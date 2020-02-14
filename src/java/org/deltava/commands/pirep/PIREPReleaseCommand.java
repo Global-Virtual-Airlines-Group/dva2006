@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a held Flight Report.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -46,6 +46,9 @@ public class PIREPReleaseCommand extends AbstractCommand {
 			// Load the comments
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
+			
+			// Add release notes
+			fr.setComments(fr.getComments() + "\r\nSYSTEM: Flight Report released by " + ctx.getUser().getName());
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
