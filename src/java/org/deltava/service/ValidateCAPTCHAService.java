@@ -33,13 +33,21 @@ public class ValidateCAPTCHAService extends WebService {
 		if (!ctx.getRequest().getMethod().equalsIgnoreCase("post"))
 			return SC_BAD_REQUEST;
 		
+		// Check if we have something
+		HttpSession s = ctx.getRequest().getSession(false);
+		if (s != null) {
+			CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME); 
+			if ((cr != null) && cr.getIsSuccess())
+				return SC_OK;
+		}
+		
 		// Validate the token
 		try (BufferedReader sr = new BufferedReader(new InputStreamReader(ctx.getRequest().getInputStream()))) {
 			GetGoogleCAPTCHA cdao = new GetGoogleCAPTCHA();
 			cdao.setConnectTimeout(2500);
 			cdao.setReadTimeout(3500);
 			CAPTCHAResult cr = cdao.validate(sr.readLine(), ctx.getRequest().getRemoteAddr());
-			HttpSession s = ctx.getRequest().getSession(true);
+			s = ctx.getRequest().getSession(true);
 			s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);	
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());

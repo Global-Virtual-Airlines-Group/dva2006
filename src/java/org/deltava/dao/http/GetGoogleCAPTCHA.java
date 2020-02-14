@@ -41,7 +41,7 @@ public class GetGoogleCAPTCHA extends DAO {
 			setMethod("POST");
 			init("https://www.google.com/recaptcha/api/siteverify");
 			try (OutputStream out = getOut()) {
-				out.write(pb.toString().getBytes(UTF_8));
+				out.write(pb.getBody(UTF_8));
 				out.flush();
 			}
 
@@ -50,7 +50,8 @@ public class GetGoogleCAPTCHA extends DAO {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
 				CAPTCHAResult result = new CAPTCHAResult (jo.optBoolean("success"));
 				result.setHostName(jo.optString("hostname"));
-				result.setChallengeTime(StringUtils.parseInstant(jo.getString("challenge_ts"), "yyyy-MM-dd'T'HH:mm:ssZZ"));
+				if (result.getIsSuccess())
+					result.setChallengeTime(StringUtils.parseInstant(jo.getString("challenge_ts"), "yyyy-MM-dd'T'HH:mm:ssVV"));
 				JSONArray msgs = jo.optJSONArray("error-codes");
 				if (msgs != null)
 					msgs.forEach(msg -> result.addMessage(String.valueOf(msg))); 
