@@ -1,10 +1,12 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.system.Issue;
+import org.deltava.beans.system.IssueArea;
+import org.deltava.beans.system.IssueStatus;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
@@ -12,11 +14,12 @@ import org.deltava.dao.*;
 import org.deltava.security.command.IssueAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display issues and comments.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -42,8 +45,8 @@ public class IssueListCommand extends AbstractViewCommand {
         int id = ctx.getID();
         
         // Get issue status/area
-        int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
-        int issueArea = StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"));
+        IssueStatus issueStatus = EnumUtils.parse(IssueStatus.class, (String) ctx.getCmdParameter(OPERATION, null), null); 
+        IssueArea issueArea = EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), null); 
         try {
             Connection c = ctx.getConnection();
             
@@ -53,12 +56,13 @@ public class IssueListCommand extends AbstractViewCommand {
             dao.setQueryMax(vc.getCount());
             
             // If we are getting a user's issues, then grab them
+            String aCode = ctx.isUserInRole("Developer") ? null : SystemData.get("airline.code");
             if (id != 0)
             	vc.setResults(dao.getUserIssues(id));
-            else if (issueStatus != -1)
-            	vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
+            else if (issueStatus != null)
+            	vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType(), aCode));
             else
-            	vc.setResults(dao.getAll(vc.getSortType(), issueArea));
+            	vc.setResults(dao.getAll(vc.getSortType(), issueArea, aCode));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
@@ -79,9 +83,7 @@ public class IssueListCommand extends AbstractViewCommand {
         access.validate();
         ctx.setAttribute("access", access, REQUEST);
         
-        // Set sort combo lists
-        ctx.setAttribute("statusOpts", ComboUtils.fromArray(Issue.STATUS), REQUEST);
-        ctx.setAttribute("areaOpts", ComboUtils.fromArray(Issue.AREA), REQUEST);
+        // Set sort combo list
         ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         
         // Set the result page and return

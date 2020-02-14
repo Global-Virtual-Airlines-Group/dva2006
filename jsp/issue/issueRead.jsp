@@ -24,7 +24,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.toggleCheckbox = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.emailAll.disabled = (!f.emailComment.checked);
 	return true;
 };
@@ -62,29 +62,34 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><span class="sec bld">${issue.statusName}</span>
-<c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
+ <td class="data"><span class="sec bld"><fmt:defaultMethod var="${issue.status}" method="description" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Issue Priority</td>
- <td class="data pri bld">${issue.priorityName}</td>
+ <td class="data pri bld"><fmt:defaultMethod var="${issue.priority}" method="description" /></td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data sec bld"><c:forEach var="ai" items="${issue.airlines}" varStatus="as">${ai.name} <c:if test="${!as.last}">, </c:if></c:forEach></td>
 </tr>
 <tr>
  <td class="label">Security</td>
- <td class="data">${issue.securityName}</td>
+ <td class="data"><fmt:defaultMethod var="${issue.security}" method="description" /></td>
 </tr>
 <tr>
  <td class="label">Area</td>
- <td class="data">${issue.areaName}</td>
+ <td class="data"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data sec">${issue.typeName}</td>
+ <td class="data sec"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
 </tr>
+<c:if test="${issue.majorVersion > 0}">
 <tr>
  <td class="label">Target Version</td>
  <td class="data">${issue.majorVersion}.${issue.minorVersion}</td>
 </tr>
+</c:if>
 <tr>
  <td class="label top">Issue Description</td>
  <td class="data"><fmt:msg value="${issue.description}" bbCode="true" /></td>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2020 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,75 +6,29 @@ import java.time.Instant;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A bean for tracking development issues.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
-	public static final int PRIORITY_LOW = 0;
-	public static final int PRIORITY_MEDIUM = 1;
-	public static final int PRIORITY_HIGH = 2;
-	public static final int PRIORITY_CRITICAL = 3;
+	public enum IssueType implements EnumDescription {
+		BUG, ENHANCEMENT;
+	}
 	
-	/**
-	 * Priority Names
-	 */
-	public static final String[] PRIORITY = {"Low", "Medium", "High", "Critical"};
-	
-	public static final int AREA_WEBSITE = 0;
-	public static final int AREA_FLEET = 1;
-	public static final int AREA_MANUAL = 2;
-	public static final int AREA_EXAMS = 3;
-	public static final int AREA_ACARS = 4;
-	public static final int AREA_SERVER = 5;
-	public static final int AREA_SCHEDULE = 6;
-	public static final int AREA_DISPATCH = 7;
-	
-	/**
-	 * Area Names
-	 */
-	public static final String[] AREA = {"Web Site", "Fleet Library", "Manuals", "Examinations", "ACARS", "Server Admin", "Schedule", "Dispatch"};
-	
-	public static final int STATUS_OPEN = 0;
-	public static final int STATUS_FIXED = 1;
-	public static final int STATUS_WORKAROUND = 2;
-	public static final int STATUS_WONTFIX = 3;
-	public static final int STATUS_DEFERRED = 4;
-	public static final int STATUS_DUPE = 5;
-	
-	/**
-	 * Status Names
-	 */
-	public static final String[] STATUS = {"Open", "Fixed", "Worked Around", "Won't Fix", "Deferred", "Duplicate"};
-	
-	public static final int TYPE_BUG = 0;
-	public static final int TYPE_ENHANCEMENT = 1;
-	
-	/**
-	 * Type Names
-	 */
-	public static final String[] TYPE = {"Bug", "Enhancement"};
-	
-	public static final int SECURITY_PUBLIC = 0;
-	public static final int SECURITY_USERS = 1;
-	public static final int SECURITY_STAFF = 2;
-	
-	/**
-	 * Security Names.
-	 */
-	public static final String[] SECURITY = {"Public", "Users Only", "Staff Only"};
-
 	private String _subject;
 	private String _description;
 	
-	private int _priority;
-	private int _area;
-	private int _issueType;
-	private int _status;
+	private IssuePriority _priority;
+	private IssueArea _area;
+	private IssueType _type;
+	private IssueStatus _status = IssueStatus.OPEN; 
+	private IssueSecurity _security = IssueSecurity.PUBLIC;
 	
 	private Instant _createdOn;
 	private Instant _lastCommentOn;
@@ -86,7 +40,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private int _majorVersion;
 	private int _minorVersion;
 	
-	private int _security;
+	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 	
 	private final Collection<IssueComment> _comments = new TreeSet<IssueComment>();
 	private int _commentCount;
@@ -118,14 +72,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	    setSubject(subj);
 	}
 
-	/**
-	 * Helper method to validate a property code.
-	 */
-	private static void validateCode(int code, String[] names) {
-		if ((code < 0) || (code >= names.length))
-			throw new IllegalArgumentException("Property value cannot be negative or >= " + names.length);
-	}
-	
 	/**
 	 * Returns the issue title.
 	 * @return the title
@@ -163,103 +109,56 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	}
 	
 	/**
-	 * Returns the issue priority code.
-	 * @return the priority code
-	 * @see Issue#getPriorityName()
-	 * @see Issue#setPriority(int)
+	 * Returns the virtual airlines associated with this issue.
+	 * @return a Collection of AirlineInformation beans
 	 */
-	public int getPriority() {
+	public Collection<AirlineInformation> getAirlines() {
+		return _airlines;
+	}
+	
+	/**
+	 * Returns the issue priority.
+	 * @return the IssuePriority
+	 * @see Issue#setPriority(IssuePriority)
+	 */
+	public IssuePriority getPriority() {
 		return _priority;
 	}
 	
 	/**
-	 * Returns the issue priority name (for JSPs).
-	 * @return the priority name
-	 * @see Issue#getPriority()
-	 * @see Issue#setPriority(int)
+	 * Returns the issue status.
+	 * @return the IssueStatus
+	 * @see Issue#setStatus(IssueStatus)
 	 */
-	public String getPriorityName() {
-		return Issue.PRIORITY[getPriority()];
-	}
-	
-	/**
-	 * Returns the issue status code.
-	 * @return the status code
-	 * @see Issue#getStatusName()
-	 * @see Issue#setStatus(int)
-	 */
-	public int getStatus() {
+	public IssueStatus getStatus() {
 		return _status;
 	}
 	
 	/**
-	 * Returns the issue status name (for JSPs).
-	 * @return the status name
-	 * @see Issue#getStatus()
-	 * @see Issue#setStatus(int)
+	 * Returns the issue type.
+	 * @return the IssueType
+	 * @see Issue#setType(IssueType)
 	 */
-	public String getStatusName() {
-		return Issue.STATUS[getStatus()];
+	public IssueType getType() {
+		return _type;
 	}
 	
 	/**
-	 * Returns the issue type code.
-	 * @return the type code
-	 * @see Issue#getTypeName()
-	 * @see Issue#setType(int)
+	 * Returns the issue area.
+	 * @return the IssueArea
+	 * @see Issue#setArea(IssueArea)
 	 */
-	public int getType() {
-		return _issueType;
-	}
-	
-	/**
-	 * Returns the issue type name (for JSPs).
-	 * @return the type name
-	 * @see Issue#getType()
-	 * @see Issue#setType(int)
-	 */
-	public String getTypeName() {
-		return Issue.TYPE[getType()];
-	}
-	
-	/**
-	 * Returns the issue area code.
-	 * @return the area code
-	 * @see Issue#getAreaName()
-	 * @see Issue#setArea(int)
-	 */
-	public int getArea() {
+	public IssueArea getArea() {
 		return _area;
 	}
 	
 	/**
-	 * Returns the issue area name (for JSPs).
-	 * @return the area name
-	 * @see Issue#getArea()
-	 * @see Issue#setArea(int)
-	 */
-	public String getAreaName() {
-		return Issue.AREA[_area];
-	}
-	
-	/**
 	 * Returns the Issue security level.
-	 * @return the security level
-	 * @see Issue#getSecurityName()
-	 * @see Issue#setSecurity(int)
+	 * @return the IssueSecurity
+	 * @see Issue#setSecurity(IssueSecurity)
 	 */
-	public int getSecurity() {
+	public IssueSecurity getSecurity() {
 		return _security;
-	}
-	
-	/**
-	 * Returns the Issue security name (for JSPs).
-	 * @return the security level name
-	 * @see Issue#getSecurity()
-	 * @see Issue#setSecurity(int)
-	 */
-	public String getSecurityName() {
-		return SECURITY[_security];
 	}
 	
 	/**
@@ -402,6 +301,23 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setMinorVersion(int v) {
 		_minorVersion = Math.max(0, v);		
 	}
+	
+	/**
+	 * Associaates a virtual airline with this Issue.
+	 * @param ai an AirlineInformation bean
+	 */
+	public void addAirline(AirlineInformation ai) {
+		_airlines.add(ai);
+	}
+	
+	/**
+	 * Updates the virtual airlines associated with this Issue.
+	 * @param airlineCodes a Collection of airline codes
+	 */
+	public void setAirlines(Collection<String> airlineCodes) {
+		_airlines.clear();
+		airlineCodes.stream().map(ac -> SystemData.getApp(ac)).filter(Objects::nonNull).forEach(this::addAirline);
+	}
 
 	@Override
 	public void setAuthorID(int id) {
@@ -439,61 +355,46 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	/**
 	 * Updates this Issue's type.
-	 * @param pv the type code
-	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @param pv the IssueType
 	 * @see Issue#getType()
-	 * @see Issue#getTypeName()
 	 */
-	public void setType(int pv) {
-		validateCode(pv, Issue.TYPE);
-		_issueType = pv;
+	public void setType(IssueType pv) {
+		_type = pv;
 	}
 	
 	/**
 	 * Updates this Issue's area.
-	 * @param pv the area code
-	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @param pv the IssueArea
 	 * @see Issue#getArea()
-	 * @see Issue#getAreaName()
 	 */
-	public void setArea(int pv) {
-		validateCode(pv, Issue.AREA);
+	public void setArea(IssueArea pv) {
 		_area = pv;
 	}
 	
 	/**
 	 * Updates this Issue's priority.
-	 * @param pv the priority code
-	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @param pv the IssuePriority
 	 * @see Issue#getPriority()
-	 * @see Issue#getPriorityName()
 	 */
-	public void setPriority(int pv) {
-		validateCode(pv, Issue.PRIORITY);
+	public void setPriority(IssuePriority pv) {
 		_priority = pv;
 	}
 	
 	/**
 	 * Updates this Issues's security level.
-	 * @param pv the level code
-	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @param pv the IssueSecurity
 	 * @see Issue#getSecurity()
-	 * @see Issue#getSecurityName()
 	 */
-	public void setSecurity(int pv) {
-		validateCode(pv, Issue.SECURITY);
+	public void setSecurity(IssueSecurity pv) {
 		_security = pv;
 	}
 	
 	/**
 	 * Updates this Issue's status.
-	 * @param pv the status code
-	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @param pv the IssueStatus
 	 * @see Issue#getStatus()
-	 * @see Issue#getStatusName()
 	 */
-	public void setStatus(int pv) {
-		validateCode(pv, Issue.STATUS);
+	public void setStatus(IssueStatus pv) {
 		_status = pv;
 	}
 	
@@ -507,13 +408,9 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	  _subject = subj.trim();
 	}
 
-	/**
-	 * Returns the CSS row class name if displayed in a view table.
-	 * @return the CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err", "opt3"};
-		return ROW_CLASSES[_status];
+		return ROW_CLASSES[_status.ordinal()];
 	}
 }

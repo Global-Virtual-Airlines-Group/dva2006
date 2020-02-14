@@ -67,7 +67,7 @@ public class IssueConvertCommand extends AbstractCommand {
 
 			// Mark resolved
 			i.setResolvedOn(Instant.now());
-			i.setStatus(Issue.STATUS_WONTFIX);
+			i.setStatus(IssueStatus.WONTFIX);
 
 			// Start transaction
 			ctx.startTX();

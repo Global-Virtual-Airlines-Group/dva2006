@@ -1,15 +1,15 @@
-// Copyright 2005, 2006, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.Issue;
+import org.deltava.beans.system.*;
 
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public final class IssueAccessControl extends AccessControl {
 		
 		_canCreate = isStaff || hasLegs;
 		if (!_ctx.isAuthenticated()) {
-			_canRead = (_i == null) ? true : (_i.getSecurity() == Issue.SECURITY_PUBLIC);
+			_canRead = (_i == null) ? true : (_i.getSecurity() == IssueSecurity.PUBLIC);
 			return;
 		}
 
@@ -62,11 +62,11 @@ public final class IssueAccessControl extends AccessControl {
 
 		// Determine state variables
 		int userID = _ctx.getUser().getID();
-		boolean isOpen = (_i.getStatus() == Issue.STATUS_OPEN);
+		boolean isOpen = (_i.getStatus() == IssueStatus.OPEN);
 		boolean isMine = ((_i.getAuthorID() == userID) || (_i.getAssignedTo() == userID));
 		
 		// Check read access
-		_canRead = (_i.getSecurity() == Issue.SECURITY_STAFF) ? isStaff || isDev : true;
+		_canRead = (_i.getSecurity() == IssueSecurity.STAFF) ? isStaff || isDev : true;
 		boolean canReopen = (!isOpen && isMine) || isDev;
 
 		// Set access control variables
