@@ -32,22 +32,21 @@ import java.util.*;
  */
 public class CIDRBlock implements java.io.Serializable {
 	
-    private final String _cidr;
-
-    private InetAddress _inetAddress;
+    private final InetAddress _inetAddress;
     private InetAddress _startAddress;
     private InetAddress _endAddress;
     private final int _prefixLength;
 
+    /**
+     * Creates the CIDR block.
+     * @param cidrAddr the address in base/prefix format
+     */
     public CIDRBlock(String cidrAddr) {
-    	super();
-        _cidr = cidrAddr;
-
         /* split CIDR to address and prefix part */
-        int index = _cidr.indexOf('/');
+        int index = cidrAddr.indexOf('/');
         if (index > -1) {
-            String addressPart = _cidr.substring(0, index);
-            String networkPart = _cidr.substring(index + 1);
+            String addressPart = cidrAddr.substring(0, index);
+            String networkPart = cidrAddr.substring(index + 1);
             try {
             	_inetAddress = InetAddress.getByName(addressPart);
             	_prefixLength = Integer.parseInt(networkPart);
@@ -57,6 +56,22 @@ public class CIDRBlock implements java.io.Serializable {
             }
         } else
             throw new IllegalArgumentException("not an valid CIDR format!");
+    }
+    
+    /**
+     * Creates the CIDR block.
+     * @param cidrAddr the base address
+     * @param prefixLength the prefix length in bits
+     */
+    public CIDRBlock(String cidrAddr, int prefixLength) {
+    	super();
+        try {
+        	_inetAddress = InetAddress.getByName(cidrAddr);
+        	_prefixLength = prefixLength;
+        	calculate();
+        } catch (UnknownHostException uhe) {
+        	throw new IllegalStateException(uhe.getMessage());
+        }
     }
 
     private void calculate() throws UnknownHostException {
