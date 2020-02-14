@@ -18,6 +18,7 @@
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
+<content:captcha action="home" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
