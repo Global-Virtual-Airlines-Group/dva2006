@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    private String _dbName;
    private String _domain;
    private boolean _canTransfer;
+   private boolean _allowMulti;
    private boolean _histRestricted;
 
    /**
@@ -88,6 +89,14 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    }
    
    /**
+    * Returns whether the airline allows Pilots to be members of multiple virtual airlines.
+    * @return TRUE if multiple profiles allowed, otherwise FALSE
+    */
+   public boolean getAllowMultiAirline() {
+	   return _allowMulti;
+   }
+   
+   /**
     * Updates the Airline domain name. The domain will be converted to lowercase.
     * @param domain the domain name
     * @throws NullPointerException if domain is null
@@ -125,6 +134,15 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
 	   _histRestricted = isRestricted;
    }
    
+   /**
+    * Updates whether this airline allows multiple pilot profiles.
+    * @param allowMulti TRUE if the user can be a member of multiple airlines, otherwise FALSE
+    * @see AirlineInformation#getAllowMultiAirline()
+    */
+   public void setAllowMultiAirline(boolean allowMulti) {
+	   _allowMulti = allowMulti;
+   }
+   
    @Override
    public String getComboName() {
       return getName();
@@ -140,9 +158,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
       return _code;
    }
    
-   /**
-    * Compares two Airline Information beans by comparing their codes.
-    */
    @Override
    public int compareTo(AirlineInformation ai2) {
       return _code.compareTo(ai2._code);
