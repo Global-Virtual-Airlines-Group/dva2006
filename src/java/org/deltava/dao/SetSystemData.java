@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,6 +8,7 @@ import java.time.zone.ZoneRules;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servlet.CommandLog;
+import org.deltava.beans.system.BlacklistEntry;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
@@ -116,6 +117,37 @@ public class SetSystemData extends DAO {
 			ps.setString(2, addr);
 			ps.setString(3, host);
 			ps.setString(4, h);
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Removes a login/registration blacklist entry containing a particular IP address.
+	 * @param addr the IP address
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteBlacklist(String addr) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SYS_BLACKLIST WHERE (ADDRESS=INET6_ATON(?))")) {
+			ps.setString(1, addr);
+			executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a login/registration blacklist entry to the database.
+	 * @param be a BlacklistEntry bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(BlacklistEntry be) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_BLACKLIST (ADDRESS, PREFIXLENGTH, CREATED, COMMENTS) VALUES (INET6_ATON(?), ?, ?, ?)")) {
+			ps.setString(1, be.getCIDR().getNetworkAddress());
+			ps.setInt(2, be.getCIDR().getPrefixLength());
+			ps.setTimestamp(3, createTimestamp(be.getCreated()));
+			ps.setString(4, be.getComments());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
