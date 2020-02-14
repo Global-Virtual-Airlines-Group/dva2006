@@ -601,8 +601,8 @@
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">
 			<version>2.2</version>
-			<version>3.1</version>
-			<version>6.4</version>
+			<version>3.4</version>
+			<version>9.0</version>
 		</list>
 		
 		<assignto>
