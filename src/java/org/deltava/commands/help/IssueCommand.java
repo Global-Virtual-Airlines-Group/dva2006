@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -216,12 +216,8 @@ public class IssueCommand extends AbstractFormCommand {
 			ctx.setAttribute("assignees", activeAssignees, REQUEST);
 			
 			// Get options for issue conversion
-			if (ac.getCanUpdateStatus() && !isNew) {
+			if (ac.getCanUpdateStatus() && !isNew)
 				ctx.setAttribute("devs", pdao.getByRole("Developer", SystemData.get("airline.db")), REQUEST);
-				ctx.setAttribute("areaNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.AREA), REQUEST);
-				ctx.setAttribute("typeNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.TYPE), REQUEST);
-				ctx.setAttribute("priorityNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.PRIORITY), REQUEST);
-			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -287,13 +283,9 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	private static Collection<Integer> getPilotIDs(Issue i) {
 		Collection<Integer> results = new HashSet<Integer>(16);
-
-		// Add creator/assignee and comment authors
 		results.add(Integer.valueOf(i.getAuthorID()));
 		results.add(Integer.valueOf(i.getAssignedTo()));
-		for (IssueComment ic : i.getComments())
-			results.add(Integer.valueOf(ic.getAuthorID()));
-
+		i.getComments().stream().map(IssueComment::getAuthorID).forEach(results::add);
 		return results;
 	}
 }

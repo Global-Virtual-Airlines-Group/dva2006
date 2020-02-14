@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -49,45 +49,17 @@ public class IssueCommand extends AbstractFormCommand {
 
 				// Instantiate a new bean
 				i = new Issue(ctx.getParameter("subject"));
-				i.setStatus(Issue.STATUS_OPEN);
+				i.setStatus(IssueStatus.OPEN);
 				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(Instant.now());
-				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security"), Issue.SECURITY_USERS));
+				i.setAirlines(List.of(SystemData.get("airline.code")));
+				i.setSecurity(EnumUtils.parse(IssueSecurity.class, ctx.getParameter("security"), IssueSecurity.USERS));
+				i.setArea(EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), IssueArea.WEBSITE));
 
-				// Assign to default user for that issue type.
+				// Assign to default user for that issue type
 				GetPilot dao2 = new GetPilot(con);
-				String assignee;
-				switch (StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")))
-				{
-					case Issue.AREA_ACARS:
-						assignee = "issue_track.assignto.acars";
-						break;
-					case Issue.AREA_DISPATCH:
-						assignee = "issue_track.assignto.dispatch";
-						break;
-					case Issue.AREA_EXAMS:
-						assignee = "issue_track.assignto.examinations";
-						break;
-					case Issue.AREA_FLEET:
-						assignee = "issue_track.assignto.fleet";
-						break;
-					case Issue.AREA_MANUAL:
-						assignee = "issue_track.assignto.manuals";
-						break;
-					case Issue.AREA_SCHEDULE:
-						assignee = "issue_track.assignto.schedule";
-						break;
-					case Issue.AREA_SERVER:
-						assignee = "issue_track.assignto.server";
-						break;
-					case Issue.AREA_WEBSITE:
-						assignee = "issue_track.assignto.website";
-						break;
-					default:
-						assignee = "issue_track.assignto.website";
-					break;
-				}
-				Pilot p = dao2.getPilotByCode(SystemData.getInt(assignee), SystemData.get("airline.db"));
+				String attr = "issue_track.assignto." + i.getArea().name().toLowerCase();
+				Pilot p = dao2.getPilotByCode(SystemData.getInt(attr), SystemData.get("airline.db"));
 				i.setAssignedTo(p.getID());
 			} else {
 				GetIssue dao = new GetIssue(con);
@@ -102,17 +74,22 @@ public class IssueCommand extends AbstractFormCommand {
 					throw securityException("Cannot save Issue " + ctx.getID());
 
 				i.setSubject(ctx.getParameter("subject"));
+				i.setArea(EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), IssueArea.WEBSITE));
 			}
 			
 			// Update security
 			if (ctx.getParameter("security") != null)
-				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
+				i.setSecurity(EnumUtils.parse(IssueSecurity.class, ctx.getParameter("security"), IssueSecurity.USERS));
 
 			// Update the issue from the request
-			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")));
-			i.setPriority(StringUtils.arrayIndexOf(Issue.PRIORITY, ctx.getParameter("priority")));
-			i.setType(StringUtils.arrayIndexOf(Issue.TYPE, ctx.getParameter("issueType")));
+			i.setPriority(EnumUtils.parse(IssuePriority.class, ctx.getParameter("priority"), IssuePriority.LOW));
+			i.setType(EnumUtils.parse(Issue.IssueType.class, ctx.getParameter("issueType"), Issue.IssueType.BUG));
 			i.setDescription(ctx.getParameter("desc"));
+			
+			// Update airlines
+			Collection<String> appCodes = ctx.getParameters("apps", Collections.emptyList());
+			if (ctx.isUserInRole("Developer") && !appCodes.isEmpty())
+				i.setAirlines(appCodes);
 
 			// Set the version
 			StringTokenizer tkns = new StringTokenizer(ctx.getParameter("version"), ".");
@@ -121,8 +98,8 @@ public class IssueCommand extends AbstractFormCommand {
 
 			// If we can resolve the issue, update the status
 			if ((access.getCanResolve()) && (ctx.getParameter("status") != null)) {
-				i.setStatus(StringUtils.arrayIndexOf(Issue.STATUS, ctx.getParameter("status")));
-				if ((i.getStatus() != Issue.STATUS_OPEN) && (i.getResolvedOn() == null))
+				i.setStatus(EnumUtils.parse(IssueStatus.class, ctx.getParameter("status"), i.getStatus()));
+				if ((i.getStatus() != IssueStatus.OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(Instant.now());
 			}
 
@@ -225,10 +202,8 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("currentVersion", currentVer, REQUEST);
 			}
 
-			// Get the Pilot DAO
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-
 			// Get developers
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Collection<Pilot> devs = new HashSet<Pilot>();
 			Collection<?> apps = ((Map<?, ?>) SystemData.getObject("apps")).values();
 			for (Iterator<?> it = apps.iterator(); it.hasNext();) {
@@ -237,6 +212,7 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 
 			// Save developers in request
+			ctx.setAttribute("allApps", apps, REQUEST);
 			ctx.setAttribute("devs", devs, REQUEST);
 
 			// Get the Pilots posting in this issue
@@ -255,13 +231,6 @@ public class IssueCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-
-		// Save option lists in the request
-		ctx.setAttribute("priorities", ComboUtils.fromArray(Issue.PRIORITY), REQUEST);
-		ctx.setAttribute("types", ComboUtils.fromArray(Issue.TYPE), REQUEST);
-		ctx.setAttribute("areas", ComboUtils.fromArray(Issue.AREA), REQUEST);
-		ctx.setAttribute("statuses", ComboUtils.fromArray(Issue.STATUS), REQUEST);
-		ctx.setAttribute("securityLevels", ComboUtils.fromArray(Issue.SECURITY), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

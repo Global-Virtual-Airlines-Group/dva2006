@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2009, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.system.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access object to retrieve Issues and Issue Comments.
@@ -35,12 +36,12 @@ public class GetIssue extends DAO {
 			
 			// Execute the query - return null if nothing found
 			List<Issue> results = execute(ps);
-			if (results.size() == 0)
-				return null;
+			if (results.size() == 0) return null;
 			
 			// Populate the bean, get comments and return
 			Issue i = results.get(0);
 			loadComments(i);
+			loadAirlines(i);
 			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -50,23 +51,25 @@ public class GetIssue extends DAO {
 	/**
 	 * Returns all Issues.
 	 * @param sortBy the column to sort the results using
-	 * @param area the area code, or -1 if none
+	 * @param area the IssueArea or null if none
+	 * @param airlineCode the airline code or null for all
 	 * @return a List of Issues
 	 * @throws DAOException the a JDBC error occurs
 	 */
-	public List<Issue> getAll(String sortBy, int area) throws DAOException {
+	public List<Issue> getAll(String sortBy, IssueArea area, String airlineCode) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID)");
-		if (area >= 0)
-			sqlBuf.append(" WHERE (I.AREA=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID)"
+			+ "WHERE (IA.AIRLINE LIKE ?)");
+		if (area != null)
+			sqlBuf.append(" AND (I.AREA=?)");
+		
 		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			if (area >= 0)
-				ps.setInt(1, area);
-				
+			ps.setString(1, (airlineCode == null) ? "%" : airlineCode);
+			if (area != null) ps.setInt(2, area.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -81,11 +84,11 @@ public class GetIssue extends DAO {
 	 */
 	public List<Issue> getUserIssues(int id) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
-			      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
+		      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
 			ps.setInt(1, id);
 			ps.setInt(2, id);
-			ps.setInt(3, Issue.STATUS_OPEN);
-			ps.setInt(4, Issue.STATUS_DEFERRED);
+			ps.setInt(3, IssueStatus.OPEN.ordinal());
+			ps.setInt(4, IssueStatus.DEFERRED.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -93,27 +96,28 @@ public class GetIssue extends DAO {
 	}
 	
 	/**
-	 * Returns all Issues with a particular status code.
-	 * @param status the status code
-	 * @param area the area code, or -1 if none
+	 * Returns all Issues with a particular status.
+	 * @param status the IssueStatus
+	 * @param area the IssueArea or null if none
 	 * @param sortType the SQL sorting fragment
+	 * @param airlineCode the airline code or null for all
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Issue> getByStatus(int status, int area, String sortType) throws DAOException {
+	public List<Issue> getByStatus(IssueStatus status, IssueArea area, String sortType, String airlineCode) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?)");
-		if (area >= 0)
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN common.ISSUE_COMMENTS IC ON "
+			+ "(I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) AND (IA.AIRLINE LIKE ?)");
+		if (area != null)
 			sqlBuf.append(" AND (I.AREA=?)");
 		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
 		sqlBuf.append(sortType);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, status);
-			if (area >= 0)
-				ps.setInt(2, area);
-			
+			ps.setInt(1, status.ordinal());
+			ps.setString(2, (airlineCode == null) ? "%" : airlineCode);
+			if (area != null) ps.setInt(3, area.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -123,35 +127,33 @@ public class GetIssue extends DAO {
 	/**
 	 * Searches all Issues for a particular phrase.
 	 * @param searchStr the search phrase
-	 * @param status the status code, or -1 if none
-	 * @param area the area code, or -1 if none
+	 * @param status the IssueStatus or null if none
+	 * @param area the IssueArea or null if none
+	 * @param airlineCode the airline code or null for all
 	 * @param includeComments TRUE if Issue Comments should be searched, otherwise FALSE
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Issue> search(String searchStr, int status, int area, boolean includeComments) throws DAOException {
+	public List<Issue> search(String searchStr, IssueStatus status, IssueArea area, String airlineCode, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
-			+ "WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN common.ISSUE_COMMENTS IC ON "
+			+ "(I.ID=IC.ISSUE_ID) WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
 		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS) > 0))" : ")");
-		if (status >= 0)
+		if (status != null)
 			sqlBuf.append(" AND (I.STATUS=?)");
-		if (area >= 0)
+		if (area != null)
 			sqlBuf.append(" AND (I.AREA=?)");
 			
-		sqlBuf.append(" GROUP BY I.ID");
+		sqlBuf.append(" AND (IA.AIRLINE LIKE ?) GROUP BY I.ID");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, searchStr);
 			int pos = 1;
-			if (includeComments)
-				ps.setString(++pos, searchStr);
-			if (status >= 0)
-				ps.setInt(++pos, status);
-			if (area >= 0)
-				ps.setInt(++pos, area);
-			
+			if (includeComments) ps.setString(++pos, searchStr);
+			if (status != null) ps.setInt(++pos, status.ordinal());
+			if (area != null) ps.setInt(++pos, area.ordinal());
+			ps.setString(++pos, (airlineCode == null) ? "%" : airlineCode);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -209,6 +211,19 @@ public class GetIssue extends DAO {
 			}
 		}
 	}
+
+	/*
+	 * Helper method to load airline/issue mappings.
+	 */
+	private void loadAirlines(Issue i) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM common.ISSUE_AIRLINES WHERE (ID=?)")) {
+			ps.setInt(1, i.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					i.addAirline(SystemData.getApp(rs.getString(1)));
+			}
+		}
+	}
 	
 	/*
 	 * Helper method to parse Issue result sets.
@@ -224,13 +239,13 @@ public class GetIssue extends DAO {
 				i.setCreatedOn(rs.getTimestamp(4).toInstant());
 				i.setResolvedOn(toInstant(rs.getTimestamp(5)));
 				i.setDescription(rs.getString(7));
-				i.setArea(rs.getInt(8));
-				i.setPriority(rs.getInt(9));
-				i.setStatus(rs.getInt(10));
-				i.setType(rs.getInt(11));
+				i.setArea(IssueArea.values()[rs.getInt(8)]);
+				i.setPriority(IssuePriority.values()[rs.getInt(9)]);
+				i.setStatus(IssueStatus.values()[rs.getInt(10)]);
+				i.setType(Issue.IssueType.values()[rs.getInt(11)]);
 				i.setMajorVersion(rs.getInt(12));
 				i.setMinorVersion(rs.getInt(13));
-				i.setSecurity(rs.getInt(14));
+				i.setSecurity(IssueSecurity.values()[rs.getInt(14)]);
 				if (hasCommentCount) {
 					i.setLastCommentOn(toInstant(rs.getTimestamp(15)));
 					i.setCommentCount(rs.getInt(16));

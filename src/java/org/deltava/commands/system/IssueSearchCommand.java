@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
-import org.deltava.beans.system.Issue;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -9,11 +9,12 @@ import org.deltava.dao.*;
 import org.deltava.security.command.IssueAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search Issues and comments.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,13 +31,9 @@ public class IssueSearchCommand extends AbstractCommand {
 		// Get search options
 		int maxResults = StringUtils.parse(ctx.getParameter("maxResults"), 20);
 		boolean searchComments = Boolean.valueOf(ctx.getParameter("doComments")).booleanValue();
-		int status = StringUtils.arrayIndexOf(Issue.STATUS, ctx.getParameter("status"));
-		int area = StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"));
+		IssueStatus status = EnumUtils.parse(IssueStatus.class, ctx.getParameter("status"), null);
+		IssueArea area = EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), null);
 		
-		// Save combo options
-		ctx.setAttribute("statusOpts", ComboUtils.fromArray(Issue.STATUS), REQUEST);
-		ctx.setAttribute("areaOpts", ComboUtils.fromArray(Issue.AREA), REQUEST);
-
 		// Get command result
 		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("searchStr") == null) {
@@ -45,10 +42,11 @@ public class IssueSearchCommand extends AbstractCommand {
 			return;
 		}
 		
+		String aCode = ctx.isUserInRole("Developer") ? null : SystemData.get("airline.code");
 		try {
 			GetIssue dao = new GetIssue(ctx.getConnection());
 			dao.setQueryMax(maxResults);
-			ctx.setAttribute("results", dao.search(ctx.getParameter("searchStr"), status, area, searchComments), REQUEST);
+			ctx.setAttribute("results", dao.search(ctx.getParameter("searchStr"), status, area, aCode, searchComments), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

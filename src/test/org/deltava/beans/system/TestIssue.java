@@ -47,11 +47,6 @@ public class TestIssue extends AbstractBeanTestCase {
 		checkProperty("commentCount", Integer.valueOf(23));
 		_i.setResolvedOn(null);
 		_i.setLastCommentOn(null);
-		
-		assertEquals(Issue.PRIORITY[_i.getPriority()], _i.getPriorityName());
-		assertEquals(Issue.STATUS[_i.getStatus()], _i.getStatusName());
-		assertEquals(Issue.TYPE[_i.getType()], _i.getTypeName());
-		assertEquals(Issue.AREA[_i.getArea()], _i.getAreaName());
 	}
 	
 	public void testValidation() {
@@ -122,7 +117,7 @@ public class TestIssue extends AbstractBeanTestCase {
 	public void testViewEntry() {
 	   String[] CLASSES = {"opt1", null, "warn", "err"};
 	   for (int x = 0; x < CLASSES.length; x++) {
-	      _i.setStatus(x);
+	      _i.setStatus(IssueStatus.values()[x]);
 	      assertEquals(CLASSES[x], _i.getRowClassName());
 	   }
 	}

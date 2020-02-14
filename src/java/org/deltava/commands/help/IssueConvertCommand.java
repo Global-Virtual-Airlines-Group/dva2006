@@ -1,24 +1,22 @@
-// Copyright 2006, 2007, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2013, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
-import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.help.*;
-import org.deltava.beans.system.Issue;
-
+import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.HelpDeskAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 5.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -51,12 +49,13 @@ public class IssueConvertCommand extends AbstractCommand {
 			i.setAuthorID(hi.getAuthorID());
 			i.setCreatedOn(hi.getCreatedOn());
 			i.setSubject(hi.getSubject());
-			i.setStatus(org.deltava.beans.system.Issue.STATUS_OPEN);
+			i.setStatus(IssueStatus.OPEN);
 			i.setDescription(hi.getBody());
+			i.addAirline(SystemData.getApp(null));
 			i.setAssignedTo(StringUtils.parse(ctx.getParameter("devAssignedTo"), ctx.getUser().getID()));
-			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"), Issue.AREA_WEBSITE));
-			i.setType(StringUtils.arrayIndexOf(Issue.TYPE, ctx.getParameter("type"), Issue.TYPE_BUG));
-			i.setPriority(StringUtils.arrayIndexOf(Issue.PRIORITY, ctx.getParameter("priority"), Issue.PRIORITY_MEDIUM));
+			i.setArea(EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), IssueArea.WEBSITE));
+			i.setType(EnumUtils.parse(Issue.IssueType.class, ctx.getParameter("type"), org.deltava.beans.system.Issue.IssueType.BUG));
+			i.setPriority(EnumUtils.parse(IssuePriority.class, ctx.getParameter("priority"), IssuePriority.MEDIUM));
 			
 			// Update the issue
 			hi.setStatus(org.deltava.beans.help.Issue.CLOSED);
@@ -69,8 +68,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			wdao.write(i);
 			
 			// Copy the issue comments
-			for (Iterator<IssueComment> ici = hi.getComments().iterator(); ici.hasNext(); ) {
-				IssueComment hic = ici.next();
+			for (org.deltava.beans.help.IssueComment hic : hi.getComments()) {
 				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(hic.getBody());
 				ic.setCreatedOn(hic.getCreatedOn());
 				ic.setAuthorID(hic.getAuthorID());
@@ -90,10 +88,10 @@ public class IssueConvertCommand extends AbstractCommand {
 			}
 			
 			// Create the new Help Desk issue comment
-			IssueComment hic = new IssueComment(ctx.getUser().getID());
+			org.deltava.beans.help.IssueComment hic = new org.deltava.beans.help.IssueComment(ctx.getUser().getID());
 			hic.setID(hi.getID());
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
 				hic.setBody("Converted to Development Issue at " + url.toString());
 			} catch (MalformedURLException mue) {
 				hic.setBody("Converted to Development Issue");
