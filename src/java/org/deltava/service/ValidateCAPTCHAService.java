@@ -37,8 +37,10 @@ public class ValidateCAPTCHAService extends WebService {
 		HttpSession s = ctx.getRequest().getSession(false);
 		if (s != null) {
 			CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME); 
-			if ((cr != null) && cr.getIsSuccess())
-				return SC_OK;
+			if ((cr != null) && cr.getIsSuccess()) {
+				ctx.getResponse().addDateHeader("Date", cr.getChallengeTime().toEpochMilli());
+				return SC_NOT_MODIFIED;
+			}
 		}
 		
 		// Validate the token
