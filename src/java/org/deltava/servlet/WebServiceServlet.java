@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -101,7 +101,9 @@ public class WebServiceServlet extends BasicAuthServlet {
 				challenge(rsp, WS_REALM.replace("%A", SystemData.get("airline.name")));
 				return;
 			}
-		} else if (usr != null)
+		}
+		
+		if (usr != null)
 			NewRelic.setUserName(usr.getName());
 		
 		// Generate the service context
