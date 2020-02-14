@@ -3,10 +3,12 @@ package org.deltava.taglib.content;
 
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.beans.system.CAPTCHAResult;
+import org.deltava.commands.HTTPContext;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -21,6 +23,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 	
 	private String _action;
 	private boolean _authOnly;
+	private boolean _force;
 	
 	/**
 	 * Updates the action name.
@@ -36,6 +39,14 @@ public class GoogleCAPTCHATag extends TagSupport {
 	 */
 	public void setAuthOnly(boolean isAuthOnly) {
 		_authOnly = isAuthOnly;
+	}
+	
+	/**
+	 * Sets whether to force a Google call even if the CAPTCHA was previously validated.
+	 * @param doForce TRUE if a call is always made, otherwise FALSE
+	 */
+	public void setForce(boolean doForce) {
+		_force = doForce;
 	}
 
 	/**
@@ -55,6 +66,16 @@ public class GoogleCAPTCHATag extends TagSupport {
 			Principal usr = req.getUserPrincipal();
 			if (usr == null)
 				return EVAL_BODY_INCLUDE;
+		}
+		
+		// Check if forced
+		if (!_force) {
+			HttpSession s = pageContext.getSession();
+			if (s != null) {
+				CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME);
+				if ((cr != null) && cr.getIsSuccess())
+					return EVAL_BODY_INCLUDE;
+			}
 		}
 		
 		try {
@@ -85,6 +106,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 	@Override
 	public void release() {
 		_authOnly = false;
+		_force = false;
 		super.release();
 	}
 }
