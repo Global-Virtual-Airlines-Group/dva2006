@@ -53,6 +53,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(Instant.now());
 				i.setAirlines(List.of(SystemData.get("airline.code")));
+				i.addAirline(SystemData.getApp(null));
 				i.setSecurity(EnumUtils.parse(IssueSecurity.class, ctx.getParameter("security"), IssueSecurity.USERS));
 				i.setArea(EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), IssueArea.WEBSITE));
 
