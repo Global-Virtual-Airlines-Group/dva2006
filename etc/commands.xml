@@ -188,6 +188,18 @@
 		<class>org.deltava.commands.hr.JobCompleteCommand</class>
 		<roles>HR</roles>
 	</command>
+	
+	<command id="blacklist">
+		<name>Blacklist View</name>
+		<class>org.deltava.commands.hr.BlacklistCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="blacklistdelete">
+		<name>Blacklist Delete</name>
+		<class>org.deltava.commands.hr.BlacklistDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
 
 	<command id="dupesearch">
 		<name>Duplicate Pilot Search</name>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.*;
 
 import org.deltava.beans.servlet.CommandLog;
 import org.deltava.beans.stats.*;
+import org.deltava.beans.system.BlacklistEntry;
 import org.deltava.taskman.TaskLastRun;
 
 import org.deltava.util.cache.*;
@@ -217,6 +218,50 @@ public class GetSystemData extends DAO {
 			ps.setString(1, taskID);
 			try (ResultSet rs = ps.executeQuery()) { 
 				return rs.next() ? toInstant(rs.getTimestamp(1)) : null;
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the Login/Regisstration blacklist.
+	 * @return a Collection of BlacklistEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<BlacklistEntry> getBlacklist() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM SYS_BLACKLIST ORDER BY CREATED DESC")) {
+			Collection<BlacklistEntry> results = new ArrayList<BlacklistEntry>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					BlacklistEntry be = new BlacklistEntry(rs.getString(1), rs.getInt(2));	
+					be.setCreated(toInstant(rs.getTimestamp(3)));
+					be.setComments(rs.getString(4));
+					results.add(be);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns whether an IP address is contained within a Login or Regisstration blacklist.
+	 * @param addr the IP Address
+	 * @return a BlacklistEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public BlacklistEntry getBlacklist(String addr) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_BLACKLIST WHERE (ADDRESS <= INET6_ATON(?)) ORDER BY ADDRESS DESC LIMIT 1")) {
+			ps.setString(1, addr);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) return null;
+				BlacklistEntry be = new BlacklistEntry(rs.getString(1), rs.getInt(2));
+				be.setCreated(toInstant(rs.getTimestamp(3)));
+				be.setComments(rs.getString(4));
+				return be;
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
