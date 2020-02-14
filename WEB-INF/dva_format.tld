@@ -415,6 +415,23 @@
 	</tag>
 
 	<tag>
+		<description>Default Method tag, used since EL cannot lookup interface default methods</description>
+		<name>defaultMethod</name>
+		<tag-class>org.deltava.taglib.format.DefaultMethodTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>method</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Airport tag, used to display ICAO/IATA codes depending on user preferences</description>
 		<name>airport</name>
 		<tag-class>org.deltava.taglib.format.AirportFormatTag</tag-class>
