@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -125,12 +125,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (isAcademy) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(p.getID());
-				for (Course c : courses) {
-					if (c.getStatus() == Status.STARTED) {
-						pirep.setAttribute(FlightReport.ATTR_ACADEMY, true);
-						break;
-					}
-				}
+				Course c = courses.stream().filter(crs -> (crs.getStatus() == Status.STARTED)).findAny().orElse(null);
+				pirep.setAttribute(FlightReport.ATTR_ACADEMY, (c != null));
 			}
 			
 			// Check if it's an Online Event flight
