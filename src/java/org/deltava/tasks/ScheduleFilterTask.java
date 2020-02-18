@@ -61,7 +61,7 @@ public class ScheduleFilterTask extends Task {
 			// Save the entries
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
-			swdao.purge(false);
+			swdao.purge();
 			for (RawScheduleEntry rse : entries)
 				swdao.write(rse, true);
 			

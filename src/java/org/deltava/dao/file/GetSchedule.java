@@ -85,9 +85,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 						// Discard distance
 						tkns.nextToken();
 
-						// Load historic/purgeable attributes
+						// Load historic attributes
 						entry.setHistoric(Boolean.valueOf(tkns.nextToken()).booleanValue());
-						entry.setCanPurge(Boolean.valueOf(tkns.nextToken()).booleanValue());
 
 						results.add(entry);
 					} catch (Exception e) {

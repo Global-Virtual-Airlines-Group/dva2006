@@ -24,7 +24,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private boolean _historic;
 	private boolean _academy;
-	private boolean _purge;
 
 	/**
 	 * Creates a new Schedule Entry object with a given flight.
@@ -114,15 +113,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	}
 
 	/**
-	 * Returns if this flight can be purged from the schedule database before an automated import.
-	 * @return TRUE if the flight can be automatically purged from the database, otherwise FALSE
-	 * @see ScheduleEntry#setCanPurge(boolean)
-	 */
-	public boolean getCanPurge() {
-		return _purge;
-	}
-	
-	/**
 	 * Returns if this flight is part of the Flight Academy.
 	 * @return TRUE if the flight is part of the Flight Academy, otherwise FALSE
 	 * @see ScheduleEntry#setAcademy(boolean)
@@ -195,22 +185,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * Updates this Schedule entry's &quot;historic flight&quot; flag.
 	 * @param historic the new &quot;historic flight&quot; flag value
 	 * @see ScheduleEntry#getHistoric()
-	 * @see ScheduleEntry#getCanPurge()
 	 */
 	public void setHistoric(boolean historic) {
 		_historic = historic;
 	}
 
-	/**
-	 * Updates this Schedule entry's &quot;no purge&quot; flag. This typically is set on historic flights.
-	 * @param purge the new &quot;no purge&quot; flag value
-	 * @see ScheduleEntry#getCanPurge()
-	 * @see ScheduleEntry#getHistoric()
-	 */
-	public void setCanPurge(boolean purge) {
-		_purge = purge;
-	}
-	
 	/**
 	 * Updates this Schedule entry's &quot;Flight Academy flight&quot; flag.
 	 * @param academy TRUE if the Flight is part of the Academy, otherwise FALSE

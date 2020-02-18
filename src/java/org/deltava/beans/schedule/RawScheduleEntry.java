@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -160,7 +160,6 @@ public class RawScheduleEntry extends ScheduleEntry {
 		se.setTimeD(LocalDateTime.of(dt, getTimeD().toLocalTime()));
 		se.setTimeA(LocalDateTime.of(dt, getTimeA().toLocalTime()));
 		se.setAcademy(getAcademy());
-		se.setCanPurge(getCanPurge());
 		se.setHistoric(getHistoric());
 		se.setSource(getSource());
 		se.setCodeShare(getCodeShare());

@@ -97,7 +97,6 @@ public class LoadHistoric extends TestCase {
 				se.setTimeA(LocalDateTime.parse(timeA.substring(0, timeA.indexOf(' ')), TF));
 
 				// Set flags
-				se.setCanPurge(false);
 				se.setHistoric(true);
 				se.setAcademy(false);
 
