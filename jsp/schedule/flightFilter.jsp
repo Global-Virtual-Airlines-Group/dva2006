@@ -76,6 +76,10 @@ golgotha.onDOMReady(function() {
  <td class="label">Effective Date</td>
  <td class="data"><el:text name="effDate" size="9" max="10" required="true" value="${fn:dateFmt(today, 'MM/dd/yyyy')}" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="purgeAll" idx="*" value="true" label="Purge entire Flight Schedule before filter" /></td>
+</tr>
 </el:table>
 
 <!-- Button bar -->
