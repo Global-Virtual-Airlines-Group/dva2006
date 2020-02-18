@@ -11,6 +11,7 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.EnumUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -31,7 +32,7 @@ public class RawBrowseCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the source and departure airport
-		ScheduleSource src = ScheduleSource.parse(ctx.getParameter("src"), ScheduleSource.MANUAL);
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		if (aD == null)
