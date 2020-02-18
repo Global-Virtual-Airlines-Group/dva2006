@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.*;
@@ -78,7 +78,6 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 
 			// Update the entry
 			entry.setEquipmentType(ctx.getParameter("eqType"));
-			entry.setCanPurge(!Boolean.valueOf(ctx.getParameter("dontPurge")).booleanValue());
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 			
@@ -123,7 +122,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the source/line
-		ScheduleSource src = ScheduleSource.parse(ctx.getParameter("src"), ScheduleSource.MANUAL);
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
 		
 		try {

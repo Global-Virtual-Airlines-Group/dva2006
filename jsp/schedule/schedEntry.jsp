@@ -151,8 +151,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE SCHEDULE ENTRY" />
-<c:if test="${!empty entry}">&nbsp;<el:cmdbutton ID="DeleteButton" url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
+ <td><el:button type="submit" label="SAVE SCHEDULE ENTRY" /><c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

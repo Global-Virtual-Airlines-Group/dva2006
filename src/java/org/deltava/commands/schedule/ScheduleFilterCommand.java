@@ -1,9 +1,9 @@
 // Copyright 2006, 2009, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.sql.*;
 import java.util.*;
 import java.time.*;
-import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -15,6 +15,8 @@ import org.deltava.dao.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.*;
 
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
@@ -86,8 +88,15 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Start the transaction
 			ctx.startTX();
 			
-			// Load the entries, save source mappings
+			// Purge if needed
 			SetSchedule dao = new SetSchedule(con);
+			boolean doPurge = Boolean.valueOf(ctx.getParameter("purgeAll")).booleanValue();
+			if (doPurge) {
+				dao.purge();
+				dao.purgeSourceAirlines();
+			}
+			
+			// Load the entries, save source mappings
 			for (ScheduleSource src : sources) {
 				Collection<Airline> validAirlines = srcAirlines.getOrDefault(src, Collections.emptyList());
 				
@@ -98,7 +107,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					if ((ir == null) || (ir.getSource() != src))
 						continue;
 					
-					rse.setCanPurge(true);
 					boolean isAdded = entries.add(rse);
 					if (!isAdded)
 						log.info(rse.getShortCode() + " already exists");
@@ -107,21 +115,25 @@ public class ScheduleFilterCommand extends AbstractCommand {
 				log.info("Loaded " + srcEntries.size() + " " + src.getDescription() + " schedule entries for " + effectiveDate);
 				dao.writeSourceAirlines(src, validAirlines);
 			}
-
+			
 			// Save the schedule entries
-			AirportServiceMap svcMap = new AirportServiceMap();
-			dao.purge(false);
-			for (RawScheduleEntry rse : entries) {
-				svcMap.add(rse.getAirline(), rse.getAirportD(), rse.getAirportA());
+			for (RawScheduleEntry rse : entries)
 				dao.write(rse, false);
-			}
 			
 			// Save effective date
 			SetMetadata mdwdao = new SetMetadata(con);
 			String aCode = SystemData.get("airline.code").toLowerCase();
 			mdwdao.write(aCode + ".schedule.effDate", effectiveDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+
+			// Change transaction isolocation
+			con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+			
+			// Load the airport service map
+			GetScheduleInfo sidao = new GetScheduleInfo(con);
+			AirportServiceMap svcMap = sidao.getRoutePairs();
 			
 			// Determine unserviced airports
+			boolean updateAirports = false;
 			SetAirportAirline awdao = new SetAirportAirline(con);
 			synchronized (SystemData.class) {
 				Collection<Airport> allAirports = SystemData.getAirports().values();
@@ -129,6 +141,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
 					if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
 						log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+						updateAirports = true;
 						ap.setAirlines(svcMap.getAirlineCodes(ap));
 						awdao.update(ap, ap.getIATA());
 					}
@@ -136,7 +149,11 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			}
 
 			ctx.commitTX();
-		} catch (DAOException de) {
+			
+			// Update airport map
+			if (updateAirports)
+				EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
+		} catch (SQLException | DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {

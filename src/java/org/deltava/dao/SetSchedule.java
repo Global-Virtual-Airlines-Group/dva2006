@@ -33,7 +33,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE, ACADEMY, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, ACADEMY, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, entry.getAirline().getCode());
@@ -47,10 +47,9 @@ public class SetSchedule extends DAO {
 			ps.setTimestamp(9, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
 			ps.setBoolean(11, entry.getHistoric());
-			ps.setBoolean(12, entry.getCanPurge());
-			ps.setBoolean(13, entry.getAcademy());
-			ps.setInt(14, (entry.getSource() == null) ? -1 : entry.getSource().ordinal());
-			ps.setString(15, entry.getCodeShare());
+			ps.setBoolean(12, entry.getAcademy());
+			ps.setInt(13, (entry.getSource() == null) ? -1 : entry.getSource().ordinal());
+			ps.setString(14, entry.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -103,20 +102,12 @@ public class SetSchedule extends DAO {
 	
 	/**
 	 * Purges entries from the Flight Schedule.
-	 * @param force TRUE if all entries should be purged, otherwise FALSE
+	 * @return the number of deleted entries
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purge(boolean force) throws DAOException {
-
-		StringBuilder sqlBuf = new StringBuilder("DELETE FROM SCHEDULE");
-		if (!force)
-			sqlBuf.append(" WHERE (CAN_PURGE=?)");
-
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			if (!force)
-				ps.setBoolean(1, true);
-
-			executeUpdate(ps, 0);
+	public int purge() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SCHEDULE")) {
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
