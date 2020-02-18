@@ -140,11 +140,7 @@ public class LoginCommand extends AbstractCommand {
 				}
 				
 				// If we got more than one pilot, filter inactive pilots
-				List<Pilot> activeUsers = new ArrayList<Pilot>();
-				for (Pilot usr : users) {
-					if ((usr.getStatus() == PilotStatus.ACTIVE) || (usr.getStatus() == PilotStatus.ONLEAVE))
-						activeUsers.add(usr);
-				}
+				List<Pilot> activeUsers = users.stream().filter(usr -> ((usr.getStatus() == PilotStatus.ACTIVE) || (usr.getStatus() == PilotStatus.ONLEAVE))).collect(Collectors.toList());
 				
 				// If there's more than one, we're good
 				if ((p == null) && (activeUsers.size() == 1))
@@ -155,7 +151,14 @@ public class LoginCommand extends AbstractCommand {
 				}
 			} else
 				p = users.get(0);
-
+			
+			// Check the blacklist
+			String remoteAddr = ctx.getRequest().getRemoteAddr();
+			GetSystemData sysdao = new GetSystemData(con);
+			BlacklistEntry be = sysdao.getBlacklist(remoteAddr);
+			if (be != null)
+				throw new SecurityException("Login prohibited from " + be);
+			
 			// Get the authenticator and try to authenticate
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
 				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
@@ -186,7 +189,6 @@ public class LoginCommand extends AbstractCommand {
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
 			
 			// Get IP address info
-			String remoteAddr = ctx.getRequest().getRemoteAddr();
 			GetIPLocation ipdao = new GetIPLocation(con);
 			IPBlock addrInfo = ipdao.get(remoteAddr);
 
@@ -220,8 +222,8 @@ public class LoginCommand extends AbstractCommand {
 			wdao.login(p.getID(), p.getLoginHost());
 			
 			// Save login hostname/IP address forever
-			SetSystemData sysdao = new SetSystemData(con);
-			sysdao.login(SystemData.get("airline.db"), p.getID(), remoteAddr, p.getLoginHost());
+			SetSystemData syswdao = new SetSystemData(con);
+			syswdao.login(SystemData.get("airline.db"), p.getID(), remoteAddr, p.getLoginHost());
 			
 			// Clear LOA if done today
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
