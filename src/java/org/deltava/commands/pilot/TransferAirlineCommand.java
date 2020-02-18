@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -71,6 +71,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			GetUserData uddao = new GetUserData(con);
 			Map<String, AirlineInformation> airlines = uddao.getAirlines(false);
 			ctx.setAttribute("airlines", airlines.values(), REQUEST);
+			ctx.setAttribute("currentAirline", SystemData.getApp(null), REQUEST);
 
 			// Check if we are transferring or just displaying the JSP
 			if (ctx.getParameter("dbName") == null) {
@@ -169,10 +170,14 @@ public class TransferAirlineCommand extends AbstractCommand {
 				// Get the ID property from the UserData object and stuff it into the existing Pilot object
 				newUser.setID(ud.getID());
 			}
-
-			// Change status at old airline to Transferred
-			p.setStatus(PilotStatus.TRANSFERRED);
-			wdao.setStatus(p.getID(), PilotStatus.TRANSFERRED);
+			
+			// Change status at old airline to Transferred if we're actually moving
+			boolean keepActive = Boolean.valueOf(ctx.getParameter("keepActive")).booleanValue();
+			ctx.setAttribute("isMove", Boolean.valueOf(keepActive), REQUEST);
+			if (keepActive) {
+				p.setStatus(PilotStatus.TRANSFERRED);
+				wdao.setStatus(p.getID(), PilotStatus.TRANSFERRED);
+			}
 
 			// Save the new user
 			newUser.setStatus(PilotStatus.ACTIVE);
@@ -183,8 +188,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 				
 				// Assign an ID if requested
-				boolean assignID = Boolean.valueOf(ctx.getParameter("assignID")).booleanValue();
-				if (assignID)
+				if (Boolean.valueOf(ctx.getParameter("assignID")).booleanValue())
 					wdao.assignID(newUser, aInfo.getDB());
 			} else
 				wdao.write(newUser, aInfo.getDB());

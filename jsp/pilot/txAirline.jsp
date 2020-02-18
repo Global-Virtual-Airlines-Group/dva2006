@@ -12,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.dbName, t:'Airline Name'});
@@ -59,7 +59,8 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /></td>
+ <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /><br />
+<el:box name="keepActive" idx="*" value="true" checked="${currentAirline.allowMultiAirline}" label="Keep Pilot active after transfer" /></td>
 </tr>
 </el:table>
 
