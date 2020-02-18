@@ -267,7 +267,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
 				fstdao.update(fr);
 			}
-
+			
 			// Write status updates (if any)
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			swdao.write(upds);

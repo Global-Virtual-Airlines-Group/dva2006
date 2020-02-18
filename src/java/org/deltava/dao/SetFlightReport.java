@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -338,7 +338,7 @@ public class SetFlightReport extends DAO {
 	public void write(FlightReport fr) throws DAOException {
 		write(fr, SystemData.get("airline.db"));
 	}
-
+	
 	/**
 	 * Writes a Flight Report to the database.
 	 * @param fr the Flight Report
@@ -463,6 +463,39 @@ public class SetFlightReport extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a Flight Report status update to the current airline's database.
+	 * @param upd a FlightHistoryEntry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(FlightHistoryEntry upd) throws DAOException {
+		write(upd, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Writes a Flight Report status update to the database.
+	 * @param upd a FlightHistoryEntry
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(FlightHistoryEntry upd, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("INSERT INTO ");
+		buf.append(formatDBName(dbName));
+		buf.append(".PIREP_STATUS_HISTORY (ID, AUTHOR_ID, CREATEDON, DESC) VALUES (?, ?, ?, ?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			ps.setInt(1, upd.getID());
+			ps.setInt(2, upd.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(upd.getCreatedOn()));
+			ps.setString(4, upd.getDescription());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}

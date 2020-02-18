@@ -2,6 +2,7 @@
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.flight.*;
 
@@ -48,12 +49,16 @@ public class PIREPReleaseCommand extends AbstractCommand {
 				fr.setComments(ctx.getParameter("dComments"));
 			
 			// Add release notes
-			fr.setComments(fr.getComments() + "\r\nSYSTEM: Flight Report released by " + ctx.getUser().getName());
+			FlightHistoryEntry upd = new FlightHistoryEntry(fr.getID(), ctx.getUser().getID(), Instant.now(), "Flight Report hold released");
 			
 			// Get the write DAO and update/dispose of the PIREP
+			ctx.startTX();
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(SystemData.get("airline.db"), null, fr, FlightStatus.SUBMITTED);
+			wdao.write(upd);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
