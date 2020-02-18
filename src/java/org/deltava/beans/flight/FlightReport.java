@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -166,9 +166,8 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	private String _route;
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
-
-	// Stores Integers pointing to other database IDs
 	private final Map<DatabaseID, Integer> _dbIds = new HashMap<DatabaseID, Integer>();
+	private final Collection<FlightHistoryEntry> _upds = new ArrayList<FlightHistoryEntry>();
 
 	/**
 	 * Creates a new Flight Report object with a given flight.
@@ -259,6 +258,14 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public Collection<String> getCaptEQType() {
 		return _captEQType;
 	}
+	
+	/**
+	 * Returns the flight status history.
+	 * @return a Collection of FlightHistoryEntry beans
+	 */
+	public Collection<FlightHistoryEntry> getStatusUpdates() {
+		return _upds;
+	}
 
 	/**
 	 * Returns the date this flight was flown.
@@ -289,16 +296,15 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	}
 
 	/**
-	 * Sets the database row ID of a relatied database row. This row may be present in the <i>PILOTS </i>,
-	 * <i>ASSIGNMENTS </i>, <i>ACARS_PIREPS </i> or <i>EVENTS </i> table. <i>This is typically used by a DAO </i>
+	 * Sets the database row ID of a relatied database row. This row may be present in the <i>PILOTS</i>,
+	 * <i>ASSIGNMENTS</i>, <i>ACARS_PIREPS</i> or <i>EVENTS</i> table. <i>This is typically used by a DAO </i>
 	 * @param idType the datbase row ID type
 	 * @return the database row ID, or 0 if not found
 	 * @throws NullPointerException if idType is null
 	 * @see FlightReport#setDatabaseID(DatabaseID, int)
 	 */
 	public int getDatabaseID(DatabaseID idType) {
-		Integer dbID = _dbIds.get(idType);
-		return (dbID == null) ? 0 : dbID.intValue();
+		return _dbIds.getOrDefault(idType, Integer.valueOf(0)).intValue();
 	}
 	
 	@Override
@@ -451,6 +457,14 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public void setCaptEQType(String eqType) {
 		_captEQType.add(eqType);
+	}
+	
+	/**
+	 * Adds a status update to this Flight Report.
+	 * @param upd a FlightHistoryEntry
+	 */
+	public void addStatusUpdate(FlightHistoryEntry upd) {
+		_upds.add(upd);
 	}
 
 	/**
