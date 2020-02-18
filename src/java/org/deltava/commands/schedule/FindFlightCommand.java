@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -85,8 +85,8 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
-		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : Inclusion.parse(ctx.getParameter("historicOnly")));
-		criteria.setDispatchOnly(Inclusion.parse(ctx.getParameter("dispatchOnly")));
+		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
+		criteria.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
 		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
 		criteria.setPilotID(ctx.getUser().getID());
