@@ -69,7 +69,7 @@ public class ExportService extends WebService {
 		try (PrintWriter out = ctx.getResponse().getWriter()) {
 			// Write the header
 			out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss") + " UTC");
-			out.println("; SOURCE,LINE,STARTS,ENDS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
+			out.println("; SOURCE,LINE,STARTS,ENDS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC");
 
 	         for (RawScheduleEntry entry : entries) {
 	             StringBuilder buf = new StringBuilder(entry.getSource().name());
@@ -99,8 +99,6 @@ public class ExportService extends WebService {
 	             buf.append(entry.getDistance());
 	             buf.append(',');
 	             buf.append(entry.getHistoric());
-	             buf.append(',');
-	             buf.append(entry.getCanPurge());
 	             out.println(buf.toString());
 	          }
 		} catch (IOException ie) {

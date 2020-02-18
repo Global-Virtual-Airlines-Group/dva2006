@@ -411,10 +411,9 @@ public class GetSchedule extends DAO {
 				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 				entry.setHistoric(rs.getBoolean(11));
-				entry.setCanPurge(rs.getBoolean(12));
-				entry.setAcademy(rs.getBoolean(13));
-				entry.setSource(ScheduleSource.values()[rs.getInt(14)]);
-				entry.setCodeShare(rs.getString(15));
+				entry.setAcademy(rs.getBoolean(12));
+				entry.setSource(ScheduleSource.values()[rs.getInt(13)]);
+				entry.setCodeShare(rs.getString(14));
 				results.add(entry);
 			}
 		}
