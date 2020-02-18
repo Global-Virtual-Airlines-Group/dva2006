@@ -21,11 +21,15 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Creates the bean.
 	 * @param id the FlightReport database ID
+	 * @param authorID the author's database ID 
 	 * @param createdOn the creation date/time
+	 * @param desc the update message
 	 */
-	public FlightHistoryEntry(int id, Instant createdOn) {
+	public FlightHistoryEntry(int id, int authorID, Instant createdOn, String desc) {
 		setID(id);
 		_createdOn = createdOn;
+		_authorID = id;
+		_desc = desc;
 	}
 	
 	/**
@@ -53,14 +57,6 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
-	}
-
-	/**
-	 * Updates the status entry description.
-	 * @param desc the description
-	 */
-	public void setDescription(String desc) {
-		_desc = desc;
 	}
 	
 	@Override
