@@ -27,7 +27,9 @@ The <content:airline /> Pilot application from ${applicant.name} has been delete
 <c:if test="${!isDelete}">
 <div class="updateHdr">Pilot Application Rejected</div>
 <br />
-The <content:airline /> Pilot application from ${applicant.name} has been rejected. An e-mail message has been sent to ${applicant.email}.<br />
+The <content:airline /> Pilot application from ${applicant.name} has been rejected.<c:if test="${!empty blackListAdd}"> An e-mail message has been sent to ${applicant.email}.<br />
+<br />
+The IP address range ${blacklistAdd} has been added to the <content:airline /> login/registration blacklist.<br /></c:if>
 <br />
 To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" link="${applicant}">Click Here</el:cmd>.<br />
 </c:if>

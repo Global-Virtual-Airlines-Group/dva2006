@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Applicant;
-import org.deltava.beans.system.AddressValidation;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +16,7 @@ import org.deltava.security.command.ApplicantAccessControl;
 /**
  * A Web Site Command to reject Applicants.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,6 +35,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 
 		Applicant a = null;
+		boolean updateBlacklist = Boolean.valueOf(ctx.getParameter("updateBlacklist")).booleanValue();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -64,12 +66,31 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			   SetAddressValidation wavdao = new SetAddressValidation(con);
 			   wavdao.delete(addrValid.getID());
 			}
+			
+			// Update the blacklist
+			if (updateBlacklist) {
+				GetIPLocation ipdao = new GetIPLocation(con);
+				GetSystemData sysdao = new GetSystemData(con);
+				BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
+				IPBlock ipb = ipdao.get(a.getRegisterAddress());
+				if (ipb == null)
+					ipb = new IPBlock(0, a.getRegisterAddress() + "/24");
+				
+				// Only update the blacklist if we don't already exist
+				if (be == null) {
+					be = new BlacklistEntry(ipb.getAddress(), ipb.getBits());
+					be.setCreated(Instant.now());
+					be.setComments("Created by " + ctx.getUser().getName() + " on applicant rejection");
+					SetSystemData syswdao = new SetSystemData(con);
+					syswdao.write(be);
+					a.setHRComments(a.getHRComments() + "\r\n" + ctx.getUser().getName() + " added " + be + " to blacklist");
+					ctx.setAttribute("blackListAdd", be, REQUEST);
+				}
+			}
 
 			// Get the write DAO and reject the applicant
 			SetApplicant wdao = new SetApplicant(con);
 			wdao.reject(a);
-			
-			// Commit the transaction
 			ctx.commitTX();
 
 			// Save the applicant in the request
@@ -82,9 +103,11 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		}
 
 		// Send e-mail notification
-		Mailer mailer = new Mailer(ctx.getUser());
-		mailer.setContext(mctxt);
-		mailer.send(a);
+		if (!updateBlacklist) {
+			Mailer mailer = new Mailer(ctx.getUser());
+			mailer.setContext(mctxt);
+			mailer.send(a);
+		}
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

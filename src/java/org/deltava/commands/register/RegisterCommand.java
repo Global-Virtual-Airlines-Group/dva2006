@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -136,6 +136,7 @@ public class RegisterCommand extends AbstractCommand {
 			if (isDupeAddr) {
 				result.setURL("/jsp/register/dupeAddress.jsp");
 				result.setSuccess(true);
+				return;
 			}
 			
 			// Check for an HTTP session
@@ -190,11 +191,9 @@ public class RegisterCommand extends AbstractCommand {
 		}
 		
 		// Set Notification Options
-		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
-		if (notifyOptions != null) {
-			for (Notification n : Notification.values())
-				a.setNotifyOption(n, notifyOptions.contains(n.name()));
-		}
+		Collection<String> notifyOptions = ctx.getParameters("notifyOption", Collections.emptyList());
+		for (Notification n : Notification.values())
+			a.setNotifyOption(n, notifyOptions.contains(n.name()));
 		
 		// Get eq type preferences
 		for (int x = 1; x < 10; x++) {
@@ -282,6 +281,16 @@ public class RegisterCommand extends AbstractCommand {
 				}
 			}
 			
+			// Check for blacklist
+			GetSystemData sysdao = new GetSystemData(con);
+			BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
+			if (be != null) {
+				log.warn("Registration blacklist for " + a.getName() + " from " + be);
+				result.setURL("/jsp/register/blackList.jsp");
+				result.setSuccess(true);
+				return;
+			}
+			
 			// Add HR comments
 			if (buf.length() > 0)
 				a.setHRComments(buf.toString());
@@ -293,10 +302,7 @@ public class RegisterCommand extends AbstractCommand {
 
 				// Check for unique name
 				GetApplicant adao = new GetApplicant(con);
-				for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
-					AirlineInformation info = i.next();
-
-					// Check Pilots & applicants
+				for (AirlineInformation info : airlines) {
 					Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB(), 28));
 					dupeResults.addAll(adao.checkUnique(a, info.getDB(), 28));
 					if (!dupeResults.isEmpty()) {

@@ -313,6 +313,12 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 </c:forEach></td>
 </tr>
 </c:if>
+<c:if test="${access.canReject}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="updateBlacklist" idx="*" value="true" label="Add network block to login/registration blacklist" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
