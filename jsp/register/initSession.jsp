@@ -5,12 +5,13 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
 <head>
-<meta http-equiv="REFRESH" content="4" />
+<meta http-equiv="refresh" content="5" />
 <title>Welcome to <content:airline /></title>
 <content:css name="main" />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:captcha action="registerInit" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
