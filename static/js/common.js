@@ -478,6 +478,7 @@ golgotha.util.validateCAPTCHA = function(token) {
 		if (xreq.readyState != 4) return false;
 		const isOK = (xreq.status == 200);
 		if (!isOK) console.log('Error ' + xreq.status + ' validating CAPTCHA!');
+		golgotha.util.captcha = true;
 		return isOK;
 	};
 
