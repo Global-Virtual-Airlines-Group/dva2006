@@ -62,7 +62,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
 			
 			// Create comments field
-			Collection<String> comments = new ArrayList<String>();
+			//Collection<String> comments = new ArrayList<String>();
 			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
 			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep, SystemData.get("airline.db"));
@@ -74,11 +74,12 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				pirep.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 				pirep.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
 				if (!StringUtils.isEmpty(fr.getComments()))
-					comments.add(fr.getComments());
+					pirep.setComments(fr.getComments());
 			}
 			
 			// Submitted!
 			pirep.setSubmittedOn(Instant.now());
+			pirep.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Submitted manually via web site");
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -106,7 +107,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
 					if (!helper.canPromote(pEQ)) {
 						i.remove();
-						comments.add("Not eligible for promotion: " + helper.getLastComment());
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
@@ -135,7 +136,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				int eventID = evdao.getPossibleEvent(pirep);
 				if (eventID != 0) {
 					Event e = evdao.get(eventID);
-					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
 					pirep.setDatabaseID(DatabaseID.EVENT, eventID);
 				}
 			}
@@ -146,7 +147,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 24) {
-						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						pirep.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
@@ -167,7 +168,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ETOPSResult er = ETOPSHelper.classify(gc);
 			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, er.getResult()));
 			if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + String.valueOf(er));
+				pirep.addStatusUpdate(0, HistoryType.SYSTEM, "ETOPS classificataion: " + String.valueOf(er));
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
@@ -197,8 +198,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Update the status of the PIREP
 			pirep.setStatus(FlightStatus.SUBMITTED);
-			if (!comments.isEmpty())
-				pirep.setComments(StringUtils.listConcat(comments, "\r\n"));
 
 			// Get the DAO and write the PIREP to the database
 			SetFlightReport fwdao = new SetFlightReport(con);

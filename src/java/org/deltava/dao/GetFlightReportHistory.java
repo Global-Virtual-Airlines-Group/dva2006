@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.flight.FlightHistoryEntry;
+import org.deltava.beans.flight.HistoryType;
 
 /**
  * A Data Access Object to load Flight Report status updates from the database.
@@ -35,7 +36,7 @@ public class GetFlightReportHistory extends DAO {
 			Collection<FlightHistoryEntry> results = new ArrayList<FlightHistoryEntry>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					FlightHistoryEntry upd = new FlightHistoryEntry(id, rs.getInt(2), toInstant(rs.getTimestamp(3)), rs.getString(4));
+					FlightHistoryEntry upd = new FlightHistoryEntry(id, HistoryType.values()[rs.getInt(3)], rs.getInt(2), toInstant(rs.getTimestamp(4)), rs.getString(5));
 					results.add(upd);
 				}
 			}

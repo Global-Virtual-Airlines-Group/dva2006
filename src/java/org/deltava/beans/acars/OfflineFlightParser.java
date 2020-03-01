@@ -203,7 +203,7 @@ public final class OfflineFlightParser {
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
-		afr.setRemarks("OFFLINE PIREP: " + inf.getRemarks());
+		afr.setRemarks(inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));

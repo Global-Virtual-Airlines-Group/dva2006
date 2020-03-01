@@ -137,7 +137,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			fr.setRank(p.getRank());
 			fr.setDate(info.getAssignDate());
 			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
-			fr.setComments("Return charter created by " + ctx.getUser().getName());
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Return Charter Flight");
 			
 			// Start the transaction
 			ctx.startTX();

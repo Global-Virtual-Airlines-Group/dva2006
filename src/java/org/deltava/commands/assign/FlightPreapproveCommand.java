@@ -51,11 +51,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			// Build Airline list
 			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
 			airlines.add(ComboUtils.fromString("All Airlines", "all"));
-			for (Airline a : SystemData.getAirlines().values()) {
-				if (a.getActive())
-					airlines.add(a);
-			}
-			
+			SystemData.getAirlines().values().stream().filter(Airline::getActive).forEach(airlines::add);			
 			ctx.setAttribute("airlines", airlines, REQUEST);
 
 			try {
@@ -85,7 +81,6 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				ctx.release();
 			}
 
-			
 			result.setURL("/jsp/assign/preApprove.jsp");
 			result.setSuccess(true);
 			return;
@@ -136,7 +131,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			fr.setRank(usr.getRank());
 			fr.setDate(info.getAssignDate());
 			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
-			fr.setComments("Pre-Approved by " + ctx.getUser().getName());
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Pre-Approved Flight");
 
 			// Start the transaction
 			ctx.startTX();
@@ -151,8 +146,6 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			info.addFlight(fr);
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
-
-			// Commit the transaction
 			ctx.commitTX();
 
 			// Save pilot in request

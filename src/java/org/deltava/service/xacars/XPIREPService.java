@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -91,14 +91,12 @@ public class XPIREPService extends XAService {
 			if (fi.getClientBuild() < SystemData.getInt("acars.xacars.protocol.major", 1))
 				throw new InvalidDataException("Invalid XACARS protocol version - " + ver);
 			
-			// Create comments field
-			Collection<String> comments = new LinkedHashSet<String>();
-			
 			// Check for Draft PIREPs by this Pilot
 			XACARSFlightReport xfr = ofl.getFlightReport();
 			xfr.setRank(usr.getRank());
 			xfr.setMajorVersion(fi.getClientBuild());
 			xfr.setMinorVersion(fi.getBeta());
+			xfr.addStatusUpdate(xfr.getAuthorID(), HistoryType.LIFECYCLE, "Submitted via XACARS");
 			GetFlightReports prdao = new GetFlightReports(con);
 			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr, SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
@@ -108,7 +106,7 @@ public class XPIREPService extends XAService {
 				xfr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 				xfr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
 				if (!StringUtils.isEmpty(fr.getComments()))
-					comments.add(fr.getComments());
+					xfr.setComments(fr.getComments());
 			}
 			
 			Duration timeS = Duration.between(inf.getStartTime(), inf.getEndTime());
@@ -136,7 +134,7 @@ public class XPIREPService extends XAService {
 					boolean isOK = helper.canPromote(pEQ);
 					if (!isOK) {
 						i.remove();
-						comments.add("Not eligible for promotion: " + helper.getLastComment());
+						xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
@@ -146,10 +144,10 @@ public class XPIREPService extends XAService {
 			// Check that the user has an online network ID
 			OnlineNetwork network = xfr.getNetwork();
 			if ((network != null) && (!usr.hasNetworkID(network))) {
-				comments.add("SYSTEM: No " + network.toString() + " ID, resetting Online Network flag");
+				xfr.addStatusUpdate(0, HistoryType.SYSTEM, "No " + network.toString() + " ID, resetting Online Network flag");
 				xfr.setNetwork(null);
 			} else if ((network == null) && (xfr.getDatabaseID(DatabaseID.EVENT) != 0)) {
-				comments.add("SYSTEM: Filed offline, resetting Online Event flag");
+				xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Filed offline, resetting Online Event flag");
 				xfr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 			
@@ -159,7 +157,7 @@ public class XPIREPService extends XAService {
 				int eventID = evdao.getPossibleEvent(xfr);
 				if (eventID != 0) {
 					Event e = evdao.get(eventID);
-					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
 					xfr.setDatabaseID(DatabaseID.EVENT, eventID);
 				}
 			}
@@ -170,8 +168,7 @@ public class XPIREPService extends XAService {
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 24) {
-						log.warn("Flight logged over 24 hours after Event completion");
-						comments.add("SYSTEM: Flight logged over 24 hours after Event completion");
+						xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged over 24 hours after Event completion");
 						xfr.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
@@ -220,10 +217,6 @@ public class XPIREPService extends XAService {
 				if ((xfr.getLength() < minHours) || (xfr.getLength() > maxHours))
 					xfr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
-			
-			// Save comments
-			if (!comments.isEmpty())
-				xfr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
 			// Load the departure runway
 			GetNavRoute navdao = new GetNavRoute(con);

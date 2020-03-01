@@ -14,6 +14,7 @@ import org.deltava.beans.*;
 
 public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 
+	private final HistoryType _type;
 	private final Instant _createdOn;
 	private int _authorID;
 	private String _desc;
@@ -21,14 +22,16 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Creates the bean.
 	 * @param id the FlightReport database ID
+	 * @param t the HistoryType
 	 * @param authorID the author's database ID 
 	 * @param createdOn the creation date/time
 	 * @param desc the update message
 	 */
-	public FlightHistoryEntry(int id, int authorID, Instant createdOn, String desc) {
-		setID(id);
+	public FlightHistoryEntry(int id, HistoryType t, int authorID, Instant createdOn, String desc) {
+		if (id > 0) setID(id);
 		_createdOn = createdOn;
-		_authorID = id;
+		_type = t;
+		_authorID = authorID;
 		_desc = desc;
 	}
 	
@@ -47,6 +50,14 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 	public String getDescription() {
 		return _desc;
 	}
+	
+	/**
+	 * Returns the type of status update.
+	 * @return the HistoryType
+	 */
+	public HistoryType getType() {
+		return _type;
+	}
 
 	@Override
 	public int getAuthorID() {
@@ -55,7 +66,6 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 
 	@Override
 	public void setAuthorID(int id) {
-		validateID(_authorID, id);
 		_authorID = id;
 	}
 	
