@@ -254,7 +254,7 @@ public class GetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public BlacklistEntry getBlacklist(String addr) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_BLACKLIST WHERE (ADDRESS <= INET6_ATON(?)) ORDER BY ADDRESS DESC LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_BLACKLIST WHERE (ADDR <= INET6_ATON(?)) ORDER BY ADDR DESC LIMIT 1")) {
 			ps.setString(1, addr);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (!rs.next()) return null;
