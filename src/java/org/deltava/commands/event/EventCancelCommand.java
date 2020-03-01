@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2012, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to cancel an Online Event.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -64,14 +64,14 @@ public class EventCancelCommand extends AbstractCommand {
         	 String tableName = i.next();
         	 Collection<FlightReport> pireps = frdao.getByEvent(e.getID(), tableName.substring(0, tableName.indexOf('.')));
         	 frdao.getCaptEQType(pireps);
-        	 for (Iterator<FlightReport> pi = pireps.iterator(); pi.hasNext();) {
-        		 FlightReport fr = pi.next();
+        	 for (FlightReport fr : pireps) {
                  if (fr.getStatus() == FlightStatus.DRAFT) {
                      fwdao.delete(fr.getID());
                      flightsDeleted++;
                   } else {
                      fr.setDatabaseID(DatabaseID.ASSIGN, 0);
                      fr.setDatabaseID(DatabaseID.EVENT, 0);
+                     fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Event Canceled");
                      fwdao.write(fr);
                      flightsUpdated++;
                   }
