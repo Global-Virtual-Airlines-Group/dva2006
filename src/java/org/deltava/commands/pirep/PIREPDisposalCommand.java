@@ -81,18 +81,21 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			case HOLD:
 				ctx.setAttribute("isHold", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPHOLD"));
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Held"); 
 				isOK = access.getCanHold();
 				break;
 
 			case OK:
 				ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Approved"); 
 				isOK = access.getCanApprove();
 				break;
 
 			case REJECTED:
 				ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPREJECT"));
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Rejected"); 
 				isOK = access.getCanReject();
 				break;
 
@@ -112,7 +115,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Update Online Network
 			OnlineNetwork newNetwork = OnlineNetwork.fromName(ctx.getParameter("network"));
 			if ((newNetwork != fr.getNetwork()) ) {
-				comments.add("Updated online network from " + fr.getNetwork() + " to " + ((newNetwork == null) ? "Offline" : newNetwork) + " by " + ctx.getUser().getName());
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((newNetwork == null) ? "Offline" : newNetwork) + " by " + ctx.getUser().getName());
 				fr.setNetwork(newNetwork);
 			}
 
@@ -133,7 +136,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			boolean isRated = allRatings.contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
-				log.warn("Updating NotRated flag for " + p.getName() + ", eq=" + fr.getEquipmentType() + " ratings = " + p.getRatings());
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updating NotRated flag for " + p.getName() + ", eq=" + fr.getEquipmentType() + " ratings = " + p.getRatings());
 				log.warn("NotRated was " + fr.hasAttribute(FlightReport.ATTR_NOTRATED) + ", now " + !isRated);
 				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			}
@@ -218,7 +221,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				dfr.setEquipmentType(fr.getEquipmentType());
 				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
 				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
-				dfr.setComments("Diversion completion flight to " + fInfo.getAirportA().getIATA());
+				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Diversion completion flight to " + fInfo.getAirportA().getIATA());
 
 				// Create a new flight assignment
 				AssignmentInfo newAssign = new AssignmentInfo(fr.getEquipmentType());
@@ -241,6 +244,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.assignID(p, SystemData.get("airline.db"));
 				ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "Assigned Pilot ID " + p.getPilotCode());
 
 				// Create status update
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);

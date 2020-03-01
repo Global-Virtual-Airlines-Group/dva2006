@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.HistoryType;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -15,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to delete Pilot Examinations and Check Rides.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -66,6 +67,7 @@ public class ExamDeleteCommand extends AbstractCommand {
 				FlightReport fr = frdao.getACARS(ud.getDB(), acarsID);
 				if (fr != null) {
 					fr.setAttribute(FlightReport.ATTR_CHECKRIDE, false);
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Check Ride deleted");
 					SetFlightReport frwdao = new SetFlightReport(con);
 					frwdao.write(fr, ud.getDB());
 				}

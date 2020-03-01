@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete ACARS data from a Flight Report.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -44,6 +44,7 @@ public class ACARSDeleteCommand extends AbstractCommand {
 			// Delete the PIREP data
 			if (fr.hasAttribute(FlightReport.ATTR_ACARS)) {
 				fr.setAttribute(FlightReport.ATTR_ACARS, false);
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Deleted ACARS data");
 				
 				// Start the transaction
 				ctx.startTX();
@@ -56,8 +57,6 @@ public class ACARSDeleteCommand extends AbstractCommand {
 				SetFlightReport wdao = new SetFlightReport(con);
 				wdao.deleteACARS(fr.getID());
 				wdao.write(fr);
-				
-				// Commit the transaction
 				ctx.commitTX();
 			}
 			

@@ -3,6 +3,7 @@ package org.deltava.commands.pirep;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
 import java.time.temporal.*;
 import java.sql.Connection;
@@ -142,6 +143,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setRemarks(ctx.getParameter("remarks"));
 			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.UNKNOWN));
 			fr.setRoute(ctx.getParameter("route"));
+			if (fr.getID() == 0)
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Draft Report created"); 
 
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
@@ -166,7 +169,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (fr.getPassengers() != 0) {
 					int newPax = (int) Math.round(opts.getSeats() * fr.getLoadFactor());
 					if (newPax != fr.getPassengers()) {
-						log.warn("Updated passengers for PIREP #" + fr.getID() + " from " + fr.getPassengers() + " to " + newPax);
+						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Updated passengers from " + fr.getPassengers() + " to " + newPax);
 						fr.setPassengers(newPax);
 					}
 				}
@@ -403,7 +406,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(DatabaseID.PILOT));
-
+			
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
 			if (disposalID != 0)
@@ -440,6 +443,15 @@ public class PIREPCommand extends AbstractFormCommand {
 				FlightTime ft = scdao.getFlightTime(fr);
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
+			}
+			
+			// Load status history
+			if (ac.getCanViewComments()) {
+				GetFlightReportHistory stdao = new GetFlightReportHistory(con);
+				Collection<FlightHistoryEntry> history = stdao.getEntries(fr.getID());
+				Collection<Integer> IDs = history.stream().filter(upd -> (upd.getAuthorID() != 0)).map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
+				ctx.setAttribute("statusHistory", history, REQUEST);
+				ctx.setAttribute("statusHistoryUsers", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			}
 			
 			// If we're online and not on an event, list possible event

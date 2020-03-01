@@ -167,7 +167,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
 	private final Map<DatabaseID, Integer> _dbIds = new HashMap<DatabaseID, Integer>();
-	private final Collection<FlightHistoryEntry> _upds = new ArrayList<FlightHistoryEntry>();
+	private final LinkedList<FlightHistoryEntry> _upds = new LinkedList<FlightHistoryEntry>();
 
 	/**
 	 * Creates a new Flight Report object with a given flight.
@@ -465,6 +465,28 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public void addStatusUpdate(FlightHistoryEntry upd) {
 		_upds.add(upd);
+	}
+	
+	/**
+	 * Creates a new status update and adds it to the Flight Report.
+	 * @param authorID the Author's database ID
+	 * @param type the HistoryType
+	 * @param msg the status message
+	 */
+	public void addStatusUpdate(int authorID, HistoryType type, String msg) {
+		FlightHistoryEntry lastEntry = _upds.peekLast();
+		long lastUpdateTime = (lastEntry == null) ? 0 : lastEntry.getCreatedOn().toEpochMilli();
+		long createdOn = Math.max(System.currentTimeMillis(), lastUpdateTime + 1);
+		_upds.add(new FlightHistoryEntry(getID(), type, authorID, Instant.ofEpochMilli(createdOn), msg));
+	}
+	
+	/**
+	 * Updates the database ID, and the database ID of any associated status updates.
+	 */
+	@Override
+	public void setID(int id) {
+		super.setID(id);
+		_upds.forEach(upd -> upd.setID(id));
 	}
 
 	/**
