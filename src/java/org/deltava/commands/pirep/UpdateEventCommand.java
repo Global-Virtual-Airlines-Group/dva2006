@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Online Events linked to a Flight Report. 
  * @author Luke
- * @version 5.3
+ * @version 9.0
  * @since 5.3
  */
 
@@ -51,11 +51,19 @@ public class UpdateEventCommand extends AbstractCommand {
 			if (!ac.getCanDispose())
 				throw securityException("Cannot update Flight Report Online Event");
 			
+			// Add status
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Updated Online Event to " + ((e == null) ? "NONE" : e.getName()));
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Set the event and save
 			SetFlightReport frwdao = new SetFlightReport(con);
 			fr.setDatabaseID(DatabaseID.EVENT, (e == null) ? 0 : e.getID());
 			frwdao.write(fr);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

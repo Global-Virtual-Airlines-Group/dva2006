@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -143,6 +143,7 @@ public class EventAssignTask extends Task {
 						fr.setDatabaseID(DatabaseID.EVENT, e.getID());
 						fr.setDate(e.getStartTime());
 						fr.setNetwork(e.getNetwork());
+						fr.addStatusUpdate(0, HistoryType.LIFECYCLE, "Assigned for Online Event " + e.getName());
 						
 						// Write the Flight Report to the proper database
 						fwdao.write(fr, usrData.getDB());

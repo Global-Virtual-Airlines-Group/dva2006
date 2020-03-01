@@ -1,13 +1,11 @@
-// Copyright 2005, 2006, 2008, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
-import java.util.*;
 import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
-
+import org.deltava.beans.flight.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -16,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save a Flight Assignment.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -62,10 +60,10 @@ public class AssignmentSaveCommand extends AbstractCommand {
 				// Write the PIREPs to the database
 				ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
 				SetFlightReport pwdao = new SetFlightReport(con);
-				for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
-					FlightReport fr = i.next();
+				for (FlightReport fr : info.getFlights()) {
 					fr.setDate(now);
 					fr.setRank(ctx.getUser().getRank());
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Assigned from Schedule Search");
 					pwdao.write(fr);
 				}
 			}

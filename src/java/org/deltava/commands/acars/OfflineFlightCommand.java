@@ -184,6 +184,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(inf.getEndTime());
+		afr.addStatusUpdate(afr.getAuthorID(), HistoryType.LIFECYCLE, "Submitted via web site");
 		
 		// Get the client version
 		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
@@ -274,10 +275,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Check that the user has an online network ID
 			OnlineNetwork network = afr.getNetwork();
 			if ((network != null) && (!p.hasNetworkID(network))) {
-				comments.add("SYSTEM: No " + network.toString() + " ID, resetting Online Network flag");
+				afr.addStatusUpdate(0, HistoryType.SYSTEM, "No " + network.toString() + " ID, resetting Online Network flag");
 				afr.setNetwork(null);
 			} else if ((network == null) && (afr.getDatabaseID(DatabaseID.EVENT) != 0)) {
-				comments.add("SYSTEM: Filed offline, resetting Online Event flag");
+				afr.addStatusUpdate(0, HistoryType.SYSTEM, "Filed offline, resetting Online Event flag");
 				afr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 			
@@ -287,7 +288,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				int eventID = evdao.getPossibleEvent(afr);
 				if (eventID != 0) {
 					Event e = evdao.get(eventID);
-					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
 					afr.setDatabaseID(DatabaseID.EVENT, eventID);
 				}
 			}
@@ -298,7 +299,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 6) {
-						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
+						afr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						afr.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
@@ -372,14 +373,14 @@ public class OfflineFlightCommand extends AbstractCommand {
 			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, false);
 			if (!rstAirspaces.isEmpty()) {
 				afr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
-				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
+				afr.addStatusUpdate(0, HistoryType.SYSTEM, "Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
 			}
 			
 			// Check for inflight refueling and calculate fuel use
 			FuelUse fuelUse = FuelUse.validate(positions);
 			afr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
 			afr.setTotalFuel(fuelUse.getTotalFuel());
-			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
+			fuelUse.getMessages().forEach(fuelMsg -> afr.addStatusUpdate(0, HistoryType.SYSTEM, fuelMsg));
 
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(afr); ScheduleEntry onTimeEntry = null;

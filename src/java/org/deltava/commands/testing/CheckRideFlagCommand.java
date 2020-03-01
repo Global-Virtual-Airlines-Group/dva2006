@@ -124,8 +124,11 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			fr.setAttribute(FlightReport.ATTR_NOTRATED, false);
-			if (fr.getStatus() == FlightStatus.HOLD)
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Marked as Check Ride");
+			if (fr.getStatus() == FlightStatus.HOLD) {
 				fr.setStatus(FlightStatus.SUBMITTED);
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Hold Released");
+			}
 			
 			// Start the transaction
 			ctx.startTX();

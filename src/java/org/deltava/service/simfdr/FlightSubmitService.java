@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 7.0
  */
 
@@ -76,7 +76,7 @@ public class FlightSubmitService extends SimFDRService {
 			
 			// Create comments field
 			Collection<String> comments = new LinkedHashSet<String>();
-			comments.add("SYSTEM: Submitted for " + p.getName() + " by simFDR from " + ctx.getRequest().getRemoteHost());
+			fr.addStatusUpdate(0, HistoryType.LIFECYCLE, "Submitted for " + p.getName() + " by simFDR from " + ctx.getRequest().getRemoteHost());
 			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
@@ -130,10 +130,10 @@ public class FlightSubmitService extends SimFDRService {
 			// Check that the user has an online network ID
 			OnlineNetwork network = fr.getNetwork();
 			if ((network != null) && (!p.hasNetworkID(network))) {
-				comments.add("SYSTEM: No " + network.toString() + " ID, resetting Online Network flag");
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "No " + network.toString() + " ID, resetting Online Network flag");
 				fr.setNetwork(null);
 			} else if ((network == null) && (fr.getDatabaseID(DatabaseID.EVENT) != 0)) {
-				comments.add("SYSTEM: Filed offline, resetting Online Event flag");
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "Filed offline, resetting Online Event flag");
 				fr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 			
@@ -143,7 +143,7 @@ public class FlightSubmitService extends SimFDRService {
 				int eventID = evdao.getPossibleEvent(fr);
 				if (eventID != 0) {
 					Event e = evdao.get(eventID);
-					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					fr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
 					fr.setDatabaseID(DatabaseID.EVENT, eventID);
 				}
 			}
@@ -154,7 +154,7 @@ public class FlightSubmitService extends SimFDRService {
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 6) {
-						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
+						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						fr.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
@@ -181,13 +181,13 @@ public class FlightSubmitService extends SimFDRService {
 			ETOPSResult etopsClass = ETOPSHelper.classify(ofr.getPositions()); 
 			fr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, etopsClass.getResult()));
 			if (fr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "ETOPS classificataion: " + etopsClass);
 			
 			// Check prohibited airspace
 			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(ofr.getPositions(), false);
 			if (!rstAirspaces.isEmpty()) {
 				fr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
-				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
 			}
 			
 			// Calculate the load factor
@@ -203,7 +203,7 @@ public class FlightSubmitService extends SimFDRService {
 			FuelUse fuelUse = FuelUse.validate(ofr.getPositions());
 			fr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
 			fr.setTotalFuel(fuelUse.getTotalFuel());
-			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
+			fuelUse.getMessages().forEach(fuelMsg -> fr.addStatusUpdate(0, HistoryType.SYSTEM, fuelMsg));
 			
 			// Check the schedule database and check the route pair
 			GetScheduleSearch sdao = new GetScheduleSearch(con);

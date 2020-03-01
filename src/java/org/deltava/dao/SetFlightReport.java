@@ -82,6 +82,7 @@ public class SetFlightReport extends DAO {
 			// Save the promotion equipment types and comments
 			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType());
 			writeComments(pirep, dbName);
+			writeHistory(pirep.getStatusUpdates(), dbName);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -352,6 +353,7 @@ public class SetFlightReport extends DAO {
 			writeCore(fr, dbName);
 			writeComments(fr, dbName);
 			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType());
+			writeHistory(fr.getStatusUpdates(), dbName);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -468,33 +470,29 @@ public class SetFlightReport extends DAO {
 	}
 	
 	/**
-	 * Writes a Flight Report status update to the current airline's database.
-	 * @param upd a FlightHistoryEntry
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(FlightHistoryEntry upd) throws DAOException {
-		write(upd, SystemData.get("airline.db"));
-	}
-	
-	/**
-	 * Writes a Flight Report status update to the database.
-	 * @param upd a FlightHistoryEntry
+	 * Writes a Flight Report's status updates to the database.
+	 * @param upds a Collection of FlightHistoryEntry beans
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(FlightHistoryEntry upd, String dbName) throws DAOException {
+	private void writeHistory(Collection<FlightHistoryEntry> upds, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("INSERT INTO ");
 		buf.append(formatDBName(dbName));
-		buf.append(".PIREP_STATUS_HISTORY (ID, AUTHOR_ID, CREATEDON, DESC) VALUES (?, ?, ?, ?)");
+		buf.append(".PIREP_STATUS_HISTORY (ID, AUTHOR_ID, UPDATE_TYPE, CREATEDON, DESCRIPTION) VALUES (?, ?, ?, ?, ?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
-			ps.setInt(1, upd.getID());
-			ps.setInt(2, upd.getAuthorID());
-			ps.setTimestamp(3, createTimestamp(upd.getCreatedOn()));
-			ps.setString(4, upd.getDescription());
-			executeUpdate(ps, 1);
+			for (FlightHistoryEntry upd : upds) {
+				ps.setInt(1, upd.getID());
+				ps.setInt(2, upd.getAuthorID());
+				ps.setInt(3, upd.getType().ordinal());
+				ps.setTimestamp(4, createTimestamp(upd.getCreatedOn()));
+				ps.setString(5, upd.getDescription());
+				ps.addBatch();
+			}
+			
+			executeUpdate(ps, 1, upds.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

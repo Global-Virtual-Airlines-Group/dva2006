@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 2.2
  */
 
@@ -153,6 +153,8 @@ public class RoutePlanService extends WebService {
 				dfr.setSimulator(sim);
 				dfr.setRank(ctx.getUser().getRank());
 				dfr.setDate(Instant.now());
+				if (dfr.getID() == 0)
+					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
 				
 				// Save the flight assignment
 				if (ai != null) {
