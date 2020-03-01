@@ -57,7 +57,7 @@ return true;
 };
 
 golgotha.local.saveSubmit = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.doSubmit.value = 'true';
 	return golgotha.form.post(f.action);
 };
@@ -70,8 +70,10 @@ golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
 };
 
 golgotha.local.setDaysInMonth = function(combo) {
+	const y = new Date().getFullYear();
+	const isLeapYear = (((y % 4) == 0) && (y != 2100));
 	const dCombo = document.forms[0].dateD;
-	const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	const daysInMonth = [31, (isLeapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	const dd = dCombo.selectedIndex;
 	dCombo.options.length = daysInMonth[combo.selectedIndex];
 	for (var x = 1; x <= daysInMonth[combo.selectedIndex]; x++)
@@ -83,7 +85,7 @@ golgotha.local.setDaysInMonth = function(combo) {
 
 golgotha.local.loadAirports = function()
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (f.airline.selectedIndex != 0) {
 	golgotha.airportLoad.config.airline = golgotha.form.getCombo(f.airline);
 	let cfg = golgotha.airportLoad.config.clone();
@@ -101,7 +103,7 @@ return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);
 	golgotha.airportLoad.config.doICAO = ${useICAO};
