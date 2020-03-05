@@ -298,7 +298,7 @@ f.action = url;
  
 // Execute the form validation - if any
 if (f.onsubmit) {
-	var submitOK = f.onsubmit();
+	const submitOK = f.onsubmit();
 	if (!submitOK) {
 		f.action = oldaction;
 		return false;
@@ -476,7 +476,7 @@ golgotha.util.validateCAPTCHA = function(token) {
 	xreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
-		const isOK = (xreq.status == 200);
+		const isOK = (xreq.status == 200) || (xreq.status == 304);
 		if (!isOK) console.log('Error ' + xreq.status + ' validating CAPTCHA!');
 		golgotha.util.captcha = true;
 		return isOK;
