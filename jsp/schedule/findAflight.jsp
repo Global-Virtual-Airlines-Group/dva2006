@@ -193,7 +193,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <!-- Search Results Data -->
 <tr class="title caps">
  <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
-<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" tzName="UTC" /></c:if></td>
+ REPLAY OF <c:forEach var="srcInfo" items="${scheduleSources}" varStatus="edStatus"><span title="${srcInfo.source.description}"><fmt:date date="${srcInfo.effectiveDate}" fmt="d" tzName="UTC" /></span><c:if test="${!edStatus.last}">, </c:if></c:forEach></td>
 </tr>
 
 <!-- Search Results Header Bar -->

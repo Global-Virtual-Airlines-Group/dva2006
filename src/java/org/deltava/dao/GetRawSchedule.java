@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
 
 import org.deltava.beans.schedule.*;
@@ -28,10 +29,11 @@ public class GetRawSchedule extends DAO {
 	
 	/**
 	 * Returns all raw schedule sources.
+	 * @param isLoaded TRUE to only include loaded sources, otherwise FALSE
 	 * @return a Collection of ScheduleSourceInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ScheduleSourceInfo> getSources() throws DAOException {
+	public Collection<ScheduleSourceInfo> getSources(boolean isLoaded) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, RSD.EFFDATE, RSD.IMPORTDATE FROM RAW_SCHEDULE RS LEFT JOIN RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC")) {
 			Collection<ScheduleSourceInfo> results = new LinkedHashSet<ScheduleSourceInfo>();
 			ScheduleSourceInfo inf = null;
@@ -49,7 +51,7 @@ public class GetRawSchedule extends DAO {
 				}
 			}
 			
-			return results;
+			return isLoaded ? results.stream().filter(ssi -> (ssi.getImportDate() != null)).collect(Collectors.toSet()) : results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

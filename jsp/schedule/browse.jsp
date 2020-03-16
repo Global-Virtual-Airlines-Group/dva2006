@@ -18,7 +18,7 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.setAirportD = function(combo) {
 	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(combo));
 	return true;
@@ -57,7 +57,7 @@ golgotha.onDOMReady(function() {
 <!-- Table Header Bars -->
 <tr class="title">
  <td class="left caps" colspan="7"><span class="nophone"><content:airline /> FLIGHT </span>SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
-<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
+ REPLAY OF <c:forEach var="srcInfo" items="${scheduleSources}" varStatus="edStatus"><span title="${srcInfo.source.description}"><fmt:date date="${srcInfo.effectiveDate}" fmt="d" tzName="UTC" /></span><c:if test="${!edStatus.last}">, </c:if></c:forEach></td>
 </tr>
 <tr class="title">
  <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />
