@@ -121,17 +121,19 @@ public class GFSDownloadTask extends Task {
 				// Find the latest GFS run and get the latest GFS file
 				String basePath = SystemData.get("weather.gfs.path");
 				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
-				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2b.0p25.f000"));
-				Instant lm = con.getTimestamp(basePath + "/" + dir, fName);
+				String hDir = con.getNewestDirectory(basePath + "/" + dir, FileUtils.ACCEPT_ALL);
+				String gribPath = basePath + "/" + dir + "/" + hDir;
+				String fName = con.getNewest(gribPath, FileUtils.fileFilter("gfs.", ".pgrb2b.0p25.f000"));
+				Instant lm = con.getTimestamp(gribPath, fName);
 				log.info(fName + " timestamp = " + StringUtils.format(lm, "MM/dd HH:mm"));
 				log.info("Local timestamp = " + StringUtils.format(Instant.ofEpochMilli(outF.lastModified()), "MM/dd HH:mm"));
 				
 				// Calculate the effective date and download
-				dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH");
+				dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1) + hDir, "yyyyMMddHH");
 				if (!outF.exists() || (lm.toEpochMilli() > outF.lastModified())) {
 					log.info("Downloading updated GFS data");
 					long startTime = System.currentTimeMillis(); 
-					try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
+					try (InputStream in = con.get(gribPath + "/" + fName, outF)) {
 						log.info("Downloaded GFS data - " + outF.length());
 						outF.setLastModified(lm.toEpochMilli());
 						log.info("Download completed in " + (System.currentTimeMillis() - startTime) + "ms");

@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -9,11 +9,18 @@ import java.nio.file.attribute.*;
 /**
  * A utility class for filesystem functions. 
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 4.2
  */
 
 public class FileUtils {
+	
+	public static final FilenameFilter ACCEPT_ALL = new FilenameFilter() {
+		@Override
+		public boolean accept(File dir, String name) {
+			return true;
+		}
+	};
 
 	// static class
 	private FileUtils() {
