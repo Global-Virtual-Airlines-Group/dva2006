@@ -41,7 +41,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		try {
 			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
-			ctx.setAttribute("sources", rsdao.getSources(), REQUEST);
+			ctx.setAttribute("sources", rsdao.getSources(false), REQUEST);
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -58,16 +58,17 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		}
 
 		// Load import options
-		LocalDate effectiveDate = LocalDate.ofInstant(StringUtils.parseInstant(ctx.getParameter("effDate"), "MM/dd/yyyy"), ZoneOffset.UTC);
-		Collection<ScheduleSource> sources = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
-		
-		// Load source/airline mappings
-		Map<ScheduleSource, Collection<Airline>> srcAirlines = new HashMap<ScheduleSource, Collection<Airline>>();
-		for (ScheduleSource src : sources) {
-			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList()); 
-			srcAirlines.put(src, srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).collect(Collectors.toSet()));
+		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
+		Collection<ScheduleSourceInfo> sources = new LinkedHashSet<ScheduleSourceInfo>();
+		for (ScheduleSource src : srcs) {
+			ScheduleSourceInfo srcInfo = new ScheduleSourceInfo(src);
+			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter(src.name() + "-effDate"), "MM/dd/yyyy"));
+			srcInfo.setImportDate(Instant.now());
+			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
+			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).collect(Collectors.toSet()).forEach(al -> srcInfo.setLegs(al, 1));
+			sources.add(srcInfo);
 		}
-
+		
 		// Save the entries
 		Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 		try {
@@ -76,8 +77,8 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Figure out what routePairs to import by source
 			GetRawSchedule rawdao = new GetRawSchedule(con);
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
-			for (ScheduleSource src : sources) {
-				Collection<ImportRoute> rts = rawdao.getImportData(src, effectiveDate);
+			for (ScheduleSourceInfo src : sources) {
+				Collection<ImportRoute> rts = rawdao.getImportData(src.getSource(), src.getEffectiveDate());
 				for (ImportRoute ir : rts) {
 					String k = ir.createKey();
 					if (!srcPairs.containsKey(k))
@@ -97,14 +98,12 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			}
 			
 			// Load the entries, save source mappings
-			for (ScheduleSource src : sources) {
-				Collection<Airline> validAirlines = srcAirlines.getOrDefault(src, Collections.emptyList());
-				
+			for (ScheduleSourceInfo src : sources) {
 				// Get the raw data
-				List<RawScheduleEntry> srcEntries = rawdao.load(src, effectiveDate).stream().filter(se -> validAirlines.contains(se.getAirline())).collect(Collectors.toList());
+				List<RawScheduleEntry> srcEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
 				for (RawScheduleEntry rse : srcEntries) {
 					ImportRoute ir = srcPairs.get(rse.createKey());
-					if ((ir == null) || (ir.getSource() != src))
+					if ((ir == null) || (ir.getSource() != src.getSource()))
 						continue;
 					
 					boolean isAdded = entries.add(rse);
@@ -112,19 +111,14 @@ public class ScheduleFilterCommand extends AbstractCommand {
 						log.info(rse.getShortCode() + " already exists");
 				}
 				
-				log.info("Loaded " + srcEntries.size() + " " + src.getDescription() + " schedule entries for " + effectiveDate);
-				dao.writeSourceAirlines(src, validAirlines);
+				log.info("Loaded " + srcEntries.size() + " " + src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
+				dao.writeSourceAirlines(src);
 			}
 			
 			// Save the schedule entries
 			for (RawScheduleEntry rse : entries)
 				dao.write(rse, false);
 			
-			// Save effective date
-			SetMetadata mdwdao = new SetMetadata(con);
-			String aCode = SystemData.get("airline.code").toLowerCase();
-			mdwdao.write(aCode + ".schedule.effDate", effectiveDate.atStartOfDay().toInstant(ZoneOffset.UTC));
-
 			// Change transaction isolocation
 			con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 			

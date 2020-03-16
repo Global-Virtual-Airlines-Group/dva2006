@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to export the Flight Schedule in PFPX format. 
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 6.1
  */
 
@@ -44,10 +44,9 @@ public class PFPXScheduleService extends DownloadService {
 		// Check if the schedule has been updated
 		boolean isInvalid = true;
 		try {
-			GetMetadata mddao = new GetMetadata(ctx.getConnection());
-			String lastImport = mddao.get(SystemData.get("airline.code").toLowerCase() + ".schedule.import", "0");
-			long schedAge = StringUtils.parse(lastImport, 0) * 1000L;
-			isInvalid = (f.lastModified() == 0) || (schedAge > (f.lastModified() + 60_000));
+			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
+			isInvalid = srcs.stream().map(ScheduleSourceInfo::getImportDate).anyMatch(dt -> dt.toEpochMilli() > f.lastModified());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de); 
 		} finally {

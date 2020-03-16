@@ -13,23 +13,26 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:js name="datePicker" />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
-	golgotha.form.validate({f:f.effDate,l:10,t:'Effective Date'});
 	golgotha.form.validate({f:f.src,min:1,t:'Schedule Source'});
+	f.src.forEach(function(cb) { if (cb.checked) golgotha.form.validate({f:f[cb.value + '-effDate'], l:10,t:'Effective Date'}); });
 	golgotha.form.submit(f);
 	return true;
 };
 
 golgotha.local.updateSource = function(cb) {
-	golgotha.util.display(document.getElementById('src-' + cb.value), cb.checked);
+	const rows = golgotha.util.getElementsByClass('src-' + cb.value, 'tr');
+	rows.forEach(function(r) { golgotha.util.display(r, cb.checked); });
 	return true;
 };
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	f.src.forEach(function(cb) { golgotha.local.updateSource(cb); });
+	return true;
 });
 </script>
 </head>
@@ -38,6 +41,7 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -65,21 +69,25 @@ golgotha.onDOMReady(function() {
  <td class="label">Sources</td>
  <td class="data"><el:check name="src" width="210" options="${sources}" value="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
-<c:forEach var="src" items="${sources}">
-<c:set var="selectedAirlines" value="${srcAirlines[src.source]}" scope="page" />
-<tr id="src-${src.source}" style="display:none;">
- <td class="label top">${src.source.description}</td>
- <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${selectedAirlines}" /></td>
-</tr>
-</c:forEach>
-<tr>
- <td class="label">Effective Date</td>
- <td class="data"><el:text name="effDate" size="9" max="10" required="true" value="${fn:dateFmt(today, 'MM/dd/yyyy')}" /></td>
-</tr>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="purgeAll" idx="*" value="true" label="Purge entire Flight Schedule before filter" /></td>
 </tr>
+<c:forEach var="src" items="${sources}">
+<c:set var="srcEffDate" value="${empty src.effectiveDate ? today : src.effectiveDate}" scope="page" />
+<c:set var="srcEffName" value="eff${src.source}"  scope="page" />
+<tr class="src-${src.source} title caps" style="display:none;">
+ <td colspan="2">${src.source.description}</td>
+</tr>
+<tr class="src-${src.source}" style="display:none;">
+ <td class="label">Effective Date</td>
+ <td class="data"><el:text name="${srcEffName}" size="9" max="10" idx="*" required="true" value="${fn:dateFmt(srcEffDate, dateFmt)}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].${srcEffName}')" /></td>
+</tr>
+<tr class="src-${src.source}" style="display:none;">
+ <td class="label top">Airlines</td>
+ <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${srcAirlines[src.source]}" /></td>
+</tr>
+</c:forEach>
 </el:table>
 
 <!-- Button bar -->

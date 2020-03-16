@@ -30,7 +30,7 @@ public class ImportStatusCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
-			Collection<ScheduleSourceInfo> srcs = rsdao.getSources();
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false);
 			
 			// Loop through all import statuses
 			Collection<ImportStatus> results = new ArrayList<ImportStatus>();
