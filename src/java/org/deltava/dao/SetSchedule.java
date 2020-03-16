@@ -2,7 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Collection;
+import java.time.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -115,27 +115,37 @@ public class SetSchedule extends DAO {
 	
 	/**
 	 * Updates the mapping of Raw Schedules sources to Airlines. 
-	 * @param src a ScheduleSource
-	 * @param airlines a Collection of Airline beans
+	 * @param src a ScheduleSourceInfo bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeSourceAirlines(ScheduleSource src, Collection<Airline> airlines) throws DAOException {
+	public void writeSourceAirlines(ScheduleSourceInfo src) throws DAOException {
 		try {
+			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE_AIRLINES WHERE (SRC=?)")) {
-				ps.setInt(1, src.ordinal());
+				ps.setInt(1, src.getSource().ordinal());
 				executeUpdate(ps, 0);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE DATES (SRC, EFFDATE, IMPORTDATE) VALUES (?, ?, ?)")) {
+				ps.setInt(1, src.getSource().ordinal());
+				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
+				ps.setTimestamp(3, createTimestamp(src.getImportDate()));
+				executeUpdate(ps, 1);
 			}
 		
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE_AIRLINES (SRC, AIRLINE) VALUES (?, ?)")) {
-				ps.setInt(1, src.ordinal());
-				for (Airline a : airlines) {
+				ps.setInt(1, src.getSource().ordinal());
+				for (Airline a : src.getAirlines()) {
 					ps.setString(2, a.getCode());
 					ps.addBatch();
 				}
 			
-				executeUpdate(ps, 1, airlines.size());
+				executeUpdate(ps, 1, src.getAirlines().size());
 			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

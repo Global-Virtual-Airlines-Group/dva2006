@@ -32,7 +32,7 @@ public class GetRawSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleSourceInfo> getSources() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT SRC, AIRLINE, COUNT(*) AS TOTAL FROM RAW_SCHEDULE GROUP BY SRC, AIRLINE ORDER BY SRC")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, RSD.EFFDATE, RSD.IMPORTDATE FROM RAW_SCHEDULE RS LEFT JOIN RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC")) {
 			Collection<ScheduleSourceInfo> results = new LinkedHashSet<ScheduleSourceInfo>();
 			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
@@ -44,6 +44,8 @@ public class GetRawSchedule extends DAO {
 					}
 					
 					inf.setLegs(SystemData.getAirline(rs.getString(2)), rs.getInt(3));
+					inf.setEffectiveDate(toInstant(rs.getTimestamp(4)));
+					inf.setImportDate(toInstant(rs.getTimestamp(5)));
 				}
 			}
 			

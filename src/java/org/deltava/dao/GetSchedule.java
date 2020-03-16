@@ -4,7 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 import java.time.*;
-import java.time.temporal.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends DAO {
 	
-	private java.time.Instant _effDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant(ZoneOffset.UTC);
+	private final Map<ScheduleSource, ScheduleSourceInfo> _srcs = new HashMap<ScheduleSource, ScheduleSourceInfo>();
 	
 	/**
 	 * Initialize the Data Access Object.
@@ -31,12 +30,11 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
-	 * Sets the effective date of the Schedule, for DST calculations.
-	 * @param dt the effective date/time or null for today
+	 * Sets the raw schedule sources in use, for DST calculatiuons.
+	 * @param srcs a Collection of ScheduleSourceInfo beans
 	 */
-	public void setEffectiveDate(Instant dt) {
-		if (dt != null)
-			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
+	public void setSources(Collection<ScheduleSourceInfo> srcs) {
+		srcs.forEach(src -> _srcs.put(src.getSource(), src));
 	}
 
 	/**
@@ -273,9 +271,12 @@ public class GetSchedule extends DAO {
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(sr.getAirportD());
 					se.setAirportA(sr.getAirportA());
-					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
-					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 					se.setSource(ScheduleSource.values()[rs.getInt(7)]);
+					
+					ScheduleSourceInfo info = _srcs.get(se.getSource());
+					long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
+					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(effectiveDate));
+					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(effectiveDate));
 				}
 			}
 
@@ -408,12 +409,16 @@ public class GetSchedule extends DAO {
 				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 				entry.setEquipmentType(rs.getString(7));
 				entry.setLength(rs.getInt(8));
-				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
-				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setAcademy(rs.getBoolean(12));
 				entry.setSource(ScheduleSource.values()[rs.getInt(13)]);
 				entry.setCodeShare(rs.getString(14));
+				
+				ScheduleSourceInfo info = _srcs.get(entry.getSource());
+				long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
+				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(effectiveDate));
+				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(effectiveDate));
+				
 				results.add(entry);
 			}
 		}
