@@ -1,7 +1,8 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
+import java.time.*;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
@@ -19,6 +20,8 @@ import org.deltava.util.cache.Cacheable;
 public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 
 	private final ScheduleSource _src;
+	private LocalDate _effDate;
+	private Instant _importDate;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
 	
 	/**
@@ -39,6 +42,22 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	}
 	
 	/**
+	 * Returns the effective date of the last schedule filter using this source.
+	 * @return the effective date, or null
+	 */
+	public LocalDate getEffectiveDate() {
+		return _effDate;
+	}
+	
+	/**
+	 * Returns the date of the last schedule filter using this source.
+	 * @return the import date/time
+	 */
+	public Instant getImportDate() {
+		return _importDate;
+	}
+	
+	/**
 	 * Returns the total number of flight legs from this source. 
 	 * @return the number of legs
 	 */
@@ -52,6 +71,15 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public Collection<Airline> getAirlines() {
 		return _airlineLegs.keySet();
+	}
+	
+	/**
+	 * Returns whether this schedule source includes a particular airline.
+	 * @param a an Airline
+	 * @return TRUE if included, otherwise FALSE
+	 */
+	public boolean contains(Airline a) {
+		return (a != null) && (_airlineLegs.containsKey(a));
 	}
 	
 	/**
@@ -78,6 +106,22 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public void setLegs(Airline a, int legs) {
 		_airlineLegs.put(a, Integer.valueOf(legs));
+	}
+	
+	/**
+	 * Updates the effective date of the last schedule filter using this source.
+	 * @param dt the effective date/time, the time will be discarded
+	 */
+	public void setEffectiveDate(Instant dt) {
+		_effDate = (dt == null) ? null : LocalDate.ofInstant(dt, ZoneOffset.UTC);
+	}
+	
+	/**
+	 * Updates the date of the last schedule filter using this source.
+	 * @param dt the filter date/time
+	 */
+	public void setImportDate(Instant dt) {
+		_importDate = dt;
 	}
 	
 	@Override
