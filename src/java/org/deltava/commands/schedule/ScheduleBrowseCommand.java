@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.Inclusion;
@@ -53,14 +52,12 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		ViewContext<ScheduleEntry> vc = initView(ctx, ScheduleEntry.class);
 		try {
 			Connection con = ctx.getConnection();
-			
-	         // Load schedule import metadata
-	    	 GetMetadata mddao = new GetMetadata(con);
-	    	 String aCode = SystemData.get("airline.code").toLowerCase();
-	    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
-	    	 Instant effDate = mddao.getDate(aCode + ".schedule.effDate");
-	    	 ctx.setAttribute("effectiveDate", effDate, REQUEST);
-			
+
+			// Load schedule import metadata
+			GetRawSchedule rsdao = new GetRawSchedule(con);
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
+			ctx.setAttribute("scheduleSources", srcs, REQUEST);
+
 			// Load airports
 			GetScheduleAirport dao = new GetScheduleAirport(con);
 			AirportComparator ac = new AirportComparator(AirportComparator.NAME);
@@ -75,7 +72,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setQueryStart(vc.getStart());
 			sdao.setQueryMax(vc.getCount());
-			sdao.setEffectiveDate(effDate);
+			sdao.setSources(srcs);
 			vc.setResults(sdao.search(criteria));
 		} catch (DAOException de) {
 			throw new CommandException(de);

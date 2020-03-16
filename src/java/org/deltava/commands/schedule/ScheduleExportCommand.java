@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2015, 2016, 2019 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2016, 2019, 2020 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import org.deltava.commands.*;
@@ -22,7 +22,7 @@ public class ScheduleExportCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       try {
     	  GetRawSchedule dao = new GetRawSchedule(ctx.getConnection());
-    	  ctx.setAttribute("srcInfo", dao.getSources(), REQUEST);
+    	  ctx.setAttribute("srcInfo", dao.getSources(true), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
