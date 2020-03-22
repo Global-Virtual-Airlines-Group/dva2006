@@ -12,6 +12,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:captcha action="userList" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
