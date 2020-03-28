@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -70,7 +70,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		List<String> errors = new ArrayList<String>(); 
 		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		int entryCount = 0; int regionCount = 0; CycleInfo newCycle = null;
-		try (InputStream is = navData.getInputStream()) {
+		try (InputStream is = navData.getInputStream(); LineNumberReader br = new LineNumberReader(new InputStreamReader(is))) {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
@@ -86,7 +86,6 @@ public class AIRACImportCommand extends NavDataImportCommand {
 
 			// Iterate through the file
 			Collection<NavigationDataBean> nds = new ArrayList<NavigationDataBean>();
-			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 			String txtData = br.readLine(); tt.start();
 			while (txtData != null) {
 				boolean isComment = txtData.startsWith(";"); 
