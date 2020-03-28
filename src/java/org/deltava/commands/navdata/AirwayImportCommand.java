@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 2.0
  */
 
@@ -59,8 +59,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		int entryCount = 0; CycleInfo newCycle = null;
 		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		TaskTimer tt = new TaskTimer();
-		try (InputStream is = navData.getInputStream()) {
-			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+		try (InputStream is = navData.getInputStream(); LineNumberReader br = new LineNumberReader(new InputStreamReader(is))) {
 			
 			// Iterate through the file
 			Airway a = null; int lastSeq = -1; String lastCode = "";
