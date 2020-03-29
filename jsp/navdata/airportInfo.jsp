@@ -155,8 +155,8 @@ golgotha.local.update = function(combo) {
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
 // Create the map
-var mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, clickableIcons:false, streetViewControl:false};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, clickableIcons:false, streetViewControl:false};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.fitBounds(golgotha.local.mapBounds);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
@@ -172,17 +172,17 @@ golgotha.onDOMReady(function() { golgotha.gate.load('${airport.ICAO}'); golgotha
 </script>
 <script id="chartInit" async>
 google.charts.load('current', {'packages':['corechart']});
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	const js = JSON.parse(xmlreq.responseText);
+	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 	
 	// Display the chart
-	var fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
-	var fData = new google.visualization.DataTable(); 
-	var nf = new google.visualization.NumberFormat({pattern:'00'});
+	const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
+	const fData = new google.visualization.DataTable(); 
+	const nf = new google.visualization.NumberFormat({pattern:'00'});
 	fData.addColumn('number', 'Hour of Day'); nf.format(fData, 0); 
 	fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
 	fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
@@ -192,7 +192,7 @@ xmlreq.onreadystatechange = function() {
 	});
 
 	golgotha.util.display('flightTimeChart', true);
-	var mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
+	const mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
 	fC.draw(fData,{title:'Flights by Hour of Day',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
 	return true;
 };
