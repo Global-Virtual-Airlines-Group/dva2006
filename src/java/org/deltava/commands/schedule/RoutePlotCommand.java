@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -46,8 +46,8 @@ public class RoutePlotCommand extends AbstractCommand {
 			if ((dfr != null) && (dfr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID())) {
 				ctx.setAttribute("flight", dfr, REQUEST);
 				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
-				ctx.setAttribute("airportsD", Collections.singleton(dfr.getAirportD()), REQUEST);
-				ctx.setAttribute("airportsA", Collections.singleton(dfr.getAirportA()), REQUEST);
+				ctx.setAttribute("airportsD", getAirports(dfr.getAirportD()), REQUEST);
+				ctx.setAttribute("airportsA", getAirports(dfr.getAirportA()), REQUEST);
 				if (dfr.getSimulator() != Simulator.UNKNOWN)
 					ctx.setAttribute("sim", dfr.getSimulator(), REQUEST);
 				
@@ -97,14 +97,11 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airportsA", Collections.emptyList(), REQUEST);
 				
 				// Load the previous approved/submitted flight report
-				frdao.setQueryMax(10);
+				frdao.setQueryMax(15);
 				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
-				for (FlightReport fr : results) {
-					if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)) {
-						ctx.setAttribute("sim", fr.getSimulator(), REQUEST);
-						break;
-					}
-				}
+				Optional<FlightReport> fr = results.stream().filter(fl -> (fl.getStatus() != FlightStatus.DRAFT) && (fl.getStatus() != FlightStatus.REJECTED)).findFirst();
+				if (fr.isPresent())
+					ctx.setAttribute("sim", fr.get().getSimulator(), REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -116,5 +113,17 @@ public class RoutePlotCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/routePlot.jsp");
 		result.setSuccess(true);
+	}
+	
+	/*
+	 * Helper method to add superceded airports.
+	 */
+	private static Collection<Airport> getAirports(Airport a) {
+		Collection<Airport> results = new LinkedHashSet<Airport>();
+		results.add(a);
+		if (!StringUtils.isEmpty(a.getSupercededAirport()))
+			results.add(SystemData.getAirport(a.getSupercededAirport()));
+		
+		return results;
 	}
 }
