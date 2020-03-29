@@ -122,10 +122,7 @@ golgotha.gate.filter = function(gateIDs) {
 	const allGates = golgotha.gate.gates.concat(golgotha.gate.ourGates);
 	allGates.forEach(function(g) {
 		const isVisible = (gateIDs.length == 0) || gateIDs.contains(g.id);
-		if (isVisible)
-			g.show();
-		else
-			g.hide();
+		g.setMap(isVisible ? map : null);
 	});
 
 	return true;
