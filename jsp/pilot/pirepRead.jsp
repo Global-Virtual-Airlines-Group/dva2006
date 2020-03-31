@@ -380,7 +380,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 &nbsp;<el:cmdbutton url="pirepdelete" link="${pirep}" label="DELETE REPORT" />
 <c:if test="${isACARS}">
 &nbsp;<el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" /></c:if>
-&nbsp;</c:if>
+</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 <c:if test="${isACARS}"><span class="nophone">&nbsp;<el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span> <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" /></c:if>
 </content:filter>
