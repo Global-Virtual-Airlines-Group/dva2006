@@ -42,19 +42,14 @@ public class LoginCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		boolean isSecure = ctx.getRequest().isSecure();
 		
 		// Determine where we are referring from, if on the site return back there
 		String referer = ctx.getRequest().getHeader("Referer");
 		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
 			try {
 				URL url = new URL(referer);
-				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
-					if (isSecure && !"https".equals(url.getProtocol()))
-						referer = referer.replace("http:", "https:");
-					
+				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
 					ctx.setAttribute("referTo", referer, REQUEST);
-				}
 			} catch (MalformedURLException mue) {
 				log.warn("Invalid HTTP referer - " + referer);
 				referer = null;
@@ -201,7 +196,7 @@ public class LoginCommand extends AbstractCommand {
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
 			c.setMaxAge(-1);
 			c.setHttpOnly(true);
-			c.setSecure(isSecure);
+			c.setSecure(true);
 			c.setPath("/");
 			ctx.addCookie(c);
 			
