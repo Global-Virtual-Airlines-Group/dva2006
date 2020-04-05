@@ -124,7 +124,6 @@ public class FindFlightCommand extends AbstractCommand {
 				// Load schedule import metadata
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
-				ctx.setAttribute("scheduleSources", srcs, REQUEST);
 
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
@@ -144,7 +143,10 @@ public class FindFlightCommand extends AbstractCommand {
 					ctx.setAttribute("airportsA", dsts, REQUEST);
 
 				// Save results in the session - since other commands may reference these
-				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
+				Collection<ScheduleEntry> results = dao.search(criteria);
+				Collection<ScheduleSource> resultSources = results.stream().map(ScheduleEntry::getSource).collect(Collectors.toSet());  
+				ctx.setAttribute("scheduleSources", srcs.stream().filter(srcInfo -> resultSources.contains(srcInfo.getSource())).collect(Collectors.toSet()), REQUEST);
+				ctx.setAttribute("fafResults", results, SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
