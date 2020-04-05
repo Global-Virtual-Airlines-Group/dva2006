@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -26,7 +26,9 @@ import org.deltava.util.system.SystemData;
 
 public class GetDeltaSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatterBuilder _dfb = new DateTimeFormatterBuilder().appendPattern("MMM-dd");
+	private static final String DATE_FMT = "MMM-d[d]";
+	
+	private DateTimeFormatterBuilder _dfb = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(DATE_FMT);
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("h[h]:mma").toFormatter();
 	private DateTimeFormatter _df;
 	
@@ -48,7 +50,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 	 */
 	public void setEffectiveDate(LocalDateTime ldt) {
 		if (ldt != null)
-			_effDate = ldt.truncatedTo(ChronoUnit.DAYS).toLocalDate();
+			_effDate = ldt.toLocalDate();
 	}
 
 	@Override
@@ -57,9 +59,25 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 		
 		try (LineNumberReader lr = getReader()) {
 			Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+			boolean foundValidity = false;
 		
 			while (lr.ready()) {
 				String data = lr.readLine(); boolean isOK = true; FlightData fd = null;
+				
+				// Check for effective date
+				if (!foundValidity && data.startsWith("Validity Period:" )) {
+					int pos = data.indexOf(" to ");
+					if (pos > -1) {
+						int year = StringUtils.parse(data.substring(pos - 4, pos), _effDate.getYear());
+						_effDate = LocalDate.of(year, 1, 1);
+						_dfb = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(DATE_FMT);
+						_df = _dfb.parseDefaulting(ChronoField.YEAR, year).toFormatter();
+						log.info("Updating effective year to " + year);
+					}
+
+					foundValidity = true;
+				}
+				
 				try {
 					fd = parse(data);
 				} catch (Exception e) {
@@ -116,8 +134,8 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 					
 				if (isOK && (!isCodeShare || (rse.getFlightNumber() < 6100)))
 					results.add(rse);
-				else if (isOK)
-					log.info("Skipping codeshare " + fd.flightNumber);
+				else if (isOK && log.isDebugEnabled())
+					log.debug("Skipping codeshare " + fd.flightNumber);
 			}
 
 			return results;
@@ -159,7 +177,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 	private Tuple<LocalDate, LocalDate> parseDates(String startDate, String endDate) {
 		try {
 			LocalDate startD = "-".equals(startDate) ? LocalDate.of(_effDate.getYear(), 1, 1) : LocalDate.parse(startDate, _df);
-			LocalDate endD = "-".equals(endDate) ? LocalDate.of(_effDate.getYear(), 12, 31) : LocalDate.parse(startDate, _df);
+			LocalDate endD = "-".equals(endDate) ? LocalDate.of(_effDate.getYear(), 12, 31) : LocalDate.parse(endDate, _df);
 			if (endD.isBefore(startD))
 				endD = endD.plusYears(1);
 			

@@ -64,24 +64,36 @@ public class TestDeltaScheduleLoad extends TestCase {
 		LogManager.shutdown();
 		super.tearDown();
 	}
-
-	public void testLoadRaw() throws Exception {
+	
+	@SuppressWarnings("static-method")
+	public void testConvertPDF() throws Exception {
 		
 		File f = new File("C:\\Temp\\flight_schedules.pdf");
 		assertTrue(f.exists());
 		
-		String txt = null;
+		File txtF = new File("C:\\Temp\\flight_schedules.txt");
+		if (f.exists())
+			return;
+		
 		try (InputStream is = new FileInputStream(f)) {
 			GetPDFText prdao = new GetPDFText(is);
-			txt = prdao.getText();
+			String txt = prdao.getText();
+			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(txtF), 131072); PrintWriter pw = new PrintWriter(os)) {
+				pw.write(txt);
+			}
 		}
+	}
+
+	public void testLoadRaw() throws Exception {
+		
+		File f = new File("C:\\Temp\\delta_schedule.txt");
+		assertTrue(f.exists());
 		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
-		try (InputStream is = new ByteArrayInputStream(txt.getBytes())) {
+		try (InputStream is = new FileInputStream(f)) {
 			GetDeltaSchedule dao = new GetDeltaSchedule(is);
 			dao.setAircraft(_acTypes);
 			dao.setAirlines(SystemData.getAirlines().values());
-			
 			rawEntries.addAll(dao.process());
 			assertFalse(rawEntries.isEmpty());
 		}
@@ -91,9 +103,8 @@ public class TestDeltaScheduleLoad extends TestCase {
 		
 		SetSchedule rwdao = new SetSchedule(_c);
 		rwdao.purgeRaw(ScheduleSource.DELTA);
-		for (RawScheduleEntry rse : rawEntries) {
+		for (RawScheduleEntry rse : rawEntries)
 			rwdao.writeRaw(rse);
-		}
 		
 		_c.commit();
 		log.info("Wrote " + rawEntries.size() + " raw schedule entries");
