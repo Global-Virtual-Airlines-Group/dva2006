@@ -192,7 +192,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
+ <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS
  REPLAY OF <c:forEach var="srcInfo" items="${scheduleSources}" varStatus="edStatus"><span title="${srcInfo.source.description}"><fmt:date date="${srcInfo.effectiveDate}" fmt="d" tzName="UTC" /></span><c:if test="${!edStatus.last}">, </c:if></c:forEach></td>
 </tr>
 
@@ -213,7 +213,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <c:forEach var="flight" items="${fafResults}">
 <view:row entry="${flight}">
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
- <td class="pri bld">${flight.flightCode}</td>
+ <td class="pri bld" title="${flight.source.description}">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
  ${flight.airportA.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
