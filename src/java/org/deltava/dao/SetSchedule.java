@@ -126,7 +126,7 @@ public class SetSchedule extends DAO {
 				executeUpdate(ps, 0);
 			}
 			
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE DATES (SRC, EFFDATE, IMPORTDATE) VALUES (?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE) VALUES (?, ?, ?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
 				ps.setTimestamp(3, createTimestamp(src.getImportDate()));
