@@ -62,7 +62,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		Collection<ScheduleSourceInfo> sources = new LinkedHashSet<ScheduleSourceInfo>();
 		for (ScheduleSource src : srcs) {
 			ScheduleSourceInfo srcInfo = new ScheduleSourceInfo(src);
-			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter(src.name() + "-effDate"), "MM/dd/yyyy"));
+			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter("eff" + src.name()), "MM/dd/yyyy"));
 			srcInfo.setImportDate(Instant.now());
 			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
 			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).collect(Collectors.toSet()).forEach(al -> srcInfo.setLegs(al, 1));

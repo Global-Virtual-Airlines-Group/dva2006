@@ -100,6 +100,33 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	}
 	
 	/**
+	 * Returns whether this is a current schedule import.
+	 * @return TRUE if the effective date is less than 72 hours in the past, otherwise FALSE
+	 */
+	public boolean getIsCurrent() {
+		return (_effDate != null) && (Duration.between(LocalDateTime.now(), _effDate.atStartOfDay()).abs().toHours() < 96);
+	}
+	
+	/**
+	 * Returns the base schedule effective date, tied to the Monday of the week of the effective date, if not current.
+	 * @return the Monday at the start of the week, or the effective date if current
+	 */
+	public LocalDate getBaseDate() {
+		if (getIsCurrent() || (_effDate == null)) return _effDate;
+		return _effDate.minusDays(_effDate.getDayOfWeek().ordinal());
+	}
+	
+	/**
+	 * Returns the date to be used if filtering flights from this source today.
+	 * @return today is current or no previous import, otherwise the base date adjusted by the day of week
+	 * @see ScheduleSourceInfo#getBaseDate()
+	 */
+	public LocalDate getNextImportDate() {
+		if (getIsCurrent() || (_effDate == null)) return LocalDate.now();
+		return getBaseDate().plusDays(LocalDate.now().getDayOfWeek().ordinal());
+	}
+	
+	/**
 	 * Updates the number of flight legs for a particular Airline.
 	 * @param a the Airline bean
 	 * @param legs the number of legs

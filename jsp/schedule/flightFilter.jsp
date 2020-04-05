@@ -71,17 +71,17 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="purgeAll" idx="*" value="true" label="Purge entire Flight Schedule before filter" /></td>
+ <td class="data"><el:box name="purgeAll" idx="*" value="true" checked="true" label="Purge entire Flight Schedule before filter" /></td>
 </tr>
 <c:forEach var="src" items="${sources}">
-<c:set var="srcEffDate" value="${empty src.effectiveDate ? today : src.effectiveDate}" scope="page" />
 <c:set var="srcEffName" value="eff${src.source}"  scope="page" />
 <tr class="src-${src.source} title caps" style="display:none;">
- <td colspan="2">${src.source.description}</td>
+ <td colspan="2">${src.source.description}<c:if test="${!empty src.effectiveDate}"> - EFFECTIVE <fmt:date fmt="d" date="${src.effectiveDate}" tzName="UTC" /></c:if></td>
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label">Effective Date</td>
- <td class="data"><el:text name="${srcEffName}" size="9" max="10" idx="*" required="true" value="${fn:dateFmt(srcEffDate, dateFmt)}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].${srcEffName}')" /></td>
+ <td class="data"><el:text name="${srcEffName}" size="9" max="10" idx="*" required="true" value="${fn:dateFmt(src.nextImportDate, dateFmt)}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].${srcEffName}')" />
+<c:if test="${!src.isCurrent}"><span class="nophone" > (Base Date: <fmt:date fmt="d" date="${src.baseDate}" tzName="UTC" />)</span></c:if></td>
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label top">Airlines</td>
