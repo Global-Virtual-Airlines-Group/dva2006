@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
@@ -145,7 +146,7 @@ public class FindFlightCommand extends AbstractCommand {
 				// Save results in the session - since other commands may reference these
 				Collection<ScheduleEntry> results = dao.search(criteria);
 				Collection<ScheduleSource> resultSources = results.stream().map(ScheduleEntry::getSource).collect(Collectors.toSet());  
-				ctx.setAttribute("scheduleSources", srcs.stream().filter(srcInfo -> resultSources.contains(srcInfo.getSource())).collect(Collectors.toSet()), REQUEST);
+				ctx.setAttribute("scheduleSources", srcs.stream().filter(srcInfo -> resultSources.contains(srcInfo.getSource())).collect(Collectors.toMap(ScheduleSourceInfo::getSource, Function.identity())), REQUEST);
 				ctx.setAttribute("fafResults", results, SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 			} catch (DAOException de) {
