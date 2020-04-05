@@ -62,7 +62,7 @@ public class TestCollectionUtils extends TestCase {
 		ids.add(new ID(10));
 
 		Map<?, ?> m = CollectionUtils.createMap(ids, ID::getID);
-		assertEquals(ids.size() - 1, m.size());
+		assertEquals(ids.size(), m.size());
 		assertTrue(m.containsKey(Integer.valueOf(1)));
 		assertTrue(m.containsKey(Integer.valueOf(2)));
 		assertTrue(m.containsKey(Integer.valueOf(10)));
