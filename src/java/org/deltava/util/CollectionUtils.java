@@ -3,6 +3,7 @@ package org.deltava.util;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A utility class for dealing with Collections.
@@ -62,9 +63,7 @@ public class CollectionUtils {
 	 * @return a Map of the values, indexed by their key
 	 */
 	public static <K, V> Map<K, V> createMap(Collection<V> values, Function<V, K> f) {
-		Map<K, V> results = new LinkedHashMap<K, V>();
-		values.stream().forEach(v -> results.put(f.apply(v), v));
-		return results;
+		return values.stream().collect(Collectors.toMap(f, Function.identity()));
 	}
 	
 	/**
