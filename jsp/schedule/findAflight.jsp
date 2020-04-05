@@ -20,7 +20,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.ff = golgotha.ff || {};
 golgotha.ff.validate = function(f)
 {
@@ -192,8 +192,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS
- REPLAY OF <c:forEach var="srcInfo" items="${scheduleSources}" varStatus="edStatus"><span title="${srcInfo.source.description}"><fmt:date date="${srcInfo.effectiveDate}" fmt="d" tzName="UTC" /></span><c:if test="${!edStatus.last}">, </c:if></c:forEach></td>
+ <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS</td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -211,9 +210,11 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 
 <!-- Search Results -->
 <c:forEach var="flight" items="${fafResults}">
+<c:set var="srcInfo" value="${scheduleSources[flight.source]}" scope="page" />
+<c:set var="srcDate" value="${fn:dateFmt(srcInfo.effectiveDate, 'MM/dd/yyyy')}" scope="page" />
 <view:row entry="${flight}">
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
- <td class="pri bld" title="${flight.source.description}">${flight.flightCode}</td>
+ <td class="pri bld" title="${srcInfo.source.description}, ${srcDate}">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
  ${flight.airportA.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
