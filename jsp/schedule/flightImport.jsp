@@ -22,7 +22,7 @@ golgotha.local.validate = function(f) {
 		return true;
 	}
 
-	golgotha.form.validate({f:f.csvData, ext:['txt,pdf'], t:'Flight Schedule data'});
+	golgotha.form.validate({f:f.csvData, ext:['txt','pdf','gz'], t:'Flight Schedule data'});
     if (!golgotha.local.uploadComplete) {
     	f.id.value = golgotha.local.file.file.name;
         golgotha.local.showProgress(true);
@@ -89,7 +89,7 @@ golgotha.local.validate = function(f) {
 <content:googleAnalytics />
 <script async>
 golgotha.util.disable('SaveButton', true);
-golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['pdf','txt']});
+golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['pdf','txt','gz']});
 const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -18,8 +18,8 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -137,7 +137,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 				Aircraft a = pastChoices.get(rse.getShortCode());
 				if (a != null) {
 					rse.setEquipmentType(a.getName());
-					log.info("Variable equipment for " + rse.getShortCode() + ", reusing " + rse.getEquipmentType());
+					log.debug("Variable equipment for " + rse.getShortCode() + ", reusing " + rse.getEquipmentType());
 					continue;
 				}
 				
@@ -150,7 +150,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 					if (!possibleEQ.isEmpty()) {
 						Collections.shuffle(possibleEQ); Aircraft ac = possibleEQ.get(0); 
 						rse.setEquipmentType(ac.getName());
-						log.info("Variable equipment for " + rse.getShortCode() + ", using " + rse.getEquipmentType());
+						log.debug("Variable equipment for " + rse.getShortCode() + ", using " + rse.getEquipmentType());
 						pastChoices.put(rse.getShortCode(), ac);
 					} else
 						log.warn("Variable equipment for " + rse.getShortCode() + " (" + rse.getAirportD().getIATA() + "-" + rse.getAirportA().getIATA() + "), no available aircraft!");
@@ -163,6 +163,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
 			int purgeCount = swdao.purgeRaw(ss); int entryCount = entries.size();
+			log.info("Purged " + purgeCount + " raw schedule entries from " + ss.getDescription());
 			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
 				swdao.writeRaw(i.next());
 				i.remove();
@@ -202,6 +203,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 	}
 
 	private static InputStream parsePDF(File f) throws IOException, DAOException {
+		
+		if (f.getName().toLowerCase().endsWith(".gz"))
+			return new GZIPInputStream(new FileInputStream(f), 65536);
 
 		boolean isPDF = false;
 		try (InputStream his = new FileInputStream(f)) {
