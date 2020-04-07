@@ -19,7 +19,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -29,7 +29,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.resizeBriefing = function(maxRows) {
-	var txt = document.forms[0].briefing;
+	const txt = document.forms[0].briefing;
 	golgotha.form.resize(txt);
 	txt.rows = Math.min(txt.rows, maxRows);
 	return true;
@@ -307,20 +307,13 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canSignup}">
- <el:button ID="SaveButton" type="submit" label="SIGN UP FOR THIS EVENT" /></c:if>
+<c:if test="${access.canSignup}"><el:button type="submit" label="SIGN UP FOR THIS EVENT" /></c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="RouteButton" url="eventroutes" link="${event}" label="UPDATE ROUTES" />
- <el:cmdbutton ID="EditButton" url="eventedit" link="${event}" label="EDIT EVENT" />
-</c:if>
-<c:if test="${access.canAssignFlights}">
- <el:cmdbutton ID="AssignButton" url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
-</c:if><c:if test="${access.canBalance}">
- <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE SIGNUPS" /></c:if>
-<c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" /></c:if>
-<c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="eventdelete" link="${event}" label="DELETE EVENT" /></c:if>
+&nbsp;<el:cmdbutton url="eventroutes" link="${event}" label="UPDATE ROUTES" />&nbsp;<el:cmdbutton url="eventedit" link="${event}" label="EDIT EVENT" /></c:if>
+<c:if test="${access.canAssignFlights}">&nbsp;<el:cmdbutton url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" /></c:if>
+<c:if test="${access.canBalance}">&nbsp;<el:cmdbutton url="eventbalance" link="${event}" label="BALANCE SIGNUPS" /></c:if>
+<c:if test="${access.canCancel}">&nbsp;<el:cmdbutton url="eventcancel" link="${event}" label="CANCEL EVENT" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="eventdelete" link="${event}" label="DELETE EVENT" /></c:if>
  </td>
 </tr>
 </el:table>
