@@ -46,7 +46,7 @@ if (!golgotha.form.check()) return false;
 var isOK = false;
 if (f.addFA.length) {
 	for (var x = 0; ((!isOK) && (x < f.addFA.length)); x++)
-		isOK = isOK || f.addFA[x].checked;
+		isOK |= f.addFA[x].checked;
 } else
 	isOK = f.addFA.checked;
 
@@ -76,7 +76,6 @@ return true;
 
 golgotha.ff.updateSort = function(cb) { return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb)); };
 golgotha.ff.refreshAirports = function() { updateAirline(document.forms[0].airline); };
-
 golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
 {
 const f = checkbox.form;
