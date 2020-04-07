@@ -19,10 +19,10 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.updateSignups = function() {
-	var f = document.forms[0];
-	var tg = !f.canSignup.checked;
+	const f = document.forms[0];
+	const tg = !f.canSignup.checked;
 	golgotha.util.disable(f.closeDate, tg);
 	golgotha.util.disable(f.closeTime, tg);
 	golgotha.util.disable(f.airportD, tg);
@@ -51,7 +51,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);	
@@ -181,8 +181,7 @@ golgotha.onDOMReady(function() {
 <c:set var="hasName" value="${!empty route.name}" scope="page" />
 <view:row entry="${route}">
  <td class="label top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
- <td class="data"><c:if test="${hasName}"><b>${route.name}</b> </c:if>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)
- - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
+ <td class="data"><c:if test="${hasName}"><b>${route.name}</b> </c:if>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </view:row>
 <tr>
  <td class="data">${route.route}</td>
@@ -193,7 +192,7 @@ golgotha.onDOMReady(function() {
 <tr class="title caps">
  <td colspan="2">APPROACH CHARTS</td>
 </tr>
-<c:forEach var="chartAirport" items="${fn:keys(charts)}">
+<c:forEach var="chartAirport" items="${charts.keySet()}">
 <c:set var="apCharts" value="${charts[chartAirport]}" scope="page" />
 <tr>
  <td class="label top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
@@ -206,10 +205,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canEdit}">
- <el:button ID="SaveButton" type="submit" label="SAVE ONLINE EVENT" />
-</c:if></td>
+ <td>&nbsp;<c:if test="${access.canEdit}"><el:button ID="SaveButton" type="submit" label="SAVE ONLINE EVENT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

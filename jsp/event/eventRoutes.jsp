@@ -16,21 +16,21 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
-<fmt:jsarray var="routeIDs" items="${routeIDs}" />
+<script async>
+<fmt:jsarray var="golgotha.local.routeIDs" items="${routeIDs}" />
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
 // Validate existing routes
-for (var id = routeIDs.pop(); (id != null); id = routeIDs.pop()) {
+for (var id = golgotha.local.routeIDs.pop(); (id != null); id = golgotha.local.routeIDs.pop()) {
 	golgotha.form.validate({f:eval('f.maxSignups' + id), min:0, t:'Maximum Signups for Route #' + id}); 
 	golgotha.form.validate({f:eval('f.route' + id), l:6, t:'Flight Route #' + id});
 	golgotha.form.validate({f:eval('f.routeName' + id), l:6, t:'Flight Route Name #' + id});
 }
 
 // Check if we're adding a new route
-var hasNewRoute = ((f.route.value.length > 0) || (f.routeName.value.length > 0) || golgotha.form.comboSet(f.airportD) || golgotha.form.comboSet(form.airportA));
+const hasNewRoute = ((f.route.value.length > 0) || (f.routeName.value.length > 0) || golgotha.form.comboSet(f.airportD) || golgotha.form.comboSet(f.airportA));
 if (hasNewRoute) {
 	golgotha.form.validate({f:f.route, l:6, t:'Flight Route'});
 	golgotha.form.validate({f:f.routeName, l:6, t:'Flight Route Name'});
@@ -44,7 +44,7 @@ return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);	
@@ -62,7 +62,7 @@ golgotha.onDOMReady(function() {
 <el:form action="eventroutes.do" link="${event}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
+ <td colspan="4">FLIGHT ROUTES FOR <el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
 </tr>
 <c:forEach var="route" items="${event.routes}">
 <c:set var="hasName" value="${!empty route.name}" scope="page" />
@@ -121,11 +121,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE FLIGHT ROUTES" />
- <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" />
-<c:if test="${access.canBalance}">
- <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE ROUTE SIGNUPS" />
-</c:if></td>
+ <td><el:button type="submit" label="UPDATE FLIGHT ROUTES" /><c:if test="${access.canBalance}">&nbsp;<el:cmdbutton url="eventbalance" link="${event}" label="BALANCE ROUTE SIGNUPS" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
