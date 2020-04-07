@@ -727,12 +727,6 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
-	<command id="schedsave">
-		<name>Schedule Save</name>
-		<class>org.deltava.commands.schedule.ScheduleSaveCommand</class>
-		<roles>schedules,Operations</roles>
-	</command>
-
 	<command id="schedexport">
 		<name>Schedule Export</name>
 		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>
