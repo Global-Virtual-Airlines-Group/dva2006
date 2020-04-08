@@ -103,7 +103,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		}
 
 		// Send e-mail notification
-		if (!updateBlacklist) {
+		if (!updateBlacklist && a.getHasCAPTCHA()) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(a);
