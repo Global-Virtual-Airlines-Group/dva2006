@@ -47,11 +47,11 @@
 <tr class="title caps">
  <td style="width:5%;">#</td>
  <td style="width:18%;">ENTRY</td>
- <td style="width:10%;">HOURS</td>
- <td style="width:9%;">LEGS</td>
+ <td style="width:8%;">HOURS</td>
+ <td style="width:8%;">LEGS</td>
  <td class="nophone">DISTANCE</td>
  <td>FSX</td>
- <td>P3D<span class="nophone"> v4 / v3</span></td>
+ <td>P3D<span class="nophone"> 64-BIT / 32-BIT</span></td>
  <td>FS2004</td>
  <td class="nophone">X-Plane 11 / 10</td>
  <td class="nophone">FS2002 / FS2000</td>
