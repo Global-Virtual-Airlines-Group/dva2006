@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canApprove}">
 	if (!golgotha.form.check()) return false;
@@ -28,7 +28,7 @@ golgotha.local.checkVATSIMData = function(id, name)
 {
 golgotha.util.disable('ValidateButton');
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + escape(name));
+xmlreq.open('get', 'vatsim_info.ws?id=' + id + '&name=' + escape(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
@@ -70,7 +70,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Applicant Status</td>
- <td class="data sec bld caps">${applicant.status.description}</td>
+ <td class="data caps"><span class="sec bld"><fmt:defaultMethod var="${applicant.status}" method="description" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
 </tr>
 <c:if test="${!empty nameMatches}">
 <tr>
@@ -80,15 +80,14 @@ return true;
 <tr>
  <td class="data">
 <c:forEach var="dupe" items="${nameMatches}">
-${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}"> ${dupe.pilotCode}</c:if><br />
+${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">&nbsp;(${dupe.pilotCode})</c:if><br />
 </c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${(!empty questionnaire) && (!fn:pending(questionnaire))}">
 <tr>
  <td class="label">Questionnaire Score</td>
- <td class="data"><fmt:int value="${questionnaire.score}" /> / <fmt:int value="${questionnaire.size}" /> 
-(<fmt:dec fmt="##0.0" value="${questionnaire.score * 100 / questionnaire.size}" />%)</td>
+ <td class="data"><fmt:int value="${questionnaire.score}" /> / <fmt:int value="${questionnaire.size}" /> (<fmt:dec fmt="##0.0" value="${questionnaire.score * 100 / questionnaire.size}" />%)</td>
 </tr>
 </c:if>
 <c:if test="${fn:pending(questionnaire)}">

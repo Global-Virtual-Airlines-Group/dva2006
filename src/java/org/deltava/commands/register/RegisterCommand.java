@@ -104,7 +104,7 @@ public class RegisterCommand extends AbstractCommand {
 				// Load program names
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				Map<Long, Collection<ComboAlias>> eqTypes = new HashMap<Long, Collection<ComboAlias>>();
-				for (EquipmentType eq : eqdao.getActive(SystemData.get("airline.db"))) {
+				for (EquipmentType eq : eqdao.getActive()) {
 					if (eq.getNewHires()) {
 						Long s = Long.valueOf(eq.getStage());
 						Collection<ComboAlias> types = eqTypes.get(s);
@@ -291,6 +291,15 @@ public class RegisterCommand extends AbstractCommand {
 				return;
 			}
 			
+			// Check for CAPTCHA
+			HttpSession s = ctx.getSession();
+			if (s != null) {
+				CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME);
+				a.setHasCAPTCHA((cr != null) && cr.getIsSuccess());
+				if (!a.getHasCAPTCHA())
+					buf.append("CAPTCHA Validation failed!\r\n");
+			}
+			
 			// Add HR comments
 			if (buf.length() > 0)
 				a.setHRComments(buf.toString());
@@ -371,8 +380,7 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Add the questions to the exam
 			int qNum = 0;
-			for (Iterator<QuestionProfile> i = qPool.iterator(); i.hasNext();) {
-				QuestionProfile qp = i.next();
+			for (QuestionProfile qp : qPool) {
 				Question q = qp.toQuestion();
 				q.setNumber(++qNum);
 				ex.addQuestion(q);
@@ -409,7 +417,8 @@ public class RegisterCommand extends AbstractCommand {
 			mailer.setCC(MailUtils.makeAddress(SystemData.get("airline.mail.hr")));
 		
 		// Send the message
-		mailer.send(a);
+		if (a.getHasCAPTCHA())
+			mailer.send(a);
 
 		// Invalidate the temporary session
 		HttpSession s = ctx.getSession();
