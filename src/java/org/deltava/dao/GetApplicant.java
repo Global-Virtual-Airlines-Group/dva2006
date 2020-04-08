@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -401,26 +401,27 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setLegacyHours(rs.getDouble(13));
 				a.setLegacyURL(rs.getString(14));
 				a.setLegacyVerified(rs.getBoolean(15));
-				a.setHomeAirport(rs.getString(16));
-				a.setEquipmentType(rs.getString(17));
-				a.setRank(Rank.fromName(rs.getString(18)));
-				a.setNotificationCode(rs.getInt(19));
-				a.setEmailAccess(rs.getInt(20));
-				a.setCreatedOn(toInstant(rs.getTimestamp(21)));
-				// skip 22
-				a.setRegisterHostName(rs.getString(23));
-				a.setDateFormat(rs.getString(24));
-				a.setTimeFormat(rs.getString(25));
-				a.setNumberFormat(rs.getString(26));
-				a.setAirportCodeType(Airport.Code.values()[rs.getInt(27)]);
-				a.setDistanceType(DistanceUnit.values()[rs.getInt(28)]);
-				a.setWeightType(WeightUnit.values()[rs.getInt(29)]);
-				a.setSimVersion(Simulator.values()[rs.getInt(30)]);
-				a.setTZ(TZInfo.get(rs.getString(31)));
-				a.setUIScheme(rs.getString(32));
-				a.setComments(rs.getString(33));
-				a.setHRComments(rs.getString(34));
-				a.setRegisterAddress(rs.getString(35));
+				a.setHasCAPTCHA(rs.getBoolean(16));
+				a.setHomeAirport(rs.getString(17));
+				a.setEquipmentType(rs.getString(18));
+				a.setRank(Rank.fromName(rs.getString(19)));
+				a.setNotificationCode(rs.getInt(20));
+				a.setEmailAccess(rs.getInt(21));
+				a.setCreatedOn(toInstant(rs.getTimestamp(22)));
+				// skip 23
+				a.setRegisterHostName(rs.getString(24));
+				a.setDateFormat(rs.getString(25));
+				a.setTimeFormat(rs.getString(26));
+				a.setNumberFormat(rs.getString(27));
+				a.setAirportCodeType(Airport.Code.values()[rs.getInt(28)]);
+				a.setDistanceType(DistanceUnit.values()[rs.getInt(29)]);
+				a.setWeightType(WeightUnit.values()[rs.getInt(30)]);
+				a.setSimVersion(Simulator.values()[rs.getInt(31)]);
+				a.setTZ(TZInfo.get(rs.getString(32)));
+				a.setUIScheme(rs.getString(33));
+				a.setComments(rs.getString(34));
+				a.setHRComments(rs.getString(35));
+				a.setRegisterAddress(rs.getString(36));
 				results.add(a);
 			}
 		}

@@ -17,6 +17,7 @@ public class Applicant extends Person {
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
+    private boolean _hasCaptcha;
     
     private ApplicantStatus _status;
     private Simulator _simVersion;
@@ -114,8 +115,17 @@ public class Applicant extends Person {
     	return _registerAddress;
     }
     
+    /**
+     * Returns whether the CAPTCHA has been verified.
+     * @return TRUE if CAPTCHA verified, otherwise FALSE
+     * @see Applicant#setHasCAPTCHA(boolean)
+     */
+    public boolean getHasCAPTCHA() {
+    	return _hasCaptcha;
+    }
+    
 	/**
-	 * The Flight Simulator preferred by this Applicant.
+	 * Returns the Simulator preferred by this Applicant.
 	 * @return the Simulator
 	 * @see Applicant#setSimVersion(Simulator)
 	 */
@@ -225,6 +235,14 @@ public class Applicant extends Person {
      */
     public void setStatus(ApplicantStatus s) {
     	_status = s;
+    }
+    
+    /**
+     * Updates whether this Applicant has passed tha CAPTCHA check.
+     * @param hasCaptchaVerified TRUE if CAPTCHA verified, othersie FALSE
+     */
+    public void setHasCAPTCHA(boolean hasCaptchaVerified) {
+    	_hasCaptcha = hasCaptchaVerified;
     }
     
     @Override
