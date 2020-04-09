@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import com.newrelic.api.agent.*;
@@ -6,11 +6,12 @@ import com.newrelic.api.agent.*;
 /**
  * A Response class for NewRelic non-web transactions.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 7.2
  */
 
-public class SyntheticResponse implements Response {
+@SuppressWarnings("deprecation")
+public class SyntheticResponse extends ExtendedResponse {
 
 	@Override
 	public HeaderType getHeaderType() {
@@ -35,5 +36,10 @@ public class SyntheticResponse implements Response {
 	@Override
 	public String getStatusMessage() throws Exception {
 		return null;
+	}
+
+	@Override
+	public long getContentLength() {
+		return 0;
 	}
 }
