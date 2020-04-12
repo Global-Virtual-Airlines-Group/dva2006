@@ -18,12 +18,12 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 <content:filter roles="HR">
-var act = f.action;
+const act = f.action;
 if (act.indexOf('scnompurge.do') != -1) {
 	if (!confirm('Are you sure you wish to purge all Senior Captain nominations?')) return false;
 	golgotha.form.submit(f);
@@ -37,7 +37,7 @@ if (f.id.selectedIndex == 0)
 golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
 // Confirm
-var pilotName = f.id.options[f.id.selectedIndex].pilotName;
+const pilotName = f.id.options[f.id.selectedIndex].pilotName;
 if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Captain?')) return false;
 golgotha.form.submit(f);
 return true;	
@@ -239,13 +239,12 @@ for the most deserving individuals, we limit the number of nomnations that can b
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" />
+ <td><el:button type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" />
 <content:filter roles="HR">
- <el:cmdbutton ID="PurgeButton" url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" />
+&nbsp;<el:cmdbutton url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" />
 <c:if test="${prevQuarterPending}">
- <el:cmdbutton ID="PostponeButton" url="scnompostpone" label="MOVE OLD PENDING NOMINATIONS" />
-</c:if>
- <el:cmdbutton ID="RescoreButton" url="scnomrescore" label="RESCORE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
+&nbsp;<el:cmdbutton url="scnompostpone" label="MOVE OLD PENDING NOMINATIONS" /></c:if>
+&nbsp;<el:cmdbutton url="scnomrescore" label="RESCORE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
 </tr>
 </el:table>
 <el:text name="support" type="hidden" value="true" />
