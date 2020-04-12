@@ -1,26 +1,31 @@
-// Copyright 2006, 2007, 2008, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.help.Issue;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.comparators.*;
+
 import org.deltava.security.command.HelpDeskAccessControl;
+
 import org.deltava.util.RoleUtils;
 
 /**
  * A Web Site Command to display the Help Desk.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class HelpDeskCommand extends AbstractViewCommand {
 	
-	private static final List<String> ADMIN_ROLES = Arrays.asList("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin", "HelpDesk");
+	private static final List<String> ADMIN_ROLES = List.of("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin", "HelpDesk");
 
     /**
      * Executes the command.
@@ -67,7 +72,9 @@ public class HelpDeskCommand extends AbstractViewCommand {
 			
 			// Load Pilot IDs
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			List<Pilot> pilots = new ArrayList<Pilot>(pdao.getByID(IDs, "PILOTS").values());
+			Collections.sort(pilots, new PilotComparator(PersonComparator.FIRSTNAME));
+			ctx.setAttribute("pilots", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
