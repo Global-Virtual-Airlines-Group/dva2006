@@ -30,9 +30,14 @@
 	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />
 	<service id="fleet_sysinf" class="org.deltava.service.SystemInfoService" />
 	<service id="fleetlib" class="org.deltava.service.InstallerInfoService" />
+	
+	<!-- Online Event services -->
+	<service id="events" class="org.deltava.service.EventInfoService" />
 
 	<!-- Flight Schedule Services -->
 	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
+	<service id="aircraft" class="org.deltava.service.schedule.AircraftListService" />
+	<service id="airlines" class="org.deltava.service.schedule.AirlineListService" />
 	<service id="next_flight" class="org.deltava.service.schedule.AvailableFlightService" />
 	<service id="next_leg" class="org.deltava.service.schedule.AvailableFlightLegService" />
 	<service id="routeplot" class="org.deltava.service.schedule.RoutePlotMapService" />
