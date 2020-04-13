@@ -54,7 +54,7 @@
 	<cache id="TWCSeriesList" max="4" expires="20" />
 
 	<!-- ServInfo caches -->
-	<cache id="ServInfoData" max="3" expires="30" />
+	<cache id="ServInfoData" max="4" expires="20" />
 
 	<!-- System caches -->
 	<cache id="AircraftInfo" max="96" expires="3600" />
