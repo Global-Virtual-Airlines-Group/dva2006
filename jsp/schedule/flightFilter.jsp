@@ -41,6 +41,7 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
+<content:enum var="purgeOpts" className="org.deltava.beans.schedule.PurgeOptions" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -69,8 +70,8 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:check name="src" width="210" options="${sources}" value="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="purgeAll" idx="*" value="true" checked="true" label="Purge entire Flight Schedule before filter" /></td>
+ <td class="label">Purge Options</td>
+ <td class="data"><el:combo name="doPurge" idx="*" required="true" size="1" firstEntry="[ PURGE OPTIONS ]" options="${purgeOpts}" /></td>
 </tr>
 <c:forEach var="src" items="${sources}">
 <c:set var="srcEffName" value="eff${src.source}"  scope="page" />
