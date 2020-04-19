@@ -29,7 +29,7 @@
 <el:form action="myroutemap.do" method="get" validate="return false"> 
 <el:table className="form">
 <tr class="title caps">
- <td colspan="4"><content:airline /> ROUTE HISTORY FOR ${pilot.name}<span id="isLoading"></span></td>
+ <td colspan="4"><content:airline /> ROUTE HISTORY FOR ${pilot.name}<span class="nophone"> (${pilot.pilotCode})</span><span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
@@ -40,19 +40,22 @@
 <tr>
  <td colspan="4"><map:div ID="googleMap" height="510" /></td>
 </tr>
+<tr class="nophone">
+ <td colspan="4" class="mid small ita">Left-click on an Airport to view all the Routes flown to/from this Airport. Right-click on an Airport to view the last flight tracks in/out.</td>
+</tr>
 </el:table>
 </el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script async>
 <map:point var="golgotha.local.mapC" point="${home}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+const mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="SATELLITE" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); golgotha.routeMap.reset(); });
@@ -60,7 +63,6 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 // Add the home airport
 <map:marker var="airportH" point="${home}" color="white" marker="true" />
 airportH.setMap(map);
-
 golgotha.routeMap.id = '${pilot.hexID}';
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(0); });
 </script>
