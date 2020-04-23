@@ -4,8 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
+import java.util.stream.*;
 
 import junit.framework.TestCase;
 
@@ -13,18 +12,14 @@ import org.apache.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
-import org.deltava.comparators.ScheduleEntryComparator;
-
 import org.deltava.dao.*;
 
 import org.deltava.util.system.SystemData;
 
 public class TestSkyTeamScheduleLoad extends TestCase {
 	
-	private static Logger log;
-	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
-
+	
 	private Connection _c;
 	private final Collection<Aircraft> _acTypes = new ArrayList<Aircraft>();
 
@@ -33,8 +28,6 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 		super.setUp();
 		
 		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TestSkyTeamScheduleLoad.class);
-
 		SystemData.init();
 		
 		// Connect to the database
@@ -61,89 +54,65 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testConvertPDF() throws Exception {
+		
+		File f = new File("C:\\Temp\\Skyteam_Timetable_Q2_2020.pdf");
+		assertTrue(f.exists());
+		
+		File txtF = new File("C:\\Temp\\skyteam2020.txt");
+		if (txtF.exists())
+			return;
+		
+		try (InputStream is = new FileInputStream(f)) {
+			GetPDFText prdao = new GetPDFText(is);
+			prdao.setStartPage(5);
+			String txt = prdao.getText();
+			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(txtF), 131072); PrintWriter pw = new PrintWriter(os)) {
+				pw.write(txt);
+			}
+		}
 	}
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\Skyteam_Timetable.pdf");
+		File f = new File("C:\\Temp\\skyteam2020.txt");
 		assertTrue(f.exists());
 		
-		String txt = null;
-		try (InputStream is = new FileInputStream(f)) {
-			GetPDFText prdao = new GetPDFText(is);
-			prdao.setStartPage(5);
-			txt = prdao.getText();
-		}
-		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
-		try (InputStream is = new ByteArrayInputStream(txt.getBytes())) {
+		try (InputStream is = new FileInputStream(f)) {
 			GetSkyTeamSchedule dao = new GetSkyTeamSchedule(is);
 			dao.setAircraft(_acTypes);
 			dao.setAirlines(SystemData.getAirlines().values());
-			
 			rawEntries.addAll(dao.process());
-			assertFalse(rawEntries.isEmpty());
 		}
 		
 		assertFalse(rawEntries.isEmpty());
-		assertFalse(true);
 		
-		SetSchedule rwdao = new SetSchedule(_c);
+		/* SetSchedule rwdao = new SetSchedule(_c);
 		rwdao.purgeRaw(ScheduleSource.SKYTEAM);
-		for (RawScheduleEntry rse : rawEntries) {
+		for (RawScheduleEntry rse : rawEntries)
 			rwdao.writeRaw(rse);
-		}
 		
 		_c.commit();
-		log.info("Wrote " + rawEntries.size() + " raw schedule entries");
+		log.info("Wrote " + rawEntries.size() + " raw schedule entries"); */
 		
 		// Get from the database
 		final LocalDate today = LocalDate.now();
 		GetRawSchedule rawdao = new GetRawSchedule(_c);
 		Collection<RawScheduleEntry> todaysRaw = rawdao.load(ScheduleSource.SKYTEAM, today);
 		assertNotNull(todaysRaw);
+		assertFalse(todaysRaw.isEmpty());
 		
-		// Get today's flights - Map via short code
-		Map<String, List<ScheduleEntry>> fMap = new HashMap<String, List<ScheduleEntry>>();
-		rawEntries.stream().map(rse -> rse.toToday(today)).filter(Objects::nonNull).forEach(se -> addEntry(fMap, se.getShortCode(), se));
-		assertNotNull(fMap);
-		assertFalse(fMap.isEmpty());
-		
-		Supplier<IntStream> ss = () -> fMap.entrySet().stream().mapToInt(me -> me.getValue().size());
-		long totalFlights = ss.get().summaryStatistics().getSum();
-		long totalDupes = ss.get().filter(s -> (s > 1)).count();
-		assertEquals(totalFlights, todaysRaw.size());
-		
-		log.info("Processing " + fMap.size() + " flight codes for " + today);
-		log.info("Total Flights = " + totalFlights + ", dupe Count = " + totalDupes);
-		
-		ScheduleEntryComparator cmp = new ScheduleEntryComparator(ScheduleEntryComparator.DTIME);
-		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
-		for (List<ScheduleEntry> flights : fMap.values()) {
-			if (flights.size() > 1) {
-				Collections.sort(flights, cmp);
-				for (int x = 1; x < flights.size(); x++)
-					flights.get(x).setLeg(x + 1);
-			}
-			
-			entries.addAll(flights);
-		}
+		// Calculate the leg numbers
+		Collection<ScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(todaysRaw).stream().map(rse -> rse.toToday(today)).collect(Collectors.toList());
 		
 		// Make sure there are no dupes
-		Collection<ScheduleEntry> uniqueCheck = new LinkedHashSet<ScheduleEntry>(entries);
+		Collection<ScheduleEntry> uniqueCheck = new LinkedHashSet<ScheduleEntry>(legEntries);
 		assertNotNull(uniqueCheck);
-		assertEquals(entries.size(), uniqueCheck.size());
-	}
-	
-	private static <K, V> void addEntry(Map<K, List<V>> m, K key, V value) {
-		List<V> c = m.get(key);
-		if (c == null) {
-			c = new ArrayList<V>();
-			m.put(key, c);
-		}
-		
-		c.add(value);
+		assertEquals(legEntries.size(), uniqueCheck.size());
 	}
 }
