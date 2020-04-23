@@ -102,11 +102,21 @@ public class SetSchedule extends DAO {
 	
 	/**
 	 * Purges entries from the Flight Schedule.
+	 * @param src a ScheduleSource, or null for all
 	 * @return the number of deleted entries
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purge() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SCHEDULE")) {
+	public int purge(ScheduleSource src) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("DELETE FROM SCHEDULE");
+		if (src != null)
+			buf.append(" WHERE (SRC=?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			if (src != null)
+				ps.setInt(1, src.ordinal());
+			
 			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
