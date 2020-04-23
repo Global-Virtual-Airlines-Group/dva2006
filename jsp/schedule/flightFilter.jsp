@@ -17,6 +17,7 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.src,min:1,t:'Schedule Source'});
+	golgotha.form.validate({f:f.doPurge, t:'Schedule Purge Options'});
 	f.src.forEach(function(cb) { if (cb.checked) golgotha.form.validate({f:f[cb.value + '-effDate'], l:10,t:'Effective Date'}); });
 	golgotha.form.submit(f);
 	return true;
@@ -25,6 +26,13 @@ golgotha.local.validate = function(f) {
 golgotha.local.updateSource = function(cb) {
 	const rows = golgotha.util.getElementsByClass('src-' + cb.value, 'tr');
 	rows.forEach(function(r) { golgotha.util.display(r, cb.checked); });
+	return true;
+};
+
+golgotha.local.toggleAll = function(src) {
+	const f = document.forms[0];
+	const boxes = f['airline-' + src];
+	boxes.forEach(function(cb) { cb.checked = !cb.checked; });
 	return true;
 };
 
@@ -81,11 +89,12 @@ golgotha.onDOMReady(function() {
 <tr class="src-${src.source}" style="display:none;">
  <td class="label">Effective Date</td>
  <td class="data"><el:text name="${srcEffName}" size="9" max="10" idx="*" required="true" value="${fn:dateFmt(src.nextImportDate, dateFmt)}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].${srcEffName}')" />
-<c:if test="${!src.isCurrent}"><span class="nophone" > (Base Date: <fmt:date fmt="d" date="${src.baseDate}" tzName="UTC" />)</span></c:if></td>
+<c:if test="${!src.isCurrent && (!empty src.baseDate)}"><span class="nophone" > (Base Date: <fmt:date fmt="d" date="${src.baseDate}" tzName="UTC" />)</span></c:if></td>
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label top">Airlines</td>
- <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${srcAirlines[src.source]}" /></td>
+ <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${srcAirlines[src.source]}" />
+<c:if test="${src.options.size() > 6}"><br /><a href="javascript:golgotha.local.toggleAll('${src.source}')">TOGGLE ALL</a></c:if></td>
 </tr>
 </c:forEach>
 </el:table>

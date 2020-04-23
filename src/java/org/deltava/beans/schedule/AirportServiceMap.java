@@ -2,6 +2,7 @@
 package org.deltava.beans.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A bean to track which Airports are served by particular Airlines. 
@@ -27,7 +28,7 @@ public class AirportServiceMap extends TreeMap<Airline, Collection<Airport>> {
 		for (int x = 0; x < aps.length; x++)
 			airports.add(aps[x]);
 	}
-
+	
 	/**
 	 * Queries whether a particular Airline serves a particular Airport.
 	 * @param ap the Airport bean
@@ -46,8 +47,6 @@ public class AirportServiceMap extends TreeMap<Airline, Collection<Airport>> {
 	 * @see Airport#setAirlines(Collection)
 	 */
 	public Collection<String> getAirlineCodes(Airport a) {
-		Collection<String> results = new TreeSet<String>();
-		entrySet().stream().filter(me -> me.getValue().contains(a)).map(me -> me.getKey().getCode()).forEach(results::add);
-		return results;
+		return entrySet().stream().filter(me -> me.getValue().contains(a)).map(me -> me.getKey().getCode()).collect(Collectors.toCollection(TreeSet::new));
 	}
 }

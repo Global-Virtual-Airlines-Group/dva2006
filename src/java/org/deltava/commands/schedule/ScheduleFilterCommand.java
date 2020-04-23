@@ -28,7 +28,7 @@ import org.gvagroup.common.*;
 public class ScheduleFilterCommand extends AbstractCommand {
 	
 	private static final Logger log = Logger.getLogger(ScheduleFilterCommand.class);
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -65,7 +65,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter("eff" + src.name()), "MM/dd/yyyy"));
 			srcInfo.setImportDate(Instant.now());
 			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
-			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).collect(Collectors.toSet()).forEach(al -> srcInfo.setLegs(al, 1));
+			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(al -> srcInfo.setLegs(al, 1));
 			sources.add(srcInfo);
 		}
 		
@@ -73,58 +73,61 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 		try {
 			Connection con = ctx.getConnection();
-			
-			// Figure out what routePairs to import by source
+
+			// Load the entries, save source mappings
 			GetRawSchedule rawdao = new GetRawSchedule(con);
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
 			for (ScheduleSourceInfo src : sources) {
-				Collection<ImportRoute> rts = rawdao.getImportData(src.getSource(), src.getEffectiveDate());
-				for (ImportRoute ir : rts) {
-					String k = ir.createKey();
-					if (!srcPairs.containsKey(k))
-						srcPairs.put(k, ir);
+				int entriesLoaded = 0;
+				
+				// Load the entries, assign legs
+				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
+				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries);
+				for (RawScheduleEntry rse : legEntries) {
+					String key = rse.createKey();
+					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
+					if (ir.getSource() != src.getSource()) {
+						log.info(ir + " already imported by " + ir.getSource());
+						continue;
+					}
+					
+					boolean isAdded = entries.add(rse);
+					if (isAdded) {
+						entriesLoaded++;
+						ir.setFlights(ir.getFlights() + 1);
+						srcPairs.putIfAbsent(key, ir);
+					} else
+						log.info(rse.getShortCode() + " already exists [ " + ir + " ]");
 				}
+				
+				log.info("Loaded " + entriesLoaded + " " + src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
 			}
-
+			
 			// Start the transaction
 			ctx.startTX();
 			
 			// Purge if needed
 			SetSchedule dao = new SetSchedule(con);
-			boolean doPurge = Boolean.valueOf(ctx.getParameter("purgeAll")).booleanValue();
-			if (doPurge) {
-				dao.purge();
+			PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
+			if (doPurge != PurgeOptions.NONE) {
 				dao.purgeSourceAirlines();
+				if (doPurge == PurgeOptions.EXISTING) {
+					for (ScheduleSource src : srcs)
+						dao.purge(src);	
+				} else
+					dao.purge(null);
 			}
 			
-			// Load the entries, save source mappings
-			for (ScheduleSourceInfo src : sources) {
-				// Get the raw data
-				List<RawScheduleEntry> srcEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
-				for (RawScheduleEntry rse : srcEntries) {
-					ImportRoute ir = srcPairs.get(rse.createKey());
-					if ((ir == null) || (ir.getSource() != src.getSource()))
-						continue;
-					
-					boolean isAdded = entries.add(rse);
-					if (!isAdded)
-						log.info(rse.getShortCode() + " already exists");
-				}
-				
-				log.info("Loaded " + srcEntries.size() + " " + src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
+			// Save source/airline mappings
+			for (ScheduleSourceInfo src : sources)
 				dao.writeSourceAirlines(src);
-			}
 			
 			// Save the schedule entries
-			for (RawScheduleEntry rse : entries)
+			AirportServiceMap svcMap = new AirportServiceMap();
+			for (RawScheduleEntry rse : entries) {
+				svcMap.add(rse.getAirline(), rse.getAirportD(), rse.getAirportA());
 				dao.write(rse, false);
-			
-			// Change transaction isolocation
-			con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-			
-			// Load the airport service map
-			GetScheduleInfo sidao = new GetScheduleInfo(con);
-			AirportServiceMap svcMap = sidao.getRoutePairs();
+			}
 			
 			// Determine unserviced airports
 			boolean updateAirports = false;
@@ -147,7 +150,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Update airport map
 			if (updateAirports)
 				EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
-		} catch (SQLException | DAOException de) {
+		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {

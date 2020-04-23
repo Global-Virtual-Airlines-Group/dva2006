@@ -51,7 +51,7 @@ public class GetRawSchedule extends DAO {
 				}
 			}
 			
-			return isLoaded ? results.stream().filter(ssi -> (ssi.getImportDate() != null)).collect(Collectors.toSet()) : results;
+			return isLoaded ? results.stream().filter(ssi -> (ssi.getImportDate() != null)).collect(Collectors.toCollection(LinkedHashSet::new)) : results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -136,6 +136,7 @@ public class GetRawSchedule extends DAO {
 	 * @return a Collection of ImportRoute beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public Collection<ImportRoute> getImportData(ScheduleSource src, LocalDate ld) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT AIRPORT_D, AIRPORT_A, COUNT(*) AS CNT FROM RAW_SCHEDULE WHERE (SRC=?) AND (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0) GROUP BY AIRPORT_D, AIRPORT_A ORDER BY CNT DESC")) {
 			ps.setInt(1, src.ordinal());
