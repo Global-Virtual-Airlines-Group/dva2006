@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -28,11 +28,11 @@ import org.deltava.util.system.SystemData;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
-public class GetServInfo extends DAO {
+public class GetServInfo extends DAO implements OnlineNetworkDAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
@@ -86,12 +86,7 @@ public class GetServInfo extends DAO {
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
 	
-	/**
-	 * Loads network data.
-	 * @param network the network
-	 * @return a NetworkInfo bean
-	 * @throws DAOException if an HTTP error occurs
-	 */
+	@Override
 	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
 		try (LineNumberReader br = getReader()) {
 			NetworkInfo info = new NetworkInfo(network);

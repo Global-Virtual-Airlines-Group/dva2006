@@ -23,7 +23,6 @@ public class NetworkInfo implements Cacheable {
     private int _version = 7;
     private Instant _validDate;
     
-    private boolean _isExpired;
     private boolean _hasPilotIDs;
     
     private final Map<String, Pilot> _pilots = new TreeMap<String, Pilot>();
@@ -47,15 +46,6 @@ public class NetworkInfo implements Cacheable {
      */
     public int getVersion() {
         return _version;
-    }
-    
-    /**
-     * Returns if this date is probably out of date.
-     * @return TRUE if the data is out of date, otherwise FALSE
-     * @see NetworkInfo#setExpired()
-     */
-    public boolean getExpired() {
-    	return _isExpired;
     }
     
     /**
@@ -302,22 +292,10 @@ public class NetworkInfo implements Cacheable {
     	return results.isEmpty() ? null : results.get(0);
     }
     
-    /**
-	 * Marks this data as expired. <i>This flag cannot be cleared</i>.
-	 * @see NetworkInfo#getExpired()
-	 */
-    public void setExpired() {
-    	_isExpired = true;
-    }
-    
-    /**
-     * Clones this NetworkInfo bean.
-     */
     @Override
     public NetworkInfo clone() {
     	NetworkInfo ni2 = new NetworkInfo(_net);
     	ni2._version = _version;
-    	ni2._isExpired = _isExpired;
     	ni2._validDate = Instant.ofEpochMilli(_validDate.toEpochMilli());
     	ni2._pilots.putAll(_pilots);
     	ni2._controllers.putAll(_controllers);
@@ -325,18 +303,11 @@ public class NetworkInfo implements Cacheable {
     	return ni2;
     }
     
-    /**
-     * Returns the network's hash code.
-     */
     @Override
     public int hashCode() {
        return _net.hashCode();
     }
   
-    /**
-     * Returns this object's cache key.
-     * @return the network name
-     */
     @Override
     public Object cacheKey() {
        return _net;
