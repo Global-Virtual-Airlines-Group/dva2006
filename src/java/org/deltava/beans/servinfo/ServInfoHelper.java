@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 
-import org.deltava.dao.file.GetServInfo;
+import org.deltava.dao.file.*;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -16,11 +16,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 5.4
  */
 
-@Helper(GetServInfo.class)
+@Helper(NetworkInfo.class)
 public class ServInfoHelper {
 	
 	private static final Logger log = Logger.getLogger(ServInfoHelper.class);
@@ -43,22 +43,17 @@ public class ServInfoHelper {
 		if (info != null)
 			return info;
 		
-		try {
-			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-			if (f.exists()) {
-				try (FileInputStream fi = new FileInputStream(f)) {
-					GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-					info = sidao.getInfo(net);
-					if (info != null)
-						_iCache.add(info);	
-				}
-			} else
-				throw new FileNotFoundException(f.getAbsolutePath());
+		File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
+		boolean isJSON = f.getName().endsWith(".json");
+		try (FileInputStream fi = new FileInputStream(f)) {
+			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi);
+			info = dao.getInfo(net);
+			if (info != null)
+				_iCache.add(info);	
 		} catch (Exception e) {
 			log.error("Cannot load " + net + " ServInfo feed - " + e.getMessage(), e);
 			info = new NetworkInfo(net);
 			info.setValidDate(Instant.now());
-			info.setExpired();
 		}
 		
 		return info;

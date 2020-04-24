@@ -1,15 +1,16 @@
-// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
+import java.time.Instant;
+
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.*;
 
 /**
  * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 3.4
  */
 
@@ -17,8 +18,9 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	
 	private String _callSign;
 	private String _server;
+	private Instant _loginTime;
 	
-	protected GeoPosition _position;
+	protected GeoLocation _position;
 	
 	/**
 	 * Initializes the user.
@@ -46,6 +48,14 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns the date/time of the user's connection.
+	 * @return the login date/time
+	 */
+	public Instant getLoginTime() {
+		return _loginTime;
 	}
 
 	/**
@@ -78,7 +88,7 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	 * @see ConnectedUser#getPosition()
 	 */
 	public void setPosition(double lat, double lon) {
-		_position = new GeoPosition(GeoUtils.normalize(lat, lon));
+		_position = GeoUtils.normalize(lat, lon);
 	}
 	
 	/**
@@ -90,6 +100,14 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	 */
 	public void setPosition(String lat, String lon) {
 		setPosition(StringUtils.parse(lat, 0.0d), StringUtils.parse(lon, 0.0d));
+	}
+	
+	/**
+	 * Updates the date/time of the user's last connection.
+	 * @param dt the connection date/time
+	 */
+	public void setLoginTime(Instant dt) {
+		_loginTime = dt;
 	}
 	
     /**
