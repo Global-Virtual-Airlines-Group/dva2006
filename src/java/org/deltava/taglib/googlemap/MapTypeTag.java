@@ -1,4 +1,4 @@
-// Copyright 2007, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010, 2013, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -6,9 +6,9 @@ import javax.servlet.jsp.*;
 import org.deltava.util.StringUtils;
 
 /**
- * A JSP tag to set the base layer on a  Google Map.
+ * A JSP tag to set the base layer on a Google Map.
  * @author Luke
- * @version 5.2
+ * @version 9.0
  * @since 2.1
  */
 
@@ -34,18 +34,16 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	/*
 	 * Helper method to convert short codes into map type object names.
 	 */
-	private String convertType(String type) {
-		if (type == null)
-			return null;
+	private static String convertType(String type) {
+		if (type == null) return null;
 		
-		String[] MAP_OPTS = (getAPIVersion() == 3) ? V3_MAP_OPTS : V3_MAP_OPTS;
 		String mapType = type.toUpperCase();
-		int ofs = StringUtils.arrayIndexOf(MAP_OPTS, mapType, -1);
+		int ofs = StringUtils.arrayIndexOf(V3_MAP_OPTS, mapType, -1);
 		if (ofs != -1)
 			return mapType;
 		
 		ofs = StringUtils.arrayIndexOf(MAP_CODES, mapType, -1);
-		return (ofs != -1) ? MAP_OPTS[ofs] : null;
+		return (ofs != -1) ? V3_MAP_OPTS[ofs] : null;
 	}
 	
 	/**
@@ -62,27 +60,14 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	 */
 	public void setDefault(String defType) {
 		String type = convertType(defType);
-		if (type != null)
-			_default = type;
+		_default = (type == null) ? V3_DEFAULT : type;
 	}
 	
-	/**
-	 * Resets the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_default = null;
 		_mapType = null;
 		super.release();
-	}
-	
-	@Override
-	public int doStartTag() throws JspException {
-		super.doStartTag();
-		if (_default == null)
-			_default = (getAPIVersion() == 3) ? V3_DEFAULT : V3_DEFAULT;
-			
-		return SKIP_BODY;
 	}
 	
 	/**

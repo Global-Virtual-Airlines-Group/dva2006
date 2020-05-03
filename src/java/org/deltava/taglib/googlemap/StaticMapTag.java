@@ -1,19 +1,22 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
 
-import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.*;
+import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
+
 import org.deltava.taglib.html.ElementTag;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to insert a static Google Map on the page.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 6.0
  */
 
@@ -21,6 +24,7 @@ public class StaticMapTag extends ElementTag {
 	
 	private int _h;
 	private int _w;
+	private boolean _isAnonymous;
 	
 	private final List<MapEntry> _mrks = new ArrayList<MapEntry>();
 	private final Collection<GeoLocation> _path = new ArrayList<GeoLocation>();
@@ -78,8 +82,15 @@ public class StaticMapTag extends ElementTag {
 	}
 	
 	@Override
+	public void setPageContext(PageContext ctx) {
+		super.setPageContext(ctx);
+		HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
+		_isAnonymous = (req.getUserPrincipal() == null);
+	}
+	
+	@Override
 	public int doEndTag() throws JspException {
-		APIUsage.track(APIUsage.Type.STATIC);
+		APIUsage.track(APIUsage.Type.STATIC, _isAnonymous);
 		
 		// Build params
 		StringBuilder buf = new StringBuilder("maptype=terrain&size=");
@@ -90,16 +101,13 @@ public class StaticMapTag extends ElementTag {
 			buf.append("&markers=");
 			MapEntry me = _mrks.get(0);
 			if (me instanceof IconMapEntry) {
-				buf.append("icon:http");
-				if (pageContext.getRequest().isSecure())
-					buf.append('s');
-				
+				buf.append("icon:https://");
 				IconMapEntry ime = (IconMapEntry) me;
 				if (ime.getPaletteCode() == 0) {
-					buf.append("://").append(pageContext.getRequest().getServerName()).append('/');
+					buf.append(pageContext.getRequest().getServerName()).append('/');
 					buf.append(SystemData.get("path.img")).append("/maps/pal");
 				} else
-					buf.append("://maps.google.com/mapfiles/kml/pal");
+					buf.append("maps.google.com/mapfiles/kml/pal");
 				
 				buf.append(ime.getPaletteCode()).append("/icon").append(ime.getIconCode()).append(".png");
 			} else if (me instanceof MarkerMapEntry) {
@@ -133,11 +141,8 @@ public class StaticMapTag extends ElementTag {
 		}
 		
 		// Build the image URL
-		StringBuilder url = new StringBuilder("http");
-		if (pageContext.getRequest().isSecure())
-			url.append('s');
-		
-		url.append("://maps.googleapis.com/maps/api/staticmap?").append(buf.toString());
+		StringBuilder url = new StringBuilder("https://maps.googleapis.com/maps/api/staticmap?");
+		url.append(buf.toString());
 		_data.setAttribute("src", url.toString());
 		
 		try {
