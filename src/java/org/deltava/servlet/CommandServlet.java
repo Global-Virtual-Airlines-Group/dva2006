@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -88,11 +88,12 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 						swdao.logCommands(entries);
 						if (tlog.isDebugEnabled())
 							tlog.debug("Wrote command statistics");
+
+						swdao.logAPIRequests(APILogger.drain());
 					} catch (ConnectionPoolException | DAOException de) {
 						tlog.warn("Error writing command result staitistics - " + de.getMessage());
 					} finally {
 						pool.release(c);
-						_cmdLogPool.clear();
 					}
 				}
 			}
@@ -333,9 +334,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 	}
 	
-	/**
-	 * Logger thread uncaught exception handler.
-	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t != _logThread) {

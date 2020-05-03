@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view the Command History Log.
  * @author Luke
- * @version 2.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
         	 IDs.add(Integer.valueOf(id));
          
          // Get the DAO and the log entries
-         GetSystemData dao = new GetSystemData(con);
+         GetSystemLog dao = new GetSystemLog(con);
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
          

@@ -8,6 +8,7 @@ import java.time.zone.ZoneRules;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servlet.CommandLog;
+import org.deltava.beans.system.APIRequest;
 import org.deltava.beans.system.BlacklistEntry;
 
 /**
@@ -34,7 +35,7 @@ public class SetSystemData extends DAO {
 	 */
 	public void logCommands(Collection<CommandLog> entries) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) "
-				+ "VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CMDDATE=?")) {
+			+ "VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CMDDATE=?")) {
 			for (CommandLog log : entries) {
 				ps.setTimestamp(1, createTimestamp(log.getDate()));
 				ps.setInt(2, log.getPilotID());
@@ -54,6 +55,27 @@ public class SetSystemData extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	   /**
+	    * Writes external API requests to the database.
+	    * @param reqs a Collection of APIRequest beans
+	    * @throws DAOException if a JDBC error occurs
+	    */
+	   public void logAPIRequests(Collection<APIRequest> reqs) throws DAOException {
+		 try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_API_USAGE (USAGE_DATE, API, USE_COUNT, ANONYMOUS) VALUES (?, ?, 1, ?) ON DUPLICATE KEY UPDATE USE_COUNT=USE_COUNT+1, ANONYMOUS=ANONYMOUS+?")) {
+			 for (APIRequest req : reqs) {
+				 ps.setTimestamp(1, createTimestamp(req.getTime()));
+				 ps.setString(2, req.getName());
+				 ps.setInt(3, req.getIsAnonymous() ? 1 : 0);
+				 ps.setInt(4, req.getIsAnonymous() ? 1 : 0);
+				 ps.addBatch();
+			 }
+			 
+			 executeUpdate(ps, 1, reqs.size());
+		 } catch (SQLException se) {
+			 throw new DAOException(se);
+		 }
+	   }
 	
 	/**
 	 * Logs the execution time of a Scheduled Task.
