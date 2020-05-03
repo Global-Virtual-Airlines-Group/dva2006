@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
@@ -36,6 +37,8 @@ public class InsertGoogleAPITag extends TagSupport {
 	private String _minorVersion;
 	private String _cycle;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
+	
+	private boolean _isAnonymous;
 	
 	/**
 	 * Sets the Google API version to pull down.
@@ -71,10 +74,14 @@ public class InsertGoogleAPITag extends TagSupport {
 	public void setLibraries(String libList) {
 		_libraries.addAll(StringUtils.split(libList, ","));
 	}
+	
+	@Override
+	public void setPageContext(PageContext ctx) {
+		super.setPageContext(ctx);
+		HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
+		_isAnonymous = (req.getUserPrincipal() == null);
+	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -97,7 +104,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			return EVAL_PAGE;
 		
 		// Translate stable/release v3 to minor version
-		APIUsage.track(APIUsage.Type.DYNAMIC);
+		APIUsage.track(APIUsage.Type.DYNAMIC, _isAnonymous);
 		if ((_majorVersion == 3) && (_minorVersion == null) && (_cycle == null))
 			_cycle = DEFAULT_CYCLE;
 		

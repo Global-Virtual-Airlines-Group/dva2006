@@ -1,13 +1,15 @@
-// Copyright 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A JSP tag to store the number of times the Google Maps API has been requested since the web application was started.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 2.2
  */
 
@@ -29,11 +31,7 @@ public class APIUsageTag extends TagSupport {
 	 * @param t the Google Maps API type
 	 */
 	public void setType(String t) {
-		try {
-			_apiType = APIUsage.Type.valueOf(t.toUpperCase());
-		} catch (Exception e) {
-			_apiType = APIUsage.Type.DYNAMIC;
-		}
+		_apiType = EnumUtils.parse(APIUsage.Type.class, t.toUpperCase(), APIUsage.Type.DYNAMIC);
 	}
 	
 	/**
