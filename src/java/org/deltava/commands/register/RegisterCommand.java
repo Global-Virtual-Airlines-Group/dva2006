@@ -209,6 +209,7 @@ public class RegisterCommand extends AbstractCommand {
 				try {
 					GetVATSIMData dao = new GetVATSIMData();
 					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
+					APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 					if (c != null) {
 						StringBuilder buf = new StringBuilder("VATSIM ID belongs to ");
 						buf.append(c.getName());

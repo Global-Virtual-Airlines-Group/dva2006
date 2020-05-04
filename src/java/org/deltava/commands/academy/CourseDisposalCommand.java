@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.servinfo.PilotRating;
+import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -194,6 +195,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 					try {
 						SetVATSIMData vwdao = new SetVATSIMData();
 						vwdao.addRating(pr);
+						APILogger.add(new APIRequest(API.VATSIM.createName("ADDRATING"), !ctx.isAuthenticated()));
 						ctx.setAttribute("networkRatingAdded", Boolean.TRUE, REQUEST);
 					} catch (DAOException rde) {
 						ctx.setAttribute("networkRatingError", rde, REQUEST);

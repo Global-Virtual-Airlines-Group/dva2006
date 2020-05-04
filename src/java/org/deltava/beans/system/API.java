@@ -9,7 +9,7 @@ package org.deltava.beans.system;
  */
 
 public enum API {
-	GoogleMaps, FlightAware;
+	GoogleMaps, FlightAware, VATSIM, Google, WeatherCo;
 	
 	/**
 	 * Combines the API with a method name to generate an API call name.

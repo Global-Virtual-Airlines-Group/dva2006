@@ -7,7 +7,8 @@ import java.io.*;
 
 import javax.servlet.http.HttpSession;
 
-import org.deltava.beans.system.CAPTCHAResult;
+import org.deltava.beans.system.*;
+
 import org.deltava.commands.HTTPContext;
 import org.deltava.dao.http.GetGoogleCAPTCHA;
 
@@ -44,6 +45,7 @@ public class ValidateCAPTCHAService extends WebService {
 		}
 		
 		// Validate the token
+		APILogger.add(new APIRequest(API.Google.createName("CAPTCHA"), !ctx.isAuthenticated()));
 		try (BufferedReader sr = new BufferedReader(new InputStreamReader(ctx.getRequest().getInputStream()))) {
 			GetGoogleCAPTCHA cdao = new GetGoogleCAPTCHA();
 			cdao.setConnectTimeout(2500);
