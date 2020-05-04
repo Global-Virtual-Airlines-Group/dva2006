@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -296,7 +296,8 @@ abstract class PilotReadDAO extends DAO {
 				// Check if this result set has columns 53/54, which is the signature data
 				if (columnCount > 53) {
 					p.setSignatureExtension(rs.getString(53));
-					p.setSignatureModified(toInstant(rs.getTimestamp(54)));
+					if (!rs.wasNull()) // FIXME: Hack for mysql 8.0.20 joins
+						p.setSignatureModified(toInstant(rs.getTimestamp(54)));
 				}
 
 				// Check if this result set has columns 55/56, which are online legs/hours
