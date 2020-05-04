@@ -93,6 +93,11 @@ public class RawScheduleEntry extends ScheduleEntry {
 		return _endDate;
 	}
 	
+	@Override
+	public boolean getHistoric() {
+		return super.getHistoric() || getAirline().getHistoric();
+	}
+	
 	/**
 	 * Returns if a flight is operated on a particular date.
 	 * @param ld the operating date
