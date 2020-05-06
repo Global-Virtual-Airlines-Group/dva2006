@@ -295,8 +295,9 @@ abstract class PilotReadDAO extends DAO {
 
 				// Check if this result set has columns 53/54, which is the signature data
 				if (columnCount > 53) {
-					p.setSignatureExtension(rs.getString(53));
-					if (!rs.wasNull()) // FIXME: Hack for mysql 8.0.20 joins
+					String ext = rs.getString(53);
+					p.setSignatureExtension((ext == null) ? null : ext.trim().toLowerCase());
+					if (p.getHasSignature()) // FIXME: Hack for mysql 8.0.20 joins
 						p.setSignatureModified(toInstant(rs.getTimestamp(54)));
 				}
 
