@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public final class StringUtils {
 	private static final String UPPER_AFTER = " \'-";
 	
 	private static final String RESERVED_CHARS = "<>&\"\'\\\n:";
-	private static final String[] REPLACE_ENTITIES = new String[] {"&lt;", "&gt;", "&amp;", "&quot;", "&#039;", "&#092;", "<br />\n", "&#58;"};
+	private static final String[] REPLACE_ENTITIES = {"&lt;", "&gt;", "&amp;", "&quot;", "&#039;", "&#092;", "<br />\n", "&#58;"};
 
 	// We're a singleton, alone and lonely
 	private StringUtils() {
@@ -38,6 +38,18 @@ public final class StringUtils {
 	 */
 	public static boolean isEmpty(CharSequence s) {
 		return ((s == null) || (s.length() == 0));
+	}
+	
+	/**
+	 * Removes leading and trailing double-quotes from a CSV string etntity. This will only remove a trailing quote if a leading quote is present.
+	 * @param s the string
+	 * @return the string minus any leading/trailing quotes
+	 */
+	public static String removeCSVQuotes(String s) {
+		if ((s == null) || (s.length() < 2)) return s;
+		boolean leadingQ = (s.charAt(0) == '"');
+		boolean trailingQ = (s.charAt(s.length() - 1) == '"');
+		return (leadingQ && trailingQ) ? s.substring(1, s.length() - 1) : s;
 	}
 
 	/**

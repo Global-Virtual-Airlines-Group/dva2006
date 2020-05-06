@@ -43,6 +43,13 @@ public class TestStringUtils extends TestCase {
     	assertEquals("A,B,CD", StringUtils.listConcat(l, ","));
     }
     
+    public void testRemoveCSVQuotes() {
+    	assertEquals("Foo", StringUtils.removeCSVQuotes("Foo"));
+    	assertEquals("Foo", StringUtils.removeCSVQuotes("\"Foo\""));
+    	assertEquals("Foo\"", StringUtils.removeCSVQuotes("Foo\""));
+    	assertEquals("\"Foo", StringUtils.removeCSVQuotes("\"Foo"));
+    }
+    
     public void testIntParse() {
     	assertEquals(0, StringUtils.parse("0", 1));
     	assertEquals(-2, StringUtils.parse("-2", 0));
