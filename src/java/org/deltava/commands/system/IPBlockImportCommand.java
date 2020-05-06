@@ -67,6 +67,7 @@ public class IPBlockImportCommand extends AbstractCommand {
 							List<String> tkns = StringUtils.split(data, ",");
 							if (tkns.size() < 9) {
 								msgs.add("Invalid token count (" + tkns.size() + ", expected 10) at Line " + lr.getLineNumber());
+								if (msgs.size() > 1200) data = null;
 								continue;
 							}
 
@@ -78,7 +79,7 @@ public class IPBlockImportCommand extends AbstractCommand {
 								ip.setRadius(StringUtils.parse(tkns.get(9), 50));
 							if (!StringUtils.isEmpty(ip.getCity()))
 								blocks.add(ip);
-							if (blocks.size() > 30) {
+							if (blocks.size() > 200) {
 								ipwdao.write(blocks);
 								blocks.clear();
 							}

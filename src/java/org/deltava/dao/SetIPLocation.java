@@ -1,4 +1,4 @@
-// Copyright 2013, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -29,8 +29,8 @@ public class SetIPLocation extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(IPLocation loc) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO geoip.LOCATIONS (ID, COUNTRY, REGION, REGION_NAME, CITY) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY "
-				+ "UPDATE COUNTRY=VALUES(COUNTRY), REGION=VALUES(REGION), REGION_NAME=VALUES(REGION_NAME), CITY=VALUES(CITY)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO geoip.LOCATIONS (ID, COUNTRY, REGION, REGION_NAME, CITY) VALUES (?, ?, ?, ?, ?) AS new(id, c, r, rn, ct) ON DUPLICATE KEY "
+				+ "UPDATE COUNTRY=new.c, REGION=new.r, REGION_NAME=new.rn, CITY=new.ct")) {
 			ps.setInt(1, loc.getID());
 			ps.setString(2, loc.getCountry().getCode());
 			ps.setString(3, loc.getRegionCode());
@@ -48,7 +48,8 @@ public class SetIPLocation extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<IPBlock> blocks) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO geoip.BLOCKS (ID, BLOCK_START, BLOCK_END, BITS, LOCATION_ID, LAT, LNG, RADIUS) VALUES (?, INET6_ATON(?), INET6_ATON(?), ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO geoip.BLOCKS (ID, BLOCK_START, BLOCK_END, BITS, LOCATION_ID, LAT, LNG, RADIUS) VALUES (?, INET6_ATON(?), INET6_ATON(?), ?, ?, ?, ?, ?) "
+			+ "AS new (id, bs, be, bts, loc, lat, lng, rd) ON DUPLICATE KEY UPDATE BLOCK_START=new.bs, BLOCK_END=new.be, BITS=new.bts, LAT=new.lat, LNG=new.lng, RADIUS=new.rd")) {
 			for (IPBlock ib : blocks) {
 				ps.setInt(1, ib.getID());
 				ps.setString(2, ib.getAddress());

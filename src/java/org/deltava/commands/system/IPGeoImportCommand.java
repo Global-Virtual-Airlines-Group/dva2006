@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to load IP GeoLocation data.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 8.7
  */
 
@@ -79,10 +79,10 @@ public class IPGeoImportCommand extends AbstractCommand {
 								loc.setRegionCode("");
 							} else {
 								loc.setRegionCode(tkns.get(6));
-								loc.setRegion(removeCSVQuotes(tkns.get(7)));
+								loc.setRegion(StringUtils.removeCSVQuotes(tkns.get(7)));
 							}
 
-							loc.setCityName(removeCSVQuotes(tkns.get(10)));
+							loc.setCityName(StringUtils.removeCSVQuotes(tkns.get(10)));
 							ipwdao.write(loc);
 							locCount++;
 						}
@@ -117,14 +117,5 @@ public class IPGeoImportCommand extends AbstractCommand {
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/ipUpdate.jsp");
 		result.setSuccess(true);
-	}
-	
-	/*
-	 * Helper method to parse CSV-quoted strings.
-	 */
-	private static String removeCSVQuotes(String s) {
-		if ((s == null) || (s.length() < 2)) return s;
-		boolean leadingQ = (s.charAt(0) == '"');
-		return s.substring(leadingQ ? 1 : 0, s.length() - (leadingQ ? 2 : 1));
 	}
 }
