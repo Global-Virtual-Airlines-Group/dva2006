@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -6,11 +6,12 @@ import org.json.*;
 import java.time.*;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.schedule.Airport;
 
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 7.3
  */
 
@@ -43,6 +44,23 @@ public class JSONUtils {
 		JSONObject jo = new JSONObject();
 		jo.put("lat", loc.getLatitude());
 		jo.put("lng", loc.getLongitude());
+		return jo;
+	}
+	
+	/**
+	 * Formats an Airport into a JSON object.
+	 * @param a an Airport
+	 * @return a JSONObject
+	 */
+	public static JSONObject format(Airport a) {
+		JSONObject jo = new JSONObject();
+		jo.put("icao", a.getICAO());
+		jo.put("iata", a.getIATA());
+		jo.put("name", a.getName());
+		jo.put("country", a.getCountry().getCode());
+		jo.put("lat", a.getLatitude());
+		jo.put("lng", a.getLongitude());
+		jo.put("alt", a.getAltitude());
 		return jo;
 	}
 	
