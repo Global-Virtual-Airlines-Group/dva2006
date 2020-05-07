@@ -44,7 +44,7 @@ public class ExportService extends WebService {
 			throw error(SC_FORBIDDEN, "Cannot export Flight Schedule");
 
 		// Load Sources
-		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(sc -> ScheduleSource.valueOf(sc)).collect(Collectors.toCollection(TreeSet::new));
+		Collection<ScheduleSource> srcs = StringUtils.split(ctx.getParameter("src"), ",").stream().map(sc -> ScheduleSource.valueOf(sc)).collect(Collectors.toCollection(TreeSet::new));
 		Collection<RawScheduleEntry> entries = new ArrayList<RawScheduleEntry>();
 		try {
 			GetRawSchedule dao = new GetRawSchedule(ctx.getConnection());
