@@ -75,21 +75,23 @@ public class GetSystemLog extends DAO {
 	/**
 	 * Retrtieves external API request statistics from the database.
 	 * @param api the API, or null for all
+	 * @param days the number of days to go back
 	 * @return a List of APIUsage beans 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<APIUsage> getAPIRequests(API api) throws DAOException {
+	public List<APIUsage> getAPIRequests(API api, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT USAGE_DATE, API, SUM(USE_COUNT), SUM(ANONYMOUS) FROM SYS_API_USAGE ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT USAGE_DATE, API, SUM(USE_COUNT), SUM(ANONYMOUS) FROM SYS_API_USAGE WHERE (USAGE_DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
 		if (api != null)
-			sqlBuf.append("WHERE (LEFT(API,?)=?) ");
+			sqlBuf.append("AND (LEFT(API,?)=?) ");
 		sqlBuf.append("GROUP BY DATE(USAGE_DATE) ORDER BY USAGE_DATE DESC, API");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, days);
 			if (api != null) {
-				ps.setInt(1, api.name().length() + 1);
-				ps.setString(2, api.createName(""));
+				ps.setInt(2, api.name().length() + 1);
+				ps.setString(3, api.createName(""));
 			}
 			
 			// Execute the Query
