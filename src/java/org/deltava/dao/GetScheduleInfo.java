@@ -29,29 +29,6 @@ public class GetScheduleInfo extends DAO {
 	}
 	
 	/**
-	 * Returns a map of serviced Airports by Airline.
-	 * @return an AirportServiceMap bean
-	 * @throws DAOException if a JDBC error occurs
-	 * @see AirportServiceMap
-	 */
-	@Deprecated
-	public AirportServiceMap getRoutePairs() throws DAOException {
-		AirportServiceMap svcMap = new AirportServiceMap();
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A")) {
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Airline a = SystemData.getAirline(rs.getString(1));
-					svcMap.add(a, SystemData.getAirport(rs.getString(2)), SystemData.getAirport(rs.getString(3)));
-				}
-			}
-			
-			return svcMap;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns the size of the Flight Schedule.
 	 * @return the number of legs
 	 * @throws DAOException if a JDBC error occurs
