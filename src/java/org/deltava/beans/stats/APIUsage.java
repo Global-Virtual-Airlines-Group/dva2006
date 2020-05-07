@@ -3,6 +3,8 @@ package org.deltava.beans.stats;
 
 import java.time.Instant;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to store external API usage statistics.
  * @author Luke
@@ -10,7 +12,7 @@ import java.time.Instant;
  * @since 9.0
  */
 
-public class APIUsage implements Comparable<APIUsage> {
+public class APIUsage implements Cacheable, Comparable<APIUsage> {
 
 	private final Instant _date;
 	private final String _name;
@@ -81,5 +83,12 @@ public class APIUsage implements Comparable<APIUsage> {
 	public int compareTo(APIUsage u2) {
 		int tmpResult = _date.compareTo(u2._date);
 		return (tmpResult == 0) ? _name.compareTo(u2._name) : tmpResult;
+	}
+
+	@Override
+	public Object cacheKey() {
+		StringBuilder buf = new StringBuilder(_name);
+		buf.append('-').append(_date.toEpochMilli());
+		return buf.toString();
 	}
 }

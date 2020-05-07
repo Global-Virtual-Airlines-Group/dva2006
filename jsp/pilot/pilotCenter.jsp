@@ -848,6 +848,10 @@ pilot Certification.</td>
  <el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd></td>
  <td class="data">You can import MaxMind GeoCity network block and location data files into the database.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="apistats">External API Usage</el:cmd></td>
+ <td class="data">You can view usage statistics and predictions for external API usage.</td>
+</tr>
 </content:filter>
 <content:filter roles="HR,Developer">
 <c:if test="${acarsEnabled}">
