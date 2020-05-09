@@ -28,13 +28,33 @@ public class GetRawSchedule extends DAO {
 	}
 	
 	/**
-	 * Returns all raw schedule sources.
+	 * Returns all raw schedule sources from the current airline's database.
 	 * @param isLoaded TRUE to only include loaded sources, otherwise FALSE
 	 * @return a Collection of ScheduleSourceInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleSourceInfo> getSources(boolean isLoaded) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, RSD.EFFDATE, RSD.IMPORTDATE FROM RAW_SCHEDULE RS LEFT JOIN RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC")) {
+		return getSources(isLoaded, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Returns all raw schedule sources.
+	 * @param isLoaded TRUE to only include loaded sources, otherwise FALSE
+	 * @param db the database name
+	 * @return a Collection of ScheduleSourceInfo beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleSourceInfo> getSources(boolean isLoaded, String db) throws DAOException {
+		
+		// Build the SQL statement
+		String dbName = formatDBName(db);
+		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, RSD.EFFDATE, RSD.IMPORTDATE FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".RAW_SCHEDULE RS LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			Collection<ScheduleSourceInfo> results = new LinkedHashSet<ScheduleSourceInfo>();
 			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
