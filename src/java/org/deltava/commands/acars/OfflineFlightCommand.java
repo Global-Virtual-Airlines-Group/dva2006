@@ -339,7 +339,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 			}
 			
 			// Check if it's a Flight Academy flight
+			GetRawSchedule rsdao  = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			sdao.setSources(rsdao.getSources(true));
 			ScheduleEntry sEntry = sdao.get(afr);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
 			Course c = null;

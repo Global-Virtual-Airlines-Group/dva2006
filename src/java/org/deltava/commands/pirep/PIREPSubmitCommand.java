@@ -120,7 +120,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 			
 			// Check if it's a Flight Academy flight
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
+			sdao.setSources(rsdao.getSources(true));
 			ScheduleEntry sEntry = sdao.get(pirep);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
 			if (isAcademy) {
