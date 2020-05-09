@@ -87,7 +87,9 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			Collection<ScheduleEntry> flightEntries = new ArrayList<ScheduleEntry>();
 			
 			// Load the schedule entries - allow multiple legs
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			sdao.setSources(rsdao.getSources(true));
 			sdao.setQueryMax(1);
 			for (int x = 0; x < totalLegs; x++) {
 				List<ScheduleEntry> legs = sdao.search(criteria);	
