@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2011, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.cooler.Channel;
@@ -58,7 +58,8 @@ public class CoolerChannelAccessControl extends AccessControl {
 			_canAccess = RoleUtils.hasAccess(_ctx.getRoles(), _c.getReadRoles()) || RoleUtils.hasAccess(_ctx.getRoles(), _c.getWriteRoles());
 			if (!_ctx.isAuthenticated() || !isDeveloper) {
 				_canAccess &= _c.getAirlines().contains(SystemData.get("airline.code"));
-				return;
+				if (!_ctx.isAuthenticated())
+					return;
 			}
 
 			// Get the pilot code; if none use the default
