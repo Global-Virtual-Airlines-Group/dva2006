@@ -206,7 +206,9 @@ public class FlightSubmitService extends SimFDRService {
 			fuelUse.getMessages().forEach(fuelMsg -> fr.addStatusUpdate(0, HistoryType.SYSTEM, fuelMsg));
 			
 			// Check the schedule database and check the route pair
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			sdao.setSources(rsdao.getSources(true));
 			FlightTime avgHours = sdao.getFlightTime(fr); ScheduleEntry onTimeEntry = null;
 			boolean isAssignment = (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			boolean isEvent = (fr.getDatabaseID(DatabaseID.EVENT) != 0);
