@@ -34,7 +34,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var act = f.action;
+const act = f.action;
 if (act.indexOf('threadmove.do') != -1)
 	golgotha.form.validate({f:f.newChannel, t:'Channel Name'});
 else if (act.indexOf('threadsubjectedit.do') != -1)
@@ -58,14 +58,14 @@ golgotha.local.openEmoticons = function() {
 <c:if test="${access.canReply && !doEdit}">
 golgotha.local.postQuote = function(postID, f)
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 
 	// Create the opening
-	var quote = '[quote';
+	let quote = '[quote';
 	if (js.author)
 		quote += '=' + js.author;
 	quote += ']';
