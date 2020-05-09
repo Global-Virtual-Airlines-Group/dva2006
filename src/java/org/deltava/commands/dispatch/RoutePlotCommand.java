@@ -1,7 +1,9 @@
-// Copyright 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
+import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -15,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 2.2
  */
 
@@ -46,7 +48,10 @@ public class RoutePlotCommand extends AbstractCommand {
 			ctx.setAttribute("airportsD", Collections.singleton(aD), REQUEST);
 			ctx.setAttribute("airportsA", Collections.singleton(aA), REQUEST);
 			try {
-				GetSchedule sdao = new GetSchedule(ctx.getConnection());
+				Connection con = ctx.getConnection();
+				GetRawSchedule rsdao = new GetRawSchedule(con);
+				GetSchedule sdao = new GetSchedule(con);
+				sdao.setSources(rsdao.getSources(true));
 				ctx.setAttribute("airlines", sdao.getAirlines(new ScheduleRoute(aD, aA)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -55,13 +60,7 @@ public class RoutePlotCommand extends AbstractCommand {
 			}
 		} else {
 			Collection<Airline> allAirlines = SystemData.getAirlines().values();
-			for (Iterator<Airline> i = allAirlines.iterator(); i.hasNext(); ) {
-				Airline a = i.next();
-				if (!a.getActive())
-					i.remove();
-			}
-			
-			ctx.setAttribute("airlines", allAirlines, REQUEST);
+			ctx.setAttribute("airlines", allAirlines.stream().filter(Airline::getActive).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 		}
 		
 		// Forward to the JSP

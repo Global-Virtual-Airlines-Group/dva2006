@@ -57,6 +57,7 @@ public class SearchService extends WebService {
 			
 			// Search the schedule
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			sdao.setSources(srcs);
 			results.addAll(sdao.search(ssc));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
