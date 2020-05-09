@@ -231,7 +231,7 @@ public class GetIssue extends DAO {
 	private static List<Issue> execute(PreparedStatement ps) throws SQLException {
 		List<Issue> results = new ArrayList<Issue>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasCommentCount = (rs.getMetaData().getColumnCount() > 15);
+			boolean hasLastComment = (rs.getMetaData().getColumnCount() > 14);
 			while (rs.next()) {
 				Issue i = new Issue(rs.getInt(1), rs.getString(6));
 				i.setAuthorID(rs.getInt(2));
@@ -246,10 +246,8 @@ public class GetIssue extends DAO {
 				i.setMajorVersion(rs.getInt(12));
 				i.setMinorVersion(rs.getInt(13));
 				i.setSecurity(IssueSecurity.values()[rs.getInt(14)]);
-				if (hasCommentCount) {
+				if (hasLastComment)
 					i.setLastCommentOn(toInstant(rs.getTimestamp(15)));
-					i.setCommentCount(rs.getInt(16));
-				}
 
 				results.add(i);
 			}
