@@ -64,7 +64,7 @@ ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td colspan="8">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
