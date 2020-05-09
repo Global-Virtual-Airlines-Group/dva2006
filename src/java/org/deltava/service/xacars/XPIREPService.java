@@ -203,7 +203,9 @@ public class XPIREPService extends XAService {
 			}
 			
 			// Check if it's a Flight Academy flight
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
+			sdao.setSources(rsdao.getSources(true));
 			ScheduleEntry sEntry = sdao.get(xfr);
 			xfr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
 			

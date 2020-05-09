@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build multi-leg flight assignments.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 4.1
  */
 
@@ -49,7 +49,9 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the legs
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
+			sdao.setSources(rsdao.getSources(true));
 			for (int leg = 1; leg <= legCount; leg++) {
 				String fCode = ctx.getParameter("leg" + leg);
 				if (StringUtils.isEmpty(fCode))
