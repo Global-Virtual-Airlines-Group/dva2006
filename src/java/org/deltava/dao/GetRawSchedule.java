@@ -3,11 +3,11 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.*;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -18,6 +18,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetRawSchedule extends DAO {
+	
+	private static final Cache<CacheableCollection<ScheduleSourceInfo>> _srcCache = CacheManager.getCollection(ScheduleSourceInfo.class, "ScheduleSource"); 
 
 	/**
 	 * Initializes the Data Access Object.
@@ -46,8 +48,14 @@ public class GetRawSchedule extends DAO {
 	 */
 	public Collection<ScheduleSourceInfo> getSources(boolean isLoaded, String db) throws DAOException {
 		
-		// Build the SQL statement
+		// Check the cache
 		String dbName = formatDBName(db);
+		String cacheKey = dbName + "!!" + (isLoaded ? "Loaded" : "ALL");
+		CacheableCollection<ScheduleSourceInfo> results = _srcCache.get(cacheKey);
+		if (results != null)
+			return results.clone();
+		
+		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, RSD.EFFDATE, RSD.IMPORTDATE FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".RAW_SCHEDULE RS LEFT JOIN ");
@@ -55,14 +63,14 @@ public class GetRawSchedule extends DAO {
 		sqlBuf.append(".RAW_SCHEDULE_DATES RSD ON (RS.SRC=RSD.SRC) GROUP BY SRC, AIRLINE ORDER BY SRC");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			Collection<ScheduleSourceInfo> results = new LinkedHashSet<ScheduleSourceInfo>();
+			Collection<ScheduleSourceInfo> srcs = new LinkedHashSet<ScheduleSourceInfo>();
 			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleSource ss = ScheduleSource.values()[rs.getInt(1)];
 					if ((inf == null) || (ss != inf.getSource())) {
 						inf = new ScheduleSourceInfo(ss);
-						results.add(inf);
+						srcs.add(inf);
 					}
 					
 					inf.setLegs(SystemData.getAirline(rs.getString(2)), rs.getInt(3));
@@ -71,7 +79,15 @@ public class GetRawSchedule extends DAO {
 				}
 			}
 			
-			return isLoaded ? results.stream().filter(ssi -> (ssi.getImportDate() != null)).collect(Collectors.toCollection(LinkedHashSet::new)) : results;
+			// Filter and add to the cache
+			results = new CacheableSet<ScheduleSourceInfo>(cacheKey);
+			if (isLoaded)
+				srcs.stream().filter(ssi -> (ssi.getImportDate() != null)).forEach(results::add);
+			else
+				results.addAll(srcs);
+			
+			_srcCache.add(results);
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
