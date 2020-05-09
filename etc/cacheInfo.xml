@@ -61,6 +61,7 @@
 	<cache id="EquipmentTypes" max="24" expires="3600" />
 	<cache id="Accomplishments" max="192" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
+	<cache id="ScheduleSource" remote="true" expires="3600" />
 
 	<cache id="MessageTemplate" max="32" />
 	<cache id="LibraryDLCount" max="144" expires="3600" />
