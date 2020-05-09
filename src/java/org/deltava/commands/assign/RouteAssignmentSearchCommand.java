@@ -56,7 +56,9 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			
 			// Load all route pairs
 			RoutePathHelper rph = new RoutePathHelper(400, 800);
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			sdao.setSources(rsdao.getSources(true));
 			rph.setLinks(sdao.getRoutePairs(allowHistoric));
 			
 			// Figure out the routes

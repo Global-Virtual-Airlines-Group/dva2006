@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -71,7 +71,9 @@ public class XInfoService extends XAService {
 			
 			// Load the requested flight
 			if ((f != null) && (fr == null)) {
+				GetRawSchedule rsdao = new GetRawSchedule(con);
 				GetSchedule sdao = new GetSchedule(con);
+				sdao.setSources(rsdao.getSources(true));
 				f.setLeg(0);
 				if (f.getAirline() == null)
 					f.setAirline(SystemData.getAirline(uid.getAirlineCode()));

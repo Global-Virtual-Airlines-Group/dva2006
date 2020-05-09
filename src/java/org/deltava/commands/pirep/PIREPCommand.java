@@ -439,7 +439,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Calculate the average time between the airports and user's networks
 			if (ac.getCanDispose()) {
+				GetRawSchedule rsdao = new GetRawSchedule(con);
 				org.deltava.dao.GetSchedule scdao = new org.deltava.dao.GetSchedule(con);
+				scdao.setSources(rsdao.getSources(true));
 				FlightTime ft = scdao.getFlightTime(fr);
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);

@@ -73,7 +73,9 @@ public class PFPXScheduleService extends DownloadService {
 			acInfo.putAll(CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName));
 			
 			// Load the schedule
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
+			sdao.setSources(rsdao.getSources(true));
 			sched = sdao.export();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
