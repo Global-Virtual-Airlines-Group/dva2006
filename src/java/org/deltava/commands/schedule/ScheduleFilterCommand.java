@@ -14,6 +14,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
@@ -147,7 +148,8 @@ public class ScheduleFilterCommand extends AbstractCommand {
 
 			ctx.commitTX();
 			
-			// Update airport map
+			// Update airport map and schedule source cache
+			CacheManager.invalidate("ScheduleSource", true);
 			if (updateAirports)
 				EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
 		} catch (DAOException de) {
