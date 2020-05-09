@@ -66,24 +66,23 @@ golgotha.local.validate = function(f) {
 <c:if test="${doSearch}">
 <view:table cmd="issues">
 <tr class="title caps">
- <td colspan="5" class="left">SEARCH RESULTS</td>
+ <td colspan="4" class="left">SEARCH RESULTS</td>
  <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if>
 <content:filter roles="Developer"><el:cmd url="issues" link="${pageContext.request.userPrincipal}">MY ISSUES</el:cmd></content:filter></td>
 </tr>
 <c:if test="${empty results}">
 <tr>
- <td colspan="9" class="pri bld">No Issues matching your search criteria were found.</td>
+ <td colspan="8" class="pri bld">No Issues matching your search criteria were found.</td>
 </tr>
 </c:if>
 <c:if test="${!empty results}">
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:4%">ID</td>
+ <td style="width:5%">ID</td>
  <td style="width:25%">TITLE</td>
- <td style="width:8%">PRIORITY</td>
+ <td style="width:10%">PRIORITY</td>
  <td style="width:10%">AREA</td>
  <td style="width:10%">TYPE</td>
- <td style="width:8%">COMMENTS</td>
  <td style="width:10%">CREATED</td>
  <td style="width:10%">LAST COMMENT</td>
  <td>RESOLVED</td>
@@ -97,7 +96,6 @@ golgotha.local.validate = function(f) {
  <td class="pri bld">${issue.priorityName}</td>
  <td class="bld">${issue.areaName}</td>
  <td class="sec bld">${issue.typeName}</td>
- <td><fmt:int value="${issue.commentCount}" /></td>
  <td><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
  <td class="bld"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>

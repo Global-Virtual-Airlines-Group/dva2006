@@ -98,13 +98,11 @@ public class TestIssue extends AbstractBeanTestCase {
 		
 		_i.add(ic);
 		assertEquals(1, _i.getComments().size());
-		assertEquals(_i.getComments().size(), _i.getCommentCount());
 		assertEquals(ic, new ArrayList<IssueComment>(_i.getComments()).get(0));
 		
 		_i.add(ic2);
 		assertEquals(2, _i.getComments().size());
 		assertEquals(ic2, new ArrayList<IssueComment>(_i.getComments()).get(0));
-		assertEquals(_i.getComments().size(), _i.getCommentCount());
 	}
 	
 	public void testComparator() {

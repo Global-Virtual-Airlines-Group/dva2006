@@ -34,7 +34,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>
- <td colspan="7">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
+ <td colspan="6">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
 <span class="nophone"> AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void golgotha.local.doSort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.doSort()" />
 &nbsp;&nbsp;<el:cmd url="isearch">SEARCH</el:cmd></span>&nbsp;<c:if test="${access.canCreate}"> | <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
@@ -45,10 +45,9 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
  <td style="width:4%">ID</td>
  <td style="width:30%">TITLE</td>
  <td style="width:8%">PRIORITY</td>
- <td class="nophone" style="width:8%">AREA</td>
- <td class="nophone" style="width:8%">TYPE</td>
- <td style="width:8%">COMMENTS</td>
- <td class="nophone" style="width:9%">CREATED</td>
+ <td class="nophone" style="width:10%">AREA</td>
+ <td class="nophone" style="width:10%">TYPE</td>
+ <td class="nophone" style="width:10%">CREATED</td>
  <td style="width:10%">LAST COMMENT</td>
  <td class="nophone" >RESOLVED</td>
 </tr>
@@ -61,7 +60,6 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
  <td class="pri bld small"><fmt:defaultMethod var="${issue.priority}" method="description" /></td>
  <td class="bld small nophone"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
  <td class="sec bld small nophone"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
- <td><fmt:int value="${issue.commentCount}" /></td>
  <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
  <td class="bld nophone"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>
@@ -70,7 +68,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
 <view:legend width="120" labels="Open,Fixed,Worked Around,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
 </tr>
 </view:table>

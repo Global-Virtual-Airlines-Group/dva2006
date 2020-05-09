@@ -43,7 +43,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 	
 	private final Collection<IssueComment> _comments = new TreeSet<IssueComment>();
-	private int _commentCount;
 	
 	/**
 	 * Creates a new Issue.
@@ -88,15 +87,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 */
 	public String getDescription() {
 		return _description;
-	}
-	
-	/**
-	 * Returns the number of comments on this Issue.
-	 * @return the number of comments
-	 * @see Issue#setCommentCount(int)
-	 */
-	public int getCommentCount() {
-	   return _comments.isEmpty() ? _commentCount : _comments.size();
 	}
 	
 	/**
@@ -334,23 +324,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setAssignedTo(int id) {
 		validateID(0, id);
 		_assignedTo = id;
-	}
-	
-	/**
-	 * Updates the number of comments on this Issue.
-	 * @param count the number of comments
-	 * @throws IllegalStateException if comments have already been loaded
-	 * @throws IllegalArgumentException if count is negative
-	 * @see Issue#getCommentCount()
-	 * @see Issue#add(IssueComment)
-	 */
-	public void setCommentCount(int count) {
-	   if (_comments.size() > 0)
-	      throw new IllegalStateException("Comments already loaded");
-	   else if (count < 0)
-	      throw new IllegalArgumentException("Comment Count cannot be negative");
-	   
-	   _commentCount = count;
 	}
 	
 	/**
