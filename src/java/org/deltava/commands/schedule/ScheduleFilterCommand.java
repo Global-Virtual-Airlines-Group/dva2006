@@ -110,13 +110,21 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Purge if needed
 			SetSchedule dao = new SetSchedule(con);
 			PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
-			if (doPurge != PurgeOptions.NONE) {
-				dao.purgeSourceAirlines();
-				if (doPurge == PurgeOptions.EXISTING) {
-					for (ScheduleSource src : srcs)
-						dao.purge(src);	
-				} else
-					dao.purge(null);
+			switch (doPurge) {
+			case EXISTING:
+				for (ScheduleSource src : srcs) {
+					dao.purgeSourceAirlines(src);
+					dao.purge(src);
+				}
+				
+				break;
+				
+			case ALL:
+				dao.purgeSourceAirlines(null);
+				dao.purge(null);
+				break;
+				
+			default:
 			}
 			
 			// Save source/airline mappings
