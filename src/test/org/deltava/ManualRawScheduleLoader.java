@@ -17,7 +17,9 @@ import junit.framework.TestCase;
 
 public class ManualRawScheduleLoader extends TestCase {
 	
-	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/afv?useSSL=false";
+	
+	private static Logger log;
 
 	private Connection _c;
 
@@ -27,12 +29,12 @@ public class ManualRawScheduleLoader extends TestCase {
 		
 		// Init Log4j
 		PropertyConfigurator.configure("etc/log4j.test.properties");
-		
+		log = Logger.getLogger(ManualRawScheduleLoader.class);
 		SystemData.init();
 
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -55,6 +57,7 @@ public class ManualRawScheduleLoader extends TestCase {
 	}
 
 	public void testCopyManualEntries() throws Exception {
+		assertFalse(true);
 		
 		// Load manual entries
 		GetSchedule sdao = new GetSchedule(_c);
@@ -76,6 +79,52 @@ public class ManualRawScheduleLoader extends TestCase {
 		_c.commit();
 	}
 	
+	public void testCopySpecificAirlines() throws Exception {
+		List<String> airlineCodes = List.of("ALP", "VD", "MU", "CZ");
+		
+		// Get max src line
+		int maxLine = 0;
+		try (PreparedStatement ps = _c.prepareStatement("SELECT MAX(SRCLINE) FROM RAW_SCHEDULE WHERE (SRC=?)")) {
+			ps.setInt(1, ScheduleSource.LEGACY.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
+				maxLine = rs.next() ? rs.getInt(1) : 0;
+			}
+		}
+		
+		// Load what we already have
+		GetRawSchedule rsdao = new GetRawSchedule(_c);
+		List<RawScheduleEntry> rawEntries = rsdao.load(ScheduleSource.LEGACY, LocalDate.now()).stream().filter(se -> airlineCodes.contains(se.getAirline().getCode())).collect(Collectors.toList());
+		log.info("Loaded " + rawEntries.size() + " raw Schdule Entries");
+		
+		// Load the new stuff
+		GetScheduleSearch sdao = new GetScheduleSearch(_c);
+		sdao.setSources(rsdao.getSources(false, "afv"));
+		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+		for (String aCode : airlineCodes) {
+			ScheduleSearchCriteria ssc = new ScheduleSearchCriteria(SystemData.getAirline(aCode), 0, 0);
+			ssc.setDBName("afv");
+			Collection<ScheduleEntry> entries = sdao.search(ssc);
+			log.info("Loaded " + entries.size() + " Schdule Entries for " + aCode);
+			for (ScheduleEntry se : entries) {
+				boolean isFound = rawEntries.stream().filter(rse -> rse.equals(se)).findAny().isPresent();
+				if (!isFound) {
+					log.info("Missing " + se.getFlightCode());
+					results.add(toRaw(se));
+				}
+			}
+		}
+		
+		// Write to the database
+		SetSchedule swdao = new SetSchedule(_c); int ln = maxLine + 1;
+		for (RawScheduleEntry rse : results) {
+			rse.setSource(ScheduleSource.LEGACY);
+			rse.setLineNumber(ln); ln++;
+			swdao.writeRaw(rse);
+		}
+		
+		// Commit
+		_c.commit();
+	}
 	
 	private static RawScheduleEntry toRaw(ScheduleEntry se) {
 		RawScheduleEntry rse = new RawScheduleEntry(se);
