@@ -161,11 +161,19 @@ public class SetSchedule extends DAO {
 	}
 	
 	/**
-	 * Purges all Raw Schedule source / airline mappings.
+	 * Purges Raw Schedule source / airline mappings.
+	 * @param src a ScheduleSource, or null for all 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purgeSourceAirlines() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE_AIRLINES")) {
+	public void purgeSourceAirlines(ScheduleSource src) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM RAW_SCHEDULE_AIRLINES");
+		if (src != null)
+			sqlBuf.append(" WHERE (SRC=?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			if (src != null) ps.setInt(1,  src.ordinal());
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
