@@ -10,21 +10,33 @@ import java.time.Instant;
  * @since 9.0
  */
 
-public class APIRequest implements Comparable<APIRequest> {
+public class APIRequest implements java.io.Serializable, Comparable<APIRequest> {
 	
 	private final Instant _usageTime = Instant.now();
 	
 	private final String _name;
-	private final boolean _isAnonymous; 
-
+	private final String _db;
+	private final boolean _isAnonymous;
+	
 	/**
 	 * Creates the bean.
 	 * @param name the API name
 	 * @param isAnonymous TRUE if not authenticated, otherwise FALSE
 	 */
 	public APIRequest(String name, boolean isAnonymous) {
+		this (name, null, isAnonymous);
+	}
+
+	/**
+	 * Creates the bean.
+	 * @param name the API name
+	 * @param db the database to log to
+	 * @param isAnonymous TRUE if not authenticated, otherwise FALSE
+	 */
+	public APIRequest(String name, String db, boolean isAnonymous) {
 		super();
 		_name = name;
+		_db = db;
 		_isAnonymous = isAnonymous;
 	}
 	
@@ -42,6 +54,14 @@ public class APIRequest implements Comparable<APIRequest> {
 	 */
 	public Instant getTime() {
 		return _usageTime;
+	}
+
+	/**
+	 * Returns the database name.
+	 * @return the database or null if unspecific
+	 */
+	public String getDB() {
+		return _db;
 	}
 	
 	/**
