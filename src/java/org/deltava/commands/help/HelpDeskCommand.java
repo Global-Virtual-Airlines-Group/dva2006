@@ -5,12 +5,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.help.Issue;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.comparators.*;
 
 import org.deltava.security.command.HelpDeskAccessControl;
 
@@ -72,9 +70,7 @@ public class HelpDeskCommand extends AbstractViewCommand {
 			
 			// Load Pilot IDs
 			GetPilot pdao = new GetPilot(con);
-			List<Pilot> pilots = new ArrayList<Pilot>(pdao.getByID(IDs, "PILOTS").values());
-			Collections.sort(pilots, new PilotComparator(PersonComparator.FIRSTNAME));
-			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
