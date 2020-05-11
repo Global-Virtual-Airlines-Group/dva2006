@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -230,7 +230,7 @@ public class SetEvent extends DAO {
 			if (r.getRouteID() == 0)
 				r.setRouteID(maxRouteID);
 				
-			try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+			try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
 				+ "AIRPORT_D=VALUES(AIRPORT_D), AIRPORT_A=VALUES(AIRPORT_A), ROUTE=VALUES(ROUTE), ACTIVE=VALUES(ACTIVE), RNAV=VALUES(RNAV), MAX_SIGNUPS=VALUES(MAX_SIGNUPS), NAME=VALUES(NAME)")) {
 				ps.setString(1, r.getAirportD().getIATA());
 				ps.setString(2, r.getAirportA().getIATA());
