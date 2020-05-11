@@ -10,16 +10,6 @@ import org.deltava.beans.*;
  * @since 9.0
  */
 
-public enum IssueStatus implements ComboAlias, EnumDescription {
+public enum IssueStatus implements EnumDescription {
 	OPEN, FIXED, WORKEDAROUND, WONTFIX, DEFERRED, DUPLICATE;
-	
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return getDescription();
-	}
 }
