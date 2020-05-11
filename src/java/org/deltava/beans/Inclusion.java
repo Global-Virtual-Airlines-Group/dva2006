@@ -8,16 +8,6 @@ package org.deltava.beans;
  * @since 8.6
  */
 
-public enum Inclusion implements ComboAlias, EnumDescription {
+public enum Inclusion implements EnumDescription {
 	ALL, INCLUDE, EXCLUDE;
-
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return getDescription();
-	}
 }

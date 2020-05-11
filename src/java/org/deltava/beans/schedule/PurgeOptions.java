@@ -10,7 +10,7 @@ import org.deltava.beans.*;
  * @since 9.0
  */
 
-public enum PurgeOptions implements EnumDescription, ComboAlias {
+public enum PurgeOptions implements EnumDescription {
 	NONE("Do Not Purge"), EXISTING("Existing Sources"), ALL("Complete Schedule");
 
 	private final String _desc;
@@ -22,15 +22,5 @@ public enum PurgeOptions implements EnumDescription, ComboAlias {
 	@Override
 	public String getDescription() {
 		return _desc;
-	}
-
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return getDescription();
 	}
 }

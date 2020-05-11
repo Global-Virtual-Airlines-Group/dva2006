@@ -8,7 +8,7 @@ package org.deltava.beans;
  * @since 9.0
  */
 
-public interface EnumDescription {
+public interface EnumDescription extends ComboAlias {
 
 	/**
 	 * The enumeration name.
@@ -22,5 +22,15 @@ public interface EnumDescription {
 	 */
 	default String getDescription() {
 		return name().substring(0, 1) + name().substring(1).toLowerCase();
+	}
+	
+	@Override
+	default String getComboAlias() {
+		return getDescription();
+	}
+	
+	@Override
+	default String getComboName() {
+		return name();
 	}
 }

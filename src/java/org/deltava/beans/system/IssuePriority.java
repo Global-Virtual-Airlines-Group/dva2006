@@ -10,16 +10,6 @@ import org.deltava.beans.*;
  * @since 9.0
  */
 
-public enum IssuePriority implements ComboAlias, EnumDescription {
+public enum IssuePriority implements EnumDescription {
 	LOW, MEDIUM, HIGH, CRITICAL;
-	
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return getDescription();
-	}
 }
