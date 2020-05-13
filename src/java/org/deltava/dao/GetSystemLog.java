@@ -2,11 +2,14 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.servlet.CommandLog;
 import org.deltava.beans.stats.APIUsage;
 import org.deltava.beans.system.API;
+
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to read system logging tables. 
@@ -16,7 +19,9 @@ import org.deltava.beans.system.API;
  */
 
 public class GetSystemLog extends DAO {
-
+	
+	private static final Cache<APIUsage> _todayAPICache = CacheManager.get(APIUsage.class, "APIStats");
+	
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -70,6 +75,38 @@ public class GetSystemLog extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Retrieves today's API request statistics from the database.
+	 * @param api an API enumeration
+	 * @param method the method name
+	 * @return an APIUsage bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public APIUsage getCurrentAPIUsage(API api, String method) throws DAOException {
+		
+		// Check the cache
+		String methodName = api.createName(method);
+		APIUsage result = _todayAPICache.get(methodName);
+		if (result != null)
+			return result;
+		
+		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS) FROM SYS_API_USAGE WHERE (API=?) AND (DATE(USAGE_DATE)= CURDATE()) GROUP BY DT LIMIT 1")) {
+			ps.setString(1, methodName);
+			try (ResultSet rs = ps.executeQuery()) {
+				result = new APIUsage(Instant.now(), methodName);
+				if (rs.next()) {
+					result.setTotal(rs.getInt(2));
+					result.setAnonymous(rs.getInt(3));
+				}
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+		
+		_todayAPICache.add(result);
+		return result;
 	}
 	
 	/**
