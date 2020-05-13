@@ -13,8 +13,8 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
-import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -230,9 +230,8 @@ abstract class PilotReadDAO extends DAO {
 	 */
 	protected static final List<Pilot> execute(PreparedStatement ps) throws SQLException {
 		String airlineCode = SystemData.get("airline.code");
+		
 		List<Pilot> results = new ArrayList<Pilot>();
-
-		// Get the pilot info from the list
 		try (ResultSet rs = ps.executeQuery()) {
 			int columnCount = rs.getMetaData().getColumnCount();
 			while (rs.next()) {
@@ -247,7 +246,6 @@ abstract class PilotReadDAO extends DAO {
 				p.setHomeAirport(rs.getString(10));
 				p.setEquipmentType(rs.getString(11));
 				p.setRank(Rank.values()[rs.getInt(12)]);
-				//p.setRank(Rank.fromName(rs.getString(12)));
 				p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
 				p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
 				p.setNetworkID(OnlineNetwork.PILOTEDGE, rs.getString(15));
@@ -296,7 +294,7 @@ abstract class PilotReadDAO extends DAO {
 				// Check if this result set has columns 53/54, which is the signature data
 				if (columnCount > 53) {
 					String ext = rs.getString(53);
-					p.setSignatureExtension((ext == null) ? null : ext.trim().toLowerCase());
+					p.setSignatureExtension((ext == null) ? null : ext.trim());
 					if (p.getHasSignature()) // FIXME: Hack for mysql 8.0.20 joins
 						p.setSignatureModified(toInstant(rs.getTimestamp(54)));
 				}
@@ -343,13 +341,7 @@ abstract class PilotReadDAO extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, AC_ID, DATE FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID IN (");
-		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
 		sqlBuf.append("))");
 
 		// Execute the query
@@ -374,13 +366,7 @@ abstract class PilotReadDAO extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM common.AUTH_ROLES WHERE (ID IN (");
-		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
 		sqlBuf.append("))");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -449,13 +435,7 @@ abstract class PilotReadDAO extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".RATINGS WHERE (ID IN (");
-		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
 		sqlBuf.append("))");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -475,16 +455,10 @@ abstract class PilotReadDAO extends DAO {
 	 * @param dbName the database name
 	 */
 	protected static final void updatePilotCodes(Collection<Pilot> pilots, String dbName) {
-		if (SystemData.get("airline.db").equals(dbName))
-			return;
-		
-		Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
-		for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
-			AirlineInformation info = (AirlineInformation) i.next();
+		if (SystemData.get("airline.db").equals(dbName)) return;
+		for (AirlineInformation info : SystemData.getApps()) {
 			if (dbName.equals(info.getDB())) {
-				for (Pilot p : pilots)
-					p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
-
+				pilots.forEach(p -> p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber())));
 				break;
 			}
 		}
