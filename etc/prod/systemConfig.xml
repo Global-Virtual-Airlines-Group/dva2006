@@ -372,6 +372,14 @@
 		</ivao>
 	</online>
 
+	<!-- API usage limits -->
+	<api>
+		<max>
+			<googleMaps type="Integer">25700</googleMaps>
+			<flightaware type="Integer">1500</flightaware>
+		</max>
+	</api>
+
 	<security>
 		<ssl type="Boolean">true</ssl>
 		<simFDR>***REMOVED***</simFDR>
