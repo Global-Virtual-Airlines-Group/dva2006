@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,13 +20,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class TransferProcessCommand extends AbstractCommand {
 	
-	private static final Collection<Rank> STAFF_RANKS = Arrays.asList(Rank.ACP, Rank.CP);
+	private static final Collection<Rank> STAFF_RANKS = List.of(Rank.ACP, Rank.CP);
 
 	/**
 	 * Executes the command.
@@ -85,7 +85,7 @@ public class TransferProcessCommand extends AbstractCommand {
 				ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
 			
 			// Check if the user has passed the Captain's examination
-			TestingHistoryHelper testHistory = new TestingHistoryHelper(usr, currEQ, exdao.getExams(usr.getID()), null);
+			TestingHistoryHelper testHistory = new TestingHistoryHelper(usr, currEQ, exdao.getExams(usr.getID()), Collections.emptyList());
 			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamNames(Rank.C));
 
 			// Check how many legs the user has completed
