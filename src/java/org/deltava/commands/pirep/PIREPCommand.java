@@ -19,6 +19,9 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
+import org.deltava.beans.stats.APIUsage;
+import org.deltava.beans.stats.APIUsageHelper;
+import org.deltava.beans.system.API;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -394,7 +397,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		MapType mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : MapType.GOOGLE;
 		try {
 			Connection con = ctx.getConnection();
-
+			
 			// Get the DAOs and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
 			GetPilot pdao = new GetPilot(con);
@@ -736,15 +739,37 @@ public class PIREPCommand extends AbstractFormCommand {
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN))
 				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
-			// If we're set to use Google Maps, calculate the route
+			// If we're set to use Google Maps, check API usage
 			if (mapType == MapType.GOOGLE) {
-				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
-			}
+				int max = SystemData.getInt("api.max.googleMaps", -1);
+				int dailyMax = max / 30;
+
+				// Get today's predicted use
+				GetSystemLog sldao = new GetSystemLog(con);
+				APIUsage todayUse = sldao.getCurrentAPIUsage(API.GoogleMaps, "DYNAMIC");
+				APIUsage predictedUse = APIUsageHelper.predictToday(todayUse);
+				
+				// If we're below the daily max, all good
+				if (predictedUse.getTotal() > dailyMax) {
+					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);	
+					
+					// Calculate actual usage
+					APIUsage totalUse = new APIUsage(Instant.now(), API.GoogleMaps.createName("DYNAMIC"));
+					usage.stream().forEach(u -> { totalUse.setTotal(totalUse.getTotal() + u.getTotal()); totalUse.setAnonymous(totalUse.getAnonymous() + u.getAnonymous()); });
+
+					// If predicted usage is less than 90% of max or less than 105% of max and we're auth, OK
+					if ((predictedUse.getTotal() > (max * 1.05)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9)))) {
+						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
+						mapType = MapType.FALLINGRAIN;
+					}
+				}
+			}				
 
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
+			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.GOOGLE), REQUEST);
+			ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
