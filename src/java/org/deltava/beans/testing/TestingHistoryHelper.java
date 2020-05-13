@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -96,10 +96,8 @@ public final class TestingHistoryHelper {
 		super();
 		_usr = p;
 		_myEQ = myEQ;
-		if (pireps != null)
-			_pireps.addAll(pireps);
-		if (tests != null)
-			_tests.addAll(tests);
+		_pireps.addAll(pireps);
+		_tests.addAll(tests);
 	}
 
 	/**
