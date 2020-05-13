@@ -58,6 +58,24 @@ public class APIUsageHelper {
 	}
 	
 	/**
+	 * Calculates today's predicted API usage.
+	 * @param u an APIUsage bean with today's use
+	 * @return an APIUsage with today's predicted use
+	 */
+	public static APIUsage predictToday(APIUsage u) {
+		
+		// Determine percentage of the day
+		int seconds = LocalTime.ofInstant(Instant.now(), ZoneOffset.UTC).toSecondOfDay();
+		double pct = 1 - (seconds / 86400d);
+		
+		// Apply percentage
+		APIUsage result = new APIUsage(u.getDate(), u.getName());
+		result.setTotal((int)(pct * u.getTotal()));
+		result.setAnonymous((int)(pct * u.getAnonymous()));
+		return result;
+	}
+	
+	/**
 	 * Returns the number of days remaining in the month, including today.
 	 * @return the number of days
 	 */
