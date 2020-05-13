@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -30,7 +30,7 @@ public class SetAcademy extends DAO {
 	public void write(Course c) throws DAOException {
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPCATE KEY UPDATE "
+			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
 				+ "CERTNAME=VALUES(CERTNAME), PILOT_ID=VALUES(PILOT_ID), INSTRUCTOR_ID=VALUES(INSTRUCTOR_ID), STATUS=VALUES(STATUS), STARTDATE=VALUES(STARTDATE), DNDDATE=VALUES(ENDDATE)")) {
 				ps.setString(1, c.getName());
 				ps.setInt(2, c.getPilotID());
