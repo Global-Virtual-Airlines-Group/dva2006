@@ -125,8 +125,6 @@ public abstract class PilotWriteDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected void writeAlias(int id, String... aliases) throws SQLException {
-		if (!SystemData.getBoolean("security.auth_alias")) return;
-		
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AUTH_ALIAS WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 0);
