@@ -20,6 +20,7 @@ import org.deltava.util.cache.Cacheable;
 public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 
 	private final ScheduleSource _src;
+	private int _maxLine;
 	private LocalDate _effDate;
 	private Instant _importDate;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
@@ -55,6 +56,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public Instant getImportDate() {
 		return _importDate;
+	}
+	
+	/**
+	 * Returns the maximum imported line number for this source.
+	 * @return the maximum line number
+	 */
+	public int getMaxLineNumber() {
+		return _maxLine;
 	}
 	
 	/**
@@ -149,6 +158,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public void setImportDate(Instant dt) {
 		_importDate = dt;
+	}
+	
+	/**
+	 * Updates the maximum imported line number for this source.
+	 * @param ln the line number
+	 */
+	public void setMaxLineNumber(int ln) {
+		_maxLine = ln;
 	}
 	
 	@Override
