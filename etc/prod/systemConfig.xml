@@ -209,7 +209,7 @@
 
 	<!-- JDBC data source configuration -->
 	<jdbc>
-		<driver>com.mysql.jdbc.Driver</driver>
+		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://mysql.gva.aws/dva</url>
 		<user>dva</user>
 		<pwd>m4n3l5</pwd>

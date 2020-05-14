@@ -31,7 +31,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 		SystemData.init();
 		
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		
