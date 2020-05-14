@@ -42,7 +42,7 @@ public class XPlaneRunwayLoader extends TestCase {
 		log = Logger.getLogger(XPlaneRunwayLoader.class);
 		
 		// Connect to the database
-		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
+		Class<?> c = Class.forName("com.mysql.cj.jdbc.Driver");
 		DriverManager.setLoginTimeout(3);
 		assertNotNull(c);
 	}

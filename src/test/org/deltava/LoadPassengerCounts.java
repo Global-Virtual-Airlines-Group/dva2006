@@ -40,7 +40,7 @@ public class LoadPassengerCounts extends TestCase {
 		_econ.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));
 		
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "test", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);

@@ -232,7 +232,7 @@
 	
 	<!-- JDBC data source configuration -->
 	<jdbc>
-		<driver>com.mysql.jdbc.Driver</driver>
+		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://db.server.name/db</url>
 		<user>dbUser</user>
 		<pwd>dbPassword</pwd>

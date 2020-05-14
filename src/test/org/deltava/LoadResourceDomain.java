@@ -27,7 +27,7 @@ public class LoadResourceDomain extends TestCase {
 		SystemData.init();
 
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "import", "import");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);

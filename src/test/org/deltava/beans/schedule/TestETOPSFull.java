@@ -24,7 +24,7 @@ public class TestETOPSFull extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
+		Class<?> c = Class.forName("com.mysql.cj.jdbc.Driver");
 		assertNotNull(c);
 		_c = DriverManager.getConnection(URL);
 		

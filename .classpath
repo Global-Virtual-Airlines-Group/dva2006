@@ -38,8 +38,8 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.14.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.20.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.49-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.26.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20190722.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.20.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

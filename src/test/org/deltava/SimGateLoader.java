@@ -53,7 +53,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 			xmlP.mkdirs();
 
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);

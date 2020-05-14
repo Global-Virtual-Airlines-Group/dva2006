@@ -27,7 +27,7 @@ public class TestDBQuerySpeed extends TestCase {
         systemProperties.put("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.Log4JLogger");
         System.setProperties(systemProperties);
 		
-		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
+		Class<?> c = Class.forName("com.mysql.cj.jdbc.Driver");
 		assertNotNull(c);
 	}
 

@@ -27,7 +27,7 @@ public class TestGetFARoutes extends TestCase {
 		log = Logger.getLogger(TestGetFARoutes.class);
 		
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
 			assertNotNull(c);
 		
