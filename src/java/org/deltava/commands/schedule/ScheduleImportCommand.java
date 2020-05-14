@@ -3,10 +3,10 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
-import java.time.LocalDate;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +16,7 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
+import org.deltava.dao.file.GetSchedule;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.*;
@@ -103,6 +103,21 @@ public class ScheduleImportCommand extends AbstractCommand {
 						st = dao.getStatus();
 					}
 
+					break;
+					
+				case LEGACY:
+					GetRawSchedule rsdao = new GetRawSchedule(con);
+					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false);
+					try (InputStream is = new FileInputStream(f)) {
+						GetSchedule dao = new GetSchedule(is);
+						dao.setDefaultSource(ScheduleSource.LEGACY);
+						dao.setAircraft(acdao.getAircraftTypes());
+						dao.setAirlines(adao.getActive().values());
+						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));
+						entries.addAll(dao.process());
+						st = dao.getStatus();
+					}
+					
 					break;
 
 				default:
