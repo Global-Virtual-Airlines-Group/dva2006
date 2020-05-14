@@ -38,7 +38,7 @@ public class SetLocations extends TestCase {
 		SystemData.init();
 
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		DriverManager.setLoginTimeout(5);
 		_c = DriverManager.getConnection(JDBC_URL, "luke", "luke");
 		assertNotNull(_c);

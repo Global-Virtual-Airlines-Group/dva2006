@@ -29,7 +29,7 @@ abstract class PlotMap {
 		TileData.init("D:\\temp\\swap");
 		
 		// Connect to the database
-		Class<?> drv = Class.forName("com.mysql.jdbc.Driver");
+		Class<?> drv = Class.forName("com.mysql.cj.jdbc.Driver");
 		assert (drv != null);
 		Connection c = DriverManager.getConnection(URL);
 		assert (c != null);

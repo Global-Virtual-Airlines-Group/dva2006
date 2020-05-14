@@ -48,7 +48,7 @@ public class TestFAAChartLoader extends TestCase {
 		SystemData.add(SystemData.JDBC_POOL, jdbcPool);
 		
 		// Connect to the database
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection c = jdbcPool.getConnection();
 		assertNotNull(c);
 
