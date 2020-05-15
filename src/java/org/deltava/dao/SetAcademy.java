@@ -31,7 +31,7 @@ public class SetAcademy extends DAO {
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-				+ "CERTNAME=VALUES(CERTNAME), PILOT_ID=VALUES(PILOT_ID), INSTRUCTOR_ID=VALUES(INSTRUCTOR_ID), STATUS=VALUES(STATUS), STARTDATE=VALUES(STARTDATE), DNDDATE=VALUES(ENDDATE)")) {
+				+ "CERTNAME=VALUES(CERTNAME), PILOT_ID=VALUES(PILOT_ID), INSTRUCTOR_ID=VALUES(INSTRUCTOR_ID), STATUS=VALUES(STATUS), STARTDATE=VALUES(STARTDATE), ENDDATE=VALUES(ENDDATE)")) {
 				ps.setString(1, c.getName());
 				ps.setInt(2, c.getPilotID());
 				ps.setInt(3, c.getInstructorID());
@@ -58,7 +58,6 @@ public class SetAcademy extends DAO {
 				updateProgress(cp);
 			}
 			
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
