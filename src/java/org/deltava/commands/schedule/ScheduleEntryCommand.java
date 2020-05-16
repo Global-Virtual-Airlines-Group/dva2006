@@ -39,7 +39,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the source/line
-		ScheduleSource src = ScheduleSource.valueOf(ctx.getParameter("src"));
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
 		boolean isNew = (srcLine > 0);
 
@@ -94,13 +94,11 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
 			wdao.writeRaw(entry);
-			ctx.commitTX();
 
 			// Set status attributes
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
 			ctx.setAttribute(isNew ? "isCreate" : "isUpdate", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
-			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
