@@ -17,7 +17,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airline, t:'Airline'});
@@ -96,6 +96,12 @@ golgotha.local.historicAirlines = ${historicAL};
 <c:if test="${empty entry}"> <td colspan="2">NEW <content:airline /> SCHEDULE ENTRY</td></c:if>
 <c:if test="${!empty entry}"> <td colspan="2">FLIGHT ${entry.flightCode}</td></c:if>
 </tr>
+<c:if test="${!empty entry}">
+<tr>
+ <td class="label">Source / Line</td>
+ <td class="data"><span class="pri bld">${entry.source.description}</span> Line <fmt:int value="${entry.lineNumber}"  /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Airline Name</td>
  <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void golgotha.local.changeAirline(this)" firstEntry="[ AIRLINE ]" /></td>
@@ -154,8 +160,9 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
  <td><el:button type="submit" label="SAVE SCHEDULE ENTRY" /><c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
 </tr>
 </el:table>
+<el:text type="hidden" name="srcLine" value="${!empty entry ? 0 : entry.lineNumber}" />
+<el:text type="hidden" name="src" value="${entry.source}" />
 </el:form>
-<br />
 <br />
 <content:copyright />
 </content:region>
