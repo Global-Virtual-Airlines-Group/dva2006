@@ -60,7 +60,7 @@
 <c:forEach var="entry" items="${viewContext.results}">
 <view:row entry="${entry}">
  <td class="small nophone">${entry.lineNumber}</td>
- <td class="pri bld">${entry.flightCode}</td>
+ <td class="pri bld"><el:cmd url="sched" linkID="${entry.source}-${entry.lineNumber}">${entry.flightCode}</el:cmd></td>
  <td class="small"><fmt:date fmt="d" d="MM/dd/yy" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd/yy" date="${entry.endDate}" /></td>
  <td class="small sec">${entry.dayCodes}</td>
  <td class="sec bld">${entry.equipmentType}</td>
@@ -85,7 +85,6 @@
 </content:page>
 </body>
 <script async>
-golgotha.local.f = document.forms[0];
 golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {
@@ -102,13 +101,15 @@ golgotha.local.setSrc = function(cb) {
 };
 
 golgotha.local.setAirportD = function(cb) {
-	const p = {src:golgotha.form.getCombo(golgotha.local.f.src), airportD:golgotha.form.getCombo(cb)};
+	const f = document.forms[0];
+	const p = {src:golgotha.form.getCombo(f.src), airportD:golgotha.form.getCombo(cb)};
 	self.location = '/rawbrowse.do?' + golgotha.local.createParams(p);
 	return true;
 };
 
 golgotha.local.setAirportA = function(cb) {
-	const p = {src:golgotha.form.getCombo(golgotha.local.f.src), airportD:golgotha.form.getCombo(golgotha.local.f.airportD)};
+	const f = document.forms[0];
+	const p = {src:golgotha.form.getCombo(f.src), airportD:golgotha.form.getCombo(f.airportD)};
 	if (golgotha.form.comboSet(cb))
 		p.airportA = golgotha.form.getCombo(cb);
 

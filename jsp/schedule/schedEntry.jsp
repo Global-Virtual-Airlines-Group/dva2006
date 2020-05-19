@@ -16,6 +16,7 @@
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
+<content:js name="datePicker" />
 <content:googleAnalytics eventSupport="true" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -65,7 +66,7 @@ golgotha.local.getAvailableLeg = function(f) {
 	golgotha.form.submit();
 	xmlreq.send(null);
 	return true;
-};
+};</c:if>
 
 golgotha.local.changeAirline = function(combo) {
 	const f = document.forms[0];
@@ -74,7 +75,7 @@ golgotha.local.changeAirline = function(combo) {
 	rows.forEach(function(r) { golgotha.util.display(r, (combo.selectedIndex > 0)); });
 	f.isHistoric.checked = golgotha.local.historicAirlines[golgotha.form.getCombo(combo)];
 	return true;
-};</c:if>
+};
 
 golgotha.local.historicAirlines = ${historicAL};
 </script>
@@ -117,15 +118,15 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </tr>
 <tr>
  <td class="label">Starts Operation on</td>
- <td class="data"><el:text name="startDate" idx="*" size="9" max="10" required="true" value="${entry.startDate}" /></td>
+ <td class="data"><el:text name="startDate" idx="*" size="9" max="10" required="true" value="${entry.startDate}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
 </tr>
 <tr>
  <td class="label">Ceases Operation on</td>
- <td class="data"><el:text name="endDate" idx="*" size="9" max="10" required="true" value="${entry.endDate}" /></td>
+ <td class="data"><el:text name="endDate" idx="*" size="9" max="10" required="true" value="${entry.endDate}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
 </tr>
 <tr>
  <td class="label">Days of Week</td>
- <td class="data"><el:check name="days" idx="*" className="small" cols="7" width="80" options="${daysOfWeek}" value="${entry.days}" /></td>
+ <td class="data"><el:check name="days" idx="*" className="small" cols="7" width="100" options="${daysOfWeek}" value="${entry.days}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -133,7 +134,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </tr>
 <tr class="airportRow">
  <td class="label">Departing From</td>
- <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
+ <td class="data"><el:combo name="airportD" size="1" options="${airportsD}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
  <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" /> at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <content:hasmsg>
@@ -144,7 +145,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </content:hasmsg>
 <tr class="airportRow">
  <td class="label">Arriving At</td>
- <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
+ <td class="data"><el:combo name="airportA" size="1" options="${airportsA}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
  <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" /> at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <tr>
@@ -171,7 +172,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <fmt:aptype var="useICAO" />
 <script async>
 const f = document.forms[0];
-const cfg = golgotha.airportLoad.config; 
+const cfg = golgotha.airportLoad.config;
 cfg.doICAO = ${useICAO}; cfg.useSched = false;
 golgotha.airportLoad.setHelpers(f.airportD);
 golgotha.airportLoad.setHelpers(f.airportA);
