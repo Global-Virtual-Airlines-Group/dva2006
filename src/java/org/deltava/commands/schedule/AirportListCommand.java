@@ -50,15 +50,8 @@ public class AirportListCommand extends AbstractViewCommand {
 			airports.sort(cmp);
 			vc.setResults(airports.subList(vc.getStart(), vc.getStart() + vc.getCount()));
 			ctx.setAttribute("airline", NO_GATE, REQUEST);
-		} else if ((a == null) && !StringUtils.isEmpty(aCode)) {
-		   a = SystemData.getAirline(SystemData.get("airline.code"));
-		   
-		   // THIS IS A HACK FOR AFV SINCE AIRLINE.CODE DOESN'T MATCH THE SCHEDULE DB
-		   if (a == null)
-		      a = SystemData.getAirline("AF");
-		   
-		   ctx.setAttribute("airline", a, REQUEST);
-		}
+		} else
+			ctx.setAttribute("airline", a, REQUEST);
 		
 		// Get all airlines
 		Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
@@ -67,7 +60,7 @@ public class AirportListCommand extends AbstractViewCommand {
 		airlines.addAll(SystemData.getAirlines().values());
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
-
+		
 		if (!NO_GATE.equals(aCode)) {
 			try {
 				GetAirport dao = new GetAirport(ctx.getConnection());
