@@ -206,13 +206,15 @@ public class GetRawSchedule extends DAO {
 				se.setLineNumber(rs.getInt(2));
 				se.setStartDate(rs.getDate(3).toLocalDate());
 				se.setEndDate(rs.getDate(4).toLocalDate());
+				se.setDayMap(rs.getInt(5));
 				se.setAirportD(SystemData.getAirport(rs.getString(9)));
 				se.setAirportA(SystemData.getAirport(rs.getString(10)));
 				se.setEquipmentType(rs.getString(11));
 				se.setTimeD(rs.getTimestamp(12).toLocalDateTime());
 				se.setTimeA(rs.getTimestamp(13).toLocalDateTime());
-				se.setCodeShare(rs.getString(14));
-				se.setDayMap(rs.getInt(5));
+				se.setForceInclude(rs.getBoolean(14));
+				se.setAcademy(rs.getBoolean(15));
+				se.setCodeShare(rs.getString(16));
 				results.add(se);
 			}
 		}
