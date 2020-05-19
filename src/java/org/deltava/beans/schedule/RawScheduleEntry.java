@@ -20,6 +20,7 @@ public class RawScheduleEntry extends ScheduleEntry {
 	private LocalDate _endDate;
 	
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
+	private boolean _forceInclude;
 	
 	/**
 	 * Creates the bean.
@@ -93,6 +94,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 		return _endDate;
 	}
 	
+	/**
+	 * Returns whether this entry is always included.
+	 * @return TRUE if always included, otherwise FALSE
+	 */
+	public boolean getForceInclude() {
+		return _forceInclude;
+	}
+	
 	@Override
 	public boolean getHistoric() {
 		return super.getHistoric() || getAirline().getHistoric();
@@ -148,6 +157,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public void setLineNumber(int ln) {
 		_line = ln;
+	}
+	
+	/**
+	 * Updates whether this entry should always be included in a schedule filter, even if the route is already imported.
+	 * @param doForce TRUE if always loaded, otherwsie FALSE
+	 */
+	public void setForceInclude(boolean doForce) {
+		_forceInclude = doForce;
 	}
 	
 	/**

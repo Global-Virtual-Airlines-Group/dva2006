@@ -48,7 +48,7 @@ public class SetSchedule extends DAO {
 			ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
 			ps.setBoolean(11, entry.getHistoric());
 			ps.setBoolean(12, entry.getAcademy());
-			ps.setInt(13, (entry.getSource() == null) ? -1 : entry.getSource().ordinal());
+			ps.setInt(13, entry.getSource().ordinal());
 			ps.setString(14, entry.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
@@ -62,7 +62,8 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, "
+			+ "FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?s)")) {
 			ps.setInt(1, rse.getSource().ordinal());
 			ps.setInt(2, rse.getLineNumber());
 			ps.setTimestamp(3, Timestamp.valueOf(rse.getStartDate().atStartOfDay()));
@@ -76,7 +77,9 @@ public class SetSchedule extends DAO {
 			ps.setString(11, rse.getEquipmentType());
 			ps.setTimestamp(12, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(13, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			ps.setString(14, rse.getCodeShare());
+			ps.setBoolean(14, rse.getForceInclude());
+			ps.setBoolean(15, rse.getAcademy());
+			ps.setString(16, rse.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
