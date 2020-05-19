@@ -17,7 +17,7 @@ if (!golgotha.form.check()) return false;
 
 // Check if all questions were answered
 let isOK = true; let qNum = 1;
-const a = golgotha.exam.getElementsById('A' + qNum);
+let a = golgotha.exam.getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
 	if (a.length == 1)
 		isOK = (isOK && (a[0].value.length > 1));
