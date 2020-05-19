@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -41,7 +41,7 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
  <td class="right" colspan="6">TOP <el:text name="viewCount" idx="*" size="2" max ="3" value="${viewContext.count}" /> PILOTS WITH A MINIMUM OF <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS
- WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${dayFilter}" /> IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button ID="SearchButton" type="submit" label="GO" /></td>
+ WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${dayFilter}" /> IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button type="submit" label="GO" /></td>
 </tr>
 <c:if test="${!empty viewContext.results}">
 <!-- Table Header Bar-->

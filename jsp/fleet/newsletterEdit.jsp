@@ -22,7 +22,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.title, l:10, t:'Newsletter Title'});
@@ -109,9 +109,7 @@ golgotha.local.validate = function(f) {
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="submit" label="SAVE MANUAL" />
-</c:if>
+<c:if test="${access.canEdit || access.canCreate}"><el:button type="submit" label="SAVE MANUAL" /></c:if>
  </td>
 </tr>
 </el:table>

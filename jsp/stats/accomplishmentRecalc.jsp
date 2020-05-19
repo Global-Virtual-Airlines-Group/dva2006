@@ -12,7 +12,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.id, t:'Accomplishment'});
@@ -77,7 +77,7 @@ ${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="CalcButton" type="submit" label="AWARD ACCOMPLISHMENT TO ELIGIBLE PILOTS" /></td>
+ <td><el:button type="submit" label="AWARD ACCOMPLISHMENT TO ELIGIBLE PILOTS" /></td>
 </tr>
 </el:table>
 </el:form>

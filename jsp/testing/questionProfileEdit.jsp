@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="examTake" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -38,9 +38,9 @@ return true;
 
 golgotha.local.toggleAnswerBox = function()
 {
-var aRow = document.getElementById('answerRow');
-var mcRows = golgotha.util.getElementsByClass('mcRow', 'tr');
-var f = document.forms[0];
+const aRow = document.getElementById('answerRow');
+const mcRows = golgotha.util.getElementsByClass('mcRow', 'tr');
+const f = document.forms[0];
 if (f.isMultiChoice) {
 	if (f.correct) f.correct.disabled = f.isMultiChoice.checked;
 	f.answerChoices.disabled = (!f.isMultiChoice.checked);
@@ -55,16 +55,16 @@ return true;
 
 golgotha.local.updateAnswerCombo = function()
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if ((!f.answerChoices) || (!f.correctChoice)) return false;
 var oldAnswer = golgotha.form.getCombo(f.correctChoice);
 
 // Copy each line in the textbox to an answer choice
-var choices = f.answerChoices.value.split('\n');
+const choices = f.answerChoices.value.split('\n');
 f.correctChoice.options.length = 1;
 f.correctChoice.options.length = choices.length + 1;
 for (var x = 0; x < choices.length; x++) {
-	var c = choices[x].replace('\r','');
+	const c = choices[x].replace('\r','');
 	f.correctChoice.options[x + 1] = new Option(c, c);
 	if (c == oldAnswer)
 		f.correctChoice.selectedIndex = x + 1;
@@ -170,7 +170,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE QUESTION" /></td>
+ <td><el:button type="submit" label="SAVE QUESTION" /></td>
 </tr>
 </el:table>
 </el:form>

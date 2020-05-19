@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.routeID, t:'Route to move Pilots to'});
@@ -63,8 +63,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><span style="color:#ffffff" class="bld">MOVE TO ROUTE</span> <el:combo name="routeID" idx="*" firstEntry="-" options="${event.routes}" />
- <el:button ID="SaveButton" type="submit" label="MOVE" /></td>
+ <td><span style="color:#ffffff" class="bld">MOVE TO ROUTE</span> <el:combo name="routeID" idx="*" firstEntry="-" options="${event.routes}" />&nbsp;<el:button type="submit" label="MOVE" /></td>
 </tr>
 </el:table>
 </el:form>

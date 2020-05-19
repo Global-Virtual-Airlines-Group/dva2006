@@ -21,22 +21,22 @@
 <content:json /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
-<script>
+<script async>
 golgotha.exam.expiry = ${exam.expiryDate.toEpochMilli()};
 <c:if test="${exam.routePlot}">
 golgotha.exam.rpQuestions = ${rpQuestions};
 golgotha.exam.initMaps = function()
 {
-var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 for (var x = 0; x < golgotha.exam.rpQuestions.length; x++) {
 	var idx = golgotha.exam.rpQuestions[x];
-	var info = golgotha.exam.rpInfo[idx];
-	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+	const info = golgotha.exam.rpInfo[idx];
+	const mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 	info.map = new golgotha.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);
 	info.aA.setMap(info.map);
-	var rt = new google.maps.Polyline({map:info.map, path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+	const rt = new google.maps.Polyline({map:info.map, path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 }
 
 return true;
@@ -88,7 +88,7 @@ golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
 </c:if>
 <c:if test="${isRP}">
 <!-- Map #${q.number} -->
-<script type="text/javascript">
+<script>
 var info = { examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance} };
 info.mapCenter = <map:point point="${q.midPoint}" />
 info.aD = <map:marker point="${q.airportD}" />
@@ -123,8 +123,7 @@ golgotha.exam.rpInfo[${q.number}] = info;
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canSubmit}">
-<el:button ID="SubmitButton" type="submit" label="SUBMIT EXAMINATION" /></c:if>
+<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT EXAMINATION" /></c:if>
  </td>
 </tr>
 </el:table>

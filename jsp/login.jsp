@@ -13,7 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:captcha action="login" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -91,7 +91,7 @@ able to accept cookies from <span class="sec bld">${domain}</span> in order to l
 </el:table>
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" label="LOG IN" type="submit" /></td>
+ <td><el:button label="LOG IN" type="submit" /></td>
 </tr>
 </el:table>
 <el:text name="jsOK" type="hidden" value="" /><el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />

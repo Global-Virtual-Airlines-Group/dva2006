@@ -227,7 +227,7 @@ for the most deserving individuals, we limit the number of nomnations that can b
 <div id="rowSelectPilot" style="display:none;"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="[ SELECT PILOT ]" options="${emptyList}" onChange="void golgotha.sc.setPilot(this)" />
  <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void golgotha.sc.search(this.value)" />&nbsp;<span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></div>
 <div id="rowLoading" class="bld caps">LOADING ELIGIBLE PILOT LIST, PLEASE WAIT...</div>
-<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" label="RELOAD" onClick="void golgotha.sc.getPilots()" /></div>
+<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button label="RELOAD" onClick="void golgotha.sc.getPilots()" /></div>
 </td>
 </tr>
 <tr id="rowComments" style="display:none;">

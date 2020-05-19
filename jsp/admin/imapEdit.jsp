@@ -18,7 +18,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.IMAPAddr, addr:true, t:'E-Mail Address'});
@@ -69,10 +69,8 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE IMAP MAILBOX" />
-<c:if test="${!empty mb.address}">
-&nbsp;<el:cmdbutton ID="DeleteButton" url="imapdelete" link="${mb}" label="DELETE IMAP MAILBOX" /> 
-</c:if></td>
+ <td><el:button type="submit" label="SAVE IMAP MAILBOX" />
+<c:if test="${!empty mb.address}">&nbsp;<el:cmdbutton url="imapdelete" link="${mb}" label="DELETE IMAP MAILBOX" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

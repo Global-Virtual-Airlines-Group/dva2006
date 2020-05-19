@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script>
+<script async>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {
@@ -27,7 +27,7 @@ return true;
 golgotha.local.updateAddress = function()
 {
 // Allow edits to the field and redirect
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.util.disable(f.email);
 f.email.readOnly = false;
 golgotha.util.disable(f.code);
@@ -35,11 +35,11 @@ golgotha.util.disable('ResendButton');
 f.action = '/appresendvalidate.do';
 
 // Relabel the submit button
-var sb = document.getElementById('SubmitButton');
+const sb = document.getElementById('SubmitButton');
 sb.value = 'UPDATE ADDRESS';
 
 // Hide this link
-var link = document.getElementById('updateAddrLink');
+const link = document.getElementById('updateAddrLink');
 link.innerHTML = '';
 return true;
 };
@@ -94,8 +94,7 @@ If you have provided us an incorrect e-mail address or you have not received the
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2"><el:button type="submit" ID="SubmitButton" label="VALIDATE ADDRESS" /> 
-<el:cmdbutton ID="ResendButton" url="appresendvalidate" link="${addr}" post="true" label="RESEND VALIDATION E-MAIL" /></td>
+ <td colspan="2"><el:button type="submit" label="VALIDATE ADDRESS" />&nbsp;<el:cmdbutton url="appresendvalidate" link="${addr}" post="true" label="RESEND VALIDATION E-MAIL" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -54,7 +54,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" onClick="void golgotha.flightBoard.updateMap(false)" label="REFRESH ${network} DATA" /></td>
+ <td><el:button onClick="void golgotha.flightBoard.updateMap(false)" label="REFRESH ${network} DATA" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -62,7 +62,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script async>
 golgotha.flightBoard.network = '${network}';
 const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 

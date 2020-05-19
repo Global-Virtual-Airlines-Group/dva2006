@@ -16,13 +16,13 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = f.action;
+const act = f.action;
 if (act.indexOf('enroll.do') != -1)
 {
 	golgotha.form.validate({f:f.courseName, t:'Please select the Course you wish to enroll in.'});
@@ -126,8 +126,7 @@ Flight Academy training course.</td>
  <td class="left" colspan="6">Please select a Flight Academy course from the list below. Make sure that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
 </tr>
 <tr class="title">
- <td colspan="6">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
- <el:button ID="EnrollButton" type="submit" label="ENROLL IN COURSE" /></td>
+ <td colspan="6">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />&nbsp;<el:button type="submit" label="ENROLL IN COURSE" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
@@ -154,8 +153,7 @@ The <content:airline /> Flight Academy instructors score examianations within 72
  able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="6">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="[ SELECT EXAM ]" />
- <el:cmdbutton ID="ExamButton" url="newacademyexam" post="true" label="NEW EXAMINATION" /></td>
+ <td colspan="6">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="[ SELECT EXAM ]" />&nbsp;<el:cmdbutton url="newacademyexam" post="true" label="NEW EXAMINATION" /></td>
 </tr>
 </c:otherwise>
 </c:choose>

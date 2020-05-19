@@ -16,17 +16,17 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var act = f.action;
+const act = f.action;
 if (act.indexOf('dupemerge.do') != -1) {
 	golgotha.form.validate({f:f.id, t:'Pilot to merge into'});
 	golgotha.form.validate({f:f.code, t:'new Pilot Code'});
 } else {
-	var hasFirst = (f.firstName.value.length > 2) || (f.firstName2.value.length > 2);
-	var hasLast = (f.lastName.value.length > 2) || (f.lastName2.value.length > 2);
+	const hasFirst = (f.firstName.value.length > 2) || (f.firstName2.value.length > 2);
+	const hasLast = (f.lastName.value.length > 2) || (f.lastName2.value.length > 2);
 	if (!hasFirst && !hasLast)
 		throw new golgotha.util.ValidationErorr('Please provide at least one First or Last Name.', f.firstName);	
 }
@@ -73,7 +73,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="PILOT SEARCH" /></td>
+ <td><el:button type="submit" label="PILOT SEARCH" /></td>
 </tr>
 </el:table>
 
@@ -149,7 +149,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="MergeButton" url="dupemerge" post="true" label="MERGE PILOTS" /></td>
+ <td><el:cmdbutton url="dupemerge" post="true" label="MERGE PILOTS" /></td>
 </tr>
 </el:table>
 </c:if>

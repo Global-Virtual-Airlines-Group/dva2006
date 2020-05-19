@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
 	if (!golgotha.form.check()) return false;
@@ -140,12 +140,9 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit}">
-<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" key="E" link="${issue}" /></c:if>
-<c:if test="${access.canComment}">
-&nbsp;<el:button ID="CommentButton" type="submit" key="S" label="SAVE NEW COMMENT" /></c:if>
-<c:if test="${access.canResolve}">
-&nbsp;<el:cmdbutton ID="ConvertButton" label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" /></c:if>
+<c:if test="${access.canEdit}"><el:cmdbutton label="EDIT ISSUE" url="issue" op="edit" link="${issue}" /></c:if>
+<c:if test="${access.canComment}">&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
+<c:if test="${access.canResolve}">&nbsp;<el:cmdbutton label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" /></c:if>
  </td>
 </tr>
 </el:table>

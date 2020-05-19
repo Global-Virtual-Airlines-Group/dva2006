@@ -15,18 +15,18 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
 if (!golgotha.form.check()) return false;
 
 // Get form action
-var act = f.action;
+const act = f.action;
 if (act.indexOf('hdcomment.do') != -1)
 	golgotha.form.validate({f:f.body, l:10, t:'Issue Comments'});
 else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
-	var isChecked = 0;
+	let isChecked = 0;
 	for (x = 0; x < f.faqIDs.length; x++)
 		isChecked += ((f.faqIDs[x].checked) ? 1 : 0);
 
@@ -46,16 +46,16 @@ return ${access.canComment};
 golgotha.local.selectResponse = function(f)
 {
 if (!golgotha.form.comboSet(f.rspTemplate)) return false;
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'hdrsptmp.ws?id=' + escape(golgotha.form.getCombo(f.rspTemplate)));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var xml = xmlreq.responseXML;
+	const xml = xmlreq.responseXML;
 	if (!xml) return false;
-	var xe = xml.documentElement;
-	var bds = xe.getElementsByTagName("body");
+	const xe = xml.documentElement;
+	const bds = xe.getElementsByTagName("body");
 	if (bds.length == 0) return false;
-	var body = bds[0].firstChild.data;
+	const body = bds[0].firstChild.data;
 	f.body.value += body;
 	return true;
 };
@@ -136,8 +136,7 @@ return true;
  <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="4" idx="*" className="req" resize="true"></el:textbox>
 <c:if test="${access.canUseTemplate && (!empty rspTemplates)}">
 <div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right nophone">
-Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />
-<el:button ID="TemplateButton" onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
+Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />&nbsp;<el:button onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
 </c:if></div>
  </td>
 </tr>
@@ -150,12 +149,9 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
  <td>
 <c:if test="${access.canUpdateStatus}">
 <el:cmdbutton label="EDIT ISSUE" url="hdissue" op="edit" link="${issue}" /></c:if>
-<c:if test="${access.canComment}">
-&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
-<c:if test="${access.canUpdateContent}">
-&nbsp;<el:cmdbutton label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" /></c:if>
-<c:if test="${access.canClose}">
-&nbsp;<el:cmdbutton label="CLOSE ISSUE" url="hdclose" link="${issue}" /></c:if>
+<c:if test="${access.canComment}">&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
+<c:if test="${access.canUpdateContent}">&nbsp;<el:cmdbutton label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" /></c:if>
+<c:if test="${access.canClose}">&nbsp;<el:cmdbutton label="CLOSE ISSUE" url="hdclose" link="${issue}" /></c:if>
  </td>
 </tr>
 </el:table>

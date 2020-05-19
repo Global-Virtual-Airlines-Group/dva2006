@@ -145,8 +145,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canEdit}"><el:cmdbutton ID="EditButton" url="aircraft" op="edit" link="${aircraft}" label="EDIT AIRCRAFT PROFILE" /></c:if>
+ <td>&nbsp;<c:if test="${access.canEdit}"><el:cmdbutton url="aircraft" op="edit" link="${aircraft}" label="EDIT AIRCRAFT PROFILE" /></c:if>
 </td>
 </tr>
 </el:table>

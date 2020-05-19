@@ -38,8 +38,7 @@ If you still wish to apply for membership at <content:airline />, we welcome you
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="RegisterButton" url="register" op="force" label="REGISTER AT ${airlineName}" />
- <el:cmdbutton ID="HomeButton" url="home" label="NO THANKS" /></td>
+ <td><el:cmdbutton url="register" op="force" label="REGISTER AT ${airlineName}" />&nbsp;<el:cmdbutton url="home" label="NO THANKS" /></td>
 </tr>
 </el:table>
 <br />

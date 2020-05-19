@@ -13,7 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:attr roles="HR" attr="isHR" value="true" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -76,7 +76,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" label="RESET PASSWORD" type="submit" /></td>
+ <td><el:button label="RESET PASSWORD" type="submit" /></td>
 </tr>
 </el:table>
 </el:form>

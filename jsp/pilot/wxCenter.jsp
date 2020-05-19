@@ -48,11 +48,11 @@ var f = document.forms[0];
 useFA = f.useFA.checked;</content:filter>
 	
 // Build the XML Request
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 
 	// Load the weather data
 	for (var i = 0; i < js.wx.length; i++) {
@@ -123,7 +123,7 @@ return true;
 
 golgotha.local.closeWindow = function() {
     this.isOpen = false;
-    var f = document.forms[0];
+    const f = document.forms[0];
     f.wxID.value = '';
     f.metarData.value = '';
     f.metarData.disabled = true;
@@ -144,7 +144,7 @@ if (this.tabs) {
 map.infoWindow.open(map, this); 
 	
 // Copy the data to the fields
-var f = document.forms[0];
+const f = document.forms[0];
 f.wxID.value = this.code;
 f.metarData.value = this.METAR;
 f.metarData.disabled = false;
@@ -175,8 +175,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport Code</td>
- <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" /> 
-  <el:button ID="FetchButton" onClick="void golgotha.local.loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
+ <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" />&nbsp;<el:button onClick="void golgotha.local.loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
 <content:filter roles="Route,Dispatch"> <el:box name="useFA" value="true" checked="false" label="Use FlightAware Weather" /></content:filter></td>
 </tr>
 <tr>
@@ -199,10 +198,10 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
-var mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
@@ -213,19 +212,18 @@ google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
-var jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
-var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+const jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
+const jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
+const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Build the layer controls
-var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'High Jet'}, hjsl));
@@ -240,7 +238,6 @@ map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementBy
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.reloadData(true);
-	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'zoom_changed');
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	golgotha.local.loadWX('${homeAirport.ICAO}');
@@ -256,7 +253,7 @@ golgotha.maps.reloadData = function(isReload) {
 		return false;
 	}
 	
-	var dv = document.getElementById('seriesRefresh');
+	const dv = document.getElementById('seriesRefresh');
 	if (dv != null) dv.innerHTML = new Date();
 	loaders.series.loadGinsu();
 	return true;

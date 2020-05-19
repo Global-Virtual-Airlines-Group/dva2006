@@ -12,7 +12,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.comment, l:6, t:'Reason for Suspension'});
@@ -48,7 +48,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SUSPEND USER" /></td>
+ <td><el:button type="submit" label="SUSPEND USER" /></td>
 </tr>
 </el:table>
 </el:form>

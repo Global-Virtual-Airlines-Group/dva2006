@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (f.action.indexOf('txreqdelete.do') == -1) {
@@ -29,9 +29,9 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.toggleBody = function(id, type) {
-	var row = document.getElementById('body' + type + id);
-	var linkDesc = document.getElementById('toggle' + type + id);
-	var visible = (row.style.display != 'none');
+	const row = document.getElementById('body' + type + id);
+	const linkDesc = document.getElementById('toggle' + type + id);
+	const visible = (row.style.display != 'none');
 	golgotha.util.display(row, !visible);
 	linkDesc.innerHTML = visible ? 'View' : 'Hide';
 	return true;
@@ -185,20 +185,15 @@ golgotha.local.toggleBody = function(id, type) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
-<c:if test="${!empty checkRide}">
-&nbsp;<el:cmdbutton ID="CheckRideButton" url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" /></c:if>
-<c:if test="${access.canAssignRide}">
-&nbsp;<el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></c:if>
-<c:if test="${access.canApprove}">
-&nbsp;<el:button ID="ApproveButton" type="submit" label="APPROVE TRANSFER" /></c:if>
-<c:if test="${access.canReject}">
-&nbsp;<el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" /></c:if>
+ <td><el:cmdbutton url="profile" link="${pilot}" label="VIEW PROFILE" />
+<c:if test="${!empty checkRide}">&nbsp;<el:cmdbutton url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" /></c:if>
+<c:if test="${access.canAssignRide}">&nbsp;<el:button type="submit" label="ASSIGN CHECK RIDE" /></c:if>
+<c:if test="${access.canApprove}">&nbsp;<el:button type="submit" label="APPROVE TRANSFER" /></c:if>
+<c:if test="${access.canReject}">&nbsp;<el:cmdbutton url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" /></c:if>
 <c:if test="${access.canToggleRatings}">
 <c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="page" />
-&nbsp;<el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /></c:if>
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" /></c:if>
+&nbsp;<el:cmdbutton url="txreqtoggle" link="${txReq}" label="${tgLabel}" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" /></c:if>
  </td>
 </tr>
 </el:table>

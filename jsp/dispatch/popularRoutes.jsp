@@ -15,10 +15,10 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.search = function(aD, aA)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 f.airportD.value = aD;
 f.airportA.value = aA;
 f.action = '/dsprsearch.do';
@@ -28,7 +28,7 @@ return true;
 <c:if test="${access.canCreate}">
 golgotha.local.plot = function(aD, aA)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 f.airportD.value = aD;
 f.airportA.value = aA;
 f.action = '/dsprouteplot.do';
@@ -53,8 +53,7 @@ return true;
  <td colspan="3" class="left caps"><content:airline /> Flight Route Popularity</td> 
  <td colspan="5" class="right"><el:box name="noRoutes" idx="*" value="true" label="Show Pairs without Dispatch Routes" checked="${param.noRoutes}" />
  <el:box name="allFlights" idx="*" value="true" label="Inlcude non-ACARS Flights" checked="${param.allFlights}" />
- in the past <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> Days 
- <el:button ID="UpdateButton" type="submit" label="GO" /></td>
+ in the past <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> Days <el:button type="submit" label="GO" /></td>
 </tr>
 <tr class="title caps">
  <td style="width:5%">#</td>
