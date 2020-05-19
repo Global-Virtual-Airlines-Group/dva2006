@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -122,17 +122,13 @@ public class GetScheduleSearch extends GetSchedule {
 
 		// Set departure/arrival time criteria +/- 2 hours
 		if (criteria.getHourD() >= 0) {
-			conditions.add("HOUR(S.TIME_D) >= ?");
-			conditions.add("HOUR(S.TIME_D) < ?");
-			params.add(String.valueOf(criteria.getHourD() - 1));
-			params.add(String.valueOf(criteria.getHourD() + 1));
+			conditions.add("HOUR(S.TIME_D)=?");
+			params.add(String.valueOf(criteria.getHourD()));
 		}
 
 		if (criteria.getHourA() >= 0) {
-			conditions.add("HOUR(S.TIME_A) >= ?");
-			conditions.add("HOUR(S.TIME_A) < ?");
-			params.add(String.valueOf(criteria.getHourA() - 1));
-			params.add(String.valueOf(criteria.getHourA() + 1));
+			conditions.add("HOUR(S.TIME_A)=?");
+			params.add(String.valueOf(criteria.getHourA()));
 		}
 		
 		// Check whether to include Flight Academy flights

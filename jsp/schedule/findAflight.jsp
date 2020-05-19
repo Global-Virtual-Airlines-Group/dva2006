@@ -146,17 +146,15 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" />
-<span class="nophone"> <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" />
- <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></span></td>
+<span class="nophone"> <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" /> <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></span></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
-<span class="nophone"> <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" />
- <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></span></td>
+<span class="nophone"> <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" /> <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></span></td>
 </tr>
 <tr>
- <td class="label">Departure Time (+/- 1h)</td>
+ <td class="label">Departure Time (+1h)</td>
  <td class="data"><el:combo name="hourD" idx="*" size="1" options="${hours}" value="${fafCriteria.hourD}" /></td>
- <td class="label">Arrival Time (+/- 1h)</td>
+ <td class="label">Arrival Time (+1h)</td>
  <td class="data"><el:combo name="hourA" idx="*" size="1" options="${hours}" value="${fafCriteria.hourA}" /></td>
 </tr>
 <tr>
