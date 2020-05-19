@@ -4,6 +4,7 @@ package org.deltava.commands.schedule;
 import java.time.*;
 import java.time.format.*;
 import java.time.temporal.*;
+import java.util.Collections;
 import java.sql.Connection;
 
 import org.json.*;
@@ -28,7 +29,7 @@ import org.deltava.util.system.SystemData;
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("[H]H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
 	 * Callback method called when saving the schedule entry.
@@ -80,6 +81,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setEquipmentType(ctx.getParameter("eqType"));
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+			entry.setForceInclude(Boolean.valueOf(ctx.getParameter("forceInclude")).booleanValue());
 			
 			// Parse times
 			entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeD"), _tf)));
@@ -120,8 +122,9 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the source/line
-		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
-		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
+		String id = (String) ctx.getCmdParameter(ID, "-"); int pos = id.indexOf('-');
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, id.substring(0, pos), ScheduleSource.MANUAL);
+		int srcLine = StringUtils.parse(id.substring(pos + 1), -1);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -132,6 +135,8 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
 
 				ctx.setAttribute("entry", entry, REQUEST);
+				ctx.setAttribute("airportsD", Collections.singletonList(entry.getAirportD()), REQUEST);
+				ctx.setAttribute("airportsA", Collections.singletonList(entry.getAirportA()), REQUEST);
 			}
 
 			//	Get aircraft types
