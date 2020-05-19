@@ -33,7 +33,7 @@ golgotha.local.validateBuild = function(f)
 if (!golgotha.form.check()) return false;
 const legNum = f.legCount.value;
 for (var x = 1; x <= legNum; x++) {
-	var radio = eval('f.leg' + x); var lg = 'leg' + x; var isOK = false;
+	const radio = f['leg' + x]; var isOK = false;
 	if (typeof radio.length != 'undefined') {
 		for (var y = 0; !isOK && (y < radio.length); y++)
 			isOK = radio[y].checked;
