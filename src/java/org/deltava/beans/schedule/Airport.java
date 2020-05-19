@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 7.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	private int _maxRunwayLength;
 	private String _region;
 	private String _supercededAirport;
-	private boolean _adseX;
+	private boolean _asdeX;
 	private boolean _hasGateData;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
@@ -108,12 +108,12 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	}
 	
 	/**
-	 * Sets whether this airport has ADSE-X radar.
-	 * @param hasADSE TRUE if ADSE-X present, otherwise FALSE
-	 * @see Airport#getADSE()
+	 * Sets whether this airport has ASDE-X radar.
+	 * @param hasASDE TRUE if ASDE-X present, otherwise FALSE
+	 * @see Airport#getASDE()
 	 */
-	public void setADSE(boolean hasADSE) {
-		_adseX = hasADSE;
+	public void setASDE(boolean hasASDE) {
+		_asdeX = hasASDE;
 	}
 	
 	/**
@@ -305,12 +305,12 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	}
 	
 	/**
-	 * Returns whether this Airport has ADSE-X radar.
-	 * @return TRUE if ADSE-X radar present, otherwise FALSE
-	 * @see Airport#setADSE(boolean)
+	 * Returns whether this Airport has ASDE-X radar.
+	 * @return TRUE if ASDE-X radar present, otherwise FALSE
+	 * @see Airport#setASDE(boolean)
 	 */
-	public boolean getADSE() {
-		return _adseX;
+	public boolean getASDE() {
+		return _asdeX;
 	}
 	
 	/**
@@ -517,7 +517,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		a2._alt = _alt;
 		a2._region = _region;
 		a2._supercededAirport = _supercededAirport;
-		a2._adseX = _adseX;
+		a2._asdeX = _asdeX;
 		a2._tz = _tz;
 		a2._maxRunwayLength = _maxRunwayLength;
 		a2._hasGateData = _hasGateData;
