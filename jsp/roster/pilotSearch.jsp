@@ -22,7 +22,7 @@ if (!golgotha.form.check()) return false;
 const hasName = (f.firstName.value.length > 2) || (f.lastName.value.length > 2);
 const hasCode = (f.pilotCode.value.length > 1);
 const hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
-const hasRating = true;
+let hasRating = true;
 try {
 	golgotha.form.validate({f:f.ratings, min:1, t:''});
 } catch (e) {
