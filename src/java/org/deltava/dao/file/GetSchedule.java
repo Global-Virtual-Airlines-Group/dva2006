@@ -128,6 +128,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 						// Discard distance, load historic
 						tkns.nextToken();
 						entry.setHistoric(Boolean.valueOf(tkns.nextToken()).booleanValue());
+						entry.setForceInclude(Boolean.valueOf(tkns.nextToken()).booleanValue());
+						entry.setAcademy(Boolean.valueOf(tkns.nextToken()).booleanValue());
 						results.add(entry);
 					} catch (Exception e) {
 						_status.addMessage("Error on line " + br.getLineNumber() + " - " + e.getMessage());
