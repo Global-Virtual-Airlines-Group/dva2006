@@ -24,9 +24,9 @@ if (!golgotha.form.check()) return false;
 
 // Validate existing routes
 for (var id = golgotha.local.routeIDs.pop(); (id != null); id = golgotha.local.routeIDs.pop()) {
-	golgotha.form.validate({f:eval('f.maxSignups' + id), min:0, t:'Maximum Signups for Route #' + id}); 
-	golgotha.form.validate({f:eval('f.route' + id), l:6, t:'Flight Route #' + id});
-	golgotha.form.validate({f:eval('f.routeName' + id), l:6, t:'Flight Route Name #' + id});
+	golgotha.form.validate({f:f['maxSignups' + id], min:0, t:'Maximum Signups for Route #' + id}); 
+	golgotha.form.validate({f:f['route' + id], l:6, t:'Flight Route #' + id});
+	golgotha.form.validate({f:f['routeName' + id], l:6, t:'Flight Route Name #' + id});
 }
 
 // Check if we're adding a new route
