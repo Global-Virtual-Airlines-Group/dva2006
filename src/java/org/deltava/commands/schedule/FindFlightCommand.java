@@ -94,8 +94,8 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
 		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
 		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
-		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
-			criteria.setMaxResults(150);
+		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 200))
+			criteria.setMaxResults(200);
 
 		// Set equipment type(s)
 		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
