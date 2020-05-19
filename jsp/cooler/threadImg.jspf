@@ -2,10 +2,8 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <c:if test="${!empty img || !empty thread.imageURLs }">
 <style type="text/css">
-@media (max-width: 1022px) {
-    img.gallery {
-        max-width:98%;    
-    }
+img.gallery {
+	max-width:98%;
 }
 </style></c:if>
 <c:choose>
