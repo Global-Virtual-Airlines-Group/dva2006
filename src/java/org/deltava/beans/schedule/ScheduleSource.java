@@ -8,7 +8,7 @@ package org.deltava.beans.schedule;
  * @since 9.0
  */
 
-public enum ScheduleSource implements org.deltava.beans.ComboAlias {
+public enum ScheduleSource implements org.deltava.beans.EnumDescription {
 	DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry");
 	
 	private final String _desc;
@@ -17,21 +17,8 @@ public enum ScheduleSource implements org.deltava.beans.ComboAlias {
 		_desc = desc;
 	}
 
-	/**
-	 * Returns the source description.
-	 * @return the description
-	 */
+	@Override
 	public String getDescription() {
-		return _desc;
-	}
-	
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
 		return _desc;
 	}
 }
