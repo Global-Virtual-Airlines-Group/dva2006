@@ -41,7 +41,7 @@
  <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
  <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.network}</td>
- <td class="sec nophone">${event.status.name}</td>
+ <td class="sec nophone">${event.status.description}</td>
  <td class="small nophone"><c:forEach var="route" items="${event.routes}">
 ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
