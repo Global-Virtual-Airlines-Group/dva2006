@@ -36,11 +36,11 @@ golgotha.util.disable('ResendButton');
 f.action = '/resendvalidate.do';
 
 // Relabel the submit button
-var sb = document.getElementById('SubmitButton');
+const sb = document.getElementById('SubmitButton');
 sb.value = 'UPDATE ADDRESS';
 
 // Hide this link
-var link = document.getElementById('updateAddrLink');
+const link = document.getElementById('updateAddrLink');
 link.innerHTML = '';
 return true;
 };
@@ -62,8 +62,7 @@ return true;
  <td colspan="2">E-Mail Address Validation Failure</td>
 </tr>
 <tr>
- <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your 
-e-mail address threfore cannot be validated. Please type in the validation code you received within the 
+ <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your e-mail address threfore cannot be validated. Please type in the validation code you received within the 
 e-mail message, into the space provided below.</td>
 </tr>
 </c:when>
@@ -73,8 +72,7 @@ e-mail message, into the space provided below.</td>
 </tr>
 <tr>
 <c:if test="${empty addr || (!addr.isValid)}">
- <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address 
-in the space provided below.</td>
+ <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address in the space provided below.</td>
 </c:if>
 <c:if test="${!empty addr && (addr.isValid)}">
  <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for membership here at <content:airline /> is providing a valid e-mail address. You should have received an e-mail 
@@ -107,8 +105,7 @@ message in your mailbox at ${addr.address} with a validation code. Please provid
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2"><el:button type="submit" ID="SubmitButton" label="VALIDATE ADDRESS" /> 
-<el:cmdbutton ID="ResendButton" url="resendvalidate" post="true" label="RESEND VALIDATION E-MAIL" /></td>
+ <td colspan="2"><el:button type="submit" label="VALIDATE ADDRESS" />&nbsp;<el:cmdbutton url="resendvalidate" post="true" label="RESEND VALIDATION E-MAIL" /></td>
 </tr>
 </el:table>
 </el:form>

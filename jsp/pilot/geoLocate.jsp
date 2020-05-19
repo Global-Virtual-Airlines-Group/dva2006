@@ -21,10 +21,10 @@ golgotha.maps.geoLocate.gpsError = function(err) { console.log('GPS Geolocation 
 golgotha.maps.geoLocate.updateLocation = function()
 {
 // Calculate latitude/longitude
-var f = document.forms[0];
-var lat = parseInt(f.latD.value) + (parseInt(f.latM.value) / 60) + (parseInt(f.latS.value) / 3600);
+const f = document.forms[0];
+let lat = parseInt(f.latD.value) + (parseInt(f.latM.value) / 60) + (parseInt(f.latS.value) / 3600);
 lat *= (f.latDir.selectedIndex * -1);
-var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.lonS.value) / 3600);
+let lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.lonS.value) / 3600);
 lng *= (f.lonDir.selectedIndex * -1);
 
 golgotha.maps.geoLocate.usrLocation.setMap(null);
@@ -38,7 +38,7 @@ golgotha.maps.geoLocate.geoLocate = function(addr)
 if (addr.value.length < 3) return false;
 
 // Do the lookup
-var isLoading = document.getElementById('isLoading');
+const isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - SEARCHING...';
 golgotha.util.disable('SearchButton');
 golgotha.maps.geoLocate.geoCoder.geocode({address:addr.value}, golgotha.maps.geoLocate.showResponse);
@@ -47,8 +47,8 @@ return true;
 
 golgotha.maps.geoLocate.showResponse = function(result, status)
 {
-var f = document.forms[0];
-var isLoading = document.getElementById('isLoading');
+const f = document.forms[0];
+const isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = '';
 golgotha.util.disable('SearchButton', false);
 
@@ -59,10 +59,9 @@ if ((!result.geometry) || (status != google.maps.GeocoderStatus.OK)) {
 }
 
 // Get the placemark
-var p = result.geometry.location;
-var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void golgotha.maps.geoLocate.setLatLon({latLng:new google.maps.LatLng('
-	+ p.toUrlValue() + ')});">SET LOCATION</a></span>';
-var mrk = new golgotha.maps.Marker({color:'white', info:lbl, map:map}, p);
+const p = result.geometry.location;
+const lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void golgotha.maps.geoLocate.setLatLon({latLng:new google.maps.LatLng('	+ p.toUrlValue() + ')});">SET LOCATION</a></span>';
+const mrk = new golgotha.maps.Marker({color:'white', info:lbl, map:map}, p);
 map.setCenter(p, 14);
 golgotha.event.beacon('Pilot Map', 'Geolocate');
 return true;
@@ -70,7 +69,7 @@ return true;
 
 golgotha.maps.geoLocate.setLatLon = function(me)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (golgotha.maps.geoLocate.usrLocation != null)
 	golgotha.maps.geoLocate.usrLocation.setMap(null);
 
@@ -152,8 +151,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE LOCATION" />
-<c:if test="${!empty location}">&nbsp;<el:cmdbutton ID="DeleteButton" url="geolocate" op="delete" label="DELETE LOCATION" /></c:if>
+ <td><el:button type="submit" label="UPDATE LOCATION" /><c:if test="${!empty location}">&nbsp;<el:cmdbutton url="geolocate" op="delete" label="DELETE LOCATION" /></c:if>
  </td>
 </tr>
 </el:table>
@@ -162,15 +160,15 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create map options
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+const mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
@@ -179,7 +177,7 @@ golgotha.maps.geoLocate.geoCoder = new google.maps.Geocoder();
 golgotha.maps.geoLocate.myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
 
 // Add user's location
-var labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
+const labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
 <c:if test="${!empty location}">
 <map:point var="usrLoc" point="${location}" />
 golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:usrLoc, icon:golgotha.maps.geoLocate.myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});

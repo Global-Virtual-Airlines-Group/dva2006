@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="examTake" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.submit(f);
@@ -95,7 +95,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE QUESTION" /></td>
+ <td><el:button type="submit" label="UPDATE QUESTION" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -54,7 +54,7 @@
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit}"><el:cmdbutton ID="EditButton" url="ainfo" linkID="${aInfo.code}" op="edit" label="EDIT VIRTUAL AIRLNE PROFILE" /></c:if>
+<c:if test="${access.canEdit}"><el:cmdbutton url="ainfo" linkID="${aInfo.code}" op="edit" label="EDIT VIRTUAL AIRLNE PROFILE" /></c:if>
 </td>
 </tr>
 </el:table>

@@ -66,7 +66,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="SEARCH TEXT MESSAGE LOG" /></td>
+ <td><el:button type="submit" label="SEARCH TEXT MESSAGE LOG" /></td>
 </tr>
 </el:table>
 </el:form>

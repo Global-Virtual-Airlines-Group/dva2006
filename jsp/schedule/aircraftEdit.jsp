@@ -195,7 +195,7 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); gol
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE AIRCRAFT PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE AIRCRAFT PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

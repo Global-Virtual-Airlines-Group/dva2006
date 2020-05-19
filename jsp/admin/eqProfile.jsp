@@ -18,7 +18,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -133,9 +133,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit}">
-<el:button ID="SaveButton" type="submit" label="SAVE EQUIPMENT PROGRAM" />
-</c:if>
+<c:if test="${access.canEdit}"><el:button type="submit" label="SAVE EQUIPMENT PROGRAM" /></c:if>
  </td>
 </tr>
 </el:table>

@@ -31,8 +31,8 @@ golgotha.local.showMap = function(f)
 if (!golgotha.form.check()) return false;
 
 // Build the URL
-var isChecked = false;
-var url = 'acars_earth.ws?showData=false&showRoute=' + form.showRoute.checked + '&id=';
+let isChecked = false;
+let url = 'acars_earth.ws?showData=false&showRoute=' + form.showRoute.checked + '&id=';
 if (f.doMap.length) {
 	for (var x = 0; x < f.doMap.length; x++) {
 		isChecked = isChecked || f.doMap[x].checked;
@@ -86,7 +86,7 @@ return false;
  <el:button label="CALENDAR" onClick="void show_calendar('forms[0].flightDate')" /></td>
 </tr>
 <tr class="title">
- <td colspan="4" class="mid"><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHTS" /></td>
+ <td colspan="4" class="mid"><el:button type="submit" label="SEARCH FLIGHTS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -134,7 +134,7 @@ return false;
 
 <!--  Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><el:button ID="MapButton" type="submit" label="DISPLAY USING GOOGLE EARTH" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><el:button type="submit" label="DISPLAY USING GOOGLE EARTH" /></td>
 </tr>
 </c:if>
 </view:table>

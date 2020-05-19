@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.passFail, min:1, t:'Check Ride status'});
@@ -46,7 +46,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
@@ -81,10 +81,10 @@ golgotha.local.validate = function(f) {
 <tr>
  <td>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
+ <el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
 <c:if test="${access.canScore}">
- <el:button ID="SubmitButton" type="submit" label="SCORE CHECK RIDE" />
+ <el:button type="submit" label="SCORE CHECK RIDE" />
 </c:if>
  </td>
 </tr>

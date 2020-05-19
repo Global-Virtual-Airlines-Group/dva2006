@@ -309,7 +309,7 @@
  <td class="data bld" colspan="${cspan}"><el:check name="frApprove" type="radio" options="${crFlightOpts}" idx="*" /></td>
 </tr>
 <tr class="title mid">
- <td colspan="${cspan + 1}"><el:button ID="CRButton" type="submit" label="PROCESS FLIGHT REPORT / SCORE CHECK RIDE" /></td>
+ <td colspan="${cspan + 1}"><el:button type="submit" label="PROCESS FLIGHT REPORT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
 <c:if test="${!scoreCR}">

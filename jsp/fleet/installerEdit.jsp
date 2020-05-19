@@ -20,7 +20,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -121,10 +121,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="submit" label="SAVE INSTALLER" />
-</c:if>
- </td>
+<c:if test="${access.canEdit || access.canCreate}"><el:button type="submit" label="SAVE INSTALLER" /></c:if> </td>
 </tr>
 </el:table>
 </el:form>

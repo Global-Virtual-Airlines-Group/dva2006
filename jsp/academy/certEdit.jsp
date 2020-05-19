@@ -13,9 +13,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script async>
 golgotha.local.showReqCert = function(combo) {
-	var opt = combo.options[combo.selectedIndex];
+	const opt = combo.options[combo.selectedIndex];
 	golgotha.util.display('reqCertRow', (opt.text == 'Specific Certification'));
 	golgotha.util.display('reqEQRow', opt.text.startsWith('Flight '));
 	return true;	
@@ -34,17 +34,17 @@ golgotha.form.validate({f:f.stage, min:1, t:'Certification Stage'});
 golgotha.form.validate({f:f.preReqs, t:'Examination Prerequisites'});
 
 // Check specific cert
-var reqCertRow = document.getElementById('reqCertRow');
+const reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none')
 	golgotha.form.validate({f:f.reqCert, t:'Specific Certification Prerequisite'});
 
 // Check min flights / hours
-var eqCertRow = document.getElementById('reqEQRow');
+const eqCertRow = document.getElementById('reqEQRow');
 if (eqCertRow.style.display != 'none')
 	golgotha.form.validate({f:f.flightCount, min:1, t:'Minimum flight Count'});
 
 // Check network rating code
-var ratingRow = document.getElementById('ratingCodeRow');
+const ratingRow = document.getElementById('ratingCodeRow');
 if (ratingRow.style.display != 'none')
 	golgotha.form.validate({f:f.ratingCode, l:2, t:'Online Network rating Code'});
 
@@ -53,7 +53,7 @@ return true;
 };
 
 golgotha.local.onload = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.form.resize(f.desc);
 	golgotha.local.showReqCert(f.preReqs);
 	golgotha.local.showNetworkRating(f.network);
@@ -148,7 +148,7 @@ golgotha.local.onload = function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="SaveButton" type="submit" label="SAVE CERTIFICATION PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE CERTIFICATION PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

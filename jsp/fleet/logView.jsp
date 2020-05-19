@@ -15,11 +15,11 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var isOK = golgotha.form.comboSet(f.installerCode) || golgotha.form.comboSet(f.os);
+let isOK = golgotha.form.comboSet(f.installerCode) || golgotha.form.comboSet(f.os);
 if (!isOK && (f.userCode.value.length < 2)) {
 	alert('Please provide an Installer Code, Operating System or User Code.');
 	f.installerCode.focus();
@@ -61,7 +61,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="SEARCH FLEET INSTALLER DATA" /></td>
+ <td><el:button type="submit" label="SEARCH FLEET INSTALLER DATA" /></td>
 </tr>
 </el:table>
 </el:form>

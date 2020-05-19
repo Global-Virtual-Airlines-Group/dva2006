@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 <c:forEach var="domain" items="${ourDomains}">
 golgotha.form.invalidDomains.push('${domain}');</c:forEach>
@@ -56,7 +56,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ActivateButton" type="submit" label="REACTIVATE PILOT" /></td>
+ <td><el:button type="submit" label="REACTIVATE PILOT" /></td>
 </tr>
 </el:table>
 <el:text name="op" type="hidden" value="force" />

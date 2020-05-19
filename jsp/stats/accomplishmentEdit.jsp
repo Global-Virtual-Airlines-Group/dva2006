@@ -15,7 +15,7 @@
 <content:js name="jsColor" />
 <content:sysdata var="forumName" name="airline.forum" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -28,21 +28,19 @@ return true;
 };
 
 golgotha.local.toggleAll = function() {
-    var f = document.forms[0];	
+    const f = document.forms[0];	
     golgotha.util.disable(f.value, f.doAll.checked);	
     return true;	
 };
 
 golgotha.local.showChoices = function()
 {
-var rows = golgotha.util.getElementsByClass('valueRow');
-for (var r = rows.pop(); (r != null); r = rows.pop())
-	golgotha.util.display(r, false);
-
+const rows = golgotha.util.getElementsByClass('valueRow');
+rows.forEach(function(r) { golgotha.util.display(r, false); });
 golgotha.util.display('chkAll', true);
 golgotha.local.toggleAll();
-var f = document.forms[0];
-var c = golgotha.form.getCombo(f.units);
+const f = document.forms[0];
+const c = golgotha.form.getCombo(f.units);
 switch (c) {
 case 'COUNTRIES':
 	golgotha.util.display('valueCountry', true);
@@ -167,8 +165,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE ACCOMPLISHMENT PROFILE" />
-<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="accdelete" link="${ap}" label="DELETE ACCOMPLISHMENT PROFILE" /></c:if></td>
+ <td><el:button type="submit" label="SAVE ACCOMPLISHMENT PROFILE" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="accdelete" link="${ap}" label="DELETE ACCOMPLISHMENT PROFILE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

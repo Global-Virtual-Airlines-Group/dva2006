@@ -16,14 +16,14 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="examTake" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
 // Check if all questions were answered
 var isOK = true; var qNum = 1;
-var a = golgotha.exam.getElementsById('A' + qNum);
+const a = golgotha.exam.getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
 	if (a.length == 1) {
 		isOK = (isOK && (a[0].value.length > 1));
@@ -98,8 +98,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canSubmit}">
-<el:button ID="SubmitButton" type="submit" label="SUBMIT QUESTIONNAIRE" />
+<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT QUESTIONNAIRE" />
 </c:if>
  </td>
 </tr>

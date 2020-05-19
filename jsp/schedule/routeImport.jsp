@@ -10,13 +10,12 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.routeData, ext:['csv'], t:'FAA Preferred Route Data'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.routeData, ext:['csv'], t:'FAA Preferred Route Data'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -37,8 +36,7 @@ return true;
  <td class="label top">Upload CSV File</td>
  <td class="data"><el:file name="routeData" idx="*" className="small req" size="80" max="144" /><br />
 <span class="small">FAA Preferred Route data must be in CSV format, with the following fields in the file:<br />
-<span class="bld ita">Orig, Route String, Dest, Hours1, Hours2, Hours3, Type, Area, Altitude, Aircraft, Direction, 
-Seq,DCNTR,ACNTR</span>.<br />
+<span class="bld ita">Orig, Route String, Dest, Hours1, Hours2, Hours3, Type, Area, Altitude, Aircraft, Direction, Seq,DCNTR,ACNTR</span>.<br />
 This is a total of 14 tokens, and we are only importing #1, #2, #3, #13 and #14.</span></td>
 </tr>
 </el:table>
@@ -46,7 +44,7 @@ This is a total of 14 tokens, and we are only importing #1, #2, #3, #13 and #14.
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPLOAD PREFERRED ROUTE DATA" /></td>
+ <td><el:button type="submit" label="UPLOAD PREFERRED ROUTE DATA" /></td>
 </tr>
 </el:table>
 </el:form>

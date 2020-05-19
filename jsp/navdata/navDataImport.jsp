@@ -12,14 +12,14 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
-var isOK = false;
-var fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+let isOK = false;
+const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz'));
 	
@@ -59,7 +59,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPLOAD AIRAC NAVIGATION DATA" /></td>
+ <td><el:button type="submit" label="UPLOAD AIRAC NAVIGATION DATA" /></td>
 </tr>
 </el:table>
 </el:form>

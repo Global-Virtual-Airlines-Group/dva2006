@@ -24,14 +24,13 @@
 <content:region id="main">
 <div class="updateHdr">Pilot Reactivation - Membership Limit Reached</div>
 <br />
-<content:airline /> has reached its maximum size of <fmt:int value="${maxPilots}" /> Pilots. Reactivating this Pilot will take
-the Airline above its maximum size, to a total of <fmt:int value="${airlineSize + 1}" /> Pilots. Do you wish to continue?<br />
+<content:airline /> has reached its maximum size of <fmt:int value="${maxPilots}" /> Pilots. Reactivating this Pilot will take the Airline above its maximum size, to a total of <fmt:int value="${airlineSize + 1}" /> Pilots. Do you wish to continue?<br />
 <br />
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="ActivateButton" url="activate" link="${pilot}" op="force" label="ACTIVATE PILOT" /></td>
+ <td><el:cmdbutton url="activate" link="${pilot}" op="force" label="ACTIVATE PILOT" /></td>
 </tr>
 </el:table>
 <content:copyright />

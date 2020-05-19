@@ -19,7 +19,7 @@
 <c:if test="${googleMap}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -39,8 +39,8 @@ return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
 	cfg.airline = 'all';
 	<c:if test="${empty airport}">
 	if (f.country.selectedIndex > 0) cfg.country = golgotha.form.getCombo(f.country);</c:if>
@@ -175,8 +175,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE AIRPORT PROFILE" />&nbsp;
-<el:cmdbutton ID="DeleteButton" url="airportdelete" linkID="${airport.IATA}" label="DELETE AIRPORT" /></td>
+ <td><el:button type="submit" label="SAVE AIRPORT PROFILE" />&nbsp;<el:cmdbutton url="airportdelete" linkID="${airport.IATA}" label="DELETE AIRPORT" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -185,13 +184,13 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script id="mapInit" async>
+<script async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
 // Build the map
-var mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 apMarker.setMap(map);
 </script></c:if>

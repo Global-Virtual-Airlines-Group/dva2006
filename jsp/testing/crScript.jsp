@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 <fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
@@ -86,8 +86,7 @@ golgotha.local.updateEQ = function(combo) {
 <!-- Button bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
-<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
+ <td><el:button type="submit" label="SAVE CHECK RIDE SCRIPT" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

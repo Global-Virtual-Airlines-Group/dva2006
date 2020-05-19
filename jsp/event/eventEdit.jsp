@@ -205,7 +205,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;<c:if test="${access.canEdit}"><el:button ID="SaveButton" type="submit" label="SAVE ONLINE EVENT" /></c:if></td>
+ <td>&nbsp;<c:if test="${access.canEdit}"><el:button type="submit" label="SAVE ONLINE EVENT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

@@ -15,14 +15,14 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var hasName = (f.firstName.value.length > 2) || (f.lastName.value.length > 2);
-var hasCode = (f.pilotCode.value.length > 1);
-var hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
-var hasRating = true;
+const hasName = (f.firstName.value.length > 2) || (f.lastName.value.length > 2);
+const hasCode = (f.pilotCode.value.length > 1);
+const hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
+const hasRating = true;
 try {
 	golgotha.form.validate({f:f.ratings, min:1, t:''});
 } catch (e) {
@@ -89,7 +89,7 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="PILOT SEARCH" /></td>
+ <td><el:button type="submit" label="PILOT SEARCH" /></td>
 </tr>
 </el:table>
 

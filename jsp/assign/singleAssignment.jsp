@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);
@@ -95,8 +95,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="SearchButton" type="submit" label="SEARCH FOR FLIGHTS" />&nbsp;
-<el:cmdbutton ID="BuildButton" url="singlebuild" label="BUILD FLIGHT ASSIGNMENT" /></td>
+ <td><el:button type="submit" label="SEARCH FOR FLIGHTS" />&nbsp;<el:cmdbutton url="singlebuild" label="BUILD FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </el:form>

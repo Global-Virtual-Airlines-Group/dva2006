@@ -19,7 +19,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -61,7 +61,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td colspan="4"><el:button ID="SearchButton" type="submit" label="SEARCH DISPATCHER ROUTES" /></td>
+ <td colspan="4"><el:button type="submit" label="SEARCH DISPATCHER ROUTES" /></td>
 </tr>
 </el:table>
 <c:if test="${doSearch}">

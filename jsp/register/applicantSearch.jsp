@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.firstName, l:2, t:'First Name'});
@@ -53,7 +53,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Button Bar -->
 <tr class="title caps">
- <td colspan="2" class="mid"><el:button ID="SearchButton" type="submit" label="SEARCH" /></td>
+ <td colspan="2" class="mid"><el:button type="submit" label="SEARCH" /></td>
 </tr>
 </el:table>
 </el:form>

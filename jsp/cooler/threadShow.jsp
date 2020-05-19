@@ -261,7 +261,7 @@ APPLICANT<br />
 &nbsp;<el:cmdbutton label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
 &nbsp;<el:cmdbutton label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" /></c:if>
 <c:if test="${imgAccess.canDelete}">
-&nbsp;<el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" link="${img}" /></c:if>
+&nbsp;<el:cmdbutton label="DELETE IMAGE" url="imgdelete" link="${img}" /></c:if>
 <c:if test="${access.canRelinkImages}">
 &nbsp;<el:cmdbutton label="RESTORE IMAGE LINKS" url="restoreimglinks" link="${thread}" /></c:if>
 <content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
@@ -304,8 +304,7 @@ notification each time a reply is posted in this Thread.
  <td colspan="3">UPDATE DISCUSSION THREAD TITLE</td>
 </tr>
 <tr class="pri bld mid nophone">
- <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />
- <el:cmdbutton ID="EditButton" url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
+ <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />&nbsp;<el:cmdbutton url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canAddImage}">
@@ -318,7 +317,7 @@ notification each time a reply is posted in this Thread.
 <content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr class="pri bld mid nophone">
- <td colspan="3">Image Description <el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" /> <el:cmdbutton ID="LinkButton" url="imglink" link="${thread}" post="true" label="LINK IMAGE" /></td>
+ <td colspan="3">Image Description <el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" />&nbsp;<el:cmdbutton url="imglink" link="${thread}" post="true" label="LINK IMAGE" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canReply}">
@@ -336,8 +335,7 @@ notification each time a reply is posted in this Thread.
 <!-- Button Bar -->
 <c:if test="${access.canReply || access.canReport}">
 <tr class="buttons mid title">
- <td colspan="3"><c:if test="${access.canReply}"><el:button ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-&nbsp;<el:button ID="EmoticonButton" onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></c:if></td>
+ <td colspan="3"><c:if test="${access.canReply}"><el:button label="SAVE RESPONSE" type="submit" />&nbsp;<el:button onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></c:if></td>
 </tr>
 </c:if>
 </el:table>
@@ -349,7 +347,7 @@ notification each time a reply is posted in this Thread.
 </content:page>
 <c:if test="${!empty lastReadPostID}">
 <script async>
-var postRow = document.getElementById('post${lastReadPostID}');
+const postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
 <content:googleAnalytics />

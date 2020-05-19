@@ -16,7 +16,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airport, t:'Airport'});
@@ -80,8 +80,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE CHART" />
-<c:if test="${access.canDelete && (!empty chart)}"> <el:cmdbutton ID="DeleteButton" url="chartdelete" link="${chart}" label="DELETE CHART" /></c:if></td>
+ <td><el:button type="submit" label="SAVE CHART" /><c:if test="${access.canDelete && (!empty chart)}">&nbsp;<el:cmdbutton url="chartdelete" link="${chart}" label="DELETE CHART" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
@@ -93,8 +92,7 @@ golgotha.local.validate = function(f) {
 <script async>
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airlne = 'all';
-
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.airportLoad.setHelpers(f.airport);
 f.airport.loadAirports(golgotha.airportLoad.config);
 </script>

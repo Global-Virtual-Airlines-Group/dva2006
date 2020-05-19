@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -117,7 +117,7 @@ golgotha.local.validate = function(f) {
 <el:table className="bar">
 <tr>
  <td><c:if test="${access.canEdit || access.canCreate}"><el:button ID="SaveButton" type="submit" label="SAVE VIDEO" />
-<c:if test="${!empty video}"> <el:cmdbutton ID="DeleteButton" url="tvdelete" linkID="${video.fileName}" label="DELETE VIDEO" /></c:if></c:if> </td>
+<c:if test="${!empty video}">&nbsp;<el:cmdbutton url="tvdelete" linkID="${video.fileName}" label="DELETE VIDEO" /></c:if></c:if> </td>
 </tr>
 </el:table>
 <el:text name="id" type="hidden" value="" />

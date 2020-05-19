@@ -127,7 +127,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Saved Routes</td>
  <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void golgotha.routePlot.setRoute(this)" />
-<el:button ID="SearchButton" onClick="void golgotha.routePlot.searchRoutes()" label="SEARCH" />
+<el:button onClick="void golgotha.routePlot.searchRoutes()" label="SEARCH" />
 <content:filter roles="Route,Dispatch,Operations"><el:box name="forceFAReload" value="true" checked="false" label="Force FlightAware refresh" /></content:filter></td>
 </tr>
 <tr>
@@ -167,7 +167,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button onClick="void plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
+ <td><el:button onClick="void plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -176,9 +176,8 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" async>
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
 try {
@@ -188,7 +187,7 @@ try {
 // Reset form links if blob download supported
 if (golgotha.routePlot.hasBlob) {
 	f.onsubmit = function() { return false; };
-	var btn = document.getElementById('SaveButton');
+	const btn = document.getElementById('SaveButton');
 	btn.onclick = golgotha.routePlot.download;
 }
 
@@ -209,20 +208,20 @@ golgotha.routePlot.updateRoute(${!empty rwy}, false);
 </c:otherwise>
 </c:choose>
 // Create the map
-var mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:3, maxZoom:16, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:3, maxZoom:16, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
-var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+const jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Build the layer controls
-var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));

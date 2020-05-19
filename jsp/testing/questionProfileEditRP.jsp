@@ -19,7 +19,7 @@
 <map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -38,15 +38,15 @@ return true;
 
 golgotha.local.massageRoute = function(txtbox)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (txtbox == null) txtbox = f.route1;
-var wps = txtbox.value.split(' ');
+const wps = txtbox.value.split(' ');
 if ((txtbox.value.length < 2) || (wps.length < 3))
 	return false;
 
 // Get SID/STAR
-var sid = golgotha.form.getCombo(f.sid);
-var star = golgotha.form.getCombo(f.star);
+const sid = golgotha.form.getCombo(f.sid);
+const star = golgotha.form.getCombo(f.star);
 
 //Add the selected SID/STAR to the route
 if ((sid != null) && (wps[0].indexOf('.') == -1))
@@ -59,18 +59,18 @@ return true;
 
 golglotha.local.updateCorrect = function(txtbox)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 
 // Update correct answer choices
-var combo = f.correctChoice;
+const combo = f.correctChoice;
 var oldAnswer = combo.selectedIndex;
 combo.options.length = 1;
 combo.options[0] = new Option('-');
 var hasAnswers = false; var maxAnswer = 0;
 for (var x = 1; x <= 5; x++) {
-	var rt = eval('f.route' + x + '.value');
+	const rt = eval('f.route' + x + '.value');
 	if (rt.length > 2) {
-		var ofs = f.correctChoice.length;
+		const ofs = f.correctChoice.length;
 		combo.options.length = (ofs + 1);
 		combo.options[ofs] = new Option(rt);
 		maxAnswer = x;
@@ -234,8 +234,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE QUESTION" />
-<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
+ <td><el:button type="submit" label="SAVE QUESTION" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
 </tr>
 </el:table>
 <el:text name="isRoutePlot" type="hidden" value="true" />
@@ -246,8 +245,8 @@ return true;
 </content:page>
 <fmt:aptype var="useICAO" />
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
-<script id="mapInit" defer>
-var f = document.forms[0];
+<script async>
+const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.config.useSched = false;
 golgotha.airportLoad.setHelpers(f.airportD, true);
@@ -257,9 +256,9 @@ f.airportA.updateAirportCode();
 
 // Create map
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

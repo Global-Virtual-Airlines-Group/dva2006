@@ -18,7 +18,7 @@
 <c:choose>
 <c:when test="${access.canApply}">
 <c:set var="formURL" value="jobapply.do" scope="page" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -30,7 +30,7 @@ return true;
 </c:when>
 <c:when test="${access.canShortlist}">
 <c:set var="formURL" value="jobsl.do" scope="page" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -42,7 +42,7 @@ return true;
 </c:when>
 <c:when test="${access.canSelect}">
 <c:set var="formURL" value="jobapprove.do" scope="page" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -58,12 +58,12 @@ golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
 </c:choose>
-<script>
+<script async>
 golgotha.local.toggleBody = function(id)
 {
-var row = document.getElementById('desc' + id);
-var linkDesc = document.getElementById('toggle' + id);
-var visible = (row.style.display != 'none');
+const row = document.getElementById('desc' + id);
+const linkDesc = document.getElementById('toggle' + id);
+const visible = (row.style.display != 'none');
 golgotha.util.display(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
@@ -71,7 +71,7 @@ return true;
 <c:if test="${access.canApply}">
 golgotha.local.clearBody = function()
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (confirm("Are you sure you want to clear what you've written?"))
 	f.body.value = '';
 	
@@ -215,19 +215,19 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><c:if test="${access.canApply}"><el:button ID="ApplyButton" type="submit" key="S" label="APPLY FOR JOB POSTING" /></c:if>
-<c:if test="${access.canEdit}"> <el:cmdbutton ID="EditButton" url="job" op="edit" link="${job}" key="E" label="EDIT JOB POSTING" /></c:if>
-<c:if test="${access.canShortlist}"> <el:button ID="SLButton" type="submit" label="SELECT POSITION SHORTLIST" /></c:if>
-<c:if test="${access.canReset}"> <el:cmdbutton ID="ResetButton" url="jobreset" link="${job}" label="RESET POSITION SHORTLIST" /></c:if>
-<c:if test="${access.canSelect}"> <el:button ID="SelectButton" type="submit" label="SELECT SHORTLISTED APPLICANT" /></c:if>
-<c:if test="${access.canComplete}"> <el:cmdbutton ID="CompleteButton" url="jobcomplete" link="${job}" label="HIRE PROCESS COMPLETED" /></c:if>
-<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="jobdelete" link="${job}" label="DELETE JOB POSTING" /></c:if></td>
+ <td><c:if test="${access.canApply}"><el:button type="submit" label="APPLY FOR JOB POSTING" /></c:if>
+<c:if test="${access.canEdit}">&nbsp;<el:cmdbutton url="job" op="edit" link="${job}" label="EDIT JOB POSTING" /></c:if>
+<c:if test="${access.canShortlist}">&nbsp;<el:button type="submit" label="SELECT POSITION SHORTLIST" /></c:if>
+<c:if test="${access.canReset}">&nbsp;<el:cmdbutton url="jobreset" link="${job}" label="RESET POSITION SHORTLIST" /></c:if>
+<c:if test="${access.canSelect}">&nbsp;<el:button type="submit" label="SELECT SHORTLISTED APPLICANT" /></c:if>
+<c:if test="${access.canComplete}">&nbsp;<el:cmdbutton url="jobcomplete" link="${job}" label="HIRE PROCESS COMPLETED" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="jobdelete" link="${job}" label="DELETE JOB POSTING" /></c:if></td>
 </tr>
 </el:table>
 </c:if>
 </el:form>
 <c:if test="${access.canComment}">
-<script type="text/javascript">
+<script async>
 golgotha.local.commentValidate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -249,9 +249,9 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td class="mid"><el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
+ <td class="mid"><el:button type="submit" label="SAVE NEW COMMENT" />
 <content:filter roles="HR">
- <el:cmdbutton ID="CloneButton" url="jobclone" link="${job}" label="CLONE JOB POSTING" /></content:filter></td>
+&nbsp;<el:cmdbutton url="jobclone" link="${job}" label="CLONE JOB POSTING" /></content:filter></td>
 </tr>
 </el:table>
 </el:form>

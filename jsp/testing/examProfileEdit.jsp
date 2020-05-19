@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -98,7 +98,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE EXAMINATION PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE EXAMINATION PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -145,7 +145,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${access.canEdit}">
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE ISSUE" /></td>
+ <td><el:button type="submit" label="UPDATE ISSUE" /></td>
 </tr>
 </el:table>
 </c:if>

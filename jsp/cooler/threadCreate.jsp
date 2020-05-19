@@ -17,7 +17,7 @@
 <content:js name="datePicker" />
 <content:captcha action="threadCreate" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
 golgotha.local.imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
 golgotha.local.imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }
@@ -39,17 +39,17 @@ golgotha.local.openEmoticons = function() {
 };
 
 golgotha.local.enablePoll = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	if (!f.hasPoll) return false;
 	f.pollOptions.disabled = !f.hasPoll.checked;
 	return true;
 };
 
 golgotha.local.removeLink = function(seq) {
-    var idx = golgotha.local.imgData.getIndex(seq);
+    const idx = golgotha.local.imgData.getIndex(seq);
     golgotha.local.imgData.remove(idx);
     document.forms[0].imgData.value = JSON.stringify(golgotha.local.imgData);
-    var r = document.getElementById('linkImg' + seq);
+    const r = document.getElementById('linkImg' + seq);
     r.parentNode.removeChild(r);
     return true;
 };
@@ -60,12 +60,12 @@ golgotha.form.validate({f:f.imgURL, l:12, t:'URL of your Linked Image'});
 golgotha.form.validate({f:f.imgDesc, l:6, t:'Description of your Linked Image'});
 
 // Check extensions
-var imgURL = f.imgURL.value;
-var allowedExts = ['gif', 'jpg', 'jpeg', 'png'];
-var ext = imgURL.substring(imgURL.lastIndexOf('.') + 1).toLowerCase();
+const imgURL = f.imgURL.value;
+const allowedExts = ['gif', 'jpg', 'jpeg', 'png'];
+const ext = imgURL.substring(imgURL.lastIndexOf('.') + 1).toLowerCase();
 
 // Clear message
-var msgSpan = document.getElementById('imgLinkMsg');
+const msgSpan = document.getElementById('imgLinkMsg');
 msgSpan.innerHTML = '';
 
 // Check the image has been added already
@@ -78,22 +78,22 @@ if (!allowedExts.contains(ext))
 var img = new Image();
 img.onload = function() {
 	golgotha.local.imgData.add(imgURL, f.imgDesc. value);
-	var imgIdx = golgotha.local.imgData.maxSeq;
+	const imgIdx = golgotha.local.imgData.maxSeq;
 
 	// Add the image
-	var r = document.createElement('tr');
+	const r = document.createElement('tr');
 	r.setAttribute('id', 'linkImg' + imgIdx);
-	var ld = document.createElement('td');
+	const ld = document.createElement('td');
 	ld.setAttribute('colspan', '2');
 	ld.setAttribute('class', 'mid');
-	var img = document.createElement('img');
+	const img = document.createElement('img');
 	img.setAttribute('alt', f.imgDesc.value);
 	img.setAttribute('title', f.imgDesc.value);
 	img.setAttribute('src', imgURL);
 	ld.appendChild(img);
 	ld.appendChild(document.createElement('br'));
 	ld.appendChild(document.createTextNode(f.imgDesc.value + ' - '));
-	var rmvLink = document.createElement('a');
+	const rmvLink = document.createElement('a');
 	rmvLink.setAttribute('class', 'small caps');
 	rmvLink.setAttribute('onclick', 'javascript:void golgotha.local.removeLink(' + imgIdx + ')');
 	rmvLink.appendChild(document.createTextNode('Remove Linked Image'));
@@ -101,7 +101,7 @@ img.onload = function() {
 	r.appendChild(ld);
 
 	// Add to the DOM
-	var ref = document.getElementById('imgLink');
+	const ref = document.getElementById('imgLink');
 	ref.parentNode.insertBefore(r, ref);
 
 	// Convert to JSON
@@ -153,8 +153,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;
-<el:button ID="EmoticonButton" onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></td>
+ <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;<el:button onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 <tr id="imgUpload">
  <td class="label">Upload Image</td>
@@ -174,8 +173,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="imgDesc" idx="*" size="64" max="192" value="" /> 
-<el:button ID="LinkButton" label="LINK IMAGE" onClick="void golgotha.form.wrap(golgotha.local.submitImage, document.forms[0])" /></td>
+ <td class="data"><el:text name="imgDesc" idx="*" size="64" max="192" value="" />&nbsp;<el:button label="LINK IMAGE" onClick="void golgotha.form.wrap(golgotha.local.submitImage, document.forms[0])" /></td>
 </tr>
 <content:filter roles="PIREP,HR,Instructor,Operations,Moderator">
 <!-- Pilot Poll -->
@@ -202,10 +200,8 @@ return true;
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2">
-<c:if test="${channelAccess.canPost}">
- <el:button ID="SaveButton" label="SAVE NEW THREAD" type="submit" />
-</c:if>
+ <td colspan="2">&nbsp;
+<c:if test="${channelAccess.canPost}"><el:button label="SAVE NEW THREAD" type="submit" /></c:if>
  </td>
 </tr>
 </el:table>

@@ -121,7 +121,7 @@ ${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${du
 <c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
- <td class="data">${VATSIM_ID}<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /><span id="validationInfo" class="sec ita bld"></span></c:if></td>
+ <td class="data">${VATSIM_ID}<c:if test="${access.canApprove}">&nbsp;<el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /><span id="validationInfo" class="sec ita bld"></span></c:if></td>
 </tr>
 </c:if>
 <c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="page" />
@@ -324,18 +324,12 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canApprove}">
-<el:button ID="HireButton" type="submit" label="HIRE APPLICANT" /></c:if>
-<c:if test="${access.canEdit}">
-&nbsp;<el:cmdbutton url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" /></c:if>
-<c:if test="${access.canReject}">
-&nbsp;<el:cmdbutton url="appreject" link="${applicant}" label="REJECT" /></c:if>
-<c:if test="${!empty questionnaire}">
-&nbsp;<el:cmdbutton url="questionnaire" link="${questionnaire}" label="QUESTIONNAIRE" /></c:if>
-<c:if test="${access.canNotify}">
-&nbsp;<el:cmdbutton url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" /></c:if>
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton url="appdelete" link="${applicant}" label="DELETE" /></c:if>
+<c:if test="${access.canApprove}"><el:button type="submit" label="HIRE APPLICANT" /></c:if>
+<c:if test="${access.canEdit}">&nbsp;<el:cmdbutton url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" /></c:if>
+<c:if test="${access.canReject}">&nbsp;<el:cmdbutton url="appreject" link="${applicant}" label="REJECT" /></c:if>
+<c:if test="${!empty questionnaire}">&nbsp;<el:cmdbutton url="questionnaire" link="${questionnaire}" label="QUESTIONNAIRE" /></c:if>
+<c:if test="${access.canNotify}">&nbsp;<el:cmdbutton url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="appdelete" link="${applicant}" label="DELETE" /></c:if>
  </td>
 </tr>
 </el:table>

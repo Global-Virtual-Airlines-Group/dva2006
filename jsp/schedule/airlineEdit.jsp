@@ -12,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 <fmt:jsarray var="golgotha.local.airlines" items="${autoAppCodes}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -24,7 +24,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.makeReadOnly = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.airlines.forEach(function(cb) { cb.disabled = golgotha.local.airlines.contains(cb.value); });
 	return true;
 };
@@ -84,7 +84,7 @@ golgotha.local.makeReadOnly = function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE AIRLINE PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE AIRLINE PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

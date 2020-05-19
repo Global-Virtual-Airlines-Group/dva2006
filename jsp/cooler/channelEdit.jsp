@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.newName, l:5, t:'Channel Name'});
@@ -75,10 +75,8 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE CHANNEL PROFILE" />
-<c:if test="${(!empty channel) && access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="chdelete" linkID="${channel.name}" label="DELETE CHANNEL" />
-</c:if></td>
+ <td><el:button type="submit" label="SAVE CHANNEL PROFILE" />
+<c:if test="${(!empty channel) && access.canDelete}">&nbsp;<el:cmdbutton url="chdelete" linkID="${channel.name}" label="DELETE CHANNEL" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

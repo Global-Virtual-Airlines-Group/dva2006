@@ -74,15 +74,9 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td> 
- <el:cmdbutton ID="CalendarButton" url="academycalendar" label="INSTRUCTION CALENDAR" />
-<c:if test="${access.canEdit}">
- <el:cmdbutton ID="SchedButton" url="isession" op="edit" link="${session}" label="EDIT SESSION" />
-</c:if>
-<c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="icancel" link="${session}" label="CANCEL SESSION" />
-</c:if>
- </td>
+ <td><el:cmdbutton url="academycalendar" label="INSTRUCTION CALENDAR" />
+<c:if test="${access.canEdit}">&nbsp;<el:cmdbutton url="isession" op="edit" link="${session}" label="EDIT SESSION" /></c:if>
+<c:if test="${access.canCancel}">&nbsp;<el:cmdbutton url="icancel" link="${session}" label="CANCEL SESSION" /></c:if></td>
 </tr>
 </el:table>
 <content:copyright />

@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -27,17 +27,17 @@ return true;
 
 golgotha.local.loadRideCount = function(combo)
 {
-var f = document.forms[0]; var ic = f.seq;
+const f = document.forms[0]; var ic = f.seq;
 if (combo.selectedIndex < 1) {
 	ic.options.length = 1;
 	return false;
 }
 
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'ridecount.ws?id=' + golgotha.form.getCombo(combo), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];
+	const jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];
 
 	// Set combobox options
 	ic.options.length = jsData.length + 1;
@@ -98,9 +98,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton ID="DeleteButton" url="arscriptdelete" linkID="${sc.certificationName}" label="DELETE CHECK RIDE SCRIPT" />
-</c:if></td>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="arscriptdelete" linkID="${sc.certificationName}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

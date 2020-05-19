@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.submit(f);
@@ -69,7 +69,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="DOWNLOAD FAA APPROACH CHARTS" /></td>
+ <td><el:button type="submit" label="DOWNLOAD FAA APPROACH CHARTS" /></td>
 </tr>
 </el:table>
 </el:form>

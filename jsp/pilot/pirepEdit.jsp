@@ -248,7 +248,7 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 <tr>
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" /> <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, 
- <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" /> minutes <el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.local.hoursCalc, document.forms[0])" /></td>
+ <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" /> minutes <el:button label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.local.hoursCalc, document.forms[0])" /></td>
 </tr>
 <c:if test="${!isACARS}">
 <tr>
@@ -267,8 +267,7 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" />
-<c:if test="${access.canSubmitIfEdit}">&nbsp;<el:button ID="SubmitButton" onClick="void golgotha.local.saveSubmit()" label="SUBMIT FLIGHT REPORT" /></c:if>
+ <td><el:button type="submit" label="SAVE FLIGHT REPORT" /><c:if test="${access.canSubmitIfEdit}">&nbsp;<el:button onClick="void golgotha.local.saveSubmit()" label="SUBMIT FLIGHT REPORT" /></c:if>
 </td>
 </tr>
 </el:table>

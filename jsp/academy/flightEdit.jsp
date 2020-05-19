@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -83,7 +83,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" /></td>
+ <td><el:button type="submit" label="SAVE FLIGHT REPORT" /></td>
 </tr>
 </el:table>
 <c:if test="${empty flight}"><el:text name="courseID" type="hidden" value="${course.hexID}" /></c:if>

@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if ((!golgotha.form.check()) || (!f.comments)) return false;
 	golgotha.form.validate({f:f.startDate, t:'Service Start Date'});
@@ -64,8 +64,8 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE ACARS DISPATCHER SERVICE SESSION" />
-<c:if test="${access.canDelete}"> <el:cmdbutton url="dspentrydelete" link="${entry.ID}" label="DELETE SERVICE SESSION" /></c:if></td>
+ <td><el:button type="submit" label="UPDATE ACARS DISPATCHER SERVICE SESSION" />
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="dspentrydelete" link="${entry.ID}" label="DELETE SERVICE SESSION" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

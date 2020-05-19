@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.coolerImg, ext:['gif','jpg','png'], t:'Signature Image'});
@@ -59,7 +59,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE SIGNATURE IMAGE" /></td>
+ <td><el:button type="submit" label="UPDATE SIGNATURE IMAGE" /></td>
 </tr>
 </el:table>
 </el:form>

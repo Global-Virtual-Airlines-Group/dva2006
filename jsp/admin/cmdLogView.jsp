@@ -41,7 +41,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="SEARCH LOG" /></td>
+ <td><el:button type="submit" label="SEARCH LOG" /></td>
 </tr>
 </el:table>
 </el:form>

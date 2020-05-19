@@ -42,10 +42,10 @@ return true;
 
 golgotha.local.checkUnique = function()
 {
-var f = document.forms[0];
-var fN = f.firstName.value;
-var lN = f.lastName.value;
-var eMail = f.email.value;
+const f = document.forms[0];
+const fN = f.firstName.value;
+const lN = f.lastName.value;
+const eMail = f.email.value;
 if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return false;
 	
 // Create the AJAX request
@@ -53,8 +53,8 @@ const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var dupes = (parseInt(xmlreq.responseText) > 0);
-	var rows = golgotha.util.getElementsByClass('dupeFound');
+	const dupes = (parseInt(xmlreq.responseText) > 0);
+	const rows = golgotha.util.getElementsByClass('dupeFound');
 	for (var x = 0; x < rows.length; x++) {
 		golgotha.util.display(rows[x], dupes);
 		rows[x].focus();
@@ -287,7 +287,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SUBMIT REGISTRATION" /></td>
+ <td><el:button type="submit" label="SUBMIT REGISTRATION" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -52,12 +52,8 @@
 <el:table className="form">
 <tr class="title mid">
  <td>&nbsp;
-<c:if test="${access.canEdit}">
-<el:cmdbutton ID="EditButton" url="image" link="${img}" op="edit" label="EDIT IMAGE" />
-</c:if>
-<c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="imgdelete" link="${img}" label="DELETE IMAGE" />
-</c:if>
+<c:if test="${access.canEdit}"><el:cmdbutton url="image" link="${img}" op="edit" label="EDIT IMAGE" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="imgdelete" link="${img}" label="DELETE IMAGE" /></c:if>
  </td>
 </tr>
 </el:table>

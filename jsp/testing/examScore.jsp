@@ -19,7 +19,7 @@
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
@@ -113,7 +113,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ScoreButton" type="submit" label="SCORE EXAMINATION" /></td>
+ <td><el:button type="submit" label="SCORE EXAMINATION" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -122,7 +122,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script id="mapInit">
+<script>
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
@@ -130,8 +130,8 @@ golgotha.exam.maps = [];
 <map:point var="mapC" point="${q.midPoint}" />
 
 // Create map
-var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
 var map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

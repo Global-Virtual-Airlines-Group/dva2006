@@ -16,7 +16,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -36,14 +36,14 @@ return true;
 };
 
 golgotha.local.hire = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.doHire.value = 'true';
 	return cmdPost(f.action);
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config; 
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config; 
 	cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
@@ -236,15 +236,10 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <el:table className="bar">
 <tr>
  <td>
-<c:if test="${access.canApprove}">
-<el:button ID="HireButton" onClick="void golgotha.local.hire()" label="HIRE APPLICANT" />
-</c:if> 
-<el:button ID="SaveButton" type="submit" label="UPDATE APPLICANT" />
-<c:if test="${access.canReject}">
-<el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT APPLICANT" />
-</c:if>
-<c:if test="${!empty questionnaire}">
-<el:cmdbutton url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" />
+<c:if test="${access.canApprove}"><el:button onClick="void golgotha.local.hire()" label="HIRE APPLICANT" />&nbsp;</c:if> 
+<el:button type="submit" label="UPDATE APPLICANT" />
+<c:if test="${access.canReject}">&nbsp;<el:cmdbutton url="appreject" link="${applicant}" label="REJECT APPLICANT" /></c:if>
+<c:if test="${!empty questionnaire}">&nbsp;<el:cmdbutton url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" />
 </c:if>
  </td>
 </tr>

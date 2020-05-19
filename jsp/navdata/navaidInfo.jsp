@@ -27,11 +27,11 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.zoomTo = function(combo) {
-	var idx = combo.selectedIndex;
+	const idx = combo.selectedIndex;
 	if ((idx < 0) || (idx >= golgotha.local.navaids.length)) return false;
 
 	// Pan the map
-	var mrk = golgotha.local.navaids[idx];
+	const mrk = golgotha.local.navaids[idx];
 	map.panTo(mrk.getPosition());
 	golgotha.local.mapC = mrk.getPosition();
 	golgotha.local.loadWaypoints();
@@ -42,24 +42,24 @@ golgotha.local.zoomTo = function(combo) {
 golgotha.local.loadWaypoints = function()
 {
 // Get the lat/long
-var lat = golgotha.local.mapC.lat();
-var lng = golgotha.local.mapC.lng();
+const lat = golgotha.local.mapC.lat();
+const lng = golgotha.local.mapC.lng();
 var range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
 golgotha.local.sMarkers.clearMarkers();
 
 // Check if we don't select
-var f = document.forms[0];
+const f = document.forms[0];
 if (!f.showAll.checked) return true;
 
 // Status message
 golgotha.form.submit();
 
 // Build the XML Requester
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	js.items.forEach(function(wp) {
 		if (wp.code == '${param.navaidCode}') return;
 		var mrk;
@@ -134,7 +134,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="NEW NAVIGATION DATA SEARCH" /></td>
+ <td><el:button type="submit" label="NEW NAVIGATION DATA SEARCH" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -148,8 +148,8 @@ return true;
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-var mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:true, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:true, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
