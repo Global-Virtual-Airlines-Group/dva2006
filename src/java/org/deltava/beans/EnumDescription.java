@@ -26,11 +26,11 @@ public interface EnumDescription extends ComboAlias {
 	
 	@Override
 	default String getComboAlias() {
-		return getDescription();
+		return name();
 	}
 	
 	@Override
 	default String getComboName() {
-		return name();
+		return getDescription();
 	}
 }
