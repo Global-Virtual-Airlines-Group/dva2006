@@ -17,7 +17,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -31,20 +31,20 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.changeAirline = function(combo) {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.airline = golgotha.form.getCombo(combo);
 	return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 };
 
 golgotha.local.changeEQ = function(combo) {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.eqType = golgotha.form.getCombo(combo);	
 	return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
 	cfg.useSched = false; cfg.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);	
@@ -99,7 +99,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT PRE-APPROVAL" /></td>
+ <td><el:button type="submit" label="SAVE FLIGHT PRE-APPROVAL" /></td>
 </tr>
 </el:table>
 </el:form>

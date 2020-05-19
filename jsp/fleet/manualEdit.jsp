@@ -21,7 +21,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -30,8 +30,8 @@ golgotha.form.validate({f:f.version, min:1, t:'Revision Number'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
 golgotha.form.validate({f:f.file, ext:['pdf','xls'], t:'Uploaded Manual', empty:${!empty entry}});
 <c:if test="${empty entry}">
-var fileParts = f.file.value.split('\\');
-var fName = fileParts[fileParts.length - 1].toLowerCase();
+const fileParts = f.file.value.split('\\');
+const fName = fileParts[fileParts.length - 1].toLowerCase();
 if (golgotha.local.manualNames.indexOf(fName) != -1) {
 	alert('A Manual named ' + fName + ' already exists.');
 	form.file.focus();
@@ -44,7 +44,7 @@ return true;
 
 golgotha.local.updateSecurity = function(updatedField)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if ((!f.showRegister) || (!f.showRegister.checked))
 	return true;
 
@@ -141,13 +141,8 @@ return true;
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="submit" label="SAVE MANUAL" />&nbsp;
-</c:if>
-<c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="manualdelete" linkID="${entry.fileName}" label="DELETE MANUAL" />
-</c:if>
- </td>
+<c:if test="${access.canEdit || access.canCreate}"><el:button type="submit" label="SAVE MANUAL" />&nbsp;</c:if>
+<c:if test="${access.canDelete}"><el:cmdbutton url="manualdelete" linkID="${entry.fileName}" label="DELETE MANUAL" /></c:if> </td>
 </tr>
 </el:table>
 </el:form>

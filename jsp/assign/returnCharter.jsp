@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -28,7 +28,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);	
@@ -77,7 +77,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE RETURN CHARTER FLIGHT" /></td>
+ <td><el:button type="submit" label="SAVE RETURN CHARTER FLIGHT" /></td>
 </tr>
 </el:table>
 </el:form>

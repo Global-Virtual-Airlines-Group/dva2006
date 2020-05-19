@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);
@@ -38,11 +38,9 @@ golgotha.local.setSort = function() { return document.forms[0].submit(); };
 <view:table cmd="imagegallery">
 <!-- Table Sort Bar -->
 <tr class="title">
- <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
- <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
+ <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
- <td class="nophone">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="golgotha.local.setSort()" />
- <el:button ID="SubmitButton" type="submit" label="GO" /></td>
+ <td class="nophone">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="golgotha.local.setSort()" />&nbsp;<el:button type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar -->

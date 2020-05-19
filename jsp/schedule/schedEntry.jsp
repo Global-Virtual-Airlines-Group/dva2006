@@ -112,8 +112,8 @@ golgotha.local.historicAirlines = ${historicAL};
 <c:if test="${empty entry}">
 <hr />
 <span class="small">You can search for an available flight number between <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
-<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />&nbsp;<el:button ID="FlightSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br />
-You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableLeg, document.forms[0])" label="SEARCH" /></span></c:if></td>
+<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />&nbsp;<el:button onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br />
+You can search for the next available Flight Leg. <el:button onClick="void golgotha.form.wrap(golgotha.local.getAvailableLeg, document.forms[0])" label="SEARCH" /></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Starts Operation on</td>
@@ -149,7 +149,8 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" />
+ <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" /><br />
+<el:box name="forceInclude" className="small" idx="*" value="true" label="Force Inclusion even if route exists" checked="${entry.forceInclude}" />
 <c:if test="${academyEnabled}"><br /><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
 </el:table>

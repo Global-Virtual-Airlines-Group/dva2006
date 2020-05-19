@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -88,8 +88,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE WEB RESOURCE" />
-<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="resourcedelete" link="${resource}" label="DELETE WEB RESOURCE" /></c:if></td>
+ <td><el:button type="submit" label="SAVE WEB RESOURCE" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="resourcedelete" link="${resource}" label="DELETE WEB RESOURCE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

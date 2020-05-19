@@ -12,7 +12,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:5, t:'Template Title'});
@@ -48,9 +48,8 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE RESPONSE TEMPLATE" />
-<c:if test="${(!empty template) && access.canUpdateTemplate}">
- <el:cmdbutton ID="DeleteButton" url="rsptemplatedelete" post="true" linkID="${template.title}" label="DELETE RESPONSE TEMPLATE" /></c:if></td>
+ <td><el:button type="submit" label="UPDATE RESPONSE TEMPLATE" />
+<c:if test="${(!empty template) && access.canUpdateTemplate}">&nbsp;<el:cmdbutton url="rsptemplatedelete" post="true" linkID="${template.title}" label="DELETE RESPONSE TEMPLATE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

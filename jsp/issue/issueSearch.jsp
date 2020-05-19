@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.searchStr, l:5, t:'Search Term'});
@@ -58,7 +58,7 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:box name="doComments" idx="*" className="sec" value="true" label="Search Issue comments" checked="${param.doComments}" /></td>
 </tr>
 <tr class="title mid">
- <td colspan="2"><el:button ID="SearchButton" type="submit" label="SEARCH ISSUES" /></td>
+ <td colspan="2"><el:button type="submit" label="SEARCH ISSUES" /></td>
 </tr>
 </el:table>
 

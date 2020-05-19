@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -54,15 +54,13 @@ return true;
 <tr>
  <td class="label">Start Date/Time</td>
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" className="req" />
- at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
+ at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">End Date/Time</td>
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" className="req" />
- at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
+ at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
@@ -83,7 +81,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE INSTRUCTION SESSION" /></td>
+ <td><el:button type="submit" label="UPDATE INSTRUCTION SESSION" /></td>
 </tr>
 </el:table>
 <el:text name="course" type="hidden" value="${course.hexID}" />

@@ -12,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -86,9 +86,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="UPDATE CHANNEL" />
-<c:if test="${!empty channel}">
- <el:cmdbutton ID="DeleteButton" url="mvschanneldelete" link="${channel}" label="DELETE CHANNEL" />
+ <td><el:button type="submit" label="UPDATE CHANNEL" /><c:if test="${!empty channel}">&nbsp;<el:cmdbutton url="mvschanneldelete" link="${channel}" label="DELETE CHANNEL" />
 </c:if></td>
 </tr>
 </el:table>

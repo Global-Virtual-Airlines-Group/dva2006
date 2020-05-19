@@ -64,23 +64,23 @@ return true;
 };
 
 golgotha.local.disableSigBoxes = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.coolerImg.disabled = (f.useDefaultSig.checked);
 	if (golgotha.local.hasSignature) f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
 	return true;
 };
 
 golgotha.local.setDefaultFormats = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	f.df.value = '${defaultDFormat}';
 	f.tf.value = '${defaultTFormat}';
 	return true;
 };
 
 golgotha.local.checkPwd = function(t, noCascade) {
-	var f = document.forms[0];
-	var of = (t.name == 'pwd2' ? f.pwd1 : f.pwd2);
-	var isOK = (t.value.length > ${minPwd});
+	const f = document.forms[0];
+	const of = (t.name == 'pwd2' ? f.pwd1 : f.pwd2);
+	let isOK = (t.value.length > ${minPwd});
 	isOK &= ((t.value == of.value) || (of.value.length == 0));
 	golgotha.util.removeClass(t, isOK ? 'err' : 'ok');
 	golgotha.util.addClass(t, isOK ? 'ok' : 'err');
@@ -89,8 +89,8 @@ golgotha.local.checkPwd = function(t, noCascade) {
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
 	f.useDefaultSig.disabled = golgotha.local.hasSignature;
 	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
 	golgotha.airportLoad.setHelpers(f.homeAirport);
@@ -302,7 +302,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">Date/Time Format</td>
  <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}"  required="true" size="15" max="25" />&nbsp;<el:text name="tf" value="${pilot.timeFormat}" required="true" size="9" max="9" />
-  <el:button ID="DTDefaultButton" onClick="void golgotha.local.setDefaultFormats()" label="RESET" /></td>
+&nbsp;<el:button onClick="void golgotha.local.setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
@@ -383,9 +383,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
-<c:if test="${access.canEdit}">
- <td><el:button ID="SaveButton" type="submit" label="SAVE PROFILE" /></td>
-</c:if>
+ <td>&nbsp;<c:if test="${access.canEdit}"><el:button type="submit" label="SAVE PROFILE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

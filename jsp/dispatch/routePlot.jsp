@@ -26,7 +26,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
@@ -39,7 +39,7 @@ loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 golgotha.local.validate = function(f)
 {
 // Check if we're saving an existing route
-var routeID = parseInt(f.routeID.value);
+const routeID = parseInt(f.routeID.value);
 if (!isNaN(routeID) && (routeID > 0))
 	alert('Updating route #' + routeID);
 	
@@ -55,7 +55,7 @@ return true;
 };
 
 golgotha.routePlot.updateAirline = function(combo) {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 	return true;
 };
@@ -143,8 +143,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
- <el:button ID="RouteSaveButton" type="submit" label="SAVE DISPATCH ROUTE" /></td>
+ <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="RouteSaveButton" type="submit" label="SAVE DISPATCH ROUTE" /></td>
 </tr>
 </el:table>
 <el:text name="routeID" type="hidden" value="true" />
@@ -155,17 +154,17 @@ golgotha.routePlot.updateAirline = function(combo) {
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" async>
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
 
 // Load the airports
-var cfg = golgotha.airportLoad.config; 
+const cfg = golgotha.airportLoad.config; 
 cfg.doICAO = '${useICAO}';
 golgotha.airportLoad.setHelpers(f.airportD);
 golgotha.airportLoad.setHelpers(f.airportA);
 golgotha.airportLoad.setHelpers(f.airportL);
-var newCfg = cfg.clone();
+const newCfg = cfg.clone();
 
 <c:if test="${empty airportsD}">
 newCfg.airline = golgotha.form.getCombo(f.airline); 
@@ -175,20 +174,20 @@ window.setTimeout(function() { f.airportA.loadAirports(newCfg); }, 1050);</c:if>
 window.setTimeout(function() { newCfg.airline = 'all'; f.airportL.loadAirports(newCfg); }, 1250);
 
 // Create the map
-var mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
-var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+const jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Build the weather layer controls
-var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));

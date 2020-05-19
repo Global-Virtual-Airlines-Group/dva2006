@@ -15,7 +15,7 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="imgPath" name="path.img" />
-<script>
+<script async>
 golgotha.local.selectAC = function(combo)
 {
 if (!golgotha.form.comboSet(combo)) {
@@ -25,7 +25,7 @@ if (!golgotha.form.comboSet(combo)) {
 }
 
 // Get the code
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'fleetlib.ws?code=' + escape(golgotha.form.getCombo(combo)), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -35,7 +35,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Update the page
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ' + js.sims.join(', ') + '.';
 	golgotha.local.fName = js.fileName;
 	document.getElementById('FleetPic').src = js.img;
@@ -92,7 +92,7 @@ Please select a <content:airline /> Fleet Installer from the list above.</span>
 <!-- Download Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="DownloadButton" label="DOWNLOAD INSTALLER" onClick="void golgotha.local.download()" /></td>
+ <td><el:button label="DOWNLOAD INSTALLER" onClick="void golgotha.local.download()" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -51,8 +51,7 @@ golgotha.local.setViewType = function(idx) {
  <td colspan="3" class="left">ACARS CLIENT ERROR LOGS</td>
  <td colspan="3" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" />
  BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void golgotha.local.setViewType(3)" />
- USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" />
- <el:button ID="SortButton" type="submit" label="GO" /></td>
+ USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" /> <el:button type="submit" label="GO" /></td>
 </tr>
 
 <!-- View Legend Bar -->

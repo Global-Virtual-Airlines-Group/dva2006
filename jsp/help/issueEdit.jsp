@@ -146,9 +146,8 @@ golgotha.local.checkAssignee = function(combo) {
 <c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
-<c:if test="${access.canUpdateStatus}">
-&nbsp;<el:cmdbutton ID="ConvertButton" post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
+ <td><el:button type="submit" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
+<c:if test="${access.canUpdateStatus}">&nbsp;<el:cmdbutton post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
 </c:if></td>
 </tr>
 </el:table>

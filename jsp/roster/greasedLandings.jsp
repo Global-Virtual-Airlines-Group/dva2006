@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -41,7 +41,7 @@ distance down the runway.<br />
 <tr class="title">
  <td class="left caps" colspan="3"><span class="nophone"><content:airline />&nbsp;</span>OPTIMAL LANDINGS</td>
  <td class="right" colspan="5">TOP <el:text name="viewCount" idx="*" size="1" max="2" value="${viewContext.count}" /> FLIGHTS <span class="nophone">WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${daysBack}" onChange="void golgotha.local.update()" /></span> 
- IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" /><span class="nophone"><el:button ID="SearchButton" type="submit" label="GO" /></span></td>
+ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" /><span class="nophone"><el:button type="submit" label="GO" /></span></td>
 </tr>
 
 <!-- Table Header Bar-->

@@ -17,7 +17,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -74,12 +74,8 @@ return true;
 <el:table className="bar">
 <tr class="title">
  <td>
-<c:if test="${access.canEdit}">
-<el:button ID="SaveButton" type="submit" label="SAVE IMAGE" />
-</c:if>
-<c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="imgdelete" link="${img}" label="DELETE IMAGE" />
-</c:if>
+&nbsp;<c:if test="${access.canEdit}"><el:button type="submit" label="SAVE IMAGE" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="imgdelete" link="${img}" label="DELETE IMAGE" /></c:if>
  </td>
 </tr>
 </el:table>

@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.firstName, l:3, t:'First (given) Name'});
@@ -60,7 +60,7 @@ Resources department. You should hear back from them within 48-72 hours. Thank y
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" label="SUBMIT MESSAGE" /></td>
+ <td><el:button type="submit" label="SUBMIT MESSAGE" /></td>
 </tr>
 </el:table>
 <el:text name="airline" type="hidden" value="${airline.name}" />

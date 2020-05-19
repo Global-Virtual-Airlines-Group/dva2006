@@ -13,11 +13,11 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var act = f.action;
+const act = f.action;
 if (act.indexOf('scnomdispose.do') != -1)
 	if (!confirm("Are you sure you wish to approve or reject ${pilot.name}'s nomination to Senior Captain?")) return false;
 else
@@ -115,10 +115,10 @@ return true;
 <el:table className="bar">
 <tr>
  <td>
-<c:if test="${access.canNominate}"><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" /></c:if>
-<c:if test="${access.canDispose}"><el:cmdbutton ID="ApproveButton" url="scnomdispose" link="${nom}" op="true" post="true" label="PROMOTE TO SENIOR CAPTAIN" />
- <el:cmdbutton ID="RejectButton" url="scnomdispose" link="${nom}" op="false" post="true" label="REJECT NOMINATION" /></c:if>
- <el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" key="V" label="VIEW PROFILE" /></td>
+<c:if test="${access.canNominate}"><el:button type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" /></c:if>
+<c:if test="${access.canDispose}">&nbsp;<el:cmdbutton url="scnomdispose" link="${nom}" op="true" post="true" label="PROMOTE TO SENIOR CAPTAIN" />
+ <el:cmdbutton url="scnomdispose" link="${nom}" op="false" post="true" label="REJECT NOMINATION" /></c:if>
+ <el:cmdbutton url="profile" link="${pilot}" label="VIEW PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

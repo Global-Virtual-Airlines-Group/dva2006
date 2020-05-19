@@ -15,7 +15,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateProgress}">
@@ -226,38 +226,16 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 <el:table className="bar">
 <tr>
  <td> 
-<c:if test="${access.canStart}">
- <el:cmdbutton ID="EnrollButton" url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" />
-</c:if>
-<c:if test="${access.canCancel}">
- <el:button ID="CancelButton" onClick="golgotha.local.validateCancel()" label="WITHDRAW" />
-</c:if>
-<c:if test="${access.canRestart}">
- <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />
-</c:if>
-<c:if test="${access.canApprove}">
- <el:cmdbutton ID="ApproveButton" url="coursedispose" link="${course}" op="complete" label="AWARD CERTIFICATION" />
-</c:if>
-<c:if test="${access.canAssignInstructor}">
- <el:cmdbutton ID="AssignButton" url="courseassign" post="true" link="${course}" label="ASSIGN INSTRUCTOR" />
-</c:if>
-<c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
-</c:if>
-<c:if test="${access.canUpdateProgress}">
- <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" link="${course}" label="UPDATE PROGRESS" />
-</c:if>
-<c:if test="${access.canAssignCheckRide}">
- <el:cmdbutton ID="RideButton" url="courseride" link="${course}" label="ASSIGN CHECK RIDE" />
-</c:if>
-<c:if test="${access.canSchedule}">
- <el:cmdbutton ID="FlightLogButton" url="insflight" linkID="0&amp;courseID=${course.ID}" op="edit" label="LOG FLIGHT" />
- <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${course.hexID}" label="INSTRUCTION SESSION" />
-</c:if>
-<c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="coursedelete" link="${course}" label="DELETE COURSE" />
-</c:if>
- </td>
+<c:if test="${access.canStart}">&nbsp;<el:cmdbutton url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" /></c:if>
+<c:if test="${access.canCancel}">&nbsp;<el:button onClick="golgotha.local.validateCancel()" label="WITHDRAW" /></c:if>
+<c:if test="${access.canRestart}">&nbsp;<el:cmdbutton url="coursedispose" link="${course}" op="restart" label="RETURN" /></c:if>
+<c:if test="${access.canApprove}">&nbsp;<el:cmdbutton url="coursedispose" link="${course}" op="complete" label="AWARD CERTIFICATION" /></c:if>
+<c:if test="${access.canAssignInstructor}">&nbsp;<el:cmdbutton url="courseassign" post="true" link="${course}" label="ASSIGN INSTRUCTOR" /></c:if>
+<c:if test="${access.canComment}">&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
+<c:if test="${access.canUpdateProgress}">&nbsp;<el:cmdbutton url="courseprogress" post="true" link="${course}" label="UPDATE PROGRESS" /></c:if>
+<c:if test="${access.canAssignCheckRide}">&nbsp;<el:cmdbutton url="courseride" link="${course}" label="ASSIGN CHECK RIDE" /></c:if>
+<c:if test="${access.canSchedule}">&nbsp;<el:cmdbutton url="insflight" linkID="0&amp;courseID=${course.ID}" op="edit" label="LOG FLIGHT" />&nbsp;<el:cmdbutton url="isession" op="edit" linkID="0&course=${course.hexID}" label="INSTRUCTION SESSION" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="coursedelete" link="${course}" label="DELETE COURSE" /></c:if> </td>
 </tr>
 </el:table>
 </el:form>

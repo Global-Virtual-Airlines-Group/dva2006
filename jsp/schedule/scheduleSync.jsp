@@ -11,7 +11,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.purgeOnly = false;
 golgotha.local.validate = function(f)
 {
@@ -26,7 +26,7 @@ return true;
 
 golgotha.local.toggle = function(cb)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.local.purgeOnly = cb.checked;
 golgotha.util.disable(f.vaCode, golgotha.local.purgeOnly);
 golgotha.util.disable(f.purgeEntries, golgotha.local.purgeOnly);
@@ -65,7 +65,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SYNCHRONIZE FLIGHT SCHEDULES" /></td>
+ <td><el:button type="submit" label="SYNCHRONIZE FLIGHT SCHEDULES" /></td>
 </tr>
 </el:table>
 </el:form>

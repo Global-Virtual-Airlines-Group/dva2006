@@ -53,7 +53,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHT INFORMATION LOG" /></td>
+ <td><el:button type="submit" label="SEARCH FLIGHT INFORMATION LOG" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -11,7 +11,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="fileSaver" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
 	const srcs = [];
@@ -44,7 +44,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ExportButton" type="submit" label="DOWNLOAD RAW SCHEDULE DATA" /></td>
+ <td><el:button type="submit" label="DOWNLOAD RAW SCHEDULE DATA" /></td>
 </tr>
 </el:table>
 </el:form>

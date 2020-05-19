@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -87,8 +87,7 @@ return true;
 </tr>
 <c:if test="${!empty newerBuild}">
 <tr>
- <td colspan="2" class="mid error bld">A newer version of the <content:airline /> ACARS client is currently available. Please upgrade as soon as possible to Build ${newerBuild.clientBuild}
-<c:if test="${newerBuild.isBeta()}"> Beta ${newerBuild.beta}</c:if>!</td>
+ <td colspan="2" class="mid error bld">A newer version of the <content:airline /> ACARS client is currently available. Please upgrade as soon as possible to Build ${newerBuild.clientBuild}<c:if test="${newerBuild.isBeta()}"> Beta ${newerBuild.beta}</c:if>!</td>
 </tr>
 </c:if>
 <tr>
@@ -101,7 +100,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" label="SUBMIT FLIGHT REPORT" /></td>
+ <td><el:button type="submit" label="SUBMIT FLIGHT REPORT" /></td>
 </tr>
 </el:table>
 </el:form>

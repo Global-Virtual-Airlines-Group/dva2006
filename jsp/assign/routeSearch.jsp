@@ -19,7 +19,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
@@ -31,7 +31,7 @@ golgotha.local.validate = function(f) {
 golgotha.local.validateBuild = function(f)
 {
 if (!golgotha.form.check()) return false;
-var legNum = f.legCount.value;
+const legNum = f.legCount.value;
 for (var x = 1; x <= legNum; x++) {
 	var radio = eval('f.leg' + x); var lg = 'leg' + x; var isOK = false;
 	if (typeof radio.length != 'undefined') {
@@ -51,7 +51,7 @@ return true;
 };
 </c:if>
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);
@@ -91,7 +91,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="2" class="mid"><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
+ <td colspan="2" class="mid"><el:button type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -145,8 +145,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="8"><c:if test="${!empty myEQ}">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;</c:if>
-<el:button ID="BuildButton" type="submit" label="BUILD FLIGHT ASSIGNMENT" /></td>
+ <td colspan="8"><c:if test="${!empty myEQ}">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;</c:if><el:button type="submit" label="BUILD FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </el:form>

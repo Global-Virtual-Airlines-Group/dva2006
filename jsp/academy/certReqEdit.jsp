@@ -13,13 +13,12 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.name, l:10, t:'Certification Name'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.name, l:10, t:'Certification Name'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -77,7 +76,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="SaveButton" type="submit" label="SAVE CERTIFICATION REQUIREMENTS" /></td>
+ <td><el:button type="submit" label="SAVE CERTIFICATION REQUIREMENTS" /></td>
 </tr>
 </el:table>
 </el:form>
