@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to export the Airport List to a CSV file.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 8.0
  */
 
@@ -40,14 +40,13 @@ public class AirportExportCommand extends AbstractCommand {
 		if (!access.getCanExport())
 			throw securityException("Cannot export Airport List");
 
-		Collection<Airport> airports = new TreeSet<Airport>(SystemData.getAirports().values());
-
 		// Set the content type and force Save As
 		String aCode = SystemData.get("airline.code");
 		ctx.getResponse().setContentType("text/csv");
 		ctx.getResponse().setCharacterEncoding("utf-8");
 		ctx.setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_airports.csv");
 
+		Collection<Airport> airports = new TreeSet<Airport>(SystemData.getAirports().values());
 		try (PrintWriter out = ctx.getResponse().getWriter()) {
 			out.println("; " + aCode + " Airport List - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss"));
 			out.println("IATA,ICAO,NAME,LATITUDE,LONGITUDE,COUNTRY,ALTITUDE,MAX_RWY_LEN,REGION,REPLACES,ADSE,AIRLINES");
@@ -76,14 +75,9 @@ public class AirportExportCommand extends AbstractCommand {
 					buf.append(a.getSupercededAirport());
 				
 				buf.append(',');
-				buf.append(a.getADSE());
+				buf.append(a.getASDE());
 				buf.append(',');
-				for (Iterator<String> i = a.getAirlineCodes().iterator(); i.hasNext(); ) {
-					buf.append(i.next());
-					if (i.hasNext())
-						buf.append(',');
-				}
-				
+				buf.append(StringUtils.listConcat(a.getAirlineCodes(), ","));
 				out.println(buf.toString());
 			}
 		} catch (IOException ie) {

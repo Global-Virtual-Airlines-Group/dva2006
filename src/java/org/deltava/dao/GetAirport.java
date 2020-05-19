@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -66,7 +66,7 @@ public class GetAirport extends DAO {
 						a.setCountry(Country.get(rs.getString(5)));
 						a.setTZ(TZInfo.get(rs.getString(3)));
 						a.setLocation(rs.getDouble(6), rs.getDouble(7));
-						a.setADSE(rs.getBoolean(8));
+						a.setASDE(rs.getBoolean(8));
 						a.setSupercededAirport(rs.getString(9));
 						a.setAltitude(rs.getInt(10));
 						a.setRegion(rs.getString(11));
@@ -131,7 +131,7 @@ public class GetAirport extends DAO {
 					a.setCountry(Country.get(rs.getString(5)));
 					a.setTZ(TZInfo.get(rs.getString(3)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
-					a.setADSE(rs.getBoolean(8));
+					a.setASDE(rs.getBoolean(8));
 					a.setSupercededAirport(rs.getString(9));
 					a.setAltitude(rs.getInt(10));
 					a.setRegion(rs.getString(11));
@@ -244,7 +244,7 @@ public class GetAirport extends DAO {
 						a.setTZ(TZInfo.get(rs.getString(3)));
 						a.setCountry(Country.get(rs.getString(5)));
 						a.setLocation(rs.getDouble(6), rs.getDouble(7));
-						a.setADSE(rs.getBoolean(8));
+						a.setASDE(rs.getBoolean(8));
 						a.setSupercededAirport(rs.getString(9));
 						a.setAltitude(rs.getInt(10));
 						a.setRegion(rs.getString(11));

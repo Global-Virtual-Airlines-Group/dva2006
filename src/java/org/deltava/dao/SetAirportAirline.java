@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -161,7 +161,7 @@ public class SetAirportAirline extends DAO {
 				ps.setString(5, a.getCountry().getCode());
 				ps.setDouble(6, a.getLatitude());
 				ps.setDouble(7, a.getLongitude());
-				ps.setBoolean(8, a.getADSE());
+				ps.setBoolean(8, a.getASDE());
 				ps.setString(9, a.getSupercededAirport());
 				executeUpdate(ps, 1);
 			}
@@ -213,7 +213,7 @@ public class SetAirportAirline extends DAO {
 				ps.setDouble(4, a.getLatitude());
 				ps.setDouble(5, a.getLongitude());
 				ps.setString(6, a.getIATA());
-				ps.setBoolean(7, a.getADSE());
+				ps.setBoolean(7, a.getASDE());
 				ps.setString(8, a.getCountry().getCode());
 				ps.setString(9, a.getSupercededAirport());
 				ps.setString(10, oc);

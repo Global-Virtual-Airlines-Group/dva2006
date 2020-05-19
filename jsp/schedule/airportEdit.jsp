@@ -134,7 +134,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="hasADSE" idx="*" className="small" value="true" checked="${airport.ADSE}" label="This Airport has ADSE-X Ground Radar" /></td>
+ <td class="data"><el:box name="hasADSE" idx="*" className="small" value="true" checked="${airport.ASDE}" label="This Airport has ASDE-X Ground Radar" /></td>
 </tr>
 <content:hasmsg>
 <tr>
