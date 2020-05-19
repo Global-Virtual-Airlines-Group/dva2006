@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Online Events</title>
@@ -29,8 +28,7 @@
  <td class="left" colspan="6">MULTIPLE <content:airline /> ONLINE EVENTS</td>
 </tr>
 <tr>
- <td class="pri bld left" colspan="6"><fmt:int value="${fn:sizeof(futureEvents)}" /> <content:airline /> 
-Online Events have currently been scheduled, and are listed below. Please click on one of these Online Event profiles to learn more about this <content:airline /> Event.</td>
+ <td class="pri bld left" colspan="6"><fmt:int value="${futureEvents.size()}" />&nbsp;<content:airline /> Online Events have currently been scheduled, and are listed below. Please click on one of these Online Event profiles to learn more about this <content:airline /> Event.</td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -48,9 +46,8 @@ Online Events have currently been scheduled, and are listed below. Please click 
  <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
  <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.network}</td>
- <td class="sec">${event.status.name}</td>
- <td class="small"><c:forEach var="route" items="${event.routes}">
-${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
+ <td class="sec">${event.status.description}</td>
+ <td class="small"><c:forEach var="route" items="${event.routes}">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
 </view:row>
 </c:forEach>
