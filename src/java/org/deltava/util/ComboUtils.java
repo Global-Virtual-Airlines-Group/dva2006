@@ -1,26 +1,28 @@
-// Copyright 2005, 2007, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2010, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
+import org.deltava.beans.Helper;
 
 /**
  * A utility class to generate combobox lists.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  * @see ComboAlias
  */
 
+@Helper(ComboAlias.class)
 public class ComboUtils {
 
     private ComboUtils() { // private constructor since we are all static
     	super();
     }
 
-    private static class ComboAliasImpl implements ComboAlias, Comparable<ComboAlias> {
+    private static class ComboAliasImpl implements java.io.Serializable, ComboAlias, Comparable<ComboAlias> {
         
         private final String _name;
         private final String _alias;
@@ -73,14 +75,17 @@ public class ComboUtils {
     }
     
     /**
-     * Create a list of ComboAlias objects from an array of Enumerations.
+     * Create a list of ComboAlias objects from an array of Enumerations, propercasing the name.
      * @param names a variable number of enums
      * @return a List of ComboAlias objects
      */
-    public static List<ComboAlias> fromArray(Enum<?>... names) {
+    public static List<ComboAlias> properCase(Enum<?>... names) {
         List<ComboAlias> results = new ArrayList<ComboAlias>(names.length + 2);
-        for (int x = 0; x < names.length; x++)
-        	results.add(new ComboAliasImpl(names[x].name()));
+        for (int x = 0; x < names.length; x++) {
+        	String n = names[x].name();
+        	String desc = n.substring(0, 1).toUpperCase() + n.substring(1).toLowerCase();
+        	results.add(new ComboAliasImpl(desc, n));
+        }
     	
     	return results;
     }
@@ -137,9 +142,9 @@ public class ComboUtils {
         if (names.length != values.length)
             throw new ArrayIndexOutOfBoundsException("Name/Alias array lengths must be the same");
         
-        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length);
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length + 2);
         for (int x = 0; x < names.length; x++)
-            results.add(new ComboAliasImpl(names[x], values[x].toString()));
+            results.add(new ComboAliasImpl(names[x], String.valueOf(values[x])));
 
         return results;
     }
