@@ -12,4 +12,9 @@ import org.deltava.beans.*;
 
 public enum IssueStatus implements EnumDescription {
 	OPEN, FIXED, WORKEDAROUND, WONTFIX, DEFERRED, DUPLICATE;
+	
+	@Override
+	public String getDescription() {
+		return (this == WORKEDAROUND) ? "Worked Around" : EnumDescription.super.getDescription();
+	}
 }
