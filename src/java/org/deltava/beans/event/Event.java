@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -15,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,15 +37,12 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     
     private AirlineInformation _owner;
     private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
-    
     private final Collection<Chart> _charts = new TreeSet<Chart>();
-    
     private final Collection<Signup> _signups = new LinkedHashSet<Signup>();
     private final Collection<Route> _routes = new TreeSet<Route>();
     private final List<AssignmentInfo> _assignments = new ArrayList<AssignmentInfo>();
     private final Collection<DispatchRoute> _dspRoutes = new LinkedHashSet<DispatchRoute>();
     private final Collection<String> _eqTypes = new TreeSet<String>();
-    
     private final Collection<String> _contactAddrs = new LinkedHashSet<String>();
     
     /**
@@ -55,7 +53,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      */
     public Event(String name) {
         super();
-        setName(name);
+        _name = name;
     }
     
     /**
@@ -100,15 +98,14 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
         // If the event was canceled, then return that, otherwise calculate the status
         if (_status == Status.CANCELED)
             return Status.CANCELED;
-        
-        if (before(_signupDeadline))
+        else if (before(_signupDeadline))
             return Status.OPEN;
         else if (before(_startTime))
             return Status.CLOSED;
         else if (before(_endTime))
             return Status.ACTIVE;
-        else
-            return Status.COMPLETE;
+
+        return Status.COMPLETE;
     }
     
     /**
@@ -139,35 +136,16 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
         return _network;
     }
     
-    /**
-     * Returns the starting time for this Event.
-     * @return the date/time the Event starts
-     * @see Event#setStartTime(Instant)
-     * @see Event#getEndTime()
-     * @see Event#getDate()
-     * @see Event#getSignupDeadline()
-     */
     @Override
     public Instant getStartTime() {
         return _startTime;
     }
     
-    /**
-     * Returns the start time for this Event.
-     * @see CalendarEntry#getDate()
-     */
     @Override
     public Instant getDate() {
     	return _startTime;
     }
     
-    /**
-     * Returns the ending time for this Event.
-     * @return the date/time the Event ends
-     * @see Event#setEndTime(Instant)
-     * @see Event#getStartTime()
-     * @see Event#getSignupDeadline()
-     */
     @Override
     public Instant getEndTime() {
         return _endTime;
@@ -265,12 +243,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @return a Route bean, or null if not found
      */
     public Route getRoute(int routeID) {
-    	for (Route r : _routes) {
-    		if (r.getRouteID() == routeID)
-    			return r;
-    	}
-    		
-    	return null;
+    	return _routes.stream().filter(r -> r.getRouteID() == routeID).findAny().orElse(null);
     }
 
     /**
@@ -280,14 +253,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#getRoutes()
      */
     public Collection<Route> getActiveRoutes() {
-    	Collection<Route> results = new LinkedHashSet<Route>();
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
-    		if (r.getActive() && r.isAvailable())
-    			results.add(r);
-    	}
-    	
-    	return results;
+    	return _routes.stream().filter(r -> r.getActive() && r.isAvailable()).collect(Collectors.toCollection(LinkedHashSet::new));
     }
     
     /**
@@ -297,12 +263,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      */
     public Collection<Airport> getAirports() {
     	Set<Airport> results = new HashSet<Airport>();
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
-    		results.add(r.getAirportD());
-    		results.add(r.getAirportA());
-    	}
-    	
+    	_routes.forEach(r -> { results.add(r.getAirportD()); results.add(r.getAirportA()); });
     	return results;
     }
     
@@ -315,13 +276,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#isSignedUp(int)
      */
     public Signup getSignup(int pilotID) {
-    	for (Iterator<Signup> i = _signups.iterator(); i.hasNext(); ) {
-    		Signup s = i.next();
-    		if (s.getPilotID() == pilotID)
-    			return s;
-    	}
-    	
-    	return null;
+    	return _signups.stream().filter(s -> (s.getPilotID() == pilotID)).findAny().orElse(null);
     }
     
     /**
@@ -351,13 +306,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#addSignup(Signup)
      */
     public boolean isSignedUp(int pilotID) {
-       for (Iterator<Signup> i = _signups.iterator(); i.hasNext(); ) {
-          Signup s = i.next();
-          if (s.getPilotID() == pilotID)
-             return true;
-       }
-       
-       return false;
+    	return (getSignup(pilotID) != null);
     }
     
     /**
@@ -367,13 +316,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#isOrigin(Airport)
      */
     public boolean isDestination(Airport a) {
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
-    		if (r.getAirportA().equals(a))
-    			return true;
-    	}
-    	
-    	return false;
+    	return _routes.stream().anyMatch(r -> r.getAirportA().equals(a));
     }
     
     /**
@@ -384,13 +327,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#isDestination(Airport)
      */
     public boolean isOrigin(Airport a) {
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
-    		if (r.getAirportD().equals(a))
-    			return true;
-    	}
-    	
-    	return false;
+    	return _routes.stream().anyMatch(r -> r.getAirportD().equals(a));
     }
     
     /**
@@ -603,8 +540,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
 
     /**
      * Compares to events by comparing their start date/times.
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * @throws ClassCastException if o2 is not an Event
      */
     @Override
     public int compareTo(Object o2) {
