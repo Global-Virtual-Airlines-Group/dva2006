@@ -87,7 +87,6 @@ golgotha.local.historicAirlines = ${historicAL};
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
-<content:enum var="daysOfWeek" className="java.time.DayOfWeek" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

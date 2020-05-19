@@ -125,6 +125,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		String id = (String) ctx.getCmdParameter(ID, "-"); int pos = id.indexOf('-');
 		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, id.substring(0, pos), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(id.substring(pos + 1), -1);
+		ctx.setAttribute("daysOfWeek", ComboUtils.properCase(DayOfWeek.values()), REQUEST);
 		
 		try {
 			Connection con = ctx.getConnection();
