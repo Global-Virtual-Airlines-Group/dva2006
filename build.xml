@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
 	
 	<!-- Lowercase function -->
@@ -11,13 +11,13 @@
 
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.10" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.13" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="http://download.oracle.com/javase/8/docs/api/" />
+            <link href="https://docs.oracle.com/en/java/javase/13/docs/api/" />
         	<link href="http://download.oracle.com/javaee/6/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
@@ -30,7 +30,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2018 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2020 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -99,8 +99,7 @@
 		<property file="data/build_doc.properties" prefix="junit" />
 		
     	<!-- Upload the JUnit report -->
-    	<ftp password="${junit.ftp.pwd}" server="${junit.ftp.server}" userid="${junit.ftp.user}"
-    	 remotedir="${path.junit}" action="send" verbose="yes">
+    	<ftp password="${junit.ftp.pwd}" server="${junit.ftp.server}" userid="${junit.ftp.user}" remotedir="${path.junit}" action="send" verbose="yes">
     		<fileset dir="${java.io.tmpdir}/junit_report" />
     	</ftp>
 
@@ -207,7 +206,18 @@
 		
 		<property name="task.compile" value="true" />
 	</target>
-
+<!--
+	<target name="jslint" unless="task.jslint" description="Run JSLint">
+		<available file="lib/jslint4java-2.0.5.jar" property="JSLINT_AVAILABLE" />
+		<taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="lib/jslint4java-2.0.5.jar" />
+		<jslint>
+			<formatter type="plain" />
+			<fileset dir="static/js" includes="*.js" />
+		</jslint>
+		
+		<property name="task.jslint" value="true" />
+	</target>
+-->
 	<target name="minify" unless="task.minify" description="Minify JS and CSS">
 		<available file="lib/YUIAnt.jar" property="YUIANT_AVAILABLE" />
 		<fail unless="YUIANT_AVAILABLE" message="Run jar target to generate the required task" />
