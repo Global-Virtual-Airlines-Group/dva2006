@@ -92,13 +92,14 @@ public class GetSystemLog extends DAO {
 		if (result != null)
 			return result;
 		
-		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS) FROM SYS_API_USAGE WHERE (API=?) AND (DATE(USAGE_DATE)= CURDATE()) GROUP BY DT LIMIT 1")) {
+		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (DATE(USAGE_DATE)= CURDATE()) GROUP BY DT LIMIT 1")) {
 			ps.setString(1, methodName);
 			try (ResultSet rs = ps.executeQuery()) {
 				result = new APIUsage(Instant.now(), methodName);
 				if (rs.next()) {
 					result.setTotal(rs.getInt(2));
 					result.setAnonymous(rs.getInt(3));
+					result.setBlocked(rs.getInt(4));
 				}
 			}
 		} catch (SQLException se) {
@@ -119,7 +120,7 @@ public class GetSystemLog extends DAO {
 	public List<APIUsage> getAPIRequests(API api, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT USAGE_DATE, API, SUM(USE_COUNT), SUM(ANONYMOUS) FROM SYS_API_USAGE WHERE (USAGE_DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT USAGE_DATE, API, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (USAGE_DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
 		if (api != null)
 			sqlBuf.append("AND (LEFT(API,?)=?) ");
 		sqlBuf.append("GROUP BY DATE(USAGE_DATE) ORDER BY USAGE_DATE DESC, API");
@@ -138,6 +139,7 @@ public class GetSystemLog extends DAO {
 					APIUsage ap = new APIUsage(toInstant(rs.getTimestamp(1)), rs.getString(2));
 					ap.setTotal(rs.getInt(3));
 					ap.setAnonymous(rs.getInt(4));
+					ap.setBlocked(rs.getInt(5));
 					results.add(ap);
 				}
 			}
