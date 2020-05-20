@@ -30,16 +30,16 @@
 <view:table cmd="apistats">
 <tr class="title caps">
  <td colspan="2" class="left">API USAGE STATISTICS SINCE <fmt:date date="${startDate}" d="MMMM dd yyyy" fmt="d" /></td>
- <td colspan="2" class="right"><span class="nophone">PREVIOUS </span><el:text name="days" size="2" max="4" value="${daysBack}" /> DAYS</td>
+ <td colspan="3" class="right"><span class="nophone">PREVIOUS </span><el:text name="days" size="2" max="4" value="${daysBack}" /> DAYS</td>
 </tr>
 
 <!--  Chart Header Bar -->
 <tr class="title caps">
  <td colspan="2" class="left">API USAGE CHART</td>
- <td colspan="2"><span class="und" onclick="golgotha.util.toggleExpand(this, 'chartRow'); golgotha.local.showChart()">EXPAND</span></td>
+ <td colspan="3"><span class="und" onclick="golgotha.util.toggleExpand(this, 'chartRow'); golgotha.local.showChart()">EXPAND</span></td>
 </tr>
 <tr class="chartRow" style="display:none;">
- <td colspan="4"><div id="flightStats" style="height:525px;"></div></td>
+ <td colspan="5"><div id="flightStats" style="height:525px;"></div></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -48,6 +48,7 @@
  <td>API / METHOD</td>
  <td>TOTAL USAGE</td>
  <td>ANONYMOUS</td>
+ <td>BLOCKED</td>
 </tr>
 
 <!-- Table Statistics Data -->
@@ -60,7 +61,7 @@
 <c:set var="p" value="${predict[lastMethod]}" scope="page" />
 <c:if test="${!empty p}">
 <tr class="title caps">
- <td class="left" colspan="4">${p.name} - PREDICTED USAGE <fmt:int value="${p.total}" /> (<fmt:int value="${p.anonymous}" /> ANONYMOUS) OVER <fmt:int value="${daysRemaining}" /> DAYS</td>
+ <td class="left" colspan="5">${p.name} - PREDICTED USAGE <fmt:int value="${p.total}" /> (<fmt:int value="${p.anonymous}" /> ANONYMOUS) OVER <fmt:int value="${daysRemaining}" /> DAYS</td>
 </tr>
 </c:if>
 </c:if>
@@ -69,13 +70,19 @@
  <td class="sec bld">${stat.name}</td>
  <td class="bld"><fmt:int value="${stat.total}" /></td>
  <td><fmt:int value="${stat.anonymous}" /></td>
+<c:if test="${stat.blocked > 0}">
+ <td class="err bld"><fmt:int value="${stat.blocked}" /></td>
+</c:if>
+<c:if test="${stat.blocked == 0}">
+ <td class="bld">0</td>
+</c:if>
 </tr>
 </c:forEach>
 </c:forEach>
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
