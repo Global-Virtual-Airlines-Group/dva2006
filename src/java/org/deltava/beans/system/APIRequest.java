@@ -17,6 +17,7 @@ public class APIRequest implements java.io.Serializable, Comparable<APIRequest> 
 	private final String _name;
 	private final String _db;
 	private final boolean _isAnonymous;
+	private final boolean _isBlocked;
 	
 	/**
 	 * Creates the bean.
@@ -24,7 +25,7 @@ public class APIRequest implements java.io.Serializable, Comparable<APIRequest> 
 	 * @param isAnonymous TRUE if not authenticated, otherwise FALSE
 	 */
 	public APIRequest(String name, boolean isAnonymous) {
-		this (name, null, isAnonymous);
+		this (name, null, isAnonymous, false);
 	}
 
 	/**
@@ -32,12 +33,14 @@ public class APIRequest implements java.io.Serializable, Comparable<APIRequest> 
 	 * @param name the API name
 	 * @param db the database to log to
 	 * @param isAnonymous TRUE if not authenticated, otherwise FALSE
+	 * @param isBlocked TRUE if request was blocked, otherwise FALSE
 	 */
-	public APIRequest(String name, String db, boolean isAnonymous) {
+	public APIRequest(String name, String db, boolean isAnonymous, boolean isBlocked) {
 		super();
 		_name = name;
 		_db = db;
 		_isAnonymous = isAnonymous;
+		_isBlocked = isBlocked;
 	}
 	
 	/**
@@ -70,6 +73,14 @@ public class APIRequest implements java.io.Serializable, Comparable<APIRequest> 
 	 */
 	public boolean getIsAnonymous() {
 		return _isAnonymous;
+	}
+	
+	/**
+	 * Returns if the request was blocked.
+	 * @return TRUE if blocked, otherwise FALSE
+	 */
+	public boolean isBlocked() {
+		return _isBlocked;
 	}
 
 	@Override

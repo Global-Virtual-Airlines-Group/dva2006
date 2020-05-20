@@ -19,6 +19,7 @@ public class APIUsage implements Cacheable, Comparable<APIUsage> {
 	
 	private int _total;
 	private int _anonymous;
+	private int _blocked;
 	
 	/**
 	 * Creates the bean.
@@ -64,6 +65,14 @@ public class APIUsage implements Cacheable, Comparable<APIUsage> {
 	}
 	
 	/**
+	 * Returns the number of blocked API invocations.
+	 * @return the number of blocked invocations
+	 */
+	public int getBlocked() {
+		return _blocked;
+	}
+	
+	/**
 	 * Updates the total number of API invocations.
 	 * @param cnt the number of invocations
 	 */
@@ -77,6 +86,14 @@ public class APIUsage implements Cacheable, Comparable<APIUsage> {
 	 */
 	public void setAnonymous(int cnt) {
 		_anonymous = cnt;
+	}
+	
+	/**
+	 * Updates the number of blocked API invocations.
+	 * @param cnt the number of invocations
+	 */
+	public void setBlocked(int cnt) {
+		_blocked = cnt;
 	}
 
 	@Override

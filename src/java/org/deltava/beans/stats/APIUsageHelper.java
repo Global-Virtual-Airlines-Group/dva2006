@@ -64,9 +64,9 @@ public class APIUsageHelper {
 	 */
 	public static APIUsage predictToday(APIUsage u) {
 		
-		// Determine percentage of the day
-		int seconds = LocalTime.ofInstant(Instant.now(), ZoneOffset.UTC).toSecondOfDay();
-		double pct = 1 - (seconds / 86400d);
+		// Determine percentage of the day remaining
+		int seconds = LocalTime.ofInstant(Instant.now(), ZoneOffset.UTC).toSecondOfDay() + 1; // avoid divide by zero
+		double pct = 86400d / seconds;
 		
 		// Apply percentage
 		APIUsage result = new APIUsage(u.getDate(), u.getName());
