@@ -10,6 +10,7 @@ import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.AirlineComparator;
 import org.deltava.dao.*;
 import org.deltava.filter.*;
 
@@ -60,7 +61,7 @@ public class FindFlightCommand extends AbstractCommand {
 
 		// Save airlines and ratings
 		List<Airline> airlines = SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList());
-		Collections.sort(airlines);
+		Collections.sort(airlines, new AirlineComparator(AirlineComparator.NAME));
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 		ctx.setAttribute("airline", SystemData.getAirline(SystemData.get("airline.code")), REQUEST);
