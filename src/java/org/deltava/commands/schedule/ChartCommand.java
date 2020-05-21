@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -75,14 +75,9 @@ public class ChartCommand extends AbstractFormCommand {
 			
 			// Check for PDF
 			if (hasData) {
-				boolean isPDF = true;
-				@SuppressWarnings("null")
+				@SuppressWarnings("null") // can never be null
 				byte[] buffer = imgData.getBuffer();
-				for (int x = 0; x < Chart.PDF_MAGIC.length(); x++)
-					isPDF &= (buffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
-			
-				// Get image metadata
-				if (!isPDF) {
+				if (!PDFUtils.isPDF(buffer)) {
 					ImageInfo info = new ImageInfo(buffer);
 					info.check();
 					c.setImgType(Chart.ImageType.values()[info.getFormat()]);
@@ -203,10 +198,7 @@ public class ChartCommand extends AbstractFormCommand {
 		} else {
 			// Determine if we're displaying the printer-friendly page
 			boolean isPrintFriendly = "print".equals(ctx.getCmdParameter(Command.OPERATION, null));
-			String JSPname = isPrintFriendly ? "chartPrint.jsp" : "chartView.jsp";
-
-			// Forward to the JSP
-			result.setURL("/jsp/schedule/" + JSPname);
+			result.setURL("/jsp/schedule/" + (isPrintFriendly ? "chartPrint.jsp" : "chartView.jsp"));
 		}
 	}
 }
