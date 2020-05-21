@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.util.StringUtils;
@@ -6,13 +6,13 @@ import org.deltava.util.StringUtils;
 /**
  * An enumeration of Runway surface types.
  * @author Luke
- * @version 6.4
+ * @version 9.0
  * @since 6.4
  */
 
 public enum Surface {
 	ASPHALT(true), BITUMINOUS(true), BRICK, CLAY, CEMENT(true), CONCRETE(true), CORAL, DIRT,	 GRASS, GRAVEL, ICE, MACADAM, OIL_TREATED, 
-	PLANKS, SAND, SHALE, SNOW, STEEL_MATS, TARMAC(true), UNKNOWN(true), WATER;
+	PLANKS, SAND, SHALE, SNOW, MATS, TARMAC(true), UNKNOWN(true), WATER;
 	
 	private final boolean _hard;
 	
