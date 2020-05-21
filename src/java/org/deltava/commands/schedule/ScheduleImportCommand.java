@@ -223,11 +223,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 			return new GZIPInputStream(new FileInputStream(f), 65536);
 
 		boolean isPDF = false;
-		try (InputStream his = new FileInputStream(f)) {
-			byte[] b = new byte[64]; int bytesRead = his.read(b);
-			isPDF = (bytesRead > Chart.PDF_MAGIC.length());
-			for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
-				isPDF &= (b[x] == Chart.PDF_MAGIC.getBytes()[x]);
+		try (InputStream his = new BufferedInputStream(new FileInputStream(f))) {
+			byte[] b = new byte[64]; his.read(b);
+			isPDF = PDFUtils.isPDF(b);
 		}
 
 		if (isPDF) {
