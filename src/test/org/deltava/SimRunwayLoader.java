@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 
+import org.deltava.util.EnumUtils;
 import org.deltava.util.StringUtils;
-
 import org.jdom2.*;
 import org.jdom2.filter.ElementFilter;
 
@@ -20,36 +20,16 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?rewriteBatchedStatements=true&useSSL=false";
 	private Connection _c;
 
-	private static final String SCENERY_ROOT = "D:\\Program Files\\Prepar3Dv4\\Scenery";
-	private static final String XML_PATH = "E:\\temp\\bgxml_p3dv4";
+	private static final String XML_PATH = "C:\\temp";
 
-	private static final String BGLXML = "data/bglxml/bglxml.exe";
 	private static final Simulator SIM = Simulator.P3Dv4;
 
-	private static final String[] NAMES = { "NORTH", "SOUTH", "EAST", "WEST", "NORTHWEST", "SOUTHEAST", "NORTHEAST", "SOUTHWEST" };
-	private static final String[] CODES = { "N", "S", "E", "W", "NW", "SE", "NE", "SW" };
-
-	private static final double FT_PER_M = 3.2808399;
-
 	private static final int WGS84_SRID = 4326;
-
-	final class SceneryFilter implements FileFilter {
-		@Override
-		public boolean accept(File f) {
-			String fn = f.getName().toLowerCase();
-			return (f.isFile() && fn.startsWith("ap") && fn.endsWith(".bgl"));
-		}
-	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		log = Logger.getLogger(SimRunwayLoader.class);
-
-		// Create the output directory
-		File xmlP = new File(XML_PATH);
-		if (!xmlP.exists())
-			xmlP.mkdirs();
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -67,58 +47,6 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 
 	private static String formatLocation(double lat, double lng) {
 		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(lat), Double.valueOf(lng));
-	}
-
-	public void testConvertBGLs() throws Exception {
-		assertFalse(true);
-
-		// Check that we're running Windows and the file exists
-		assertTrue(System.getProperty("os.name").contains("Windows"));
-		File exe = new File(BGLXML);
-		assertTrue(exe.exists() && exe.isFile());
-
-		File rt = new File(SCENERY_ROOT);
-		assertTrue(rt.isDirectory());
-
-		Collection<File> bglFiles = getFiles(rt, new SceneryFilter());
-		assertNotNull(bglFiles);
-
-		// Process the BGLs
-		for (Iterator<File> i = bglFiles.iterator(); i.hasNext();) {
-			File bgl = i.next();
-			String fRoot = bgl.getName().substring(0, bgl.getName().lastIndexOf('.'));
-			File xml = new File(XML_PATH, fRoot + ".xml");
-
-			// Covert the BGL
-			if (!xml.exists()) {
-				log.info("Converting " + bgl.getCanonicalPath() + " to XML");
-				ProcessBuilder pb = new ProcessBuilder(exe.getAbsolutePath(), "-t", bgl.getPath(), xml.getPath());
-				Process p = pb.start();
-				int result = p.waitFor();
-				if (result != 0) {
-					try (InputStream is = new BufferedInputStream(p.getInputStream(), 512)) {
-						try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-							while (br.ready())
-								log.info(br.readLine());
-						}
-					}
-
-					fail("Cannot convert to XML");
-				}
-
-				// Load the XML
-				Document doc = null;
-				try {
-					filterAmpersands(xml);
-					doc = loadXML(new FileReader(xml));
-				} catch (Exception e) {
-					log.error(e.getMessage(), e);
-				}
-
-				// Process the document
-				assertNotNull(doc);
-			}
-		}
 	}
 
 	public void testLoadXML() throws Exception {
@@ -142,162 +70,114 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 			ps.setInt(1, SIM.getCode());
 			ps.executeUpdate();
 		}
+		
+		// Load the widths from R5.csv
+		File cf = new File(XML_PATH, "r5.csv");
+		assertTrue(cf.exists() && cf.isFile());
+		Map<String, Integer> widths = new HashMap<String, Integer>();
+		try (LineNumberReader lr = new LineNumberReader(new FileReader(cf))) {
+			String data = lr.readLine();
+			while (data != null) {
+				List<String> tkns = StringUtils.split(data, ",");
+				String apCode = tkns.get(0);
+				String rwyNumber = tkns.get(1).substring(1, 3);
+				switch (tkns.get(1).charAt(3)) {
+					case '1':
+						rwyNumber += "L";
+						break;
+						
+					case '2':
+						rwyNumber += "R";
+						break;
+						
+					case '3':
+						rwyNumber += "C";
+						break;
+						
+					default:
+						break;
+				}
+				
+				if (codes.contains(apCode))
+					widths.put(apCode + "$" + rwyNumber, Integer.valueOf(StringUtils.parse(tkns.get(8), -1)));
+				
+				data = lr.readLine();
+			}
+		}
 
 		// Init the prepared statement
 		try (PreparedStatement ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 			ps.setInt(3, SIM.getCode());
 
-			// Load the XML files
-			File[] xmls = rt.listFiles(new XMLFilter());
-			assertNotNull(xmls);
-			for (int x = 0; x < xmls.length; x++) {
-				Document doc = loadXML(new FileReader(xmls[x]));
-				assertNotNull(doc);
+			// Load the XML file
+			File xf = new File(XML_PATH, "Runways.xml");
+			assertTrue(xf.exists() && xf.isFile());
 
-				// Get the airports
-				Iterator<Element> ali = doc.getDescendants(new ElementFilter("Airport"));
-				while (ali.hasNext()) {
-					Element ae = ali.next();
-					String apCode = ae.getAttributeValue("ident").toUpperCase();
-					if (!codes.contains(apCode))
-						continue;
+			Document doc = loadXML(new FileReader(xf));
+			assertNotNull(doc);
 
-					log.info("Processing " + apCode + " from " + xmls[x]);
+			// Get the airports
+			Iterator<Element> ali = doc.getDescendants(new ElementFilter("ICAO"));
+			while (ali.hasNext()) {
+				Element ae = ali.next();
+				String apCode = ae.getAttributeValue("id").toUpperCase();
+				if (!codes.contains(apCode))
+					continue;
 
-					float magVar = Float.parseFloat(ae.getAttributeValue("magvar", "0.0"));
-					Map<String, Runway> runways = new HashMap<String, Runway>();
-					Iterator<Element> rli = ae.getDescendants(new ElementFilter("Runway"));
-					while (rli.hasNext()) {
-						Element re = rli.next();
-						double lat = Double.parseDouble(re.getAttributeValue("lat"));
-						double lng = Double.parseDouble(re.getAttributeValue("lon"));
+				int hasData = 0;
+				ps.setString(1, apCode);
 
-						// Get the heading
-						float hdg = Float.parseFloat(re.getAttributeValue("heading"));
+				float magVar = Float.parseFloat(ae.getAttributeValue("MagVar", "0.0"));
+				Iterator<Element> rli = ae.getDescendants(new ElementFilter("Runway"));
+				while (rli.hasNext()) {
+					Element re = rli.next();
+					String rwyID = re.getAttributeValue("id");
+					double lat = Double.parseDouble(re.getChildTextTrim("Lat"));
+					double lng = Double.parseDouble(re.getChildTextTrim("Lon"));
 
-						// Get the runway length
-						String rawLength = re.getAttributeValue("length");
-						if (Character.isLetter(rawLength.charAt(rawLength.length() - 1)))
-							rawLength = rawLength.substring(0, rawLength.length() - 2);
+					// Get the heading/length/width
+					float hdg = Float.parseFloat(re.getChildTextTrim("Hdg"));
+					float length = Float.parseFloat(re.getChildTextTrim("Len"));
+					Integer w = widths.getOrDefault(apCode + "$" + rwyID, Integer.valueOf(-1));
+					if (w.intValue() < 0)
+						log.warn("Cannot get runway width for " + rwyID + " at " + apCode);
 
-						double length = Double.parseDouble(rawLength);
-						double width = Double.parseDouble(re.getAttributeValue("width"));
-						length *= FT_PER_M;
-						width *= FT_PER_M;
+					Runway rwy = new Runway(lat, lng);
+					rwy.setCode(apCode);
+					rwy.setName(rwyID);
+					rwy.setHeading(Math.round(hdg));
+					rwy.setLength(Math.round(length));
+					rwy.setWidth(w.intValue());
+					rwy.setMagVar(magVar);
+					rwy.setSurface(EnumUtils.parse(Surface.class, re.getChildTextTrim("Def").replace('-', '_'), Surface.UNKNOWN));
+					if (rwy.getSurface() == Surface.UNKNOWN)
+						log.warn("Unknown surface - " + re.getChildTextTrim("Def"));
+					
+					// Save the data
+					if (rwy.getName().length() <= 4) {
+						ps.setString(2, rwy.getName());
+						ps.setDouble(4, rwy.getLatitude());
+						ps.setDouble(5, rwy.getLongitude());
+						ps.setInt(6, Math.round(hdg));
+						ps.setInt(7, rwy.getLength());
+						ps.setInt(8, rwy.getWidth());
+						ps.setDouble(9, magVar);
+						ps.setInt(10, rwy.getSurface().ordinal());
+						ps.setString(11, formatLocation(lat, lng));
+						ps.setInt(12, WGS84_SRID);
+						ps.addBatch();
+						hasData++;
+					} else
+						log.warn("Skipping " + apCode + " runway " + rwy.getName());
+				}
 
-						// Get the runway code
-						String number = re.getAttributeValue("number");
-						String code = re.getAttributeValue("primaryDesignator");
-						if (code != null) {
-							code = code.substring(0, 1).toUpperCase();
-							if (!"W".equals(code) && !"N".equals(code))
-								number += code;
-						} else if (Character.isLetter(number.charAt(0))) {
-							int ofs = StringUtils.arrayIndexOf(NAMES, number);
-							if (ofs > -1)
-								number = CODES[ofs];
-						}
-
-						Runway rwy = new Runway(lat, lng);
-						rwy.setCode(apCode);
-						rwy.setName(number);
-						rwy.setHeading(Math.round(hdg));
-						rwy.setLength((int) Math.round(length));
-						rwy.setWidth((int) Math.round(width));
-						rwy.setMagVar(magVar);
-						rwy.setSurface(Surface.valueOf(re.getAttributeValue("surface")));
-						runways.put(number, rwy);
-					}
-
-					// Load the runway starts
-					ps.setString(1, apCode);
-					boolean hasData = false;
-					Iterator<Element> sli = ae.getDescendants(new ElementFilter("Start"));
-					while (sli.hasNext()) {
-						Element se = sli.next();
-						String type = se.getAttributeValue("type");
-						if (!"RUNWAY".equalsIgnoreCase(type))
-							continue;
-
-						String number = se.getAttributeValue("number");
-						String code = se.getAttributeValue("designator");
-						if (code != null) {
-							code = code.substring(0, 1).toUpperCase();
-							if (!"W".equals(code) && !"N".equals(code))
-								number += code;
-						} else
-							code = "";
-
-						// Get the proper code
-						if (Character.isLetter(number.charAt(0))) {
-							int ofs = StringUtils.arrayIndexOf(NAMES, number);
-							if (ofs > -1)
-								number = CODES[ofs];
-						}
-
-						// Get the runway data
-						double lat = Double.parseDouble(se.getAttributeValue("lat"));
-						double lng = Double.parseDouble(se.getAttributeValue("lon"));
-						float hdg = Float.parseFloat(se.getAttributeValue("heading"));
-
-						// Get the length
-						Runway r = runways.get(number);
-						if (r == null) {
-							String rawNumber = se.getAttributeValue("number");
-							int newNumber = StringUtils.parse(rawNumber, -1);
-							if (newNumber > 0) {
-								newNumber += ((newNumber < 18) ? 18 : -18);
-								String newCode = StringUtils.format(newNumber, "00");
-								if (code.equals("L"))
-									newCode += "R";
-								if (code.equals("R"))
-									newCode += "L";
-								if (code.equals("C"))
-									newCode += "C";
-
-								r = runways.get(newCode);
-								if (r == null)
-									log.warn("Cannot find runway " + newCode);
-							} else {
-								int ofs = StringUtils.arrayIndexOf(NAMES, rawNumber);
-								String newCode = rawNumber;
-								if (ofs > -1) {
-									if ((ofs % 2) == 0)
-										newCode = CODES[ofs + 1];
-									else
-										newCode = CODES[ofs - 1];
-								}
-
-								r = runways.get(newCode);
-								if (r == null)
-									log.warn("Cannot find runway " + newCode);
-							}
-						}
-
-						// Save the data
-						if ((number.length() <= 4) && (r != null)) {
-							ps.setString(2, number);
-							ps.setDouble(4, lat);
-							ps.setDouble(5, lng);
-							ps.setInt(6, Math.round(hdg));
-							ps.setInt(7, r.getLength());
-							ps.setInt(8, r.getWidth());
-							ps.setDouble(9, magVar);
-							ps.setInt(10, r.getSurface().ordinal());
-							ps.setString(11, formatLocation(lat, lng));
-							ps.setInt(12, WGS84_SRID);
-							ps.addBatch();
-							hasData = true;
-						} else
-							log.warn("Skipping " + apCode + " runway " + number);
-					}
-
-					// Save the entries
-					if (hasData) {
-						ps.executeBatch();
-						// _c.rollback();
-						_c.commit();
-					}
+				// Save the entries
+				if (hasData > 0) {
+					ps.executeBatch();
+					// _c.rollback();
+					_c.commit();
+					log.debug("Processing " + hasData + " runways for " + apCode);
+					hasData = 0;
 				}
 			}
 		}
