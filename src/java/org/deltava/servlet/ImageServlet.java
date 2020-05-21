@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -18,7 +18,6 @@ import org.deltava.security.command.*;
 
 import org.deltava.dao.*;
 import org.deltava.util.*;
-
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.*;
@@ -26,7 +25,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 7.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -223,13 +222,8 @@ public class ImageServlet extends DownloadServlet {
 		if (imgBuffer == null)
 			return;
 
-		// Check for PDF
-		boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
-		for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
-			isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
-
 		// Get the image type
-		if (!isPDF) {
+		if (!PDFUtils.isPDF(imgBuffer)) {
 			ImageInfo info = new ImageInfo(imgBuffer);
 			if (!info.check()) {
 				rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
