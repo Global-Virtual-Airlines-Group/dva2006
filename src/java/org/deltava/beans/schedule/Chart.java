@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -17,28 +17,17 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	/**
 	 * Chart type enumeration.
 	 */
-	public enum Type implements ComboAlias {
-		UNKNOWN("???"), ILS("ILS Approach"), APR("Approach"), STAR("Standard Terminal Arrival"), 
-		SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package"),
-		MIN("Minimums");
+	public enum Type implements EnumDescription {
+		UNKNOWN("???"), ILS("ILS Approach"), APR("Approach"), STAR("Standard Terminal Arrival"), SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package"), MIN("Minimums");
 		
 		private final String _desc;
 		
 		Type(String desc) {
 			_desc = desc;
 		}
-		
+
+		@Override
 		public String getDescription() {
-			return _desc;
-		}
-
-		@Override
-		public String getComboAlias() {
-			return name();
-		}
-
-		@Override
-		public String getComboName() {
 			return _desc;
 		}
 	}
@@ -50,11 +39,6 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 		GIF, JPG, PNG, PDF;
 	}
 	
-	/**
-	 * Adobe Portable Document Format magic number.
-	 */
-	public static final String PDF_MAGIC = "%PDF-";
-
 	private ImageType _imgType;
 	private Type _type;
 	private String _name;
