@@ -16,39 +16,6 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="examTake" />
-<script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-
-// Check if all questions were answered
-let isOK = true; let qNum = 1;
-let a = golgotha.exam.getElementsById('A' + qNum);
-while (isOK && (a.length > 0)) {
-	if (a.length == 1)
-		isOK = (isOK && (a[0].value.length > 1));
-	else {
-		var checkCount = 0;
-		for (var x = 0; x < a.length; x++) {
-			if (a[x].checked)
-				checkCount++;
-		}
-		
-		isOK = (isOK && (checkCount > 0));
-	}
-
-	qNum++;
-	a = document.getElementById('A' + qNum);
-}
-
-if (!isOK) {
-	if (!confirm("You have not answered all Questions. Hit OK to submit.")) return false;
-}
-
-golgotha.form.submit(f);
-return true;
-};
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -67,7 +34,7 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="page"/>
+<c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
  <td class="label top" rowspan="${hasImage ? '2' : '1'}">Question #<fmt:int value="${q.number}" /></td>
@@ -80,14 +47,17 @@ return true;
 </tr>
 </c:if>
 
-<!-- Answer# ${qnum} -->
+<!-- Answer #${q.number} -->
 <tr>
  <td class="label top">Answer #<fmt:int value="${q.number}" /></td>
  <c:if test="${!fn:isMultiChoice(q)}">
  <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="90%" height="2" resize="true">${q.answer}</el:textbox></td>
 </c:if>
 <c:if test="${fn:isMultiChoice(q)}">
- <td class="data"><el:check ID="A${q.number}" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+<c:set var="maxSize" value="${q.maxAnswerLength}" scope="page" />
+<c:set var="doLines" value="${maxSize > 80}" scope="page" />
+<c:set var="cols" value="${doLines ? 1 : (350 / maxSize)}" scope="page" />
+ <td class="data"><el:check ID="A${q.number}" type="radio" name="answer${q.number}" className="small" newLine="${doLines}" width="${doLines ? 500 : 225}" cols="${cols}" options="${q.choices}" value="${q.answer}" /></td>
 </c:if>
 </tr>
 </c:forEach>
