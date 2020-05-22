@@ -109,7 +109,10 @@ golgotha.exam.rpInfo[${q.number}] = info;
  <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.updateMap(golgotha.exam.rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br />" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>
 </c:when>
 <c:when test="${isMC}">
- <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+<c:set var="maxSize" value="${q.maxAnswerLength}" scope="page" />
+<c:set var="doLines" value="${maxSize > 80}" scope="page" />
+<c:set var="cols" value="${doLines ? 1 : (350 / maxSize)}" scope="page" />
+ <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" newLine="${doLines}" className="small" width="${doLines ? 500 : 225}" cols="${cols}" options="${q.choices}" value="${q.answer}" /></td>
 </c:when>
 <c:otherwise>
  <td class="data"><el:textbox ID="A${q.number}" onBlur="void golgotha.exam.saveAnswer(${q.number}, ${exam.hexID})" name="answer${q.number}" className="small" width="90%" height="3" resize="true">${q.answer}</el:textbox></td>
@@ -122,9 +125,7 @@ golgotha.exam.rpInfo[${q.number}] = info;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT EXAMINATION" /></c:if>
- </td>
+ <td>&nbsp;<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT EXAMINATION" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
