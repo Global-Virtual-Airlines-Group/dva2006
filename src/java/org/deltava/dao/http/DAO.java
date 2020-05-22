@@ -1,11 +1,10 @@
-// Copyright 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.net.*;
 import java.util.Base64;
-
-import javax.net.ssl.*;
+import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.system.VersionInfo;
 
@@ -13,13 +12,12 @@ import org.deltava.beans.system.VersionInfo;
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 2.4
  */
 
 public abstract class DAO {
 
-	private SSLContext _sslCtxt;
 	private String _method = "GET";
 
 	private int _readTimeout = 4500;
@@ -34,14 +32,6 @@ public abstract class DAO {
 	private void checkConnected() {
 		if (_urlcon == null)
 			throw new IllegalStateException("Not Initialized");
-	}
-
-	/**
-	 * Overrides the context used to generate SSL context.
-	 * @param ctxt the SSLContext
-	 */
-	public void setSSLContext(SSLContext ctxt) {
-		_sslCtxt = ctxt;
 	}
 
 	/**
@@ -90,13 +80,8 @@ public abstract class DAO {
 				throw new InterruptedIOException("Already connected to " + _urlcon.getURL().toExternalForm());
 		}
 
-		_urlcon = u.openConnection();
-		if ("https".equals(u.getProtocol()) && (_sslCtxt != null)) {
-			HttpsURLConnection sslcon = (HttpsURLConnection) _urlcon;
-			sslcon.setSSLSocketFactory(_sslCtxt.getSocketFactory());
-		}
-
 		// Set timeouts and other stuff
+		_urlcon = u.openConnection();
 		_urlcon.setConnectTimeout(_connectTimeout);
 		_urlcon.setReadTimeout(_readTimeout);
 		_urlcon.setDefaultUseCaches(false);
@@ -125,10 +110,11 @@ public abstract class DAO {
 	 * @param pwd the password
 	 */
 	protected void setAuthentication(String userID, String pwd) {
-		String up = userID + ":" + pwd;
+		StringBuilder authBuf = new StringBuilder(userID);
+		authBuf.append(':').append(pwd);
 		Base64.Encoder enc = Base64.getEncoder();
 		StringBuilder buf = new StringBuilder("BASIC ");
-		buf.append(enc.encodeToString(up.getBytes()));
+		buf.append(enc.encodeToString(authBuf.toString().getBytes(StandardCharsets.ISO_8859_1)));
 		setRequestHeader("Authorization", buf.toString());
 	}
 
