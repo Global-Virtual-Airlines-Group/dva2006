@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.ACARSError;
+import org.deltava.beans.event.Event;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
@@ -23,7 +24,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 7.3
+ * @version 9.0
  * @since 7.3
  */
 
@@ -32,7 +33,7 @@ public class AttachmentServlet extends DownloadServlet {
 	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
-		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs");
+		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings");
 		
 		private final String _urlPart;
 		private final String _realm;
@@ -151,6 +152,20 @@ public class AttachmentServlet extends DownloadServlet {
 				rsp.setContentType("text/plain");
 				rsp.setHeader("Content-disposition", "attachment; filename=acars_error_" + dbID + ".log");
 				rsp.setIntHeader("max-age", 3600);
+				break;
+				
+			case EVENT:
+				GetEvent edao = new GetEvent(c);
+				Event e = edao.get(dbID);
+				if ((e == null) || (e.getBriefing() == null))
+					throw new NotFoundException("Invalid Event - " + url.getLastPath());
+				
+				// Get the briefing
+				buffer = e.getBriefing().getBuffer();
+				boolean isPDF = PDFUtils.isPDF(buffer);
+				rsp.setIntHeader("max-age", 3600);
+				rsp.setContentType(isPDF ? "application/pdf" : "text/plain");
+				rsp.setHeader("Content-disposition", "attachment; filename=ebrief_" + dbID + (isPDF ? ".pdf" : ".txt"));
 				break;
 				
 			default:
