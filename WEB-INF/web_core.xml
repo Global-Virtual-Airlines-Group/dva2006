@@ -166,6 +166,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
+        <url-pattern>/ebrief/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityCookieFilter</filter-name>
         <url-pattern>/upload/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
@@ -175,6 +179,10 @@
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/error_log/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityRequestWrapperFilter</filter-name>
+        <url-pattern>/ebrief/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
@@ -259,6 +267,11 @@
     <servlet-mapping>
         <servlet-name>attachments</servlet-name>    
         <url-pattern>/error_log/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>attachments</servlet-name>    
+        <url-pattern>/ebrief/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
