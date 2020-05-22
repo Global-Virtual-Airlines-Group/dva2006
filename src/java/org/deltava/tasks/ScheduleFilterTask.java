@@ -72,7 +72,7 @@ public class ScheduleFilterTask extends Task {
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
-					if (ir.getSource() != srcInfo.getSource()) {
+					if ((ir.getSource() != srcInfo.getSource()) && !rse.getForceInclude()) {
 						log.info(ir + " already imported by " + ir.getSource());
 						continue;
 					}
