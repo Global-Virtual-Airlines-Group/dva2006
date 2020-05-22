@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store multiple-choice examination questions.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,6 +31,15 @@ public class MultiChoiceQuestion extends Question implements MultipleChoice {
 	@Override
 	public List<String> getChoices() {
 		return new ArrayList<String>(_choices);
+	}
+	
+	/**
+	 * Returns the maximum length of any of the answer choices.
+	 * @return the maximum answer length
+	 */
+	public int getMaxAnswerLength() {
+		OptionalInt i = _choices.stream().mapToInt(String::length).max();
+		return i.orElse(0);
 	}
 
 	/**
