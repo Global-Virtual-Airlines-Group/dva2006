@@ -22,12 +22,12 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 
 // Check if all questions were answered
-var isOK = true; var qNum = 1;
-const a = golgotha.exam.getElementsById('A' + qNum);
+let isOK = true; let qNum = 1;
+let a = golgotha.exam.getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
-	if (a.length == 1) {
+	if (a.length == 1)
 		isOK = (isOK && (a[0].value.length > 1));
-	} else {
+	else {
 		var checkCount = 0;
 		for (var x = 0; x < a.length; x++) {
 			if (a[x].checked)
@@ -75,8 +75,7 @@ return true;
 </tr>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small"><span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
- bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small"><span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" /> bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
@@ -97,10 +96,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT QUESTIONNAIRE" />
-</c:if>
- </td>
+ <td>&nbsp;<c:if test="${access.canSubmit}"><el:button type="submit" label="SUBMIT QUESTIONNAIRE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
