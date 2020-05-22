@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspWriter;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a JavaScript include file.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 		try {
 			JspWriter out = pageContext.getOut();
 			out.print("<script src=\"");
-			if (!_resourceName.startsWith("http://")) {
+			if (!_resourceName.startsWith("http://") && !_resourceName.startsWith("https:/")) {
 				StringBuilder buf = new StringBuilder(SystemData.get("path.js"));
 				buf.append("/v");
 				buf.append(VersionInfo.BUILD);
