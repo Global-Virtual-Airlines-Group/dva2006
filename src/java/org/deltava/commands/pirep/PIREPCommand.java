@@ -748,17 +748,23 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetSystemLog sldao = new GetSystemLog(con);
 				APIUsage todayUse = sldao.getCurrentAPIUsage(API.GoogleMaps, "DYNAMIC");
 				APIUsage predictedUse = APIUsageHelper.predictToday(todayUse);
+				if (ctx.isUserInRole("Developer"))
+					ctx.setHeader("X-API-DailyUsage", "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
 				
 				// If we're below the daily max, all good
 				if (predictedUse.getTotal() > dailyMax) {
-					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);	
+					String method = API.GoogleMaps.createName("DYNAMIC");
+					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);
+					predictedUse = APIUsageHelper.predictUsage(usage, method);
 					
 					// Calculate actual usage
-					APIUsage totalUse = new APIUsage(Instant.now(), API.GoogleMaps.createName("DYNAMIC"));
+					APIUsage totalUse = new APIUsage(Instant.now(), method);
 					usage.stream().forEach(u -> { totalUse.setTotal(totalUse.getTotal() + u.getTotal()); totalUse.setAnonymous(totalUse.getAnonymous() + u.getAnonymous()); });
+					if (ctx.isUserInRole("Developer"))
+						ctx.setHeader("X-API-MonthUsage", "Max " + max + " / a=" + totalUse.getTotal() + ",p=" + predictedUse.getTotal());
 
-					// If predicted usage is less than 90% of max or less than 105% of max and we're auth, OK
-					if ((predictedUse.getTotal() > (max * 1.05)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9)))) {
+					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
+					if ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9)))) {
 						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
 						mapType = MapType.FALLINGRAIN;
 					}
