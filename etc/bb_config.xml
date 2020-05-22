@@ -77,7 +77,7 @@
 		<regex>(?i)\[img\](.*?)\[/img\]</regex>
 		<replace>
 		<![CDATA[
-		<img src="$1" border="0" />
+		<img src="$1" border="0" style="max-width:98%;" />
 		]]>
 		</replace>
 	</match>
