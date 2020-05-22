@@ -100,6 +100,7 @@ abstract class PilotReadDAO extends DAO {
 			loadRatings(results, dbName);
 			loadRoles(results);
 			loadAccomplishments(results, dbName);
+			updateSignatures(results, dbName);
 
 			// Add the result to the cache and return
 			_cache.addAll(results.values());
@@ -205,6 +206,7 @@ abstract class PilotReadDAO extends DAO {
 				loadRatings(ucMap, dbName);
 				loadRoles(ucMap);
 				loadAccomplishments(ucMap, dbName);
+				updateSignatures(ucMap, dbName);
 			} catch (SQLException se) {
 				log.error("Query = " + sqlBuf.toString());
 				throw new DAOException(se);
@@ -319,12 +321,12 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadChildRows(Pilot p, String dbName) throws SQLException {
-		Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
-		tmpMap.put(Integer.valueOf(p.getID()), p);
+		Map<Integer, Pilot> tmpMap = Collections.singletonMap(Integer.valueOf(p.getID()), p);
 		loadIMAddrs(tmpMap, dbName);
 		loadRatings(tmpMap, dbName);
 		loadRoles(tmpMap);
 		loadAccomplishments(tmpMap, dbName);
+		updateSignatures(tmpMap, dbName);
 	}
 
 	/**
@@ -334,8 +336,7 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadAccomplishments(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
-		if (pilots.isEmpty())
-			return;
+		if (pilots.isEmpty()) return;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, AC_ID, DATE FROM ");
@@ -393,13 +394,7 @@ abstract class PilotReadDAO extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, TYPE, ADDR FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOT_IMADDR WHERE (ID IN (");
-		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-		
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
 		sqlBuf.append("))");
 		
 		// Execute the query
@@ -428,8 +423,7 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadRatings(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
-		if (pilots.isEmpty())
-			return;
+		if (pilots.isEmpty()) return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
@@ -460,6 +454,32 @@ abstract class PilotReadDAO extends DAO {
 			if (dbName.equals(info.getDB())) {
 				pilots.forEach(p -> p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber())));
 				break;
+			}
+		}
+	}
+
+	// FIXME: Remove when 8.0.21 is released
+	protected final void updateSignatures(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty()) return;
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EXT, MODIFIED FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".SIGNATURES WHERE (ID IN (");
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
+		sqlBuf.append("))");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));					
+					if (p != null) {
+						String ext = rs.getString(2);
+						p.setSignatureExtension((ext == null) ? null : ext.trim());
+						if (p.getHasSignature())
+							p.setSignatureModified(toInstant(rs.getTimestamp(3)));						
+					}
+				}
 			}
 		}
 	}
