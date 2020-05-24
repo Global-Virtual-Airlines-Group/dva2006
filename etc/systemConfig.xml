@@ -362,8 +362,8 @@
 	<!-- API usage limits -->
 	<api>
 		<max>
-			<googleMaps type="Integer">25700</googleMaps>
-			<flightaware type="Integer">1500</flightaware>
+			<googleMaps type="Integer">250</googleMaps>
+			<flightaware type="Integer">15</flightaware>
 		</max>
 	</api>
 	
@@ -396,7 +396,10 @@
 			<analytics>UA-2066915-1</analytics>
 			<airCharts>bc59d23a-a926-5a6d-83aa-8e477688a38d</airCharts>
 			<wunderground>e466a9feecedb389</wunderground>
-			<googleMaps>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</googleMaps>
+			<googleMaps>
+				<auth>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</auth>
+				<anon>AIzaSyADmgR8dXaYYznXKqJxzyZuDaFq0MD1vw4</anon>
+			</googleMaps>
 			<google>AIzaSyDipON4NxnUFpg1wEnqA5OugqaqYxaBXIU</google>
 			<vatsim>1db84fa44417fda98d313a5839f80ba8</vatsim>
 			<twc>d522aa97197fd864d36b418f39ebb323</twc>
