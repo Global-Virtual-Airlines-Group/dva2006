@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -20,9 +20,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?rewriteBatchedStatements=true&useSSL=false";
 	private Connection _c;
 
-	private static final String XML_PATH = "C:\\temp";
-
 	private static final Simulator SIM = Simulator.P3Dv4;
+	private static final String XML_PATH = "E:\\temp\\rwy\\";
 
 	private static final int WGS84_SRID = 4326;
 
@@ -51,8 +50,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 
 	public void testLoadXML() throws Exception {
 
-		File rt = new File(XML_PATH);
-		assertTrue(rt.isDirectory());
+		File xp = new File(XML_PATH, SIM.name());
+		assertTrue(xp.isDirectory());
 
 		// Load ICAO codes
 		Collection<String> codes = new HashSet<String>();
@@ -71,8 +70,10 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 			ps.executeUpdate();
 		}
 		
+		log.info("Loaded " + codes.size() + " Airports, purged " + SIM + " runways");
+		
 		// Load the widths from R5.csv
-		File cf = new File(XML_PATH, "r5.csv");
+		File cf = new File(xp, "r5.csv");
 		assertTrue(cf.exists() && cf.isFile());
 		Map<String, Integer> widths = new HashMap<String, Integer>();
 		try (LineNumberReader lr = new LineNumberReader(new FileReader(cf))) {
@@ -104,17 +105,18 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				data = lr.readLine();
 			}
 		}
+		
+		// Load the XML file
+		File xf = new File(xp, "Runways.xml");
+		assertTrue(xf.exists() && xf.isFile());
+
+		Document doc = loadXML(new FileReader(xf));
+		assertNotNull(doc);
 
 		// Init the prepared statement
+		int totalRwys = 0;
 		try (PreparedStatement ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 			ps.setInt(3, SIM.getCode());
-
-			// Load the XML file
-			File xf = new File(XML_PATH, "Runways.xml");
-			assertTrue(xf.exists() && xf.isFile());
-
-			Document doc = loadXML(new FileReader(xf));
-			assertNotNull(doc);
 
 			// Get the airports
 			Iterator<Element> ali = doc.getDescendants(new ElementFilter("ICAO"));
@@ -127,7 +129,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				int hasData = 0;
 				ps.setString(1, apCode);
 
-				float magVar = Float.parseFloat(ae.getAttributeValue("MagVar", "0.0"));
+				float magVar = Float.parseFloat(ae.getChildTextTrim("MagVar"));
 				Iterator<Element> rli = ae.getDescendants(new ElementFilter("Runway"));
 				while (rli.hasNext()) {
 					Element re = rli.next();
@@ -149,6 +151,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					rwy.setLength(Math.round(length));
 					rwy.setWidth(w.intValue());
 					rwy.setMagVar(magVar);
+					rwy.setThreshold(Integer.parseInt(re.getChildTextTrim("ThresholdOffset")));
 					rwy.setSurface(EnumUtils.parse(Surface.class, re.getChildTextTrim("Def").replace('-', '_'), Surface.UNKNOWN));
 					if (rwy.getSurface() == Surface.UNKNOWN)
 						log.warn("Unknown surface - " + re.getChildTextTrim("Def"));
@@ -177,9 +180,11 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					// _c.rollback();
 					_c.commit();
 					log.debug("Processing " + hasData + " runways for " + apCode);
-					hasData = 0;
+					totalRwys += hasData; hasData = 0;
 				}
 			}
 		}
+		
+		log.info("Loaded " + totalRwys + " runways into " + SIM);
 	}
 }
