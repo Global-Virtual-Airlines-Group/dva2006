@@ -21,6 +21,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	private int _length;
 	private int _width = 175;
 	private int _heading;
+	private int _threshold;
 	
 	private Simulator _sim = Simulator.UNKNOWN;
 	private Surface _sfc = Surface.UNKNOWN;
@@ -75,6 +76,15 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	/**
+	 * Returns the lenght of the runway threshold.
+	 * @return the length in feet
+	 * @see Runway#setThreshold(int)
+	 */
+	public int getThreshold() {
+		return _threshold;
+	}
+	
+	/**
 	 * Returns the runway surface type.
 	 * @return the Surface
 	 * @see Runway#setSurface(Surface)
@@ -126,6 +136,15 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public void setWidth(int w) {
 		_width = Math.max(1, w);
+	}
+	
+	/**
+	 * Updates the length of the runway threshold. 
+	 * @param len the length in feet
+	 * @see Runway#getThreshold()
+	 */
+	public void setThreshold(int len) {
+		_threshold = Math.max(1,  len);
 	}
 
 	/**
