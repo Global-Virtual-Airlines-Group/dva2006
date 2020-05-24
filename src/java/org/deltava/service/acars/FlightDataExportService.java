@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import org.deltava.beans.WeightUnit;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.Recorder;
 
@@ -17,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -56,6 +57,9 @@ public class FlightDataExportService extends WebService {
 		} finally {
 			ctx.release();
 		}
+		
+		// Get weight units
+		WeightUnit wt = ctx.isAuthenticated() ? ctx.getUser().getWeightType() : WeightUnit.LB;
 
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
@@ -67,9 +71,9 @@ public class FlightDataExportService extends WebService {
 		// Format the ACARS data
 		for (RouteEntry entry : routeData) {
 			if (entry instanceof ACARSRouteEntry)
-				ctx.println(format((ACARSRouteEntry) entry));
+				ctx.println(format((ACARSRouteEntry) entry, wt));
 			else if (entry instanceof XARouteEntry)
-				ctx.println(format((XARouteEntry) entry));
+				ctx.println(format((XARouteEntry) entry, wt));
 		}
 
 		// Write the response
@@ -87,7 +91,7 @@ public class FlightDataExportService extends WebService {
 	/*
 	 * Helper method to format an XACARS position entry.
 	 */
-	private static String format(XARouteEntry entry) {
+	private static String format(XARouteEntry entry, WeightUnit wu) {
 		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));
@@ -110,14 +114,14 @@ public class FlightDataExportService extends WebService {
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getWindHeading(), "000"));
 		buf.append(',');
-		buf.append(StringUtils.format(entry.getFuelRemaining(), "###0"));
+		buf.append(StringUtils.format(wu.getFactor() * entry.getFuelRemaining(), "###0"));
 		return buf.toString();
 	}
 
 	/*
 	 * Helper method to format an ACARS position entry.
 	 */
-	private static String format(ACARSRouteEntry entry) {
+	private static String format(ACARSRouteEntry entry, WeightUnit wu) {
 		Instant i = (entry.getSimUTC() == null) ? entry.getDate() : entry.getSimUTC();
 		StringBuilder buf = new StringBuilder(StringUtils.format(i, "MM/dd/yyyy HH:mm:ss"));
 		buf.append(',');
@@ -157,11 +161,11 @@ public class FlightDataExportService extends WebService {
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getVisibility(), "#0.00"));
 		buf.append(',');
-		buf.append(StringUtils.format(entry.getFuelFlow(), "###0"));
+		buf.append(StringUtils.format(wu.getFactor() * entry.getFuelFlow(), "###0"));
 		buf.append(',');
-		buf.append(StringUtils.format(entry.getFuelRemaining(), "###0"));
+		buf.append(StringUtils.format(wu.getFactor() * entry.getFuelRemaining(), "###0"));
 		buf.append(',');
-		buf.append((entry.getWeight() == 0) ? "" : StringUtils.format(entry.getWeight(), "###0"));
+		buf.append((entry.getWeight() == 0) ? "" : StringUtils.format(wu.getFactor() * entry.getWeight(), "###0"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getG(), "#0.000"));
 		buf.append(',');
