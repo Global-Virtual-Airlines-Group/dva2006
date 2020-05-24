@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -133,7 +133,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			}
 			
 			out.print("&key=");
-			out.print(SystemData.get("security.key.googleMaps"));
+			out.print(SystemData.get("security.key.googleMaps." + (_isAnonymous ? "anon" : "auth")));
 			out.println("\"></script>");
 			
 			// Build the Map context object
@@ -142,12 +142,10 @@ public class InsertGoogleAPITag extends TagSupport {
 			mco.put("API", _majorVersion);
 			mco.putOpt("cycle", _cycle);
 			mco.putOpt("minor", _minorVersion);
-			mco.put("protocol", pageContext.getRequest().isSecure() ? "https" : "http");
+			mco.put("protocol", "https");
 			mco.put("tileHost", SystemData.get("weather.tileHost"));
 			mco.put("seriesData", Collections.emptyMap());
-			mco.put("wxHost", SystemData.get("weather.apiHost"));
 			JSONObject mkeys = new JSONObject();
-			mkeys.put("wu", SystemData.get("security.key.wunderground"));
 			mkeys.put("twc", SystemData.get("security.key.twc"));
 			mco.put("keys", mkeys);
 			

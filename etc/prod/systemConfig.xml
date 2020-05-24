@@ -410,7 +410,10 @@
 			<airCharts>***REMOVED***</airCharts>
 			<wunderground>***REMOVED***</wunderground>
 			<twc>***REMOVED***</twc>
-			<googleMaps>***REMOVED***</googleMaps>
+			<googleMaps>
+				<auth>***REMOVED***</auth>
+				<anon>***REMOVED***</anon>
+			</googleMaps>
 			<google>***REMOVED***</google>
 			<vatsim>***REMOVED***</vatsim>
 			<recaptcha>

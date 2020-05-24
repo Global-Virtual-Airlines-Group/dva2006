@@ -362,8 +362,8 @@
 	<!-- API usage limits -->
 	<api>
 		<max>
-			<googleMaps type="Integer">25700</googleMaps>
-			<flightaware type="Integer">1500</flightaware>
+			<googleMaps type="Integer">250</googleMaps>
+			<flightaware type="Integer">15</flightaware>
 		</max>
 	</api>
 	
@@ -396,7 +396,10 @@
 			<analytics>UA-2066915-1</analytics>
 			<airCharts>***REMOVED***</airCharts>
 			<wunderground>***REMOVED***</wunderground>
-			<googleMaps>***REMOVED***</googleMaps>
+			<googleMaps>
+				<auth>***REMOVED***</auth>
+				<anon>***REMOVED***</anon>
+			</googleMaps>
 			<google>***REMOVED***</google>
 			<vatsim>***REMOVED***</vatsim>
 			<twc>***REMOVED***</twc>
