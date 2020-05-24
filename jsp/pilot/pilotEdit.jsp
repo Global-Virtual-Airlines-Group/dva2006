@@ -331,8 +331,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
-<el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />
- <span class="small nophone">(Navigation Bar is not displayed at screen widths below 1024 pixels.)</span></td>
+<el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />&nbsp;<span class="small nophone">(Navigation Bar is not displayed at screen widths below 1024 pixels.)</span></td>
 </tr>
 <%@ include file="/jsp/pilot/staffEdit.jspf" %>
 <%@ include file="/jsp/pilot/eMailEdit.jspf" %>
