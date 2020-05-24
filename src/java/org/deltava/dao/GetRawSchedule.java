@@ -56,7 +56,7 @@ public class GetRawSchedule extends DAO {
 			return results.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, MAX(RS.SRCLINE) AS ML, RSD.EFFDATE, RSD.IMPORTDATE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, MAX(RS.SRCLINE) AS ML, RSD.EFFDATE, RSD.IMPORTDATE, RSD.ISAUTO FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".RAW_SCHEDULE RS LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -77,6 +77,7 @@ public class GetRawSchedule extends DAO {
 					inf.setMaxLineNumber(Math.max(inf.getMaxLineNumber(), rs.getInt(4)));
 					inf.setEffectiveDate(toInstant(rs.getTimestamp(5)));
 					inf.setImportDate(toInstant(rs.getTimestamp(6)));
+					inf.setAutoImport(rs.getBoolean(7));
 				}
 			}
 			

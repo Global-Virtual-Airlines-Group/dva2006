@@ -23,6 +23,7 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	private int _maxLine;
 	private LocalDate _effDate;
 	private Instant _importDate;
+	private boolean _autoImport;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
 	
 	/**
@@ -56,6 +57,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public Instant getImportDate() {
 		return _importDate;
+	}
+	
+	/**
+	 * Returns whether this schedule import was an automatic import.
+	 * @return TRUE if automatic, otherwise FALSE
+	 */
+	public boolean getAutoImport() {
+		return _autoImport;
 	}
 	
 	/**
@@ -158,6 +167,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public void setImportDate(Instant dt) {
 		_importDate = dt;
+	}
+	
+	/**
+	 * Sets the last import as an automatic schedule import.
+	 * @param isAuto TRUE if automatic, otherwise FALSE
+	 */
+	public void setAutoImport(boolean isAuto) {
+		_autoImport = isAuto;
 	}
 	
 	/**
