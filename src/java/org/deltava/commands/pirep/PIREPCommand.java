@@ -19,9 +19,8 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
-import org.deltava.beans.stats.APIUsage;
-import org.deltava.beans.stats.APIUsageHelper;
-import org.deltava.beans.system.API;
+import org.deltava.beans.stats.*;
+import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -741,8 +740,15 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// If we're set to use Google Maps, check API usage
 			if (mapType == MapType.GOOGLE) {
+				HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+				boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
+				
 				int max = SystemData.getInt("api.max.googleMaps", -1);
 				int dailyMax = max / 30;
+				if (isSpider)
+					dailyMax *= 0.2;
+				else if (!ctx.isAuthenticated())
+					dailyMax *= 0.75;
 
 				// Get today's predicted use
 				GetSystemLog sldao = new GetSystemLog(con);
@@ -750,6 +756,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				APIUsage predictedUse = APIUsageHelper.predictToday(todayUse);
 				if (ctx.isUserInRole("Developer"))
 					ctx.setHeader("X-API-DailyUsage", "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
+				
+				// Override usage
+				boolean isOurs = ctx.isAuthenticated() && (fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID());
+				boolean forceMap = isOurs || ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("Operations");
 				
 				// If we're below the daily max, all good
 				if (predictedUse.getTotal() > dailyMax) {
@@ -764,11 +774,12 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setHeader("X-API-MonthUsage", "Max " + max + " / a=" + totalUse.getTotal() + ",p=" + predictedUse.getTotal());
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
-					if ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9)))) {
+					if (!forceMap && (isSpider || (predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
 						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
 						mapType = MapType.FALLINGRAIN;
 					}
-				}
+				} else if (isSpider && (predictedUse.getTotal() > dailyMax))
+					mapType = MapType.FALLINGRAIN;
 			}				
 
 			// Get the pilot/PIREP beans in the request
