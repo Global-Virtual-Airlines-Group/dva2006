@@ -84,7 +84,8 @@ golgotha.onDOMReady(function() {
 <c:forEach var="src" items="${sources}">
 <c:set var="srcEffName" value="eff${src.source}"  scope="page" />
 <tr class="src-${src.source} title caps" style="display:none;">
- <td colspan="2">${src.source.description}<c:if test="${!empty src.effectiveDate}"> - EFFECTIVE <fmt:date fmt="d" date="${src.effectiveDate}" tzName="UTC" /></c:if></td>
+ <td colspan="2">${src.source.description}<c:if test="${!empty src.effectiveDate}"> - EFFECTIVE <fmt:date fmt="d" date="${src.effectiveDate}" tzName="UTC" /></c:if>
+<c:if test="${!empty src.importDate}"> (${src.autoImport ? 'AUTO' : 'MANUAL'} IMPORT ON <fmt:date t="HH:mm" date="${src.importDate}" />)</c:if></td>
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label">Effective Date</td>
