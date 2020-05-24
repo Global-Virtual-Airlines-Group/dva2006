@@ -1,9 +1,8 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -181,17 +180,13 @@ public class GetNavData extends DAO {
 		if (rw.startsWith("RW"))
 			rw = rw.substring(2);
 		
-		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
-			+ "R.SIMVERSION, R.WIDTH FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
-			+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)")) {
+		try (PreparedStatement ps = prepare("SELECT R.*, RR.NEWCODE, N.FREQ FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
+			+ "LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)")) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
-			ps.setInt(2, Surface.UNKNOWN.ordinal());
-			ps.setInt(3, Navaid.RUNWAY.ordinal());
-			ps.setString(4, a.getICAO());
-			ps.setString(5, rw);
-			ps.setInt(6, s.getCode());
-			List<NavigationDataBean> results = execute(ps);
-			return results.isEmpty() ? null : (Runway) results.get(0);
+			ps.setString(2, a.getICAO());
+			ps.setString(3, rw);
+			ps.setInt(4, s.getCode());
+			return executeRunway(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -206,16 +201,12 @@ public class GetNavData extends DAO {
 	 */
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
-		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
-			+ "R.SIMVERSION, R.WIDTH FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
-			+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {
+		try (PreparedStatement ps = prepare("SELECT R.*, RR.NEWCODE, N.FREQ FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
+			+ "LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
-			ps.setInt(2, Surface.UNKNOWN.ordinal());
-			ps.setInt(3, Navaid.RUNWAY.ordinal());
-			ps.setString(4, a.getICAO());
-			ps.setInt(5, s.getCode());
-			List<NavigationDataBean> results = execute(ps);
-			return results.stream().filter(Runway.class::isInstance).map(Runway.class::cast).collect(Collectors.toList());
+			ps.setString(2, a.getICAO());
+			ps.setInt(3, s.getCode());
+			return executeRunway(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -236,25 +227,12 @@ public class GetNavData extends DAO {
 		try {
 			if (sim != Simulator.UNKNOWN) {
 				Simulator s = (sim.ordinal() < Simulator.FS9.ordinal()) ? Simulator.FS9 : sim;
-				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {	
-					ps.setString(1, a.getICAO());
-					ps.setInt(2, s.getCode());
-					try (ResultSet rs = ps.executeQuery()) {
-						while (rs.next()) {
-							Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
-							r.setCode(rs.getString(1));
-							r.setName(rs.getString(2));
-							r.setHeading(rs.getInt(6));
-							r.setLength(rs.getInt(7));
-							r.setWidth(rs.getInt(8));
-							r.setMagVar(rs.getDouble(9));
-							r.setSurface(Surface.values()[rs.getInt(10)]);
-							// LL
-							r.setNewCode(rs.getString(12));
-							r.setSimulator(s);
-							results.add(r);
-						}
-					}
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, RR.NEWCODE, N.FREQ FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
+					+ "LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {
+					ps.setInt(1, Navaid.RUNWAY.ordinal());
+					ps.setString(2, a.getICAO());
+					ps.setInt(3, s.getCode());
+					results.addAll(executeRunway(ps));
 				}
 			}
 			
@@ -413,6 +391,33 @@ public class GetNavData extends DAO {
 			}
 		}
 
+		return results;
+	}
+
+	/*
+	 * Helper method to iterate through a RUNWAYS result set.
+	 */
+	private static List<Runway> executeRunway(PreparedStatement ps) throws SQLException {
+		List<Runway> results = new ArrayList<Runway>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+				r.setCode(rs.getString(1));
+				r.setName(rs.getString(2));
+				r.setSimulator(Simulator.fromVersion(rs.getInt(3), Simulator.UNKNOWN));
+				r.setHeading(rs.getInt(6));
+				r.setLength(rs.getInt(7));
+				r.setWidth(rs.getInt(8));
+				r.setMagVar(rs.getDouble(9));
+				r.setSurface(Surface.values()[rs.getInt(10)]);
+				r.setThreshold(rs.getInt(11));
+				// LL
+				r.setNewCode(rs.getString(13));
+				r.setFrequency(rs.getString(14));
+				results.add(r);
+			}
+		}
+		
 		return results;
 	}
 }
