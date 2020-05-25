@@ -88,7 +88,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if (!rse.getForceInclude() && (ir.getSource() != src.getSource())) {
-						log.info(ir + " already imported by " + ir.getSource());
+						log.debug(ir + " already imported by " + ir.getSource());
 						continue;
 					}
 					
