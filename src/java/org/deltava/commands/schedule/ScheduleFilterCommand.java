@@ -66,21 +66,18 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter("eff" + src.name()), "MM/dd/yyyy"));
 			srcInfo.setImportDate(Instant.now());
 			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
-			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(al -> srcInfo.setLegs(al, 1));
+			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(al -> srcInfo.addLegs(al, 0));
 			sources.add(srcInfo);
 		}
 		
-		// Save the entries
-		Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 		try {
 			Connection con = ctx.getConnection();
+			Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 
 			// Load the entries, save source mappings
 			GetRawSchedule rawdao = new GetRawSchedule(con);
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
 			for (ScheduleSourceInfo src : sources) {
-				int entriesLoaded = 0;
-				
 				// Load the entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
 				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries);
@@ -88,20 +85,23 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if (!rse.getForceInclude() && (ir.getSource() != src.getSource())) {
+						src.skip();
 						log.debug(ir + " already imported by " + ir.getSource());
 						continue;
 					}
 					
 					boolean isAdded = entries.add(rse);
 					if (isAdded) {
-						entriesLoaded++;
+						src.addLegs(rse.getAirline(), 1);
 						ir.setFlights(ir.getFlights() + 1);
 						srcPairs.putIfAbsent(key, ir);
-					} else
+					} else {
 						log.info(rse.getShortCode() + " already exists [ " + ir + " ]");
+						src.skip();
+					}
 				}
 				
-				log.info("Loaded " + entriesLoaded + " " + src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
+				log.info("Loaded " + src.getLegs() + " (" + src.getSkipped() + " skipped) "+ src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
 			}
 			
 			// Start the transaction
@@ -112,9 +112,10 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
 			switch (doPurge) {
 			case EXISTING:
-				for (ScheduleSource src : srcs) {
-					dao.purgeSourceAirlines(src);
-					dao.purge(src);
+				for (ScheduleSourceInfo src : sources) {
+					dao.purgeSourceAirlines(src.getSource());
+					dao.purge(src.getSource());
+					src.setPurged(true);
 				}
 				
 				break;
@@ -122,6 +123,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			case ALL:
 				dao.purgeSourceAirlines(null);
 				dao.purge(null);
+				sources.forEach(srcInfo -> srcInfo.setPurged(true));
 				break;
 				
 			default:
@@ -168,9 +170,8 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		}
 
 		// Save the status
-		ctx.setAttribute("isFlights", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("entryCount", Integer.valueOf(entries.size()), REQUEST);
-		ctx.setAttribute("doPurge", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isFilter", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("srcs", sources, REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");

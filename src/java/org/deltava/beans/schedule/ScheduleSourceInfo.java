@@ -26,6 +26,10 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	private boolean _autoImport;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
 	
+	// Import statistics
+	private int _skipped;
+	private boolean _purged;
+	
 	/**
 	 * Creates the bean.
 	 * @param src the ScheduleSource 
@@ -92,6 +96,22 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	}
 	
 	/**
+	 * Returns the number of skipped flight legs in the last import.
+	 * @return the number of legs
+	 */
+	public int getSkipped() {
+		return _skipped;
+	}
+	
+	/**
+	 * Returns whether this source was purged during the current import.
+	 * @return TRUE if purged, otherwise FALSE
+	 */
+	public boolean getPurged() {
+		return _purged;
+	}
+	
+	/**
 	 * Returns whether this schedule source includes a particular airline.
 	 * @param a an Airline
 	 * @return TRUE if included, otherwise FALSE
@@ -149,8 +169,9 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 * @param a the Airline bean
 	 * @param legs the number of legs
 	 */
-	public void setLegs(Airline a, int legs) {
-		_airlineLegs.put(a, Integer.valueOf(legs));
+	public void addLegs(Airline a, int legs) {
+		Integer i = _airlineLegs.getOrDefault(a, Integer.valueOf(0));
+		_airlineLegs.put(a, Integer.valueOf(i.intValue() + legs));
 	}
 	
 	/**
@@ -183,6 +204,18 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public void setMaxLineNumber(int ln) {
 		_maxLine = ln;
+	}
+	
+	public void skip() {
+		_skipped++;
+	}
+	
+	/**
+	 * Updates whether this source was purged during the current import.
+	 * @param isPurged TRUE if purged, otherwise FALSE
+	 */
+	public void setPurged(boolean isPurged) {
+		_purged = isPurged;
 	}
 	
 	@Override
