@@ -42,10 +42,12 @@ if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Cap
 golgotha.form.submit(f);
 return true;	
 };
+
+golgotha.onDOMReady(function() { golgotha.sc.getPilots() });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.sc.getPilots()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
