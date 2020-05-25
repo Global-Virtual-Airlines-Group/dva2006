@@ -17,7 +17,7 @@ golgotha = {local:{}};
 golgotha.local.addEmoticon = function(name)
 {
 // Get the window opener
-var parent = window.opener;
+const parent = window.opener;
 if (!parent) {
 	alert('Your ${forumName} post does not appear to be open.');
 	self.close();
@@ -25,7 +25,7 @@ if (!parent) {
 }
 
 // Get the form
-var f = parent.document.forms[0];
+const f = parent.document.forms[0];
 if ((!f) || (!f.msgText)) return false;
 
 // Append the emoticon

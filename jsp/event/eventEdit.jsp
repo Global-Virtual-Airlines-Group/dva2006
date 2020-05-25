@@ -54,12 +54,13 @@ golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers(f.airportD);
-	golgotha.airportLoad.setHelpers(f.airportA);	
+	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.local.updateSignups();
 });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.updateSignups()">
+<body>
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>

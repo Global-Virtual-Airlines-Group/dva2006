@@ -52,17 +52,17 @@ golgotha.form.submit(f);
 return true;
 };
 
-golgotha.local.onload = function() {
+golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	golgotha.form.resize(f.desc);
 	golgotha.local.showReqCert(f.preReqs);
 	golgotha.local.showNetworkRating(f.network);
 	return true;
-};
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.onload()">
+<body>
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>

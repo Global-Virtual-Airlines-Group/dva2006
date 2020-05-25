@@ -34,10 +34,12 @@ golgotha.local.resizeBriefing = function(maxRows) {
 	txt.rows = Math.min(txt.rows, maxRows);
 	return true;
 };
+
+golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.resizeBriefing(20)">
+<body>
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
