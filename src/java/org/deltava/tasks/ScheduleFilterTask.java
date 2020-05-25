@@ -59,6 +59,9 @@ public class ScheduleFilterTask extends Task {
 			for (ScheduleSourceInfo srcInfo : srcs) {
 				LocalDate effDate = srcInfo.getNextImportDate();
 				log.info("Filtering " + srcInfo.getSource() + ", effective " + effDate);
+				srcInfo.setEffectiveDate(effDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+				srcInfo.setImportDate(Instant.now());
+				srcInfo.setAutoImport(true);
 				
 				// Purge this source
 				int entriesPurged = swdao.purge(srcInfo.getSource());
@@ -73,7 +76,7 @@ public class ScheduleFilterTask extends Task {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if ((ir.getSource() != srcInfo.getSource()) && !rse.getForceInclude()) {
-						log.info(ir + " already imported by " + ir.getSource());
+						log.debug(ir + " already imported by " + ir.getSource());
 						continue;
 					}
 					
