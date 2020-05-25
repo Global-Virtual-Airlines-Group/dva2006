@@ -44,7 +44,7 @@ public class ScheduleFilterTask extends Task {
 			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines();
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());
-				airlines.forEach(al -> src.setLegs(al, 1));
+				airlines.forEach(al -> src.addLegs(al, 0));
 				log.info("Importing " + src.getAirlines() + " from " + src.getSource());
 			}
 			
@@ -70,28 +70,29 @@ public class ScheduleFilterTask extends Task {
 				// Load schedule entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(srcInfo.getSource(), srcInfo.getEffectiveDate()).stream().filter(se -> srcInfo.contains(se.getAirline())).collect(Collectors.toList());
 				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries);
-				
-				int entriesLoaded = 0;
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if ((ir.getSource() != srcInfo.getSource()) && !rse.getForceInclude()) {
 						log.debug(ir + " already imported by " + ir.getSource());
+						srcInfo.skip();
 						continue;
 					}
 					
 					boolean isAdded = entries.add(rse); ir.setPriority(ir.getSource().ordinal());
 					if (isAdded) {
-						entriesLoaded++;
+						srcInfo.addLegs(rse.getAirline(), 1);
 						ir.setFlights(ir.getFlights() + 1);
 						srcPairs.putIfAbsent(key, ir);
-					} else
+					} else {
+						srcInfo.skip();
 						log.info(rse.getShortCode() + " already exists [ " + rse.getAirportD().getIATA() + " - " + rse.getAirportA().getIATA() + " ]");
+					}
 					
 					swdao.writeSourceAirlines(srcInfo);
 				}
 				
-				log.info("Loaded " + entriesLoaded + " " + srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate());
+				log.info("Loaded " + srcInfo.getLegs() + " (" + srcInfo.getSkipped() + " skipped) "+ srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate());
 			}
 			
 			// Save the schedule entries

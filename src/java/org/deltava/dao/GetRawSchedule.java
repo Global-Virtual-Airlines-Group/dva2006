@@ -73,7 +73,7 @@ public class GetRawSchedule extends DAO {
 						srcs.add(inf);
 					}
 					
-					inf.setLegs(SystemData.getAirline(rs.getString(2)), rs.getInt(3));
+					inf.addLegs(SystemData.getAirline(rs.getString(2)), rs.getInt(3));
 					inf.setMaxLineNumber(Math.max(inf.getMaxLineNumber(), rs.getInt(4)));
 					inf.setEffectiveDate(toInstant(rs.getTimestamp(5)));
 					inf.setImportDate(toInstant(rs.getTimestamp(6)));
