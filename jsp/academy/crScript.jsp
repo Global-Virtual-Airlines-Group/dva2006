@@ -52,10 +52,12 @@ xmlreq.onreadystatechange = function() {
 xmlreq.send(null);
 return true;
 };
+
+golgotha.onDOMReady(function() { golgotha.form.resizeAll(); });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.form.resizeAll()">
+<body>
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>

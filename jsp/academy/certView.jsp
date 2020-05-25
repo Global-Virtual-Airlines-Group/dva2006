@@ -126,13 +126,8 @@
 <el:table className="bar">
 <tr>
  <td> 
-<c:if test="${access.canEdit}">
- <el:cmdbutton url="cert" linkID="${cert.name}" op="edit" label="EDIT CERTIFICATION PROFILE" />
- <el:cmdbutton url="certreqs" linkID="${cert.name}" op="edit" label="EDIT REQUIREMENTS" />
-</c:if>
-<c:if test="${access.canDelete}">
- <el:cmdbutton url="certdelete" linkID="${cert.name}" label="DELETE CERTIFICATION PROFILE" />
-</c:if>
+<c:if test="${access.canEdit}"><el:cmdbutton url="cert" linkID="${cert.name}" op="edit" label="EDIT CERTIFICATION PROFILE" />&nbsp;<el:cmdbutton url="certreqs" linkID="${cert.name}" op="edit" label="EDIT REQUIREMENTS" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="certdelete" linkID="${cert.name}" label="DELETE CERTIFICATION PROFILE" /></c:if>
  </td>
 </tr>
 </el:table>
