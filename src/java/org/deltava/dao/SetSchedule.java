@@ -6,6 +6,8 @@ import java.time.*;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
@@ -14,6 +16,8 @@ import org.deltava.beans.schedule.*;
  */
 
 public class SetSchedule extends DAO {
+	
+	private static final Cache<CacheableCollection<ScheduleSourceInfo>> _srcCache = CacheManager.getCollection(ScheduleSourceInfo.class, "ScheduleSource");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -161,6 +165,8 @@ public class SetSchedule extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			_srcCache.remove(src.cacheKey());
 		}
 	}
 	
@@ -181,6 +187,11 @@ public class SetSchedule extends DAO {
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			if (src != null) 
+				_srcCache.remove(src.name());
+			else
+				CacheManager.invalidate("ScheduleSource", true);
 		}
 	}
 	
