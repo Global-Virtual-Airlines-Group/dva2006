@@ -4,8 +4,6 @@ package org.deltava.taglib.googlemap;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.util.EnumUtils;
-
 /**
  * A JSP tag to store the number of times the Google Maps API has been requested since the web application was started.
  * @author Luke
@@ -31,7 +29,7 @@ public class APIUsageTag extends TagSupport {
 	 * @param t the Google Maps API type
 	 */
 	public void setType(String t) {
-		_apiType = EnumUtils.parse(APIUsage.Type.class, t.toUpperCase(), APIUsage.Type.DYNAMIC);
+		_apiType = APIUsage.Type.valueOf(t.toUpperCase());
 	}
 	
 	/**
