@@ -76,6 +76,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		File cf = new File(xp, "r5.csv");
 		assertTrue(cf.exists() && cf.isFile());
 		Map<String, Integer> widths = new HashMap<String, Integer>();
+		Map<String, Double> magVar = new HashMap<String, Double>();
 		try (LineNumberReader lr = new LineNumberReader(new FileReader(cf))) {
 			String data = lr.readLine();
 			while (data != null) {
@@ -99,8 +100,12 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						break;
 				}
 				
-				if (codes.contains(apCode))
+				if (codes.contains(apCode)) {
+					double mV = Double.parseDouble(tkns.get(9));
 					widths.put(apCode + "$" + rwyNumber, Integer.valueOf(StringUtils.parse(tkns.get(8), -1)));
+					magVar.putIfAbsent(apCode, Double.valueOf(mV));
+					magVar.put(apCode + "$" + rwyNumber, Double.valueOf(mV));
+				}
 				
 				data = lr.readLine();
 			}
@@ -115,7 +120,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 
 		// Init the prepared statement
 		int totalRwys = 0;
-		try (PreparedStatement ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+		try (PreparedStatement ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 			ps.setInt(3, SIM.getCode());
 
 			// Get the airports
@@ -129,7 +134,6 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				int hasData = 0;
 				ps.setString(1, apCode);
 
-				float magVar = Float.parseFloat(ae.getChildTextTrim("MagVar"));
 				Iterator<Element> rli = ae.getDescendants(new ElementFilter("Runway"));
 				while (rli.hasNext()) {
 					Element re = rli.next();
@@ -138,19 +142,24 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					double lng = Double.parseDouble(re.getChildTextTrim("Lon"));
 
 					// Get the heading/length/width
-					float hdg = Float.parseFloat(re.getChildTextTrim("Hdg"));
+					double hdg = Double.parseDouble(re.getChildTextTrim("Hdg"));
 					float length = Float.parseFloat(re.getChildTextTrim("Len"));
 					Integer w = widths.getOrDefault(apCode + "$" + rwyID, Integer.valueOf(-1));
+					Double mV = magVar.getOrDefault(apCode + "$" + rwyID, magVar.get(apCode));
 					if (w.intValue() < 0)
 						log.warn("Cannot get runway width for " + rwyID + " at " + apCode);
+					if (mV == null) {
+						log.warn("Cannot get magnetic declination for " + rwyID + " at " + apCode);
+						mV = Double.valueOf(0);
+					}
 
 					Runway rwy = new Runway(lat, lng);
 					rwy.setCode(apCode);
 					rwy.setName(rwyID);
-					rwy.setHeading(Math.round(hdg));
+					rwy.setHeading((int) Math.round(hdg + mV.doubleValue()));
 					rwy.setLength(Math.round(length));
 					rwy.setWidth(w.intValue());
-					rwy.setMagVar(magVar);
+					rwy.setMagVar(mV.doubleValue());
 					rwy.setThreshold(Integer.parseInt(re.getChildTextTrim("ThresholdOffset")));
 					rwy.setSurface(EnumUtils.parse(Surface.class, re.getChildTextTrim("Def").replace('-', '_'), Surface.UNKNOWN));
 					if (rwy.getSurface() == Surface.UNKNOWN)
@@ -161,13 +170,14 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						ps.setString(2, rwy.getName());
 						ps.setDouble(4, rwy.getLatitude());
 						ps.setDouble(5, rwy.getLongitude());
-						ps.setInt(6, Math.round(hdg));
+						ps.setInt(6, rwy.getHeading());
 						ps.setInt(7, rwy.getLength());
 						ps.setInt(8, rwy.getWidth());
-						ps.setDouble(9, magVar);
+						ps.setDouble(9, rwy.getMagVar());
 						ps.setInt(10, rwy.getSurface().ordinal());
-						ps.setString(11, formatLocation(lat, lng));
-						ps.setInt(12, WGS84_SRID);
+						ps.setInt(11, rwy.getThreshold());
+						ps.setString(12, formatLocation(lat, lng));
+						ps.setInt(13, WGS84_SRID);
 						ps.addBatch();
 						hasData++;
 					} else
