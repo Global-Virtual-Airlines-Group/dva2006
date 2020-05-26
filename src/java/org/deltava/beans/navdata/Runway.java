@@ -144,7 +144,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * @see Runway#getThreshold()
 	 */
 	public void setThreshold(int len) {
-		_threshold = Math.max(1,  len);
+		_threshold = Math.max(0,  len);
 	}
 
 	/**
