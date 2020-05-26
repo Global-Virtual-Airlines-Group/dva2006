@@ -101,7 +101,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				}
 				
 				if (codes.contains(apCode)) {
-					double mV = Double.parseDouble(tkns.get(9));
+					double mV = Double.parseDouble(tkns.get(9)) * -1;
 					widths.put(apCode + "$" + rwyNumber, Integer.valueOf(StringUtils.parse(tkns.get(8), -1)));
 					magVar.putIfAbsent(apCode, Double.valueOf(mV));
 					magVar.put(apCode + "$" + rwyNumber, Double.valueOf(mV));
@@ -156,7 +156,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					Runway rwy = new Runway(lat, lng);
 					rwy.setCode(apCode);
 					rwy.setName(rwyID);
-					rwy.setHeading((int) Math.round(hdg + mV.doubleValue()));
+					rwy.setHeading((int) Math.round(hdg - mV.doubleValue()));
 					rwy.setLength(Math.round(length));
 					rwy.setWidth(w.intValue());
 					rwy.setMagVar(mV.doubleValue());
