@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -80,26 +80,22 @@ public class GetACARSLog extends GetACARSData {
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
 		if (criteria.getPilotID() != 0)
-			terms.add("((AUTHOR=?) OR (RECIPIENT=?))");
+			terms.add("((M.AUTHOR=?) OR (M.RECIPIENT=?))");
 		if (criteria.getStartDate() != null)
-			terms.add("(DATE > ?)");
+			terms.add("(M.DATE > ?)");
 		if (criteria.getEndDate() != null)
-			terms.add("(DATE < ?)");
+			terms.add("(M.DATE < ?)");
 		if (searchStr != null)
-			terms.add("(LOCATE(?, BODY) > 0)");
+			terms.add("(LOCATE(?, M.BODY) > 0)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT * FROM acars.MESSAGES ");
-		if (!terms.isEmpty()) {
-			buf.append("WHERE ");
-			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
-				buf.append(i.next());
-				if (i.hasNext())
-					buf.append(" AND ");
-			}
+		StringBuilder buf = new StringBuilder("SELECT M.* FROM acars.MESSAGES M LEFT JOIN common.USERDATA UD ON (M.AUTHOR=UD.ID) WHERE (UD.AIRLINE=?)");
+		for (String t : terms) {
+			buf.append(" AND ");
+			buf.append(t);
 		}
 
-		buf.append(" ORDER BY DATE");
+		buf.append(" ORDER BY M.DATE");
 
 		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
