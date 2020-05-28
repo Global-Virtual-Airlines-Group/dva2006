@@ -1,37 +1,24 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store map types.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 5.0
  */
 
-public enum MapType implements ComboAlias {
-	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain");
+public enum MapType implements EnumDescription {
+	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static");
 
-	private final String _name;
+	private final String _desc;
 	
 	MapType(String name) {
-		_name = name;
+		_desc = name;
 	}
 	
-	/**
-	 * Returns the map type description.
-	 * @return the description
-	 */
-	public String getName() {
-		return _name;
-	}
-
 	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return _name;
+	public String getDescription() {
+		return _desc;
 	}
 }
