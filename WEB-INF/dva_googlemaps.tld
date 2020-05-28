@@ -73,6 +73,18 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
+			<name>scale</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>center</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.GeoLocation</type>
+		</attribute>
+		<attribute>
 			<name>markers</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
