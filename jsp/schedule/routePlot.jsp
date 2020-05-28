@@ -52,7 +52,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
 <content:empty var="emptyList" />
-<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3Dv4,XP9" />
+<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3D,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -208,7 +208,7 @@ golgotha.routePlot.updateRoute(${!empty rwy}, false);
 </c:otherwise>
 </c:choose>
 // Create the map
-const mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:3, maxZoom:16, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
