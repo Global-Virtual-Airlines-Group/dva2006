@@ -42,11 +42,12 @@ return true;
 <content:json />
 <content:js name="acarsFlightMap" />
 <script async>
+<c:if test="${googleMap}">
 golgotha.local.zoomTo = function(lat, lng, zoom) {
 	map.setZoom((zoom == null) ? 12 : zoom);
-	map.panTo({lat:lat, lng:lng});
+	map.panTo({lat:lat,lng:lng});
 	return true;
-};
+};</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no');
@@ -263,10 +264,11 @@ golgotha.local.showRunwayChoices = function() {
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
 <content:browser human="true">
-<c:if test="${googleMap}">
 <tr class="title">
  <td colspan="2">ROUTE MAP</td>
 </tr>
+<c:choose>
+<c:when test="${googleMap}">
 <tr>
  <td class="label">Map Data</td>
  <td class="data"><span class="bld">
@@ -282,13 +284,19 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td colspan="2"><map:div ID="googleMap" height="575" /></td>
 </tr>
-</c:if>
-<c:if test="${!googleMap}">
+</c:when>
+<c:when test="${googleStaticMap}">
 <tr>
- <td colspan="2"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
+ <td colspan="2"><map:static w="1280" h="500" scale="2" markers="${filedRoute}" center="${mapCenter}" /></td>
+</tr>
+</c:when>
+<c:when test="${frMap}">
+<tr>
+ <td colspan="2"><img src="https://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
-</c:if>
+</c:when>
+</c:choose>
 <c:if test="${isACARS}">
 <tr class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
@@ -321,7 +329,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 </content:browser>
 <c:if test="${!empty statusHistory}">
 <tr class="title caps">
- <td colspan="2"> <span class="nophone">FLIGHT REPORT </span>STATUS HISTORY</td>
+ <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY</td>
 </tr>
 <c:forEach var="upd" items="${statusHistory}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
@@ -395,7 +403,8 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 </content:region>
 </content:page>
 <content:browser human="true">
-<c:if test="${googleMap}">
+<c:choose>
+<c:when test="${googleMap}">
 <script async>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
@@ -490,6 +499,11 @@ xreq.send(null);
 return true;
 });</c:if>
 </script>
-</c:if></content:browser>
+</c:when>
+<c:when test="${googleStatic}">
+
+<!--  Google static Map -->
+</c:when>
+</c:choose></content:browser>
 </body>
 </html>

@@ -734,9 +734,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.add(fr.getAirportD());
 				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
-				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);				
+				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
+				mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN))
-				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
+				ctx.setAttribute("mapRoute", List.of(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
 			// If we're set to use Google Maps, check API usage
 			if (mapType == MapType.GOOGLE) {
@@ -762,7 +763,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				boolean forceMap = isOurs || ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("Operations");
 				
 				// If we're below the daily max, all good
-				if (predictedUse.getTotal() > dailyMax) {
+				if ((predictedUse.getTotal() > dailyMax) && !isSpider) {
 					String method = API.GoogleMaps.createName("DYNAMIC");
 					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);
 					predictedUse = APIUsageHelper.predictUsage(usage, method);
@@ -774,18 +775,20 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setHeader("X-API-MonthUsage", "Max " + max + " / a=" + totalUse.getTotal() + ",p=" + predictedUse.getTotal());
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
-					if (!forceMap && (isSpider || (predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
-						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
-						mapType = MapType.FALLINGRAIN;
+					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
+						log.info("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
+						mapType = MapType.GOOGLEStatic;
 					}
-				} else if (isSpider && (predictedUse.getTotal() > dailyMax))
-					mapType = MapType.FALLINGRAIN;
+				} else if (predictedUse.getTotal() > dailyMax)
+					mapType = MapType.GOOGLEStatic;
 			}				
 
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
+			ctx.setAttribute("frMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
 			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.GOOGLE), REQUEST);
+			ctx.setAttribute("googleStaticMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
 			ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
