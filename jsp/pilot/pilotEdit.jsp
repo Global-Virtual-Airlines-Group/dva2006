@@ -326,7 +326,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Route Map Type</td>
- <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapType.name}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapType}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
