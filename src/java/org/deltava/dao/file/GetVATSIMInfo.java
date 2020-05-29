@@ -50,6 +50,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		
 		// Parse the servers
 		NetworkInfo info = new NetworkInfo(net);
+		info.setValidDate(StringUtils.parseRFC3339Date(jo.getJSONObject("general").getString("update_timestamp")));
 		Map<String, Server> results = new TreeMap<String, Server>();
 		JSONArray sa = jo.getJSONArray("servers");
 		for (int x = 0; x < sa.length(); x++) {
