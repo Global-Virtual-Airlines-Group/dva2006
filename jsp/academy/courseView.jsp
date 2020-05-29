@@ -53,7 +53,7 @@ golgotha.local.validateCancel = function() {
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td colspan="6" class="data">${pilot.rank.name} <el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> (${pilot.pilotCode})</td>
+ <td colspan="6" class="data">${pilot.rank.name}&nbsp;<el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Stage</td>
@@ -61,8 +61,11 @@ golgotha.local.validateCancel = function() {
 </tr>
 <tr>
  <td class="label">Course Status</td>
- <td colspan="6" class="data"><span class="sec bld">${course.status.name}</span>, started on 
-<fmt:date fmt="d" date="${course.startDate}" /></td>
+ <td colspan="6" class="data"><span class="sec bld">${course.status.name}</span>, started on <fmt:date fmt="d" date="${course.startDate}" /></td>
+</tr>
+<tr>
+ <td class="label">Check Rides</td>
+ <td colspan="6" class="data"><span class="pri bld"><fmt:int value="${course.rideCount}" /></span> Check Rides required for completion</td>
 </tr>
 <c:forEach var="cr" items="${course.checkRides}">
 <tr>
