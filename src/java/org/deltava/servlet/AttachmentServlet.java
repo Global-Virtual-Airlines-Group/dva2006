@@ -165,7 +165,7 @@ public class AttachmentServlet extends DownloadServlet {
 				boolean isPDF = PDFUtils.isPDF(buffer);
 				rsp.setIntHeader("max-age", 3600);
 				rsp.setContentType(isPDF ? "application/pdf" : "text/plain");
-				rsp.setHeader("Content-disposition", "attachment; filename=ebrief_" + dbID + (isPDF ? ".pdf" : ".txt"));
+				rsp.setHeader("Content-disposition", "attachment; filename=eventBriefing_" + dbID + (isPDF ? ".pdf" : ".txt"));
 				break;
 				
 			default:
