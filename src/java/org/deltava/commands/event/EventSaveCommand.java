@@ -1,15 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
+import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.AirportComparator;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -81,10 +81,24 @@ public class EventSaveCommand extends AbstractCommand {
 			
 			// Save access
 			ctx.setAttribute("access", access, REQUEST);
+			
+			// Get the briefing file
+			FileUpload bf = ctx.getFile("briefPDF");
+			boolean deletePDF = Boolean.valueOf(ctx.getParameter("deleteBrief")).booleanValue();
+			if ((bf != null) && PDFUtils.isPDF(bf.getBuffer())) {
+				Briefing b = new Briefing(bf.getBuffer());
+				e.setBriefing(b);
+			} else if (!deletePDF) {
+				String btxt = ctx.getParameter("briefing");
+				if (!StringUtils.isEmpty(btxt))
+					e.setBriefing(new Briefing(btxt.getBytes(StandardCharsets.UTF_8)));
+				else
+					e.setBriefing(null);
+			} else
+				e.setBriefing(null);
 
 			// Populate fields from the request
 			e.setNetwork(OnlineNetwork.fromName(ctx.getParameter("network")));
-			e.setBriefing(ctx.getParameter("briefing"));
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
 			if (!e.getCanSignup() && !StringUtils.isEmpty(ctx.getParameter("signupURL")))
 				e.setSignupURL(ctx.getParameter("signupURL"));
@@ -95,10 +109,7 @@ public class EventSaveCommand extends AbstractCommand {
 			Collection<String> aCodes = ctx.getParameters("airlines");
 			if (aCodes != null) {
 				e.getAirlines().clear();
-				for (Iterator<String> i = aCodes.iterator(); i.hasNext(); ) {
-					AirlineInformation ai = SystemData.getApp(i.next());
-					e.addAirline(ai);
-				}
+				aCodes.stream().map(c -> SystemData.getApp(c)).filter(Objects::nonNull).forEach(e::addAirline);
 			}
 			
 			// Parse the start/end/deadline times
@@ -130,8 +141,7 @@ public class EventSaveCommand extends AbstractCommand {
 			Collection<String> eqTypes = ctx.getParameters("eqTypes");
 			if (eqTypes != null) {
 				e.getEquipmentTypes().clear();
-				for (Iterator<String> i = eqTypes.iterator(); i.hasNext(); )
-					e.addEquipmentType(i.next());
+				eqTypes.forEach(e::addEquipmentType);
 			}
 
 			// See which charts have been selected
@@ -149,8 +159,7 @@ public class EventSaveCommand extends AbstractCommand {
 			Collection<String> addrs = StringUtils.split(ctx.getParameter("contactAddrs"), "\n");
 			if (!CollectionUtils.isEmpty(addrs)) {
 				e.getContactAddrs().clear();
-				for (String addr : addrs)
-					e.addContactAddr(addr);
+				addrs.forEach(e::addContactAddr);
 			}
 
 			// Save the event in the request
@@ -169,8 +178,7 @@ public class EventSaveCommand extends AbstractCommand {
 				int maxY = SystemData.getInt("online.banner_max.y");
 				if (imgOK && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
 					imgOK = false;
-					ctx.setMessage("Your Banner Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
-							+ info.getWidth() + "x" + info.getHeight());
+					ctx.setMessage("Your Banner Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = " + info.getWidth() + "x" + info.getHeight());
 				}
 				
 				// Check the image size

@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 public class Event extends ImageBean implements ComboAlias, TimeSpan {
 	
     private String _name;
-    private String _briefing;
+    private Briefing _briefing;
     private Instant _startTime;
     private Instant _endTime;
     private Instant _signupDeadline;
@@ -78,15 +78,15 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * Returns the Online Event pilot briefing.
      * @return the briefing
      */
-    public String getBriefing() {
+    public Briefing getBriefing() {
         return _briefing;
     }
     
     /*
      * Null-safe helper method to compare dates.
      */
-    private static boolean before(Instant d2) {
-    	return (d2 == null) ? true : (System.currentTimeMillis() < d2.toEpochMilli());
+    private static boolean before(Instant d1, Instant d2) {
+    	return (d2 == null) ? true : d1.isBefore(d2);
     }
     
     /**
@@ -95,14 +95,16 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see Event#setStatus(Status)
      */
     public Status getStatus() {
+    	Instant now = Instant.now();
+    	
         // If the event was canceled, then return that, otherwise calculate the status
         if (_status == Status.CANCELED)
             return Status.CANCELED;
-        else if (before(_signupDeadline))
+        else if (before(now, _signupDeadline))
             return Status.OPEN;
-        else if (before(_startTime))
+        else if (before(now, _startTime))
             return Status.CLOSED;
-        else if (before(_endTime))
+        else if (before(now, _endTime))
             return Status.ACTIVE;
 
         return Status.COMPLETE;
@@ -332,11 +334,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     
     /**
      * Updates the briefing for this Online Event.
-     * @param briefing the briefing text
+     * @param b the Briefing bean
      * @see Event#getBriefing()
      */
-    public void setBriefing(String briefing) {
-        _briefing = briefing;
+    public void setBriefing(Briefing b) {
+        _briefing = b;
     }
     
     /**
@@ -369,7 +371,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     public void setStartTime(Instant dt) {
         _startTime = dt;
         if (dt != null)
-        	_signupDeadline = dt.minusSeconds(60000);
+        	_signupDeadline = dt.minusSeconds(3600);
     }
     
     /**
@@ -538,9 +540,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     	_contactAddrs.add(addr.trim());
     }
 
-    /**
-     * Compares to events by comparing their start date/times.
-     */
     @Override
     public int compareTo(Object o2) {
         Event e2 = (Event) o2;
