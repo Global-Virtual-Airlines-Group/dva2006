@@ -137,13 +137,22 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:textbox name="contactAddrs" idx="*" width="50" height="2">${addrs}</el:textbox></td>
 </tr>
 <tr>
- <td class="label top">Flight Briefing</td>
- <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="5" resize="true">${event.briefing}</el:textbox></td>
-</tr>
-<tr>
  <td class="label top">Equipment Types</td>
  <td class="data"><span class="sec small">These should be unselected unless signups are restricted to a specific set of equipment.</span><br />
 <el:check name="eqTypes" idx="*" cols="9" width="95" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">FLIGHT BRIEFING</td>
+</tr>
+<c:set var="hasTextBriefing" value="${!empty event.briefing && !event.briefing.isPDF}" scope="page" />
+<tr>
+ <td class="label top">Briefing Text</td>
+ <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="5" resize="true">${hasTextBriefing ? event.briefing : ''}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Attach File</td>
+ <td class="data"><el:file name="briefPDF" idx="*" className="small" size="96" max="144" /><c:if test="${event.briefing.isPDF}"><el:box name="deleteBrief" value="true" label="Delete existing Briefing" /></c:if>
+<c:if test="${hasTextBriefing}"><span class="small ita nophone"> Uploading a Briefing file will overwrite the existing Briefing!</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">AVAILABLE FLIGHT ROUTES</td>

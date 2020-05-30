@@ -15,6 +15,9 @@ import org.deltava.util.PDFUtils;
  */
 
 public class Briefing extends DatabaseBlobBean {
+	
+	private int _size;
+	private boolean _isPDF;
 
 	/**
 	 * Creates the bean.
@@ -42,7 +45,28 @@ public class Briefing extends DatabaseBlobBean {
 	 * @return TRUE if PDF, otherwise FALSE
 	 */
 	public boolean getIsPDF() {
-		return PDFUtils.isPDF(_buffer);
+		return isLoaded() ? PDFUtils.isPDF(_buffer) : _isPDF;
+	}
+
+	@Override
+	public int getSize() {
+		return isLoaded() ? super.getSize() : _size;
+	}
+	
+	/**
+	 * Forces the object type.
+	 * @param isPDF TRUE if a PDF, otherwise FALSE
+	 */
+	public void setForcePDF(boolean isPDF) {
+		_isPDF = isPDF;
+	}
+	
+	/**
+	 * Forces the object size.
+	 * @param size the size in bytes
+	 */
+	public void setForceSize(int size) {
+		_size = size;
 	}
 	
 	@Override

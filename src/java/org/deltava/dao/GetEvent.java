@@ -10,6 +10,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.RoutePair;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -44,6 +45,7 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
+			loadBriefings(eMap);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -56,8 +58,7 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getAssignableEvents() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) "
-			+ "ORDER BY E.STARTTIME DESC")) {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC")) {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 			ps.setTimestamp(1, now);
 			ps.setTimestamp(2, now);
@@ -69,6 +70,7 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
+			loadBriefings(eMap);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -125,6 +127,7 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
+			loadBriefings(eMap);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -161,6 +164,7 @@ public class GetEvent extends DAO {
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
+			loadBriefings(eMap);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -189,7 +193,7 @@ public class GetEvent extends DAO {
 	public Event get(int id) throws DAOException {
 		try {
 			Event e = null;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT E.*, EB.EXT, ISNULL(EBR.DATA), EBR.DATA FROM events.EVENTS E LEFT JOIN events.BANNERS EB ON (E.ID=EB.ID) LEFT JOIN events.BRIEFINGS EBR ON (E.ID=EBR.ID) WHERE (E.ID=?) LIMIT 1")) {
 				ps.setInt(1, id);
 				e = execute(ps).stream().findFirst().orElse(null);
 			}
@@ -254,13 +258,7 @@ public class GetEvent extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EA.*, COUNT(ES.PILOT_ID) FROM events.EVENT_AIRPORTS EA LEFT JOIN events.EVENT_SIGNUPS ES ON (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) WHERE (EA.ID IN (");
-		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(events.keySet(), ","));
 		sqlBuf.append(")) GROUP BY EA.ID, EA.ROUTE_ID ORDER BY EA.ID");
 
 		// Execute the query
@@ -290,7 +288,9 @@ public class GetEvent extends DAO {
 	private static List<Event> execute(PreparedStatement ps) throws SQLException {
 		List<Event> results = new ArrayList<Event>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasBanner = (rs.getMetaData().getColumnCount() > 11);
+			ResultSetMetaData md = rs.getMetaData();
+			boolean hasBanner = (md.getColumnCount() > 10);
+			boolean hasBriefing = (md.getColumnCount() > 12);
 			while (rs.next()) {
 				Event e = new Event(rs.getString(2));
 				e.setID(rs.getInt(1));
@@ -299,12 +299,13 @@ public class GetEvent extends DAO {
 				e.setStartTime(rs.getTimestamp(5).toInstant());
 				e.setEndTime(toInstant(rs.getTimestamp(6)));
 				e.setSignupDeadline(toInstant(rs.getTimestamp(7)));
-				e.setBriefing(rs.getString(8));
-				e.setCanSignup(rs.getBoolean(9));
-				e.setSignupURL(rs.getString(10));
-				e.setOwner(SystemData.getApp(rs.getString(11)));
+				e.setCanSignup(rs.getBoolean(8));
+				e.setSignupURL(rs.getString(9));
+				e.setOwner(SystemData.getApp(rs.getString(10)));
 				if (hasBanner)
-					e.setBannerExtension(rs.getString(12));
+					e.setBannerExtension(rs.getString(11));
+				if (hasBriefing && !rs.getBoolean(12))
+					e.setBriefing(new Briefing(rs.getBytes(13)));
 
 				results.add(e);
 			}
@@ -321,16 +322,9 @@ public class GetEvent extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ES.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_SIGNUPS ES, events.EVENT_AIRPORTS EA WHERE (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) AND (ES.ID IN (");
-		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(events.keySet(), ","));
 		sqlBuf.append("))");
 
-		// Execute the query and load the signups
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -341,10 +335,33 @@ public class GetEvent extends DAO {
 					s.setAirportD(SystemData.getAirport(rs.getString(6)));
 					s.setAirportA(SystemData.getAirport(rs.getString(7)));
 
-					// Add to results
 					Event e = events.get(Integer.valueOf(s.getID()));
 					if (e != null)
-					e.addSignup(s);
+						e.addSignup(s);
+				}
+			}
+		}
+	}
+	
+	private void loadBriefings(Map<Integer, Event> events) throws SQLException {
+		if (events.isEmpty()) return;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ISPDF, SIZE FROM events.BRIEFINGS WHERE (ID IN (");
+		sqlBuf.append(StringUtils.listConcat(events.keySet(), ","));
+		sqlBuf.append("))");
+
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Briefing b = new Briefing(null); 
+					b.setID(rs.getInt(1));
+					b.setForcePDF(rs.getBoolean(2));
+					b.setForceSize(rs.getInt(3));
+
+					Event e = events.get(Integer.valueOf(b.getID()));
+					if (e != null)
+						e.setBriefing(b);
 				}
 			}
 		}

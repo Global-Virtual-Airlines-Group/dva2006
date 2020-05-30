@@ -85,8 +85,7 @@ public class EventCommand extends AbstractCommand {
 
 			// Set access on the signups
 			Map<Integer, SignupAccessControl> sAccessMap = new HashMap<Integer, SignupAccessControl>();
-			for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
-				Signup s = i.next();
+			for (Signup s : e.getSignups()) {
 				SignupAccessControl sAccess = new SignupAccessControl(ctx, e, s);
 				sAccess.validate();
 				sAccessMap.put(Integer.valueOf(s.getPilotID()), sAccess);
