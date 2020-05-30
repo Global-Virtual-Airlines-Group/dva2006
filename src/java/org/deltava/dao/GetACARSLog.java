@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load ACARS log data.
@@ -98,7 +99,8 @@ public class GetACARSLog extends GetACARSData {
 		buf.append(" ORDER BY M.DATE");
 
 		try (PreparedStatement ps = prepare(buf.toString())) {
-			int psOfs = 0;
+			int psOfs = 1;
+			ps.setString(1, SystemData.get("airline.code"));
 			if (criteria.getPilotID() != 0) {
 				ps.setInt(++psOfs, criteria.getPilotID());
 				ps.setInt(++psOfs, criteria.getPilotID());
