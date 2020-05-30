@@ -103,7 +103,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:choose>
 <c:when test="${event.briefing.isPDF}">
 <tr>
- <td class="label">Flight Briefing</td>
+ <td class="label top">Flight Briefing</td>
  <td colspan="5" class="data"><el:link url="/ebrief/${event.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:int value="${event.briefing.size}" /> bytes, Adobe PDF document</span></td>
 </tr>
 </c:when>
