@@ -100,10 +100,20 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </view:row>
 </c:forEach>
 </c:if>
+<c:choose>
+<c:when test="${event.briefing.isPDF}">
+<tr>
+ <td class="label">Flight Briefing</td>
+ <td colspan="5" class="data"><el:link url="/ebrief/${event.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:int value="${event.briefing.size}" /> bytes, Adobe PDF document</span></td>
+</tr>
+</c:when>
+<c:when test="${!empty event.briefing}">
 <tr class="nophone">
  <td class="label top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="2">${event.briefing}</el:textbox></td>
 </tr>
+</c:when>
+</c:choose>
 <c:if test="${!empty event.equipmentTypes}">
 <tr>
  <td class="label">Equipment Types</td>

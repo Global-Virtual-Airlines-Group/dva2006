@@ -44,6 +44,7 @@ public class SetEvent extends DAO {
 				update(e);
 
 			// Write the child rows
+			writeBriefing(e);
 			writeAirlines(e);
 			writeAirports(e);
 			writeCharts(e);
@@ -291,6 +292,26 @@ public class SetEvent extends DAO {
 			executeUpdate(ps, 1, e.getEquipmentTypes().size());
 		}
 	}
+	
+	/*
+	 * Writes briefing data to the database.
+	 */
+	private void writeBriefing(Event e) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.BRIEFINGS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
+		}
+		
+		Briefing b = e.getBriefing();
+		if (b == null) return;
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.BRIEFINGS (ID, ISPDF, SIZE, DATA) VALUES (?, ?, ?, ?)")) {
+			ps.setInt(1, e.getID());
+			ps.setBoolean(2, b.getIsPDF());
+			ps.setInt(3, b.getSize());
+			ps.setBinaryStream(4, b.getInputStream());
+			executeUpdate(ps, 1);
+		}
+	}
 
 	/*
 	 * Writes ATC contact addresses to the database.
@@ -319,17 +340,16 @@ public class SetEvent extends DAO {
 	 * Adds a new Online Event to the database.
 	 */
 	private void insert(Event e) throws SQLException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setString(1, e.getName());
 			ps.setInt(2, e.getNetwork().ordinal());
 			ps.setInt(3, e.getStatus().ordinal());
 			ps.setTimestamp(4, createTimestamp(e.getStartTime()));
 			ps.setTimestamp(5, createTimestamp(e.getEndTime()));
 			ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
-			ps.setString(7, e.getBriefing());
-			ps.setBoolean(8, e.getCanSignup());
-			ps.setString(9, e.getSignupURL());
-			ps.setString(10, e.getOwner().getCode());
+			ps.setBoolean(7, e.getCanSignup());
+			ps.setString(8, e.getSignupURL());
+			ps.setString(9, e.getOwner().getCode());
 
 			// Execute the update and get the Event ID
 			executeUpdate(ps, 1);
@@ -341,18 +361,17 @@ public class SetEvent extends DAO {
 	 * Updates an existing Online Event in the database.
 	 */
 	private void update(Event e) throws SQLException {
-		try (PreparedStatement ps = prepare("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepare("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)")) {
 			ps.setString(1, e.getName());
 			ps.setInt(2, e.getNetwork().ordinal());
 			ps.setTimestamp(3, createTimestamp(e.getStartTime()));
 			ps.setTimestamp(4, createTimestamp(e.getEndTime()));
 			ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
-			ps.setString(6, e.getBriefing());
-			ps.setBoolean(7, e.getCanSignup());
-			ps.setString(8, e.getSignupURL());
-			ps.setInt(9, e.getStatus().ordinal());
-			ps.setString(10, e.getOwner().getCode());
-			ps.setInt(11, e.getID());
+			ps.setBoolean(6, e.getCanSignup());
+			ps.setString(7, e.getSignupURL());
+			ps.setInt(8, e.getStatus().ordinal());
+			ps.setString(9, e.getOwner().getCode());
+			ps.setInt(10, e.getID());
 			executeUpdate(ps, 1);
 		}
 	}

@@ -17,14 +17,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script>
+<script async>
 golgotha.local.switchType = function(combo) {
 	self.location = '/eventcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 
 golgotha.local.expandSection = function(id) {
-	var s = document.getElementById(id);
+	const s = document.getElementById(id);
     if (s) s.style.display = (s.style.display == 'none') ? '' : 'none';
 	return true;
 };
@@ -46,17 +46,17 @@ golgotha.local.expandSection = function(id) {
 </tr>
 </el:table>
 <div class="mid">
-<calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
+<calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
 <c:set var="eventSize" value="${event.signups.size()}" scope="page" />
 <c:set var="eventLargeSignup" value="${eventSize > 10}" scope="page" />
 <c:set var="eventLargeRoutes" value="${event.routes.size() > 3}" scope="page" />
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<c:if test="${event.briefing.isPDF}">
+<span class="small"><el:link url="/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br /></c:if>
 <c:if test="${eventLargeRoutes}">
-<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br />
-</c:if>
+<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br /></c:if>
 <div id="eRoute${event.hexID}" class="small"<c:if test="${eventLargeRoutes}"> style="display:none;"</c:if>>
 <c:forEach var="route" items="${event.routes}">
 <c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">

@@ -17,14 +17,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script>
+<script async>
 golgotha.local.switchType = function(combo) {
 	self.location = '/eventcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 
 golgotha.local.expandSection = function(id) {
-    var s = document.getElementById(id);
+    const s = document.getElementById(id);
     if (s) s.style.display = (s.style.display == 'none') ? '' : 'none';
     return true;
 };
@@ -52,6 +52,8 @@ golgotha.local.expandSection = function(id) {
 <c:set var="eventLargeSignup" value="${eventSize > 20}" scope="page" />
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<c:if test="${event.briefing.isPDF}">
+<span class="small"><el:link url="/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br /></c:if>
 <c:forEach var="route" items="${event.routes}">
 <c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">
 <div class="small">${route.airportD.name} - ${route.airportA.name}<br />
