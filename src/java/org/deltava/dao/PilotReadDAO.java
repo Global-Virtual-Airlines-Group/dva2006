@@ -295,8 +295,8 @@ abstract class PilotReadDAO extends DAO {
 
 				// Check if this result set has columns 53/54, which is the signature data
 				if (columnCount > 53) {
-					String ext = rs.getString(53);
-					p.setSignatureExtension((ext == null) ? null : ext.trim());
+					//String ext = rs.getString(53);
+					//p.setSignatureExtension((ext == null) ? null : ext.trim());
 					if (p.getHasSignature()) // FIXME: Hack for mysql 8.0.20 joins
 						p.setSignatureModified(toInstant(rs.getTimestamp(54)));
 				}
@@ -321,7 +321,7 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadChildRows(Pilot p, String dbName) throws SQLException {
-		Map<Integer, Pilot> tmpMap = Collections.singletonMap(Integer.valueOf(p.getID()), p);
+		Map<Integer, Pilot> tmpMap = Map.of(Integer.valueOf(p.getID()), p);
 		loadIMAddrs(tmpMap, dbName);
 		loadRatings(tmpMap, dbName);
 		loadRoles(tmpMap);
