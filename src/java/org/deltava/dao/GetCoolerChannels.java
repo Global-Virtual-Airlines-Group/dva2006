@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -34,18 +34,15 @@ public class GetCoolerChannels extends DAO {
 	 * Helper class to allow displaying of last subject in a channel.
 	 */
 	public class LastPostMessage extends Message {
-		private String _subject;
+		private final String _subject;
 
-		LastPostMessage(int authorID) {
+		LastPostMessage(int authorID, String subject) {
 			super(authorID);
+			_subject = subject;
 		}
 
 		public String getSubject() {
 			return _subject;
-		}
-
-		public void setSubject(String subj) {
-			_subject = subj;
 		}
 	}
 	
@@ -74,9 +71,7 @@ public class GetCoolerChannels extends DAO {
 			}
 
 			// Load the roles and airlines
-			Map<String, Channel> results = new HashMap<String, Channel>();
-			results.put(c.getName(), c);
-			loadInfo(results);
+			loadInfo(Map.of(c.getName(), c));
 			_cache.add(c);
 			return c;
 		} catch (SQLException se) {
@@ -134,15 +129,8 @@ public class GetCoolerChannels extends DAO {
 		}
 
 		// Parse through the results and strip out from the airline - since it's cheaper to do it here than in the query
-		Collection<Channel> channels = new TreeSet<Channel>(results.values());
-		if (al != null) {
-			for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
-				Channel c = i.next();
-				if (!c.hasAirline(al.getCode()))
-					i.remove();
-			}
-		}
-
+		Collection<Channel> channels = results.values().stream().filter(c -> ((al == null) || c.hasAirline(al.getCode()))).collect(Collectors.toCollection(TreeSet::new));
+				
 		// Add to cache
 		_cache.addAll(channels);
 
@@ -163,19 +151,12 @@ public class GetCoolerChannels extends DAO {
 	public List<Channel> getChannels(AirlineInformation al, Collection<String> roles) throws DAOException {
 
 		// Check if we are querying for the admin role; in this case return everything
-		if (roles.contains("Admin"))
+		if (roles.contains("Developer"))
 			return getChannels(null, true, true);
 
 		// Check if we can display locked threads
 		List<Channel> channels = getChannels(al, roles.contains("Moderator"), false);
-		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
-			Channel c = i.next();
-			if (!RoleUtils.hasAccess(roles, c.getReadRoles()))
-				i.remove();
-		}
-
-		// return results
-		return channels;
+		return channels.stream().filter(ch -> RoleUtils.hasAccess(roles, ch.getReadRoles())).collect(Collectors.toList());
 	}
 
 	/*
@@ -226,11 +207,10 @@ public class GetCoolerChannels extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					LastPostMessage msg = new LastPostMessage(rs.getInt(13));
+					LastPostMessage msg = new LastPostMessage(rs.getInt(13), rs.getString(2));
 					msg.setThreadID(rs.getInt(1));
 					msg.setID(msg.getThreadID());
-					msg.setSubject(rs.getString(2));
-					msg.setCreatedOn(rs.getTimestamp(12).toInstant());
+					msg.setCreatedOn(toInstant(rs.getTimestamp(12)));
 					results.add(msg);
 				}
 			}
