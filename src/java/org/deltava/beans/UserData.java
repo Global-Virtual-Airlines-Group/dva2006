@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.util.*;
  * A class to store cross-Airline User data. This is used to track locations of users in parts of the application (Water
  * Cooler, Online Events) that allow users from other airlines to write database entries.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -58,6 +58,17 @@ public class UserData extends DatabaseBean {
 	 */
 	public String getDB() {
 		return _dbName;
+	}
+	
+	/**
+	 * Returns the fully qualified table name.
+	 * @return the the database and table names as db.TABLENAME
+	 */
+	public String getDBTable() {
+		StringBuilder buf = new StringBuilder(_dbName);
+		buf.append('.');
+		buf.append(_tableName);
+		return buf.toString();
 	}
 
 	/**
@@ -181,17 +192,11 @@ public class UserData extends DatabaseBean {
 	   return "PILOTS".equals(tn);
 	}
 
-	/**
-	 * Returns the hashcode of the database ID.
-	 */
 	@Override
 	public int hashCode() {
 		return getID();
 	}
 
-	/**
-	 * Returns the database ID.
-	 */
 	@Override
 	public Object cacheKey() {
 		return Integer.valueOf(getID());

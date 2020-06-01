@@ -1,12 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A class to support a map of {@link UserData} beans. This class implements Map to allow it to be accessed directly via JSP Expression Language.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -26,10 +27,7 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	 */
 	public UserDataMap(Collection<UserData> data) {
 		super();
-		for (Iterator<UserData> i = data.iterator(); i.hasNext(); ) {
-			UserData ud = i.next();
-			put(Integer.valueOf(ud.getID()), ud);
-		}
+		data.forEach(ud -> put(Integer.valueOf(ud.getID()), ud));
 	}
 
 	/**
@@ -58,14 +56,7 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	 * @throws NullPointerException if tableName is null
 	 */
 	public Collection<UserData> getByTable(String tableName) {
-		Collection<UserData> results = new HashSet<UserData>();
-		for (Iterator<UserData> i = values().iterator(); i.hasNext();) {
-			UserData usr = i.next();
-			if (tableName.equals(usr.getDB() + "." + usr.getTable()))
-				results.add(usr);
-		}
-
-		return results;
+		return values().stream().filter(usr -> tableName.equals(usr.getDBTable())).collect(Collectors.toSet());
 	}
 
 	/**
@@ -73,13 +64,7 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	 * @return a Collection of table names in DB.TABLE format
 	 */
 	public Collection<String> getTableNames() {
-		Collection<String> results = new LinkedHashSet<String>(4);
-		for (Iterator<UserData> i = values().iterator(); i.hasNext();) {
-			UserData usr = i.next();
-			results.add(usr.getDB() + "." + usr.getTable());
-		}
-
-		return results;
+		return values().stream().map(UserData::getDBTable).collect(Collectors.toSet());
 	}
 
 	/**
@@ -87,13 +72,7 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	 * @return a Collection of domain names
 	 */
 	public Collection<String> getDomains() {
-		Collection<String> results = new LinkedHashSet<String>(4);
-		for (Iterator<UserData> i = values().iterator(); i.hasNext();) {
-			UserData usr = i.next();
-			results.add(usr.getDomain());
-		}
-
-		return results;
+		return values().stream().map(UserData::getDomain).collect(Collectors.toSet());
 	}
 
 	/**
@@ -101,18 +80,9 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	 * @return a Collection of database IDs
 	 */
 	public Collection<Integer> getAllIDs() {
-		Collection<Integer> results = new HashSet<Integer>();
-		for (Iterator<UserData> i = values().iterator(); i.hasNext();) {
-			UserData usr = i.next();
-			results.addAll(usr.getIDs());
-		}
-
-		return results;
+		return values().stream().flatMap(ud -> ud.getIDs().stream()).collect(Collectors.toSet());
 	}
 
-	/**
-	 * Dumps the IDs to a string, like a list.
-	 */
 	@Override
 	public String toString() {
 		return keySet().toString();
