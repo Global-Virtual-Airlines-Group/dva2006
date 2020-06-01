@@ -146,8 +146,7 @@ public final class OfflineFlightParser {
 		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (pL != null) {
 			DateTimeFormatter mdtf = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy HH:mm:ss").appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).toFormatter();
-			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
-				Element pe = i.next();
+			for (Element pe : pL) {
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
 					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(pe.getChildTextTrim("date"), mdtf).toInstant(ZoneOffset.UTC), loc);
@@ -258,7 +257,7 @@ public final class OfflineFlightParser {
 		if (afr.getTakeoffHeading() > -1) {
 			double lat = parse(ie.getChildTextTrim("takeoffLatitude"));
 			double lng = parse(ie.getChildTextTrim("takeoffLongitude"));
-			afr.setTakeoffLocation(new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("takeoffAltitude"), 0)));
+			afr.setTakeoffLocation(new GeoPosition(lat, lng, Math.min(24000, StringUtils.parse(ie.getChildTextTrim("takeoffAltitude"), 0))));
 		}
 		
 		// Set the landing position if present
@@ -266,7 +265,7 @@ public final class OfflineFlightParser {
 		if (afr.getLandingHeading() > -1) {
 			double lat = parse(ie.getChildTextTrim("landingLatitude"));
 			double lng = parse(ie.getChildTextTrim("landingLongitude"));
-			afr.setLandingLocation(new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0)));
+			afr.setLandingLocation(new GeoPosition(lat, lng, Math.min(24000, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0))));
 		}
 
 		// Load the 0X/1X/2X/4X times
