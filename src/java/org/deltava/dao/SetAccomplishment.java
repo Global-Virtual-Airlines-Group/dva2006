@@ -1,4 +1,4 @@
-// Copyright 2010, 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -31,7 +31,7 @@ public class SetAccomplishment extends DAO {
 	 */
 	public void write(Accomplishment a) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPCATE KEY UPDATE "
+			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
 				+ "NAME=VALUES(NAME), UNIT=VALUES(UNIT), VAL=VALUES(VAL), COLOR=VALUES(COLOR), CHOICES=VALUES(CHOICES), ACTIVE=VALUES(ACTIVE), ALWAYS_SHOW=VALUES(ALWAYS_SHOW)")) {
 				ps.setString(1, a.getName());
 				ps.setInt(2, a.getUnit().ordinal());
