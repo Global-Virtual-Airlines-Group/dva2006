@@ -83,22 +83,21 @@ public class IssueCommentCommand extends AbstractCommand {
 
 				// Check if we're sending to all commenters
 				boolean sendAll = Boolean.valueOf(ctx.getParameter("emailAll")).booleanValue();
-				if (sendAll) {
-					for (IssueComment c : i.getComments())
-						pilotIDs.add(Integer.valueOf(c.getAuthorID()));
-				}
+				if (sendAll)
+					i.getComments().stream().map(IssueComment::getAuthorID).forEach(pilotIDs::add);
 
-				// Get the Issue creator and assignee, and remove the current user
+				// Get the Issue creator and assignee, and remove the current user's IDs
+				GetUserData uddao = new GetUserData(con);
+				UserData ud = uddao.get(ctx.getUser().getID());
 				pilotIDs.add(Integer.valueOf(i.getAuthorID()));
 				pilotIDs.add(Integer.valueOf(i.getAssignedTo()));
-				pilotIDs.remove(Integer.valueOf(ctx.getUser().getID()));
+				pilotIDs.removeAll(ud.getIDs());
 
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctx.setTemplate(mtdao.get("ISSUECOMMENT"));
 
 				// Get the user data
-				GetUserData uddao = new GetUserData(con);
 				UserDataMap udm = uddao.get(pilotIDs);
 
 				// Get the pilot profiles
