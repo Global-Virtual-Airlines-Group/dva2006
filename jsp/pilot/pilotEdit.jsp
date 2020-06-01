@@ -187,7 +187,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Additional Ratings</td>
 <c:if test="${access.canPromote}">
- <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="95" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="110" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
 </c:if>
 <c:if test="${!access.canPromote}">
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
