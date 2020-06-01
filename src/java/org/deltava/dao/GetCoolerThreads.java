@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,6 +13,7 @@ import org.deltava.comparators.ArbitraryComparator;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
@@ -44,16 +45,19 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getByChannel(String channelName, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON ((T.ID=I.ID) AND (I.SEQ=1)) "
+			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((T.CHANNEL=CI.CHANNEL) AND (CI.INFOTYPE=?)) WHERE (CI.INFODATA=?) ");
 		if (channelName != null)
-			sqlBuf.append(" WHERE (T.CHANNEL=?)");
+			sqlBuf.append(" AND (T.CHANNEL=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, Channel.InfoType.AIRLINE.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
 			if (channelName != null)
-				ps.setString(1, channelName);
+				ps.setString(3, channelName);
 			
 			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
@@ -67,7 +71,10 @@ public class GetCoolerThreads extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC")) {
+		try (PreparedStatement ps = prepare("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON ((T.ID=I.ID) AND (I.SEQ=1)) "
+			+ "LEFT JOIN common.COOLER_CHANNEL_INFO CI ON ((T.CHANNEL=CI.CHANNEL)) AND (CI.INFOTYPE=?)) WHERE (CI.INFODATA=?) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC")) {
+			ps.setInt(1, Channel.InfoType.AIRLINE.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
 			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -124,13 +131,16 @@ public class GetCoolerThreads extends DAO {
 			return getByChannel(null, showImgs);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) WHERE (T.SORTDATE > ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON ((T.ID=I.ID) AND (I.SEQ=1)) "
+			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (C.INFOTYPE=?)) WHERE (CI.INFODATA=?) AND (T.SORTDATE > ?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setTimestamp(1, createTimestamp(sd));
+			ps.setInt(1, Channel.InfoType.AIRLINE.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			ps.setTimestamp(3, createTimestamp(sd));
 			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -250,7 +260,8 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, common.COOLER_POSTS P WHERE (T.ID=P.THREAD_ID) ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, common.COOLER_POSTS P LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (CI.INFOTYPE=?))"
+			+ " WHERE (T.ID=P.THREAD_ID) AND (CI.INFODATA=?) ");
 		
 		// Check for text / subject search
 		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
@@ -267,12 +278,13 @@ public class GetCoolerThreads extends DAO {
 			buf.append("AND (T.CHANNEL=?) ");
 		if (criteria.getMinimumDate() != null)
 			buf.append("AND (T.LASTUPDATE > ?)");
-
 		if (!hasQuery)
 			buf.append("ORDER BY T.LASTUPDATE DESC");
 		
 		try (PreparedStatement ps = prepare(buf.toString())) {
-			int psOfs = 0;
+			ps.setInt(1, Channel.InfoType.AIRLINE.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			int psOfs = 2;
 			if (hasQuery) {
 				ps.setString(++psOfs, criteria.getSearchTerm());
 				if (criteria.getSearchSubject())
