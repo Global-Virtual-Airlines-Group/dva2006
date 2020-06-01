@@ -29,6 +29,8 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="statusOpts" className="org.deltava.beans.system.IssueStatus" />
+<content:enum var="areaOpts" className="org.deltava.beans.system.IssueArea" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -66,13 +68,12 @@ golgotha.local.validate = function(f) {
 <c:if test="${doSearch}">
 <view:table cmd="issues">
 <tr class="title caps">
- <td colspan="4" class="left">SEARCH RESULTS</td>
- <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if>
-<content:filter roles="Developer"><el:cmd url="issues" link="${pageContext.request.userPrincipal}">MY ISSUES</el:cmd></content:filter></td>
+ <td colspan="6" class="left"><span class="nophone"><content:airline /> DEVELOPMENT ISSUE </span>SEARCH RESULTS</td>
+ <td colspan="2">&nbsp;<c:if test="${access.canCreate}"><el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
 </tr>
 <c:if test="${empty results}">
 <tr>
- <td colspan="8" class="pri bld">No Issues matching your search criteria were found.</td>
+ <td colspan="8" class="pri bld">No Development Issues matching your search criteria were found.</td>
 </tr>
 </c:if>
 <c:if test="${!empty results}">
@@ -81,11 +82,11 @@ golgotha.local.validate = function(f) {
  <td style="width:5%">ID</td>
  <td style="width:25%">TITLE</td>
  <td style="width:10%">PRIORITY</td>
- <td style="width:10%">AREA</td>
- <td style="width:10%">TYPE</td>
- <td style="width:10%">CREATED</td>
+  <td class="nophone" style="width:10%">AREA</td>
+ <td class="nophone" style="width:10%">TYPE</td>
+ <td class="nophone" style="width:10%">CREATED</td>
  <td style="width:10%">LAST COMMENT</td>
- <td>RESOLVED</td>
+ <td class="nophone" >RESOLVED</td>
 </tr>
 
 <!-- Table Issue Data -->
@@ -93,14 +94,20 @@ golgotha.local.validate = function(f) {
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="small"><el:cmd url="issue" link="${issue}">${issue.subject}</el:cmd></td>
- <td class="pri bld">${issue.priorityName}</td>
- <td class="bld">${issue.areaName}</td>
- <td class="sec bld">${issue.typeName}</td>
- <td><fmt:date fmt="d" date="${issue.createdOn}" /></td>
+  <td class="pri bld small"><fmt:defaultMethod var="${issue.priority}" method="description" /></td>
+ <td class="bld small nophone"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
+ <td class="sec bld small nophone"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
- <td class="bld"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>
+ <td class="bld nophone"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>
 </view:row>
 </c:forEach>
+
+<!-- Scroll Bar -->
+<tr class="title">
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
+<view:legend width="120" labels="Open,Fixed,Worked Around,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
+</tr>
 </c:if>
 </view:table>
 </c:if>
