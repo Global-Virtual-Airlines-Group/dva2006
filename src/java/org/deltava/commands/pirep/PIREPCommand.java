@@ -347,9 +347,10 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
-		int maxRange = SystemData.getInt("users.pirep.maxDays", 7);
+		int maxRange = SystemData.getInt("users.pirep.maxDays", 1);
+		int minRange = SystemData.getInt("users.pirep.minDays", 7);
 		ctx.setAttribute("forwardDateLimit", today.plusDays(maxRange), REQUEST);
-		ctx.setAttribute("backwardDateLimit", today.minusDays(maxRange), REQUEST);
+		ctx.setAttribute("backwardDateLimit", today.minusDays(minRange), REQUEST);
 		
 		// Set flight years
 		Collection<Integer> years = new TreeSet<Integer>();
@@ -776,10 +777,10 @@ public class PIREPCommand extends AbstractFormCommand {
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
 					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
-						log.info("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "]");
+						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "] : " + ctx.getRequest().getRemoteHost() + " spider=" + isSpider);
 						mapType = MapType.GOOGLEStatic;
 					}
-				} else if (predictedUse.getTotal() > dailyMax)
+				} else if (isSpider || (predictedUse.getTotal() > dailyMax))
 					mapType = MapType.GOOGLEStatic;
 			}				
 
