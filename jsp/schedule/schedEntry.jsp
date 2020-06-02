@@ -25,6 +25,10 @@ golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
 	golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+	golgotha.form.validate({f:f.startDate, l:9, t:'Start Date'});
+	golgotha.form.validate({f:f.endDate, l:9, t:'End Date'});
+	golgotha.form.validate({f:f.timeD, l:4, t:'Departure Time'});
+	golgotha.form.validate({f:f.timeA, l:4, t:'Arrival Time'});
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
 	golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
 	golgotha.form.submit(f);
@@ -134,7 +138,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <tr class="airportRow">
  <td class="label">Departing From</td>
  <td class="data"><el:combo name="airportD" size="1" options="${airportsD}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" /> at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
+ <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" /> at <el:text name="timeD" idx="*" required="true" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <content:hasmsg>
 <tr>
@@ -145,7 +149,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <tr class="airportRow">
  <td class="label">Arriving At</td>
  <td class="data"><el:combo name="airportA" size="1" options="${airportsA}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" /> at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
+ <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" /> at <el:text name="timeA" idx="*" required="true" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -161,7 +165,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
  <td><el:button type="submit" label="SAVE SCHEDULE ENTRY" /><c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
 </tr>
 </el:table>
-<el:text type="hidden" name="srcLine" value="${!empty entry ? 0 : entry.lineNumber}" />
+<el:text type="hidden" name="srcLine" value="${empty entry ? 0 : entry.lineNumber}" />
 <el:text type="hidden" name="src" value="${entry.source}" />
 </el:form>
 <br />

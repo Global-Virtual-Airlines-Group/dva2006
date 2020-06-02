@@ -67,7 +67,7 @@ public class SetSchedule extends DAO {
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, "
-			+ "FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?s)")) {
+			+ "FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, rse.getSource().ordinal());
 			ps.setInt(2, rse.getLineNumber());
 			ps.setTimestamp(3, Timestamp.valueOf(rse.getStartDate().atStartOfDay()));
@@ -96,11 +96,10 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if entry is null
 	 */
-	public void delete(ScheduleEntry entry) throws DAOException {
-		try (PreparedStatement ps = prepare("DELETE FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)")) {
-			ps.setString(1, entry.getAirline().getCode());
-			ps.setInt(2, entry.getFlightNumber());
-			ps.setInt(3, entry.getLeg());
+	public void delete(RawScheduleEntry entry) throws DAOException {
+		try (PreparedStatement ps = prepare("DELETE FROM RAW_SCHEDULE WHERE (SRC=?) AND (SRCLINE=?)")) {
+			ps.setInt(1, entry.getSource().ordinal());
+			ps.setInt(2, entry.getLineNumber());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -29,7 +29,7 @@ public class GetRawScheduleInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getNextManualEntryLine() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT MAX(SRC_LINE) WHERE (SRC=?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT MAX(SRCLINE) FROM RAW_SCHEDULE WHERE (SRC=?)")) {
 			ps.setInt(1, ScheduleSource.MANUAL.ordinal());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) + 1 : 1;

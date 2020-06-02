@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("[H]H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
 	 * Callback method called when saving the schedule entry.
@@ -42,7 +42,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the source/line
 		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
-		boolean isNew = (srcLine > 0);
+		boolean isNew = (srcLine < 1);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -74,7 +74,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			// Load start/end dates
 			entry.setStartDate(LocalDate.parse(ctx.getParameter("startDate"), _df));
 			entry.setEndDate(LocalDate.parse(ctx.getParameter("endDate"), _df));
-			if (entry.getEndDate().isAfter(entry.getStartDate()))
+			if (!entry.getEndDate().isAfter(entry.getStartDate()))
 				entry.setEndDate(entry.getEndDate().plusYears(1));
 
 			// Update the entry

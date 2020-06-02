@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.schedule.*;
@@ -44,7 +44,7 @@ public class ScheduleAccessControl extends AccessControl {
 		validateContext();
 
 		// Set role fields
-		boolean isImported = (_entry != null) && ((_entry.getSource() == null) || (_entry.getSource() == ScheduleSource.MANUAL));
+		boolean isImported = (_entry != null) && ((_entry.getSource() == null) || (_entry.getSource() != ScheduleSource.MANUAL));
 		boolean hasRole = _ctx.isUserInRole("Schedule") || _ctx.isUserInRole("Operations");
 		_canEdit = hasRole && !isImported;
 		_canDelete = hasRole;
