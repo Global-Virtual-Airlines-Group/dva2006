@@ -1,17 +1,15 @@
-// Copyright 2005, 2006, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Flight;
-import org.deltava.beans.schedule.ScheduleEntry;
-
+import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.FlightCodeParser;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to delete Flight Schedule entries.
@@ -29,21 +27,21 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the old flight ID
-		String fCode = (String) ctx.getCmdParameter(ID, null);
-		Flight id = FlightCodeParser.parse(fCode);
-		if (id == null)
-			throw notFoundException("Invalid Flight Code - " + fCode);
+		
+		// Get the source/line
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
+		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
+		if (srcLine < 0)
+			throw notFoundException("Invalid Source Line - " + srcLine);
 
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the entry
-			GetSchedule dao = new GetSchedule(con);
-			ScheduleEntry entry = dao.get(id);
+			GetRawSchedule dao = new GetRawSchedule(con);
+			RawScheduleEntry entry = dao.get(src, srcLine);
 			if (entry == null)
-				throw notFoundException("Invalid Flight Code - " + fCode);
+				throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
 			
 			// Check our access
 			ScheduleAccessControl ac = new ScheduleAccessControl(ctx, entry);
@@ -62,7 +60,8 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 
 		// Set status attributes
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("scheduleEntry", id, REQUEST);
+		ctx.setAttribute("src", src, REQUEST);
+		ctx.setAttribute("srcLine", Integer.valueOf(srcLine), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
