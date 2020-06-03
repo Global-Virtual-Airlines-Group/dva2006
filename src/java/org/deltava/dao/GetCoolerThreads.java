@@ -132,7 +132,7 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON ((T.ID=I.ID) AND (I.SEQ=1)) "
-			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (C.INFOTYPE=?)) WHERE (CI.INFODATA=?) AND (T.SORTDATE > ?)");
+			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (CI.INFOTYPE=?)) WHERE (CI.INFODATA=?) AND (T.SORTDATE > ?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
