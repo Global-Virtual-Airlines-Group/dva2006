@@ -15,6 +15,13 @@ public enum IssueStatus implements EnumDescription {
 	
 	@Override
 	public String getDescription() {
-		return (this == WORKEDAROUND) ? "Worked Around" : EnumDescription.super.getDescription();
+		switch (this) {
+		case WORKEDAROUND:
+			return "Worked Around";
+		case WONTFIX:
+			return "Won't Fix";
+		default:
+			return EnumDescription.super.getDescription();
+		}
 	}
 }
