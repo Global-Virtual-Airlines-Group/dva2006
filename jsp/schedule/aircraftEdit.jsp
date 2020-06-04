@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const isUsed = f.useAircraft.checked;
@@ -91,7 +91,8 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); gol
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /></td>
+ <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /><br />
+<el:box name ="academyOnly" idx="*" value="true" checked="${aircraft.academyOnly}" label="This Aircraft is only used in the Flight Academy" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">VIRTUAL AIRLINE OPTIONS</td>
