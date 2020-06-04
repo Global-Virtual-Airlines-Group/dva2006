@@ -1,21 +1,25 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.time.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.schedule.Aircraft;
 
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to suspend inactive Flight Academy Courses. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 6.3
  */
 
@@ -40,8 +44,16 @@ public class CoursePurgeTask extends Task {
 		
 		try {
 			Connection con = ctx.getConnection();
-			GetAcademyCourses cdao = new GetAcademyCourses(con);
-			SetAcademy wdao = new SetAcademy(con); SetExam ewdao = new SetExam(con);
+			GetAcademyCertifications ccdao = new GetAcademyCertifications(con);
+			GetAcademyCourses cdao = new GetAcademyCourses(con); GetPilot pdao = new GetPilot(con);
+			SetAcademy wdao = new SetAcademy(con); SetExam ewdao = new SetExam(con); SetPilot pwdao = new SetPilot(con);
+			SetStatusUpdate upwdao = new SetStatusUpdate(con);
+			
+			// Load academy aircraft
+			GetAircraft acdao = new GetAircraft(con);
+			Collection<String> academyEQ = acdao.getAll().stream().filter(ac -> ac.getAcademyOnly()).map(Aircraft::getName).collect(Collectors.toSet());
+			
+			// Start transaction
 			ctx.startTX();
 			
 			// Load the inactive courses
@@ -51,7 +63,21 @@ public class CoursePurgeTask extends Task {
 			// Invalidate the courses
 			for (Map.Entry<Integer, Integer> me : courseIDs.entrySet()) {
 				Course c = cdao.get(me.getKey().intValue());
+				Certification cert = ccdao.get(c.getName());
 				c.setStatus(Status.ABANDONED);
+				
+				// Check if we need to remove ratings
+				Pilot p  = pdao.get(c.getPilotID());
+				Collection<String> rRatings = cert.getRideEQ().stream().filter(r -> academyEQ.contains(r) && p.hasRating(r)).collect(Collectors.toSet());
+				if (!rRatings.isEmpty()) {
+					p.removeRatings(rRatings);
+					pwdao.write(p);
+					
+					StatusUpdate upd = new StatusUpdate(c.getPilotID(), UpdateType.ACADEMY);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Ratings removed: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
+					upwdao.write(upd);
+				}
 				
 				// Create a status entry
 				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
