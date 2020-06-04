@@ -9,166 +9,45 @@ arc_util="pbzip2 -9 -p2 -c"
 cd /home/backup/svn
 
 # Get the current revision
-svnlook youngest /home/svn > /tmp/svn.revision
+LATEST=`svnlook youngest /home/svn`
+LASTREV=`cat svn.revision_base`
+echo "Latest=$LATEST, Last=$LASTREV"
 
 # Check if we have anything to back up
 if [ "$1" != "force" ] ;then
- if [ -e "/tmp/svn_backup/svn.revision_base" ] ;then
-  if [ ! "`cat /tmp/svn.revision`" -gt "`cat /home/backup/svn/svn.revision_base`" ] ;then
-   echo "Subversion repository unchanged Revision=`cat /tmp/svn.revision`"
-   rm /tmp/svn.revision
-   exit 1
-  fi
+ if [ $LATEST -le $LASTREV ] ;then
+  echo "Subversion repository unchanged Revision=$LATEST"
+  exit 1
  fi
 fi
 
 # Back up the first 1000 revisions
-if [ ! -f "/home/backup/svn/svn_0xxx.bz2" ] ;then
- echo 'Backing up revisions 0-999'
- svnadmin dump /home/svn --revision 0:999 | $arc_util > svn_0xxx.bz2
- echo 1000 > /tmp/svn.revision_base
-else
- echo 1000 > /tmp/svn.revision_base
+REVISION=1000
+while [ $REVISION -lt $LATEST ]
+do
+
+let "SR = $REVISION - 1000"
+let "ER = $REVISION - 1"
+ARCHIVE="svn_$ER.bz2"
+
+if [ ! -f "/home/backup/svn/$ARCHIVE" ] ; then
+ echo "Backing up revisions $SR-$ER"
+ svnadmin dump /home/svn --revision $SR:$ER | $arc_util > $ARCHIVE
 fi
 
-# If we have more than 2000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "2000" ] ;then
- if [ ! -f "/home/backup/svn/svn_10xx.bz2" ] ;then
-  echo 'Backing up revisions 1000-1999'
-  svnadmin dump /home/svn --incremental --revision 1000:1999 | $arc_util > svn_10xx.bz2
- fi
+((REVISION+=1000))
 
- echo 2000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 3000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "3000" ] ;then
- if [ ! -f "/home/backup/svn/svn_20xx.bz2" ] ;then
-  echo 'Backing up revisions 2000-2999'
-  svnadmin dump /home/svn --incremental --revision 2000:2999 | $arc_util > svn_20xx.bz2
- fi
-
- echo 3000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 4000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "4000" ] ;then
- if [ ! -f "/home/backup/svn/svn_30xx.bz2" ] ;then
-  echo 'Backing up revisions 3000-3999'
-  svnadmin dump /home/svn --incremental --revision 3000:3999 | $arc_util > svn_30xx.bz2
- fi
-
- echo 4000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 5000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "5000" ] ;then
- if [ ! -f "/home/backup/svn/svn_40xx.bz2" ] ;then
-  echo 'Backing up revisions 4000-4999'
-  svnadmin dump /home/svn --incremental --revision 4000:4999 | $arc_util > svn_40xx.bz2
- fi
-
- echo 5000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 6000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "6000" ] ;then
- if [ ! -f "/home/backup/svn/svn_50xx.bz2" ] ;then
-  echo 'Backing up revisions 5000-5999'
-  svnadmin dump /home/svn --incremental --revision 5000:5999 | $arc_util > svn_50xx.bz2
- fi
-
- echo 6000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 7000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "7000" ] ;then
- if [ ! -f "/home/backup/svn/svn_60xx.bz2" ] ;then
-  echo 'Backing up revisions 6000-6999'
-  svnadmin dump /home/svn --incremental --revision 6000:6999 | $arc_util > svn_60xx.bz2
- fi
-
- echo 7000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 8000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "8000" ] ;then
- if [ ! -f "/home/backup/svn/svn_70xx.bz2" ] ;then
-  echo 'Backing up revisions 7000-7999'
-  svnadmin dump /home/svn --incremental --revision 7000:7999 | $arc_util > svn_70xx.bz2
- fi
-
- echo 8000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 9000 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "9000" ] ;then
- if [ ! -f "/home/backup/svn/svn_80xx.bz2" ] ;then
-  echo 'Backing up revisions 8000-8999'
-  svnadmin dump /home/svn --incremental --revision 8000:8999 | $arc_util > svn_80xx.bz2
- fi
-
- echo 9000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 10k revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "10000" ] ;then
- if [ ! -f "/home/backup/svn/svn_90xx.bz2" ] ;then
-  echo 'Backing up revisions 9000-9999'
-  svnadmin dump /home/svn --incremental --revision 9000:9999 | $arc_util > svn_90xx.bz2
- fi
-
- echo 10000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 11k revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "11000" ] ;then
- if [ ! -f "/home/backup/svn/svn_100xx.bz2" ] ;then
-  echo 'Backing up revisions 10000-10999'
-  svnadmin dump /home/svn --incremental --revision 10000:10999 | $arc_util > svn_100xx.bz2
- fi
-
- echo 11000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 12k revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "12000" ] ;then
- if [ ! -f "/home/backup/svn/svn_110xx.bz2" ] ;then
-  echo 'Backing up revisions 11000-11999'
-  svnadmin dump /home/svn --incremental --revision 11000:11999 | $arc_util > svn_110xx.bz2
- fi
-
- echo 12000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 13k revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "13000" ] ;then
- if [ ! -f "/home/backup/svn/svn_120xx.bz2" ] ;then
-  echo 'Backing up revisions 12000-12999'
-  svnadmin dump /home/svn --incremental --revision 12000:12999 | $arc_util > svn_120xx.bz2
- fi
-
- echo 13000 > /tmp/svn.revision_base
-fi
-
-# If we have more than 13k revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "14000" ] ;then
- if [ ! -f "/home/backup/svn/svn_130xx.bz2" ] ;then
-  echo 'Backing up revisions 13000-13999'
-  svnadmin dump /home/svn --incremental --revision 13000:13999 | $arc_util > svn_130xx.bz2
- fi
-
- echo 14000 > /tmp/svn.revision_base
-fi
+done
 
 # Back up the last revisions
-echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
-svnadmin dump /home/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | $arc_util > svn_top.bz2
+let "SR = $REVISION - 1000"
+echo "Backing up revisions $SR-$LATEST"
+svnadmin dump /home/svn --incremental --revision $SR:$LATEST --incremental | $arc_util > svn_top.bz2
 
-# Clean up
-mv /tmp/svn.revision /home/backup/svn/svn.revision_base
-rm /tmp/svn.revision_base
+# Save last revision
+echo $LATEST > svn.revision_base
 
 # Change file permissions
 chown -R backup:users *.bz2
 chmod 640 *
+exit 0
