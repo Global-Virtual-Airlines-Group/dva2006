@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.schedule.Aircraft;
 import org.deltava.beans.servinfo.PilotRating;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
@@ -146,9 +147,19 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Start a transaction
 			ctx.startTX();
 			
-			// Get the DAO and update the course 
+			// Get the DAOs and update the course
+			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.setStatus(c.getID(), op, c.getStartDate());
+			
+			// Determine ratings to add/remove
+			GetAircraft acdao = new GetAircraft(con);
+			Collection<String> academyEQ = new HashSet<String>();
+			for (String r : crt.getRideEQ()) {
+				Aircraft ac = acdao.get(r);
+				if ((ac != null) && ac.getAcademyOnly())
+					academyEQ.add(r);
+			}
 			
 			// If we're canceling, cancel all Instruction Sessions
 			if (op == Status.ABANDONED) {
@@ -166,10 +177,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				
 				// Delete any unflown check rides
 				SetExam exwdao = new SetExam(con);
-				for (CheckRide cr : rides) {
-					if (cr.getStatus() == TestStatus.NEW)
-						exwdao.delete(cr);
-				}
+				exwdao.deleteCheckRides(c.getID());
 				
 				// Load the pilots
 				UserDataMap udm = uddao.get(IDs);
@@ -179,10 +187,34 @@ public class CourseDisposalCommand extends AbstractCommand {
 				cc.setCreatedOn(Instant.now());
 				cc.setText("Returned to Course");
 				wdao.comment(cc);
+				
+				// Add the ratings
+				academyEQ.removeIf(r -> usr.hasRating(r));
+				if (!academyEQ.isEmpty()) {
+					usr.addRatings(academyEQ);
+					SetPilot pwdao = new SetPilot(con);
+					pwdao.write(usr, ud.getDB());
+					
+					StatusUpdate upd2 = new StatusUpdate(usr.getID(), UpdateType.ACADEMY);
+					upd2.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Ratings added: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
+					uwdao.write(ud.getDB(), upd2);
+				}
+			} else if (op == Status.COMPLETE) {
+				academyEQ.removeIf(r -> !usr.hasRating(r));
+				if (!academyEQ.isEmpty()) {
+					usr.removeRatings(academyEQ);
+					SetPilot pwdao = new SetPilot(con);
+					pwdao.write(usr, ud.getDB());
+					
+					StatusUpdate upd2 = new StatusUpdate(usr.getID(), UpdateType.ACADEMY);
+					upd2.setAuthorID(ctx.getUser().getID());
+					upd2.setDescription("Ratings removed: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
+					uwdao.write(ud.getDB(), upd2);
+				}
 			}
 			
 			// Write the Status Update
-			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			uwdao.write(ud.getDB(), upd);
 			
 			// Send the completion to VATSIM

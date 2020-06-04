@@ -1,21 +1,23 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
-import java.sql.Connection;
+import java.util.*;
 import java.time.Instant;
+import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.schedule.Aircraft;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -56,9 +58,11 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 				throw securityException("Must have " + minFlights + " flights to enroll");
 			
 			// Create the status entry
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			StatusUpdate upd = new StatusUpdate(ctx.getUser().getID(), UpdateType.ACADEMY);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Requested enrollment in " + cert.getName());
+			upds.add(upd);
 			
 			// Convert the Certification into a Course bean
 			c = new Course(cert.getName(), ctx.getUser().getID());
@@ -83,22 +87,42 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			if (cert.getStage() > 1)
 				autoEnroll &= academyHistory.hasAny(1) ;
 			
+			// Start a transaction
+			ctx.startTX();
+				
 			// If this is an autoenroll stage 1, then get them directly in
 			if (autoEnroll) {
 				c.setStatus(Status.STARTED);
 				upd.setDescription("Enrolled in " + cert.getName());
+				
+				// Find any ratings we need to give
+				GetAircraft acdao = new GetAircraft(con);
+				Collection<String> academyEQ = new HashSet<String>();
+				for (String r : cert.getRideEQ()) {
+					Aircraft ac = acdao.get(r);
+					if ((ac != null) && ac.getAcademyOnly() && !p.hasRating(r))
+						academyEQ.add(r);
+				}
+
+				if (!academyEQ.isEmpty()) {
+					SetPilot pwdao = new SetPilot(con);
+					p.addRatings(academyEQ);
+					pwdao.write(p);
+					
+					StatusUpdate upd2 = new StatusUpdate(ctx.getUser().getID(), UpdateType.ACADEMY);
+					upd2.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Ratings added: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
+					upds.add(upd2);
+				}
 			}
 			
-			// Start a transaction
-			ctx.startTX();
-				
 			// Get the write DAO and save the course
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.write(c);
 			
 			// Write the status update
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
-			uwdao.write(upd);
+			uwdao.write(upds);
 			
 			// Commit the transaction
 			ctx.commitTX();
