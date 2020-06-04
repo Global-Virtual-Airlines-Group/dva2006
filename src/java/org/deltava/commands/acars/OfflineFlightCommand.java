@@ -343,18 +343,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setSources(rsdao.getSources(true));
 			ScheduleEntry sEntry = sdao.get(afr);
-			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
+			boolean isAcademy = a.getAcademyOnly() || ((sEntry != null) && sEntry.getAcademy());
 			Course c = null;
 			if (isAcademy) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(ctx.getUser().getID());
-				for (Iterator<Course> i = courses.iterator(); (c == null) && i.hasNext(); ) {
-					Course crs = i.next();
-					if (crs.getStatus() == Status.STARTED)
-						c = crs;
-				}
-				
-				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null));
+				c = courses.stream().filter(crs -> (crs.getStatus() == Status.STARTED)).findAny().orElse(null);
+				boolean isINS = p.isInRole("Instructor") ||  p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit") || p.isInRole("Examiner");
+				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null) || isINS);	
+				if (!afr.hasAttribute(FlightReport.ATTR_ACADEMY))
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Removed Flight Academy status - No active Course");
 			}
 			
 			// Combine offline and online position reports

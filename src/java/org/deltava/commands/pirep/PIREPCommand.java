@@ -151,6 +151,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (aInfo != null) {
 				AircraftPolicyOptions opts = aInfo.getOptions(SystemData.get("airline.code"));
 				fr.setAttribute(FlightReport.ATTR_HISTORIC, aInfo.getHistoric());
+				fr.setAttribute(FlightReport.ATTR_ACADEMY, aInfo.getAcademyOnly());
 				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > opts.getRange()));
 				
 				// Check for excessive weight
