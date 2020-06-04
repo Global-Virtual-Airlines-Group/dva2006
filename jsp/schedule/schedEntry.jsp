@@ -121,11 +121,11 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </tr>
 <tr>
  <td class="label">Starts Operation on</td>
- <td class="data"><el:text name="startDate" idx="*" size="9" max="10" required="true" value="${entry.startDate}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
+ <td class="data"><el:text name="startDate" idx="*" size="9" max="10" required="true" value="${fn:dateFmt(entry.startDate, 'MM/dd/yyyy')}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
 </tr>
 <tr>
  <td class="label">Ceases Operation on</td>
- <td class="data"><el:text name="endDate" idx="*" size="9" max="10" required="true" value="${entry.endDate}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+ <td class="data"><el:text name="endDate" idx="*" size="9" max="10" required="true" value="${fn:dateFmt(entry.endDate, 'MM/dd/yyyy')}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
 </tr>
 <tr>
  <td class="label">Days of Week</td>

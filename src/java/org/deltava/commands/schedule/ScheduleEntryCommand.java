@@ -67,25 +67,36 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			if (!ac.getCanEdit())
 				throw securityException("Cannot modify Flight Schedule entry");
 			
-			// Load the airports
+			// Load the airports / equipment
 			entry.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+			entry.setEquipmentType(ctx.getParameter("eqType"));
 			
 			// Load start/end dates
 			entry.setStartDate(LocalDate.parse(ctx.getParameter("startDate"), _df));
 			entry.setEndDate(LocalDate.parse(ctx.getParameter("endDate"), _df));
 			if (!entry.getEndDate().isAfter(entry.getStartDate()))
 				entry.setEndDate(entry.getEndDate().plusYears(1));
+			
+			// Get the aircraft type
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft a = acdao.get(entry.getEquipmentType());
+			if (a == null)
+				throw notFoundException("Invalid equipment - " + entry.getEquipmentType());
 
 			// Update the entry
-			entry.setEquipmentType(ctx.getParameter("eqType"));
-			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
-			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+			entry.setHistoric(a.getHistoric() || Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
+			entry.setAcademy(a.getAcademyOnly() || Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 			entry.setForceInclude(Boolean.valueOf(ctx.getParameter("forceInclude")).booleanValue());
 			
-			// Parse times
+			// Parse times and days
 			entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeD"), _tf)));
 			entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeA"), _tf)));
+			
+			// Get days of week
+			entry.getDays().clear();
+			for (String day : ctx.getParameters("days", Collections.emptySet()))
+				entry.addDayOfWeek(DayOfWeek.valueOf(day));
 			
 			// Get a line number if manual entry
 			if ((src == ScheduleSource.MANUAL) && (srcLine <= 0)) {
