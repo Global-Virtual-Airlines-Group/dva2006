@@ -129,7 +129,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Check Ride Equipment Type(s)</td>
- <td class="data"><el:check name="rideEQ" cols="8" width="95" className="small" newLine="true"  checked="${cert.rideEQ}" options="${allEQ}"  />
+ <td class="data"><el:check name="rideEQ" cols="8" width="110" className="small" newLine="true"  checked="${cert.rideEQ}" options="${allEQ}"  />
 <div style="clear:both"></div><span class="small ita">(Leave this blank to allow check rides in any of the pilot's rated aircraft.)</span></td> 
 </tr>
 <tr>
