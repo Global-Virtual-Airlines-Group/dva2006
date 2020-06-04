@@ -1,6 +1,6 @@
 #!/bin/bash
 # Configuration backup script
-# (c) 2005, 2006, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
@@ -10,7 +10,6 @@ tar vcfz awstats.tar.gz /usr/local/etc/awstats
 tar vcfz httpd.tar.gz /usr/local/apache24/conf
 tar vcfz tomcat.tar.gz /usr/local/tomcat/conf
 tar vcfz mysql.tar.gz /etc/my.cnf
-tar vcfz crontabs.tar.gz /var/spool/cron/tabs
 
 # Update permissions
 chmod 660 *.tar.gz
@@ -19,9 +18,6 @@ chown backup:users *.tar.gz
 # Copy data directories
 cd /home/www/deltava.org
 tar --exclude="www/luke/*" -vcf /home/backup/sites/www.deltava.org.tar *
-
-cd /home/www/kolin.org
-tar -vcf /home/backup/sites/www.kolin.org.tar *
 
 cd /home/www/afva.net
 tar -vcf /home/backup/sites/www.afva.net.tar *
