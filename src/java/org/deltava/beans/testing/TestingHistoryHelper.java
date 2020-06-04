@@ -29,7 +29,8 @@ public final class TestingHistoryHelper {
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private static final int CP_STAGE = 6;
 	
-	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
+	private final String _airlineCode = SystemData.get("airline.code");
+	private final String _qName = _airlineCode + " " + Examination.QUESTIONNAIRE_NAME;
 
 	private final Pilot _usr;
 	private final EquipmentType _myEQ;
@@ -204,7 +205,7 @@ public final class TestingHistoryHelper {
 
 		int maxStage = 1;
 		for (Test t : _tests) {
-			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
+			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail() && _airlineCode.equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -222,7 +223,7 @@ public final class TestingHistoryHelper {
 		for (Test t : _tests) {
 			if (t.getAcademy() || !t.getPassFail() || (!(t instanceof CheckRide)))
 				continue;
-			if (!SystemData.get("airline.code").equals(t.getOwner().getCode()))
+			if (!_airlineCode.equals(t.getOwner().getCode()))
 				continue;
 			
 			CheckRide cr = (CheckRide) t;
@@ -240,19 +241,7 @@ public final class TestingHistoryHelper {
 	 * @return the number of legs
 	 */
 	public int getFlightLegs(EquipmentType eq) {
-		int result = 0;
-		long fVal = _pireps.stream().filter(fr -> (fr.getStatus() == FlightStatus.OK)).filter(fr -> ((eq == null) || fr.getCaptEQType().contains(eq.getName()))).count();
-		for (FlightReport fr : _pireps) {
-			if (fr.getStatus() == FlightStatus.OK) {
-				if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
-					result++;
-			}
-		}
-
-		if (fVal != result)
-			throw new IllegalStateException("fval = " + fVal + " result = " + result);
-		
-		return result;
+		return (int) _pireps.stream().filter(fr -> (fr.getStatus() == FlightStatus.OK)).filter(fr -> ((eq == null) || fr.getCaptEQType().contains(eq.getName()))).count();
 	}
 	
 	/**
@@ -309,8 +298,7 @@ public final class TestingHistoryHelper {
 
 		// If the exam is a higher stage than us, require Captan's rank in the stage below
 		if ((ep.getStage() > getMaxCheckRideStage()) && !isCaptainInStage(ep.getStage() - 1))
-			throw new PromotionIneligibilityException(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
-					+ ", not Captain in stage " + (ep.getStage() - 1));
+			throw new PromotionIneligibilityException(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage() + ", not Captain in stage " + (ep.getStage() - 1));
 
 		// Check if we've been locked out of exams
 		if (_usr.getNoExams())
@@ -332,7 +320,7 @@ public final class TestingHistoryHelper {
 		}
 		
 		// If it's not in our airline, don't allow it
-		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode()))
+		if (!_airlineCode.equals(eq.getOwner().getCode()))
 			throw new PromotionIneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 
 		// Check if we've passed the FO exam for that program
@@ -346,8 +334,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if the Pilot has completed enough flight legs in their current program to request a switch or additional
-	 * ratings.
+	 * Returns if the Pilot has completed enough flight legs in their current program to request a switch or additional ratings.
 	 * @return TRUE if the Pilot has completed one half of the legs required for promotion to Captain, otherwise FALSE
 	 */
 	public boolean canRequestSwitch() {
