@@ -52,7 +52,7 @@ public class FindFlightCommand extends AbstractCommand {
 
 			// Get the equipment types
 			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).collect(Collectors.toList()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
