@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -128,21 +128,22 @@ public class GetAircraft extends DAO {
 				a.setIATA(StringUtils.split(rs.getString(4), ","));
 				a.setICAO(rs.getString(5));
 				a.setHistoric(rs.getBoolean(6));
-				a.setEngines(rs.getByte(7));
-				a.setEngineType(rs.getString(8));
-				a.setCruiseSpeed(rs.getInt(9));
-				a.setFuelFlow(rs.getInt(10));
-				a.setBaseFuel(rs.getInt(11));
-				a.setTaxiFuel(rs.getInt(12));
-				a.setTanks(TankType.PRIMARY, rs.getInt(13));
-				a.setPct(TankType.PRIMARY, rs.getInt(14));
-				a.setTanks(TankType.SECONDARY, rs.getInt(15));
-				a.setPct(TankType.SECONDARY, rs.getInt(16));
-				a.setTanks(TankType.OTHER, rs.getInt(17));
-				a.setMaxWeight(rs.getInt(18));
-				a.setMaxTakeoffWeight(rs.getInt(19));
-				a.setMaxLandingWeight(rs.getInt(20));
-				a.setMaxZeroFuelWeight(rs.getInt(21));
+				a.setAcadedmyOnly(rs.getBoolean(7));
+				a.setEngines(rs.getByte(8));
+				a.setEngineType(rs.getString(9));
+				a.setCruiseSpeed(rs.getInt(10));
+				a.setFuelFlow(rs.getInt(11));
+				a.setBaseFuel(rs.getInt(12));
+				a.setTaxiFuel(rs.getInt(13));
+				a.setTanks(TankType.PRIMARY, rs.getInt(14));
+				a.setPct(TankType.PRIMARY, rs.getInt(15));
+				a.setTanks(TankType.SECONDARY, rs.getInt(16));
+				a.setPct(TankType.SECONDARY, rs.getInt(17));
+				a.setTanks(TankType.OTHER, rs.getInt(18));
+				a.setMaxWeight(rs.getInt(19));
+				a.setMaxTakeoffWeight(rs.getInt(20));
+				a.setMaxLandingWeight(rs.getInt(21));
+				a.setMaxZeroFuelWeight(rs.getInt(22));
 				results.put(a.getName(), a);
 			}
 		}

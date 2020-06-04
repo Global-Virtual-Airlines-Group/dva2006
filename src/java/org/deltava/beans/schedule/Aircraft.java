@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary, secondary
  * and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank types.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	private String _name;
 	private String _fullName;
 	private boolean _historic;
+	private boolean _academyOnly;
 	
 	private String _family;
 
@@ -99,6 +100,15 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public boolean getHistoric() {
 		return _historic;
+	}
+	
+	/**
+	 * Returns whether this aircraft is only used in the Flight Academy.
+	 * @return TRUE if only used in the Flight Academy, otherwise FALSE
+	 * @see Aircraft#setAcadedmyOnly(boolean)
+	 */
+	public boolean getAcademyOnly() {
+		return _academyOnly;
 	}
 	
 	/**
@@ -223,8 +233,8 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 * @return a Map of Collections of tank names, keyed by tank type
 	 * @see Aircraft#getTankPercent()
 	 */
-	public Map<String, Collection<String>> getTankNames() {
-		Map<String, Collection<String>> results = new LinkedHashMap<String, Collection<String>>();
+	public Map<TankType, Collection<String>> getTankNames() {
+		Map<TankType, Collection<String>> results = new TreeMap<TankType, Collection<String>>();
 		for (TankType tt : TankType.values()) {
 			Collection<String> names = new LinkedHashSet<String>();
 			for (FuelTank t : FuelTank.values()) {
@@ -232,7 +242,7 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 					names.add(t.getName());
 			}
 			
-			results.put(tt.getDescription(), names);
+			results.put(tt, names);
 		}
 
 		return results;
@@ -243,10 +253,10 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 * @return a Map of tank percentages, keyed by tank type
 	 * @see Aircraft#getTankNames() 
 	 */
-	public Map<String, Integer> getTankPercent() {
-		Map<String, Integer> results = new LinkedHashMap<String, Integer>();
+	public Map<TankType, Integer> getTankPercent() {
+		Map<TankType, Integer> results = new TreeMap<TankType, Integer>();
 		for (TankType tt : TankType.values())
-			results.put(tt.getDescription(), Integer.valueOf(_tankPct[tt.ordinal()]));
+			results.put(tt, Integer.valueOf(_tankPct[tt.ordinal()]));
 		
 		return results;
 	}
@@ -343,6 +353,15 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public void setHistoric(boolean isHistoric) {
 		_historic = isHistoric;
+	}
+
+	/**
+	 * Updates whether this aircraft is only used in the Flight Academy.
+	 * @param isAcademy TRUE if Flight Academy only, otherwise FALSE
+	 * @see Aircraft#getAcademyOnly()
+	 */
+	public void setAcadedmyOnly(boolean isAcademy) {
+		_academyOnly = isAcademy;
 	}
 	
 	/**
@@ -552,6 +571,8 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	public String getRowClassName() {
 		if (_fuelFlow == 0)
 			return "warn";
+		if (_academyOnly)
+			return "opt2";
 		
 		return _historic ? "opt1" : null;
 	}
