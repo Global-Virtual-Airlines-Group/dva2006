@@ -11,6 +11,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.Status;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
@@ -47,10 +48,6 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-
-	// Month combolist values
-	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }, 
-			new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
 
 	/**
 	 * Initialize the command.
@@ -199,7 +196,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Calculate the date
 			ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
-			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), StringUtils.parse(ctx.getParameter("dateM"), now.getMonthValue()),
+			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), StringUtils.parse(ctx.getParameter("dateM"), now.getMonthValue() - 1) + 1,
 					StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
 			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
@@ -292,9 +289,17 @@ public class PIREPCommand extends AbstractFormCommand {
 				return;
 			}
 			
+			// Check for academy course
+			GetAcademyCourses crsdao = new GetAcademyCourses(con);
+			boolean hasCourse = crsdao.getByPilot(usr.getID()).stream().anyMatch(crs -> crs.getStatus() == Status.STARTED);
+			
 			//	Get aircraft types
 			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+			Collection<Aircraft> eqTypes = acdao.getAircraftTypes();
+			if (!hasCourse)
+				eqTypes.removeIf(Aircraft::getAcademyOnly);
+			
+			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
@@ -374,7 +379,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Set basic lists for the JSP
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
-		ctx.setAttribute("months", months, REQUEST);
+		ctx.setAttribute("months", ComboUtils.properCase(Month.values()), REQUEST);
 		ctx.setAttribute("years", years, REQUEST);
 
 		// Set the access controller
