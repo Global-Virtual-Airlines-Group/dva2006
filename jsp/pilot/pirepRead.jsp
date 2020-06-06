@@ -287,7 +287,7 @@ golgotha.local.showRunwayChoices = function() {
 </c:when>
 <c:when test="${googleStaticMap}">
 <tr>
- <td colspan="2"><map:static w="1280" h="500" scale="2" markers="${filedRoute}" center="${mapCenter}" /></td>
+ <td colspan="2" class="mid"><map:static w="1280" h="520" scale="2" markers="${filedRoute}" center="${mapCenter}" /></td>
 </tr>
 </c:when>
 <c:when test="${frMap}">
