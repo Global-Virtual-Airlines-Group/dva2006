@@ -180,7 +180,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			int purgeCount = swdao.purgeRaw(ss); int entryCount = entries.size();
 			log.info("Purged " + purgeCount + " raw schedule entries from " + ss.getDescription());
 			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
-				swdao.writeRaw(i.next());
+				swdao.writeRaw(i.next(), false);
 				i.remove();
 			}
 			

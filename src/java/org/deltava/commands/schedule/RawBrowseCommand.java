@@ -35,29 +35,27 @@ public class RawBrowseCommand extends AbstractViewCommand {
 		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
-		if (aD == null)
-			aD = SystemData.getAirport(ctx.getUser().getHomeAirport());
-
-		// Save the search criteria
-		ctx.setAttribute("airportD", aD, REQUEST);
-		ctx.setAttribute("airportA", aA, REQUEST);
-		ctx.setAttribute("src", src, REQUEST);
 
 		ViewContext<RawScheduleEntry> vc = initView(ctx, RawScheduleEntry.class);
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Load airports
+			// Load departure airports
 			AirportComparator ac = new AirportComparator(AirportComparator.NAME);
 			GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
 			List<Airport> airportsD = ridao.getOriginAirports(src, null);
-			List<Airport> airportsA = ridao.getArrivalAirports(src, aD);
 			Collections.sort(airportsD, ac);
-			Collections.sort(airportsA, ac);
 			
+			// Set departure airport if not specified
+			if ((aD == null) && !airportsD.isEmpty())
+				aD = airportsD.get(0);
+			
+			// Load arrival airports
+			List<Airport> airportsA = ridao.getArrivalAirports(src, aD);
+			Collections.sort(airportsA, ac);
 			ctx.setAttribute("airportsD", airportsD, REQUEST);
 			ctx.setAttribute("airportsA", airportsA, REQUEST);
-
+			
 			// Search the schedule
 			GetRawSchedule sdao = new GetRawSchedule(con);
 			sdao.setQueryStart(vc.getStart());
@@ -68,6 +66,11 @@ public class RawBrowseCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the search criteria
+		ctx.setAttribute("airportD", aD, REQUEST);
+		ctx.setAttribute("airportA", aA, REQUEST);
+		ctx.setAttribute("src", src, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
