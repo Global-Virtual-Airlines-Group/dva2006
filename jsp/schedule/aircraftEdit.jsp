@@ -60,6 +60,7 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); gol
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:enum var="tanks" className="org.deltava.beans.schedule.FuelTank" />
+<content:enum var="tankTypes" className="org.deltava.beans.schedule.TankType" />
 <content:enum var="etopsRatings" className="org.deltava.beans.flight.ETOPS" exclude="INVALID" />
 
 <!-- Main Body Frame -->
@@ -170,27 +171,26 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); gol
  <td class="label">Taxi Fuel</td>
  <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" required="true" /> pounds</td>
 </tr>
-<c:set var="tankNames" value="${aicraft.tankNames.values()}" scope="page" />
 <c:set var="tankPercent" value="${aicraft.tankPercent.values()}" scope="page" />
 <tr>
  <td class="label top">Primary Tanks</td>
- <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" newLine="true" checked="${tankNames[0]}" options="${tanks}" /></td>
+ <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames[tankTypes[0]]}" options="${tanks}" /></td>
 </tr>
 <tr>
  <td class="label">Primary Percentage</td>
- <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${tankPercent[0]}" required="true" /> percent before filling Secondary tanks</td>
+ <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent[tankTypes[0]]}" required="true" /> percent before filling Secondary tanks</td>
 </tr>
 <tr>
  <td class="label top">Secondary Tanks</td>
- <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" newLine="true" checked="${tankNames[1]}" options="${tanks}" /></td>
+ <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames[tankTypes[1]]}" options="${tanks}" /></td>
 </tr>
 <tr>
  <td class="label">Secondary Percentage</td>
- <td class="data">Fill to <el:text name="sPct" idx="*" size="2" max="3" value="${tankPercent[1]}" required="true" /> percent before filling Other tanks</td>
+ <td class="data">Fill to <el:text name="sPct" idx="*" size="2" max="3" value="${aircraft.tankPercent[tankTypes[1]]}" required="true" /> percent before filling Other tanks</td>
 </tr>
 <tr>
  <td class="label top">Other Tanks</td>
- <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" newLine="true" checked="${tankNames[2]}" options="${tanks}" /></td>
+ <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames[tankTypes[2]]}" options="${tanks}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
