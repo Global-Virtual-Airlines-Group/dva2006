@@ -72,7 +72,7 @@ public class ManualRawScheduleLoader extends TestCase {
 		SetSchedule swdao = new SetSchedule(_c); int ln = 1;
 		for (RawScheduleEntry rse : rawEntries) {
 			rse.setLineNumber(ln); ln++;
-			swdao.writeRaw(rse);
+			swdao.writeRaw(rse, false);
 		}
 		
 		// Commit
@@ -119,7 +119,7 @@ public class ManualRawScheduleLoader extends TestCase {
 		for (RawScheduleEntry rse : results) {
 			rse.setSource(ScheduleSource.LEGACY);
 			rse.setLineNumber(ln); ln++;
-			swdao.writeRaw(rse);
+			swdao.writeRaw(rse, false);
 		}
 		
 		// Commit

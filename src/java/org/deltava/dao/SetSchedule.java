@@ -63,11 +63,16 @@ public class SetSchedule extends DAO {
 	/**
 	 * Writes a raw Schedule Entry from a schedule provider into the storage database.
 	 * @param rse a RawScheduleEntry
+	 * @param doReplace TRUE if an existing entry can be replaced, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeRaw(RawScheduleEntry rse) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, "
-			+ "FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+	public void writeRaw(RawScheduleEntry rse, boolean doReplace) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
 			ps.setInt(2, rse.getLineNumber());
 			ps.setTimestamp(3, Timestamp.valueOf(rse.getStartDate().atStartOfDay()));

@@ -162,7 +162,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" label="SAVE SCHEDULE ENTRY" /><c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
+ <td><el:button type="submit" label="SAVE SCHEDULE ENTRY" /><c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="sched_delete" linkID="${entry.source}-${entry.lineNumber}" label="DELETE ENTRY" /></c:if></td>
 </tr>
 </el:table>
 <el:text type="hidden" name="srcLine" value="${empty entry ? 0 : entry.lineNumber}" />

@@ -84,9 +84,8 @@ public class TestRawScheduleLoad extends TestCase {
 		
 		SetSchedule rwdao = new SetSchedule(_c);
 		rwdao.purgeRaw(ScheduleSource.DELTA);
-		for (RawScheduleEntry rse : rawEntries) {
-			rwdao.writeRaw(rse);
-		}
+		for (RawScheduleEntry rse : rawEntries)
+			rwdao.writeRaw(rse, false);
 		
 		_c.commit();
 		log.info("Wrote " + rawEntries.size() + " raw schedule entries");

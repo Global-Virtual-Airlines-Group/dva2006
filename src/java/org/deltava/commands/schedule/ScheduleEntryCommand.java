@@ -106,7 +106,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
-			wdao.writeRaw(entry);
+			wdao.writeRaw(entry, true);
 
 			// Set status attributes
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
