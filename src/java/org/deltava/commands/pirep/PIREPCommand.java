@@ -743,8 +743,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
 				mapType = MapType.GOOGLEStatic;
-			} else if (!isACARS && (mapType != MapType.FALLINGRAIN))
-				ctx.setAttribute("mapRoute", List.of(fr.getAirportD(), fr.getAirportA()), REQUEST);
+			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
+				Collection<GeoLocation> rt = List.of(fr.getAirportD(), fr.getAirportA());
+				ctx.setAttribute("mapRoute", rt, REQUEST);
+				ctx.setAttribute("filedRoute", rt, REQUEST);
+			}
 
 			// If we're set to use Google Maps, check API usage
 			if (mapType == MapType.GOOGLE) {
@@ -768,9 +771,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Override usage
 				boolean isOurs = ctx.isAuthenticated() && (fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID());
 				boolean forceMap = isOurs || ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("Operations");
+				boolean isDraft = (fr.getStatus() == FlightStatus.DRAFT);
 				
 				// If we're below the daily max, all good
-				if ((predictedUse.getTotal() > dailyMax) && !isSpider) {
+				if ((predictedUse.getTotal() > dailyMax) && !isSpider && !isDraft) {
 					String method = API.GoogleMaps.createName("DYNAMIC");
 					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);
 					predictedUse = APIUsageHelper.predictUsage(usage, method);
@@ -786,7 +790,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "] : " + ctx.getRequest().getRemoteHost() + " spider=" + isSpider);
 						mapType = MapType.GOOGLEStatic;
 					}
-				} else if (isSpider || (predictedUse.getTotal() > dailyMax))
+				} else if (isSpider || isDraft || (predictedUse.getTotal() > dailyMax))
 					mapType = MapType.GOOGLEStatic;
 			}				
 
