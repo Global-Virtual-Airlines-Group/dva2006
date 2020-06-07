@@ -19,6 +19,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:enum var="tankTypes" className="org.deltava.beans.schedule.TankType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -121,23 +122,23 @@
 </tr>
 <tr>
  <td class="label top">Primary Tanks</td>
- <td class="sec data"><fmt:list value="${aircraft.tankNames['Primary']}" delim=", " empty="NONE" /></td>
+ <td class="sec data"><fmt:list value="${aircraft.tankNames[tankTypes[0]]}" delim=", " empty="NONE" /></td>
 </tr>
 <tr>
  <td class="label">Primary Percentage</td>
- <td class="data">Fill to <fmt:int value="${aircraft.tankPercent['Primary']}" /> percent before filling Secondary tanks</td>
+ <td class="data">Fill to <fmt:int value="${aircraft.tankPercent[tankTypes[0]]}" /> percent before filling Secondary tanks</td>
 </tr>
 <tr>
  <td class="label top">Secondary Tanks</td>
- <td class="sec data"><fmt:list value="${aircraft.tankNames['Secondary']}" delim=", " empty="NONE" /></td>
+ <td class="sec data"><fmt:list value="${aircraft.tankNames[tankTypes[1]]}" delim=", " empty="NONE" /></td>
 </tr>
 <tr>
  <td class="label">Secondary Percentage</td>
- <td class="data">Fill to <fmt:int value="${aircraft.tankPercent['Secondary']}" /> percent before filling Other tanks</td>
+ <td class="data">Fill to <fmt:int value="${aircraft.tankPercent[tankTypes[1]]}" /> percent before filling Other tanks</td>
 </tr>
 <tr>
  <td class="label top">Other Tanks</td>
- <td class="sec data"><fmt:list value="${aircraft.tankNames['Other']}" delim=", " empty="NONE" /></td>
+ <td class="sec data"><fmt:list value="${aircraft.tankNames[tankTypes[2]]}" delim=", " empty="NONE" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
