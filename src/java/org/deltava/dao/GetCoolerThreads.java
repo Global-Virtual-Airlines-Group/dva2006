@@ -260,7 +260,7 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, common.COOLER_POSTS P LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (CI.INFOTYPE=?))"
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_POSTS P, common.COOLER_THREADS T LEFT JOIN common.COOLER_CHANNELINFO CI ON ((CI.CHANNEL=T.CHANNEL) AND (CI.INFOTYPE=?))"
 			+ " WHERE (T.ID=P.THREAD_ID) AND (CI.INFODATA=?) ");
 		
 		// Check for text / subject search
