@@ -13,10 +13,13 @@ import java.util.*;
 public enum BrowserType {
 	
 	IE("MSIE", "Trident"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), CHROME("Chrome"), OPERA("Opera"), 
-	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider",  "Yahoo! Slurp",  "SemrushBot"), UNKNOWN;
+	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider",  "Yahoo! Slurp",  "SemrushBot", "AhrefsBot", "Bytespider", "TurnitinBot"), UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new ArrayList<String>(4);
 	
+	/**
+	 * A class to store browser type data.
+	 */
 	public static class BrowserVersion implements java.io.Serializable {
 		private final BrowserType _browser;
 		private final String _version;
@@ -40,7 +43,7 @@ public enum BrowserType {
 	}
 
 	BrowserType(String... detectStrings) {
-		_detectStrings.addAll(Arrays.asList(detectStrings));
+		_detectStrings.addAll(List.of(detectStrings));
 	}
 	
 	/**
