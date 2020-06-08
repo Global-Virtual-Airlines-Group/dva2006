@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -79,7 +79,7 @@ public class GetACARSBuilds extends DAO {
 			ps.setInt(2, info.getVersion());
 			switch (info.getClientType()) {
 				case DISPATCH:
-					ps.setString(1, isForced ? "latestDispatch" : "forcedDispatch");
+					ps.setString(1, isForced ? "forcedDispatch" : "latestDispatch");
 					break;
 			
 				case ATC:
