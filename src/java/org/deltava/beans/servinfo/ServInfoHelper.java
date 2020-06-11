@@ -46,8 +46,8 @@ public class ServInfoHelper {
 		File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
 		boolean isJSON = f.getName().endsWith(".json");
 		try (FileInputStream fi = new FileInputStream(f)) {
-			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi);
-			info = dao.getInfo(net);
+			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi, net);
+			info = dao.getInfo();
 			if (info != null)
 				_iCache.add(info);	
 		} catch (Exception e) {
