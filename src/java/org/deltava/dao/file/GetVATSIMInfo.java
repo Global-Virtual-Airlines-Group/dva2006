@@ -3,6 +3,7 @@ package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.json.*;
 
@@ -23,7 +24,9 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
-
+	
+	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss";
+	
 	/**
 	 * Creates the Data Access Object.
 	 * @param is the InputStream to read
@@ -32,13 +35,19 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		super(is);
 	}
 	
+	private static Instant parseDateTime(String dt) {
+		int pos = dt.indexOf('.');
+		String dt2 = (pos > -1) ? dt.substring(0, pos) : dt;
+		return StringUtils.parseInstant(dt2, DATE_FMT);
+	}
+	
 	private static Airport getAirport(String airportCode) {
 		Airport a = SystemData.getAirport(airportCode);
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
 
 	@Override
-	public NetworkInfo getInfo(OnlineNetwork net) throws DAOException {
+	public NetworkInfo getInfo() throws DAOException {
 		
 		// Load the JSON
 		JSONObject jo = null;
@@ -49,8 +58,8 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		}
 		
 		// Parse the servers
-		NetworkInfo info = new NetworkInfo(net);
-		info.setValidDate(StringUtils.parseRFC3339Date(jo.getJSONObject("general").getString("update_timestamp")));
+		NetworkInfo info = new NetworkInfo(OnlineNetwork.VATSIM);
+		info.setValidDate(parseDateTime(jo.getJSONObject("general").getString("update_timestamp")));
 		Map<String, Server> results = new TreeMap<String, Server>();
 		JSONArray sa = jo.getJSONArray("servers");
 		for (int x = 0; x < sa.length(); x++) {
@@ -75,22 +84,24 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			switch (t) {
 				case PILOT:
 					Pilot p = new Pilot(id, OnlineNetwork.VATSIM);
+					p.setCallsign(co.getString("callsign"));
 					p.setAltitude(co.getInt("altitude"));
 					p.setGroundSpeed(co.getInt("groundspeed"));
 					p.setHeading(co.getInt("heading"));
-					p.setRoute(co.getString("planned_route"));
-					p.setComments(co.getString("planned_remarks"));
-					p.setAirportD(getAirport(co.getString("planned_depairport")));
-					p.setAirportA(getAirport(co.getString("planned_destairport")));
+					p.setRoute(co.optString("planned_route", ""));
+					p.setComments(co.optString("planned_remarks", ""));
+					p.setAirportD(getAirport(co.optString("planned_depairport")));
+					p.setAirportA(getAirport(co.optString("planned_destairport")));
 					info.add(p);
 					nt = p;
 					break;
 					
 				case ATC:
 					Controller c = new Controller(id, OnlineNetwork.VATSIM);
+					c.setCallsign(co.getString("callsign"));
 					c.setRating(Rating.values()[co.getInt("rating")]);
 					c.setFacility(Facility.values()[co.getInt("facilitytype")]);
-					c.setFrequency(co.getString("frequency"));
+					c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
 					info.add(c);
 					nt = c;
 					break;
@@ -99,9 +110,8 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 					continue;
 			}
 			
-			nt.setLoginTime(StringUtils.parseRFC3339Date(co.getString("time_logon")));
+			nt.setLoginTime(parseDateTime(co.getString("time_logon")));
 			nt.setPosition(co.getDouble("latitude"), co.getDouble("longitude"));
-			nt.setCallsign(co.getString("callsign"));
 			nt.setName(co.getString("realname"));
 			nt.setServer(co.getString("server"));
 			Server srv = results.get(nt.getServer());
