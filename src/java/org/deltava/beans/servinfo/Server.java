@@ -1,16 +1,16 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 /**
  * A bean to store information about Online Network FSD Servers. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 3.4
  */
 
-public class Server implements Comparable<Server> {
+public class Server implements java.io.Serializable, Comparable<Server> {
 	
-	private String _name;
+	private final String _name;
 	private String _addr;
 	
 	private String _location;
