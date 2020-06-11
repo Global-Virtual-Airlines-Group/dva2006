@@ -16,7 +16,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 		super.setUp("data/satnet-data.txt");
 		SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
 		SystemData.add("airports", new HashMap<Object, Object>());
-		_dao = new GetServInfo(_is);
+		_dao = new GetServInfo(_is, OnlineNetwork.VATSIM);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 	}
 
 	public void testRead() throws Exception {
-		NetworkInfo info = _dao.getInfo(OnlineNetwork.VATSIM);
+		NetworkInfo info = _dao.getInfo();
 		Collection<?> p = info.getPilots();
 		assertTrue(p.size() > 58);
 	}
