@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.OnlineNetwork;
@@ -8,11 +8,16 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
 public class Controller extends ConnectedUser {
+	
+	/**
+	 * Observer frequency.
+	 */
+	public static final String OBS_FREQ = "199.998";
    
    private Facility _type;
    private String _freq;
@@ -59,13 +64,14 @@ public class Controller extends ConnectedUser {
      */
     @Override
     public final void setName(String name) {
-    	int pos = name.lastIndexOf(' ');
+    	String n = name.trim();
+    	int pos = n.lastIndexOf(' ');
     	if (pos == -1) {
-    		setLastName(name);
+    		setLastName(n);
     		setFirstName("??");
     	} else {
-    		setLastName(name.substring(pos + 1));
-    		setFirstName(name.substring(0, pos));
+    		setLastName(n.substring(pos + 1));
+    		setFirstName(n.substring(0, pos));
     	}
     }
     
@@ -114,7 +120,7 @@ public class Controller extends ConnectedUser {
      * @see Controller#getFrequency()
      */
     public boolean hasFrequency() {
-    	return !StringUtils.isEmpty(_freq) && !"199.998".equals(_freq);
+    	return !StringUtils.isEmpty(_freq) && !OBS_FREQ.equals(_freq);
     }
     
     /**
