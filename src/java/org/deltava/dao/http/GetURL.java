@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 5.0
  */
 
@@ -23,6 +23,7 @@ public class GetURL extends DAO {
 	private final String _outFile;
 	
 	private boolean _forceDL;
+	private long _lastModified = -1;
 	
 	/**
 	 * Initializes the Data Access Object
@@ -44,6 +45,14 @@ public class GetURL extends DAO {
 	}
 	
 	/**
+	 * Updates the timestamp used to send an If-Modified-Since header.
+	 * @param dt the epoch timestamp in milliseconds
+	 */
+	public void setIfModifiedSince(long dt) {
+		_lastModified = dt;
+	}
+	
+	/**
 	 * Downloads the file.
 	 * @return TRUE if a new copy was downloaded, otherwise FALSE
 	 * @throws DAOException if an error occurs
@@ -51,12 +60,13 @@ public class GetURL extends DAO {
 	public File download() throws DAOException {
 		try {
 			File outF = new File(_outFile);
-			long lastMod = outF.exists() ? outF.lastModified() : -1;
+			if (_lastModified == -1)
+				_lastModified = outF.exists() ? outF.lastModified() : -1;
 			init(_url);
 			
 			// If we're not forcing the download and it exists, do a head request to check
-			if (!_forceDL && (lastMod > -1))
-				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(lastMod)));
+			if (!_forceDL && (_lastModified > -1))
+				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
 				
 			// Check the status code, if not modified exit out
 			int statusCode = getResponseCode();
@@ -64,14 +74,12 @@ public class GetURL extends DAO {
 				return outF;
 			
 			// Download the file
-			try (InputStream in = getIn()) {
-				try (OutputStream out = new FileOutputStream(_outFile)) {
-					byte[] buffer = new byte[16384];
-					int bytesRead = in.read(buffer);
-					while (bytesRead > 0) {
-						out.write(buffer, 0, bytesRead);
-						bytesRead = in.read(buffer);
-					}
+			try (InputStream in = getIn(); OutputStream out = new FileOutputStream(_outFile)) {
+				byte[] buffer = new byte[16384];
+				int bytesRead = in.read(buffer);
+				while (bytesRead > 0) {
+					out.write(buffer, 0, bytesRead);
+					bytesRead = in.read(buffer);
 				}
 			}
 			
@@ -92,18 +100,25 @@ public class GetURL extends DAO {
 		try {
 			init(_url);
 			
+			// If we're not forcing the download and it exists, do a head request to check
+			if (!_forceDL && (_lastModified > -1))
+				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
+			
+			// Check the status code, if not modified exit out
+			int statusCode = getResponseCode();
+			if (!_forceDL && (statusCode == SC_NOT_MODIFIED))
+				return null;
+			
 			// Download the file
-			try (InputStream in = getIn()) {
-				try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-					byte[] buffer = new byte[16384];
-					int bytesRead = in.read(buffer);
-					while (bytesRead > 0) {
-						out.write(buffer, 0, bytesRead);
-						bytesRead = in.read(buffer);
-					}
-					
-					return out.toByteArray();
+			try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				byte[] buffer = new byte[16384];
+				int bytesRead = in.read(buffer);
+				while (bytesRead > 0) {
+					out.write(buffer, 0, bytesRead);
+					bytesRead = in.read(buffer);
 				}
+				
+				return out.toByteArray();
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
