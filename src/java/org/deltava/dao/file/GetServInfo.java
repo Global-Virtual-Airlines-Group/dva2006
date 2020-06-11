@@ -35,13 +35,17 @@ import org.deltava.util.system.SystemData;
 public class GetServInfo extends DAO implements OnlineNetworkDAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
+	
+	private final OnlineNetwork _net;
 
 	/**
 	 * Initializes the DAO with a particular stream.
 	 * @param is the stream to use
+	 * @param net the OnlineNetwork
 	 */
-	public GetServInfo(InputStream is) {
+	public GetServInfo(InputStream is, OnlineNetwork net) {
 		super(is);
+		_net = net;
 	}
 	
 	/**
@@ -87,9 +91,9 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 	}
 	
 	@Override
-	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
+	public NetworkInfo getInfo() throws DAOException {
 		try (LineNumberReader br = getReader()) {
-			NetworkInfo info = new NetworkInfo(network);
+			NetworkInfo info = new NetworkInfo(_net);
 			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
 			String iData = br.readLine();
 			while (iData != null) {
@@ -142,7 +146,7 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 										break;
 									
 									try {
-										Controller c = new Controller(id, network);
+										Controller c = new Controller(id, _net);
 										c.setCallsign(si.get(SITokens.CALLSIGN));
 										c.setName(si.get(SITokens.NAME));
 										c.setFrequency(si.get(SITokens.FREQ));
@@ -174,7 +178,7 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 										break;
 									
 									try {
-										Pilot p = new Pilot(id, network);
+										Pilot p = new Pilot(id, _net);
 										p.setCallsign(si.get(SITokens.CALLSIGN));
 										p.setName(si.get(SITokens.NAME));
 										p.setAirportD(getAirport(si.get(SITokens.AIRPORT_D)));
