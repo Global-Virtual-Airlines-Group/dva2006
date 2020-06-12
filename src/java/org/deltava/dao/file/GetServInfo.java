@@ -115,6 +115,7 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 									try {
 										info.setValidDate(StringUtils.parseInstant(val, "yyyyMMddHHmmss"));
 									} catch (Exception e) {
+										log.info(e.getMessage());
 										info.setValidDate(Instant.now());
 									}
 
