@@ -129,7 +129,7 @@
 	<service id="fir" class="org.deltava.service.servinfo.FIRInfoService" />
 	<service id="firs" class="org.deltava.service.servinfo.FIRLayerService" />
 	<service id="vatsim_info" class="org.deltava.service.servinfo.PilotValidationService" />
-	<service id="networkpull" class="org.deltava.service.OnlinePullService" />
+	<!-- <service id="networkpull" class="org.deltava.service.OnlinePullService" />  -->
 
 	<!-- Weather Services -->
 	<service id="metar" class="org.deltava.service.wx.METARService" />
