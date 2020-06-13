@@ -72,7 +72,7 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON ((T.ID=I.ID) AND (I.SEQ=1)) "
-			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((T.CHANNEL=CI.CHANNEL)) AND (CI.INFOTYPE=?)) WHERE (CI.INFODATA=?) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC")) {
+			+ "LEFT JOIN common.COOLER_CHANNELINFO CI ON ((T.CHANNEL=CI.CHANNEL) AND (CI.INFOTYPE=?)) WHERE (CI.INFODATA=?) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC")) {
 			ps.setInt(1, Channel.InfoType.AIRLINE.ordinal());
 			ps.setString(2, SystemData.get("airline.code"));
 			return getByID(executeIDs(ps));
