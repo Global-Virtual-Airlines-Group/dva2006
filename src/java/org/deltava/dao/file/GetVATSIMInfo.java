@@ -69,6 +69,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			Server srv = new Server(so.getString("name"));
 			srv.setAddress(so.getString("hostname_or_ip"));
 			srv.setLocation(so.optString("location", "?"));
+			srv.setConnectionsAllowed(so.optBoolean("clients_connection_allowed", true));
 			results.put(srv.getName(), srv);
 			info.add(srv);
 		}

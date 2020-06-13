@@ -17,6 +17,7 @@ public class Server implements java.io.Serializable, Comparable<Server> {
 	private String _comment;
 	
 	private int _connections;
+	private boolean _connectionsAllowed = true;
 
 	/**
 	 * Creates a new Server bean.
@@ -69,6 +70,14 @@ public class Server implements java.io.Serializable, Comparable<Server> {
 	}
 	
 	/**
+	 * Returns whether new connections to this FSD server are permitted.
+	 * @return TRUE if new connections permitted, otherwise FALSE
+	 */
+	public boolean getConnectionsAllowed() {
+		return _connectionsAllowed;
+	}
+	
+	/**
 	 * Updates the server address.
 	 * @param addr the IP address
 	 */
@@ -97,7 +106,15 @@ public class Server implements java.io.Serializable, Comparable<Server> {
 	 * @param cons the number of connections
 	 */
 	public void setConnections(int cons) {
-		_connections = Math.max(0, cons);
+		_connections = cons;
+	}
+	
+	/**
+	 * Updates whether new connections to this FSD server are permitted.
+	 * @param connectionsAllowed TRUE if new connections permitted, otherwise FALSE
+	 */
+	public void setConnectionsAllowed(boolean connectionsAllowed) {
+		_connectionsAllowed = connectionsAllowed;
 	}
 	
 	@Override
