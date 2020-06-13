@@ -11,7 +11,7 @@
 
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.13" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.14" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -121,7 +121,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="13" target="13" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="14" target="14" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -181,13 +181,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.13" compilerSourceVM="1.13" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.14" compilerSourceVM="1.14" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="FALSE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="13" source="13" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="14" source="14" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
