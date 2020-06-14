@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -48,6 +48,21 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<FlightReport> getByDate(java.time.Instant dt) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))")) {
 			ps.setTimestamp(1, createTimestamp(dt));
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns alll Flight Reports logged using a specific aircraft SDK.
+	 * @param sdkName the SDK name
+	 * @return a List of FlightReports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getBySDK(String sdkName) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (APR.SDK=?) ORDER BY APR.ID DESC")) {
+			ps.setString(1, sdkName);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -160,6 +161,25 @@ public class GetACARSLog extends GetACARSData {
 				ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 
 			return executeFlightInfo(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns a list of Aircraft SDKs used for ACARS Flight Reports.
+	 * @return a Collection of SDK names
+	 * @throws DAOException if a JDBC error occured
+	 */
+	public Collection<String> getSDKs() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT SDK, COUNT(*) AS CNT FROM ACARS_PIREPS GROUP BY SDK ORDER BY CNT DESC")) {
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
