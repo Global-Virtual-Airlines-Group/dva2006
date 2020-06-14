@@ -185,7 +185,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			} else if (op == Status.STARTED) {
 				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
 				cc.setCreatedOn(Instant.now());
-				cc.setText("Returned to Course");
+				cc.setBody("Returned to Course");
 				wdao.comment(cc);
 				
 				// Add the ratings

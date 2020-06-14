@@ -44,8 +44,8 @@ public class IssueCommentCommand extends AbstractCommand {
 				throw securityException("Cannot comment on Issue " + ctx.getID());
 
 			// Create the Issue comment bean
-			IssueComment ic = new IssueComment(ctx.getParameter("comment"));
-			ic.setIssueID(i.getID());
+			IssueComment ic = new IssueComment(0, ctx.getParameter("comment"));
+			ic.setParentID(i.getID());
 			ic.setAuthorID(ctx.getUser().getID());
 			
 			// Create an Issue file bean if attached file

@@ -30,7 +30,7 @@ public class TestIssueComment extends AbstractBeanTestCase {
 	
 	public void testProperties() {
 		assertEquals(1, _ic.getID());
-		assertEquals("Comments", _ic.getComments());
+		assertEquals("Comments", _ic.getBody());
 		checkProperty("createdBy", Integer.valueOf(45));
 		checkProperty("issueID", Integer.valueOf(45));
 		checkProperty("createdOn", Instant.now());

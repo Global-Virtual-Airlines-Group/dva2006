@@ -41,7 +41,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private int _minorVersion;
 	
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
-	
 	private final Collection<IssueComment> _comments = new TreeSet<IssueComment>();
 	
 	/**
@@ -220,7 +219,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @see Issue#getComments()
 	 */
 	public void add(IssueComment ic) {
-		ic.setIssueID(getID());
+		ic.setParentID(getID());
 		_comments.add(ic);
 	}
 	
