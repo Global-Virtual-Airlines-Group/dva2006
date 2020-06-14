@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -319,7 +319,7 @@ public class GetAcademyCourses extends DAO {
 				while (rs.next()) {
 					CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
 					cc.setCreatedOn(rs.getTimestamp(3).toInstant());
-					cc.setText(rs.getString(4));
+					cc.setBody(rs.getString(4));
 					c.addComment(cc);
 				}
 			}

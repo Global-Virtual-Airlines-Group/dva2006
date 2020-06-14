@@ -211,8 +211,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			for (Course c : courses) {
 				if (c.getStatus() != Status.COMPLETE) {
 					CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-					cc.setCreatedOn(Instant.now());
-					cc.setText("Transferred to " + aInfo.getName());
+					cc.setBody("Transferred to " + aInfo.getName());
 					awdao.reassign(c.getID(), newUser.getID());
 					awdao.comment(cc);
 				}

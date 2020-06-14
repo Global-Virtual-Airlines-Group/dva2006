@@ -124,9 +124,9 @@ public class SetIssue extends DAO {
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.ISSUE_COMMENTS (ISSUE_ID, AUTHOR, CREATED, COMMENTS) VALUES (?, ?, NOW(), ?)")) {
-				ps.setInt(1, ic.getIssueID());
+				ps.setInt(1, ic.getParentID());
 				ps.setInt(2, ic.getAuthorID());
-				ps.setString(3, ic.getComments());
+				ps.setString(3, ic.getBody());
 				executeUpdate(ps, 1);
 			}
 			

@@ -97,7 +97,7 @@ golgotha.local.toggleCheckbox = function() {
 
 <!-- Issue Comments -->
 <tr class="title caps left">
- <td colspan="2"><c:if test="${fn:sizeof(issue.comments) > 1}"><fmt:int value="${fn:sizeof(issue.comments)}" />&nbsp;</c:if>ISSUE COMMENTS</td>
+ <td colspan="2"><c:if test="${issue.comments.size() > 1}"><fmt:int value="${issue.comments.size()}" />&nbsp;</c:if>ISSUE COMMENTS</td>
 </tr>
 <c:if test="${empty issue.comments}">
 <tr class="pri bld mid caps">
@@ -110,7 +110,7 @@ golgotha.local.toggleCheckbox = function() {
 <tr>
  <td class="label top">${author.name}<span class="nophone"> (${author.pilotCode})</span><br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
- <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" />
+ <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
 <c:if test="${!empty comment.name}">
 <hr />
 Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K) <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>

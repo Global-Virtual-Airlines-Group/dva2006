@@ -72,10 +72,10 @@ public class SetAcademy extends DAO {
 	 */
 	public void comment(CourseComment cc) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) VALUES (?, ?, ?, ?)")) {
-			ps.setInt(1, cc.getID());
+			ps.setInt(1, cc.getParentID());
 			ps.setInt(2, cc.getAuthorID());
 			ps.setTimestamp(3, createTimestamp(cc.getCreatedOn()));
-			ps.setString(4, cc.getText());
+			ps.setString(4, cc.getBody());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
