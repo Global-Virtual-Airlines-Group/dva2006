@@ -1188,6 +1188,12 @@
 		<roles>HR,Operations</roles>
 	</command>
 
+	<command id="pirepsdk">
+		<name>Flight Reports by SDK</name>
+		<class>org.deltava.commands.pirep.FlightSDKCommand</class>
+		<roles>HR,Operations,PIREP</roles>
+	</command>
+
 	<command id="rwychoices">
 		<name>Runway Choices</name>
 		<class>org.deltava.commands.pirep.RunwayChoiceCommand</class>
