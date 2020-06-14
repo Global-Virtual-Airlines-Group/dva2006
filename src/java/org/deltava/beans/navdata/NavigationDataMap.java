@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class NavigationDataMap implements Cacheable {
     */
    public NavigationDataMap(Collection<NavigationDataBean> entries) {
 	   super();
-	   addAll(entries);
+	   entries.forEach(this::add);
    }
    
    /**
@@ -53,15 +53,6 @@ public class NavigationDataMap implements Cacheable {
       // Get the set and add the bean
       Collection<NavigationDataBean> beans = _entries.get(nd.getCode());
       beans.add(nd);
-   }
-   
-   /**
-    * Adds a number of navigation aids to the map.
-    * @param beans a Collection of NavigationDataBeans
-    */
-   public void addAll(Collection<NavigationDataBean> beans) {
-      for (Iterator<NavigationDataBean> i = beans.iterator(); i.hasNext(); )
-         add(i.next());
    }
    
    /**
@@ -114,9 +105,7 @@ public class NavigationDataMap implements Cacheable {
     */
    public Collection<NavigationDataBean> getAll() {
       List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
-      for (Iterator<? extends Set<NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); )
-         results.addAll(i.next());
-      
+      _entries.values().stream().forEach(results::addAll);
       return results;
    }
    
@@ -132,7 +121,6 @@ public class NavigationDataMap implements Cacheable {
     * Filters out navigation aids based on their type.
     * @param types a Collection of Integers with navigation aid type codes
     * @see NavigationDataBean#getType()
-    * @see NavigationDataMap#filter(Navaid)
     */
    public void filter(Collection<Navaid> types) {
 	   for (Iterator<? extends Set<NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); ) {
@@ -150,16 +138,6 @@ public class NavigationDataMap implements Cacheable {
    }
    
    /**
-    * Filters out all navigation aids not of a particular type.
-    * @param navaidType the navigation aid type code to retain
-    * @see NavigationDataMap#filter(Collection)
-    * @see NavigationDataBean#getType()
-    */
-   public void filter(Navaid navaidType) {
-	   filter(Collections.singleton(navaidType));
-   }
-   
-   /**
     * Sets this bean's cache key. This is typically the query object used to generate this map.
     * @param key the cache key
     */
@@ -167,9 +145,6 @@ public class NavigationDataMap implements Cacheable {
 	   _key = key;
    }
    
-   /**
-    * Returns this bean's cache key.
-    */
    @Override
    public Object cacheKey() {
 	   return _key;
