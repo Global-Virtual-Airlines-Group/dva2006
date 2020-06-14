@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -42,7 +42,7 @@ public class GetHelp extends DAO {
 			if (i == null) return null;
 
 			// Load the comments
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM HELPDESK_COMMENTS WHERE (ID=?) ORDER BY CREATED_ON")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT IC.*, IFS.NAME, IFS.SIZE FROM HELPDESK_COMMENTS IC LEFT JOIN HELPDESK_FILES IFS ON ((IC.ID=IFS.ID) AND (IC.CREATED_ON=IFS.CREATED_ON)) WHERE (IC.ID=?) ORDER BY IC.CREATED_ON")) {
 				ps.setInt(1, id);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -50,6 +50,8 @@ public class GetHelp extends DAO {
 						ic.setCreatedOn(rs.getTimestamp(3).toInstant());
 						ic.setFAQ(rs.getBoolean(4));
 						ic.setBody(rs.getString(5));
+						ic.setName(rs.getString(6));
+						ic.setSize(rs.getInt(7));
 						i.addComment(ic);
 					}
 				}
@@ -70,6 +72,34 @@ public class GetHelp extends DAO {
 		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
 			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
 			return executeIssue(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads an attached File.
+	 * @param id the issue database ID
+	 * @param createdOn the comment creation epoch timestamp
+	 * @return the file data
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public IssueComment getFile(int id, java.time.Instant createdOn) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SIZE, NAME, BODY FROM common.ISSUE_FILES WHERE (ID=?) AND (CREATED_ON=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			ps.setTimestamp(2, createTimestamp(createdOn));
+			
+			IssueComment ic = null;
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					ic = new IssueComment(0);
+					ic.setSize(rs.getInt(1));
+					ic.setName(rs.getString(2));
+					ic.load(rs.getBytes(3));
+				}
+			}
+			
+			return ic;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

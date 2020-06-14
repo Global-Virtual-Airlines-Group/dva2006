@@ -133,7 +133,7 @@ golgotha.local.validateCancel = function() {
 
 <!-- Course Progress -->
 <tr class="title caps">
- <td colspan="7">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
+ <td colspan="7">COURSE PROGRESS - <fmt:int value="${course.progress.size()}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <c:set var="isMine" value="${course.pilotID == user.ID}" scope="page" />
@@ -148,8 +148,7 @@ golgotha.local.validateCancel = function() {
 <span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /> (${lastUpd.name})</span>
 </c:when>
 <c:when test="${!empty progress.examName}">
-Requires the <span class="pri bld">${progress.examName}</span> examination<c:if test="${isMine}">, which can be started at the 
- <el:cmd url="academy" className="sec bld">Flight Academy</el:cmd> page</c:if>. 
+Requires the <span class="pri bld">${progress.examName}</span> examination<c:if test="${isMine}">, which can be started at the <el:cmd url="academy" className="sec bld">Flight Academy</el:cmd> page</c:if>. 
 </c:when>
 </c:choose>
 <c:if test="${access.canUpdateProgress}">
@@ -161,7 +160,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 <c:if test="${!empty sessions}">
 <!-- Instruction Sessions -->
 <tr class="title caps">
- <td colspan="7">INSTRUCTION SESSION LOG - <fmt:int value="${fn:sizeof(sessions)}" /> SESSIONS</td>
+ <td colspan="7">INSTRUCTION SESSION LOG - <fmt:int value="${sessions.size()}" /> SESSIONS</td>
 </tr>
 <tr class="title mid caps">
  <td>DATE</td>
@@ -182,7 +181,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 <c:if test="${!empty flights}">
 <!-- Instruction Flights -->
 <tr class="title caps">
- <td colspan="7">INSTRUCTION FLIGHT LOG - <fmt:int value="${fn:sizeof(flights)}" /> FLIGHTS</td>
+ <td colspan="7">INSTRUCTION FLIGHT LOG - <fmt:int value="${flights.size()}" /> FLIGHTS</td>
 </tr>
 <tr class="title mid caps">
  <td>DATE</td>
@@ -205,14 +204,14 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
- <td colspan="7">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
+ <td colspan="7">DISCUSSION - <fmt:int value="${course.comments.size()}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
 <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
- <td colspan="6" class="data top"><fmt:msg value="${comment.text}" /></td>
+ <td colspan="6" class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </c:if>

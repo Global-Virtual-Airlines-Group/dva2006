@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Help Desk - ${issue.subject}</title>
@@ -47,7 +46,7 @@ golgotha.local.selectResponse = function(f)
 {
 if (!golgotha.form.comboSet(f.rspTemplate)) return false;
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'hdrsptmp.ws?id=' + escape(golgotha.form.getCombo(f.rspTemplate)));
+xmlreq.open('get', 'hdrsptmp.ws?id=' + escape(golgotha.form.getCombo(f.rspTemplate)));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const xml = xmlreq.responseXML;
@@ -76,7 +75,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdcomment.do" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form method="post" action="hdcomment.do" link="${issue}" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -96,7 +95,7 @@ return true;
  <td class="data"><span class="sec bld">${issue.statusName}</span>
 <c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
-<c:if test="${access.canUpdateContent && (fn:sizeof(issue.comments) > 1)}">
+<c:if test="${access.canUpdateContent && (issue.comments.size() > 1)}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isFAQ" idx="*" value="true" checked="${issue.FAQ}" className="sec bld" label="This Issue is part of the FAQ" /></td>
@@ -124,7 +123,10 @@ return true;
  <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.toEpochMilli()}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.toEpochMilli()}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
- <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
+ <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
+<c:if test="${!empty comment.name}">
+<hr />
+Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K) <a href="/help/${issue.hexID}/${comment.createdOn.toEpochMilli()}">Click to download</a></c:if></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -139,6 +141,10 @@ return true;
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />&nbsp;<el:button onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
 </c:if></div>
  </td>
+</tr>
+<tr>
+ <td class="label">Attach File</td>
+ <td><el:file name="attach" className="small" size="96" max="160" /></td>
 </tr>
 </c:if>
 </el:table>

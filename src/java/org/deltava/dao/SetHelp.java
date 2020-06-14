@@ -80,13 +80,31 @@ public class SetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurss
 	 */
 	public void write(IssueComment ic) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO HELPDESK_COMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)")) {
-			ps.setInt(1, ic.getID());
-			ps.setInt(2, ic.getAuthorID());
-			ps.setTimestamp(3, createTimestamp(ic.getCreatedOn()));
-			ps.setString(4, ic.getBody());
-			executeUpdate(ps, 1);
+		try  {
+			startTransaction();
+
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO HELPDESK_COMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)")) {
+				ps.setInt(1, ic.getID());
+				ps.setInt(2, ic.getAuthorID());
+				ps.setTimestamp(3, createTimestamp(ic.getCreatedOn()));
+				ps.setString(4, ic.getBody());
+				executeUpdate(ps, 1);
+			}
+			
+			if (ic.isLoaded()) {
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO HELPDESK_FILES (ID, CREATED_ON, SIZE, NAME, BODY) VALUES (?, ?, ?, ?, ?)")) {
+					ps.setInt(1, ic.getID());
+					ps.setTimestamp(2, createTimestamp(ic.getCreatedOn()));
+					ps.setInt(3, ic.getSize());
+					ps.setString(4, ic.getName());
+					ps.setBinaryStream(4, ic.getInputStream(), ic.getSize());
+					executeUpdate(ps, 1);
+				}
+			}
+		
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

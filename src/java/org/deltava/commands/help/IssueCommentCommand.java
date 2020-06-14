@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.EMailAddress;
+import org.deltava.beans.FileUpload;
 import org.deltava.beans.help.*;
 
 import org.deltava.commands.*;
@@ -17,7 +18,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to save Flight Academy Issue comments.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -57,6 +58,13 @@ public class IssueCommentCommand extends AbstractCommand {
 			ic.setBody(ctx.getParameter("body"));
 			i.addComment(ic);
 			
+			// Create an Issue file bean if attached file
+			FileUpload fu = ctx.getFile("attach");
+			if (fu != null) {
+				ic.load(fu.getBuffer());
+				ic.setName(fu.getName());
+			}
+			
 			// Get all of the recipients
 			Collection<Integer> IDs = i.getComments().stream().map(IssueComment::getAuthorID).collect(Collectors.toSet());
 			IDs.add(Integer.valueOf(i.getAuthorID()));
@@ -81,10 +89,8 @@ public class IssueCommentCommand extends AbstractCommand {
             	iwdao.write(i);
             }
 			
-			// Save the comment
+			// Save and commit
 			iwdao.write(ic);
-			
-			// Commit
 			ctx.commitTX();
 			
 			// Load the recipients

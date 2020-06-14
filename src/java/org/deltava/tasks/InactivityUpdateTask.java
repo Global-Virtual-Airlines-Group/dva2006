@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -140,7 +140,7 @@ public class InactivityUpdateTask extends Task {
 						// Create comment
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
 						cc.setCreatedOn(upd.getDate());
-						cc.setText(upd.getDescription());
+						cc.setBody(upd.getDescription());
 						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
 						
 						// Write

@@ -197,7 +197,7 @@ public class GetIssue extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					IssueComment ic = new IssueComment(rs.getInt(1), rs.getString(4));
-					ic.setIssueID(i.getID());
+					ic.setParentID(i.getID());
 					ic.setAuthorID(rs.getInt(2));
 					ic.setCreatedOn(rs.getTimestamp(3).toInstant());
 					int size = rs.getInt(5);

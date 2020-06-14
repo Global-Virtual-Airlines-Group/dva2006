@@ -81,8 +81,7 @@ public class CoursePurgeTask extends Task {
 				
 				// Create a status entry
 				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-				cc.setCreatedOn(Instant.now());
-				cc.setText("Automatically abandoned after no activity in " + me.getValue() + " days");
+				cc.setBody("Automatically abandoned after no activity in " + me.getValue() + " days");
 				
 				// Update the course and comments
 				ewdao.deleteCheckRides(c.getID());
