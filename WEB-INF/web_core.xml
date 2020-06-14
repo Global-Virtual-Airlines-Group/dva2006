@@ -173,6 +173,10 @@
         <url-pattern>/upload/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
+        <filter-name>SecurityCookieFilter</filter-name>
+        <url-pattern>/help/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/issue/*</url-pattern>
     </filter-mapping>
@@ -187,6 +191,10 @@
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/upload/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityRequestWrapperFilter</filter-name>
+        <url-pattern>/help/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
@@ -252,6 +260,11 @@
     <servlet-mapping>
     	<servlet-name>dbImage</servlet-name>
     	<url-pattern>/event/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet-mapping>
+    	<servlet-name>dbImage</servlet-name>
+    	<url-pattern>/help/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
