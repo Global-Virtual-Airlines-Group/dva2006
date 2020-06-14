@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -269,28 +269,15 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	 * @return a NavigationDataBean, or null if the type is unknown
 	 */
 	public static NavigationDataBean create(Navaid type, double lat, double lng) {
-		switch (type) {
-		case VOR:
-			return new VOR(lat, lng);
-			
-		case NDB:
-			return new NDB(lat, lng);
-			
-		case INT:
-			return new Intersection(null, lat, lng);
-			
-		case RUNWAY:
-			return new Runway(lat, lng);
-			
-		case AIRPORT:
-			return new AirportLocation(lat, lng);
-			
-		case GATE:
-			return new Gate(lat, lng);
-
-		default:
-			return null;
-		}
+		return switch (type) {
+			case VOR -> new VOR(lat, lng);
+			case NDB -> new NDB(lat, lng);
+			case INT -> new Intersection(null, lat, lng);
+			case RUNWAY -> new Runway(lat, lng);
+			case AIRPORT -> new AirportLocation(lat, lng);
+			case GATE -> new Gate(lat, lng);
+			default -> null;
+		};
 	}
 	
 	/**
