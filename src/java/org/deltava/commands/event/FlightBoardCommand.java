@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2012, 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -10,13 +10,13 @@ import org.deltava.beans.servinfo.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.util.EnumUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 5.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,17 +30,9 @@ public class FlightBoardCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the network name and whether we display a map
-		OnlineNetwork network = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
-		try {
-			network = OnlineNetwork.valueOf(ctx.getParameter("id").toUpperCase());
-		} catch (Exception e) {
-			// empty
-		}
-		
-		// Get the network info
+		// Get the network name and info
+		OnlineNetwork network = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("id"), OnlineNetwork.valueOf(SystemData.get("online.default_network")));
 		NetworkInfo info = ServInfoHelper.getInfo(network);
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -54,8 +46,7 @@ public class FlightBoardCommand extends AbstractCommand {
 			// Get airports to load from DAFIF data and highlight our airline's code
 			List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
 			Collection<String> airportIDs = new HashSet<String>();
-			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
-				Pilot usr = i.next();
+			for (Pilot usr : info.getPilots()) {
 				for (Iterator<?> ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted());) {
 					String code = (String) ci.next();
 					if (usr.getCallsign().startsWith(code))
@@ -71,12 +62,10 @@ public class FlightBoardCommand extends AbstractCommand {
 			// Get the airports only
 			GetNavData navdao = new GetNavData(con);
 			NavigationDataMap navaids = navdao.getByID(airportIDs);
-			navaids.filter(Navaid.AIRPORT);
+			navaids.filter(Collections.singleton(Navaid.AIRPORT));
 
 			// Update the pilots with the proper airport data
-			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
-				Pilot usr = i.next();
-
+			for (Pilot usr : info.getPilots()) {
 				// Update the departure airport
 				if (navaids.contains(usr.getAirportD().getICAO()) && !usr.getAirportD().hasPosition()) {
 					AirportLocation al = (AirportLocation) navaids.get(usr.getAirportD().getICAO());

@@ -59,9 +59,10 @@ public class GetNavData extends DAO {
 		NavigationDataMap ndmap = new NavigationDataMap();
 		ndmap.setCacheKey(c);
 		
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.NAVDATA WHERE (CODE=?) AND (ITEMTYPE<>?) ORDER BY ITEMTYPE")) {
 			ps.setString(1, c);
-			ndmap.addAll(execute(ps));
+			ps.setInt(2, Navaid.RUNWAY.ordinal());
+			execute(ps).forEach(ndmap::add);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -263,7 +264,7 @@ public class GetNavData extends DAO {
 		// Check the cache
 		NavigationDataMap results = new NavigationDataMap();
 		for (String id : ids)
-			results.addAll(get(id).getAll());
+			get(id).getAll().forEach(results::add);
 		
 		results.setCacheKey(ids);
 		return results;
