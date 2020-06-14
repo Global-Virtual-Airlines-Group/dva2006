@@ -239,6 +239,10 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 <span class="pri bld">There <fmt:is value="${checkRideQueueSize}" />&nbsp;<fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="pirepsdk">Aircraft SDK Flight Reports</el:cmd></td>
+ <td class="data">You can review <content:airline /> ACARS Flight Reports flown using custom Aircraft SDKs.</td>
+</tr>
 </content:filter>
 <content:filter roles="HR,Operations,Examination">
 <!-- Pending Transfer Request / Examination Section -->
