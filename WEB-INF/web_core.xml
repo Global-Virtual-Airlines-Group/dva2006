@@ -174,7 +174,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/help/*</url-pattern>
+        <url-pattern>/helpdesk/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
@@ -194,7 +194,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/help/*</url-pattern>
+        <url-pattern>/helpdesk/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
@@ -262,11 +262,6 @@
     	<url-pattern>/event/*</url-pattern>
     </servlet-mapping>
 
-	<servlet-mapping>
-    	<servlet-name>dbImage</servlet-name>
-    	<url-pattern>/help/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/fleet/*</url-pattern>
@@ -285,6 +280,11 @@
     <servlet-mapping>
         <servlet-name>attachments</servlet-name>    
         <url-pattern>/ebrief/*</url-pattern>
+    </servlet-mapping>
+    
+   	<servlet-mapping>
+    	<servlet-name>attachments</servlet-name>
+    	<url-pattern>/helpdesk/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -85,17 +85,20 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public IssueComment getFile(int id, java.time.Instant createdOn) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT SIZE, NAME, BODY FROM common.ISSUE_FILES WHERE (ID=?) AND (CREATED_ON=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT HDC.AUTHOR, HDF.SIZE, HDF.NAME, HDF.BODY FROM HELPDESK_COMMENTS HDC LEFT JOIN HELPDESK_FILES HDF ON (HDC.ID=HDF.ID) AND (HDC.CREATED_ON=HDF.CREATED_ON) "
+			+ "WHERE (HDC.ID=?) AND (HDC.CREATED_ON=?) LIMIT 1")) {
 			ps.setInt(1, id);
 			ps.setTimestamp(2, createTimestamp(createdOn));
 			
 			IssueComment ic = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					ic = new IssueComment(0);
-					ic.setSize(rs.getInt(1));
-					ic.setName(rs.getString(2));
-					ic.load(rs.getBytes(3));
+					ic = new IssueComment(rs.getInt(1));
+					ic.setID(id);
+					ic.setCreatedOn(createdOn);
+					ic.setSize(rs.getInt(2));
+					ic.setName(rs.getString(3));
+					ic.load(rs.getBytes(4));
 				}
 			}
 			
