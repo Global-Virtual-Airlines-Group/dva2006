@@ -97,7 +97,7 @@ public class SetHelp extends DAO {
 					ps.setTimestamp(2, createTimestamp(ic.getCreatedOn()));
 					ps.setInt(3, ic.getSize());
 					ps.setString(4, ic.getName());
-					ps.setBinaryStream(4, ic.getInputStream(), ic.getSize());
+					ps.setBinaryStream(5, ic.getInputStream(), ic.getSize());
 					executeUpdate(ps, 1);
 				}
 			}
