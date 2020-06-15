@@ -134,7 +134,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
 <fmt:date date="${comment.createdOn}" /></td>
- <td class="data top"><fmt:msg value="${comment.comments}" /></td>
+ <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </c:if>
