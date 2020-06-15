@@ -21,7 +21,7 @@ public class IssueComment extends AbstractComment {
 	 */
 	public IssueComment(int id, String comments) {
 		super();
-		setID(id);
+		if (id > 0) setID(id);
 		setBody(comments);
 	}
 }
