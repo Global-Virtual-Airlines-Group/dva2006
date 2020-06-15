@@ -3,6 +3,7 @@ package org.deltava.servlet;
 
 import java.io.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import javax.servlet.http.*;
 
@@ -14,9 +15,7 @@ import org.deltava.beans.event.Event;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
-
-import org.deltava.security.command.IssueAccessControl;
-
+import org.deltava.security.command.*;
 import org.deltava.util.*;
 
 import org.gvagroup.jdbc.*;
@@ -33,7 +32,7 @@ public class AttachmentServlet extends DownloadServlet {
 	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
-		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings");
+		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues");
 		
 		private final String _urlPart;
 		private final String _realm;
@@ -152,6 +151,30 @@ public class AttachmentServlet extends DownloadServlet {
 				rsp.setContentType("text/plain");
 				rsp.setHeader("Content-disposition", "attachment; filename=acars_error_" + dbID + ".log");
 				rsp.setIntHeader("max-age", 3600);
+				break;
+				
+			case HELPDESK:
+				GetHelp hdao = new GetHelp(c);
+				org.deltava.beans.help.Issue hi = hdao.getIssue(dbID);
+				if (hi == null)
+					throw new NotFoundException("Invalid Help Desk Issue - " + dbID);
+				
+				// Validate access to the thread
+				try {
+					HelpDeskAccessControl ac = new HelpDeskAccessControl(new ServletSecurityContext(req), hi);
+					ac.validate();
+				} catch (AccessControlException ace) {
+					throw new ForbiddenException("Cannot view Image - Cannot read Issue " + hi.getID());
+				}
+				
+				Instant dt = Instant.ofEpochMilli(Long.parseLong(url.getLastPath()));
+				org.deltava.beans.help.IssueComment cmt = hdao.getFile(hi.getID(), dt);
+				if (cmt == null)
+					throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + dbID);
+				
+				buffer = cmt.getBuffer();
+				rsp.setContentType("application/octet-stream");
+				rsp.setHeader("Content-disposition", "attachment; filename=" + cmt.getName());
 				break;
 				
 			case EVENT:
