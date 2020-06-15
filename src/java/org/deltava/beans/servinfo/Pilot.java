@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -102,19 +102,11 @@ public class Pilot extends ConnectedUser {
 		return _hdg;
 	}
 
-	/**
-	 * Returns the User type.
-	 * @return NetworkUser.Type.PILOT
-	 */
 	@Override
 	public final Type getType() {
 		return Type.PILOT;
 	}
 	
-    /**
-     * Returns the Pilot's rating code.
-     * @return Rating.OBS always
-     */
 	@Override
     public final Rating getRating() {
        return Rating.OBS;
@@ -149,14 +141,10 @@ public class Pilot extends ConnectedUser {
 	/**
 	 * Updates the Pilot's altitude.
 	 * @param alt the altitude in feet above Mean Sea Level
-	 * @throws IllegalArgumentException if alt is &lt; -250 or &gt; 150,000 feet
 	 * @see Pilot#getAltitude()
 	 */
 	public void setAltitude(int alt) {
-		if ((alt < -250) || (alt > 150000))
-			throw new IllegalArgumentException("Invalid Altitude - " + alt);
-
-		_altitude = alt;
+		_altitude = Math.max(-300, Math.min(150000, alt));
 	}
 
 	/**
@@ -198,14 +186,10 @@ public class Pilot extends ConnectedUser {
 	/**
 	 * Updates the Pilot's ground speed.
 	 * @param gSpeed the ground speed in knots
-	 * @throws IllegalArgumentException if gSpeed is negative or &gt; 4500
 	 * @see Pilot#getGroundSpeed()
 	 */
 	public void setGroundSpeed(int gSpeed) {
-		if ((gSpeed < 0) || (gSpeed > 4500))
-			throw new IllegalArgumentException("Invalid Ground Speed - " + gSpeed);
-
-		_gSpeed = gSpeed;
+		_gSpeed = Math.max(-5, Math.min(4500, gSpeed));
 	}
 
 	/**
@@ -252,9 +236,6 @@ public class Pilot extends ConnectedUser {
 		_isHighlighted = isHighlighted;
 	}
 	
-    /**
-     * Sets the Pilot's rating code. This is overriden to OBS.
-     */
 	@Override
     public final void setRating(Rating r) {
     	super.setRating(Rating.OBS);
@@ -281,11 +262,6 @@ public class Pilot extends ConnectedUser {
 		return route;
 	}
 	
-	/**
-	 * Returns the Google Maps icon color.
-	 * @return BLUE if isMember() is TRUE, YELLOW if isHighlighted() is TRUE, otherwise WHITE
-	 * @see Pilot#isHighlighted()
-	 */
 	@Override
 	public String getIconColor() {
 		if (_isHighlighted && (getPilotID() != 0))
@@ -296,10 +272,6 @@ public class Pilot extends ConnectedUser {
 		return WHITE;
 	}
 	
-	/**
-	 * Returns the Google Map Infobox text.
-	 * @return HTML text
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox onlinePilot\"><span class=\"bld\">");
