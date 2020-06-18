@@ -80,11 +80,11 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			for (ScheduleSourceInfo src : sources) {
 				// Load the entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
-				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries);
+				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries); rawEntries.clear();
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
-					if (!rse.getForceInclude() && (ir.getSource() != src.getSource())) {
+					if ((ir.getSource() != src.getSource()) && ir.hasAirline(rse.getAirline()) && !rse.getForceInclude()) {
 						src.skip();
 						log.debug(ir + " already imported by " + ir.getSource());
 						continue;
@@ -93,7 +93,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					boolean isAdded = entries.add(rse);
 					if (isAdded) {
 						src.addLegs(rse.getAirline(), 1);
-						ir.setFlights(ir.getFlights() + 1);
+						ir.addEntry(rse);
 						srcPairs.putIfAbsent(key, ir);
 					} else {
 						log.info(rse.getShortCode() + " already exists [ " + ir + " ]");
