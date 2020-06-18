@@ -69,11 +69,11 @@ public class ScheduleFilterTask extends Task {
 				
 				// Load schedule entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(srcInfo.getSource(), srcInfo.getEffectiveDate()).stream().filter(se -> srcInfo.contains(se.getAirline())).collect(Collectors.toList());
-				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries);
+				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries); rawEntries.clear();
 				for (RawScheduleEntry rse : legEntries) {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
-					if ((ir.getSource() != srcInfo.getSource()) && !rse.getForceInclude()) {
+					if ((ir.getSource() != srcInfo.getSource()) && ir.hasAirline(rse.getAirline()) && !rse.getForceInclude()) {
 						log.debug(ir + " already imported by " + ir.getSource());
 						srcInfo.skip();
 						continue;
@@ -82,7 +82,7 @@ public class ScheduleFilterTask extends Task {
 					boolean isAdded = entries.add(rse); ir.setPriority(ir.getSource().ordinal());
 					if (isAdded) {
 						srcInfo.addLegs(rse.getAirline(), 1);
-						ir.setFlights(ir.getFlights() + 1);
+						ir.addEntry(rse);
 						srcPairs.putIfAbsent(key, ir);
 					} else {
 						srcInfo.skip();

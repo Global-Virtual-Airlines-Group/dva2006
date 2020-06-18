@@ -1,6 +1,8 @@
 // Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import java.util.*;
+
 /**
  * A bean to track flight routes within a Flight Schedule import. 
  * @author Luke
@@ -12,6 +14,8 @@ public class ImportRoute extends AbstractRoute implements Comparable<ImportRoute
 
 	private final ScheduleSource _src;
 	private int _priority;
+	
+	private final Collection<Airline> _airlines = new HashSet<Airline>();
 
 	/**
 	 * Creates the bean.
@@ -40,6 +44,19 @@ public class ImportRoute extends AbstractRoute implements Comparable<ImportRoute
 		return _priority;
 	}
 	
+	public boolean hasAirline(Airline a) {
+		return _airlines.contains(a);
+	}
+	
+	/**
+	 * Adds a flight / airline between these two Airports.
+	 * @param se a ScheduleEntry
+	 */
+	public void addEntry(ScheduleEntry se) {
+		_airlines.add(se.getAirline());
+		_frequency++;
+	}
+	
 	/**
 	 * Updates the priority score.
 	 * @param p the score
@@ -48,14 +65,6 @@ public class ImportRoute extends AbstractRoute implements Comparable<ImportRoute
 		_priority = p;
 	}
 	
-	/**
-	 * Updates the number of flights between these two Airports.
-	 * @param cnt the number of flight legs
-	 */
-	public void setFlights(int cnt) {
-		_frequency = cnt;
-	}
-
 	@Override
 	public int compareTo(ImportRoute ir2) {
 		int tmpResult = Integer.compare(_priority, ir2._priority);
