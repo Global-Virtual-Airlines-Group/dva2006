@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -49,7 +49,7 @@ public class SetHelp extends DAO {
 					ps.setInt(1, i.getAuthorID());
 					ps.setInt(2, i.getAssignedTo());
 					ps.setTimestamp(3, createTimestamp(i.getCreatedOn()));
-					ps.setInt(4, i.getStatus());
+					ps.setInt(4, i.getStatus().ordinal());
 					ps.setBoolean(5, i.getPublic());
 					ps.setString(6, i.getSubject());
 					ps.setString(7, i.getBody());
@@ -59,7 +59,7 @@ public class SetHelp extends DAO {
 				i.setID(getNewID());
 			} else {
 				try (PreparedStatement ps = prepare("UPDATE HELPDESK SET STATUS=?, ASSIGNEDTO=?, RESOLVED_ON=?, ISPUBLIC=?, SUBJECT=?, BODY=? WHERE (ID=?)")) {
-					ps.setInt(1, i.getStatus());
+					ps.setInt(1, i.getStatus().ordinal());
 					ps.setInt(2, i.getAssignedTo());
 					ps.setTimestamp(3, createTimestamp(i.getResolvedOn()));
 					ps.setBoolean(4, i.getPublic());

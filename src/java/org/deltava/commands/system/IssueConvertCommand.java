@@ -54,7 +54,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			hi.setAuthorID(i.getAuthorID());
 			hi.setCreatedOn(i.getCreatedOn());
 			hi.setSubject(i.getSubject());
-			hi.setStatus(org.deltava.beans.help.Issue.OPEN);
+			hi.setStatus(org.deltava.beans.help.IssueStatus.OPEN);
 			hi.setBody(i.getDescription());
 			mctx.addData("issue", hi);
 			
