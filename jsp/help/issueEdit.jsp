@@ -50,10 +50,11 @@ golgotha.local.checkAssignee = function(combo) {
 <content:enum var="areaOpts" className="org.deltava.beans.system.IssueArea" />
 <content:enum var="typeOpts" className="org.deltava.beans.system.Issue$IssueType" />
 <content:enum var="priorityOpts" className="org.deltava.beans.system.IssuePriority" />
+<content:enum var="statusOpts" className="org.deltava.beans.help.IssueStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdissue.do" op="save" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form method="post" action="hdissue.do" allowUpload="true" op="save" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
 <c:if test="${!empty issue}">
@@ -76,7 +77,7 @@ golgotha.local.checkAssignee = function(combo) {
 <c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statuses}" value="${issue.statusName}" /></td>
+ <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statusOpts}" value="${issue.status}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
@@ -92,6 +93,12 @@ golgotha.local.checkAssignee = function(combo) {
  <td class="label top">Issue Description</td>
  <td class="data"><el:textbox name="body" width="90%" height="5" idx="7" className="req" resize="true">${issue.body}</el:textbox></td>
 </tr>
+<c:if test="${empty issue}">
+<tr>
+ <td class="label">Attach File</td>
+ <td><el:file name="attach" className="small" size="96" max="160" /></td>
+</tr>
+</c:if>
 <c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">&nbsp;</td>
