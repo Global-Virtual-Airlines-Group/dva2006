@@ -1,30 +1,23 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.util.StringUtils;
 
 /**
  * A bean to store Help Desk Issues.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
-	public static final int OPEN = 0;
-	public static final int ASSIGNED = 1;
-	public static final int CLOSED = 2;
-	
-	public static final String[] STATUS_NAMES = {"Open", "Assigned", "Closed"};
-	
 	private int _authorID;
 	private int _assigneeID;
-	private int _status;
+	private IssueStatus _status;
 	private int _commentCount;
 	private int _lastCommentID;
 	
@@ -76,11 +69,10 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	/**
 	 * Returns the Issue status.
-	 * @return the status code
-	 * @see Issue#setStatus(int)
-	 * @see Issue#getStatusName()
+	 * @return the IssueStatus
+	 * @see Issue#setStatus(IssueStatus)
 	 */
-	public int getStatus() {
+	public IssueStatus getStatus() {
 		return _status;
 	}
 	
@@ -102,17 +94,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 		return _faq;
 	}
 
-	/**
-	 * Returns the Issue status name, for use in a JSP.
-	 * @return the status name
-	 * @see Issue#STATUS_NAMES
-	 * @see Issue#getStatus()
-	 * @see Issue#setStatus(int)
-	 */
-	public String getStatusName() {
-		return STATUS_NAMES[_status];
-	}
-	
 	/**
 	 * Returns the Issue subject.
 	 * @return the subject
@@ -271,29 +252,11 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	/**
 	 * Updates this Issue's status.
-	 * @param status the status code
-	 * @throws IllegalArgumentException if status is invalid
-	 * @see Issue#setStatus(String)
+	 * @param status the IssueStatus
 	 * @see Issue#getStatus()
-	 * @see Issue#getStatusName()
 	 */
-	public void setStatus(int status) {
-		if ((status < 0) || (status >= STATUS_NAMES.length))
-			throw new IllegalArgumentException("Invalid status - " + status);
-		
+	public void setStatus(IssueStatus status) {
 		_status = status;
-	}
-	
-	/**
-	 * Updates this Issues's status.
-	 * @param statusName the status code description
-	 * @throws IllegalArgumentException if statusName is invalid
-	 * @see Issue#setStatus(int)
-	 * @see Issue#getStatusName()
-	 * @see Issue#getStatus()
-	 */
-	public void setStatus(String statusName) {
-		setStatus(StringUtils.arrayIndexOf(STATUS_NAMES, statusName)); 
 	}
 	
 	/**
@@ -332,6 +295,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	@Override
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {null, "opt2", "opt1"};
-		return _faq ? "opt3" : ROW_CLASSES[_status];
+		return _faq ? "opt3" : ROW_CLASSES[_status.ordinal()];
 	}
 }

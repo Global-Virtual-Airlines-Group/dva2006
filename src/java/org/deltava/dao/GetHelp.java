@@ -175,7 +175,7 @@ public class GetHelp extends DAO {
 			if (showPublic)
 				ps.setBoolean(++pos, true);
 			if (activeOnly)
-				ps.setInt(++pos, Issue.CLOSED);
+				ps.setInt(++pos, IssueStatus.CLOSED.ordinal());
 
 			return executeIssue(ps);
 		} catch (SQLException se) {
@@ -191,7 +191,7 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getActive() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
 			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
-			ps.setInt(1, Issue.OPEN);
+			ps.setInt(1, IssueStatus.OPEN.ordinal());
 			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -289,7 +289,7 @@ public class GetHelp extends DAO {
 				i.setAssignedTo(rs.getInt(3));
 				i.setCreatedOn(rs.getTimestamp(4).toInstant());
 				i.setResolvedOn(toInstant(rs.getTimestamp(5)));
-				i.setStatus(rs.getInt(6));
+				i.setStatus(IssueStatus.values()[rs.getInt(6)]);
 				i.setPublic(rs.getBoolean(7));
 				i.setFAQ(rs.getBoolean(8));
 				i.setBody(rs.getString(10));
