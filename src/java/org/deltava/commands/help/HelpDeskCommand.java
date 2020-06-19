@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.help.Issue;
+import org.deltava.beans.help.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -39,7 +39,7 @@ public class HelpDeskCommand extends AbstractViewCommand {
 			// Get the DAO and my issue list
 			GetHelp idao = new GetHelp(con);
 			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false, true);
-			myIssues = myIssues.stream().filter(i -> (i.getStatus() != Issue.CLOSED)).collect(Collectors.toList());
+			myIssues = myIssues.stream().filter(i -> (i.getStatus() != IssueStatus.CLOSED)).collect(Collectors.toList());
 			
 			// Add Active issues
 			Collection<Issue> allIssues = new HashSet<Issue>(myIssues);

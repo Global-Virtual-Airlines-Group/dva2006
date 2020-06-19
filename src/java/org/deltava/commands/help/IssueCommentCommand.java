@@ -84,8 +84,8 @@ public class IssueCommentCommand extends AbstractCommand {
             
             // If the Issue is closed, reopen it
             SetHelp iwdao = new SetHelp(con);
-            if (i.getStatus() == Issue.CLOSED) {
-            	i.setStatus(Issue.OPEN);
+            if (i.getStatus() == IssueStatus.CLOSED) {
+            	i.setStatus(IssueStatus.OPEN);
             	iwdao.write(i);
             }
 			

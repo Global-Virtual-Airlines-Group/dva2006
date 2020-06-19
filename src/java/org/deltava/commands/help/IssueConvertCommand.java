@@ -58,7 +58,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			i.setPriority(EnumUtils.parse(IssuePriority.class, ctx.getParameter("priority"), IssuePriority.MEDIUM));
 			
 			// Update the issue
-			hi.setStatus(org.deltava.beans.help.Issue.CLOSED);
+			hi.setStatus(org.deltava.beans.help.IssueStatus.CLOSED);
 			
 			// Start a transaction
 			ctx.startTX();
