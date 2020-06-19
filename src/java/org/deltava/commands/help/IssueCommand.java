@@ -65,10 +65,10 @@ public class IssueCommand extends AbstractFormCommand {
 
 				// Update subject
 				i.setSubject(ctx.getParameter("subject"));
-				i.setStatus(ctx.getParameter("status"));
-				if ((i.getStatus() != Issue.OPEN) && (i.getResolvedOn() == null))
+				i.setStatus(EnumUtils.parse(IssueStatus.class, ctx.getParameter("status"), IssueStatus.OPEN));
+				if ((i.getStatus() != IssueStatus.OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(Instant.now());
-				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
+				else if ((i.getStatus() == IssueStatus.OPEN) && (i.getResolvedOn() != null))
 					i.setResolvedOn(null);
 			} else {
 				// Check access
@@ -81,7 +81,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i = new Issue(ctx.getParameter("subject"));
 				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(Instant.now());
-				i.setStatus(Issue.OPEN);
+				i.setStatus(IssueStatus.OPEN);
 				
 				// Set default assignee
 				GetPilot pdao = new GetPilot(con);
@@ -94,9 +94,24 @@ public class IssueCommand extends AbstractFormCommand {
 			if (ac.getCanUpdateStatus())
 				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			
+			
 			// Save the issue
+			ctx.startTX();
 			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(i);
+			
+			// Get attachment
+			FileUpload fu = ctx.getFile("attach");
+			if (fu != null) {
+				IssueComment ic = new IssueComment(i.getAuthorID());
+				ic.setName(fu.getName());
+				ic.load(fu.getBuffer());
+				ic.setBody("Added attachment " + ic.getName());
+				i.addComment(ic);
+				iwdao.write(ic);
+			}
+			
+			ctx.commitTX();
 			 
 			// Send an issue
 			if (isNew || sendIssue) {
@@ -145,6 +160,7 @@ public class IssueCommand extends AbstractFormCommand {
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("isNew", Boolean.valueOf(isNew), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -224,9 +240,6 @@ public class IssueCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Save Issue statuses
-		ctx.setAttribute("statuses", ComboUtils.fromArray(Issue.STATUS_NAMES), REQUEST);
-
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/help/issueEdit.jsp");
