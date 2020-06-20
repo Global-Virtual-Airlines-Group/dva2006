@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to embed the Google asynchronous JavaScript API. 
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 5.0
  */
 
@@ -39,11 +39,7 @@ public class GoogleJSTag extends TagSupport {
 		
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<script src=\"http");
-			if (pageContext.getRequest().isSecure())
-				out.print('s');
-			
-			out.print("://www.gstatic.com/");
+			out.print("<script src=\"https://www.gstatic.com/");
 			out.print(_module);
 			out.println("/loader.js\"></script>");
 		} catch (Exception e) {

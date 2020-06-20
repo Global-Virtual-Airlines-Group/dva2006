@@ -1,4 +1,4 @@
-// Copyright 2005, 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2015, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,13 +11,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert an PICS-1.1 content rating.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
 public class InsertPICSTag extends TagSupport {
 
-	private boolean _doICRA;
 	private boolean _doSafeSurf;
 
 	/**
@@ -25,16 +24,7 @@ public class InsertPICSTag extends TagSupport {
 	 */
 	public InsertPICSTag() {
 		super();
-		setIcra(true);
 		setSafeSurf(true);
-	}
-
-	/**
-	 * Controls whether an ICRA content rating tag should be displayed.
-	 * @param doICRA TRUE if the rating tag should be shown, otherwise FALSE
-	 */
-	public void setIcra(boolean doICRA) {
-		_doICRA = doICRA && (SystemData.get("content.icra") != null);
 	}
 
 	/**
@@ -51,7 +41,6 @@ public class InsertPICSTag extends TagSupport {
 	@Override
 	public void release() {
 		super.release();
-		setIcra(true);
 		setSafeSurf(true);
 	}
 
@@ -68,19 +57,9 @@ public class InsertPICSTag extends TagSupport {
 			return EVAL_PAGE;
 
 		// Build the site URL
-		String url = (pageContext.getRequest().isSecure() ? "https" : "http") + "://" + pageContext.getRequest().getServerName();
+		String url = "https://" + pageContext.getRequest().getServerName();
 		try {
 			JspWriter out = pageContext.getOut();
-			if (_doICRA) {
-				out.print("<meta http-equiv=\"PICS-Label\" content=\'(PICS-1.1 \"http://www.icra.org/ratingsv02.html\" l gen true for \"");
-				out.print(url);
-				out.print("\" r (");
-				out.print(SystemData.get("content.icra"));
-				out.print("))\'>");
-				if (_doSafeSurf)
-					out.println();
-			}
-
 			if (_doSafeSurf) {
 				out.print("<meta http-equiv=\"PICS-Label\" content=\'(PICS-1.1 \"http://www.classify.org/safesurf/\" L gen true for \"");
 				out.print(url);

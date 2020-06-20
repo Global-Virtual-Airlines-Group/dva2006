@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -10,13 +10,13 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to insert a link to an RSS data feed.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
 public class InsertRSSTag extends InsertContentTag {
 
-	private static final String DEFAULT_PROTOCOL = "http";
+	private static final String DEFAULT_PROTOCOL = "https";
 
 	private String _title;
 	private String _protocol;
@@ -74,7 +74,6 @@ public class InsertRSSTag extends InsertContentTag {
 	public int doStartTag() throws JspException {
 		if (_protocol == null)
 			_protocol = DEFAULT_PROTOCOL;
-
 		if (_host == null)
 			_host = pageContext.getRequest().getServerName();
 

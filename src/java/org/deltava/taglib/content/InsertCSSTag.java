@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		try {
 			// Build the resource name if host specified
 			if (_host != null) {
-				URL url = new URL(pageContext.getRequest().isSecure() ? "https" : "http", _host, buf.toString());
+				URL url = new URL("https", _host, buf.toString());
 				buf = new StringBuilder(url.toString());
 			}
 			
