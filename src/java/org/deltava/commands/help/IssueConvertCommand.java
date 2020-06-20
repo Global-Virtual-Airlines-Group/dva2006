@@ -69,7 +69,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Copy the issue comments
 			for (org.deltava.beans.help.IssueComment hic : hi.getComments()) {
-				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(hic.getID(), hic.getBody());
+				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, hic.getBody());
 				ic.setCreatedOn(hic.getCreatedOn());
 				ic.setAuthorID(hic.getAuthorID());
 				ic.setParentID(i.getID());
@@ -78,8 +78,8 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Add a dummy issue comment
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
-				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url.toString());
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
+				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url);
 				ic.setAuthorID(ctx.getUser().getID());
 				ic.setParentID(i.getID());
 				wdao.write(ic);
