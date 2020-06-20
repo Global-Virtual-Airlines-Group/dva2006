@@ -3,6 +3,8 @@ package org.deltava.beans.schedule;
 
 import java.time.*;
 
+import org.deltava.beans.EnumDescription;
+
 /**
  * An enumeration to store Raw Schedule import flight length calculation policies. By default, flight lengths are calculated
  * based on departure/arrival times, however  
@@ -11,7 +13,7 @@ import java.time.*;
  * @since 9.0
  */
 
-public enum ImportPolicy {
+public enum ImportPolicy implements EnumDescription {
 	TIMES("Departure/Arrival Times"), LENGTH("Departure Time/Duration");
 
 	private final String _desc;
@@ -24,6 +26,7 @@ public enum ImportPolicy {
 	 * Returns the policy description.
 	 * @return the description
 	 */
+	@Override
 	public String getDescription() {
 		return _desc;
 	}
