@@ -86,7 +86,7 @@ public class IssueConvertCommand extends AbstractCommand {
 
 			// Add a dummy issue comment
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
 				org.deltava.beans.help.IssueComment hic = new org.deltava.beans.help.IssueComment(ctx.getUser().getID());
 				hic.setBody("Converted from Development Issue at " + url.toString());
 				hic.setID(hi.getID());
@@ -101,7 +101,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Add a dummy issue comment
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
 				IssueComment ic = new IssueComment(0, "Converted to Help Desk Issue at " + url.toString());
 				ic.setParentID(i.getID());
 				ic.setAuthorID(ctx.getUser().getID());
