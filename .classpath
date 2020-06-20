@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.26.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20200518.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
