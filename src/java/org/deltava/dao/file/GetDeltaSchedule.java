@@ -89,8 +89,10 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 				if (dts == null) continue;
 				
 				boolean isCodeShare = fd.flightNumber.endsWith("*");
-				if (isCodeShare)
+				if (isCodeShare) {
 					fd.flightNumber = fd.flightNumber.substring(0, fd.flightNumber.length() - 1);
+					isCodeShare = !fd.codeShare.contains("Delta");
+				}
 						
 				RawScheduleEntry rse = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
 				rse.setAirportD(SystemData.getAirport(fd.airportD));
@@ -132,7 +134,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 					log.info("Disabled airline at Line " + lr.getLineNumber() + " - " + rse.getAirline().getCode() + " (" + fd.flightNumber.substring(0, 2) + ")");
 				}
 					
-				if (isOK && (!isCodeShare || (rse.getFlightNumber() < 6100)))
+				if (isOK && !isCodeShare)
 					results.add(rse);
 				else if (isOK && log.isDebugEnabled())
 					log.debug("Skipping codeshare " + fd.flightNumber);
@@ -162,6 +164,13 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 			tA = tA.substring(0, tA.length() - 2);
 		
 		fd.timeA = tA.toUpperCase() + "M";
+		
+		// Parse codeshare data
+		StringBuilder csBuf = new StringBuilder();
+		for (int idx = 16; (idx < tkns.size() - 4); idx++)
+			csBuf.append(tkns.get(idx)).append(' ');
+
+		fd.codeShare = csBuf.toString().trim();
 		
 		StringBuilder dwBuf = new StringBuilder();
 		for (int ofs = 6; ofs < 13; ofs++) {

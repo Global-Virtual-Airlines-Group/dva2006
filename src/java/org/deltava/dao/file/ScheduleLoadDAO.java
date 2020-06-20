@@ -43,6 +43,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 		String timeA;
 		String flightNumber;
 		String eqType;
+		String codeShare;
 	}
 	
 	/**
