@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.commands.HTTPContext;
 /**
  * A Helper class to check whether content has been aded into this request.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -106,8 +106,7 @@ public class ContentHelper {
 		// Build the header
 		StringBuilder buf = new StringBuilder();
 		if (url.startsWith("/")) {
-			buf.append(ctx.getRequest().isSecure() ? "https" : "http");
-			buf.append("://");
+			buf.append("https://");
 			buf.append(ctx.getRequest().getServerName());
 		}
 		
