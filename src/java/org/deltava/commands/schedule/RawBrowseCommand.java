@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class RawBrowseCommand extends AbstractViewCommand {
 			Collections.sort(airportsD, ac);
 			
 			// Set departure airport if not specified
-			if ((aD == null) && !airportsD.isEmpty())
+			if ((aD == null) && (aA == null) && !airportsD.isEmpty())
 				aD = airportsD.get(0);
 			
 			// Load arrival airports
