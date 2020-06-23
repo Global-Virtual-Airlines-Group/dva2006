@@ -5,6 +5,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
+import org.deltava.beans.schedule.GeoPosition;
 
 @SuppressWarnings("static-method")
 public class TestIntersection extends AbstractBeanTestCase {
@@ -60,6 +61,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52E"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("48N030W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("485823N0302231W"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
    }
@@ -100,5 +102,25 @@ protected void tearDown() throws Exception {
 	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(48.0, i.getLatitude(), 0.001);
 	   assertEquals(-30.0, i.getLongitude(), 0.001);
+	   
+	   GeoPosition gp = new GeoPosition();
+	   gp.setLatitude(48, 58, 23);
+	   gp.setLongitude(-30, 22, 31);
+	   
+	   i = Intersection.parse("485823N0302231W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   gp = new GeoPosition();
+	   gp.setLatitude(-48, 18, 3);
+	   gp.setLongitude(-130, 2, 1);
+	   
+	   i = Intersection.parse("481803S1300201W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
    }
 }
