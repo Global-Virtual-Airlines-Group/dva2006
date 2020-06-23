@@ -249,8 +249,7 @@ return true;
 const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.config.useSched = false;
-golgotha.airportLoad.setHelpers(f.airportD, true);
-golgotha.airportLoad.setHelpers(f.airportA, true);
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA], true);
 f.airportD.updateAirportCode();
 f.airportA.updateAirportCode();
 
