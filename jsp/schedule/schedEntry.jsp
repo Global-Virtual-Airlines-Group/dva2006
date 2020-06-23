@@ -177,8 +177,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 const f = document.forms[0];
 const cfg = golgotha.airportLoad.config;
 cfg.doICAO = ${useICAO}; cfg.useSched = false;
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 golgotha.local.changeAirline(f.airline);
 </script>
 </body>

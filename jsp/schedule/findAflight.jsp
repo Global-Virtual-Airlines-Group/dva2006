@@ -101,8 +101,7 @@ golgotha.onDOMReady(function() {
 	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
 	cfg.myRated = f.myEQTypes.checked;
-	golgotha.airportLoad.setHelpers(f.airportD);
-	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
 	<c:if test="${!empty fafCriteria}">
 	f.airportD.updateAirportCode();

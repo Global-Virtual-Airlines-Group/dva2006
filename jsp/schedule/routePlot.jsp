@@ -193,9 +193,7 @@ if (golgotha.routePlot.hasBlob) {
 
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airline = 'all';
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
-golgotha.airportLoad.setHelpers(f.airportL);
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
 <c:choose>
 <c:when test="${empty flight}">
 // Load the airports
