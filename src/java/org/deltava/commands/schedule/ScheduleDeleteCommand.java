@@ -29,8 +29,9 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the source/line
-		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("src"), ScheduleSource.MANUAL);
-		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
+		String id = (String) ctx.getCmdParameter(ID, "-"); int pos = id.indexOf('-');
+		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, id.substring(0, pos), ScheduleSource.MANUAL);
+		int srcLine = StringUtils.parse(id.substring(pos + 1), -1);
 		if (srcLine < 0)
 			throw notFoundException("Invalid Source Line - " + srcLine);
 
@@ -60,6 +61,7 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 
 		// Set status attributes
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isRawSchedule", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("src", src, REQUEST);
 		ctx.setAttribute("srcLine", Integer.valueOf(srcLine), REQUEST);
 
