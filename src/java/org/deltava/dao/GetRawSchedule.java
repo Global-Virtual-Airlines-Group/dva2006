@@ -142,7 +142,7 @@ public class GetRawSchedule extends DAO {
 	/**
 	 * Lists all raw schedule entries between two Airports from a particular schedule source.
 	 * @param src a ScheduleSource
-	 * @param aD the departure Airport
+	 * @param aD the departure Airport, or null for all
 	 * @param aA the arrival Airport, or null for all
 	 * @return a List of RawScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
@@ -150,16 +150,20 @@ public class GetRawSchedule extends DAO {
 	public List<RawScheduleEntry> list(ScheduleSource src, Airport aD, Airport aA) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RAW_SCHEDULE WHERE (SRC=?) AND (AIRPORT_D=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RAW_SCHEDULE WHERE (SRC=?) ");
+		if (aD != null)
+			sqlBuf.append("AND (AIRPORT_D=?)");
 		if (aA != null)
 			sqlBuf.append(" AND (AIRPORT_A=?)");
 		sqlBuf.append(" ORDER BY SRCLINE");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, src.ordinal());
-			ps.setString(2, aD.getIATA());
+			int pos = 0;
+			ps.setInt(++pos, src.ordinal());
+			if (aD != null)
+				ps.setString(++pos, aD.getIATA());
 			if (aA != null)
-				ps.setString(3, aA.getIATA());
+				ps.setString(++pos, aA.getIATA());
 
 			return execute(ps);
 		} catch (SQLException se) {
