@@ -39,8 +39,8 @@
  <td class="right" colspan="10">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.setSrc(this)" /></td>
 </tr>
 <tr class="title">
- <td class="right" colspan="10">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />
- <el:airportCode combo="airportD" airport="${airportD}" idx="*" /> TO <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void golgotha.local.setAirportA(this)" />
+ <td class="right" colspan="10">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" firstEntry="-" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirports()" />
+ <el:airportCode combo="airportD" airport="${airportD}" idx="*" /> TO <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void golgotha.local.setAirports()" />
  <el:airportCode combo="airportA" airport="${airportA}" idx="*" /><span class="nophone"> <el:cmdbutton url="sched" op="edit" label="NEW RAW SCHEDULE ENTRY" /></span></td>
 </tr>
 <tr class="title caps">
@@ -100,18 +100,13 @@ golgotha.local.setSrc = function(cb) {
 	return true;
 };
 
-golgotha.local.setAirportD = function(cb) {
+golgotha.local.setAirports = function() {
 	const f = document.forms[0];
-	const p = {src:golgotha.form.getCombo(f.src), airportD:golgotha.form.getCombo(cb)};
-	self.location = '/rawbrowse.do?' + golgotha.local.createParams(p);
-	return true;
-};
-
-golgotha.local.setAirportA = function(cb) {
-	const f = document.forms[0];
-	const p = {src:golgotha.form.getCombo(f.src), airportD:golgotha.form.getCombo(f.airportD)};
-	if (golgotha.form.comboSet(cb))
-		p.airportA = golgotha.form.getCombo(cb);
+	const p = {src:golgotha.form.getCombo(f.src)};
+	if (golgotha.form.comboSet(f.airportD))
+		p.airportD = golgotha.form.getCombo(f.airportD);
+	if (golgotha.form.comboSet(f.airportA))
+		p.airportA = golgotha.form.getCombo(f.airportA);
 
 	self.location = '/rawbrowse.do?' + golgotha.local.createParams(p);
 	return true;
@@ -119,8 +114,7 @@ golgotha.local.setAirportA = function(cb) {
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
-	golgotha.airportLoad.setHelpers(f.airportD);
-	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	return true;
 });
 </script>
