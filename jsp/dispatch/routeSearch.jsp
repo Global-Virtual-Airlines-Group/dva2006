@@ -20,17 +20,16 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) {
-	alert('Please select a Departure or Arrival Airport.');
-	f.airportD.focus();
-	return false;
-}
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) {
+		alert('Please select a Departure or Arrival Airport.');
+		f.airportD.focus();
+		return false;
+	}
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -123,11 +122,10 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script type="text/javascript" defer>
-var f = document.forms[0];
+<script async>
+const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 </script>
 </body>
 </html>

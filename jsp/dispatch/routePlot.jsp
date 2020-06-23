@@ -161,9 +161,7 @@ golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airp
 // Load the airports
 const cfg = golgotha.airportLoad.config; 
 cfg.doICAO = '${useICAO}';
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
-golgotha.airportLoad.setHelpers(f.airportL);
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
 const newCfg = cfg.clone();
 
 <c:if test="${empty airportsD}">
