@@ -187,6 +187,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Load schedule sources
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			Collection<ScheduleSourceInfo> stats = rsdao.getSources(true);
+			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 			
 			// Save the status
 			SetImportStatus sswdao = new SetImportStatus(SystemData.get("schedule.cache"), ss.name() + ".import.status.txt");	
