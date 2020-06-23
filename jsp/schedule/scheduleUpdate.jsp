@@ -38,6 +38,11 @@ The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been upda
 <br />
 The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been removed from the <content:airline /> Flight Schedule.<br />
 </c:when>
+<c:when test="${isRawSchedule && isDelete}">
+<div class="updateHdr">Schedule Entry Deleted</div>
+<br />
+The <content:airline /> Raw Schedule Entry from ${src} Line <fmt:int value="${srcLine}" /> was delete from the database and is no longer eligible for inclusion in the Flight Schedule.<br />
+</c:when>
 <c:when test="${isAirline}">
 <div class="updateHdr">Airline Updated</div>
 <br />
