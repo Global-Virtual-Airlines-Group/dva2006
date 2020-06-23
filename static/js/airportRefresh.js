@@ -27,14 +27,17 @@ golgotha.airportLoad.config.getCode = function(opt) {
 };
 
 // Helper functions to attach to airport/airline comboboxen
-golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
-	if (combo == null) return false;
-	combo.massageSelects = function() { golgotha.airportLoad.massageSelects(combo); };
-	combo.loadAirports = golgotha.airportLoad.loadAirports;
-	combo.updateAirportCode = golgotha.airportLoad.updateAirportCode;
-	combo.setAirport = golgotha.airportLoad.setAirport;
-	combo.massageSelects(); combo.notVisited = false;
-	if (addSIDSTARHook) combo.loadSIDSTAR = golgotha.airportLoad.loadSIDSTAR;
+golgotha.airportLoad.setHelpers = function(combos, addSIDSTARHook) {
+	if (combos == null) return false;
+	combos = (combos instanceof Array) ? combos : [combos];
+	combos.forEach(function(cb) {
+		cb.massageSelects = function() { golgotha.airportLoad.massageSelects(cb); };
+		cb.loadAirports = golgotha.airportLoad.loadAirports;
+		cb.updateAirportCode = golgotha.airportLoad.updateAirportCode;
+		cb.setAirport = golgotha.airportLoad.setAirport;
+		cb.massageSelects(); cb.notVisited = false;
+		if (addSIDSTARHook) cb.loadSIDSTAR = golgotha.airportLoad.loadSIDSTAR;	
+	});
 	return true;
 };
 

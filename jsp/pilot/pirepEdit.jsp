@@ -104,8 +104,7 @@ return true;
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
-	golgotha.airportLoad.setHelpers(f.airportD);
-	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 });
 
