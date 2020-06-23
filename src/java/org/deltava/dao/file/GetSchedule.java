@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.time.format.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.schedule.*;
 
@@ -22,8 +23,8 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd-MMM").toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("[H]H:mm").toFormatter();
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	private ScheduleSource _src;
 	private final Map<ScheduleSource, Integer> _srcMaxLines = new HashMap<ScheduleSource, Integer>();
@@ -33,7 +34,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @param is the input stream to read
 	 */
 	public GetSchedule(InputStream is) {
-		super(null, is);
+		super(ScheduleSource.MANUAL, is);
 	}
 
 	/*
@@ -83,7 +84,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
 					try {
 						StringTokenizer tkns = new StringTokenizer(txtData, ",");
-						if (tkns.countTokens() != 11)
+						if (tkns.countTokens() != 17)
 							throw new IllegalArgumentException("Invalid number of tokens, count=" + tkns.countTokens());
 						
 						// Get source and line
@@ -102,6 +103,17 @@ public class GetSchedule extends ScheduleLoadDAO {
 						// Calculate start/end dates
 						LocalDate sd = LocalDate.parse(tkns.nextToken(), _df);
 						LocalDate ed = LocalDate.parse(tkns.nextToken(), _df);
+						
+						// Get days of week
+						String daysOfWeek = tkns.nextToken(); Collection<DayOfWeek> days = new LinkedHashSet<DayOfWeek>();
+						for (int x = 0; x < daysOfWeek.length(); x++) {
+							char c = daysOfWeek.charAt(x);
+							if (Character.isDigit(c)) {
+								int day = Character.getNumericValue(c);
+								if ((day > 0) && (day < 8))
+									days.add(DayOfWeek.of(day));
+							}
+						}
 						
 						// Get the airline
 						String aCode = tkns.nextToken();

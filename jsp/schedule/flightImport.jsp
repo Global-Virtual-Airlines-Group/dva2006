@@ -12,7 +12,8 @@
 <content:js name="common" />
 <content:js name="resumable" />
 <content:js name="progress" />
-<script>
+<script async>
+golgotha.local.fileTypes = ['txt','pdf','gz','csv'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.schedType, t:'Schedule Type'});
@@ -22,7 +23,7 @@ golgotha.local.validate = function(f) {
 		return true;
 	}
 
-	golgotha.form.validate({f:f.csvData, ext:['txt','pdf','gz'], t:'Flight Schedule data'});
+	golgotha.form.validate({f:f.csvData, ext:golgotha.local.fileTypes, t:'Flight Schedule data'});
     if (!golgotha.local.uploadComplete) {
     	f.id.value = golgotha.local.file.file.name;
         golgotha.local.showProgress(true);
@@ -89,7 +90,7 @@ golgotha.local.validate = function(f) {
 <content:googleAnalytics />
 <script async>
 golgotha.util.disable('SaveButton', true);
-golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['pdf','txt','gz']});
+golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
