@@ -475,7 +475,7 @@ public class SetFlightReport extends DAO {
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	private void writeHistory(Collection<FlightHistoryEntry> upds, String dbName) throws DAOException {
+	public void writeHistory(Collection<FlightHistoryEntry> upds, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("INSERT INTO ");

@@ -1,10 +1,8 @@
-// Copyright 2007, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -19,14 +17,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to toggle whether a Flight Report counts for promotion to Captain.
  * @author Luke
- * @version 7.4
+ * @version 9.0
  * @since 1.0
  */
 
 public class PromotionToggleCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(PromotionToggleCommand.class);
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -49,18 +45,13 @@ public class PromotionToggleCommand extends AbstractCommand {
 			if (!access.getCanDispose())
 				throw securityException("Cannot Toggle Promotion flag on " + ctx.getID());
 			
-			// Get comments
-			StringBuilder buf = new StringBuilder();
-			if (!StringUtils.isEmpty(fr.getComments()))
-				buf.append(fr.getComments());
-
 			// Start transaction
 			ctx.startTX();
 			
 			// Check if we set or clear
 			SetFlightReport fwdao = new SetFlightReport(con);
 			if (!fr.getCaptEQType().isEmpty()) {
-				buf.append("\r\nPromotion flag cleared by " + ctx.getUser().getName());
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Promotion flag Cleared");
 				fwdao.clearPromoEQ(fr.getID());
 			} else {
 				GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -71,20 +62,18 @@ public class PromotionToggleCommand extends AbstractCommand {
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pType = i.next();
 					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-					if (!helper.canPromote(pEQ)) {
-						log.warn(helper.getLastComment());
+					if (!helper.canPromote(pEQ))
 						i.remove();
-					}
 				}
 				
 				if (!pTypeNames.isEmpty()) {
-					buf.append("\r\nPromotion flag in " + StringUtils.listConcat(pTypeNames, ", ") + " set by " + ctx.getUser().getName());
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Promotion flagged in " + StringUtils.listConcat(pTypeNames, ", "));
 					fwdao.setPromoEQ(fr.getID(), pTypeNames);
 				}
 			}
 			
 			// Save comments and commit
-			fr.setComments(buf.toString());
+			fwdao.writeHistory(fr.getStatusUpdates(), SystemData.get("airline.db"));
 			fwdao.writeComments(fr);
 			ctx.commitTX();
 		} catch (DAOException de) {
