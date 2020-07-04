@@ -76,8 +76,8 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
  <td colspan="5" class="data bld">${event.owner.name}</td> 
 </tr>
 <tr>
- <td class="label top">Airlines</td>
- <td colspan="5" class="data"><c:forEach var="airline" items="${event.airlines}">${airline.name}<br /></c:forEach></td>
+ <td class="label">Airlines</td>
+ <td colspan="5" class="data"><c:forEach var="airline" items="${event.airlines}" varStatus="st">${airline.name}<c:if test="${!st.last}">, </c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${event.canSignup}">
@@ -120,11 +120,16 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
  <td class="data" colspan="5"><fmt:list value="${event.equipmentTypes}" delim=", " /></td>
 </tr>
 </c:if>
+<c:if test="${!empty event.featuredAirports}">
+<tr>
+ <td class="label">Featured Airports</td>
+ <td class="data" colspan="5"><c:forEach var="ap" items="${event.featuredAirports}" varStatus="st">${ap.name} (<fmt:airport airport="${ap}" />)<c:if test="${!st.last}">, </c:if></c:forEach></td>
+</tr>
+</c:if>
 <content:filter roles="Event,HR"><c:if test="${!empty event.contactAddrs}">
 <tr>
- <td class="label top">ATC Contact Addresses</td>
- <td colspan="5" class="data"><c:forEach var="addr" items="${event.contactAddrs}">
-<el:link url="mailto:${addr}">${addr}</el:link><br /></c:forEach></td>
+ <td class="label">ATC Contact Addresses</td>
+ <td colspan="5" class="data"><c:forEach var="addr" items="${event.contactAddrs}" varStatus="st"><el:link url="mailto:${addr}">${addr}</el:link><c:if test="${!st.last}">, </c:if></c:forEach></td>
 </tr>
 </c:if></content:filter>
 <content:filter roles="Pilot">
