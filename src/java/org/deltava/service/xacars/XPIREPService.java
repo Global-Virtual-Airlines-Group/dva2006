@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.event.Event;
+import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -153,26 +153,27 @@ public class XPIREPService extends XAService {
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
+			EventFlightHelper efr = new EventFlightHelper(xfr);
 			if ((xfr.getDatabaseID(DatabaseID.EVENT) == 0) && (xfr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int eventID = evdao.getPossibleEvent(xfr);
-				if (eventID != 0) {
-					Event e = evdao.get(eventID);
+				List<Event> events = evdao.getPossibleEvents(xfr);
+				events.removeIf(e -> !efr.matches(e));
+				if (!events.isEmpty()) {
+					Event e = events.get(0);
 					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					xfr.setDatabaseID(DatabaseID.EVENT, eventID);
+					xfr.setDatabaseID(DatabaseID.EVENT, e.getID());
 				}
 			}
 			
 			// Check that the event hasn't expired
 			if (xfr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(xfr.getDatabaseID(DatabaseID.EVENT));
-				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
-					if (timeSinceEnd > 24) {
-						xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged over 24 hours after Event completion");
-						xfr.setDatabaseID(DatabaseID.EVENT, 0);
-					}
-				} else
+				if ((e != null) && !efr.matches(e)) {
+					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged over 24 hours after Event completion");
 					xfr.setDatabaseID(DatabaseID.EVENT, 0);
+				} else {
+					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Unknown Online Event - " + xfr.getDatabaseID(DatabaseID.EVENT));
+					xfr.setDatabaseID(DatabaseID.EVENT, 0);
+				}
 			}
 			
 			// Check if the user is rated to fly the aircraft

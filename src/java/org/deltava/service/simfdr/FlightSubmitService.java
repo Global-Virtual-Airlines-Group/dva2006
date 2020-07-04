@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
-import org.deltava.beans.event.Event;
+import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -139,24 +139,23 @@ public class FlightSubmitService extends SimFDRService {
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
+			EventFlightHelper efr = new EventFlightHelper(fr);
 			if ((fr.getDatabaseID(DatabaseID.EVENT) == 0) && (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int eventID = evdao.getPossibleEvent(fr);
-				if (eventID != 0) {
-					Event e = evdao.get(eventID);
+				List<Event> events = evdao.getPossibleEvents(fr);
+				events.removeIf(e -> !efr.matches(e));
+				if (!events.isEmpty()) {
+					Event e = events.get(0);
 					fr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					fr.setDatabaseID(DatabaseID.EVENT, eventID);
+					fr.setDatabaseID(DatabaseID.EVENT, e.getID());
 				}
 			}
 			
 			// Check that the event hasn't expired
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(fr.getDatabaseID(DatabaseID.EVENT));
-				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
-					if (timeSinceEnd > 6) {
-						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
-						fr.setDatabaseID(DatabaseID.EVENT, 0);
-					}
+				if ((e != null) && !efr.matches(e)) {
+					fr.addStatusUpdate(0, HistoryType.SYSTEM, efr.getMessage());
+					fr.setDatabaseID(DatabaseID.EVENT, 0);
 				} else
 					fr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
