@@ -37,7 +37,7 @@
 		<regex>(?s)(?i)\[b\](.*?)\[/b\]</regex>
 		<replace>
 		<![CDATA[
-		<b>$1</b>
+		<span class="bld">$1</span>
 		]]>
 		</replace>
 	</match>
@@ -47,7 +47,7 @@
 		<regex>(?s)(?i)\[i\](.*?)\[/i\]</regex>
 		<replace>
 		<![CDATA[
-		<i>$1</i>
+		<span class="ita">$1</span>
 		]]>
 		</replace>
 	</match>
@@ -57,7 +57,7 @@
 		<regex>(?s)(?i)\[u\](.*?)\[/u\]</regex>
 		<replace>
 		<![CDATA[
-		<u>$1</u>
+		<span class="und">$1</span>
 		]]>
 		</replace>
 	</match>
