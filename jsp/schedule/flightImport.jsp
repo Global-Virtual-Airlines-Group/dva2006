@@ -67,6 +67,10 @@ golgotha.local.validate = function(f) {
  <td class="label">Duration Calculation</td>
  <td class="data"><el:combo name="importPolicy" idx="*" size="1" options="${importPolicies}" required="true" firstEntry="[ CALCULATION ]" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge Raw Schedule from this Schedule Source" /></td>
+</tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
 </tr>
