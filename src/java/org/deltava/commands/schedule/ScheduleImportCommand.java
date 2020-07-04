@@ -59,7 +59,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			return;
 		}
 
-		ImportStatus st = null;
+		ImportStatus st = null; boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		File f = (ss == ScheduleSource.INNOVATA) ? new File(SystemData.get("schedule.innovata.file")) : new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		try {
 			// Get the DAOs
@@ -177,8 +177,13 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Save the data
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
-			int purgeCount = swdao.purgeRaw(ss); int entryCount = entries.size();
-			log.info("Purged " + purgeCount + " raw schedule entries from " + ss.getDescription());
+			if (doPurge && !entries.isEmpty()) {
+				int purgeCount = swdao.purgeRaw(ss);
+				log.info("Purged " + purgeCount + " raw schedule entries from " + ss.getDescription());
+				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
+			}
+			
+			int entryCount = entries.size();
 			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
 				swdao.writeRaw(i.next(), false);
 				i.remove();
@@ -199,7 +204,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			ctx.setAttribute("sources", stats, REQUEST);
 			ctx.setAttribute("status", st, REQUEST);
 			ctx.setAttribute("importCount", Integer.valueOf(entryCount), REQUEST);
-			ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
+			
 			ctx.setAttribute("today", LocalDate.now(), REQUEST);
 		} catch (DAOException | IOException de) {
 			ctx.rollbackTX();
