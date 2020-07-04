@@ -229,7 +229,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Move track data from the raw table
 			if (!pd.isEmpty()) {
 				SetOnlineTrack twdao = new SetOnlineTrack(con);	
-				twdao.write(pirep.getID(), pd);
+				twdao.write(pirep.getID(), pd, SystemData.get("airline.db"));
 				twdao.purgeRaw(trackID);
 			}
 			

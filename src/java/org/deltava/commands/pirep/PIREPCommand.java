@@ -687,7 +687,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							
 							// Move track data from the raw table
 							SetOnlineTrack twdao = new SetOnlineTrack(con);
-							twdao.write(fr.getID(), pd);
+							twdao.write(fr.getID(), pd, SystemData.get("airline.db"));
 							twdao.purgeRaw(trackID);
 							
 							// Save the route
