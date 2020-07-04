@@ -15,7 +15,7 @@ echo "Latest=$LATEST, Last=$LASTREV"
 
 # Check if we have anything to back up
 if [ "$1" != "force" ] ;then
- if [ $LATEST -le $LASTREV ] ;then
+ if [ "$LATEST" -le "$LASTREV" ] ;then
   echo "Subversion repository unchanged Revision=$LATEST"
   exit 1
  fi
@@ -32,7 +32,7 @@ ARCHIVE="svn_$ER.bz2"
 
 if [ ! -f "/home/backup/svn/$ARCHIVE" ] ; then
  echo "Backing up revisions $SR-$ER"
- svnadmin dump /home/svn --revision $SR:$ER | $arc_util > $ARCHIVE
+ svnadmin dump /home/svn --memory-cache-size 48 --incremental --revision $SR:$ER | $arc_util > $ARCHIVE
 fi
 
 ((REVISION+=1000))
@@ -42,7 +42,7 @@ done
 # Back up the last revisions
 let "SR = $REVISION - 1000"
 echo "Backing up revisions $SR-$LATEST"
-svnadmin dump /home/svn --incremental --revision $SR:$LATEST --incremental | $arc_util > svn_top.bz2
+svnadmin dump /home/svn --incremental --revision $SR:$LATEST | $arc_util > svn_top.bz2
 
 # Save last revision
 echo $LATEST > svn.revision_base
