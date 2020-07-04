@@ -15,7 +15,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
-import org.deltava.beans.event.Event;
+import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -284,26 +284,27 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
+			EventFlightHelper efr = new EventFlightHelper(afr);
 			if ((afr.getDatabaseID(DatabaseID.EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int eventID = evdao.getPossibleEvent(afr);
-				if (eventID != 0) {
-					Event e = evdao.get(eventID);
+				List<Event> events = evdao.getPossibleEvents(afr);
+				events.removeIf(e -> !efr.matches(e));
+				if (!events.isEmpty()) {
+					Event e = events.get(0);
 					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					afr.setDatabaseID(DatabaseID.EVENT, eventID);
+					afr.setDatabaseID(DatabaseID.EVENT, e.getID());
 				}
 			}
 			
 			// Check that the event hasn't expired
 			if (afr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(afr.getDatabaseID(DatabaseID.EVENT));
-				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
-					if (timeSinceEnd > 6) {
-						afr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
-						afr.setDatabaseID(DatabaseID.EVENT, 0);
-					}
-				} else
+				if ((e != null) && !efr.matches(e)) {
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, efr.getMessage());
 					afr.setDatabaseID(DatabaseID.EVENT, 0);
+				} else {
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Unknown Online Event - " + afr.getDatabaseID(DatabaseID.EVENT));
+					afr.setDatabaseID(DatabaseID.EVENT, 0);
+				}
 			}
 			
 			// Check for historic aircraft
@@ -348,7 +349,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (isAcademy) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(ctx.getUser().getID());
-				c = courses.stream().filter(crs -> (crs.getStatus() == Status.STARTED)).findAny().orElse(null);
+				c = courses.stream().filter(crs -> (crs.getStatus() == org.deltava.beans.academy.Status.STARTED)).findAny().orElse(null);
 				boolean isINS = p.isInRole("Instructor") ||  p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit") || p.isInRole("Examiner");
 				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null) || isINS);	
 				if (!afr.hasAttribute(FlightReport.ATTR_ACADEMY))
