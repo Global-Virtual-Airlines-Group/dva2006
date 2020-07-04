@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.econ.*;
+import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.event.Event;
+import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -61,9 +62,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			CacheManager.invalidate("Pilots", Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT)));
 			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
 			
-			// Create comments field
-			//Collection<String> comments = new ArrayList<String>();
-			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
 			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep, SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
@@ -96,7 +94,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			pirep.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			if (!isRated)
-				log.warn(p.getName() + " not rated in " + pirep.getEquipmentType() + " ratings = " + p.getRatings());
+				pirep.addStatusUpdate(0, HistoryType.SYSTEM, p.getName() + " not rated in " + pirep.getEquipmentType() + " ratings = " + p.getRatings());
 
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
@@ -128,32 +126,50 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (isAcademy) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(p.getID());
-				Course c = courses.stream().filter(crs -> (crs.getStatus() == Status.STARTED)).findAny().orElse(null);
+				Course c = courses.stream().filter(crs -> (crs.getStatus() == org.deltava.beans.academy.Status.STARTED)).findAny().orElse(null);
 				pirep.setAttribute(FlightReport.ATTR_ACADEMY, (c != null));
+			}
+			
+			// If it's online load the track data
+			Collection<PositionData> pd = new ArrayList<PositionData>(); int trackID = 0;
+			if (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) {
+				GetOnlineTrack tdao = new GetOnlineTrack(con); 
+				trackID = tdao.getTrackID(pirep.getDatabaseID(DatabaseID.PILOT), pirep.getNetwork(), pirep.getSubmittedOn(), pirep.getAirportD(), pirep.getAirportA());
+				if (trackID != 0) {
+					pd.addAll(tdao.getRaw(trackID));
+					if (!pd.isEmpty())
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Loaded " + pirep.getNetwork() + " online track data (" + pd.size() + " positions)");
+					if (StringUtils.isEmpty(pirep.getRoute())) {
+						pirep.setRoute(tdao.getRoute(trackID));
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Updated route from " + pirep.getNetwork() + " flight plan");
+					}
+				}
 			}
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
+			EventFlightHelper efr = new EventFlightHelper(pirep);
+			efr.addOnlineTrack(pd);
 			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int eventID = evdao.getPossibleEvent(pirep);
-				if (eventID != 0) {
-					Event e = evdao.get(eventID);
+				List<Event> events = evdao.getPossibleEvents(pirep);
+				events.removeIf(e -> !efr.matches(e));
+				if (!events.isEmpty()) {
+					Event e = events.get(0);
 					pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					pirep.setDatabaseID(DatabaseID.EVENT, eventID);
+					pirep.setDatabaseID(DatabaseID.EVENT, e.getID());
 				}
 			}
 			
 			// Check that the event hasn't expired
 			if (pirep.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(pirep.getDatabaseID(DatabaseID.EVENT));
-				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
-					if (timeSinceEnd > 24) {
-						pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
-						pirep.setDatabaseID(DatabaseID.EVENT, 0);
-					}
-				} else
+				if ((e != null) && !efr.matches(e)) {
+					pirep.addStatusUpdate(0, HistoryType.SYSTEM, efr.getMessage());
 					pirep.setDatabaseID(DatabaseID.EVENT, 0);
+				} else {
+					pirep.addStatusUpdate(0, HistoryType.SYSTEM, "Unknown Online Event - " + pirep.getDatabaseID(DatabaseID.EVENT));
+					pirep.setDatabaseID(DatabaseID.EVENT, 0);
+				}
 			}
 
 			// Check the range
@@ -200,17 +216,29 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Update the status of the PIREP
 			pirep.setStatus(FlightStatus.SUBMITTED);
+			
+			// Start transaction
+			ctx.startTX();
 
 			// Get the DAO and write the PIREP to the database
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(pirep);
 			if (fwdao.updatePaxCount(pirep.getID()))
-				log.warn("Update Passnger count for PIREP #" + pirep.getID());
+				log.warn("Update Passenger count for PIREP #" + pirep.getID());
+			
+			// Move track data from the raw table
+			if (!pd.isEmpty()) {
+				SetOnlineTrack twdao = new SetOnlineTrack(con);	
+				twdao.write(pirep.getID(), pd);
+				twdao.purgeRaw(trackID);
+			}
 			
 			// Save the pirep in the request
+			ctx.commitTX();
 			ctx.setAttribute("pirep", pirep, REQUEST);
 			ctx.setAttribute("isOurs", Boolean.valueOf(pirep.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
