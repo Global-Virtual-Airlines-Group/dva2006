@@ -112,6 +112,13 @@ public class EventSaveCommand extends AbstractCommand {
 				aCodes.stream().map(c -> SystemData.getApp(c)).filter(Objects::nonNull).forEach(e::addAirline);
 			}
 			
+			// Get featured Airports
+			Collection<String> faCodes = ctx.getParameters("featuredAirports"); final Event fe = e;
+			if (faCodes != null) {
+				e.getFeaturedAirports().clear();
+				faCodes.stream().map(c -> SystemData.getAirport(c)).filter(Objects::nonNull).filter(a -> fe.getAirports().contains(a)).forEach(e::addFeaturedAirport);
+			}
+			
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
 			e.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));

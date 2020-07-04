@@ -43,12 +43,12 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     private final List<AssignmentInfo> _assignments = new ArrayList<AssignmentInfo>();
     private final Collection<DispatchRoute> _dspRoutes = new LinkedHashSet<DispatchRoute>();
     private final Collection<String> _eqTypes = new TreeSet<String>();
+    private final Collection<Airport> _airports = new HashSet<Airport>();
     private final Collection<String> _contactAddrs = new LinkedHashSet<String>();
     
     /**
      * Creates a new Online Event.
      * @param name the event name
-     * @throws NullPointerException if name is null
      * @see Event#getName()
      */
     public Event(String name) {
@@ -71,7 +71,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     
     @Override
     public String getComboAlias() {
-        return String.valueOf(getID());
+        return getHexID();
     }
     
     /**
@@ -267,6 +267,15 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     	Set<Airport> results = new HashSet<Airport>();
     	_routes.forEach(r -> { results.add(r.getAirportD()); results.add(r.getAirportA()); });
     	return results;
+    }
+    
+    /**
+     * Returns any featured Airports for this Online Event.
+     * @return a Collection of Airport beans
+     * @see Event#addFeaturedAirport(Airport)
+     */
+    public Collection<Airport> getFeaturedAirports() {
+    	return _airports;
     }
     
     /**
@@ -533,11 +542,19 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     /**
      * Adds a contact address to this Online Event.
      * @param addr the e-mail address
-     * @throws NullPointerException if addr is null
      * @see Event#getContactAddrs()
      */
     public void addContactAddr(String addr) {
     	_contactAddrs.add(addr.trim());
+    }
+    
+    /**
+     * Adds a featured Airport to this Online Event.
+     * @param a an Airport
+     * @see Event#getFeaturedAirports()
+     */
+    public void addFeaturedAirport(Airport a) {
+    	_airports.add(a);
     }
 
     @Override
