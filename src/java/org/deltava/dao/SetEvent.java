@@ -50,6 +50,7 @@ public class SetEvent extends DAO {
 			writeCharts(e);
 			writeEQTypes(e);
 			writeContactAddrs(e);
+			writeFeaturedAirports(e);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -251,14 +252,11 @@ public class SetEvent extends DAO {
 	 * Writes participating airlines to the database.
 	 */
 	private void writeAirlines(Event e) throws SQLException {
-		
-		// Clear airlines
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.AIRLINES WHERE (ID=?)")) {
 			ps.setInt(1, e.getID());
 			executeUpdate(ps, 0);
 		}
 		
-		// Add airline codes
 		try (PreparedStatement ps = prepare("INSERT INTO events.AIRLINES (ID, AIRLINE) VALUES (?, ?)")) {
 			ps.setInt(1, e.getID());
 			for (AirlineInformation ai : e.getAirlines()) {
@@ -274,14 +272,11 @@ public class SetEvent extends DAO {
 	 * Writes equipment types to the database.
 	 */
 	private void writeEQTypes(Event e) throws SQLException {
-
-		// Clear equipment types
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)")) {
 			ps.setInt(1, e.getID());
 			executeUpdate(ps, 0);
 		}
 
-		// Add the equipment types
 		try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)")) {
 			ps.setInt(1, e.getID());
 			for (String eq : e.getEquipmentTypes()) {
@@ -290,6 +285,26 @@ public class SetEvent extends DAO {
 			}
 
 			executeUpdate(ps, 1, e.getEquipmentTypes().size());
+		}
+	}
+	
+	/*
+	 * Writes featured Airports to the database.
+	 */
+	private void writeFeaturedAirports(Event e) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.AIRPORTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
+		}
+		
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.AIRPORTS (ID, AIRPORT) VALUES (?,?)")) {
+			ps.setInt(1, e.getID());
+			for (Airport a : e.getFeaturedAirports()) {
+				ps.setString(2, a.getIATA());
+				ps.addBatch();
+			}
+			
+			executeUpdate(ps, 1, e.getFeaturedAirports().size());
 		}
 	}
 	
@@ -317,14 +332,11 @@ public class SetEvent extends DAO {
 	 * Writes ATC contact addresses to the database.
 	 */
 	private void writeContactAddrs(Event e) throws SQLException {
-
-		// Clear contacts
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.EVENT_CONTACTS WHERE (ID=?)")) {
 			ps.setInt(1, e.getID());
 			executeUpdate(ps, 0);
 		}
 
-		// Create the prepared statement
 		try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)")) {
 			ps.setInt(1, e.getID());
 			for (String addr : e.getContactAddrs()) {

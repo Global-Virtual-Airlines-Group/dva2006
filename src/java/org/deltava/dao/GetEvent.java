@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -76,33 +76,37 @@ public class GetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
-	public int getPossibleEvent(FlightReport fr) throws DAOException {
-		return getPossibleEvent(fr, fr.getNetwork(), fr.getSubmittedOn());
+
+	/**
+	 * Returns possible Online Events for a particular flight report. This will select an Event that started prior to the submission date and ended less than 2 days before the submission date. 
+	 * @param fr the FlightReport
+	 * @return a Collection of Evens
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Event> getPossibleEvents(FlightReport fr) throws DAOException {
+		return getPossibleEvents(fr, fr.getNetwork(), fr.getSubmittedOn(), SystemData.get("airline.code"));
 	}
 	
 	/**
-	 * Returns a possible Online Event for a particular flight report. This will select an Event that started prior to the submission date
-	 * and ended less than 2 days before the submission date. 
-	 * @param fr the RoutePair
+	 * Returns possible Online Events for a particular flight. This will select an Event that started prior to the submission date and ended less than 2 days before the submission date. 
+	 * @param rp the RoutePair
 	 * @param net the OnlineNetwork
 	 * @param dt the Flight date/time
-	 * @return the Online Event database ID, or zero if none found
+	 * @param airlineCode the Airline Code
+	 * @return a Collection of Events
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getPossibleEvent(RoutePair fr, OnlineNetwork net, java.time.Instant dt) throws DAOException {
-		if (net == null) return 0;
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) "
+	public List<Event> getPossibleEvents(RoutePair rp, OnlineNetwork net, java.time.Instant dt, String airlineCode) throws DAOException {
+		if (net == null) return Collections.emptyList();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT E.* FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) "
 			+ "AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (EAL.AIRLINE=?) AND (E.STARTTIME < ?) AND (DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?) ORDER BY E.ID LIMIT 1")) {
-			ps.setString(1, fr.getAirportD().getIATA());
-			ps.setString(2, fr.getAirportA().getIATA());
+			ps.setString(1, rp.getAirportD().getIATA());
+			ps.setString(2, rp.getAirportA().getIATA());
 			ps.setInt(3, net.ordinal());
-			ps.setString(4, SystemData.get("airline.code"));
+			ps.setString(4, airlineCode);
 			ps.setTimestamp(5, createTimestamp(dt));
 			ps.setTimestamp(6, createTimestamp(dt));
-			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() ? rs.getInt(1) : 0;
-			}
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -204,6 +208,7 @@ public class GetEvent extends DAO {
 			loadAirlines(e);
 			loadEQTypes(e);
 			loadContactAddrs(e);
+			loadFeaturedAirports(e);
 			
 			// Create a map and load the airports
 			Map<Integer, Event> eMap = Collections.singletonMap(Integer.valueOf(e.getID()), e);
@@ -383,6 +388,16 @@ public class GetEvent extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					e.addContactAddr(rs.getString(1));
+			}
+		}
+	}
+	
+	private void loadFeaturedAirports(Event e) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRPORT FROM events.AIRPORTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					e.addFeaturedAirport(SystemData.getAirport(rs.getString(1)));
 			}
 		}
 	}

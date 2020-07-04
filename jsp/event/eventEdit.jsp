@@ -153,6 +153,12 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:file name="briefPDF" idx="*" className="small" size="96" max="144" /><c:if test="${event.briefing.isPDF}"><el:box name="deleteBrief" value="true" label="Delete existing Briefing" /></c:if>
 <c:if test="${hasTextBriefing}"><span class="small ita nophone"> Uploading a Briefing file will overwrite the existing Briefing!</span></c:if></td>
 </tr>
+<c:if test="${!empty event.airports}">
+<tr>
+ <td class="label top">Featured Airports</td>
+ <td class="data"><el:check name="featuredAirports" idx="*" className="small" width="220" cols="1" newLine="true" options="${event.airports}" checked="${event.featuredAirports}" /></td>
+</tr>
+</c:if>
 <tr class="title caps">
  <td colspan="2">AVAILABLE FLIGHT ROUTES</td>
 </tr>
@@ -164,13 +170,11 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Departure Airport</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;
-<el:text name="adCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;<el:text name="adCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Destination Airport</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;
-<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Flight Routing</td>
