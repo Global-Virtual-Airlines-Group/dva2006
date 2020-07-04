@@ -13,7 +13,8 @@ import java.util.*;
 public enum BrowserType {
 	
 	IE("MSIE", "Trident"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), CHROME("Chrome"), OPERA("Opera"), 
-	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider",  "Yahoo! Slurp",  "SemrushBot", "AhrefsBot", "Bytespider", "TurnitinBot", "PetalBot"), UNKNOWN;
+	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider",  "Yahoo! Slurp",  "SemrushBot", "AhrefsBot", "Bytespider", "TurnitinBot", "PetalBot", "Barkrowler"),
+	UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new ArrayList<String>(4);
 	
