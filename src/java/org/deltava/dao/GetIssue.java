@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+	// Copyright 2005, 2006, 2009, 2011, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -59,8 +59,8 @@ public class GetIssue extends DAO {
 	public List<Issue> getAll(String sortBy, IssueArea area, String airlineCode) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID)"
-			+ "WHERE (IA.AIRLINE LIKE ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(DISTINCT IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) LEFT JOIN "
+			+ "common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) WHERE (IA.AIRLINE LIKE ?)");
 		if (area != null)
 			sqlBuf.append(" AND (I.AREA=?)");
 		
@@ -83,7 +83,7 @@ public class GetIssue extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Issue> getUserIssues(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
+		try (PreparedStatement ps = prepare("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(DISTINCT IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
 		      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
 			ps.setInt(1, id);
 			ps.setInt(2, id);
@@ -107,8 +107,8 @@ public class GetIssue extends DAO {
 	public List<Issue> getByStatus(IssueStatus status, IssueArea area, String sortType, String airlineCode) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN common.ISSUE_COMMENTS IC ON "
-			+ "(I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) AND (IA.AIRLINE LIKE ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(DISTINCT IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN "
+			+ "common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) AND (IA.AIRLINE LIKE ?)");
 		if (area != null)
 			sqlBuf.append(" AND (I.AREA=?)");
 		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
@@ -137,8 +137,8 @@ public class GetIssue extends DAO {
 	public List<Issue> search(String searchStr, IssueStatus status, IssueArea area, String airlineCode, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN common.ISSUE_COMMENTS IC ON "
-			+ "(I.ID=IC.ISSUE_ID) WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(DISTINCT IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN "
+			+ "common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
 		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS) > 0))" : ")");
 		if (status != null)
 			sqlBuf.append(" AND (I.STATUS=?)");
@@ -231,7 +231,7 @@ public class GetIssue extends DAO {
 	private static List<Issue> execute(PreparedStatement ps) throws SQLException {
 		List<Issue> results = new ArrayList<Issue>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasLastComment = (rs.getMetaData().getColumnCount() > 14);
+			boolean hasLastComment = (rs.getMetaData().getColumnCount() > 15);
 			while (rs.next()) {
 				Issue i = new Issue(rs.getInt(1), rs.getString(6));
 				i.setAuthorID(rs.getInt(2));
@@ -246,8 +246,10 @@ public class GetIssue extends DAO {
 				i.setMajorVersion(rs.getInt(12));
 				i.setMinorVersion(rs.getInt(13));
 				i.setSecurity(IssueSecurity.values()[rs.getInt(14)]);
-				if (hasLastComment)
+				if (hasLastComment) {
 					i.setLastCommentOn(toInstant(rs.getTimestamp(15)));
+					i.setCommentCount(rs.getInt(16));
+				}
 
 				results.add(i);
 			}
