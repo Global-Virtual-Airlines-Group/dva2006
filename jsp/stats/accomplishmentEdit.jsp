@@ -28,7 +28,7 @@ return true;
 };
 
 golgotha.local.toggleAll = function() {
-    const f = document.forms[0];	
+    const f = document.forms[0];
     golgotha.util.disable(f.value, f.doAll.checked);	
     return true;	
 };
@@ -148,10 +148,9 @@ return true;
 <c:if test="${!empty ap}">
 <tr>
  <td class="label">Pilots</td>
- <td class="data">
-<c:choose>
+ <td class="data"><c:choose>
 <c:when test="${ap.pilots == 0}"><span class="bld">No <content:airline /> Pilots have achieved this Accomplishment</span></c:when>
-<c:otherwise><span class="pri bld"><fmt:int value="${ap.pilots}" /> <content:airline /> Pilots have achieved this Accomplishment</span></c:otherwise>
+<c:otherwise><span class="pri bld"><fmt:int value="${ap.pilots}" />&nbsp;<content:airline /> Pilots have achieved this Accomplishment</span></c:otherwise>
 </c:choose></td>
 </tr>
 </c:if>

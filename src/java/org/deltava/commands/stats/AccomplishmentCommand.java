@@ -96,13 +96,14 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 			case AIRPORTD:
 			case AIRPORTA:
 				Collection<String> iataCodes = new TreeSet<String>(); Collection<String> badCodes = new LinkedHashSet<String>();
-				Collection<String> apCodes = StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ","));
-				for (String code : apCodes) {
-					Airport ap = SystemData.getAirport(code);
+				StringTokenizer tk = new StringTokenizer(ctx.getParameter("choices"), ",\n");
+				while (tk.hasMoreElements()) {
+					String c = tk.nextToken().trim();
+					Airport ap = SystemData.getAirport(c);
 					if (ap != null)
 						iataCodes.add(ap.getIATA());
 					else
-						badCodes.add(code);
+						badCodes.add(c);
 				}
 				
 				a.setChoices(iataCodes);
