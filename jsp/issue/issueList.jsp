@@ -33,7 +33,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <view:table cmd="issues">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="2" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>
+ <td colspan="3" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>
  <td colspan="6">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
 <span class="nophone"> AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void golgotha.local.doSort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.doSort()" />
@@ -48,6 +48,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
  <td class="nophone" style="width:10%">AREA</td>
  <td class="nophone" style="width:10%">TYPE</td>
  <td class="nophone" style="width:10%">CREATED</td>
+ <td class="nophone" style="width:6%">COMMENTS</td>
  <td style="width:10%">LAST COMMENT</td>
  <td class="nophone" >RESOLVED</td>
 </tr>
@@ -61,6 +62,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
  <td class="bld small nophone"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
  <td class="sec bld small nophone"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
  <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
+ <td class="nophone"><fmt:int value="${issue.commentCount}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
  <td class="bld nophone"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>
 </view:row>
@@ -68,7 +70,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
+ <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
 <view:legend width="120" labels="Open,Fixed,Worked Around,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
 </tr>
 </view:table>
