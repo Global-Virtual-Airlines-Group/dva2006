@@ -32,6 +32,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	private Instant _createdOn;
 	private Instant _lastCommentOn;
+	private int _commentCount;
 	private Instant _resolvedOn;
 	
 	private int _createdBy;
@@ -176,6 +177,15 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public Instant getResolvedOn() {
 		return _resolvedOn;
 	}
+	
+	/**
+	 * Returns the number of comments for this Issue.
+	 * @return the number of comments
+	 * @see Issue#setCommentCount(int)
+	 */
+	public int getCommentCount() {
+		return _comments.isEmpty() ? _commentCount : _comments.size();
+	}
 
 	@Override
 	public int getAuthorID() {
@@ -289,6 +299,19 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 */
 	public void setMinorVersion(int v) {
 		_minorVersion = Math.max(0, v);		
+	}
+	
+	/**
+	 * Updates the number of comments for this Issue.
+	 * @param cnt the number of comments
+	 * @throws IllegalArgumentException if comments are already populated
+	 * @see Issue#getCommentCount()
+	 */
+	public void setCommentCount(int cnt) {
+		if (!_comments.isEmpty())
+			throw new IllegalArgumentException("Comments already populated");
+		
+		_commentCount = cnt;
 	}
 	
 	/**
