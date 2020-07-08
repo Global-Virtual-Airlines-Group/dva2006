@@ -26,6 +26,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _vSpeed;
 	private double _aoa;
 	private double _gForce;
+	private double _cg;
 	private double _n1;
 	private double _n2;
 	
@@ -175,6 +176,14 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public int getPressure() {
 		return _pressure;
+	}
+	
+	/**
+	 * Returns the center of gravity of the aircraft.
+	 * @return the CG as percent MAC
+	 */
+	public double getCG() {
+		return _cg;
 	}
 
 	/**
@@ -452,6 +461,14 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setPressure(int p) {
 		_pressure = p;
+	}
+	
+	/**
+	 * Sets the aircraft's center of gravity.
+	 * @param cg the CG as percent MAC
+	 */
+	public void setCG(double cg) {
+		_cg = cg;
 	}
 	
 	/**
