@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -62,7 +62,7 @@ public class GetACARSPositions extends GetACARSData {
 		try {
 			Map<Long, GeospaceLocation> results = new LinkedHashMap<Long, GeospaceLocation>();
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, "
-				+ "FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
+				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
 				ps.setInt(1, flightID);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -89,20 +89,21 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setFuelRemaining(rs.getInt(21));
 						entry.setFuelFlow(rs.getInt(22));
 						entry.setAOA(rs.getDouble(23));
-						entry.setG(rs.getDouble(24));
-						entry.setFlags(rs.getInt(25));
-						entry.setFrameRate(rs.getInt(26));
-						entry.setSimRate(rs.getInt(27));
-						entry.setSimUTC(toInstant(rs.getTimestamp(28)));
-						entry.setPhase(FlightPhase.values()[rs.getInt(29)]);
-						entry.setNAV1(rs.getString(30));
-						entry.setNAV2(rs.getString(31));
-						entry.setADF1(rs.getString(32));
-						entry.setVASFree(rs.getInt(33));
-						entry.setWeight(rs.getInt(34));
-						entry.setAirspace(AirspaceType.values()[rs.getInt(35)]);
-						entry.setGroundOperations(rs.getInt(36));
-						entry.setNetworkConnected(rs.getBoolean(37));
+						entry.setCG(rs.getDouble(24));
+						entry.setG(rs.getDouble(25));
+						entry.setFlags(rs.getInt(26));
+						entry.setFrameRate(rs.getInt(27));
+						entry.setSimRate(rs.getInt(28));
+						entry.setSimUTC(toInstant(rs.getTimestamp(29)));
+						entry.setPhase(FlightPhase.values()[rs.getInt(30)]);
+						entry.setNAV1(rs.getString(31));
+						entry.setNAV2(rs.getString(32));
+						entry.setADF1(rs.getString(33));
+						entry.setVASFree(rs.getInt(34));
+						entry.setWeight(rs.getInt(35));
+						entry.setAirspace(AirspaceType.values()[rs.getInt(36)]);
+						entry.setGroundOperations(rs.getInt(37));
+						entry.setNetworkConnected(rs.getBoolean(38));
 						
 						// Add to results - or just log a GeoPosition if we're on the ground
 						if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())

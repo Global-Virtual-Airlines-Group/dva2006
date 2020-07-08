@@ -164,6 +164,7 @@ public final class OfflineFlightParser {
 					pos.setN2(parse(pe.getChildTextTrim("n2")));
 					pos.setAOA(parse(pe.getChildTextTrim("aoa")));
 					pos.setG(parse(pe.getChildTextTrim("g")));
+					pos.setCG(Double.parseDouble(pe.getChildTextTrim("cg")));
 					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
 					pos.setPhase(FlightPhase.fromString(pe.getChildTextTrim("phase")));
 					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
@@ -176,6 +177,7 @@ public final class OfflineFlightParser {
 					pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0));
 					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
+					pos.setGroundOperations(StringUtils.parse(pe.getChildTextTrim("groundOps"), 0));
 					pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
 					pos.setNAV1(pe.getChildTextTrim("nav1"));
 					pos.setNAV2(pe.getChildTextTrim("nav2"));

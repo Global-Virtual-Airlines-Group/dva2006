@@ -127,7 +127,7 @@ public class SetACARSData extends DAO {
 	 */
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, GFORCE, FRAMERATE, SIM_TIME, VAS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, CG, GFORCE, FRAMERATE, NET_CONNECTED, SIM_TIME, VAS, WEIGHT, GNDFLAGS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, flightID);
 			for (ACARSRouteEntry re: entries) {
 				ps.setTimestamp(2, createTimestamp(re.getDate()));
@@ -156,10 +156,14 @@ public class SetACARSData extends DAO {
 				ps.setInt(25, re.getPressure());
 				ps.setDouble(26, re.getVisibility());
 				ps.setDouble(27, re.getAOA());
-				ps.setDouble(28, re.getG());
-				ps.setInt(29, re.getFrameRate());
-				ps.setTimestamp(30, createTimestamp(re.getSimUTC()));
-				ps.setInt(31, re.getVASFree());
+				ps.setDouble(28, re.getCG());
+				ps.setDouble(29, re.getG());
+				ps.setInt(30, re.getFrameRate());
+				ps.setBoolean(31, re.getNetworkConnected());
+				ps.setTimestamp(32, createTimestamp(re.getSimUTC()));
+				ps.setInt(33, re.getVASFree());
+				ps.setInt(34, re.getWeight());
+				ps.setInt(35, re.getGroundOperations());
 				ps.addBatch();
 			}
 

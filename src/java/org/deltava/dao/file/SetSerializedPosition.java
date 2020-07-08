@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -36,7 +36,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	public SerializedDataVersion archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return null;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv7 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv8 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
@@ -94,6 +94,8 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		out.writeUTF((re.getADF1() == null) ? "" : re.getADF1()); // v6
 		out.writeBoolean(re.getNetworkConnected()); // v7
+		out.writeInt(re.getGroundOperations()); // v8
+		out.writeFloat((float) re.getCG());
 		
 		// Write ATC1
 		Controller atc = re.getATC1();
