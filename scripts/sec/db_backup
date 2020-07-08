@@ -93,15 +93,19 @@ fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.MESSAGES acars | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.MESSAGES --ignore-table=acars.POSITIONS acars | $arc_util > acars.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS | $arc_util > acars_positions.sql.bz2
 
 # Write flight statistics
 echo `date +%H:%M:%S`' Writing flight statistics'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
- FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > dva_stats.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
- FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > afv_stats.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > dva_stats.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > afv_stats.sql.bz2
+
+# Write raw schedule
+echo `date +%H:%M:%S`' Writing raw schedule'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES | $arc_util > dva_raw_sched.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES | $arc_util > afv_raw_sched.sql.bz2
 
 # Write online track
 echo `date +%H:%M:%S`' Writing online tracks'
@@ -113,6 +117,7 @@ echo `date +%H:%M:%S`' Writing DVA database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE \
  --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE \
  --ignore-table=dva.FLIGHTSTATS_LANDING --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES \
+ --ignore-table=dva.RAW_SCHEDULE --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.RAW_SCHEDULE_AIRLINES \
  --ignore-table=dva.FLIGHTSTATS_PILOT_DAY --ignore-table=dva.ONLINE_TRACK dva | $arc_util > dva.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dva_gscore.sql.bz2
 
@@ -121,6 +126,7 @@ echo `date +%H:%M:%S`' Writing AFV database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE \
  --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE \
  --ignore-table=afv.FLIGHTSTATS_LANDING --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES \
+ --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES \
  --ignore-table=afv.FLIGHTSTATS_PILOT_DAY --ignore-table=afv.ONLINE_TRACK afv | $arc_util > afv.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > afv_gscore.sql.bz2
 
