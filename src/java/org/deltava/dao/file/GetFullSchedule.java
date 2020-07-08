@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -27,10 +27,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").parseDefaulting(ChronoField.SECOND_OF_DAY, 0).toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
 
-	private final int _yearOffset = LocalDate.now().getYear() - 2015;
-	
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private final Collection<String> _mlCodes = new HashSet<String>();
 	private final Collection<String> _csCodes = new HashSet<String>();
@@ -206,8 +204,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		}
 		
 		try {
-			entry.setStartDate(LocalDate.parse(entries.get(5), _df).plusYears(_yearOffset));
-			entry.setEndDate(LocalDate.parse(entries.get(6), _df).plusYears(_yearOffset));
+			entry.setStartDate(LocalDate.parse(entries.get(5), _df));
+			entry.setEndDate(LocalDate.parse(entries.get(6), _df));
 		} catch (Exception pe) {
 			log.warn("Error parsing date - " + pe.getMessage());
 			_status.addMessage("Error parsing date - " + pe.getMessage());
