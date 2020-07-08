@@ -20,6 +20,7 @@ import org.deltava.dao.file.GetSchedule;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -190,8 +191,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Load schedule sources
+			CacheManager.invalidate("ScheduleSource");
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<ScheduleSourceInfo> stats = rsdao.getSources(true);
+			Collection<ScheduleSourceInfo> stats = rsdao.getSources(false);
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 			
 			// Save the status
