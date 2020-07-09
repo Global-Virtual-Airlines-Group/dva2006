@@ -46,6 +46,16 @@ public class GetNavData extends DAO {
 		if (result != null)
 			return result;
 		
+		// Look for coordinates
+		if ((c.length() > 11) && (NavigationDataBean.isCoordinates(c) == CodeType.FULL)) {
+			Intersection i = Intersection.parse(c);
+			if (i != null) {
+				result = new NavigationDataMap();
+				result.add(i);
+				return result;
+			}
+		}
+		
 		// If we're too long, then try looking for a bearing and range
 		if (c.length() > 7) {
 			result = getBearingRange(c);
