@@ -115,7 +115,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));
-						entries.addAll(dao.process());
+						dao.process().stream().filter(se -> (se.getSource() == ScheduleSource.LEGACY)).forEach(entries::add);
 						st = dao.getStatus();
 					}
 					
