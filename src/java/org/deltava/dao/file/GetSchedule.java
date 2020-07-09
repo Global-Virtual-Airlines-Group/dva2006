@@ -130,6 +130,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setLineNumber(srcLine);
 						entry.setStartDate(sd);
 						entry.setEndDate(ed);
+						days.forEach(entry::addDayOfWeek);
 						entry.setAirportD(getAirport(tkns.nextToken(), br.getLineNumber()));
 						entry.setTimeD(LocalDateTime.of(today, LocalTime.parse(tkns.nextToken(), _tf)));
 						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
