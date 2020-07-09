@@ -1,4 +1,4 @@
-// Copyright 2005, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -30,8 +30,8 @@ public class SetNews extends DAO {
     */
    public void write(News n) throws DAOException {
 	   try {
-		   try (PreparedStatement ps = prepare("INSERT INTO NEWS (PILOT_ID, DATE, SUBJECT, BODY, ID) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE PILOT_ID=VALUES(PILOT_ID), DATE=VALUES(DATE), "
-				+ " SUBJECT=VALUES(SUBJECT), BODY=VALUES(BODY)")) {
+		   try (PreparedStatement ps = prepare("INSERT INTO NEWS (PILOT_ID, DATE, SUBJECT, BODY, ID) VALUES (?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE PILOT_ID=N.PILOT_ID, DATE=N.DATE, "
+				+ "SUBJECT=N.SUBJECT, BODY=N.BODY")) {
 			   ps.setInt(1, n.getAuthorID());
 			   ps.setTimestamp(2, createTimestamp(n.getDate()));
 			   ps.setString(3, n.getSubject());
@@ -53,8 +53,8 @@ public class SetNews extends DAO {
     */
    public void write(Notice n) throws DAOException {
       try {
-    	  try (PreparedStatement ps = prepare("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE, ISHTML, ID)  VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE PILOT_ID=VALUES(PILOT_ID), "
-    			  + "EFFDATE=VALUES(EFFDATE), SUBJECT=VALUES(SUBJECT), BODY=VALUES(BODY), ACTIVE=VALUES(ACTIVE), ISHTML=VALUES(ISHTML)")) {
+    	  try (PreparedStatement ps = prepare("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE, ISHTML, ID)  VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE PILOT_ID=N.PILOT_ID, "
+    			  + "EFFDATE=N.EFFDATE, SUBJECT=N.SUBJECT, BODY=N.BODY, ACTIVE=N.ACTIVE, ISHTML=N.ISHTML")) {
     		  ps.setInt(1, n.getAuthorID());
     		  ps.setTimestamp(2, createTimestamp(n.getDate()));
     		  ps.setString(3, n.getSubject());

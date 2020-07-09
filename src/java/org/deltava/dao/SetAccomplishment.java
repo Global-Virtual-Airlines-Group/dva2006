@@ -31,8 +31,8 @@ public class SetAccomplishment extends DAO {
 	 */
 	public void write(Accomplishment a) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-				+ "NAME=VALUES(NAME), UNIT=VALUES(UNIT), VAL=VALUES(VAL), COLOR=VALUES(COLOR), CHOICES=VALUES(CHOICES), ACTIVE=VALUES(ACTIVE), ALWAYS_SHOW=VALUES(ALWAYS_SHOW)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+				+ "NAME=N.NAME, UNIT=N.UNIT, VAL=N.VAL, COLOR=N.COLOR, CHOICES=N.CHOICES, ACTIVE=N.ACTIVE, ALWAYS_SHOW=N.ALWAYS_SHOW")) {
 				ps.setString(1, a.getName());
 				ps.setInt(2, a.getUnit().ordinal());
 				ps.setInt(3, a.getValue());
