@@ -94,7 +94,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label top">Airlines</td>
- <td class="data"><el:check name="airline-${src.source}"  width="225" cols="5" newLine="true" options="${src.options}" value="${srcAirlines[src.source]}" />
+ <td class="data"><el:check name="airline-${src.source}"  width="240" cols="5" newLine="true" options="${src.options}" value="${srcAirlines[src.source]}" />
 <c:if test="${src.options.size() > 6}"><a href="javascript:golgotha.local.toggleAll('${src.source}')">TOGGLE ALL</a></c:if></td>
 </tr>
 </c:forEach>
