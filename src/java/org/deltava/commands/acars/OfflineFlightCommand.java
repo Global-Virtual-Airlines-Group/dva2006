@@ -286,7 +286,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetEvent evdao = new GetEvent(con);
 			EventFlightHelper efr = new EventFlightHelper(afr);
 			if ((afr.getDatabaseID(DatabaseID.EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				List<Event> events = evdao.getPossibleEvents(afr);
+				List<Event> events = evdao.getPossibleEvents(afr, SystemData.get("airline.code"));
 				events.removeIf(e -> !efr.matches(e));
 				if (!events.isEmpty()) {
 					Event e = events.get(0);

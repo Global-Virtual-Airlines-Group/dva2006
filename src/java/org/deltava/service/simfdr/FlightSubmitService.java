@@ -141,7 +141,7 @@ public class FlightSubmitService extends SimFDRService {
 			GetEvent evdao = new GetEvent(con);
 			EventFlightHelper efr = new EventFlightHelper(fr);
 			if ((fr.getDatabaseID(DatabaseID.EVENT) == 0) && (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				List<Event> events = evdao.getPossibleEvents(fr);
+				List<Event> events = evdao.getPossibleEvents(fr, SystemData.get("airline.code"));
 				events.removeIf(e -> !efr.matches(e));
 				if (!events.isEmpty()) {
 					Event e = events.get(0);
