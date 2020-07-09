@@ -1,4 +1,4 @@
-// Copyright 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -29,9 +29,9 @@ public class SetJobs extends DAO {
 	 */
 	public void write(JobPosting jp) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepare("INSERT INTO JOBPOSTINGS (CLOSES, STATUS, TITLE, MINLEGS, MINAGE, STAFF_ONLY, HIRE_MGR, SUMMARY, BODY, CREATED, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?) "
-				+ "ON DUPLICATE KEY UPDATE CLOSES=VALUES(CLOSES), STATUS=VALUES(STATUS), TITLE=VALUES(TITLE), MINLEGS=VALUES(MINLEGS), MINAGE=VALUES(MINAGE), STAFF_ONLY=VALUES(STAFF_ONLY), "
-				+ "HIRE_MGR=VALUES(HIRE_MGR), SUMMARY=VALUES(SUMMARY), BODy=VALUES(BODY)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO JOBPOSTINGS (CLOSES, STATUS, TITLE, MINLEGS, MINAGE, STAFF_ONLY, HIRE_MGR, SUMMARY, BODY, CREATED, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?) AS N "
+				+ "ON DUPLICATE KEY UPDATE CLOSES=N.CLOSES, STATUS=N.STATUS, TITLE=N.TITLE, MINLEGS=N.MINLEGS, MINAGE=N.MINAGE, STAFF_ONLY=N.STAFF_ONLY, HIRE_MGR=N.HIRE_MGR, SUMMARY=N.SUMMARY, "
+				+ "BODY=N.BODY")) {
 				ps.setTimestamp(1, createTimestamp(jp.getClosesOn()));
 				ps.setInt(2, jp.getStatus());
 				ps.setString(3, jp.getTitle());

@@ -30,9 +30,8 @@ public class SetAcademy extends DAO {
 	public void write(Course c) throws DAOException {
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-				+ "CERTNAME=VALUES(CERTNAME), PILOT_ID=VALUES(PILOT_ID), INSTRUCTOR_ID=VALUES(INSTRUCTOR_ID), STATUS=VALUES(STATUS), STARTDATE=VALUES(STARTDATE), ENDDATE=VALUES(ENDDATE), "
-				+ "CHECKRIDES=VALUES(CHECKRIDES)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+				+ "CERTNAME=N.CERTNAME, PILOT_ID=N.PILOT_ID, INSTRUCTOR_ID=N.INSTRUCTOR_ID, STATUS=N.STATUS, STARTDATE=N.STARTDATE, ENDDATE=N.ENDDATE, CHECKRIDES=N.CHECKRIDES")) {
 				ps.setString(1, c.getName());
 				ps.setInt(2, c.getPilotID());
 				ps.setInt(3, c.getInstructorID());
@@ -40,7 +39,7 @@ public class SetAcademy extends DAO {
 				ps.setTimestamp(5, createTimestamp(c.getStartDate()));
 				ps.setTimestamp(6, createTimestamp(c.getEndDate()));
 				ps.setInt(7, c.getRideCount());
-				ps.setInt(7, c.getID());
+				ps.setInt(8, c.getID());
 				executeUpdate(ps, 1);
 			}
 			

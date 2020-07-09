@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -50,8 +50,8 @@ public class SetLibrary extends DAO {
 	public void write(Manual m, boolean isNew) throws DAOException {
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepare("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-				+ "NAME=VALUES(NAME), FILESIZE=VALUES(FILESIZE), VERSION=VALUES(VERSION), SECURITY=VALUES(SECURITY), BODY=VALUES(BODY), ONREG=VALUES(ONREG), IGNORE_CERTS=VALUES(IGNORE_CERTS)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+				+ "NAME=N.NAME, FILESIZE=N.FILESIZE, VERSION=N.VERSION, SECURITY=N.SECURITY, BODY=N.BODY, ONREG=N.ONREG, IGNORE_CERTS=N.IGNORE_CERTS")) {
 				ps.setString(1, m.getName());
 				ps.setLong(2, m.getSize());
 				ps.setInt(3, m.getMajorVersion());
@@ -95,8 +95,8 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Newsletter nws) throws DAOException {
-		try (PreparedStatement ps = prepare("INSERT INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLCATE KEY UPDATE "
-			+ "NAME=VALUES(NAME), CATEGORY=VALUES(CATEGORY), FILESIZE=VALUES(FILESIZE), SECURITY=VALUES(SECURITY), PUBLISHED=VALUES(PUBLISHED), BODY=VALUES(BODY)")) {
+		try (PreparedStatement ps = prepare("INSERT INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLCATE KEY UPDATE "
+			+ "NAME=N.NAME, CATEGORY=N.CATEGORY, FILESIZE=N.FILESIZE, SECURITY=N.SECURITY, PUBLISHED=N.PUBLISHED, BODY=N.BODY")) {
 			ps.setString(1, nws.getName());
 			ps.setString(2, nws.getCategory());
 			ps.setLong(3, nws.getSize());
@@ -126,9 +126,8 @@ public class SetLibrary extends DAO {
 			}
 			
 			// Write the entry
-			try (PreparedStatement ps = prepare("INSERT INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-				+ "ON DUPLICATE KEY UPDATE NAME=VALUES(NAME), IMG=VALUES(IMG), FILESIZE=VALUES(FILESIZE), MAJOR=VALUES(MAJOR), MINOR=VALUES(MINOR), SUBMINOR=VALUES(SUBMINOR), "
-				+ "CODE=VALUES(CODE), BODY=VALUES(BODY), FSVERSION=VALUES(FSVERSION)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS N "
+				+ "ON DUPLICATE KEY UPDATE NAME=N.NAME, IMG=N.IMG, FILESIZE=N.FILESIZE, MAJOR=N.MAJOR, MINOR=N.MINOR, SUBMINOR=N.SUBMINOR, CODE=N.CODE, BODY=N.BODY, FSVERSION=N.FSVERSION")) {
 				ps.setString(1, i.getName());
 				ps.setString(2, i.getImage());
 				ps.setLong(3, i.getSize());
@@ -167,8 +166,8 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(FileEntry e) throws DAOException {
-		try (PreparedStatement ps = prepare("INSERT INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-			+ "NAME=VALUES(NAME), FILESIZE=VALUES(FILESIZE), SECURITY=VALUES(SECURITY), AUTHOR=VALUES(AUTHOR) BODY=VALUES(BODY)")) {
+		try (PreparedStatement ps = prepare("INSERT INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+			+ "NAME=N.NAME, FILESIZE=N.FILESIZE, SECURITY=N.SECURITY, AUTHOR=N.AUTHOR, BODY=N.BODY")) {
 			ps.setString(1, e.getName());
 			ps.setLong(2, e.getSize());
 			ps.setInt(3, e.getSecurity().ordinal());

@@ -44,8 +44,8 @@ public class SetChart extends DAO {
 			startTransaction();
 
 			// Write the metadata
-			try (PreparedStatement ps = prepare("INSERT INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-				+ "ICAO=VALUES(ICAO), TYPE=VALUES(TYPE), IMGFORMAT=VALUES(IMGFORMAT), NAME=VALUES(NAME), SIZE=VALUES(SIZE), LASTMODIFIED=VALUES(LASTMODIFIED), HASH=VALUES(HASH)")) {
+			try (PreparedStatement ps = prepare("INSERT INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+				+ "ICAO=N.ICAO, TYPE=N.TYPE, IMGFORMAT=N.IMGFORMAT, NAME=N.NAME, SIZE=N.SIZE, LASTMODIFIED=N.LASTMODIFIED, HASH=N.HASH")) {
 				ps.setString(1, c.getAirport().getICAO());
 				ps.setInt(2, c.getType().ordinal());
 				ps.setInt(3, c.getImgType().ordinal());
