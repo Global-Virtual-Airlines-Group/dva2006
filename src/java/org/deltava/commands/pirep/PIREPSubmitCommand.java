@@ -151,7 +151,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			EventFlightHelper efr = new EventFlightHelper(pirep);
 			efr.addOnlineTrack(pd);
 			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				List<Event> events = evdao.getPossibleEvents(pirep);
+				List<Event> events = evdao.getPossibleEvents(pirep, SystemData.get("airline.code"));
 				events.removeIf(e -> !efr.matches(e));
 				if (!events.isEmpty()) {
 					Event e = events.get(0);
