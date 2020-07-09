@@ -3,14 +3,14 @@ package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.RoutePair;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -76,36 +76,63 @@ public class GetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
-	/**
-	 * Returns possible Online Events for a particular flight report. This will select an Event that started prior to the submission date and ended less than 2 days before the submission date. 
-	 * @param fr the FlightReport
-	 * @return a Collection of Evens
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<Event> getPossibleEvents(FlightReport fr) throws DAOException {
-		return getPossibleEvents(fr, fr.getNetwork(), fr.getSubmittedOn(), SystemData.get("airline.code"));
-	}
 	
 	/**
-	 * Returns possible Online Events for a particular flight. This will select an Event that started prior to the submission date and ended less than 2 days before the submission date. 
+	 * Returns possible Online Events within a given time period.
 	 * @param rp the RoutePair
 	 * @param net the OnlineNetwork
-	 * @param dt the Flight date/time
-	 * @param airlineCode the Airline Code
-	 * @return a Collection of Events
+	 * @param dt the start date/time
+	 * @param airlineCode the airline code
+	 * @return a List of Events
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Event> getPossibleEvents(RoutePair rp, OnlineNetwork net, java.time.Instant dt, String airlineCode) throws DAOException {
-		if (net == null) return Collections.emptyList();
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT E.* FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) "
-			+ "AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (EAL.AIRLINE=?) AND (E.STARTTIME < ?) AND (DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?) ORDER BY E.ID LIMIT 1")) {
+	public List<Event> getPossibleEvents(RoutePair rp, OnlineNetwork net, Instant dt, String airlineCode) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) AND "
+			+ "(EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (EAL.AIRLINE=?) AND (? BETWEEN E.STARTTIME AND E.ENDTIME) ORDER BY E.ID")) {
 			ps.setString(1, rp.getAirportD().getIATA());
 			ps.setString(2, rp.getAirportA().getIATA());
 			ps.setInt(3, net.ordinal());
 			ps.setString(4, airlineCode);
 			ps.setTimestamp(5, createTimestamp(dt));
-			ps.setTimestamp(6, createTimestamp(dt));
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns possible Online Events for a particular flight. For non-FDR flight reports, this will select an Event that started prior to the submission date and ended less than 2 days before the submission date. 
+	 * @param fr the FlightReport
+	 * @param airlineCode the Airline Code
+	 * @return a List of Events
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Event> getPossibleEvents(FlightReport fr, String airlineCode) throws DAOException {
+		if (fr.getNetwork() == null) return Collections.emptyList();
+		FDRFlightReport ffr = (fr instanceof FDRFlightReport) ? (FDRFlightReport) fr : null;
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT E.* FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) "
+			+ "AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (EAL.AIRLINE=?) AND ");
+		if (ffr != null)
+			buf.append("((? BETWEEN E.STARTTIME AND E.ENDTIME) OR (? BETWEEN E.STARTTIME AND E.ENDTIME))");
+		else
+			buf.append("(DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?)");
+		
+		buf.append(" ORDER BY E.ID");
+		
+		try (PreparedStatement ps = prepare(buf.toString())) {
+			ps.setString(1, fr.getAirportD().getIATA());
+			ps.setString(2, fr.getAirportA().getIATA());
+			ps.setInt(3, fr.getNetwork().ordinal());
+			ps.setString(4, airlineCode);
+			if (ffr != null) {
+				ps.setTimestamp(5, createTimestamp(ffr.getTakeoffTime()));
+				ps.setTimestamp(6, createTimestamp(ffr.getLandingTime()));
+			}
+			else
+				ps.setTimestamp(5, createTimestamp(fr.getSubmittedOn()));
+				
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
