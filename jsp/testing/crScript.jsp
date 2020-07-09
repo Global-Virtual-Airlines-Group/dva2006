@@ -86,7 +86,7 @@ golgotha.local.updateEQ = function(combo) {
 <!-- Button bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" label="SAVE CHECK RIDE SCRIPT" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
+ <td><el:button type="submit" label="SAVE CHECK RIDE SCRIPT" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="crscriptdelete" linkID="${script.auditID}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
