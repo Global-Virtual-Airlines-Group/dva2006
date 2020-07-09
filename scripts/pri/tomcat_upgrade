@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -30,6 +30,8 @@ rm LICENSE
 rm NOTICE
 rm RELEASE-NOTES
 rm RUNNING.txt
+rm BUILDING.txt
+rm *.md
 chmod 755 *
 
 # Nuke bad stuff in bin
