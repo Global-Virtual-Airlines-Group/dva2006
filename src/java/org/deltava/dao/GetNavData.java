@@ -47,7 +47,7 @@ public class GetNavData extends DAO {
 			return result;
 		
 		// Look for coordinates
-		if ((c.length() > 11) && (NavigationDataBean.isCoordinates(c) == CodeType.FULL)) {
+		if (c.length() > 11) {
 			Intersection i = Intersection.parse(c);
 			if (i != null) {
 				result = new NavigationDataMap();
