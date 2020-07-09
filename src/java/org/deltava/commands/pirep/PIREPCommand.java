@@ -184,7 +184,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			} catch (Exception e) {
 				net = null;
 			} finally {
-				fr.setNetwork(net);
+				if (fr.getNetwork() != net) {
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((net == null) ? "Offline" : net) + " by " + ctx.getUser().getName());
+					fr.setNetwork(net);
+				}
 			}
 			
 			// Get the flight time
@@ -467,7 +470,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// If we're online and not on an event, list possible event
 			if (ac.getCanDispose() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
-				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr), REQUEST);
+				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr, SystemData.get("airline.code")), REQUEST);
 
 			// Get the Navdata DAO
 			GetNavRoute navdao = new GetNavRoute(con);
