@@ -26,15 +26,15 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
-	private ScheduleSource _src;
 	private final Map<ScheduleSource, Integer> _srcMaxLines = new HashMap<ScheduleSource, Integer>();
 		
 	/**
 	 * Initializes the Data Access Object.
+	 * @param src the ScheduleSource
 	 * @param is the input stream to read
 	 */
-	public GetSchedule(InputStream is) {
-		super(ScheduleSource.MANUAL, is);
+	public GetSchedule(ScheduleSource src, InputStream is) {
+		super(src, is);
 	}
 
 	/*
@@ -49,14 +49,6 @@ public class GetSchedule extends ScheduleLoadDAO {
 		}
 
 		return a;
-	}
-	
-	/**
-	 * Updates the default Schedule source.
-	 * @param src the ScheduleSource
-	 */
-	public void setDefaultSource(ScheduleSource src) {
-		_src = src;
 	}
 	
 	/**
@@ -89,7 +81,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						
 						// Get source and line
 						String srcName = tkns.nextToken();
-						ScheduleSource src = EnumUtils.parse(ScheduleSource.class, srcName, _src);
+						ScheduleSource src = EnumUtils.parse(ScheduleSource.class, srcName, _status.getSource());
 						int srcLine = StringUtils.parse(tkns.nextToken(), -1);
 						if (src == null)
 							throw new IllegalArgumentException("Invalid Schedule source - " + srcName);
