@@ -107,15 +107,15 @@ public class ScheduleImportCommand extends AbstractCommand {
 					break;
 					
 				case LEGACY:
+				case MANUAL:
 					GetRawSchedule rsdao = new GetRawSchedule(con);
 					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false);
 					try (InputStream is = new FileInputStream(f)) {
-						GetSchedule dao = new GetSchedule(is);
-						dao.setDefaultSource(ScheduleSource.LEGACY);
+						GetSchedule dao = new GetSchedule(ss, is);
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));
-						dao.process().stream().filter(se -> (se.getSource() == ScheduleSource.LEGACY)).forEach(entries::add);
+						dao.process().stream().filter(se -> (se.getSource() == ss)).forEach(entries::add);
 						st = dao.getStatus();
 					}
 					

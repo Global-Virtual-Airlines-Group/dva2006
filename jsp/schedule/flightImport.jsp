@@ -45,7 +45,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" exclude="MANUAL" />
+<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" />
 <content:enum var="importPolicies" className="org.deltava.beans.schedule.ImportPolicy" />
 
 <!-- Main Body Frame -->
