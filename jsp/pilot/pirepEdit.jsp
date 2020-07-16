@@ -152,7 +152,7 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 <content:empty var="emptyList" />
 <content:singleton var="apD" value="${pirep.airportD}" />
 <content:singleton var="apA" value="${pirep.airportA}" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2020" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -277,7 +277,7 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 </content:region>
 </content:page>
 <content:browser html4="true">
-<script id="dateInit" async>
+<script async>
 const f = document.forms[0];
 const d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 golgotha.local.initDateCombos(f.dateM, f.dateD, d);
