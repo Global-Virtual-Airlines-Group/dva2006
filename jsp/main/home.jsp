@@ -43,7 +43,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004 and Flight 
- Simulator X (including FSX: Steam Edition). We offer partial support at this time for Lockheed-Martin Prepar3D v1-3 and Laminar Research X-Plane 10. We are working to implement more features of these programs into our aircraft 
+ Simulator X (including FSX: Steam Edition). We offer partial support at this time for Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11. We are working to implement more features of these programs into our aircraft 
  programs, and VATSIM approved Flight Academy.We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over <fmt:int value="${httpStats.bytes}" /> bytes worth of data.
