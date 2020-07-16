@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to embed Google analytics data.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -76,9 +76,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 
 		// Create DOM entry
 		out.println("(function() { var ga = document.createElement('script');");
-		out.println("ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
-		out.println("ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga);");
-		out.println("})();");
+		out.println("ga.src = 'https://ssl.google-analytics.com/ga.js'; ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga); })();");
 		out.println("</script>");
 	}
 	
