@@ -37,8 +37,8 @@ public class GetAggregateStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(OTHER_SIM), SUM(PAX) AS PAX, AVG(LOADFACTOR) AS LF, "
-			+ "AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
+			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS PAX, "
+			+ "AVG(LOADFACTOR) AS LF, AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
 		if ("F.EQTYPE".equals(grp.getSQL()))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else if (grp.isPilotGroup())
@@ -62,7 +62,8 @@ public class GetAggregateStatistics extends DAO {
 					entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(10));
 					entry.setFSVersionLegs(Simulator.XP10, rs.getInt(11));
 					entry.setFSVersionLegs(Simulator.XP11, rs.getInt(12));
-					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(13));
+					entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(13));
+					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(14));
 					entry.setPax(rs.getInt(13));
 					entry.setLoadFactor(rs.getDouble(14));
 					results.add(entry);
@@ -87,8 +88,9 @@ public class GetAggregateStatistics extends DAO {
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
-			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, "
-			+ "SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
+			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, "
+			+ "SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, "
+			+ "common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
 		if (apType == 1)
 			sqlBuf.append("AND (IS_DEPARTURE=1) ");
 		else if (apType == 2)
@@ -118,7 +120,8 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
+			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), "
+			+ "SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
 		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
 			sqlBuf.append("0 AS PIDS");
 		else
@@ -169,7 +172,8 @@ public class GetAggregateStatistics extends DAO {
 				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(15));
 				entry.setFSVersionLegs(Simulator.XP10, rs.getInt(16));
 				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(17));
-				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(18));
+				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(18));
+				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(19));
 				entry.setPax(rs.getInt(19));
 				entry.setLoadFactor(rs.getDouble(20));
 				entry.setPilotIDs(rs.getInt(21));

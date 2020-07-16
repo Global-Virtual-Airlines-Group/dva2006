@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to graph simulator version statistics.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 7.4
  */
 
@@ -50,6 +50,7 @@ public class SimulatorStatsService extends WebService {
 			ma.put(legs.getOrDefault("FSX", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS9", ZERO).intValue());
 			ma.put(legs.getOrDefault("XP10", ZERO).intValue() + legs.getOrDefault("XP11", ZERO).intValue());
+			ma.put(legs.getOrDefault("FS2020", ZERO));
 			ma.put(legs.getOrDefault("FS2002", ZERO).intValue());
 			ma.put(legs.getOrDefault("UNKNOWN", ZERO).intValue() + legs.getOrDefault("FS2000", ZERO).intValue());
 			ja.put(ma);

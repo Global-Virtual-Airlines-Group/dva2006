@@ -50,11 +50,20 @@
  <td style="width:8%;">HOURS</td>
  <td style="width:8%;">LEGS</td>
  <td class="nophone">DISTANCE</td>
+<c:if test="${hasFSX}">
  <td>FSX</td>
+</c:if>
+<c:if test="${hasP3D}">
  <td>P3D<span class="nophone"> 64-BIT / 32-BIT</span></td>
+</c:if>
  <td>FS2004</td>
+<c:if test="${hasMSFS}">
+ <td>FS2020</td>
+</c:if> 
  <td class="nophone">X-Plane 11 / 10</td>
+<c:if test="${!hasP3D && !hasMSFS}">
  <td class="nophone">FS2002 / FS2000</td>
+</c:if>
  <td class="nophone">OTHER</td>
 </tr>
 
@@ -74,12 +83,25 @@
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec bld nophone"><fmt:distance value="${stat.distance}" /></td>
+<c:if test="${hasFSX}"> 
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
+</c:if>
+<c:if test="${hasFSX}">
  <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /></c:if><c:if test="${hasP3D3 && has64}"> + </c:if><c:if test="${hasP3D3}"><fmt:int value="${eLegs['P3D']}" /></c:if> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
+</c:if>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
+<c:if test="${hasMSFS}">
+ <td class="small"><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${eLegs['FS2020'] * 100.0 / stat.legs}" />%)</td>
+</c:if>
  <td class="small nophone"><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if><c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
+<c:if test="${!hasP3D && !hasMSFS}">
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" />&nbsp;<c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" />&nbsp;</c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
- <td class="small nophone"><fmt:int value="${eLegs['UNKNOWN']}" /> (<fmt:dec value="${eLegs['UNKNOWN'] * 100.0 / stat.legs}" />%)</td>
+<c:set var="otherLegs" value="${eLegs['UNKNOWN']}" scope="page" />
+</c:if>
+<c:if test="${hasP3D || hasMSFS}">
+<c:set var="otherLegs" value="${eLegs['FS2002'] + eLegs['FS2000'] + eLegs['UNKNOWN']}" scope="page" />
+</c:if>
+ <td class="small nophone"><fmt:int value="${otherLegs}" /> (<fmt:dec value="${otherLegs * 100.0 / stat.legs}" />%)</td>
 </view:row>
 </c:forEach>
 
@@ -99,11 +121,11 @@ google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 
-	var xmlreq = new XMLHttpRequest();
+	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('get', 'simstats.ws', true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		var js = JSON.parse(xmlreq.responseText);
+		const js = JSON.parse(xmlreq.responseText);
 		js.splice(0, 1); 
 		golgotha.local.chartData = js.reverse();
 		return golgotha.local.renderChart();
@@ -114,16 +136,17 @@ golgotha.local.showChart = function() {
 };
 
 golgotha.local.renderChart = function() {
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
     // Display the chart
-    var chart = new google.visualization.LineChart(document.getElementById('flightStats'));
-    var data = new google.visualization.DataTable();
+    const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
+    const data = new google.visualization.DataTable();
     data.addColumn('string','Month');
     data.addColumn('number','Prepar3D');
     data.addColumn('number','FSX');
     data.addColumn('number','FS2004');
     data.addColumn('number','X-Plane');
+    data.addColumn('number','FS2020');
     data.addColumn('number','FS2002');
     data.addColumn('number','Other');
     data.addRows(golgotha.local.chartData);
