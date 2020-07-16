@@ -1,29 +1,30 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.Simulator;
 
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 6.2
+ * @version 9.0
  * @since 1.0
  */
 
 public class FlightStatsEntry implements java.io.Serializable, Comparable<FlightStatsEntry> {
 
-	private String _label;
+	private final String _label;
 	
-	private int _legs;
+	private final int _legs;
 	private int _acarsLegs;
 	private int _vatsimLegs;
 	private int _ivaoLegs;
 	private int _historicLegs;
 	private int _dispatchLegs;
-	private double _hours;
-	private int _miles;
+	private final double _hours;
+	private final int _miles;
 	private int _pilotIDs;
 	private double _loadFactor;
 	private int _pax;
@@ -191,15 +192,20 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	 */
 	public Map<String, Integer> getVersionLegs() {
 		Map<String, Integer> results = new HashMap<String, Integer>();
-		for (Map.Entry<Simulator, Integer> me : _verLegs.entrySet())
-			results.put(me.getKey().name(), me.getValue());
-		
+		_verLegs.entrySet().forEach(me -> results.put(me.getKey().name(), me.getValue()));
 		return results;
 	}
 	
 	/**
-	 * Sets the legs for a specific Flight Simulator version. Version should be set to
-	 * 7 through 110 for FS2000 through FSX, and 0 for other.
+	 * Returns the simulators used in this stats period.
+	 * @return a Collection of Simulators
+	 */
+	public Collection<Simulator> getSimulators() {
+		return _verLegs.entrySet().stream().filter(me -> me.getValue().intValue() > 0).map(Map.Entry::getKey).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Sets the legs for a specific Simulator version.
 	 * @param s the Simulator value
 	 * @param legs the number of legs
 	 */
