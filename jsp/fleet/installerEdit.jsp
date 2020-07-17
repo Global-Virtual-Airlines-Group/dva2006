@@ -21,18 +21,17 @@
 <content:favicon />
 <content:js name="common" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.title, l:6, t:'Installer Title'});
-golgotha.form.validate({f:f.majorVersion, min:0, t:'Major Version Number'});
-golgotha.form.validate({f:f.minorVersion, min:0, t:'Minor Version Number'});
-golgotha.form.validate({f:f.subVersion, min:0, t:'Sub-Version Number'});
-golgotha.form.validate({f:f.desc, l:10, t:'Description'});
-golgotha.form.validate({f:f.code, l:3, t:'Installer Code'});
-golgotha.form.validate({f:f.fileName, l:8, t:'Installer Filename'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.title, l:6, t:'Installer Title'});
+	golgotha.form.validate({f:f.majorVersion, min:0, t:'Major Version Number'});
+	golgotha.form.validate({f:f.minorVersion, min:0, t:'Minor Version Number'});
+	golgotha.form.validate({f:f.subVersion, min:0, t:'Sub-Version Number'});
+	golgotha.form.validate({f:f.desc, l:10, t:'Description'});
+	golgotha.form.validate({f:f.code, l:3, t:'Installer Code'});
+	golgotha.form.validate({f:f.fileName, l:8, t:'Installer Filename'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -43,6 +42,7 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 <content:enum var="securityOptions" className="org.deltava.beans.fleet.Security" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
