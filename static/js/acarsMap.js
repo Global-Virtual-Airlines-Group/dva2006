@@ -244,6 +244,10 @@ xreq.send(null);
 return true;
 };
 
+golgotha.maps.acars.sort = function(e1, e2) {
+	return e1.pilot.pn - e2.pilot.pn;
+};
+
 golgotha.maps.acars.getServiceRange = function(marker, range) {
 	const bC = marker.isBusy ? '#c02020' : '#20c060';
 	const fC = marker.isBusy ? '#802020' : '#208040';
