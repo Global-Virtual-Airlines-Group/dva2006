@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 2.4
  */
 
@@ -132,16 +132,16 @@ public abstract class FlightPlanGenerator {
 	 * @return a FlightPlanGenerator
 	 */
 	public static FlightPlanGenerator create(Simulator sim) {
-		
 		switch (sim) {
-			case XP9:
-			case XP10:
-			case XP11:
+			case XP9, XP10, XP11:
 				return new XP9Generator();
 			
-			case P3D:
-			case P3Dv4:
+			case P3D, P3Dv4:
 				return new P3DGenerator();
+			
+			// TODO: Implement for FS2020
+			case FS2020:
+				return null;
 	
 			case FSX:
 				return new FSXGenerator();
