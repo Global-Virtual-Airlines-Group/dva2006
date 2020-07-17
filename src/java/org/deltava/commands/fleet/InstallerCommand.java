@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,14 +19,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class InstallerCommand extends LibraryEditCommand {
 	
-	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.P3Dv4, Simulator.XP9, Simulator.XP10, Simulator.XP11);
-
 	/**
 	 * Method called when editing the form.
 	 * @param ctx the Command context
@@ -34,7 +32,6 @@ public class InstallerCommand extends LibraryEditCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		ctx.setAttribute("fsVersions", SIMS, REQUEST);
 		super.execEdit(ctx, "fleet");
 	}
 
@@ -58,7 +55,6 @@ public class InstallerCommand extends LibraryEditCommand {
 
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
-
 		List<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -104,7 +100,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			Collection<String> appCodes = ctx.getParameters("airlines");
 			if (appCodes != null) {
 				e.getApps().clear();
-				appCodes.forEach(c -> e.addApp(SystemData.getApp(c)));
+				appCodes.stream().map(c -> SystemData.getApp(c)).filter(Objects::nonNull).forEach(e::addApp);
 			}
 			
 			// Get the message template
