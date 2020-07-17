@@ -114,6 +114,7 @@ public class RoutePlanService extends WebService {
 			routePoints.add(new AirportLocation(aA));
 			
 			// If we're saving a draft PIREP
+			String newRoute = rteBuf.toString(); 
 			if (saveDraft) {
 				GetAircraft acdao = new GetAircraft(con);
 				Aircraft ac = acdao.get(ctx.getParameter("eqType"));
@@ -155,6 +156,8 @@ public class RoutePlanService extends WebService {
 				dfr.setDate(Instant.now());
 				if (dfr.getID() == 0)
 					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
+				else if (!newRoute.equals(dfr.getRoute()))
+					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Updated Route via Route Plotter");
 				
 				// Save the flight assignment
 				if (ai != null) {
@@ -164,7 +167,7 @@ public class RoutePlanService extends WebService {
 				
 				// Save the route and commit
 				SetFlightReport frwdao = new SetFlightReport(con);
-				dfr.setRoute(rteBuf.toString());
+				dfr.setRoute(newRoute);
 				frwdao.write(dfr);
 				ctx.commitTX();
 			}
