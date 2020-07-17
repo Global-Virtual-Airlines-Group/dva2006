@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -17,11 +17,12 @@ import org.deltava.dao.ipc.GetACARSPool;
 import org.deltava.service.*;
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to provide JSON-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -63,8 +64,13 @@ public class MapJSONService extends WebService {
 		if (entriesPurged)
 			_simFDRFlightCache.add(trackIDs);
 
-		// Add the items
+		// Add the items, then prune from other virtual airlines
 		entries.addAll(trackIDs.values());
+		if (!ctx.isUserInRole("Developer")) {
+			final String airlineCode = SystemData.get("airline.code");
+			entries.removeIf(e -> !e.getPilot().getAirlineCode().equals(airlineCode));
+		}
+		
 		JSONObject jo = new JSONObject();
 		for (ACARSMapEntry entry : entries) {
 			JSONObject eo = new JSONObject();
@@ -115,8 +121,10 @@ public class MapJSONService extends WebService {
 				JSONObject po = new JSONObject();
 				po.put("name", p.getName());
 				po.put("id", p.getID());
-				if (!StringUtils.isEmpty(p.getPilotCode()))
+				if (!StringUtils.isEmpty(p.getPilotCode())) {
 					po.put("code", p.getPilotCode());
+					po.put("pn", p.getPilotNumber());
+				}
 
 				eo.put("pilot", po);
 			}
@@ -138,10 +146,6 @@ public class MapJSONService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
