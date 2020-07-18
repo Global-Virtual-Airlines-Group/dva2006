@@ -9,9 +9,9 @@ xmlreq.onreadystatechange = function() {
 		golgotha.util.setHTML('isLoading', ' - ERROR ' + xmlreq.status);
 		return false;
 	}
-		golgotha.util.setHTML('isLoading', ' - REDRAWING...');
-		
+
 	// Clean up the map - don't strip out the weather layer
+	golgotha.util.setHTML('isLoading', ' - REDRAWING...');
 	map.removeMarkers(golgotha.maps.acars.routeData);
 	map.removeMarkers(golgotha.maps.acars.routeWaypoints);
 	map.removeMarkers(golgotha.maps.acars.acPositions);
@@ -28,6 +28,7 @@ xmlreq.onreadystatechange = function() {
 	// Parse the JSON
 	const js = JSON.parse(xmlreq.responseText);
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
+	js.aircraft.sort(golgotha.maps.acars.sort);
 	for (var i = 0; i < js.aircraft.length; i++) {
 		const a = js.aircraft[i]; var mrk;
 		if (a.pal)
@@ -38,12 +39,11 @@ xmlreq.onreadystatechange = function() {
 		mrk.isExternal = a.hasOwnProperty('external_id');
 		mrk.flight_id = mrk.isExternal ? a.external_id : a.flight_id;
 		mrk.isBusy = a.busy;
-		if (a.tabs.length == 0)
-			mrk.infoLabel = a.info;
-		else {
+		if (a.tabs.length != 0) {
 			mrk.updateTab = golgotha.maps.util.updateTab;
 			mrk.tabs = a.tabs;
-		}
+		} else
+			mrk.infoLabel = a.info;
 
 		// Add the user ID
 		if ((a.pilot) && (cbo != null)) {
@@ -53,11 +53,7 @@ xmlreq.onreadystatechange = function() {
 
 			let o = new Option(lbl, a.pilot.code);
 			o.mrk = mrk;
-			try {
-				cbo.add(o, null);
-			} catch (err) {
-				cbo.add(o); // IE hack
-			}
+			cbo.add(o, null);
 			if (selectedPilot == a.pilot.code)
 				cbo.selectedIndex = (cbo.options.length - 1);
 		}
@@ -69,6 +65,7 @@ xmlreq.onreadystatechange = function() {
 	} // for
 
 	if (js.dispatch.length > 0) golgotha.event.beacon('ACARS', 'Dispatch Positions');
+	js.dispatch.sort(golgotha.maps.acars.sort); 
 	for (var i = 0; i < js.dispatch.length; i++) {
 		const d = js.dispatch[i]; var mrk;
 		if (d.pal)
@@ -78,22 +75,17 @@ xmlreq.onreadystatechange = function() {
 
 		mrk.range = d.range;
 		mrk.isBusy = d.busy;
-		if (d.tabs.length == 0)
-			mrk.infoLabel = d.info;
-		else {
+		if (d.tabs.length != 0) {
 			mrk.updateTab = golgotha.maps.util.updateTab;
 			mrk.tabs = d.tabs;
-		}
+		} else
+			mrk.infoLabel = d.info;
 
 		// Add the user ID
 		if ((d.pilot) && (cbo != null)) {
 			let o = new Option(d.pilot.name + ' (' + d.pilot.code + '/Dispatcher)', d.pilot.code);
 			o.mrk = mrk;
-			try {
-				cbo.add(o, null);
-			} catch (err) {
-				cbo.add(o); // IE hack
-			}
+			cbo.add(o, null);
 			if (selectedPilot == d.pilot.code)
 				cbo.selectedIndex = (cbo.options.length - 1);
 		}
@@ -245,7 +237,7 @@ return true;
 };
 
 golgotha.maps.acars.sort = function(e1, e2) {
-	return e1.pilot.pn - e2.pilot.pn;
+	return e1.pilot.name - e2.pilot.name;
 };
 
 golgotha.maps.acars.getServiceRange = function(marker, range) {
