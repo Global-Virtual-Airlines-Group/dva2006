@@ -31,8 +31,8 @@ public class GetACARSPurge extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR "
-			+ "ON (F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED")) {
+		try (PreparedStatement ps = prepare("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR "
+			+ "ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED")) {
 			ps.setBoolean(1, false);
 			ps.setBoolean(2, false);
 			ps.setInt(3, cutoff);
