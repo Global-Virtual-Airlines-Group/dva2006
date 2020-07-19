@@ -64,6 +64,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 
 	private int _dispatcherID;
 	private int _routeID;
+	private int _dispatchLogID;
 	
 	private int _txCode;
 	private double _loadFactor;
@@ -105,6 +106,14 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public int getRouteID() {
 		return _routeID;
+	}
+	
+	/**
+	 * Returns the database ID of the dispatch log entry.
+	 * @return the log entry database ID
+	 */
+	public int getDispatchLogID() {
+		return _dispatchLogID;
 	}
 
 	@Override
@@ -517,6 +526,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public void setRouteID(int id) {
 		_routeID = Math.max(0, id);
 	}
+	
+	/**
+	 * Updates the Dispatch Log ID used in this flight.
+	 * @param id the database ID of the dispatch data, or zero if none
+	 * @see FlightInfo#getDispatchLogID()
+	 */
+	public void setDispatchLogID(int id) {
+		_dispatchLogID = id;
+	}
 
 	/**
 	 * Updates whether this flight was flown disconnected from the ACARS server.
@@ -742,7 +760,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		_sim = sim;
 		if ((sim == Simulator.XP9) || (sim == Simulator.XP10))
 			_fdr = Recorder.XACARS;
-		else if ((sim == Simulator.P3Dv4) || (sim == Simulator.XP11))
+		else if ((sim == Simulator.P3Dv4) || (sim == Simulator.XP11) || (sim == Simulator.FS2020))
 			_isSim64Bit = true;
 	}
 
