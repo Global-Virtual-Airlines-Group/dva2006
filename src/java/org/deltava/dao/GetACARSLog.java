@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 
 import org.deltava.util.system.SystemData;
@@ -138,8 +139,8 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
+		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID)");
 		if (!terms.isEmpty()) {
 			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
@@ -184,7 +185,35 @@ public class GetACARSLog extends GetACARSData {
 			throw new DAOException(se);
 		}
 	}
-
+	
+	/**
+	 * Loads an ACARS Dispatch log entry from the database.
+	 * @param id the database ID
+	 * @return a DispatchLogEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public DispatchLogEntry getDispatchLog(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DL.*, IFNULL(FDL.ID,0) FROM acars.DISPATCH_LOG DL LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (DL.ID=FDL.LOG_ID) WHERE (DL.ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return executeDispatchLog(ps).stream().findFirst().orElse(null);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads ACARS Dispatch log entries from the database.
+	 * @return a List of DispatchLogEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<DispatchLogEntry> getDispatchLogs() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DL.*, IFNULL(FDL.ID,0) FROM acars.DISPATCH_LOG DL LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (DL.ID=FDL.LOG_ID) ORDER BY DL.ID DESC")) {
+			return executeDispatchLog(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/*
 	 * Helper method to parse Message result sets.
 	 */
@@ -200,6 +229,34 @@ public class GetACARSLog extends GetACARSData {
 			}
 		}
 
+		return results;
+	}
+
+	/*
+	 * Helper method to parse Dispatch log entry result sets.
+	 */
+	private static List<DispatchLogEntry> executeDispatchLog(PreparedStatement ps) throws SQLException {
+		List<DispatchLogEntry> results = new ArrayList<DispatchLogEntry>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				DispatchLogEntry le = new DispatchLogEntry(rs.getInt(1));
+				le.setDispatcherID(rs.getInt(2));
+				le.setPilotID(rs.getInt(3));
+				le.setCreatedOn(toInstant(rs.getTimestamp(4)));
+				le.setEquipmentType(rs.getString(5));
+				le.setCruiseAltitude(rs.getString(6));
+				le.setAirportD(SystemData.getAirport(rs.getString(7)));
+				le.setAirportA(SystemData.getAirport(rs.getString(8)));
+				le.setSimulator(Simulator.fromVersion(rs.getInt(9), Simulator.UNKNOWN));
+				le.setFuelLoad(rs.getInt(10));
+				le.setSID(rs.getString(11));
+				le.setSTAR(rs.getString(12));
+				le.setRoute(rs.getString(13));
+				le.setFlightID(rs.getInt(14));
+				results.add(le);
+			}
+		}
+		
 		return results;
 	}
 }

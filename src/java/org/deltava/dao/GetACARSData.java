@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -150,8 +150,8 @@ public class GetACARSData extends DAO {
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
 			FlightInfo info = null;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN "
-					+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN "
+				+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (F.ID=?) LIMIT 1")) {
 				ps.setInt(1, flightID);
 
 				// Get the first entry, or null
@@ -330,6 +330,7 @@ public class GetACARSData extends DAO {
 				info.setRemoteAddr(rs.getString(34));
 				info.setRouteID(rs.getInt(35));
 				info.setDispatcherID(rs.getInt(36));
+				info.setDispatchLogID(rs.getInt(37));
 				results.add(info);
 			}
 		}

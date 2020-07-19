@@ -487,7 +487,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
 				// Get the route data from the DAFIF database
-				GetACARSData ardao = new GetACARSData(con);
+				GetACARSLog ardao = new GetACARSLog(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
@@ -543,6 +543,10 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (ud != null)
 							ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
 					}
+					
+					// Load the dispatch log entry
+					if (info.getDispatchLogID() != 0)
+						ctx.setAttribute("dispatchLog", ardao.getDispatchLog(info.getDispatchLogID()), REQUEST);
 					
 					// Load the gates
 					GetGates gdao = new GetGates(con);
