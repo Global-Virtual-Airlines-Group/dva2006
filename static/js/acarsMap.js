@@ -237,7 +237,7 @@ return true;
 };
 
 golgotha.maps.acars.sort = function(e1, e2) {
-	return e1.pilot.name - e2.pilot.name;
+	return e1.pilot.name.localeCompare(e2.pilot.name);
 };
 
 golgotha.maps.acars.getServiceRange = function(marker, range) {
