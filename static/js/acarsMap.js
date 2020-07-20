@@ -28,9 +28,9 @@ xmlreq.onreadystatechange = function() {
 	// Parse the JSON
 	const js = JSON.parse(xmlreq.responseText);
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
-	js.aircraft.sort(golgotha.maps.acars.sort);
-	for (var i = 0; i < js.aircraft.length; i++) {
-		const a = js.aircraft[i]; var mrk;
+	const allAC = js.aircraft.sort(golgotha.maps.acars.sort);
+	allAC.forEach(function(a) {
+		var mrk;
 		if (a.pal)
 			mrk = new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon}, a.ll);
 		else if (a.color)
@@ -62,12 +62,12 @@ xmlreq.onreadystatechange = function() {
 		google.maps.event.addListener(mrk, 'click', golgotha.maps.acars.clickAircraft);
 		golgotha.maps.acars.acPositions.push(mrk);
 		mrk.setMap(map);
-	} // for
+	});
 
 	if (js.dispatch.length > 0) golgotha.event.beacon('ACARS', 'Dispatch Positions');
-	js.dispatch.sort(golgotha.maps.acars.sort); 
-	for (var i = 0; i < js.dispatch.length; i++) {
-		const d = js.dispatch[i]; var mrk;
+	const allDSP = js.dispatch.sort(golgotha.maps.acars.sort);
+	allDSP.forEach(function(d) { 
+		var mrk;
 		if (d.pal)
 			mrk = new golgotha.maps.IconMarker({pal:d.pal, icon:d.icon}, d.ll);
 		else if (d.color)
@@ -94,7 +94,7 @@ xmlreq.onreadystatechange = function() {
 		google.maps.event.addListener(mrk, 'click', golgotha.maps.acars.clickDispatch);
 		golgotha.maps.acars.dcPositions.push(mrk);
 		mrk.setMap(map);
-	} // for
+	});
 
 	// Enable the Google Earth button depending on if we have any aircraft
 	golgotha.util.disable('EarthButton', (js.aircraft.length == 0));
