@@ -16,18 +16,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-var filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
-golgotha.form.validate({f:f.viewType, t:'Filter Type'});
-if (filterType == 2)
- 	golgotha.form.validate({f:f.author, t:'Error Report Author'});
-else if (filterType == 3)
-	golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	const filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
+	golgotha.form.validate({f:f.viewType, t:'Filter Type'});
+	if (filterType == 2)
+	 	golgotha.form.validate({f:f.author, t:'Error Report Author'});
+	else if (filterType == 3)
+		golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.setViewType = function(idx) {
@@ -60,7 +59,7 @@ golgotha.local.setViewType = function(idx) {
  <td style="width:14%">DATE/TIME</td>
  <td class="nophone">PILOT NAME</td>
  <td style="width:6%">BUILD</td>
- <td class="nophone">FS</td>
+ <td class="nophone">SIMULATOR</td>
  <td class="left">ERROR MESSAGE</td>
 </tr>
 
