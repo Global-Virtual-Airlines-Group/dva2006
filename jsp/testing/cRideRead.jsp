@@ -68,12 +68,12 @@ golgotha.local.toggleBody = function(id) {
 </c:if>
 <tr>
  <td class="label">Assigned on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void golgotha.local.toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
+ <td class="data"><fmt:date t="HH:mm" date="${checkRide.date}" /> - <a href="javascript:void golgotha.local.toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
 </tr>
 <c:if test="${!fn:isWaiver(checkRide) && (!empty checkRide.submittedOn)}">
 <tr>
  <td class="label">Submitted on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.submittedOn}" /></td>
+ <td class="data"><fmt:date t="HH:mm" date="${checkRide.submittedOn}" /></td>
 </tr>
 </c:if>
 <c:if test="${!fn:isWaiver(checkRide)}">
@@ -95,7 +95,7 @@ golgotha.local.toggleBody = function(id) {
 <c:if test="${!empty checkRide.scoredOn}">
 <tr>
  <td class="label">Evaluated on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</td>
+ <td class="data"><fmt:date t="HH:mm" date="${checkRide.scoredOn}" /> by ${scorer.name}</td>
 </tr>
 </c:if>
 <c:if test="${!empty checkRide.expirationDate}">
