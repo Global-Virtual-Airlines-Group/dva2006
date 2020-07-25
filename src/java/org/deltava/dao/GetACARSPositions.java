@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 4.1
  */
 
@@ -62,7 +62,8 @@ public class GetACARSPositions extends GetACARSData {
 		try {
 			Map<Long, GeospaceLocation> results = new LinkedHashMap<Long, GeospaceLocation>();
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, "
-				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
+				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED, ENC_N1, ENC_N2 FROM acars.POSITIONS WHERE (FLIGHT_ID=?) "
+				+ "ORDER BY REPORT_TIME")) {
 				ps.setInt(1, flightID);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -104,6 +105,12 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setAirspace(AirspaceType.values()[rs.getInt(36)]);
 						entry.setGroundOperations(rs.getInt(37));
 						entry.setNetworkConnected(rs.getBoolean(38));
+						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(39));
+						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(40));
+						for (int eng = 0; eng < n1.length; eng++) {
+							entry.setN1(eng, n1[eng]);
+							entry.setN2(eng, n2[eng]);
+						}
 						
 						// Add to results - or just log a GeoPosition if we're on the ground
 						if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())

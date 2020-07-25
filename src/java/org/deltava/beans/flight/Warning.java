@@ -1,10 +1,10 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * An enumeration to list flight condition warnings.
  * @author Luke
- * @version 8.3
+ * @version 9.1
  * @since 8.0
  */
 
@@ -13,7 +13,7 @@ public enum Warning {
 	OVER250K("250 under 10K"), DESCENTRATE("Descent Rate"), BANK("Bank Angle"), PITCH("Pitch Angle"), GFORCE("G-Force"), TAXISPEED("Taxi Speed"), 
 	NOFUEL("No Fuel", FlightScore.DANGEROUS), OVERSPEED("Overspeed", FlightScore.DANGEROUS), STALL("Stall", FlightScore.DANGEROUS), 
 	AIRSPACE("Airspace", FlightScore.DANGEROUS), ALTITUDE("Altitude"), GEARSPEED("Gear Extension", FlightScore.DANGEROUS), 
-	GEARUP("Gear Up"), CRASH("Crash", FlightScore.DANGEROUS);
+	GEARUP("Gear Up"), CRASH("Crash", FlightScore.DANGEROUS), ENGOUT("Engine Out", FlightScore.DANGEROUS);
 
 	private final String _desc;
 	private final FlightScore _score;
