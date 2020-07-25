@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -27,8 +27,11 @@ public class ACARSRouteEntry extends RouteEntry {
 	private double _aoa;
 	private double _gForce;
 	private double _cg;
-	private double _n1;
-	private double _n2;
+	private int _engineCount;
+	private final double[] _n1 = new double[6];
+	private final double[] _n2 = new double[6];
+	private double _avgN1;
+	private double _avgN2;
 	
 	private double _viz;
 	private int _temp;
@@ -194,6 +197,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	public int getVerticalSpeed() {
 		return _vSpeed;
 	}
+	
+	/**
+	 * Returns the number of engines.
+	 * @return the engine count
+	 * @see ACARSRouteEntry#setEngineCount(int)
+	 */
+	public int getEngineCount() {
+		return _engineCount;
+	}
 
 	/**
 	 * Returns the average N1 speed of all engines.
@@ -201,7 +213,16 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#setN1(double)
 	 */
 	public double getN1() {
-		return _n1;
+		return _avgN1;
+	}
+	
+	/**
+	 * Returns an individual engine's N1 speed.
+	 * @param eng the zero-offset engine number
+	 * @return the N1 percentage
+	 */
+	public double getN1(int eng) {
+		return _n1[eng];
 	}
 
 	/**
@@ -210,7 +231,29 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#setN2(double)
 	 */
 	public double getN2() {
-		return _n2;
+		return _avgN2;
+	}
+	
+	/**
+	 * Returns an individual engine's N2 speed.
+	 * @param eng the zero-offset engine number
+	 * @return the N2 percentage
+	 */
+	public double getN2(int eng) {
+		return _n2[eng];
+	}
+	
+	/**
+	 * Returns whether an engine is not running.
+	 * @return TRUE if at least one engine is not running, otherwise FALSE
+	 */
+	public boolean isEngineOut() {
+		for (int x = 0; x < _engineCount; x++) {
+			if ((_n1[x] < 10) || (_n2[x] < 20))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -375,6 +418,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	public void setVerticalSpeed(int speed) {
 		_vSpeed = speed;
 	}
+	
+	/**
+	 * Updates the number of engines.
+	 * @param cnt the engine count
+	 * @see ACARSRouteEntry#getEngineCount()
+	 */
+	public void setEngineCount(int cnt) {
+		_engineCount = cnt;
+	}
 
 	/**
 	 * Updates the aircraft's average N1 speed.
@@ -382,7 +434,17 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#getN1()
 	 */
 	public void setN1(double nn1) {
-		_n1 = Math.max(0, nn1);
+		_avgN1 = Math.max(0, nn1);
+	}
+	
+	/**
+	 * Updates an aircraft's individual engine N1 speed.
+	 * @param eng the zero-offset engine number
+	 * @param nn1 the N1 speed as a percentage
+	 * @see ACARSRouteEntry#getN1()
+	 */
+	public void setN1(int eng, double nn1) {
+		_n1[eng] = Math.max(0, nn1);
 	}
 
 	/**
@@ -391,7 +453,17 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#getN2()
 	 */
 	public void setN2(double nn2) {
-		_n2 = Math.max(0, nn2);
+		_avgN2 = Math.max(0, nn2);
+	}
+	
+	/**
+	 * Updates an aircraft's individual engine N2 speed.
+	 * @param eng the zero-offset engine number
+	 * @param nn2 the N2 speed as a percentage
+	 * @see ACARSRouteEntry#getN2()
+	 */
+	public void setN2(int eng, double nn2) {
+		_n2[eng] = Math.max(0, nn2);
 	}
 
 	/**
@@ -594,10 +666,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		return buf.toString();
 	}
 	
-	/**
-	 * Returns the warning message.
-	 * @return the warning
-	 */
 	@Override
 	public Collection<Warning> getWarnings() {
 		Collection<Warning> warns = new LinkedHashSet<Warning>();
@@ -632,13 +700,12 @@ public class ACARSRouteEntry extends RouteEntry {
 			
 		if (isFlagSet(ACARSFlags.CRASH))
 			warns.add(Warning.CRASH);
+		if (isFlagSet(ACARSFlags.ONGROUND) && isEngineOut())
+			warns.add(Warning.ENGOUT);
 		
 		return warns;
 	}
 
-	/**
-	 * Return the Google Maps icon color.
-	 */
 	@Override
 	public String getIconColor() {
 		if (isFlagSet(ACARSFlags.TOUCHDOWN))
@@ -651,10 +718,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		return GREY;
 	}
 
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(384);
@@ -710,16 +773,16 @@ public class ACARSRouteEntry extends RouteEntry {
 		buf.append(" degrees<br />Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
 		buf.append(" feet/min<br />");
-		if (_n1 > 155) {
-			buf.append(StringUtils.format(_n1, "###0"));
+		if (_avgN1 > 155) {
+			buf.append(StringUtils.format(_avgN1, "###0"));
 			buf.append(" RPM, ");
-			buf.append(StringUtils.format(_n2, "##0.0"));
+			buf.append(StringUtils.format(_avgN2, "##0.0"));
 			buf.append("% throttle");
 		} else {
 			buf.append("N<sub>1</sub>: ");	
-			buf.append(StringUtils.format(_n1, "##0.0"));
+			buf.append(StringUtils.format(_avgN1, "##0.0"));
 			buf.append("%, N<sub>2</sub>: ");
-			buf.append(StringUtils.format(_n2, "##0.0"));
+			buf.append(StringUtils.format(_avgN2, "##0.0"));
 			buf.append('%');
 		}
 		

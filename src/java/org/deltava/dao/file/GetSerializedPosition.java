@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 4.1
  */
 
@@ -81,8 +81,19 @@ public class GetSerializedPosition extends DAO {
 			re.setVerticalSpeed(in.readShort());
 			re.setAOA(in.readFloat());
 			re.setG(in.readFloat());
-			re.setN1(in.readFloat());
-			re.setN2(in.readFloat());
+			if (version.getVersion() >= 9) {
+				re.setEngineCount(in.readShort());
+				re.setN1(in.readDouble());
+				re.setN2(in.readDouble());
+				for (int eng = 0; eng < re.getEngineCount(); eng++) {
+					re.setN1(eng, in.readDouble());
+					re.setN2(eng, in.readDouble());
+				}
+			} else {
+				re.setN1(in.readFloat());
+				re.setN2(in.readFloat());
+			}
+			
 			re.setVisibility(in.readFloat());
 			re.setFuelFlow(in.readInt());
 			re.setFlaps(in.readShort());
