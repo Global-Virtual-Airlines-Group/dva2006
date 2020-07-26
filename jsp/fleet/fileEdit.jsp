@@ -64,11 +64,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req" >${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" resize="true" className="req" >${entry.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
- <td class="label">Document Size</td>
+ <td class="label">File Size</td>
 <c:if test="${entry.size > 0}">
  <td class="data sec bld"><fmt:int value="${entry.size}" /> bytes</td>
 </c:if>
@@ -82,7 +82,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label">Document Security</td>
+ <td class="label">File Security</td>
  <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" options="${securityOptions}" /></td>
 </tr>
 <c:if test="${(empty entry) || (entry.size == 0)}">
@@ -96,7 +96,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" label="SAVE FILE" /></td>
+ <td><el:button type="submit" label="SAVE FILE" />
+<c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="userfiledelete" link="${entry}" label="DELETE FILE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
