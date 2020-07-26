@@ -18,6 +18,7 @@
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
+<content:googleAnalytics eventSupport="true" />
 <content:captcha action="home" />
 <content:pics />
 <content:favicon />
@@ -36,15 +37,15 @@
 <style type="text/css">
 div#ipV6banner {
 	position:fixed;
-	width:35%;
+	width:30%;
 	min-width:480px;
 	height:128px;
 	bottom:24px;
 	left:24px;
-	background:#efefff;
-	opacity: .525;
-	filter: alpha(opacity=52);
-	 z-index: 99;
+	background:#f4f4ff;
+	opacity: .785;
+	filter: alpha(opacity=79);
+	z-index: 99;
 }
 </style>
 </content:ip>
@@ -59,8 +60,8 @@ div#ipV6banner {
 <!-- Main Body Frame -->
 <content:region id="main">
 Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004 and Flight 
- Simulator X (including FSX: Steam Edition). We offer partial support at this time for Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11. We are working to implement more features of these programs into our aircraft 
- programs, and VATSIM approved Flight Academy.We are in no way affiliated with Delta Air Lines.<br />
+ Simulator X (including FSX: Steam Edition). We also support Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11. We are working to implement more features of these programs into our aircraft 
+ programs, and VATSIM approved Flight Academy. We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over <fmt:int value="${httpStats.bytes}" /> bytes worth of data.
 <c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in our ${forumName} discussion forum in the past 24 hours.</c:if>
@@ -238,17 +239,16 @@ If you have questions or comments, please direct them to our Corporate Offices a
 </content:page>
 <content:ip IPv6="true">
 <div id="ipV6banner" class="nophone ovalBorder mid">
-<el:img src="IPv6_128.png" caption="World IPv6 Launch" style="float:left; margin-right:20px;"/>
+<el:img src="IPv6_128.png" caption="World IPv6 Launch" style="float:left; margin-right:20px;" />
 <span class="mid bld" style="position:relative; top:28px;">You are visiting <content:airline /> today using IPv6. This new Internet addressing technology eliminates many of the hacks and workarounds needed to combat the impending exhaustion of IPv4 addresses.<br />
 <br /> 
 Thanks for doing your part to move the Internet forward to IPv6!</span>
 </div>
-<content:googleAnalytics eventSupport="true" />
 <script async>
-golgotha.event.beacon('Network', 'IPv6');</script>
-</content:ip>
-<content:ip IPv4="true">
-<content:googleAnalytics />
+golgotha.event.beacon('Network', 'IPv6');
+const dv = document.getElementById('ipV6banner');
+if (dv) dv.addEventListener('click', function(ev) { golgotha.util.show(dv, false); });
+</script>
 </content:ip>
 </body>
 </html>
