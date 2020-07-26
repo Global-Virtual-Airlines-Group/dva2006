@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Online Network user information.
  * @author Luke
- * @version 8.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -17,25 +17,22 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
 		PILOT, ATC, RATING;
 	}
 
-	private int _id;
+	private final int _id;
 	private String _firstName;
 	private String _lastName;
-	private Rating _rating;
+	private Rating _rating = Rating.OBS;
 
 	private int _databaseID;
-
 	private final OnlineNetwork _net;
 
 	/**
 	 * Initializes the bean with a given network ID.
 	 * @param id the user ID
 	 * @param net the OnlineNetwork
-	 * @throws IllegalArgumentException if id is negative
-	 * @see NetworkUser#setID(int)
 	 */
 	public NetworkUser(int id, OnlineNetwork net) {
 		super();
-		setID(id);
+		_id = Math.max(0, id);
 		_net = net;
 	}
 
@@ -57,7 +54,6 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
 	/**
 	 * Returns the user's network ID.
 	 * @return the network ID
-	 * @see NetworkUser#setID(int)
 	 */
 	public int getID() {
 		return _id;
@@ -111,15 +107,6 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
 	}
 
 	/**
-	 * Updates the user's network ID.
-	 * @param id the network ID
-	 * @see NetworkUser#getID()
-	 */
-	public void setID(int id) {
-		_id = Math.max(0, id);
-	}
-
-	/**
 	 * Updates the database ID of this User.
 	 * @param id the database ID, or 0 if this network user is not a member
 	 * @see NetworkUser#getPilotID()
@@ -167,6 +154,12 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
 				n = n.substring(0, pos);
 			if (n.endsWith(" -"))
 				n = n.substring(0, n.length() - 2);
+		}
+		
+		// Check for empty name
+		if (n.length() < 2) {
+			setLastName("N/A");
+			return;
 		}
 
 		// Split the data
