@@ -19,6 +19,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:js name="common" />
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -97,7 +98,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><el:button type="submit" label="SAVE FILE" />
-<c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="userfiledelete" link="${entry}" label="DELETE FILE" /></c:if></td>
+<c:if test="${!empty entry}">&nbsp;<el:cmdbutton url="userfiledelete" linkID="${entry.fileName}" label="DELETE FILE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
