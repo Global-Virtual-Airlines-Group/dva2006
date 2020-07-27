@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 5.4
  */
 
@@ -48,7 +48,7 @@ public class ServInfoHelper {
 		try (FileInputStream fi = new FileInputStream(f)) {
 			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi, net);
 			info = dao.getInfo();
-			if (info != null)
+			if ((info != null) && (info.getValidDate() != null))
 				_iCache.add(info);	
 		} catch (Exception e) {
 			log.error("Cannot load " + net + " ServInfo feed - " + e.getMessage(), e);
