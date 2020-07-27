@@ -43,9 +43,9 @@ public class ServInfoHelper {
 		if (info != null)
 			return info;
 		
-		File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-		boolean isJSON = f.getName().endsWith(".json");
-		try (FileInputStream fi = new FileInputStream(f)) {
+		String url = SystemData.get("online." + net.toString().toLowerCase() + ".status_url");
+		boolean isJSON = (url != null) && url.endsWith(".json");
+		try (FileInputStream fi = new FileInputStream(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"))) {
 			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi, net);
 			info = dao.getInfo();
 			if ((info != null) && (info.getValidDate() != null))
