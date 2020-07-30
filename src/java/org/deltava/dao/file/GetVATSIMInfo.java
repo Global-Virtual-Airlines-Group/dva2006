@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
@@ -94,6 +94,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 					p.setHeading(co.getInt("heading"));
 					p.setRoute(co.optString("planned_route", ""));
 					p.setComments(co.optString("planned_remarks", ""));
+					p.setEquipmentCode(co.optString("planned_aircraft"));
 					p.setAirportD(getAirport(co.optString("planned_depairport")));
 					p.setAirportA(getAirport(co.optString("planned_destairport")));
 					info.add(p);
