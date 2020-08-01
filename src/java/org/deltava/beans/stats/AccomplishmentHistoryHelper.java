@@ -1,7 +1,8 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 8.7
+ * @version 9.1
  * @since 3.2
  */
 
@@ -37,6 +38,8 @@ public class AccomplishmentHistoryHelper {
 	private final Collection<DispatchConnectionEntry> _cons = new TreeSet<DispatchConnectionEntry>();
 	
 	private static class AccomplishmentCounter {
+		
+		private final MutableInteger ZERO = new MutableInteger(0);
 
 		private int _legs;
 		private int _historicLegs;
@@ -81,6 +84,8 @@ public class AccomplishmentHistoryHelper {
 			incLeg(_daLegs, fr.getAirportD().getIATA());
 			incLeg(_aaLegs, fr.getAirportA().getIATA());
 			fr.getCaptEQType().forEach(eq -> incLeg(_pLegs, eq));
+			if (fr.getSubmittedOn() == null)
+				fr.setSubmittedOn(fr.getDate());
 		}
 		
 		static void incLeg(Map<String, MutableInteger> map, String key) {
@@ -170,19 +175,19 @@ public class AccomplishmentHistoryHelper {
 		}
 		
 		public Integer getEquipmentLegs(String eqType) {
-			return _eqLegs.containsKey(eqType) ? _eqLegs.get(eqType).getValue() : Integer.valueOf(0);
+			return _eqLegs.getOrDefault(eqType, ZERO).getValue();
 		}
 		
 		public Integer getPromotionLegs(String eqType) {
-			return _pLegs.containsKey(eqType) ? _pLegs.get(eqType).getValue() : Integer.valueOf(0);
+			return _pLegs.getOrDefault(eqType, ZERO).getValue();
 		}
 		
 		public Integer getDepartureLegs(String iata) {
-			return _daLegs.containsKey(iata) ? _daLegs.get(iata).getValue() : Integer.valueOf(0);
+			return _daLegs.getOrDefault(iata, ZERO).getValue();
 		}
 		
 		public Integer getArrivalLegs(String iata) {
-			return _aaLegs.containsKey(iata) ? _aaLegs.get(iata).getValue() : Integer.valueOf(0);
+			return _aaLegs.getOrDefault(iata, ZERO).getValue();
 		}
 	}
 	
@@ -286,7 +291,8 @@ public class AccomplishmentHistoryHelper {
 			case PROMOLEGS:
 				return a.getChoices().stream().map(eqType -> cnt.getPromotionLegs(eqType)).mapToInt(Integer::intValue).sum();
 			case MEMBERDAYS:
-				return (System.currentTimeMillis() - _usr.getCreatedOn().toEpochMilli()) / 86400_000;
+				Duration d = Duration.between(_usr.getCreatedOn(), Instant.now());
+				return d.toDays();
 			default:
 				return 0;
 		}
@@ -374,21 +380,18 @@ public class AccomplishmentHistoryHelper {
 			return null;
 		
 		// Check join date
-		if (a.getUnit() == AccomplishUnit.MEMBERDAYS) {
-			ZonedDateTime zdt = ZonedDateTime.ofInstant(_usr.getCreatedOn(), ZoneOffset.UTC);
-			return zdt.plusDays(a.getValue()).toInstant();
-		}
+		if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
+			return _usr.getCreatedOn().plus(a.getValue(), ChronoUnit.DAYS);
 			
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
 		if (a.getUnit().getDataRequired() == Data.FLIGHTS) {
 			for (FlightReport fr : _pireps) {
-				Instant dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
 				cnt.add(fr);
 				
 				// If we meet the criteria, return the date
 				if (has(a, cnt) != Result.NOTYET)
-					return dt;
+					return fr.getSubmittedOn();
 			}
 		}
 		

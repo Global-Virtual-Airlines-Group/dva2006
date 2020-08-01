@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 3.2
  */
 
@@ -31,12 +31,26 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, Auditabl
 	/**
 	 * Creates the bean.
 	 * @param name the accomplishment name
-	 * @throws NullPointerException if name is null
 	 * @see Accomplishment#setName(String)
 	 */
 	public Accomplishment(String name) {
 		super();
 		setName(name);
+	}
+	
+	/**
+	 * Creates an Accomplishment from a DatedAccomplishment
+	 * @param da the DatedAccomplishment
+	 */
+	public Accomplishment(DatedAccomplishment da) {
+		this(da.getName());
+		setID(da.getID());
+		setUnit(da.getUnit());
+		setActive(da.getActive());
+		setValue(da.getValue());
+		setPilots(da.getPilots());
+		setColor(da.getColor());
+		setOwner(da.getOwner());
 	}
 
 	/**
