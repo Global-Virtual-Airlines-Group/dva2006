@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a static Google Map on the page.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 6.0
  */
 
@@ -52,7 +52,8 @@ public class StaticMapTag extends ElementTag {
 	 * @param mrks a Collection of MapEntry beans
 	 */
 	public void setMarkers(Collection<MapEntry> mrks) {
-		_mrks.addAll(mrks);
+		if (mrks != null)
+			_mrks.addAll(mrks);
 	}
 
 	/**
