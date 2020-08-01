@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 8.1
+ * @version 9.1
  * @since 1.0
  */
 
@@ -109,15 +109,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("access", access, REQUEST);
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
-			frdao.setQueryMax(10); FlightReport lastFlight = null;
+			frdao.setQueryMax(10);
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
-			for (FlightReport fr : results) {
-				if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)) {
-					lastFlight = fr;
-					ctx.setAttribute("lastFlight", fr, REQUEST);
-					break;
-				}
-			}
+			FlightReport lastFlight = results.stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)).findFirst().orElse(null);
+			ctx.setAttribute("lastFlight", lastFlight, REQUEST);
 			
 			// Check if we can request a backout charter
 			if (lastFlight != null) {
@@ -303,18 +298,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.release();
 		}
 		
-		// Set facebook requested permissions
-		if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-			@SuppressWarnings("unchecked")
-			List<String> perms = (List<String>) SystemData.getObject("users.facebook.permissions");
-			if (ctx.isUserInRole("Admin")) {
-				perms.add("manage_pages");
-				perms.add("publish_pages");
-				ctx.setAttribute("fbPerms", perms, REQUEST);
-			} else if (!ctx.isSuperUser())
-				ctx.setAttribute("fbPerms", perms, REQUEST);
-		}
-
 		// Figure out the image to display
 		Map<?, ?> acImgs = (Map<?, ?>) SystemData.getObject("pcImages");
 		if (acImgs != null)
