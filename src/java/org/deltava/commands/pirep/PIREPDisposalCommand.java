@@ -163,10 +163,12 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(acchelper::add);
 
-				// Load accomplishments - only save the ones we don't meet yet
+				// Load accomplishments - only save the ones we haven't obtained yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
-
+				Collection<Accomplishment> allAccs = accdao.getAll();
+				Collection<Accomplishment> pAccs = accdao.getByPilot(p, SystemData.get("airline.db")).stream().map(Accomplishment::new).collect(Collectors.toList());
+				Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).collect(Collectors.toList());
+				
 				// Add the approved PIREP
 				acchelper.add(fr);
 
@@ -175,11 +177,15 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext();) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
-						acwdao.achieve(p.getID(), a, Instant.now());
 						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());
+						if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
+							upd.setDate(acchelper.achieved(a));
+						
+						acwdao.achieve(p.getID(), a, upd.getDate());
 						upds.add(upd);
+						fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, upd.getDescription());
 					} else
 						i.remove();
 				}
@@ -263,6 +269,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					SetAssignment fawdao = new SetAssignment(con);
 					fawdao.complete(assign);
 					ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Flight Assignment Completed");
 				}
 			}
 
@@ -331,10 +338,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 
-			// Commit the transaction
+			// Commit and Invalidate the pilot again to reflect the new totals
 			ctx.commitTX();
-
-			// Invalidate the pilot again to reflect the new totals
 			if (op == FlightStatus.OK)
 				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getAuthorID()));
 
