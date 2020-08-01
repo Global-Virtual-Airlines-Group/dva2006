@@ -15,7 +15,7 @@ import org.deltava.dao.http.GetGoogleCAPTCHA;
 /**
  * A Web Service to validate Google RECAPTCHA tokens.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
@@ -54,7 +54,7 @@ public class ValidateCAPTCHAService extends WebService {
 			s = ctx.getRequest().getSession(true);
 			s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);	
 		} catch (Exception e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
 		
 		return SC_OK;
