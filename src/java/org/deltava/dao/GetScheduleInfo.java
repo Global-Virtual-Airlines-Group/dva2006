@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class GetScheduleInfo extends DAO {
 		// Check the cache
 		CacheableLong result = _schedSizeCache.get(GetSchedule.class);
 		if (result != null)
-			return (int) result.getValue();
+			return result.intValue();
 		
 		try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM SCHEDULE")) {
 			try (ResultSet rs = ps.executeQuery()) {
@@ -46,7 +46,7 @@ public class GetScheduleInfo extends DAO {
 			}
 
 			_schedSizeCache.add(result);
-			return (int) result.getValue();
+			return result.intValue();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
