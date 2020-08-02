@@ -43,11 +43,10 @@
 </tr>
 
 <!-- Table Data Section -->
-<c:forEach var="airline" items="${docs.keySet()}">
 <tr class="title caps">
- <td colspan="7" class="left">DOCUMENT LIBRARY - ${airline.name}</td>
+ <td colspan="7" class="left">DOCUMENT LIBRARY - <content:airline /></td>
 </tr>
-<c:forEach var="doc" items="${docs[airline]}">
+<c:forEach var="doc" items="${docs}">
 <c:set var="ac" value="${accessMap[doc]}" scope="page" />
 <c:set var="docType" value="${doc.type}" scope="page" />
 <view:row entry="${doc}">
@@ -74,7 +73,7 @@
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
-</c:forEach>
+
 <!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.fleet.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site command to display the Document Library. Note that this command will display library entries from other
  * Airlines, with the proviso that <i>all files are in the same library path</i>.
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -29,28 +28,6 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 	private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
 	
-	private class AppComparator implements Comparator<AirlineInformation> {
-		
-		private final String _myCode;
-		
-		AppComparator() {
-			super();
-			_myCode = SystemData.get("airline.code");
-		}
-		
-		@Override
-		public int compare(AirlineInformation ai1, AirlineInformation ai2) {
-			if (ai1.getCode().equals(ai2.getCode()))
-				return 0;
-			else if (ai1.getCode().equals(_myCode))
-				return -1;
-			else if (ai2.getCode().equals(_myCode))
-				return 1;
-			
-			return ai1.compareTo(ai2);
-		}
-	}
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -61,23 +38,13 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 		// Calculate access for adding content
 		Collection<Course> courses = null;
-		Map<AirlineInformation, Collection<Manual>> results = new TreeMap<AirlineInformation, Collection<Manual>>(new AppComparator());
+		Collection<Manual> results = new ArrayList<Manual>();
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the document libraries from the other airlines
+			// Get the documents
 			GetDocuments dao = new GetDocuments(con);
-			Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
-			for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
-				AirlineInformation info = (AirlineInformation) i.next();
-				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
-					results.put(info, dao.getManuals(info.getDB()));
-				else {
-					Collection<Manual> entries = dao.getManuals(info.getDB());
-					appendDB(entries, info.getDB());
-					results.put(info, entries);
-				}
-			}
+			results.addAll(dao.getManuals(SystemData.get("airline.db")));
 
 			// Load the user's Flight Academy courses
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
@@ -90,24 +57,21 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 		// Validate our access to the results
 		Map<Manual, ManualAccessControl> acMap = new HashMap<Manual, ManualAccessControl>();
-		for (Iterator<Collection<Manual>> ci = results.values().iterator(); ci.hasNext();) {
-			Collection<Manual> manuals = ci.next();
-			for (Iterator<Manual> i = manuals.iterator(); i.hasNext();) {
-				Manual e = i.next();
-				ManualAccessControl ac = new ManualAccessControl(ctx, courses);
-				ac.setEntry(e);
-				ac.validate();
+		for (Iterator<Manual> i = results.iterator(); i.hasNext();) {
+			Manual e = i.next();
+			ManualAccessControl ac = new ManualAccessControl(ctx, courses);
+			ac.setEntry(e);
+			ac.validate();
 
-				// Check that the resource exists
-				if (e.getSize() == 0) {
-					log.warn(e.getFullName() + " not found in file system!");
-					if (!ctx.isUserInRole("Fleet"))
-						i.remove();
-				} else if (!ac.getCanView())
+			// Check that the resource exists
+			if (e.getSize() == 0) {
+				log.warn(e.getFullName() + " not found in file system!");
+				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
-				else
-					acMap.put(e, ac);
-			}
+			} else if (!ac.getCanView())
+				i.remove();
+
+			acMap.put(e, ac);
 		}
 
 		// Save the results in the request

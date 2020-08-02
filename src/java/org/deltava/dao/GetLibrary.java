@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -58,7 +58,9 @@ public class GetLibrary extends DAO {
 				ps.setString(1, SystemData.get("airline.code"));
 			
 			List<Installer> results = loadInstallers(ps);
-			loadDownloadCounts(results);
+			for (Installer i : results)
+				loadDownloadCount(i);
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -89,8 +91,8 @@ public class GetLibrary extends DAO {
 			if (results.isEmpty()) return null;
 			
 			// Get airline data
-			loadDownloadCounts(results);
 			Installer i = results.stream().findFirst().orElse(null);
+			loadDownloadCount(i);
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)")) {
 				ps.setString(1, fName);
 				try (ResultSet rs = ps.executeQuery()) {
@@ -129,8 +131,8 @@ public class GetLibrary extends DAO {
 			if (results.isEmpty()) return null;
 			
 			// Get airline data
-			loadDownloadCounts(results);
 			Installer i = results.stream().findFirst().orElse(null);
+			loadDownloadCount(i);
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)")) {
 				ps.setString(1, i.getFileName());
 				try (ResultSet rs = ps.executeQuery()) {
@@ -263,44 +265,26 @@ public class GetLibrary extends DAO {
 	}
 	
 	/**
-	 * Helper method to fetch download counts from the cache.
-	 * @param files the Collection to populate
+	 * Helper method to load download counts for a Library Entry.
+	 * @param le the LibraryEntry to populate
 	 * @throws SQLException if an error occurs
 	 */
-	protected void loadDownloadCounts(Collection<? extends FleetEntry> files) throws SQLException {
+	protected void loadDownloadCount(LibraryEntry le) throws SQLException {
 		
-		// Check the cache and build the SQL statement
-		int entrySize = 0;
-		StringBuilder sqlBuf = new StringBuilder("SELECT FILENAME, COUNT(*) FROM DOWNLOADS WHERE FILENAME IN (");
-		for (Iterator<? extends FleetEntry> i = files.iterator(); i.hasNext(); ) {
-			FleetEntry fe = i.next();
-			CacheableLong cnt = _dlCache.get(fe.getFileName());
-			if (cnt == null) {
-				entrySize++;
-				sqlBuf.append('\'');
-				sqlBuf.append(fe.getFileName());
-				sqlBuf.append("\',");
-			} else
-				fe.setDownloadCount((int) cnt.getValue());
+		// Check the cache
+		CacheableLong cnt = _dlCache.get(le.getFileName());
+		if (cnt != null) {
+			le.setDownloadCount(cnt.intValue());
+			return;
 		}
 		
-		if (entrySize == 0)
-			return;
-		
-		// Load from the database
-		sqlBuf.setLength(sqlBuf.length() - 1);
-		sqlBuf.append(") GROUP BY FILENAME");
-		Map<String, ? extends FleetEntry> is = CollectionUtils.createMap(files, FleetEntry::getFileName);
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM DOWNLOADS WHERE (FILENAME=?)")) {
+			ps.setString(1, le.getFileName());
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					FleetEntry fe = is.get(rs.getString(1));
-					if (fe != null) {
-						fe.setDownloadCount(rs.getInt(2));
-						CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
-						_dlCache.add(cnt);
-					}
-				}
+				int downloadCount = rs.next() ? rs.getInt(1) : 0;
+				le.setDownloadCount(downloadCount);
+				cnt = new CacheableLong(le.getFileName(), downloadCount);
+				_dlCache.add(cnt);
 			}
 		}
 	}
