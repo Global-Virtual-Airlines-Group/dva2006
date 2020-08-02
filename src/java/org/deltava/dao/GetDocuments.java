@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -157,7 +157,9 @@ public class GetDocuments extends GetLibrary {
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			Collection<Manual> results = loadManuals(ps);
-			loadDownloadCounts(results);
+			for (Manual m : results)
+				loadDownloadCount(m);
+			
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, Manual::getFileName);
 			loadCertifications(docMap);
 			return results;
@@ -183,7 +185,9 @@ public class GetDocuments extends GetLibrary {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, certName);
 			Collection<Manual> results = loadManuals(ps);
-			loadDownloadCounts(results);
+			for (Manual m : results)
+				loadDownloadCount(m);
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
