@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class GetPilotRecognition extends GetPilot {
      * @return the number of pilots
      * @throws DAOException if a JDBC error occurs
      */
-    public long hasPromotionQueue(String eqType) throws DAOException {
+    public int hasPromotionQueue(String eqType) throws DAOException {
     	
     	// Remap "all"
     	String eq = (eqType == null) ? "ALL" : eqType; 
@@ -72,7 +72,7 @@ public class GetPilotRecognition extends GetPilot {
     	// Check the cache
     	CacheableLong result = _promoCache.get(eq);
     	if (result != null)
-    		return result.getValue();
+    		return result.intValue();
 
     	// Get the results
     	Collection<Integer> results = getPromotionQueue(eq);
