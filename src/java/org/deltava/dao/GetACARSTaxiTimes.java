@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 8.6
  */
 
@@ -47,7 +47,7 @@ public class GetACARSTaxiTimes extends DAO {
 		String key = buildCacheKey(a, db, true);
 		CacheableLong depTime = _cache.get(key);
 		if (depTime != null)
-			return (int) depTime.getValue();
+			return depTime.intValue();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, TAXI_TIME, TAKEOFF_TIME)) AS TX_TKO FROM ");
@@ -86,7 +86,7 @@ public class GetACARSTaxiTimes extends DAO {
 		String key = buildCacheKey(a, db, false);
 		CacheableLong arrTime = _cache.get(key);
 		if (arrTime != null)
-			return (int) arrTime.getValue();
+			return arrTime.intValue();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, LANDING_TIME, END_TIME)) AS TX_LND FROM ");

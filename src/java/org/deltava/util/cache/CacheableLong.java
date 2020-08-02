@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A utility class to create a cacheable Long.
  * @author Luke
- * @version 6.1
+ * @version 9.1
  * @since 1.0
  */
 
@@ -40,6 +40,14 @@ public class CacheableLong implements Cacheable {
 		return _value;
 	}
 	
+	/**
+	 * Returns the value as a 32-bit integer.
+	 * @return an int
+	 */
+	public int intValue() {
+		return (int) _value;
+	}
+	
 	@Override
 	public int hashCode() {
 		return _key.hashCode();
@@ -52,6 +60,6 @@ public class CacheableLong implements Cacheable {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(_value);
+		return Long.toString(_value);
 	}
 }
