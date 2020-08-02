@@ -22,7 +22,11 @@
 		<files>
 			<enabled type="Boolean">true</enabled>
 			<list name="categories" attr="category" unique="true">
+				<category>Banner Images</category>
+				<category>Flight Plans</category>
 				<category>Fuel Planners</category>
+				<category>Panels</category>
+				<category>Repaints</category>
 			</list>
 
 			<!-- Use mod_xsendfile -->
@@ -520,7 +524,7 @@
 		<js>js</js>
 		<img>img</img>
 		<library>/home/www/library</library>
-		<userfiles>/home/www/library/usrfiles</userfiles>
+		<userfiles>/home/www/userfiles</userfiles>
 		<video>/home/www/video</video>
 		<upload>/home/www/upload</upload>
 		<httplog>/var/log/www</httplog>

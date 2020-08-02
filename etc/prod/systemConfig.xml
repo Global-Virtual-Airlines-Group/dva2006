@@ -22,7 +22,11 @@
 		<files>
 			<enabled type="Boolean">true</enabled>
 			<list name="categories" attr="category" unique="true">
+				<category>Banner Images</category>
+				<category>Flight Plans</category>
 				<category>Fuel Planners</category>
+				<category>Panels</category>
+				<category>Repaints</category>
 			</list>
 
 			<!-- Use mod_xsendfile -->
