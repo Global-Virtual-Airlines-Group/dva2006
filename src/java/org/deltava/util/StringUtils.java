@@ -15,7 +15,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -51,15 +51,34 @@ public final class StringUtils {
 		boolean trailingQ = (s.charAt(s.length() - 1) == '"');
 		return (leadingQ && trailingQ) ? s.substring(1, s.length() - 1) : s;
 	}
+	
+	/**
+	 * Escapes single and double quotes in a string with a leading backslash.
+	 * @param s the string
+	 * @return the escaped string
+	 * @throws NullPointerException if s is null
+	 */
+	public static String escapeQuotes(String s) {
+		StringBuilder buf = new StringBuilder(s.length() + 4);
+		for (int x = 0; x < s.length(); x++) {
+			char c = s.charAt(x);
+			if ((c == '\'') || (c == '\"') || (c == '\\'))
+				buf.append('\\');
+			
+			buf.append(c);
+		}
+		
+		return buf.toString();
+	}
 
 	/**
 	 * Converts a string to "proper case".
-	 * @param s The string to convert
+	 * @param s the string to convert
 	 * @return the converted string
 	 * @throws NullPointerException if the string is null
 	 */
 	public static String properCase(String s) {
-		StringBuilder buf = new StringBuilder(s.length());
+		StringBuilder buf = new StringBuilder(s.length() + 2);
 		buf.append(Character.toUpperCase(s.charAt(0))); // Convert first character to uppercase always
 		for (int x = 1; x < s.length(); x++) {
 			char c = s.charAt(x);
