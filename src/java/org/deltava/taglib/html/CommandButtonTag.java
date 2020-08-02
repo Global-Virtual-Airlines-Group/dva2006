@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.taglib.ContentHelper;
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
- * @version 6.0
+ * @version 9.1
  * @since 1.0 
  */
 
@@ -125,8 +126,7 @@ public class CommandButtonTag extends ButtonTag {
       }
 
       // Sets the JavaScript get/post function
-      String jsFuncName = (_doPost) ? "post" : "get";
-      super.setOnClick("void golgotha.form." + jsFuncName + "(\'" + url.toString() + "\')");
+      super.setOnClick("void golgotha.form." + ((_doPost) ? "post" : "get") + "(\'" + StringUtils.escapeQuotes(url.toString()) + "\')");
       super.setClassName("cmdButton");
 
       // Calls the superclass renderer
