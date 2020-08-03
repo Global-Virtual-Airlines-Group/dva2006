@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -11,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -70,12 +71,12 @@ public class SetStatusUpdate extends DAO {
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
-				long lastUpdateTime = 0;
+				Instant lastUpdateTime = Instant.MIN;
 				for (StatusUpdate upd : updates) {
-					if (upd.getDate().toEpochMilli() <= lastUpdateTime)
-						upd.setDate(upd.getDate().plusMillis(2));
+					if (!upd.getDate().isAfter(lastUpdateTime))
+						upd.setDate(upd.getDate().plusMillis(50));
 					
-					lastUpdateTime = upd.getDate().toEpochMilli();
+					lastUpdateTime = upd.getDate();
 				
 					// Write the data
 					ps.setInt(1, upd.getID());
@@ -97,8 +98,7 @@ public class SetStatusUpdate extends DAO {
 	}
 	
 	/**
-	 * Clears spurious Leave of Absence records created within 24 hours if a Pilot
-	 * returns from an LOA immediately.
+	 * Clears spurious Leave of Absence records created within 24 hours if a Pilot returns from an LOA immediately.
 	 * @param id the Pilot database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
