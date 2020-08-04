@@ -2,8 +2,9 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.time.Instant;
 import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 
@@ -17,6 +18,14 @@ import org.deltava.util.system.SystemData;
  */
 
 public class SetStatusUpdate extends DAO {
+	
+	private class UpdateComparator implements Comparator<StatusUpdate> {
+
+		@Override
+		public int compare(StatusUpdate upd1, StatusUpdate upd2) {
+			return upd1.getDate().compareTo(upd2.getDate());
+		}
+	}
 
 	/**
 	 * Initializes the Data Access Object.
@@ -68,15 +77,21 @@ public class SetStatusUpdate extends DAO {
 	public void write(Collection<StatusUpdate> updates) throws DAOException {
 		if (updates.isEmpty()) return;
 		
+		// Sort by date to ensure no duplicate dates
+		List<StatusUpdate> upds = new ArrayList<StatusUpdate>(updates);
+		upds.sort(new UpdateComparator());
+		
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
 				Instant lastUpdateTime = Instant.MIN;
-				for (StatusUpdate upd : updates) {
-					if (!upd.getDate().isAfter(lastUpdateTime))
-						upd.setDate(upd.getDate().plusMillis(50));
+				for (StatusUpdate upd : upds) {
+					Instant updDate = upd.getDate().truncatedTo(ChronoUnit.MILLIS);
+					if (!updDate.isAfter(lastUpdateTime))
+						updDate = lastUpdateTime.plusMillis(5);
 					
-					lastUpdateTime = upd.getDate();
+					lastUpdateTime = updDate;
+					upd.setDate(updDate);
 				
 					// Write the data
 					ps.setInt(1, upd.getID());
