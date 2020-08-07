@@ -33,22 +33,6 @@
 <meta property="og:locality" content="Atlanta" />
 <meta property="og:region" content="GA" />
 <meta property="og:country-name" content="USA" />
-<content:ip IPv6="true">
-<style type="text/css">
-div#ipV6banner {
-	position:fixed;
-	width:30%;
-	min-width:480px;
-	height:128px;
-	bottom:24px;
-	left:24px;
-	background:#f4f4ff;
-	opacity: .785;
-	filter: alpha(opacity=79);
-	z-index: 99;
-}
-</style>
-</content:ip>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -67,10 +51,12 @@ Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> 
 <c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in our ${forumName} discussion forum in the past 24 hours.</c:if>
 <c:if test="${(!empty runTimeDays) && (runTimeDays > 0)}"> Our web server has been running for <fmt:quantity value="${runTimeDays}" single="day" />, <fmt:quantity value="${runTimeHours}" single="hour" /> and <fmt:quantity value="${runTimeMinutes}" single="minute" />.</c:if>
 <br />
+<br />
 <content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join the <content:airline /> active pilot roster, you may submit flight reports and contribute to our discussion forums and image library. If you are interested in 
 a serious virtual airline, designed for both the experienced pilot and the novice (and all of us that are in between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br />
 <br /></content:filter>
+<br />
 <!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
@@ -237,18 +223,5 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <content:copyright />
 </content:region>
 </content:page>
-<content:ip IPv6="true">
-<div id="ipV6banner" class="nophone ovalBorder mid">
-<el:img src="IPv6_128.png" caption="World IPv6 Launch" style="float:left; margin-right:20px;" />
-<span class="mid bld" style="position:relative; top:10px;">You are visiting <content:airline /> today using IPv6. This new Internet addressing technology eliminates many of the hacks and workarounds needed to combat the impending exhaustion of IPv4 addresses.<br />
-<br /> 
-Thanks for doing your part to move the Internet forward to IPv6!</span>
-</div>
-<script async>
-golgotha.event.beacon('Network', 'IPv6');
-const dv = document.getElementById('ipV6banner');
-if (dv) dv.addEventListener('click', function(ev) { golgotha.util.show(dv, false); });
-</script>
-</content:ip>
 </body>
 </html>
