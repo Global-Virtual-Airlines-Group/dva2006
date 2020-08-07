@@ -12,6 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -36,7 +37,8 @@
  <td style="width:15%">EQUIPMENT TYPE</td>
  <td style="width:10%">STAGE</td>
  <td style="width:10%">MIN STAGE</td>
- <td style="width:10%">SIZE</td>
+ <td>SIZE</td>
+ <td style="width:15%">PASS / TOTAL</td>
  <td>PASSING SCORE</td>
 </tr>
 
@@ -48,7 +50,8 @@
  <td class="sec bld"><fmt:int value="${exam.stage}" /></td>
  <td class="sec"><fmt:int value="${exam.minStage}" /></td>
  <td class="bld"><fmt:int value="${exam.size}" /></td>
- <td><fmt:int value="${exam.passScore}" /> (<fmt:dec value="${exam.passScore / exam.size * 100}" />%)</td>
+ <td><fmt:int value="${exam.passCount}" /> / <fmt:int value="${exam.total}" /><c:if test="${exam.total > 0}" > (<fmt:dec value="${exam.passCount * 100 / exam.total}" />)</c:if></td>
+ <td><fmt:int value="${exam.passScore}" /> (<fmt:dec value="${exam.passScore * 100 / exam.size}" />%)</td>
 </view:row>
 </c:forEach>
 

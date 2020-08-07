@@ -11,6 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -40,7 +41,7 @@
 </tr>
 <tr>
  <td class="label">Questions</td>
- <td class="data"><fmt:int value="${eProfile.size}" /></td>
+ <td class="data"><fmt:int value="${eProfile.size}" /><c:if test="${eProfile.questionPoolSize > 0}">&nbsp;(Question Pool: <fmt:int value="${eProfile.questionPoolSize}" /> questions)</c:if></td>
 </tr>
 <tr>
  <td class="label">Passing Score</td>
@@ -65,6 +66,16 @@
  <td class="data"><fmt:list value="${eProfile.airlines}" delim=", " /></td>
 </tr>
 <tr>
+<c:if test="${eProfile.total > 0}">
+ <td class="label">Statistics</td>
+ <td class="data">Passed <fmt:int value="${eProfile.passCount}" /> times, <fmt:int value="${eProfile.total}" /> total (<fmt:dec value="${eProfile.passCount * 100 / eProfile.total}" /> %)</td>
+</c:if>
+<c:if test="${eProfile.total == 0}">
+ <td class="label">&nbsp;</td>
+ <td class="data sec bld caps">This Examination has never been Offered</td>
+</c:if>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data bld caps">
 <c:if test="${eProfile.active}"><span class="ter">Examination is Available</span></c:if>
@@ -81,8 +92,8 @@ Examination is part of the <content:airline /> Flight Academy</c:if></td>
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${access.canEdit}">
-<el:cmdbutton url="eprofile" linkID="${eProfile.name}" op="edit" label="EDIT EXAMINATION PROFILE" /></c:if></td>
+<c:if test="${access.canEdit}"><el:cmdbutton url="eprofile" linkID="${eProfile.name}" op="edit" label="EDIT EXAMINATION PROFILE" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="epdelete" linkID="${eProfile.name}" label="DELETE EXAMINATION PROFILE" /></c:if></td>
 </tr>
 </el:table>
 <content:copyright />

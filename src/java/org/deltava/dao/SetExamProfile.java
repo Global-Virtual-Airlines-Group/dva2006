@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for writing Examination Profiles and Check Ride scripts.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -176,6 +176,20 @@ public class SetExamProfile extends DAO {
 		try (PreparedStatement ps = prepare("DELETE FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?)")) {
 			ps.setString(1, key.getEquipmentType());
 			ps.setBoolean(2, key.isCurrency());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Deletes an Examination Profile from the database.
+	 * @param ep an ExamProfile bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(ExamProfile ep) throws DAOException {
+		try (PreparedStatement ps = prepare("DELETE FROM exams.EXAMINFO WHERE (NAME=?)")){
+			ps.setString(1, ep.getName());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
