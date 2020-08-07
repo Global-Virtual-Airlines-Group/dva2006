@@ -10,17 +10,18 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Profiles.
  * @author Luke
- * @version 3.6
+ * @version 9.1
  * @since 1.0
  */
 
 public class ExamProfileAccessControl extends AccessControl {
 
-	private ExamProfile _ep;
+	private final ExamProfile _ep;
 
 	private boolean _canRead;
 	private boolean _canCreate;
 	private boolean _canEdit;
+	private boolean _canDelete;
 
 	/**
 	 * Initialize the Access Controller.
@@ -32,9 +33,6 @@ public class ExamProfileAccessControl extends AccessControl {
 		_ep = ep;
 	}
 
-	/**
-	 * Calculates access rights.
-	 */
 	@Override
 	public void validate() {
 		validateContext();
@@ -53,6 +51,7 @@ public class ExamProfileAccessControl extends AccessControl {
 		// Check if we are a member of the HR role
 		_canEdit = isOurAirline && (isHR || isAdmin);
 		_canRead = _canEdit || isExaminer || (_ep.getAcademy() && _ctx.isUserInRole("AcademyAudit"));
+		_canDelete = _canEdit && (_ep.getTotal() == 0);
 	}
 
 	/**
@@ -77,5 +76,13 @@ public class ExamProfileAccessControl extends AccessControl {
 	 */
 	public boolean getCanCreate() {
 		return _canCreate;
+	}
+	
+	/**
+	 * Returns if the profile can be deleted.
+	 * @return TRUE if it can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
 	}
 }
