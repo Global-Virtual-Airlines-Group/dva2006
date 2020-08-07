@@ -1,10 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.Simulator;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.beans.testing.*;
 
 import org.deltava.util.*;
@@ -13,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -34,7 +36,8 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ExamProfile getExamProfile(String examName) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.EXAMINFO WHERE (NAME=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EI.*, COUNT(E.ID), SUM(E.PASS), COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) "
+			+ "LEFT JOIN exams.QE_INFO QE ON (EI.NAME=QE.EXAM_NAME) WHERE (EI.NAME=?) GROUP BY EI.NAME LIMIT 1")) {
 			ps.setString(1, examName);
 
 			// Execute the query - return null if not found
@@ -53,7 +56,8 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getAllExamProfiles() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM exams.EXAMINFO ORDER BY STAGE, NAME")) {
+		try (PreparedStatement ps = prepare("SELECT EI.*, COUNT(E.ID), SUM(E.PASS), COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) "
+			+ "LEFT JOIN exams.QE_INFO QE ON (EI.NAME=QE.EXAM_NAME) GROUP BY EI.NAME ORDER BY EI.STAGE, EI.NAME")) {
 			List<ExamProfile> results = execute(ps);
 			loadAirlines(results);
 			loadScorers(results);
@@ -69,15 +73,8 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getExamProfiles() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME")) {
-			ps.setString(1, SystemData.get("airline.code"));
-			List<ExamProfile> results = execute(ps);
-			loadAirlines(results);
-			loadScorers(results);
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
+		AirlineInformation ai = SystemData.getApp(null);
+		return getAllExamProfiles().stream().filter(ep -> ep.getAirlines().contains(ai)).collect(Collectors.toList());
 	}
 
 	/**
@@ -87,7 +84,8 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getExamProfiles(boolean isAcademy) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (E.ACADEMY=?) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME")) {
+		try (PreparedStatement ps = prepare("SELECT EI.*, COUNT(E.ID), SUM(E.PASS) FROM exams.EXAM_AIRLINES EA, exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) WHERE (EI.NAME=EA.NAME) AND (EI.ACADEMY=?) "
+			+ "AND (EA.AIRLINE=?) GROUP BY EI.NAME ORDER BY EI.STAGE, EI.NAME")) {
 			ps.setBoolean(1, isAcademy);
 			ps.setString(2, SystemData.get("airline.code"));
 			List<ExamProfile> results = execute(ps);
@@ -171,6 +169,9 @@ public class GetExamProfiles extends DAO {
 				ep.setAcademy(rs.getBoolean(9));
 				ep.setNotify(rs.getBoolean(10));
 				ep.setOwner(SystemData.getApp(rs.getString(11)));
+				ep.setTotal(rs.getInt(12));
+				ep.setPassCount(rs.getInt(13));
+				ep.setQuestionPoolSize(rs.getInt(14));
 				results.add(ep);
 			}
 		}
