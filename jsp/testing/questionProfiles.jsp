@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script>
 golgotha.local.update = function() { return document.forms[0].submit(); };
@@ -35,8 +36,7 @@ golgotha.local.update = function() { return document.forms[0].submit(); };
  <td style="width:12%">CORRECT / ASKED</td>
  <td style="width:6%">&nbsp;</td>
  <td style="width:7%">&nbsp;</td>
- <td style="width:20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
- <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
+ <td style="width:20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />&nbsp;<el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
  <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void golgotha.local.update()" />
  MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${minExams}" />
  <el:box name="isAcademy" value="true" checked="${academyOnly}" className="small" label="Academy Only" /> <el:button type="submit" label="GO" /></td>

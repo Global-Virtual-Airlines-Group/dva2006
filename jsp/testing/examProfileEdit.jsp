@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:set var="examName" value="${empty eProfile ? 'New Examination' : eProfile.name}" scope="page" />
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script async>
 golgotha.local.validate = function(f)
@@ -85,6 +87,16 @@ return true;
  <td class="label top">Allowed Scorers</td>
  <td class="data"><span class="ita">Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</span><br /> 
 <el:check name="scorerIDs" width="170" cols="5" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
+</tr>
+<tr>
+<c:if test="${eProfile.total > 0}">
+ <td class="label">Statistics</td>
+ <td class="data">Passed <fmt:int value="${eProfile.passCount}" /> times, <fmt:int value="${eProfile.total}" /> total (<fmt:dec value="${eProfile.passCount * 100 / eProfile.total}" /> %)</td>
+</c:if>
+<c:if test="${!empty eProfile && (eProfile.total == 0)}">
+ <td class="label">&nbsp;</td>
+ <td class="data sec bld caps">This Examination has never been Offered</td>
+</c:if>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
