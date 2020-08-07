@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 8.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -28,6 +28,10 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	private boolean _active;
 	private boolean _flightAcademy;
 	private boolean _notify;
+	
+	private int _examCount;
+	private int _passCount;
+	private int _poolSize;
 
 	private AirlineInformation _owner;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -131,6 +135,33 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	 */
 	public boolean getNotify() {
 		return _notify;
+	}
+	
+	/**
+	 * Returns the total number of times this Examination has been taken.
+	 * @return the number of Examinations
+	 * @see ExamProfile#setTotal(int)
+	 */
+	public int getTotal() {
+		return _examCount;
+	}
+	
+	/**
+	 * Returns the total number of times this Examination has been passed.
+	 * @return the number of passed Examinations
+	 * @see ExamProfile#setPassCount(int)
+	 */
+	public int getPassCount() {
+		return _passCount;
+	}
+	
+	/**
+	 * Returns the number of questions in this Examination's question pool.
+	 * @return the number of questions
+	 * @see ExamProfile#setQuestionPoolSize(int)
+	 */
+	public int getQuestionPoolSize() {
+		return _poolSize;
 	}
 
 	/**
@@ -258,6 +289,33 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	 */
 	public void setNotify(boolean doNotify) {
 		_notify = doNotify;
+	}
+	
+	/**
+	 * Updates the total number of times this Examination has been taken.
+	 * @param total the number of times
+	 * @see ExamProfile#getTotal()
+	 */
+	public void setTotal(int total) {
+		_examCount = total;
+	}
+	
+	/**
+	 * Updates the total numebr of times this Examination has been passed.
+	 * @param cnt the number of passed Examinations
+	 * @see ExamProfile#getPassCount()
+	 */
+	public void setPassCount(int cnt) {
+		_passCount = cnt;
+	}
+	
+	/**
+	 * Updates the number of Exam Questions in this Examination's question pool.
+	 * @param cnt the number of questions
+	 * @see ExamProfile#getQuestionPoolSize()
+	 */
+	public void setQuestionPoolSize(int cnt) {
+		_poolSize = cnt;
 	}
 
 	/**
