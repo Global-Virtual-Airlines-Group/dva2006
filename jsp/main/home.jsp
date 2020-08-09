@@ -81,21 +81,6 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </c:forEach>
 </el:table>
 </c:if>
-<c:if test="${!empty latestNews}">
-<!-- Latest News -->
-<el:table className="view">
-<c:forEach var="entry" items="${latestNews}">
-<tr>
- <td class="priB" width="20%"><fmt:date fmt="d" date="${entry.date}" /></td>
- <td class="pri bld mid"><fmt:text value="${entry.subject}" /></td>
- <td class="secB" width="20%">${entry.authorName}</td>
-</tr>
-<tr>
- <td class="left" colspan="3"><fmt:msg value="${entry.body}" bbCode="true" /></td>
-</tr>
-</c:forEach>
-</el:table>
-</c:if>
 <c:if test="${!empty acarsPool}">
 <content:attr attr="isHR" roles="HR" value="true" />
 <!-- Current ACARS server connections -->
@@ -210,6 +195,21 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 <tr>
  <td class="priB mid">${pilot.pilotCode}</td>
  <td class="def mid">${pilot.rank.name}&nbsp;${pilot.name} (${pilot.equipmentType})</td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
+<c:if test="${!empty latestNews}">
+<!-- Latest News -->
+<el:table className="view">
+<c:forEach var="entry" items="${latestNews}">
+<tr>
+ <td class="priB" width="20%"><fmt:date fmt="d" date="${entry.date}" /></td>
+ <td class="pri bld mid"><fmt:text value="${entry.subject}" /></td>
+ <td class="secB" width="20%">${entry.authorName}</td>
+</tr>
+<tr>
+ <td class="left" colspan="3"><fmt:msg value="${entry.body}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </el:table>
