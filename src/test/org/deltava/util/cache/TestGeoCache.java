@@ -77,6 +77,26 @@ public class TestGeoCache extends TestCase {
 		assertFalse(_cache.contains(new GeoPosition(52.5151, 5.5151)));
 		assertTrue(_cache.contains(new GeoPosition(52.508, 5.506)));
 	}
+	
+	public void testCreateGeoKey() {
+		assertEquals(0.01, _cache.getRoundingAmount(), 0.00001);
+		
+		assertEquals("52.51@5.51", _cache.createGeoKey(new GeoPosition(52.51, 5.51)));
+		assertEquals("52.51@-5.51", _cache.createGeoKey(new GeoPosition(52.51, -5.51)));
+		assertEquals("52.51@-5.51", _cache.createGeoKey(new GeoPosition(52.515, -5.515)));
+		assertEquals("52.52@-5.52", _cache.createGeoKey(new GeoPosition(52.516, -5.516)));
+	}
+	
+	public void testNonStandardRounding() {
+		_cache = new ExpiringGeoCache<Cacheable>(2, 1, 0.2);
+		assertEquals(0.2, _cache.getRoundingAmount(), 0.00001);
+		_cache.addNull(new GeoPosition(52.51, 5.51));
+		assertEquals(1, _cache.size());
+		
+		assertTrue(_cache.contains(new GeoPosition(52.51, 5.51)));
+		assertTrue(_cache.contains(new GeoPosition(52.6, 5.6)));
+		assertFalse(_cache.contains(new GeoPosition(52.7, 5.7)));
+	}
 
 	public void testLargeCache() {
 		Collection<Cacheable> entries = new ArrayList<Cacheable>();
