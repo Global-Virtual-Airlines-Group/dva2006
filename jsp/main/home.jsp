@@ -200,6 +200,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </el:table>
 </c:if>
 <c:if test="${!empty latestNews}">
+<br />
 <!-- Latest News -->
 <el:table className="view">
 <c:forEach var="entry" items="${latestNews}">
