@@ -6,8 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.Simulator;
-import org.deltava.beans.system.AirlineInformation;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -84,17 +84,7 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getExamProfiles(boolean isAcademy) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT EI.*, COUNT(E.ID), SUM(E.PASS) FROM exams.EXAM_AIRLINES EA, exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) WHERE (EI.NAME=EA.NAME) AND (EI.ACADEMY=?) "
-			+ "AND (EA.AIRLINE=?) GROUP BY EI.NAME ORDER BY EI.STAGE, EI.NAME")) {
-			ps.setBoolean(1, isAcademy);
-			ps.setString(2, SystemData.get("airline.code"));
-			List<ExamProfile> results = execute(ps);
-			loadAirlines(results);
-			loadScorers(results);
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
+		return getExamProfiles().stream().filter(ep -> (ep.getAcademy() == isAcademy)).collect(Collectors.toList());
 	}
 	
 	/**
