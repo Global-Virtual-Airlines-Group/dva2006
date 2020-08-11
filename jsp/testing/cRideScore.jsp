@@ -46,7 +46,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> - <el:cmdbutton url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
@@ -58,11 +58,11 @@ golgotha.local.validate = function(f) {
 </c:if>
 <tr>
  <td class="label">Assigned on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>
+ <td class="data"><fmt:date t="HH:mm" date="${checkRide.date}" /></td>
 </tr>
 <tr>
  <td class="label">Submitted on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.submittedOn}" /></td>
+ <td class="data"><fmt:date t="HH:mm" date="${checkRide.submittedOn}" /></td>
 </tr>
 <c:if test="${access.canScore}">
 <tr>
@@ -79,13 +79,9 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>
-<c:if test="${access.canDelete}">
- <el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
-</c:if>
-<c:if test="${access.canScore}">
- <el:button type="submit" label="SCORE CHECK RIDE" />
-</c:if>
+ <td>&nbsp;
+<c:if test="${access.canDelete}"><el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" /></c:if>
+<c:if test="${access.canScore}">&nbsp;<el:button type="submit" label="SCORE CHECK RIDE" /></c:if>
  </td>
 </tr>
 </el:table>
