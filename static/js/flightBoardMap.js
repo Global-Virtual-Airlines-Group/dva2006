@@ -1,5 +1,4 @@
 golgotha.flightBoard = golgotha.flightBoard || {atc:[], pilots:[], months:['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], network:'?'};
-
 golgotha.flightBoard.updateMap = function(isAuto)
 {
 const xmlreq = new XMLHttpRequest();
@@ -47,11 +46,7 @@ xmlreq.onreadystatechange = function() {
 		// Add to ATC list
 		const o = new Option(mrk.callsign, mrk.callsign);
 		o.mrk = mrk;
-		try {
-			cbo.add(o, null);
-		} catch (err) {
-			cbo.add(o); // IE hack
-		}
+		cbo.add(o, null);
 		if (selectedATC == mrk.callsign)
 			cbo.selectedIndex = (cbo.options.length - 1);
 	});
