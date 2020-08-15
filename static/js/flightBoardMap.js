@@ -19,7 +19,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Display effective date
 	const dt = new Date(js.date);
-	golgotha.util.setHTML('isLoading', ' - VALID AS OF ' + golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ' + dt.getHours() + ':' + dt.getMinutes());
+	golgotha.util.setHTML('isLoading', ' - VALID AS OF ' + golgotha.flightBoard.formatDate(dt));
 
 	// Display pilots
 	golgotha.flightBoard.pilots.length = 0;
@@ -61,6 +61,20 @@ xmlreq.onreadystatechange = function() {
 xmlreq.send(null);
 return true;
 };
+
+golgotha.flightBoard.formatDate = function(dt) {
+	let fdt = golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ';
+	if (dt.getHours() < 10)
+		fdt += '0';
+
+	fdt += dt.getHours();
+	fdt += ':';
+	if (dt.getMinutes() < 10)
+		fdt += ':';
+
+	fdt += dt.getMinutes();
+	return fdt;
+}
 
 golgotha.flightBoard.infoClose = function()
 {
