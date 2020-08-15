@@ -58,6 +58,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	
 	private int _groundOps;
 	private boolean _networkConnected;
+	private boolean _acarsConnected;
 
 	private static final ACARSFlags[] AP_FLAGS = { ACARSFlags.AP_APR, ACARSFlags.AP_HDG, ACARSFlags.AP_NAV, ACARSFlags.AP_ALT, ACARSFlags.AP_GPS , ACARSFlags.AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -365,6 +366,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns if the client is connected to the ACARS server.
+	 * @return TRUE if connected, otherwise FALSE
+	 * @see ACARSRouteEntry#setACARSConnected(boolean)
+	 */
+	public boolean getACARSConnected() {
+		return _acarsConnected;
+	}
+	
+	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
 	 * @see ACARSRouteEntry#getRadarAltitude()
@@ -640,6 +650,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setNetworkConnected(boolean isConnected) {
 		_networkConnected = isConnected;
+	}
+	
+	/**
+	 * Updates whether the user is connected to the ACARS server.
+	 * @param isConnected TRUE if connected, otherwise FALSE
+	 * @see ACARSRouteEntry#getACARSConnected()
+	 */
+	public void setACARSConnected(boolean isConnected) {
+		_acarsConnected = isConnected;
 	}
 	
 	/**
