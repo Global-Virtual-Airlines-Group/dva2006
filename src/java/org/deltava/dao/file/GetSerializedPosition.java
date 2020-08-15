@@ -127,8 +127,11 @@ public class GetSerializedPosition extends DAO {
 				re.setADF1(StringUtils.isEmpty(adf1) ? null : adf1);
 			}
 			
-			if (version.getVersion() > 6)
-				re.setNetworkConnected(in.readBoolean());
+			if (version.getVersion() > 6) {
+				byte b = in.readByte();
+				re.setNetworkConnected((b & 0x1) > 0);
+				re.setACARSConnected((b & 0x2) == 0);
+			}
 				
 			if (version.getVersion() > 7) {
 				re.setGroundOperations(in.readInt());

@@ -99,7 +99,13 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		out.writeUTF((re.getADF1() == null) ? "" : re.getADF1()); // v6
-		out.writeBoolean(re.getNetworkConnected()); // v7
+		
+		// encode two booleans into a single byte, second bit is set if DISCONNECTED
+		int b = re.getNetworkConnected() ? 1 : 0;
+		if (!re.getACARSConnected())
+			b += 2;
+		
+		out.write(b); // v7
 		out.writeInt(re.getGroundOperations()); // v8
 		out.writeFloat((float) re.getCG());
 		
