@@ -32,16 +32,18 @@
 <view:table cmd="rawbrowse">
 
 <!-- Table Header Bars -->
-<tr class="title">
- <td class="left caps" colspan="10"><span class="nophone"><content:airline />&nbsp;</span>RAW FLIGHT SCHEDULE</td>
+<tr class="title caps">
+ <td class="left" colspan="10"><span class="nophone"><content:airline />&nbsp;</span>RAW FLIGHT SCHEDULE</td>
 </tr>
 <tr class="title caps">
- <td class="right" colspan="10">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.setSrc(this)" /></td>
+ <td colspan="3"><el:cmdbutton url="sched" op="edit" label="NEW RAW SCHEDULE ENTRY" /></td>
+ <td class="right" colspan="7">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.setSrc(this)" /></td>
 </tr>
 <tr class="title">
- <td class="right" colspan="10">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" firstEntry="-" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirports()" />
- <el:airportCode combo="airportD" airport="${airportD}" idx="*" /> TO <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void golgotha.local.setAirports()" />
- <el:airportCode combo="airportA" airport="${airportA}" idx="*" /><span class="nophone"> <el:cmdbutton url="sched" op="edit" label="NEW RAW SCHEDULE ENTRY" /></span></td>
+ <td class="left" colspan="3">OPERATED ON <el:text name="filterDate" size="8" max="10" value="${param.filterDate}" /></td>
+ <td class="right" colspan="7">FROM <el:combo name="airportD" idx="*" size="1" className="small" firstEntry="-" options="${airportsD}" value="${airportD}" />
+ <el:airportCode combo="airportD" airport="${airportD}" idx="*" /> TO <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" />
+ <el:airportCode combo="airportA" airport="${airportA}" idx="*" />&nbsp;<el:button onClick="void golgotha.local.update()" label="GO" /></td>
 </tr>
 <tr class="title caps">
  <td class="nophone">LINE</td>
@@ -100,9 +102,9 @@ golgotha.local.setSrc = function(cb) {
 	return true;
 };
 
-golgotha.local.setAirports = function() {
+golgotha.local.update = function() {
 	const f = document.forms[0];
-	const p = {src:golgotha.form.getCombo(f.src)};
+	const p = {src:golgotha.form.getCombo(f.src),filterDate:f.filterDate.value};
 	if (golgotha.form.comboSet(f.airportD))
 		p.airportD = golgotha.form.getCombo(f.airportD);
 	if (golgotha.form.comboSet(f.airportA))
