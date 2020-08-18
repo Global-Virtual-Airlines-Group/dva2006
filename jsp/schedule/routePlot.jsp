@@ -52,7 +52,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
 <content:empty var="emptyList" />
-<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3D,XP9" />
+<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3D,XP9,XP10" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
