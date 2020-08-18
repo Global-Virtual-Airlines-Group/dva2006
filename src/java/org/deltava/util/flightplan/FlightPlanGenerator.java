@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 2.4
  */
 
@@ -139,9 +139,8 @@ public abstract class FlightPlanGenerator {
 			case P3D, P3Dv4:
 				return new P3DGenerator();
 			
-			// TODO: Implement for FS2020
 			case FS2020:
-				return null;
+				return new FS2020Generator();
 	
 			case FSX:
 				return new FSXGenerator();
