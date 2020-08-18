@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -17,12 +18,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the raw Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
 public class RawBrowseCommand extends AbstractViewCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -56,11 +57,20 @@ public class RawBrowseCommand extends AbstractViewCommand {
 			ctx.setAttribute("airportsD", airportsD, REQUEST);
 			ctx.setAttribute("airportsA", airportsA, REQUEST);
 			
+			// Determine optional filter date
+			Instant fdt = parseDateTime(ctx, "filter");
+			
 			// Search the schedule
 			GetRawSchedule sdao = new GetRawSchedule(con);
-			sdao.setQueryStart(vc.getStart());
-			sdao.setQueryMax(vc.getCount());
-			vc.setResults(sdao.list(src, aD, aA));
+			if (fdt != null) {
+				LocalDate ld = LocalDate.ofInstant(fdt, ZoneOffset.UTC);
+				vc.setResults(sdao.list(src, aD, aA));
+				vc.getResults().removeIf(rse -> !rse.operatesOn(ld));
+			} else {
+				sdao.setQueryStart(vc.getStart());
+				sdao.setQueryMax(vc.getCount());
+				vc.setResults(sdao.list(src, aD, aA));
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
