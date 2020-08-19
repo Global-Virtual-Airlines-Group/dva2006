@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to delete Flight Schedule entries.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 				throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
 			
 			// Check our access
-			ScheduleAccessControl ac = new ScheduleAccessControl(ctx, entry);
+			ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
 			ac.validate();
 			if (!ac.getCanDelete())
 				throw securityException("Cannot modify Flight Schedule");

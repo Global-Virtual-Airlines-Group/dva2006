@@ -1,20 +1,16 @@
 // Copyright 2005, 2006, 2009, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.schedule.*;
-
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Flight Schdeule data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
 public class ScheduleAccessControl extends AccessControl {
-	
-	private final ScheduleEntry _entry;
 	
 	private boolean _canEdit;
 	private boolean _canDelete;
@@ -22,21 +18,11 @@ public class ScheduleAccessControl extends AccessControl {
 	private boolean _canExport;
 	
 	/**
-	 * Initializes the Access Controller for generic schedule operations.
+	 * Initializes the Access Controller.
 	 * @param ctx the Command context
 	 */
 	public ScheduleAccessControl(SecurityContext ctx) {
-		this(ctx, null);
-	}
-
-	/**
-	 * Initializes the Access Controller.
-	 * @param ctx the Command context
-	 * @param se the ScheduleEntry
-	 */
-	public ScheduleAccessControl(SecurityContext ctx, ScheduleEntry se) {
 		super(ctx);
-		_entry = se;
 	}
 
 	@Override
@@ -44,9 +30,8 @@ public class ScheduleAccessControl extends AccessControl {
 		validateContext();
 
 		// Set role fields
-		boolean isImported = (_entry != null) && ((_entry.getSource() == null) || (_entry.getSource() != ScheduleSource.MANUAL));
 		boolean hasRole = _ctx.isUserInRole("Schedule") || _ctx.isUserInRole("Operations");
-		_canEdit = hasRole && !isImported;
+		_canEdit = hasRole;
 		_canDelete = hasRole;
 		_canImport = hasRole;
 		_canExport = hasRole;
