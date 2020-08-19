@@ -19,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
 public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd MMM").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd MMM").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
 	
 	private static final Logger log = Logger.getLogger(GetSkyTeamSchedule.class);
