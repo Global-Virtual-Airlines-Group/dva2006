@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 2.6
  */
 
@@ -81,7 +81,7 @@ public class MetarParser {
 				ZonedDateTime zdt = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
 				DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("ddHHmm");
 				dfb.parseDefaulting(ChronoField.MONTH_OF_YEAR, zdt.get(ChronoField.MONTH_OF_YEAR));
-				dfb.parseDefaulting(ChronoField.YEAR, zdt.get(ChronoField.YEAR));
+				dfb.parseDefaulting(ChronoField.YEAR_OF_ERA, zdt.get(ChronoField.YEAR));
 				LocalDateTime ldt = LocalDateTime.parse(token.substring(0, token.length() - endOfs), dfb.toFormatter());
 				result.setDate(ldt.toInstant(ZoneOffset.UTC));
 			} else if (isWind(token)) {

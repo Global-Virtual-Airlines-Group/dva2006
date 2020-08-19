@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load the Delta flight schedule.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
@@ -55,7 +55,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
-		_df = _dfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).toFormatter();
+		_df = _dfb.parseDefaulting(ChronoField.YEAR_OF_ERA, _effDate.getYear()).toFormatter();
 		
 		try (LineNumberReader lr = getReader()) {
 			Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
@@ -71,7 +71,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 						int year = StringUtils.parse(data.substring(pos - 4, pos), _effDate.getYear());
 						_effDate = LocalDate.of(year, 1, 1);
 						_dfb = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(DATE_FMT);
-						_df = _dfb.parseDefaulting(ChronoField.YEAR, year).toFormatter();
+						_df = _dfb.parseDefaulting(ChronoField.YEAR_OF_ERA, year).toFormatter();
 						log.info("Updating effective year to " + year);
 					}
 
