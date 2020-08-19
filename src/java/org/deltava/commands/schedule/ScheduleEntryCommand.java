@@ -62,7 +62,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			}
 			
 			// Check our access
-			ScheduleAccessControl ac = new ScheduleAccessControl(ctx, entry);
+			ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
 			ac.validate();
 			if (!ac.getCanEdit())
 				throw securityException("Cannot modify Flight Schedule entry");
