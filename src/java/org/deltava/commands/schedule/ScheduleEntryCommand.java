@@ -22,13 +22,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
