@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 8.3
+ * @version 9.1
  * @since 1.0
  */
 
@@ -161,7 +161,7 @@ public abstract class AbstractCommand implements Command {
 			} else if (ctx.getParameter(paramHdr + "Time") != null) {
 				LocalDateTime today = LocalDateTime.now();
 				DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern(tfmt);
-				tfb.parseDefaulting(ChronoField.YEAR, today.get(ChronoField.YEAR));
+				tfb.parseDefaulting(ChronoField.YEAR_OF_ERA, today.get(ChronoField.YEAR_OF_ERA));
 				tfb.parseDefaulting(ChronoField.DAY_OF_YEAR, today.getLong(ChronoField.DAY_OF_YEAR));
 				ldt = LocalDateTime.parse(ctx.getParameter(paramHdr + "Time"), tfb.toFormatter());
 			} else

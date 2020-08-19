@@ -280,4 +280,22 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 			// empty
 		}
 	}
+	
+	public void testParseDate() {
+
+		df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
+		assertNotNull(df);
+		
+		LocalDate ld = LocalDate.parse("07/15/2020", df);
+		assertNotNull(ld);
+		assertEquals(7, ld.get(ChronoField.MONTH_OF_YEAR));
+		assertEquals(15, ld.get(ChronoField.DAY_OF_MONTH));
+		assertEquals(2020, ld.get(ChronoField.YEAR));
+		
+		LocalDate ld2 = LocalDate.parse("08/16/2026", df);
+		assertNotNull(ld2);
+		assertEquals(8, ld2.get(ChronoField.MONTH_OF_YEAR));
+		assertEquals(16, ld2.get(ChronoField.DAY_OF_MONTH));
+		assertEquals(2026, ld2.get(ChronoField.YEAR));
+	}
 }

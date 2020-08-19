@@ -1,4 +1,4 @@
-// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw PDF-exported airline schedules.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 8.0
  */
 
@@ -51,7 +51,7 @@ public class GetRawPDFSchedule extends ScheduleLoadDAO {
 	
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
-		DateTimeFormatter df = _dfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).toFormatter();
+		DateTimeFormatter df = _dfb.parseDefaulting(ChronoField.YEAR_OF_ERA, _effDate.getYear()).toFormatter();
 		
 		try (LineNumberReader lr = getReader()) {
 			Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
