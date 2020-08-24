@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
@@ -11,17 +11,12 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator X.
  * @author Luke
- * @version 6.3
+ * @version 9.1
  * @since 2.4
  */
 
 public class FSXGenerator extends MSFSGenerator {
-
-	/**
-	 * Generates an FSX flight plan between two airports.
-	 * @param waypoints a Collection of waypoints
-	 * @return the generated flight plan file
-	 */
+	
 	@Override
 	public String generate(Collection<NavigationDataBean> waypoints) {
 		StringWriter out = new StringWriter();
@@ -88,5 +83,10 @@ public class FSXGenerator extends MSFSGenerator {
 		}
 
 		return out.toString();
+	}
+	
+	@Override
+	public String getEncoding() {
+		return "windows-1252";
 	}
 }

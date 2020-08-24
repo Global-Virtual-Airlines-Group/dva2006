@@ -21,6 +21,11 @@ abstract class MSFSXMLGenerator extends MSFSGenerator {
 	private final int _appMajor;
 	private final int _appVersion;
 	
+	/**
+	 * Creates the Generator.
+	 * @param appMajor the application major version
+	 * @param appVersion the application version
+	 */
 	protected MSFSXMLGenerator(int appMajor, int appVersion) {
 		super();
 		_appMajor = appMajor;
@@ -82,6 +87,11 @@ abstract class MSFSXMLGenerator extends MSFSGenerator {
 		}
 		
 		return doc;
+	}
+	
+	@Override
+	public String generate(Collection<NavigationDataBean> waypoints) {
+		return XMLUtils.format(generateDocument(waypoints), getEncoding());
 	}
 	
 	@Override

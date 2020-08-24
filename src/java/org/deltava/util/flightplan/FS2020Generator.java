@@ -1,12 +1,6 @@
 // Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
-import java.util.Collection;
-
-import org.deltava.beans.navdata.NavigationDataBean;
-
-import org.deltava.util.XMLUtils;
-
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2020.
  * @author Luke
@@ -21,10 +15,5 @@ public class FS2020Generator extends MSFSXMLGenerator {
 	 */
 	public FS2020Generator() {
 		super(11, 282174);
-	}
-
-	@Override
-	public String generate(Collection<NavigationDataBean> waypoints) {
-		return XMLUtils.format(generateDocument(waypoints), "UTF-8");
 	}
 }
