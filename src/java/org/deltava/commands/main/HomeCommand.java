@@ -1,8 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 8.7
+ * @version 9.1
  * @since 1.0
  */
 
@@ -59,14 +62,11 @@ public class HomeCommand extends AbstractCommand {
 		
 		// Get OS uptime if running on Linux
 		if ("Linux".equals(System.getProperty("os.name"))) {
-			GetProcData pdao = new GetProcData();
+			Instant now = Instant.now();
 			try {
-				int runTime = pdao.getUptime();
-				ctx.setAttribute("runTimeDays", Integer.valueOf(runTime / 86400), REQUEST);
-				runTime %= 86400;
-				ctx.setAttribute("runTimeHours", Integer.valueOf(runTime / 3600), REQUEST);
-				runTime %= 3600;
-				ctx.setAttribute("runTimeMinutes", Integer.valueOf(runTime / 60), REQUEST);
+				GetProcData pdao = new GetProcData();
+				int runTime = pdao.getUptime(); 
+				ctx.setAttribute("runTime", Duration.between(now.minusMillis(runTime), now), REQUEST);
 			} catch (DAOException de) {
 				log.error(de.getMessage());
 			}
@@ -108,13 +108,7 @@ public class HomeCommand extends AbstractCommand {
 			// Get new/active NOTAMs since last login
 			if (ctx.isAuthenticated() && (ctx.getUser().getLastLogin() != null)) {
 				Person usr = ctx.getUser();
-				Collection<?> notams = nwdao.getActiveNOTAMs();
-				for (Iterator<?> i = notams.iterator(); i.hasNext();) {
-					Notice ntm = (Notice) i.next();
-					if (ntm.getDate().isBefore(usr.getLastLogin()))
-						i.remove();
-				}
-
+				Collection<?> notams = nwdao.getActiveNOTAMs().stream().filter(n -> n.getDate().isBefore(usr.getLastLogin())).collect(Collectors.toList());
 				ctx.setAttribute("notams", notams, REQUEST);
 			}
 			
@@ -123,6 +117,7 @@ public class HomeCommand extends AbstractCommand {
 			DynContent contentType = cList.get(ofs);
 			
 			// Figure out dynamic content
+			String airlineCode = SystemData.get("airline.code");
 			switch (contentType) {
 				case NEXT_EVENT:
 					evdao.setQueryMax(5);					
@@ -130,20 +125,27 @@ public class HomeCommand extends AbstractCommand {
 					break;
 
 				case ACARS_USERS:
-					if (acarsPool != null)
-						ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
+					if (acarsPool == null) break;
+					Collection<ConnectionEntry> poolInfo = IPCUtils.deserialize(acarsPool.getPoolInfo(false));
+					poolInfo.removeIf(ce -> !ce.getUserData().getAirlineCode().equals(airlineCode));
+					ctx.setAttribute("acarsPool", poolInfo, REQUEST);
 					break;
 					
 				// Latest takeoffs and landings
 				case ACARS_TOLAND:
 					GetACARSData afdao = new GetACARSData(con);
 					GetACARSTakeoffs todao = new GetACARSTakeoffs(con);
+					GetUserData uddao = new GetUserData(con);
 					todao.setQueryMax(10);
+					
 					Map<TakeoffLanding, FlightInfo> toLand = new LinkedHashMap<TakeoffLanding, FlightInfo>();
 					for (TakeoffLanding tl : todao.getLatest()) {
 						FlightInfo fl = afdao.getInfo(tl.getID());
-						if (fl != null)
-							toLand.put(tl, fl);
+						if (fl != null) {
+							UserData ud = uddao.get(fl.getAuthorID());
+							if ((ud != null) && ud.getAirlineCode().equals(airlineCode))
+								toLand.put(tl, fl);
+						}
 					}
 					
 					ctx.setAttribute("toLand", toLand, REQUEST);
@@ -170,12 +172,8 @@ public class HomeCommand extends AbstractCommand {
 						ctx.setAttribute("promotions", upds, REQUEST);
 					}
 					
-					// Get pilot IDs
-					Collection<Integer> IDs = new HashSet<Integer>();
-					for (StatusUpdate upd : upds)
-						IDs.add(Integer.valueOf(upd.getID()));
-					
 					// Load pilots
+					Collection<Integer> IDs = upds.stream().map(StatusUpdate::getID).collect(Collectors.toSet());
 					GetPilot pdao = new GetPilot(con);
 					ctx.setAttribute("updPilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 					break;
