@@ -65,8 +65,8 @@ public class HomeCommand extends AbstractCommand {
 			Instant now = Instant.now();
 			try {
 				GetProcData pdao = new GetProcData();
-				int runTime = pdao.getUptime(); 
-				ctx.setAttribute("runTime", Duration.between(now.minusMillis(runTime), now), REQUEST);
+				long runTime = pdao.getUptime(); 
+				ctx.setAttribute("runTime", Duration.between(now.minusSeconds(runTime), now), REQUEST);
 			} catch (DAOException de) {
 				log.error(de.getMessage());
 			}
@@ -108,7 +108,7 @@ public class HomeCommand extends AbstractCommand {
 			// Get new/active NOTAMs since last login
 			if (ctx.isAuthenticated() && (ctx.getUser().getLastLogin() != null)) {
 				Person usr = ctx.getUser();
-				Collection<?> notams = nwdao.getActiveNOTAMs().stream().filter(n -> n.getDate().isBefore(usr.getLastLogin())).collect(Collectors.toList());
+				Collection<?> notams = nwdao.getActiveNOTAMs().stream().filter(n -> n.getDate().isAfter(usr.getLastLogin())).collect(Collectors.toList());
 				ctx.setAttribute("notams", notams, REQUEST);
 			}
 			
