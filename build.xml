@@ -379,6 +379,16 @@
                 </modified>
             </fileset>
         </scp>
+		
+		<!-- Upload murmur auth -->
+		<scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/murmur" port="${mail.ssh.port}" verbose="yes" trust="yes" keyfile="${mail.ssh.key}">
+			<fileset dir="scripts/murmur">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+					<param name="algorithm.algorithm" value="MD5" />
+				    <param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
+				</modified>
+			</fileset>
+		</scp>
 	</target>
 	
 	<!-- Production Deployment via SSH -->
