@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -17,6 +17,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    private long _id;
    private int _pilotID;
    private Pilot _usr;
+   private UserData _usrLoc;
    private Instant _st;
    private Instant _et;
    
@@ -119,6 +120,15 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     */
    public Pilot getUser() {
       return _usr;
+   }
+   
+   /**
+    * Returns the UserData bean for the connection's authenticated user. This may not be set.
+    * @return the UserData object
+    * @see ConnectionEntry#setUserData(UserData)
+    */
+   public UserData getUserData() {
+	   return _usrLoc;
    }
    
    /**
@@ -263,6 +273,15 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     */
    public void setUser(Pilot usr) {
       _usr = usr;
+   }
+   
+   /**
+    * Updates the UserData record for the user who created this connection.
+    * @param ud the UserData bean
+    * @see ConnectionEntry#getUserData()
+    */
+   public void setUserData(UserData ud) {
+	   _usrLoc = ud;
    }
    
    /**
