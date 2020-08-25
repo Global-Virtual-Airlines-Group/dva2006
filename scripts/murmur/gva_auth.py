@@ -488,7 +488,7 @@ def do_main_program():
                 return (FALL_THROUGH, None, None)
            
             try:
-                sql = 'SELECT a.id, a.pwd, aa.userid, a.name, ud.airline, a.enabled FROM common.USERDATA ud, common.AUTH a LEFT JOIN common.AUTH_ALIAS aa ON (a.ID=aa.ID) AND (aa.iscode=1) WHERE (a.id=ud.id) AND (aa.userid = %s)'
+                sql = 'SELECT a.id, a.pwd, aa.userid, a.name, a.enabled FROM common.USERDATA ud, common.AUTH a LEFT JOIN common.AUTH_ALIAS aa ON (a.ID=aa.ID) AND (aa.iscode=1) WHERE (a.id=ud.id) AND (aa.userid = %s)'
                 cur = threadDB.execute(sql, [name])
             except threadDbException:
                 return (FALL_THROUGH, None, None)
@@ -499,7 +499,7 @@ def do_main_program():
                 info('Fall through for unknown user "%s"', name)
                 return (FALL_THROUGH, None, None)
     
-            uid, upw, uname, urealname, udb, activated = res
+            uid, upw, uname, urealname, activated = res
            
             if activated == 1 and check_hash(pw, upw):
                 # Authenticated, fetch role memberships
@@ -515,8 +515,7 @@ def do_main_program():
                 if groups:
                     groups = [a[0] for a in groups]
 
-                info('User authenticated: "%s" (%d)', name, uid)
-                debug('Group memberships: %s', str(groups))
+                info('User authenticated: "%s" (%d), Groups: %s', name, uid, str(groups))
                 return (uid, entity_decode(urealname), groups)
 
             info('Failed authentication attempt for user: "%s" (%d)', name, uid)
