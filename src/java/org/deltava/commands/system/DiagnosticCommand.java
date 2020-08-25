@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 8.6
+ * @version 9.1
  * @since 1.0
  */
 
@@ -50,9 +50,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		if ("Linux".equals(System.getProperty("os.name"))) {
 			try {
 				GetProcData procdao = new GetProcData();
-				int osRunTime = procdao.getUptime();
+				long osRunTime = procdao.getUptime();
 				ctx.setAttribute("osStart", Instant.now().minusSeconds(osRunTime), REQUEST);
-				ctx.setAttribute("osExecTime", Integer.valueOf(osRunTime), REQUEST);
+				ctx.setAttribute("osExecTime", Long.valueOf(osRunTime), REQUEST);
 				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
 				ctx.setAttribute("osMemInfo", procdao.getMemory(), REQUEST);
 			} catch (DAOException de) {
