@@ -16,7 +16,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -46,9 +46,8 @@ golgotha.local.update = function() { return document.forms[0].submit(); };
 <c:forEach var="q" items="${viewContext.results}">
 <view:row entry="${q}">
  <td><el:cmd className="pri bld" url="qprofile" link="${q}">VIEW</el:cmd></td>
- <td><fmt:int value="${q.correctAnswers}" /> / <fmt:int value="${q.totalAnswers}" /></td>
- <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>
-<c:if test="${q.totalAnswers == 0}">-</c:if></td>
+ <td><fmt:int value="${q.passCount}" /> / <fmt:int value="${q.total}" /></td>
+ <td><c:if test="${q.total > 0}"><fmt:dec value="${q.passCount * 100 / q.total}" fmt="##0.0" />%</c:if><c:if test="${q.total == 0}">-</c:if></td>
  <td>&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
 <c:if test="${q.size > 0}"><el:img src="testing/image.png" caption="Image Resource" /></c:if></td>
  <td class="left small" colspan="2"><fmt:text value="${q.question}" /></td>
