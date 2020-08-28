@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 2.1
  */
 
@@ -35,7 +35,7 @@ public class GetExamQuestions extends DAO {
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
 			QuestionProfile qp = null; boolean isMultiChoice = false;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM "
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, SUM(QS.TOTAL), SUM(QS.CORRECT), COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM "
 				+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
 				+ "ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1")) {
 				ps.setInt(1, id);
@@ -117,6 +117,32 @@ public class GetExamQuestions extends DAO {
 	}
 	
 	/**
+	 * Returns discrete pass / fail statistics for a particular Question.
+	 * @param id the database ID
+	 * @param isAcademy TRUE if Flight Academy only, otherwise FALSE
+	 * @return a PassStatistics bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public PassStatistics getDiscreteStatistics(int id, boolean isAcademy) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(QS.TOTAL), SUM(QS.CORRECT) FROM exams.QUESTIONSTATS QS WHERE (QS.ID=?) AND (QS.ACADEMY=?)")) {
+			ps.setInt(1,  id);
+			ps.setBoolean(2, isAcademy);
+			
+			TestStatistics st = new TestStatistics();
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					st.setTotal(rs.getInt(1));
+					st.setPassCount(rs.getInt(2));
+				}
+			}
+			
+			return st;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads Questions for a particular Examination, or all Examinations. 
 	 * @param exam the ExaminationProfile or null if all
 	 * @return a List of QuestionProfile beans
@@ -168,8 +194,7 @@ public class GetExamQuestions extends DAO {
 			if (isAcademy)
 				ps.setBoolean(2, true);
 			
-			List<QuestionProfile> results = execute(ps);
-			return results;
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -201,8 +226,7 @@ public class GetExamQuestions extends DAO {
 				ps.setBoolean(++param, true);
 			ps.setBoolean(++param, true);
 			ps.setInt(++param, Math.max(1, minExams));
-			List<QuestionProfile> results = execute(ps);
-			return results;
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -58,19 +58,19 @@
  <td class="data small"><fmt:list value="${question.exams}" delim=", " /></td>
 </tr>
 <tr>
- <td class="label">Statistics</td>
-<c:if test="${question.totalAnswers > 0}">
- <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times, <fmt:int value="${question.correctAnswers}" /> correctly (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
+ <td class="label top">Statistics</td>
+<c:if test="${question.total > 0}">
+ <td class="data">Answered <fmt:int value="${question.total}" /> times, <fmt:int value="${question.passCount}" /> correctly (<fmt:dec value="${question.passCount / question.total * 100}" />%)
+<c:if test="${(academyStats.total > 0) && (academyStats.total != question.total)}"><br />Answered <fmt:int value="${academyStats.total}" /> times, <fmt:int value="${academyStats.passCount}" /> correctly (<fmt:dec value="${academyStats.passCount / academyStats.total * 100}" />%)
+ <span class="small sec bld caps">(Flight Academy)</span></c:if></td>
 </c:if>
-<c:if test="${question.totalAnswers == 0}">
+<c:if test="${question.total == 0}">
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
-</tr>
 <c:if test="${question.size > 0}">
 <tr>
  <td class="label">Image Information</td>
- <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
- bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
+ <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" /> bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
  pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage('${question.hexID}',${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
@@ -111,13 +111,13 @@
 </content:page>
 <content:googleAnalytics />
 <c:if test="${fn:isRoutePlot(question)}">
-<script id="mapInit" async>
+<script async>
 <map:point var="mapC" point="${question.midPoint}" />
 
 // Create map
-var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
