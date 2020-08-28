@@ -60,12 +60,10 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Statistics</td>
-<c:if test="${question.totalAnswers > 0}">
- <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times,
- <fmt:int value="${question.correctAnswers}" /> correctly 
- (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
+<c:if test="${question.total > 0}">
+ <td class="data">Answered <fmt:int value="${question.total}" /> times, <fmt:int value="${question.passCount}" /> correctly (<fmt:dec value="${question.passCount / question.total * 100}" />%)</td>
 </c:if>
-<c:if test="${question.totalAnswers == 0}">
+<c:if test="${question.total == 0}">
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
 </tr>
