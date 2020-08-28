@@ -4,16 +4,19 @@ package org.deltava.taglib.content;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to embed Google analytics data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
 public class GoogleAnalyticsTag extends TagSupport {
+	
+	private static final String JS_URL = "https://ssl.google-analytics.com/ga.js";
 	
 	private boolean _eventSupport;
 	private boolean _asyncLoad = true;
@@ -41,7 +44,9 @@ public class GoogleAnalyticsTag extends TagSupport {
 		JspWriter out = pageContext.getOut();
 		
 		// Write the script include tag
-		out.println("<script src=\"https://ssl.google-analytics.com/ga.js\"></script>");
+		out.print("<script src=\"");
+		out.print(JS_URL);
+		out.println("\"></script>");
 		
 		// Write the analytics script
 		out.println("<script>");
@@ -70,13 +75,15 @@ public class GoogleAnalyticsTag extends TagSupport {
 	private void writeAsync(String accountID) throws Exception {
 		JspWriter out = pageContext.getOut();
 		out.println("<script async>");
-		out.println("var _gaq = _gaq || [];");
+		out.println("const _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '" + accountID + "']);");
 		out.println("_gaq.push(['_trackPageview']);");
 
 		// Create DOM entry
-		out.println("(function() { var ga = document.createElement('script');");
-		out.println("ga.src = 'https://ssl.google-analytics.com/ga.js'; ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga); })();");
+		out.println("(function() { const ga = document.createElement('script');");
+		out.print("ga.src = '");
+		out.print(JS_URL);
+		out.println("'; ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga); })();");
 		out.println("</script>");
 	}
 	
@@ -92,6 +99,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 			return EVAL_PAGE;
 		
 		try {
+			ContentHelper.pushContent(pageContext, JS_URL, "script");
 			if (!_asyncLoad || _eventSupport)
 				writeSync(accountID);
 			else
@@ -105,9 +113,6 @@ public class GoogleAnalyticsTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_eventSupport = false;

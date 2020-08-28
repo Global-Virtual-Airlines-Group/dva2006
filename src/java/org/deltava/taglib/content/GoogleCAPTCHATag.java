@@ -9,17 +9,20 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.system.CAPTCHAResult;
 import org.deltava.commands.HTTPContext;
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to insert Google RECAPTCHA libraries. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 9.0
  */
 
 public class GoogleCAPTCHATag extends TagSupport {
+	
+	private static final String JS_URL = "https://www.google.com/recaptcha/api.js?render=";
 	
 	private String _action;
 	private boolean _authOnly;
@@ -78,12 +81,17 @@ public class GoogleCAPTCHATag extends TagSupport {
 			}
 		}
 		
+		// Build URL with site key
+		StringBuilder urlBuf = new StringBuilder(JS_URL);
+		urlBuf.append(siteKey);
+		ContentHelper.pushContent(pageContext, urlBuf.toString(), "script");
+		
 		try {
 			JspWriter out = pageContext.getOut();
 			
 			// Write the script tag
-			out.print("<script src=\"https://www.google.com/recaptcha/api.js?render=");
-			out.print(siteKey);
+			out.print("<script src=\"");
+			out.print(urlBuf.toString());
 			out.println("\"></script>");
 			
 			// Write the action
