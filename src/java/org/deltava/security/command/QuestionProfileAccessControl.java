@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Question Profiles.
  * @author Luke
- * @version 8.1
+ * @version 9.1
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class QuestionProfileAccessControl extends AccessControl {
 		_canRead = isHR || _ctx.isUserInRole("Examination") || isTestAdmin;
 		_canInclude = (_qp != null) && _qp.getAirlines().contains(SystemData.getApp(aCode)) && (isHR || isTestAdmin);
 		_canEdit = (_qp == null) ? _canCreate : (isOurs || _canInclude);
-		_canDelete = isHR && isOurs && (_qp != null) && (_qp.getTotalAnswers() == 0);
+		_canDelete = isHR && isOurs && (_qp != null) && (_qp.getTotal() == 0);
 		if (!_canRead)
 			throw new AccessControlException("Cannot view Question Profile");
 	}

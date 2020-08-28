@@ -260,6 +260,9 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
 			readAuditLog(ctx, qp);
+			
+			// Load the academy statistics
+			ctx.setAttribute("academyStats", dao.getDiscreteStatistics(qp.getID(), true), REQUEST);
 
 			// Display route
 			if (qp instanceof RoutePlot) {
