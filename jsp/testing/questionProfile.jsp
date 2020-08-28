@@ -103,7 +103,7 @@
 <el:table className="bar">
 <tr>
  <td>&nbsp;<c:if test="${access.canEdit}"><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" /></c:if>
-<c:if test="${access.canDelete && (question.totalAnswers == 0)}">&nbsp;<el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
+<c:if test="${access.canDelete && (question.total == 0)}">&nbsp;<el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
 </tr>
 </el:table>
 <content:copyright />

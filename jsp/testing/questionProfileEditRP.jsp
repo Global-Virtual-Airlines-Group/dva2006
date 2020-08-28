@@ -88,7 +88,7 @@ for (var x = 1; x <= 5; x++) {
 }
 
 // Show the correct answer
-var row = document.getElementById('correctAnswerRow');
+const row = document.getElementById('correctAnswerRow');
 row.style.display = (maxAnswer > 1) ? '' : 'none';
 combo.selectedIndex = (oldAnswer >= combo.options.length) ? 0 : oldAnswer;
 golgotha.local.plotRouteMap(combo);
@@ -97,14 +97,14 @@ return true;
 
 golgotha.local.plotRouteMap = function(combo)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (combo.selectedIndex == 0) {
 	map.clearOverlays();
 	return false;
 }
 
 // Create updated map of parameters for route plotting
-var opt = combo.options[combo.selectedIndex];
+const opt = combo.options[combo.selectedIndex];
 var wps = opt.value.split(' ');
 if (wps[0].indexOf('.') != -1) {
 	golgotha.form.setCombo(f.sid, wps[0]);
@@ -156,12 +156,10 @@ return true;
 <c:if test="${!empty question}">
 <tr>
  <td class="label">Statistics</td>
-<c:if test="${question.totalAnswers > 0}">
- <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times,
- <fmt:int value="${question.correctAnswers}" /> correctly 
- (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
+<c:if test="${question.total > 0}">
+ <td class="data">Answered <fmt:int value="${question.total}" /> times, <fmt:int value="${question.passCount}" /> correctly (<fmt:dec value="${question.passCount / question.total * 100}" />%)</td>
 </c:if>
-<c:if test="${question.totalAnswers == 0}">
+<c:if test="${question.total == 0}">
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
 </tr>

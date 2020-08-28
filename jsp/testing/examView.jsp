@@ -76,8 +76,7 @@
 </c:if>
 <tr>
  <td class="data"><span class="sec small">${q.correctAnswer}</span>
- <c:if test="${!empty qProfile}"> - <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
- (<span class="bld"><fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %</span>)</c:if></td>
+ <c:if test="${!empty qProfile}"> - <fmt:int value="${qProfile.passCount}" /> / <fmt:int value="${qProfile.total}" /> (<span class="bld"><fmt:dec value="${qProfile.passCount * 100.0 / qProfile.total}" fmt="##0.00" /> %</span>)</c:if></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(q)}">
