@@ -2,7 +2,7 @@
 package org.deltava.taglib.format;
 
 import java.time.*;
-import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import javax.servlet.jsp.JspException;
 
@@ -50,17 +50,11 @@ public class JSDateTag extends JSTag {
 	@Override
 	public int doEndTag() throws JspException {
 		
+		if (!_doTime)
+			_dt = _dt.truncatedTo(ChronoUnit.DAYS);
+		
         StringBuilder buf = new StringBuilder("new Date(");
-        buf.append(_dt.get(ChronoField.YEAR)).append(',');
-        buf.append(_dt.get(ChronoField.MONTH_OF_YEAR)).append(',');
-        buf.append(_dt.get(ChronoField.DAY_OF_MONTH));
-        if (_doTime) {
-        	buf.append(',');
-        	buf.append(_dt.get(ChronoField.HOUR_OF_DAY)).append(',');
-        	buf.append(_dt.get(ChronoField.MINUTE_OF_HOUR)).append(',');
-        	buf.append(_dt.get(ChronoField.SECOND_OF_MINUTE));
-        }
-        
+        buf.append(_dt.toEpochSecond() * 1000);
         buf.append(");");
         try {
         	writeVariableName();
