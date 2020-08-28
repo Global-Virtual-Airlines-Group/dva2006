@@ -44,9 +44,9 @@ if (parseInt(f.flightLeg.value) > 8)
 <content:browser html4="true">
 // Validate the date
 <content:filter roles="!PIREP">
-var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
-var pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
-var pDate = new Date(pY, f.dateM.selectedIndex, pD);
+const pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
+const pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
+const pDate = new Date(pY, f.dateM.selectedIndex, pD);
 if (pDate > fwdLimit)
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight in the future.', f.dateM);
 if (pDate < bwdLimit)
