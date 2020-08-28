@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheable, ViewEntry {
+public class ExamProfile implements Comparable<ExamProfile>, PassStatistics, Auditable, Cacheable, ViewEntry {
 
 	private String _name;
 	private int _stage;
@@ -29,8 +29,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	private boolean _flightAcademy;
 	private boolean _notify;
 	
-	private int _examCount;
-	private int _passCount;
+	private final TestStatistics _stats = new TestStatistics();
 	private int _poolSize;
 
 	private AirlineInformation _owner;
@@ -136,23 +135,15 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	public boolean getNotify() {
 		return _notify;
 	}
-	
-	/**
-	 * Returns the total number of times this Examination has been taken.
-	 * @return the number of Examinations
-	 * @see ExamProfile#setTotal(int)
-	 */
+
+	@Override
 	public int getTotal() {
-		return _examCount;
+		return _stats.getTotal();
 	}
-	
-	/**
-	 * Returns the total number of times this Examination has been passed.
-	 * @return the number of passed Examinations
-	 * @see ExamProfile#setPassCount(int)
-	 */
+
+	@Override
 	public int getPassCount() {
-		return _passCount;
+		return _stats.getPassCount();
 	}
 	
 	/**
@@ -297,7 +288,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	 * @see ExamProfile#getTotal()
 	 */
 	public void setTotal(int total) {
-		_examCount = total;
+		_stats.setTotal(total);
 	}
 	
 	/**
@@ -306,7 +297,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheabl
 	 * @see ExamProfile#getPassCount()
 	 */
 	public void setPassCount(int cnt) {
-		_passCount = cnt;
+		_stats.setPassCount(cnt);
 	}
 	
 	/**

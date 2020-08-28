@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,17 +9,16 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 7.4
+ * @version 9.1
  * @since 1.0
  */
 
-public class QuestionProfile extends Question implements Auditable, ViewEntry {
+public class QuestionProfile extends Question implements Auditable, PassStatistics, ViewEntry {
 
-	private int _totalAnswers;
-	private int _correctAnswers;
 	private boolean _active;
 	private final Collection<String> _exams = new TreeSet<String>();
-
+	private final TestStatistics _stats = new TestStatistics();
+	
 	private AirlineInformation _owner;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 
@@ -40,24 +39,6 @@ public class QuestionProfile extends Question implements Auditable, ViewEntry {
 	 */
 	public Collection<String> getExams() {
 		return _exams;
-	}
-
-	/**
-	 * Returns the total number of times this Question has been answered correctly.
-	 * @return the number of correct answers
-	 * @see QuestionProfile#setCorrectAnswers(int)
-	 */
-	public int getCorrectAnswers() {
-		return _correctAnswers;
-	}
-
-	/**
-	 * Returns the total number of times this Question has been included in an Examination.
-	 * @return the number of times included
-	 * @see QuestionProfile#setTotalAnswers(int)
-	 */
-	public int getTotalAnswers() {
-		return _totalAnswers;
 	}
 
 	/**
@@ -88,6 +69,16 @@ public class QuestionProfile extends Question implements Auditable, ViewEntry {
 		return _airlines;
 	}
 
+	@Override
+	public int getTotal() {
+		return _stats.getTotal();
+	}
+
+	@Override
+	public int getPassCount() {
+		return _stats.getPassCount();
+	}
+	
 	/**
 	 * Sets the Question Number. <i>DISABLED</i>
 	 * @throws UnsupportedOperationException always
@@ -140,19 +131,19 @@ public class QuestionProfile extends Question implements Auditable, ViewEntry {
 	/**
 	 * Updates the total number of times this Question has been answered correctly.
 	 * @param count the number of correct answers
-	 * @see QuestionProfile#getCorrectAnswers()
+	 * @see PassStatistics#getPassCount()
 	 */
 	public void setCorrectAnswers(int count) {
-		_correctAnswers = Math.max(0, count);
+		_stats.setPassCount(count);
 	}
 
 	/**
 	 * Updates the total number of times this Question has been included in an Examination.
 	 * @param count the number of times included
-	 * @see QuestionProfile#getTotalAnswers()
+	 * @see PassStatistics#getTotal()
 	 */
 	public void setTotalAnswers(int count) {
-		_totalAnswers = Math.max(0, count);
+		_stats.setTotal(count);
 	}
 	
     /**
@@ -186,10 +177,6 @@ public class QuestionProfile extends Question implements Auditable, ViewEntry {
     		_airlines.addAll(airlines);
     }
 
-	/**
-	 * Compares this to another Question Profile by comparing their texts.
-	 * @see Comparable#compareTo(Object)
-	 */
     @Override
 	public final int compareTo(Object o2) {
 		QuestionProfile qp2 = (QuestionProfile) o2;
@@ -211,8 +198,7 @@ public class QuestionProfile extends Question implements Auditable, ViewEntry {
 	}
 	
 	/**
-	 * Converts this question profile into a question. Subclasess should extend this method
-	 * to create the necessary Question subclasses.
+	 * Converts this question profile into a question. Subclasess should extend this method to create the necessary Question subclasses.
 	 * @return a Question bean
 	 */
 	public Question toQuestion() {
