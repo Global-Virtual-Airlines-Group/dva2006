@@ -39,7 +39,7 @@ golgotha.local.update = function() { return document.forms[0].submit(); };
  <td style="width:20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />&nbsp;<el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
  <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void golgotha.local.update()" />
  MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${minExams}" />
- <el:box name="isAcademy" value="true" checked="${academyOnly}" className="small" label="Academy Only" /> <el:button type="submit" label="GO" /></td>
+ <el:box name="isAcademy" value="true" checked="${academyOnly}" className="small" label="Academy Only" />&nbsp;<el:button type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Question Data -->
