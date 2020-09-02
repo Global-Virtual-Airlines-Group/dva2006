@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -43,7 +44,6 @@ public class GetExamQuestions extends DAO {
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
 						isMultiChoice = (rs.getInt(7) > 0);
-						boolean isImage = (rs.getInt(9) > 0);
 						boolean isRP = (rs.getString(13) != null);
 
 						// Populate the Question Profile
@@ -64,7 +64,7 @@ public class GetExamQuestions extends DAO {
 						qp.setOwner(SystemData.getApp(rs.getString(6)));
 
 						// Load image data
-						if (isImage) {
+						if (rs.getInt(9) > 0) {
 							qp.setType(rs.getInt(8));
 							qp.setSize(rs.getInt(9));
 							qp.setWidth(rs.getInt(10));
@@ -78,15 +78,7 @@ public class GetExamQuestions extends DAO {
 				return null;
 			
 			// Load stats
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(QS.TOTAL), SUM(QS.CORRECT) FROM exams.QUESTIONSTATS QS WHERE (QS.ID=?)")) {
-				ps.setInt(1, qp.getID());
-				try (ResultSet rs = ps.executeQuery()) {
-					if (rs.next()) {
-						qp.setTotalAnswers(rs.getInt(1));
-						qp.setCorrectAnswers(rs.getInt(2));
-					}
-				}
-			}
+			loadStatistics(Collections.singleton(qp));
 
 			// Load airlines
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)")) {
@@ -159,9 +151,8 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getQuestions(ExamProfile exam) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q "
-			+ "LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) "
-			+ "LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QE_INFO QE "
+			+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) ");
 		if (exam != null)
 			sqlBuf.append("WHERE (QE.EXAM_NAME=?) ");
 		sqlBuf.append("GROUP BY Q.ID");
@@ -172,6 +163,7 @@ public class GetExamQuestions extends DAO {
 			
 			// Load results
 			List<QuestionProfile> results = execute(ps);
+			loadStatistics(results);
 			if (exam != null)
 				loadMultiChoice(exam.getName(), results);
 
@@ -190,19 +182,20 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getMostPopular(boolean isAcademy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, "
-			+ "RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, SUM(QS.TOTAL) AS CNT FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
 		if (isAcademy)
 			sqlBuf.append(" AND (QS.ACADEMY=?)");
 		sqlBuf.append(")	LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) "
-			+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY QS.TOTAL DESC");
+			+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY CNT DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setBoolean(1, true);
 			if (isAcademy)
 				ps.setBoolean(2, true);
 			
-			return execute(ps);
+			List<QuestionProfile> results = execute(ps);
+			loadStatistics(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -219,8 +212,7 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getResults(boolean isDesc, boolean isAcademy, int minExams) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q "
-			+ "LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, QS.TOTAL, QS.CORRECT FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
 		if (isAcademy)
 			sqlBuf.append(" AND (QS.ACADEMY=?)");
 		sqlBuf.append(") LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) "
@@ -234,7 +226,9 @@ public class GetExamQuestions extends DAO {
 				ps.setBoolean(++param, true);
 			ps.setBoolean(++param, true);
 			ps.setInt(++param, Math.max(1, minExams));
-			return execute(ps);
+			List<QuestionProfile> results = execute(ps);
+			loadStatistics(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -265,22 +259,22 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getQuestionPool(ExamProfile exam, boolean isRandom, int pilotID) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, COUNT(EQ.EXAM_ID)+(RAND()*3) AS CNT "
-			+ "FROM exams.QE_INFO QE, exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
-			+ "ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMS E ON (E.PILOT_ID=?) LEFT JOIN exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) AND "
-			+ "(EQ.EXAM_ID=E.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY Q.ID ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, COUNT(EQ.EXAM_ID)+(RAND()*3) AS CNT FROM exams.QE_INFO QE, "
+			+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN "
+			+ "exams.EXAMS E ON (E.PILOT_ID=?) LEFT JOIN exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) AND (EQ.EXAM_ID=E.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY Q.ID ");
 		if (pilotID > 0)
 			sqlBuf.append("ORDER BY CNT");
 		else if (isRandom)
 			sqlBuf.append("ORDER BY RAND()");
 		sqlBuf.append(" LIMIT ?");
 
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
 			ps.setBoolean(2, true);
 			ps.setString(3, exam.getName());
 			ps.setInt(4, exam.getSize());
 			List<QuestionProfile> results = execute(ps);
+			loadStatistics(results);
 			loadMultiChoice(exam.getName(), results);
 			return results;
 		} catch (SQLException se) {
@@ -295,15 +289,15 @@ public class GetExamQuestions extends DAO {
 		List<QuestionProfile> results = new ArrayList<QuestionProfile>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				boolean isMultiChoice = (rs.getInt(9) > 0);
-				boolean isRP = (rs.getString(15) != null);
+				boolean isMultiChoice = (rs.getInt(7) > 0);
+				boolean isRP = (rs.getString(13) != null);
 
 				// Populate the Question Profile
 				QuestionProfile qp = null;
 				if (isRP) {
 					RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
-					rpqp.setAirportD(SystemData.getAirport(rs.getString(14)));
-					rpqp.setAirportA(SystemData.getAirport(rs.getString(15)));	
+					rpqp.setAirportD(SystemData.getAirport(rs.getString(12)));
+					rpqp.setAirportA(SystemData.getAirport(rs.getString(13)));	
 					qp = rpqp;
 				} else if (isMultiChoice)
 					qp = new MultiChoiceQuestionProfile(rs.getString(2));
@@ -315,15 +309,13 @@ public class GetExamQuestions extends DAO {
 				qp.setReference(rs.getString(4));
 				qp.setActive(rs.getBoolean(5));
 				qp.setOwner(SystemData.getApp(rs.getString(6)));
-				qp.setTotalAnswers(rs.getInt(7));
-				qp.setCorrectAnswers(rs.getInt(8));
 
 				// Load image metadata
-				if (rs.getInt(11) > 0) {
-					qp.setType(rs.getInt(10));
-					qp.setSize(rs.getInt(11));
-					qp.setWidth(rs.getInt(12));
-					qp.setHeight(rs.getInt(13));
+				if (rs.getInt(9) > 0) {
+					qp.setType(rs.getInt(8));
+					qp.setSize(rs.getInt(9));
+					qp.setWidth(rs.getInt(10));
+					qp.setHeight(rs.getInt(11));
 				}
 			
 				results.add(qp);
@@ -331,6 +323,29 @@ public class GetExamQuestions extends DAO {
 		}
 		
 		return results;
+	}
+
+	/*
+	 * Helper method to load question profile statistics.
+	 */
+	private void loadStatistics(Collection<QuestionProfile> qs) throws SQLException {
+		if (qs.isEmpty()) return;
+		Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(qs, QuestionProfile::getID);
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT QS.ID, SUM(QS.TOTAL), SUM(QS.CORRECT) FROM exams.QUESTIONSTATS QS WHERE (QS.ID IN (");
+		sqlBuf.append(StringUtils.listConcat(resultMap.keySet(), ","));
+		sqlBuf.append(")) GROUP BY QS.ID");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString()); ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				QuestionProfile qp = resultMap.get(Integer.valueOf(rs.getInt(1)));
+				if (qp != null) {
+					qp.setTotalAnswers(rs.getInt(2));
+					qp.setCorrectAnswers(rs.getInt(3));
+				}
+			}
+		}
 	}
 	
 	/*
