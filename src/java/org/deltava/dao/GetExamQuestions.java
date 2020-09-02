@@ -35,23 +35,22 @@ public class GetExamQuestions extends DAO {
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
 			QuestionProfile qp = null; boolean isMultiChoice = false;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, SUM(QS.TOTAL), SUM(QS.CORRECT), COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM "
-				+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
-				+ "ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI "
+				+ "ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1")) {
 				ps.setInt(1, id);
 
 				// Execute the Query
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						isMultiChoice = (rs.getInt(9) > 0);
-						boolean isImage = (rs.getInt(11) > 0);
-						boolean isRP = (rs.getString(15) != null);
+						isMultiChoice = (rs.getInt(7) > 0);
+						boolean isImage = (rs.getInt(9) > 0);
+						boolean isRP = (rs.getString(13) != null);
 
 						// Populate the Question Profile
 						if (isRP) {
 							RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
-							rpqp.setAirportD(SystemData.getAirport(rs.getString(14)));
-							rpqp.setAirportA(SystemData.getAirport(rs.getString(15)));
+							rpqp.setAirportD(SystemData.getAirport(rs.getString(12)));
+							rpqp.setAirportA(SystemData.getAirport(rs.getString(13)));
 							qp = rpqp;
 						} else if (isMultiChoice)
 							qp = new MultiChoiceQuestionProfile(rs.getString(2));
@@ -63,15 +62,13 @@ public class GetExamQuestions extends DAO {
 						qp.setReference(rs.getString(4));
 						qp.setActive(rs.getBoolean(5));
 						qp.setOwner(SystemData.getApp(rs.getString(6)));
-						qp.setTotalAnswers(rs.getInt(7));
-						qp.setCorrectAnswers(rs.getInt(8));
 
 						// Load image data
 						if (isImage) {
-							qp.setType(rs.getInt(10));
-							qp.setSize(rs.getInt(11));
-							qp.setWidth(rs.getInt(12));
-							qp.setHeight(rs.getInt(13));
+							qp.setType(rs.getInt(8));
+							qp.setSize(rs.getInt(9));
+							qp.setWidth(rs.getInt(10));
+							qp.setHeight(rs.getInt(11));
 						}
 					}
 				}
@@ -79,6 +76,17 @@ public class GetExamQuestions extends DAO {
 			
 			if (qp == null)
 				return null;
+			
+			// Load stats
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(QS.TOTAL), SUM(QS.CORRECT) FROM exams.QUESTIONSTATS QS WHERE (QS.ID=?)")) {
+				ps.setInt(1, qp.getID());
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						qp.setTotalAnswers(rs.getInt(1));
+						qp.setCorrectAnswers(rs.getInt(2));
+					}
+				}
+			}
 
 			// Load airlines
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)")) {
