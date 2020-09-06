@@ -4,9 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 
 import org.deltava.beans.testing.*;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.system.AirlineInformation;
-
-import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object for writing Examination Profiles and Check Ride scripts.
@@ -154,15 +153,39 @@ public class SetExamProfile extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EquipmentRideScript sc) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, ISDEFAULT, SIMS, BODY) VALUES (?, ?, ?, ?, ?, ?)")) {
-			ps.setString(1, sc.getEquipmentType());
-			ps.setString(2, sc.getProgram());
-			ps.setBoolean(3, sc.getIsCurrency());
-			ps.setBoolean(4, sc.getIsDefault());
-			ps.setString(5, StringUtils.listConcat(sc.getSimulators(), ","));
-			ps.setString(6, sc.getDescription());
-			executeUpdate(ps, 1);
+		try {
+			startTransaction();
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM CR_SIMS WHERE (EQTYPE=?) AND (EQPROGRAM=?) AND (CURRENCY=?)")) {
+				ps.setString(1, sc.getEquipmentType());
+				ps.setString(2, sc.getProgram());
+				ps.setBoolean(3, sc.getIsCurrency());
+				executeUpdate(ps, 0);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, ISDEFAULT, BODY) VALUES (?, ?, ?, ?, ?)")) {
+				ps.setString(1, sc.getEquipmentType());
+				ps.setString(2, sc.getProgram());
+				ps.setBoolean(3, sc.getIsCurrency());
+				ps.setBoolean(4, sc.getIsDefault());
+				ps.setString(5, sc.getDescription());
+				executeUpdate(ps, 1);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO CR_SIMS (EQTYPE, EQPROGRAM, CURRENCY, SIM) VALUES (?, ?, ?, ?)")) {
+				ps.setString(1, sc.getEquipmentType());
+				ps.setString(2, sc.getProgram());
+				ps.setBoolean(3, sc.getIsCurrency());
+				for (Simulator s : sc.getSimulators()) {
+					ps.setString(4, s.name());
+					ps.addBatch();
+				}
+				
+				executeUpdate(ps, 1, sc.getSimulators().size());
+			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

@@ -94,18 +94,22 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EquipmentRideScript getScript(EquipmentRideScriptKey key) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?) LIMIT 1")) {
-			ps.setString(1, key.getEquipmentType());
-			ps.setBoolean(2, key.isCurrency());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CD.*, GROUP_CONCAT(CS.SIM SEPARATOR ?) FROM CR_DESCS CD LEFT JOIN CR_SIMS CS ON ((CD.EQPROGRAM=CS.EQPROGRAM) "
+			+ "AND (CD.EQTYPE=CS.EQTYPE) AND (CD.CURRENCY=CS.CURRENCY)) WHERE (CD.EQPROGRAM=?) AND (CD.EQTYPE=?) AND (CD.CURRENCY=?) GROUP BY CD.EQPROGRAM, CD.EQTYPE, CD.CURRENCY")) {
+			ps.setString(1, ",");
+			ps.setString(2, key.getProgramName());
+			ps.setString(3, key.getEquipmentType());
+			ps.setBoolean(4, key.isCurrency());
 			EquipmentRideScript result = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					result = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					result.setIsCurrency(rs.getBoolean(3));
 					result.setIsDefault(rs.getBoolean(4));
-					List<String> sims = StringUtils.split(rs.getString(5), ",");
-					sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(result::addSimulator);
-					result.setDescription(rs.getString(6));
+					result.setDescription(rs.getString(5));
+					List<String> sims = StringUtils.split(rs.getString(6), ",");
+					if (sims != null)
+						sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(result::addSimulator);
 				}
 			}
 
@@ -121,16 +125,20 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EquipmentRideScript> getScripts() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM CR_DESCS")) {
+		try (PreparedStatement ps = prepare("SELECT CD.*, GROUP_CONCAT(CS.SIM SEPARATOR ?) FROM CR_DESCS CD LEFT JOIN CR_SIMS CS ON ((CD.EQPROGRAM=CS.EQPROGRAM) AND "
+			+ "(CD.EQTYPE=CS.EQTYPE) AND (CD.CURRENCY=CS.CURRENCY)) GROUP BY CD.EQPROGRAM, CD.EQTYPE, CD.CURRENCY")) {
+			ps.setString(1, ",");
 			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					sc.setIsCurrency(rs.getBoolean(3));
 					sc.setIsDefault(rs.getBoolean(4));
-					sc.setDescription(rs.getString(6));
-					List<String> sims = StringUtils.split(rs.getString(5), ",");
-					sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
+					sc.setDescription(rs.getString(5));
+					List<String> sims = StringUtils.split(rs.getString(6), ",");
+					if (sims != null)
+						sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
+					
 					results.add(sc);
 				}
 			}
