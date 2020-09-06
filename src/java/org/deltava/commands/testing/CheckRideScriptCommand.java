@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 8.7
+ * @version 9.1
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			sc.setEquipmentType(ctx.getParameter("eqType"));
 			sc.setIsCurrency(isCurrency);
 			sc.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
+			sc.getSimulators().clear();
 			ctx.getParameters("sims", Collections.emptySet()).stream().map(s ->Simulator.fromName(s, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 
 			// Calculate our access
