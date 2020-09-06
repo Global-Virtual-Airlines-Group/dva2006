@@ -75,7 +75,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	private void writeAsync(String accountID) throws Exception {
 		JspWriter out = pageContext.getOut();
 		out.println("<script async>");
-		out.println("const _gaq = _gaq || [];");
+		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '" + accountID + "']);");
 		out.println("_gaq.push(['_trackPageview']);");
 
