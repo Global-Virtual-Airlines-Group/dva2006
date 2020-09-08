@@ -1,15 +1,16 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.util.Collection;
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.ComboUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -21,6 +22,8 @@ import org.deltava.util.system.SystemData;
 
 public class MyFlightStatsCommand extends AbstractViewCommand {
 	
+	private static final List<ComboAlias> GRAPH_OPTS = ComboUtils.fromArray(new String[] {"Flight Legs", "Flight Hours"}, new String[] {"LEGS", "HOURS"});
+
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -34,6 +37,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.LEGS);
 		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.EQ);
 		vc.setSortType(srt.name()); ctx.setAttribute("groupType", grp, REQUEST);
+		ctx.setAttribute("graphOpts", GRAPH_OPTS, REQUEST);
 
 		// Get the user ID
 		int userID = ctx.getUser().getID();

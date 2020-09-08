@@ -18,12 +18,37 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
+golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'}};
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);
     return true;
+};
+
+golgotha.local.drawGraphs = function(stData, clData, label) {
+	var data = new google.visualization.DataTable();
+	data.addColumn('date', 'Month');
+	for (var st = 1; st <= golgotha.local.data.maxStage; st++)
+		data.addColumn('number', 'Stage ' + st);
+
+	data.addRows(stData);	
+	var t = label + ' by Date/Stage'; const vs = {title:'Flight ' + label};
+	golgotha.local.charts.stage.draw(data,{title:t,isStacked:true,fontSize:10,hAxis:golgotha.local.charts.hStyle,vAxis:vs,width:'100%'});
+
+	var data = new google.visualization.DataTable();
+	data.addColumn('date', 'Month');
+	golgotha.local.data.sims.forEach(function(s) { data.addColumn('number', s); });
+	data.addRows(clData);	
+	var t = label +  ' by Date/Simulator';
+	golgotha.local.charts.sim.draw(data,{title:t,isStacked:true,fontSize:10,hAxis:golgotha.local.charts.hStyle,vAxis:vs,width:'100%'});
+	return true;
+};
+
+golgotha.local.swapTimeGraphs = function(rb) {
+	const isLegs = (rb.value == 'LEGS');
+	return golgotha.local.drawGraphs(isLegs ? golgotha.local.data.calendar : golgotha.local.data.calendarHours, isLegs ? golgotha.local.data.simCalendar : golgotha.local.data.simCalendarHours, isLegs ? 'Flights' : 'Hours');
 };
 </script>
 </head>
@@ -103,6 +128,10 @@ golgotha.local.validate = function(f) {
  <td><div id="landingSpd" style="width:100%; height:350px;"></div></td>
  <td><div id="landingSct" style="width:100%; height:350px;"></div></td>
 </tr>
+<tr class="title">
+ <td class="left">FLIGHT DATA OVER TIME</td>
+ <td class="right"><el:check type="radio" name="timeGraphOpts" options="${graphOpts}" value="LEGS" onChange="void golgotha.local.swapTimeGraphs(this)" /></td>
+</tr>
 <tr>
  <td colspan="2"><div id="stageStats" style="width:100%; height:340px;"></div></td>
 </tr>
@@ -123,73 +152,61 @@ golgotha.local.validate = function(f) {
 <script async>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var statsData = JSON.parse(xmlreq.responseText);
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:9};
+	golgotha.local.data = JSON.parse(xmlreq.responseText);
+	const lgStyle = {color:'black',fontName:'Verdana',fontSize:9};
 
 	// Display the eqtypes chart
-	var chart = new google.visualization.PieChart(document.getElementById('landingChart'));
-	var data = new google.visualization.DataTable();
+	let chart = new google.visualization.PieChart(document.getElementById('landingChart'));
+	let data = new google.visualization.DataTable();
 	data.addColumn('string','Equipment');
 	data.addColumn('number','Flight Legs');
-	data.addRows(statsData.eqCount);
+	data.addRows(golgotha.local.data.eqCount);
 	chart.draw(data,{title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'});
 
 	// Display the vertical speed chart
-	var chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
-	var data = new google.visualization.DataTable();
+	chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
+	data = new google.visualization.DataTable();
 	data.addColumn('string','Landing Speed');
 	data.addColumn('number','Damaging');
 	data.addColumn('number','Firm');
 	data.addColumn('number','Optimal');
 	data.addColumn('number','Too Soft');
-	data.addRows(statsData.landingSpd);
+	data.addRows(golgotha.local.data.landingSpd);
 	chart.draw(data,{title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none',vAxis:lgStyle});
 
 	// Display the vertical speed/runway distance chart
-	var chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
-	var data = new google.visualization.DataTable();
+	chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
+	data = new google.visualization.DataTable();
 	data.addColumn('number','Touchown Distance');
 	data.addColumn('number','Dangerous');
 	data.addColumn('number','Acceptable');
 	data.addColumn('number','Optimal');
 	data.addColumn('number','Too Soft');
-	data.addRows(statsData.landingSct);
-	var hX = {title:'Distance from Threshold (feet)',textStyle:lgStyle};
-	var yX = {title:'Landing Speed (feet/min)',textStyle:lgStyle};
+	data.addRows(golgotha.local.data.landingSct);
+	const hX = {title:'Distance from Threshold (feet)',textStyle:lgStyle};
+	const yX = {title:'Landing Speed (feet/min)',textStyle:lgStyle};
 	chart.draw(data,{title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],legend:{textStyle:lgStyle},hAxis:hX,vAxis:yX});
 
 	// Display quality breakdown chart
-	var chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
-	var data = new google.visualization.DataTable();
+	chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
+	data = new google.visualization.DataTable();
 	data.addColumn('string','Landing Quality');
 	data.addColumn('number','Flight Legs');	
-	data.addRows(statsData.landingQuality);
+	data.addRows(golgotha.local.data.landingQuality);
 	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});
 
-	// Display stage by date chart
-	var chart = new google.visualization.ColumnChart(document.getElementById('stageStats'));
-	var data = new google.visualization.DataTable();
-	data.addColumn('date', 'Month');
-	for (var st = 1; st <= statsData.maxStage; st++)
-		data.addColumn('number', 'Stage ' + st);
+	// Massage data and init charts
+	const dateTX = function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
+	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX);
+	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX);
+	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
+	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
 
-	statsData.calendar.forEach(function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
-	data.addRows(statsData.calendar);
-	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
-	chart.draw(data,{title:'Flights by Date/Stage',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
-
-	// Display sim by date chart
-	var chart = new google.visualization.ColumnChart(document.getElementById('simStats'));
-	var data = new google.visualization.DataTable();
-	data.addColumn('date', 'Month');
-	statsData.sims.forEach(function(s) { data.addColumn('number', s); });
-	statsData.simCalendar.forEach(function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
-	data.addRows(statsData.simCalendar);
-	chart.draw(data,{title:'Flights by Date/Simulator',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+	golgotha.local.drawGraphs(golgotha.local.data.calendar, golgotha.local.data.simCalendar, 'Flights');
 	return true;
 };
 
