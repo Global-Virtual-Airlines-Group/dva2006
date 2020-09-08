@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
+
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
@@ -18,14 +19,14 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 8.3
+ * @version 9.1
  * @since 2.1
  */
 
 public class MyFlightsService extends WebService {
 	
 	private static final int MAX_ENTRIES = 12;
-
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -129,31 +130,35 @@ public class MyFlightsService extends WebService {
 		// Create stage/flights by Month
 		int maxStage = stageStats.stream().mapToInt(StageStatsEntry::getMaxStage).max().orElse(1);
 		jo.put("maxStage", maxStage);
-		JSONArray jdo = new JSONArray();
+		JSONArray jdo = new JSONArray(); JSONArray jdh = new JSONArray();
 		for (StageStatsEntry entry : stageStats) {
-			JSONArray da = new JSONArray();
-			da.put(JSONUtils.format(entry.getDate()));
+			JSONObject jd = JSONUtils.format(entry.getDate());
+			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
+			da.put(jd); dh.put(jd);
 			
-			for (int x = 1; x <= maxStage; x++)
+			for (int x = 1; x <= maxStage; x++) {
 				da.put(entry.getLegs(x));
+				dh.put(entry.getHours(x));
+			}
 
-			jdo.put(da);
+			jdo.put(da); jdh.put(dh);
 		}
 		
 		// Create sim/flights by Month
 		Collection<Simulator> sims = simStats.stream().flatMap(ss -> ss.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
 		sims.forEach(s -> jo.append("sims", s.name()));
-		JSONArray jso = new JSONArray();
+		JSONArray jso = new JSONArray(); JSONArray jsh = new JSONArray();
 		for (SimStatsEntry entry : simStats) {
-			JSONArray da = new JSONArray();
-			da.put(JSONUtils.format(entry.getDate()));
-			sims.forEach(s -> da.put(entry.getLegs(s)));
-			jso.put(da);
+			JSONObject jd = JSONUtils.format(entry.getDate());
+			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
+			da.put(jd); dh.put(jd);
+			sims.forEach(s -> { da.put(entry.getLegs(s)); dh.put(entry.getHours(s)); });
+			jso.put(da); jsh.put(dh);
 		}
 		
 		// Dump the JSON to the output stream
-		jo.put("calendar", jdo);
-		jo.put("simCalendar", jso);
+		jo.put("calendar", jdo); jo.put("calendarHours", jdh);
+		jo.put("simCalendar", jso); jo.put("simCalendarHours", jsh);
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(600);
