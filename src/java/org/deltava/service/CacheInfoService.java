@@ -1,9 +1,9 @@
-// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.util.Collection;
+import java.util.*;
 
 import org.json.*;
 
@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Service to display application cache information.
  * @author Luke
- * @version 7.4
+ * @version 9.1
  * @since 6.2
  */
 
@@ -34,7 +34,7 @@ public class CacheInfoService extends WebService {
 			throw error(SC_UNAUTHORIZED, "Not in Admin role", false);
 		
 		// Get cache info
-		Collection<CacheInfo> info = CacheManager.getCacheInfo();
+		List<CacheInfo> info = new ArrayList<CacheInfo>(CacheManager.getCacheInfo());
 		String fmt = ctx.getUser().getNumberFormat();
 		
 		// Tell ACARS to update its cache
@@ -48,7 +48,8 @@ public class CacheInfoService extends WebService {
 				acarsInfo.forEach(ci -> { info.add(new CacheInfo("acars", ci)); });
 		}
 		
-		// Format results
+		// Sort and Format results
+		Collections.sort(info);
 		JSONObject jo = new JSONObject();
 		for (CacheInfo c : info) {
 			JSONObject co = new JSONObject();

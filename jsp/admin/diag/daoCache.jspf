@@ -21,9 +21,9 @@
  <td>HIT RATE</td>
 </tr>
 </el:table>
-<script id="cacheReload" async>
+<script async>
 golgotha.local.cacheUpdate = function(updateInterval) {
-	var xmlreq = new XMLHttpRequest();
+	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('GET', 'cacheinfo.ws', true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -35,34 +35,34 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 			r.parentNode.removeChild(r);
 
         // Parse the response
-		var jsData = JSON.parse(xmlreq.responseText);
-		for (var c = jsData.caches.pop(); (c != null); c = jsData.caches.pop()) {
-			var r = document.createElement('tr');
+		const jsData = JSON.parse(xmlreq.responseText);
+        jsData.caches.forEach(function(c) {
+			const r = document.createElement('tr');
 			r.setAttribute('class', 'daoCacheEntry');
-			var ic = golgotha.local.createCell(c.id, 'pri bld'); ic.cacheID = c.id;
+			const ic = golgotha.local.createCell(c.id, 'pri bld'); ic.cacheID = c.id;
 			ic.addEventListener('dblclick', function() { golgotha.local.cacheClear(this.cacheID); });
 			r.appendChild(ic);
 			r.appendChild(golgotha.local.createCell(c.type));
 			r.appendChild(golgotha.local.createCell(c.size));
 			if (c.remote) {
-				var msg = c.latency + 'ms latency';
+				let msg = c.latency + 'ms latency';
 				if (c.errors > 0)
 					msg += ' (' + c.errors + ' errors)';
 
-				var cc = r.appendChild(golgotha.local.createCell(msg));
+				const cc = r.appendChild(golgotha.local.createCell(msg));
 				cc.setAttribute('colspan', '2');
 				r.appendChild(cc);
 			} else {
 				r.appendChild(golgotha.local.createCell(c.maxSize));
 				r.appendChild(golgotha.local.createCell(c.fill, 'sec'));
 			}
-			
+
 			r.appendChild(golgotha.local.createCell(c.reqs));
 			r.appendChild(golgotha.local.createCell(c.hits));
 			r.appendChild(golgotha.local.createCell((c.hitRate == null) ? 'N/A' : c.hitRate, 'bld'));
 			title.parentNode.insertBefore(r, null);
-		}
-		
+		});
+
 	    if (updateInterval > 0)
 	        window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
 
@@ -74,15 +74,15 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 };
 
 golgotha.local.createCell = function(txt, className) {
-	var td = document.createElement('td');
+	const td = document.createElement('td');
 	if (className != null) td.setAttribute('class', className);
 	td.appendChild(document.createTextNode(txt));
 	return td;
 };
 
 golgotha.local.cacheClear = function(id) {
-	var xmlreq = new XMLHttpRequest();
-	xmlreq.open('POST', 'cacheclear.ws?id=' + id, true);
+	const xmlreq = new XMLHttpRequest();
+	xmlreq.open('post', 'cacheclear.ws?id=' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		alert('Cleared "' + id + '" cache');
