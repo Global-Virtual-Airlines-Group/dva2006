@@ -1,7 +1,8 @@
-// Copyright 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 import java.sql.Connection;
 
@@ -22,12 +23,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 7.2
+ * @version 9.1
  * @since 3.2
  */
 
 public class AccomplishmentCheckCommand extends AbstractCommand {
-
+	
 	/**
 	 * Execute the command.
 	 * @param ctx the Command context
@@ -61,7 +62,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
 			frdao.getCaptEQType(flights);
-			flights.forEach(fr -> helper.add(fr));
+			flights.forEach(helper::add);
 			
 			// Load the Pilot's Dispatch entries
 			GetACARSLog acdao = new GetACARSLog(con);
@@ -73,34 +74,20 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 				dce.addFlights(dspFlights);
 				helper.add(ce);
 			}
+			
+			// Load existing accomplishments, and recalculate
+			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID);
+			Collection<DatedAccomplishment> newAccs = accs.stream().map(a -> accCheck(a, helper, pAccs.get(Integer.valueOf(a.getID())))).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new));
 
 			// Start a transaction
 			ctx.startTX();
 			
 			// Clear the user's accomplishments
 			SetAccomplishment awdao = new SetAccomplishment(con);
-			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID);
 			for (Accomplishment a : pAccs.values())
 				awdao.clearAchievement(p.getID(), a);
-			
-			// Loop through accomplishments
-			Collection<DatedAccomplishment> newAccs = new TreeSet<DatedAccomplishment>();
-			for (Accomplishment a : accs) {
-				Instant dt = helper.achieved(a);
-				if (dt != null) {
-					DatedAccomplishment da = new DatedAccomplishment(dt, a);
-					DatedAccomplishment da2 = pAccs.get(Integer.valueOf(a.getID()));
-					if (da2 != null) {
-						long timeDiff = Math.abs(dt.toEpochMilli() - da2.getDate().toEpochMilli()) / 1000;
-						if (timeDiff > 86400)
-							newAccs.add(da);	
-					} else
-						newAccs.add(da);
-					
-					// Write the accomplishment
-					awdao.achieve(p.getID(), da, dt);
-				}
-			}
+			for (DatedAccomplishment da : newAccs)
+				awdao.achieve(da.getPilotID(), da, da.getDate());
 			
 			// Commit and clear cache
 			ctx.commitTX();
@@ -124,5 +111,16 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
+	}
+		
+	private static DatedAccomplishment accCheck(Accomplishment a, AccomplishmentHistoryHelper helper, DatedAccomplishment da2) {
+		Instant dt = helper.achieved(a);		
+		if (dt == null) return null;
+		
+		DatedAccomplishment da = new DatedAccomplishment(helper.getPilotID(), dt, a);
+		if (da2 == null) return da;
+		
+		long timeDiff = Math.abs(dt.toEpochMilli() - da2.getDate().toEpochMilli()) / 1000;
+		return (timeDiff < 86400) ? da : null;
 	}
 }
