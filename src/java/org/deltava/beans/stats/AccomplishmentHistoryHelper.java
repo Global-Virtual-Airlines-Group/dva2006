@@ -244,6 +244,14 @@ public class AccomplishmentHistoryHelper {
 	public long getProgress(Accomplishment a) {
 		return progress(a, _totals);
 	}
+	
+	/**
+	 * Returns the Pilot's database ID.
+	 * @return the database ID
+	 */
+	public int getPilotID() {
+		return _usr.getID();
+	}
 
 	/*
 	 * Returns how far a pilot is towards a particular Accomplishment.

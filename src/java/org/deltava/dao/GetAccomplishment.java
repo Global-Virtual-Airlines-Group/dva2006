@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 3.2
  */
 
@@ -161,7 +161,7 @@ public class GetAccomplishment extends DAO {
 		for (DatedAccomplishmentID id : p.getAccomplishmentIDs()) {
 			Accomplishment a = get(id.getID(), dbName);
 			if (a != null) {
-				DatedAccomplishment da = new DatedAccomplishment(id.getDate(), a);
+				DatedAccomplishment da = new DatedAccomplishment(p.getID(), id.getDate(), a);
 				results.add(da);
 			}
 		}
