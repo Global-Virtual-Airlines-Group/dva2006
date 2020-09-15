@@ -1,7 +1,8 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.util.CollectionUtils;
@@ -9,7 +10,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class to filter Accomplishments.
  * @author Luke
- * @version 3.2
+ * @version 9.1
  * @since 3.2
  */
 
@@ -21,24 +22,64 @@ class AccomplishmentFilter {
 	}
 	
 	/**
+	 * Determines whether a RoutePair updates an Accomplishment's counts, if an Accomplishment's unit uses geolocations.
+	 * @param rp the RoutePair
+	 * @param a the Accomplishment
+	 * @return TRUE if the RoutePair's airports meet the Accomplishment criteria
+	 * @see AccomplishUnit#isGeo()
+	 */
+	static boolean matchesGeo(RoutePair rp, Accomplishment a) {
+		AccomplishUnit u = a.getUnit();
+		if (!u.isGeo()) return true;
+		
+		switch (u) {
+		case AIRPORTD:
+		case ADLEGS:
+			return matches(rp.getAirportD(), a);
+			
+		case AIRPORTA:
+		case AALEGS:
+			return matches(rp.getAirportA(), a);
+			
+		case AIRPORTS:
+			return matches(rp.getAirportD(), a) || matches(rp.getAirportA(), a);
+			
+		case COUNTRIES:
+			return matches(rp.getAirportD().getCountry(), a) || matches(rp.getAirportA().getCountry(), a);
+			
+		case STATES:
+			return matches(rp.getAirportD().getState(), a) || matches(rp.getAirportA().getState(), a);
+			
+		case CONTINENTS:
+			return matches(rp.getAirportD().getCountry().getContinent(), a) || matches(rp.getAirportA().getCountry().getContinent(), a);
+			
+		default:
+			return false;
+		}
+	}
+	
+	/*
 	 * Helper method to determine whether an object is included in an Accomplishment. 
 	 */
 	private static <T> boolean matches(T entry, Accomplishment a) {
 		if (entry instanceof Airport) {
 			Airport ap = (Airport) entry;
-			return ((a.getChoices().contains(ap.getIATA()) || (a.getChoices().contains(ap.getICAO()))));
+			return a.getChoices().contains(ap.getIATA()) || a.getChoices().contains(ap.getICAO());
 		} else if (entry instanceof State) {
 			State st = (State) entry;
-			return (a.getChoices().contains(st.name()));
+			return a.getChoices().contains(st.name());
 		} else if (entry instanceof Country) {
 			Country c = (Country) entry;
-			return (a.getChoices().contains(c.getCode()));
+			return a.getChoices().contains(c.getCode());
 		} else if (entry instanceof Airline) {
 			Airline al = (Airline) entry;
-			return (a.getChoices().contains(al.getCode()));
+			return a.getChoices().contains(al.getCode());
+		} else if (entry instanceof Continent) {
+			Continent c = (Continent) entry;
+			return a.getChoices().contains(c.name());
 		}
 
-		return (a.getChoices().contains(entry.toString()));
+		return (a.getChoices().contains(String.valueOf(entry)));
 	}
 	
 	/**
@@ -52,13 +93,7 @@ class AccomplishmentFilter {
 		if (a.getChoices().isEmpty())
 			return new ArrayList<T>(values);
 		
-		Collection<T> results = new ArrayList<T>(values.size());
-		for (T entry : values) {
-			if (matches(entry, a))
-				results.add(entry);
-		}
-		
-		return results;
+		return values.stream().filter(v -> matches(v, a)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -83,6 +118,8 @@ class AccomplishmentFilter {
 					results.add(((State) entry).toString());
 				else if (entry instanceof Airline)
 					results.add(((Airline) entry).getCode());
+				else if (entry instanceof Continent)
+					results.add(((Continent) entry).name());
 				else
 					results.add(String.valueOf(entry));
 			}
