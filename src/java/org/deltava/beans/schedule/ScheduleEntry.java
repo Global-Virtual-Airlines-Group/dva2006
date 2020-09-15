@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -9,11 +9,16 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
 public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
+	
+	/**
+	 * Variable equipment code.
+	 */
+	public static final String EQ_VARIES = "EQV";
 	
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
@@ -43,6 +48,16 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private static ZoneId getAirportTimeZone(Airport a) {
 		return (a == null) ? ZoneOffset.UTC : a.getTZ().getZone();
+	}
+	
+	/**
+	 * Helper method to determine if flight is using a variable equipment type.
+	 * @param f a Flight
+	 * @return TRUE if equipment varies, otherwise FALSE
+	 * @see ScheduleEntry#EQ_VARIES
+	 */
+	public static boolean isVariable(Flight f) {
+		return EQ_VARIES.equalsIgnoreCase(f.getEquipmentType());
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -101,7 +101,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * @see ScheduleLoadDAO#setAircraft(Collection)
 	 */
 	protected String getEquipmentType(String iataCode) {
-		if ("EQV".equalsIgnoreCase(iataCode)) return "EQV";
+		if (ScheduleEntry.EQ_VARIES.equalsIgnoreCase(iataCode)) return ScheduleEntry.EQ_VARIES;
 		Aircraft a = _iataMappings.get(iataCode.toUpperCase());
 		return (a == null) ? null : a.getName();
 	}
