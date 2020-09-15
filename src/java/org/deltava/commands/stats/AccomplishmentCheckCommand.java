@@ -2,9 +2,9 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.time.Instant;
+import java.time.*;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
@@ -16,7 +16,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
@@ -76,8 +76,8 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			}
 			
 			// Load existing accomplishments, and recalculate
-			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID);
-			Collection<DatedAccomplishment> newAccs = accs.stream().map(a -> accCheck(a, helper, pAccs.get(Integer.valueOf(a.getID())))).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new));
+			Map<Integer, DatedAccomplishment> pAccs = Collections.unmodifiableMap(CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID));
+			Collection<DatedAccomplishment> newAccs = accs.parallelStream().map(a -> accCheck(a, helper, pAccs.get(Integer.valueOf(a.getID())))).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new));
 
 			// Start a transaction
 			ctx.startTX();
@@ -90,7 +90,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 				awdao.achieve(da.getPilotID(), da, da.getDate());
 			
 			// Commit and clear cache
-			ctx.commitTX();
+			//ctx.commitTX();
 			CacheManager.invalidate("Pilots", p.cacheKey());
 			
 			// Write status variable
@@ -112,7 +112,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
-		
+	
 	private static DatedAccomplishment accCheck(Accomplishment a, AccomplishmentHistoryHelper helper, DatedAccomplishment da2) {
 		Instant dt = helper.achieved(a);		
 		if (dt == null) return null;
@@ -120,7 +120,8 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 		DatedAccomplishment da = new DatedAccomplishment(helper.getPilotID(), dt, a);
 		if (da2 == null) return da;
 		
-		long timeDiff = Math.abs(dt.toEpochMilli() - da2.getDate().toEpochMilli()) / 1000;
-		return (timeDiff < 86400) ? da : null;
+		// Return only if the date has changed by >1 day
+		Duration d = Duration.between(dt, da2.getDate());
+		return (d.abs().getSeconds() > 86400) ? da : null;
 	}
 }
