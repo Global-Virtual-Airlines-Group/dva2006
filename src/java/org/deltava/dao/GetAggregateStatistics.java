@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 6.2
  */
 
@@ -64,8 +64,8 @@ public class GetAggregateStatistics extends DAO {
 					entry.setFSVersionLegs(Simulator.XP11, rs.getInt(12));
 					entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(13));
 					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(14));
-					entry.setPax(rs.getInt(13));
-					entry.setLoadFactor(rs.getDouble(14));
+					entry.setPax(rs.getInt(15));
+					entry.setLoadFactor(rs.getDouble(16));
 					results.add(entry);
 				}
 			}
@@ -174,9 +174,9 @@ public class GetAggregateStatistics extends DAO {
 				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(17));
 				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(18));
 				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(19));
-				entry.setPax(rs.getInt(19));
-				entry.setLoadFactor(rs.getDouble(20));
-				entry.setPilotIDs(rs.getInt(21));
+				entry.setPax(rs.getInt(20));
+				entry.setLoadFactor(rs.getDouble(21));
+				entry.setPilotIDs(rs.getInt(22));
 				results.add(entry);
 			}
 			
