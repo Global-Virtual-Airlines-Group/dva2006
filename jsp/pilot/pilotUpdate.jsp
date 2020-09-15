@@ -115,9 +115,9 @@ address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
 <br />
 <li>The user account for ${pilot.name} has been Suspended.</li>
 </c:if>
-<c:if test="${accomplishUpdate}">
+<c:if test="${accomplishUpdate && (!empty accs)}">
 <!-- Accomplishment Update -->
-The following new Pilot Accomplishments have been added to ${pilot.name}'s profile:<br />
+<li>The following new or updated Pilot Accomplishments have been added to ${pilot.name}'s profile:</li><br />
 <br />
 <c:forEach var="acc" items="${accs}">
 <li><fmt:accomplish className="bld" accomplish="${acc}" /> on <fmt:date fmt="d" date="${acc.date}" /></li>
