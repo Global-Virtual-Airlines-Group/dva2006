@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -126,8 +126,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 				}
 			}
 			
-			// Find "EQV" entries
-			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(ScheduleImportCommand::isVariable).collect(Collectors.toList());
+			// Find variable entries
+			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(ScheduleEntry::isVariable).collect(Collectors.toList());
 			Collection<Airline> airlines = variedEQ.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
 			Map<String, Aircraft> allAC = CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName);
 			
@@ -142,7 +142,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Get unvaried
-			entries.stream().filter(se -> !isVariable(se)).forEach(se -> {
+			entries.stream().filter(se -> !ScheduleEntry.isVariable(se)).forEach(se -> {
 				Collection<Aircraft> ac = airlineEQ.get(se.getAirline());
 				if (ac != null)
 					ac.add(allAC.get(se.getEquipmentType()));
@@ -221,10 +221,6 @@ public class ScheduleImportCommand extends AbstractCommand {
 		result.setSuccess(true);
 	}
 	
-	private static boolean isVariable(ScheduleEntry se) {
-		return "EQV".equals(se.getEquipmentType());
-	}
-
 	private static InputStream parsePDF(File f) throws IOException, DAOException {
 		
 		if (f.getName().toLowerCase().endsWith(".gz"))
