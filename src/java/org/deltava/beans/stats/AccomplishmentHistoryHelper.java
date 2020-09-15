@@ -388,23 +388,24 @@ public class AccomplishmentHistoryHelper {
 			return null;
 		
 		// Check join date
-		if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
+		AccomplishUnit u = a.getUnit();
+		if (u == AccomplishUnit.MEMBERDAYS)
 			return _usr.getCreatedOn().plus(a.getValue(), ChronoUnit.DAYS);
 			
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
-		if (a.getUnit().getDataRequired() == Data.FLIGHTS) {
+		if (u.getDataRequired() == Data.FLIGHTS) {
 			for (FlightReport fr : _pireps) {
 				cnt.add(fr);
 				
 				// If we meet the criteria, return the date
-				if (has(a, cnt) != Result.NOTYET)
+				if (AccomplishmentFilter.matchesGeo(fr, a) && (has(a, cnt) != Result.NOTYET))
 					return fr.getSubmittedOn();
 			}
 		}
 		
 		// Loop through the connection entries
-		if (a.getUnit().getDataRequired() == Data.DISPATCH) {
+		if (u.getDataRequired() == Data.DISPATCH) {
 			for (DispatchConnectionEntry dce : _cons) {
 				cnt.add(dce);
 				if (has(a, cnt) != Result.NOTYET)
