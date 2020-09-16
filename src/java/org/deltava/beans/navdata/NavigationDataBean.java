@@ -310,6 +310,11 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		if (!Character.isLetter(code.charAt(code.length() - 1)))
 			return CodeType.CODE;
 		
+		// Check for slash
+		int spos = code.indexOf('/');
+		if ((spos > 1) && Character.isLetter(code.charAt(spos - 1)))
+			return CodeType.SLASH;
+		
 		// Check to ensure no additional letters, except in position 1/2
 		int ltrCount = 0;
 		for (int x = 1; x < code.length() - 2; x++) {

@@ -1,10 +1,10 @@
-// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 6.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -79,6 +79,40 @@ public class Intersection extends NavigationDataBean {
 		return buf.toString();
 	}
 	
+	private static double parseDMSLatitude(double dms) {
+		
+		double lat = dms;
+		if (lat >= 100000) {
+			double latS = lat % 100;
+			double latM = Math.floor(((lat % 10000) - latS) / 100);
+			double latD = Math.floor(lat / 10000);
+			lat = latD + (latM / 60) + (latS / 3600); 
+		} else if (lat >= 1000) {
+			double latM = lat % 100;
+			double latD = Math.floor(lat / 100);
+			lat = latD + (latM / 60);
+		}
+		
+		return lat;
+	}
+	
+	private static double parseDMSLongitude(double dms) {
+		
+		double lng = dms; 
+		if (lng >= 180000) {
+			double lngS = lng % 100;
+			double lngM = Math.floor(((lng % 10000) - lngS) / 100);
+			double lngD = Math.floor(lng / 10000);
+			lng = lngD + (lngM / 60) + (lngS / 3600); 
+		} else if (lng >= 18000) {
+			double lngM = lng % 100;
+			double lngD = Math.floor(lng / 100);
+			lng = lngD + (lngM / 60);
+		}
+		
+		return lng;
+	}
+	
 	/**
 	 * Parses a North Atlantic Track latitude/longitude waypoint code.
 	 * @param code the waypoint code
@@ -105,38 +139,12 @@ public class Intersection extends NavigationDataBean {
 				String latDir = code.substring(pos, pos + 1).toUpperCase();
 				String lngDir = code.substring(code.length() - 1).toUpperCase();
 				try {
-					Hemisphere hLat = Hemisphere.valueOf(latDir);
-					Hemisphere hLng = Hemisphere.valueOf(lngDir);
+					Hemisphere hLat = Hemisphere.valueOf(latDir); Hemisphere hLng = Hemisphere.valueOf(lngDir);
 					double lat = Double.parseDouble(code.substring(0, pos)) ;
 					double lng = Double.parseDouble(code.substring(pos + 1, code.length() - 1));
-					
-					// Add in latitude Minute/second encoding
-					if (lat >= 100000) {
-						double latS = lat % 100;
-						double latM = Math.floor(((lat % 10000) - latS) / 100);
-						double latD = Math.floor(lat / 10000);
-						lat = latD + (latM / 60) + (latS / 3600); 
-					} else if (lat >= 1000) {
-						double latM = lat % 100;
-						double latD = Math.floor(lat / 100);
-						lat = latD + (latM / 60);
-					}
-					
-					// Add in longitude Minute/second encoding
-					if (lng >= 180000) {
-						double lngS = lng % 100;
-						double lngM = Math.floor(((lng % 10000) - lngS) / 100);
-						double lngD = Math.floor(lng / 10000);
-						lng = lngD + (lngM / 60) + (lngS / 3600); 
-					} else if (lng >= 18000) {
-						double lngM = lng % 100;
-						double lngD = Math.floor(lng / 100);
-						lng = lngD + (lngM / 60);
-					}
-					
-					return new Intersection(code, lat * hLat.getLatitudeFactor(), lng * hLng.getLongitudeFactor());
+					return new Intersection(code, parseDMSLatitude(lat) * hLat.getLatitudeFactor(), parseDMSLongitude(lng) * hLng.getLongitudeFactor());
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid waypoint code - " + code);
+					throw new IllegalArgumentException("Invalid full waypoint code - " + code);
 				}
 				
 			case QUADRANT:
@@ -147,8 +155,20 @@ public class Intersection extends NavigationDataBean {
 					double lng = Double.parseDouble(code.substring(2, code.length() - 1)) * h.getLongitudeFactor();
 					return new Intersection(code, lat, lng);
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid waypoint code - " + code);
-				}				
+					throw new IllegalArgumentException("Invalid quadrant waypoint code - " + code);
+				}
+				
+			case SLASH:
+				int spos = code.indexOf('/');
+				try {
+					Hemisphere hLat = Hemisphere.valueOf(String.valueOf(code.charAt(spos - 1)).toUpperCase());
+					Hemisphere hLng = Hemisphere.valueOf(String.valueOf(code.charAt(code.length() - 1)).toUpperCase());
+					double lat = Double.parseDouble(code.substring(0, spos - 1));
+					double lng = Double.parseDouble(code.substring(spos + 1, code.length() -1 ));
+					return new Intersection(code, parseDMSLatitude(lat) * hLat.getLatitudeFactor(), parseDMSLongitude(lng) * hLng.getLongitudeFactor());
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Invalid slash waypoint code - " + code);
+				}
 				
 			default:
 				return null;
