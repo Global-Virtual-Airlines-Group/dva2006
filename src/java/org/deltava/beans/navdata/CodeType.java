@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
@@ -6,11 +6,10 @@ package org.deltava.beans.navdata;
  * coordinates as either a quadrant (with a single letter at the end) or a full lat/long set
  * with two letters.
  * @author Luke
- * @version 2.6
+ * @version 9.1
  * @since 2.6
  */
 
 public enum CodeType {
-
-	CODE, QUADRANT, FULL;
+	CODE, QUADRANT, FULL, SLASH;
 }
