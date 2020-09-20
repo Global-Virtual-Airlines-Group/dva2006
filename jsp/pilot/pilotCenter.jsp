@@ -70,7 +70,9 @@
 <tr>
  <td class="sideLabel mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri bld"><content:airline /></span>, ${pilot.firstName}.
-<c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
+<c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if>
+<c:if test="${acarsEnabled && (empty pilot.pilotCode)}">You can use <span class="pribld">${pilot.ID}</span> as a temporary ACARS User ID.</c:if>
+<br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
 You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.remoteAddr})<c:if test="${!empty ipAddrInfo}">, in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
