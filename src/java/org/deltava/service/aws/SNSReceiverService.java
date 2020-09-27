@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -9,24 +9,29 @@ import org.json.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.dao.DAOException;
+import org.deltava.beans.Pilot;
+
+import org.deltava.dao.*;
 import org.deltava.dao.http.GetURL;
 
 import org.deltava.crypt.SNSVerifier;
 
 import org.deltava.service.*;
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to receive Amazon SNS messages.
  * @author Luke
- * @version 8.5
+ * @version 9.1
  * @since 8.5
  */
 
 abstract class SNSReceiverService extends WebService {
 	
 	private static final Logger log = Logger.getLogger(SNSReceiverService.class);
+	
+	private Pilot _usr;
 
 	/**
 	 * Validates an SNS message.
@@ -97,7 +102,22 @@ abstract class SNSReceiverService extends WebService {
 			return isOK ? SC_OK : SC_INTERNAL_SERVER_ERROR;
 		}
 		
-		return execute(new SNSContext(ctx, sns));
+		// Load the User
+		if (_usr == null) {
+			try {
+				GetPilotDirectory pdao = new GetPilotDirectory(ctx.getConnection());
+				_usr = pdao.getByCode(SystemData.get("users.tasks_by"));
+			} catch (DAOException de) {
+				throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());				
+			} finally {
+				ctx.release();
+			}
+		}
+		
+		// Create the context and execute
+		SNSContext sctx = new SNSContext(ctx, sns);
+		sctx.setUser(_usr);
+		return execute(sctx);
 	}
 	
 	/**

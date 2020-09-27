@@ -1,4 +1,4 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Amazone SES feedback SNS messages.
  * @author Luke
- * @version 8.6
+ * @version 9.1
  * @since 8.5
  */
 
@@ -48,8 +48,10 @@ public class SESFeedbackService extends SNSReceiverService {
 		try {
 			Connection con = ctx.getConnection();
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			SetPilot pwdao = new SetPilot(con);
 			SetCoolerMessage cwdao = new SetCoolerMessage(con);
 			SetEMailDelivery dvwdao = new SetEMailDelivery(con);
+			SetStatusUpdate suwdao = new SetStatusUpdate(con);
 			
 			// Get the Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
@@ -57,7 +59,7 @@ public class SESFeedbackService extends SNSReceiverService {
 			if (c == null)
 				throw new DAOException("Unknown notification Channel - " + channelName);
 			
-			Message msg = new Message(pdao.getByCode(SystemData.get("users.tasks_by")).getID());
+			Message msg = new Message(ctx.getUser().getID());
 			msg.setRemoteAddr("127.0.0.1");
 			msg.setRemoteHost("localhost");
 			
@@ -66,10 +68,13 @@ public class SESFeedbackService extends SNSReceiverService {
 				MessageThread mt = new MessageThread("Amazon SES bounce notification");
 				mt.setChannel(c.getName());
 				
-				StringBuilder buf = new StringBuilder("Amazon SES bounce notification\n\n");
+				// Get type (is it permanent?)
 				JSONObject bo = msgo.getJSONObject("bounce");
+				String bncType = bo.optString("bounceType", "?"); boolean isPerm = "permanent".equalsIgnoreCase(bncType);
+				
+				StringBuilder buf = new StringBuilder("Amazon SES bounce notification\n\n");
 				buf.append("Type: ");
-				buf.append(bo.optString("bounceType", "?")).append(" / ");
+				buf.append(bncType).append(" / ");
 				buf.append(bo.optString("bounceSubType", "?")).append("\n\n");
 				
 				JSONArray rcpts = bo.getJSONArray("bouncedRecipients");
@@ -85,6 +90,19 @@ public class SESFeedbackService extends SNSReceiverService {
 						dv.setEmail(ro.getString("emailAddress"));
 						dv.setResponse(ro.optString("diagnosticCode"));
 						dv.setMessageID(bo.optString("feedbackId", "?"));
+						dvwdao.write(dv);
+						
+						// Block if permanent
+						if (isPerm) {
+							p.setEmailInvalid(true);
+							pwdao.write(p);
+				            
+				            // Create the status entry
+				            StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
+				            upd.setAuthorID(ctx.getUser().getID());
+				            upd.setDescription("E-Mail Address Invalidated by SES feedback");
+							suwdao.write(upd);
+						}
 						
 						buf.append(p.getName());
 						buf.append(" (").append(p.getPilotCode()).append(") - ");
