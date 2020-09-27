@@ -90,7 +90,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 				awdao.achieve(da.getPilotID(), da, da.getDate());
 			
 			// Commit and clear cache
-			//ctx.commitTX();
+			ctx.commitTX();
 			CacheManager.invalidate("Pilots", p.cacheKey());
 			
 			// Write status variable
