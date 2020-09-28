@@ -5,6 +5,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.security.SecurityContext;
+import org.deltava.util.system.SystemData;
 
 /**
  * An Access Controller for Issue Tracking.
@@ -34,22 +35,20 @@ public final class IssueAccessControl extends AccessControl {
 		_i = i;
 	}
 
-	/**
-	 * Calculates access rights.
-	 */
 	@Override
 	public void validate() {
 		validateContext();
 
 		// Set issue creation access
 		Person p = _ctx.getUser();
-		boolean isDev = _ctx.isUserInRole("Developer");
+		boolean isDev = _ctx.getRoles().contains("Developer");
+		boolean isOurAirline = (_i != null) && _i.getAirlines().contains(SystemData.getApp(null));
 		boolean isStaff = isDev || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
 		boolean hasLegs = (p instanceof Pilot) && (((Pilot) p).getLegs() > 5);
 		
 		_canCreate = isStaff || hasLegs;
 		if (!_ctx.isAuthenticated()) {
-			_canRead = (_i == null) ? true : (_i.getSecurity() == IssueSecurity.PUBLIC);
+			_canRead = (_i == null) ? true : ((_i.getSecurity() == IssueSecurity.PUBLIC) && isOurAirline);
 			return;
 		}
 
@@ -59,14 +58,14 @@ public final class IssueAccessControl extends AccessControl {
 			_canEdit = _canCreate;
 			return;
 		}
-
+		
 		// Determine state variables
 		int userID = _ctx.getUser().getID();
 		boolean isOpen = (_i.getStatus() == IssueStatus.OPEN);
 		boolean isMine = ((_i.getAuthorID() == userID) || (_i.getAssignedTo() == userID));
 		
 		// Check read access
-		_canRead = (_i.getSecurity() == IssueSecurity.STAFF) ? isStaff || isDev : true;
+		_canRead = (isOurAirline || isDev) && ((_i.getSecurity() == IssueSecurity.STAFF) ? isStaff : true);
 		boolean canReopen = (!isOpen && isMine) || isDev;
 
 		// Set access control variables
