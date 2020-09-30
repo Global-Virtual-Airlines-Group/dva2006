@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 5.1
  */
 
@@ -114,19 +114,19 @@ public class GetGates extends DAO {
 			return CollectionUtils.sort(results, CMP);
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),'') AS AL, IFNULL(GA.INTL,0) AS INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
-			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND "
-			+ "(ND.ITEMTYPE=?) WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),'') AS AL, IFNULL(GA.INTL,0) AS INTL, NULL AS RG, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
+			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) "
+			+ "AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) ");
 		if (rp.getAirportD() != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY G.NAME");
 		
+		Airport a = isDeparture ? rp.getAirportD() : rp.getAirportA();
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) { 
 			int pos = 0;
-			ps.setInt(++pos, Navaid.AIRPORT.ordinal());
-			ps.setString(++pos, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
+			ps.setString(++pos, a.getICAO());
 			ps.setBoolean(++pos, isDeparture);
 			ps.setInt(++pos, sim.getCode());
 			if (rp.getAirportD() != null)
@@ -136,6 +136,7 @@ public class GetGates extends DAO {
 			
 			results = new CacheableSet<Gate>(key);
 			results.addAll(execute(ps));
+			results.forEach(g -> g.setRegion(a.getRegion()));
 			_cache.add(results);
 			return CollectionUtils.sort(results, CMP);
 		} catch (SQLException se) {
