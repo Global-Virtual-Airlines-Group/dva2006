@@ -33,7 +33,7 @@ public class GetIssue extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Issue get(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT I.*, GROUP_CONCAT(DISTINCT IA.AIRLINE SEPARATOR ?) AS AL FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) WHERE (I,ID=?) GROUP BY I.ID")) {
+		try (PreparedStatement ps = prepare("SELECT I.*, NULL, 0, GROUP_CONCAT(DISTINCT IA.AIRLINE SEPARATOR ?) AS AL FROM common.ISSUES I LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) WHERE (I.ID=?) GROUP BY I.ID")) {
 			ps.setString(1, " ");
 			ps.setInt(2, id);
 			
