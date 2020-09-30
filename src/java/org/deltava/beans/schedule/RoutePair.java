@@ -4,7 +4,7 @@ package org.deltava.beans.schedule;
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 2.6
  */
 
@@ -45,6 +45,16 @@ public interface RoutePair {
      */
     default boolean matches(RoutePair rp) {
     	return isPopulated() && getAirportD().equals(rp.getAirportD()) && getAirportA().equals(rp.getAirportA());
+    }
+    
+    /**
+     * Returns whether this RoutePair includes a particular IATA or ICAO code.
+     * @param code the ICAO/IATA code
+     * @return TRUE if the code matches the departure or arrival airport, otherwise FALSE
+     */
+    @SuppressWarnings("unlikely-arg-type")
+    default boolean includes(String code) {
+    	return isPopulated() && (getAirportD().equals(code) || getAirportA().equals(code));
     }
     
     /**
