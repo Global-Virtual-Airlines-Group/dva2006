@@ -15,6 +15,7 @@ import org.deltava.beans.event.Event;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
+import org.deltava.security.SecurityContext;
 import org.deltava.security.command.*;
 import org.deltava.util.*;
 
@@ -23,7 +24,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 7.3
  */
 
@@ -112,6 +113,7 @@ public class AttachmentServlet extends DownloadServlet {
 		try {
 			c = jdbcPool.getConnection();
 			
+			SecurityContext sctx = new ServletSecurityContext(req);
 			switch (fType) {
 			case ISSUE:
 				// Validate that we can view the issue
@@ -121,7 +123,7 @@ public class AttachmentServlet extends DownloadServlet {
 					throw new NotFoundException("Invalid Issue - " + url.getLastPath());
 				
 				// Validate access to the thread
-				IssueAccessControl access = new IssueAccessControl(new ServletSecurityContext(req), i);
+				IssueAccessControl access = new IssueAccessControl(sctx, i);
 				access.validate();
 				if (!access.getCanRead())
 					throw new ForbiddenException("Cannot view Image - Cannot read Issue " + i.getID());
@@ -137,15 +139,19 @@ public class AttachmentServlet extends DownloadServlet {
 				break;
 				
 			case ERROR:
-				if (!req.isUserInRole("Developer"))
-					throw new ForbiddenException("Cannot view ACARS Errror Logs");
-				
+				// Get the error report
 				GetACARSErrors errdao = new GetACARSErrors(c);
 				ACARSError err = errdao.get(dbID);
 				if (err == null)
 					throw new NotFoundException("Invalid Error Report - " + dbID);
 				else if (!err.isLoaded())
 					throw new NotFoundException("No Log attached to Error Report - " + dbID);
+				
+				// Check access
+				ErrorLogAccessControl eac = new ErrorLogAccessControl(sctx, err);
+				eac.validate();
+				if (!eac.getCanRead())
+					throw new ForbiddenException("Cannot view Errort Report");
 				
 				buffer = err.getLogData();
 				rsp.setContentType("text/plain");
@@ -161,7 +167,7 @@ public class AttachmentServlet extends DownloadServlet {
 				
 				// Validate access to the thread
 				try {
-					HelpDeskAccessControl ac = new HelpDeskAccessControl(new ServletSecurityContext(req), hi);
+					HelpDeskAccessControl ac = new HelpDeskAccessControl(sctx, hi);
 					ac.validate();
 				} catch (AccessControlException ace) {
 					throw new ForbiddenException("Cannot view Image - Cannot read Issue " + hi.getID());
