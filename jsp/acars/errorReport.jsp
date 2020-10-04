@@ -131,7 +131,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton url="acarserrordelete" link="${err}" label="DELETE ERROR REPORT" /></td>
+ <td>&nbsp;<c:if test="${access.canDelete}"><el:cmdbutton url="acarserrordelete" link="${err}" label="DELETE ERROR REPORT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
@@ -148,7 +148,7 @@ golgotha.local.loadLog = function(id) {
 	xmlreq.open('get', '/error_log/' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		var td = document.getElementById('logData');
+		const td = document.getElementById('logData');
 		td.innerText = xmlreq.responseText;
 		if (doSave) {
 			const ct = xmlreq.getResponseHeader('Content-Type');

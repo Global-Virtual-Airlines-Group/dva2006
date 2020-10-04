@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -9,13 +9,13 @@ import org.deltava.beans.acars.ACARSError;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.security.command.ErrorLogAccessControl;
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display an ACARS client error report.
  * @author Luke
- * @version 7.5
+ * @version 9.1
  * @since 1.0
  */
 
@@ -36,6 +36,12 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			ACARSError err = dao.get(ctx.getID());
 			if (err == null)
 				throw notFoundException("Invalid Error Report - " + ctx.getID());
+			
+			// Check our access
+			ErrorLogAccessControl ac = new ErrorLogAccessControl(ctx, err);
+			ac.validate();
+			if (!ac.getCanRead())
+				throw securityException("Cannot view Error Report " + err.getID());
 			
 			// Load the author
 			GetPilot pdao = new GetPilot(con);
@@ -64,9 +70,10 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			// Load the client data
 			GetSystemInfo sysdao = new GetSystemInfo(con);
 			ctx.setAttribute("acarsClientInfo", sysdao.get(ud.getID(), err.getSimulator(), err.getCreatedOn()), REQUEST);
-
+			
 			// Save the error report
 			ctx.setAttribute("err", err, REQUEST);
+			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

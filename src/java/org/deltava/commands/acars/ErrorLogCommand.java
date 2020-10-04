@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2106, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2106, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -10,12 +10,13 @@ import org.deltava.beans.acars.ACARSError;
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.security.command.ErrorLogAccessControl;
 import org.deltava.util.*;
 
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 7.5
+ * @version 9.1
  * @since 1.0
  */
 
@@ -36,7 +37,10 @@ public class ErrorLogCommand extends AbstractViewCommand {
 
 		// Get the view context and the search type
 		ViewContext<ACARSError> vc = initView(ctx, ACARSError.class);
-		int searchType = StringUtils.arrayIndexOf(FILTER_OPTS, ctx.getParameter("viewType"), ALL); 
+		int searchType = StringUtils.arrayIndexOf(FILTER_OPTS, ctx.getParameter("viewType"), ALL);
+		if (!ctx.isUserInRole("Developer"))
+			searchType = AUTHOR;
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -50,7 +54,8 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			switch (searchType) {
 				case AUTHOR :
-					vc.setResults(dao.getByPilot(StringUtils.parse(ctx.getParameter("author"), -1)));
+					int authorID = ctx.isUserInRole("Developer") ? StringUtils.parse(ctx.getParameter("author"), -1) : ctx.getUser().getID();
+					vc.setResults(dao.getByPilot(authorID));
 					break;
 					
 				case CLIENT :
@@ -76,10 +81,15 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
 			authorIDs.stream().map(id -> pilots.get(id)).filter(Objects::nonNull).forEach(authors::add);
 			
+			// Save access control
+			ErrorLogAccessControl ac = new ErrorLogAccessControl(ctx, null);
+			ac.validate();
+			
 			// Save the pilot profiles
 			ctx.setAttribute("pilots", pilots, REQUEST);
 			ctx.setAttribute("authors", authors, REQUEST);
 			ctx.setAttribute("userdata", udmap, REQUEST);
+			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
