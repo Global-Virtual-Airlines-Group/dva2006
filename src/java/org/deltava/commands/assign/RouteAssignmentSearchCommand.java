@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 4.1
  */
 
@@ -45,6 +45,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		
 		// Get the route pair and type
 		Inclusion allowHistoric = EnumUtils.parse(Inclusion.class, ctx.getParameter("includeHistoric"), Inclusion.ALL);
+		int maxDistance = StringUtils.parse(ctx.getParameter("maxLength"), 0);
 		ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
 		rp.setType((allowHistoric == Inclusion.ALL) ? RoutePairType.HYBRID : (allowHistoric == Inclusion.EXCLUDE) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
 		try {
@@ -59,7 +60,9 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setSources(rsdao.getSources(true));
-			rph.setLinks(sdao.getRoutePairs(allowHistoric));
+			Collection<ScheduleRoute> lnks = sdao.getRoutePairs(allowHistoric);
+			lnks.removeIf(sr -> ((maxDistance > 0) && (sr.getDistance() > maxDistance)));
+			rph.setLinks(lnks);
 			
 			// Figure out the routes
 			Collection<RoutePair> rts = rph.getShortestPath(rp);
@@ -76,13 +79,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 				ssc.setLeg(0);
 				ssc.setExcludeHistoric(allowHistoric);
 				ssc.setCheckDispatchRoutes(true);
-				for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
-					Aircraft a = i.next();
-					AircraftPolicyOptions opts = a.getOptions(airlineCode);
-					if ((opts.getRange() > 0) && ((rtp.getDistance() + 250) > opts.getRange()))
-						i.remove();
-				}
-				
+				myEQTypes.removeIf(ac -> filter(ac, rtp, airlineCode));
 				Collection<ScheduleEntry> entries = sdao.search(ssc);
 				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).collect(Collectors.toList());
 				results.put(rtp.getAirportA(), filteredEntries.isEmpty() ? entries : filteredEntries);
@@ -106,5 +103,10 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 	
 	private static boolean filter(ScheduleEntry se, RoutePairType rt) {
 		return (rt.hasHistoric() && se.getHistoric()) || (rt.hasCurrent() && !se.getHistoric());
+	}
+	
+	private static boolean filter(Aircraft a, RoutePair rp, String airlineCode) {
+		AircraftPolicyOptions opts = a.getOptions(airlineCode);
+		return ((opts == null) || ((opts.getRange() > 0) && ((rp.getDistance() + 200) > opts.getRange())));
 	}
 }
