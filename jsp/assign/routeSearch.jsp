@@ -84,6 +84,10 @@ golgotha.onDOMReady(function() {
  <el:airportCode combo="airportA" idx="*" airport="${rp.airportA}" /></td>
 </tr>
 <tr>
+ <td class="label">Maximum Leg Length</td>
+ <td class="data"><el:text name="maxLength" size="4" max="4" idx="*" value="${param.maxLength}" /> miles</td>
+</tr>
+<tr>
  <td class="label">Historic Routes</td>
  <td class="data"><el:combo name="includeHistoric" size="1" idx="*" options="${inclusionOpts}" value="${param.includeHistoric}" /></td>
 </tr>
