@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -14,13 +14,16 @@ import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 
 import org.deltava.dao.*;
+
+import org.deltava.security.command.ErrorLogAccessControl;
+
 import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 8.6
+ * @version 9.1
  * @since 1.0
  */
 
@@ -40,6 +43,12 @@ public class ErrorLogService extends WebService {
 		// If this isn't a post, just return a 400
 		if (!ctx.getRequest().getMethod().equalsIgnoreCase("post"))
 			return SC_BAD_REQUEST;
+		
+		// Check our access
+		ErrorLogAccessControl ac = new ErrorLogAccessControl(ctx, null);
+		ac.validate();
+		if (!ac.getCanRead())
+			return SC_FORBIDDEN;
 		
 		// Create the error bean
 		ACARSError err = new ACARSError(ctx.getUser().getID(), ctx.getParameter("msg"));

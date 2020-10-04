@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -94,6 +94,33 @@ public class SetACARSLog extends DAO {
 		try (PreparedStatement ps = 	prepareWithoutLimits("DELETE FROM acars.ERRORS WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges all ACARS Error messages for a given build from the error log.
+	 * @param build the client build
+	 * @param beta the beta, zero for all betas and -1 for everything
+	 * @return the number of reports deleted
+	 * @throws DAOException
+	 */
+	public int purgeError(int build, int beta) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM acars.ERRORS WHERE (CLIENT_BUILD=?)");
+		if (beta > 0)
+			sqlBuf.append(" AND (BETA=?)");
+		else if (beta == 0)
+			sqlBuf.append(" AND (BETA<>?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, build);
+			if (beta > -1)
+				ps.setInt(2, beta);
+			
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

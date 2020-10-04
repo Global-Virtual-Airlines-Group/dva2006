@@ -19,10 +19,13 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
-	golgotha.form.validate({f:f.viewType, t:'Filter Type'});
-	if (filterType == 2)
-	 	golgotha.form.validate({f:f.author, t:'Error Report Author'});
-	else if (filterType == 3)
+	if (f.action == 'acarserrors.do') {
+		golgotha.form.validate({f:f.viewType, t:'Filter Type'});
+		if (filterType == 2)
+	 		golgotha.form.validate({f:f.author, t:'Error Report Author'});
+		else if (filterType == 3)
+			golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
+	} else
 		golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
 
 	golgotha.form.submit(f);
@@ -50,7 +53,8 @@ golgotha.local.setViewType = function(idx) {
  <td colspan="3" class="left">ACARS CLIENT ERROR LOGS</td>
  <td colspan="3" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" />
  BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void golgotha.local.setViewType(3)" />
- USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" /> <el:button type="submit" label="GO" /></td>
+ USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" /> <el:button type="submit" label="GO" />
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="acarserrorpurge" post="true" label="PURGE" /></c:if></td>
 </tr>
 
 <!-- View Legend Bar -->
@@ -60,7 +64,7 @@ golgotha.local.setViewType = function(idx) {
  <td class="nophone">PILOT NAME</td>
  <td style="width:6%">BUILD</td>
  <td class="nophone">SIMULATOR</td>
- <td class="left">ERROR MESSAGE</td>
+ <td class="left nophone">ERROR MESSAGE</td>
 </tr>
 
 <!-- View Data -->
@@ -74,7 +78,7 @@ golgotha.local.setViewType = function(idx) {
  <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}">b${err.beta}</c:if></td>
  <td class="small nophone">${err.simulator}</td>
- <td class="left"><fmt:text value="${err.message}" /></td>
+ <td class="left nophone"><fmt:text value="${err.message}" /></td>
 </view:row>
 </c:forEach>
 

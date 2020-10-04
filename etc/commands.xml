@@ -2103,19 +2103,25 @@
 	<command id="acarserrors">
 		<name>ACARS Error Reports</name>
 		<class>org.deltava.commands.acars.ErrorLogCommand</class>
-		<roles>HR,Developer</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="acarserror">
 		<name>ACARS Error Report</name>
 		<class>org.deltava.commands.acars.ErrorLogEntryCommand</class>
-		<roles>HR,Developer</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="acarserrordelete">
 		<name>ACARS Error Report Delete</name>
 		<class>org.deltava.commands.acars.ErrorLogDeleteCommand</class>
-		<roles>HR,Developer</roles>
+		<roles>Developer</roles>
+	</command>
+
+	<command id="acarserrorpurge">
+		<name>ACARS Error Log Purge</name>
+		<class>org.deltava.commands.acars.ErrorLogPurgeCommand</class>
+		<roles>Developer</roles>
 	</command>
 
 	<command id="liveries">
