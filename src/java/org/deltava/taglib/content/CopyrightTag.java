@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice.
  * @author Luke
- * @version 8.2
+ * @version 9.1
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class CopyrightTag extends TagSupport {
 	 * @return TagSupport#EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	public int doEndTag() throws JspException {
 		try {
@@ -46,6 +47,11 @@ public class CopyrightTag extends TagSupport {
 				jw.print(VersionInfo.HTML_COPYRIGHT);
 				jw.print(" (Build ");
 				jw.print(VersionInfo.BUILD);
+				if (VersionInfo.HOTFIX > 0) {
+					jw.print('.');
+					jw.print(VersionInfo.HOTFIX);
+				}
+				
 				jw.print(")</div>");
 
 				// Display disclaimer
@@ -64,6 +70,11 @@ public class CopyrightTag extends TagSupport {
 				jw.print(VersionInfo.TXT_COPYRIGHT);
 				jw.print(" (Build ");
 				jw.print(String.valueOf(VersionInfo.BUILD));
+				if (VersionInfo.HOTFIX > 0) {
+					jw.print('.');
+					jw.print(VersionInfo.HOTFIX);
+				}
+				
 				jw.println(") -->");
 			}
 		} catch (Exception e) {
@@ -75,9 +86,6 @@ public class CopyrightTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
