@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
-	
-	<!-- Lowercase function -->
-	<scriptdef language="javascript" name="lower">
-		<attribute name="string" /> 
-		<attribute name="to" />
-			project.setProperty(attributes.get("to"),attributes.get("string").toLowerCase());
-	</scriptdef>
-
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.14" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.15" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="https://docs.oracle.com/en/java/javase/13/docs/api/" />
+            <link href="https://docs.oracle.com/en/java/javase/15/docs/api/" />
         	<link href="http://download.oracle.com/javaee/6/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
@@ -121,7 +113,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="14" target="14" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="15" target="15" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -181,13 +173,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.14" compilerSourceVM="1.14" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.15" compilerSourceVM="1.15" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="FALSE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="14" source="14" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="15" source="15" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
@@ -272,9 +264,15 @@
 	<target name="deploy" depends="jspc,minify" description="Deploy to development environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.dev.port" value="22" />
-		<lower string="${user.name}" to="webapp.dev.user" />
+		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
+			<classpath id="lc.classpath">
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+			</classpath>
+		</taskdef>
+		
+		<lower value="${user.name}" property="webapp.dev.user" />
 		<property name="http.dev.port" value="22" />
-		<lower string="${user.name}" to="http.dev.user" />
+		<lower value="${user.name}" property="http.dev.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
@@ -356,8 +354,14 @@
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
 		<property name="mail.ssh.port" value="22" />
-		<lower string="${user.name}" to="webapp.ssh.user" />
-		<lower string="${user.name}" to="mail.ssh.user" />
+		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
+			<classpath id="lc.classpath">
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+			</classpath>
+		</taskdef>
+		
+		<lower value="${user.name}" property="webapp.ssh.user" />
+		<lower value="${user.name}" property="mail.ssh.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the scripts to web server -->
@@ -395,9 +399,15 @@
 	<target name="prod_deploy" depends="jspc,minify" description="Deploy to Production environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
-		<lower string="${user.name}" to="webapp.ssh.user" />
+		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
+			<classpath id="lc.classpath">
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+			</classpath>
+		</taskdef>
+		
+		<lower value="${user.name}" property="webapp.ssh.user" />
 		<property name="http.ssh.port" value="22" />
-		<lower string="${user.name}" to="http.ssh.user" />
+		<lower value="${user.name}" property="http.ssh.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
@@ -411,8 +421,7 @@
 		</scp>
 		
 		<!-- Upload the common JAR files to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
-			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -422,8 +431,7 @@
 		</scp>
 
 		<!-- Upload the JAR files to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib"
-			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 				<include name="golgotha_web.jar" />
@@ -442,8 +450,7 @@
 		</scp>
 		
 		<!-- Upload the config file to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc"
-			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="etc">
 				<include name="commands.xml" />
 				<include name="services.xml" />
@@ -540,14 +547,19 @@
 		<gzip src="${java.io.tmpdir}/src/golgotha_acars.tar" destfile="${java.io.tmpdir}/src/golgotha_acars.tar.gz" />
 		<delete file="${java.io.tmpdir}/src/golgotha.tar" />
 		<delete file="${java.io.tmpdir}/src/golgotha_acars.tar" />
+		
+		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
+			<classpath id="lc.classpath">
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+			</classpath>
+		</taskdef>
 			
 		<!-- Upload to the web site -->
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="golgotha.ssh.port" value="22" />
-		<lower string="${user.name}" to="golgotha.ssh.user" />
+		<lower value="${user.name}" property="golgotha.ssh.user" />
 		
-		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes"
-			port="${golgotha.ssh.port}" trust="yes" keyfile="${golgotha.ssh.key}">
+		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes" port="${golgotha.ssh.port}" trust="yes" keyfile="${golgotha.ssh.key}">
 			<fileset dir="${java.io.tmpdir}/src">
 				<include name="*.tar.gz" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
