@@ -84,7 +84,8 @@ public class GetIssue extends DAO {
 	 */
 	public List<Issue> getUserIssues(int id) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(DISTINCT IC.ID) AS CC, GROUP_CONCAT(DISTINCT IA.AIRLINE SEPARATOR ?) AS AL FROM common.ISSUES I "
-			+ "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
+			+ "LEFT JOIN common.ISSUE_AIRLINES IA ON (I.ID=IA.ID) LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) "
+			+ "GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
 			ps.setString(1, " ");
 			ps.setInt(2, id);
 			ps.setInt(3, id);
