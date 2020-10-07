@@ -34,7 +34,6 @@
 	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.4.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.14.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20200518.jar"/>
@@ -42,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-3.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.27.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
