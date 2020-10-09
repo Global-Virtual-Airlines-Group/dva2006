@@ -127,7 +127,7 @@ public class HomeCommand extends AbstractCommand {
 				case ACARS_USERS:
 					if (acarsPool == null) break;
 					Collection<ConnectionEntry> poolInfo = IPCUtils.deserialize(acarsPool.getPoolInfo(false));
-					poolInfo.removeIf(ce -> !ce.getUserData().getAirlineCode().equals(airlineCode));
+					poolInfo.removeIf(ce -> (ce.getUserData() == null) || !ce.getUserData().getAirlineCode().equals(airlineCode));
 					ctx.setAttribute("acarsPool", poolInfo, REQUEST);
 					break;
 					
