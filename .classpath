@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
@@ -42,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/deploy/jedis-3.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.27.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
