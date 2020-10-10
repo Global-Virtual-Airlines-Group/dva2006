@@ -23,8 +23,8 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("d[d]-MMM[-YYYY]").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	private final Map<ScheduleSource, Integer> _srcMaxLines = new HashMap<ScheduleSource, Integer>();
 		
