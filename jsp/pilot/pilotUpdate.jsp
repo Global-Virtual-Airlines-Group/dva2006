@@ -123,6 +123,10 @@ address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
 <li><fmt:accomplish className="bld" accomplish="${acc}" /> on <fmt:date fmt="d" date="${acc.date}" /></li>
 </c:forEach>
 </c:if>
+<c:if test="${accomplishUpdate && (empty accs)}">
+<!-- Accomplishment Update -->
+<li>No new Pilot Accomploshments have been added to ${pilot.name}'s profile.</li>
+</c:if>
 </ul>
 <br />
 To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" op="read" className="sec bld">Click Here</el:cmd>.<br />
