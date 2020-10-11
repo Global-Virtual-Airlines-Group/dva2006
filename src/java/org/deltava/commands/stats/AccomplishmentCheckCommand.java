@@ -78,11 +78,12 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			// Load existing accomplishments, and recalculate
 			Map<Integer, DatedAccomplishment> pAccs = Collections.unmodifiableMap(CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID));
 			Collection<DatedAccomplishment> newAccs = accs.parallelStream().map(a -> accCheck(a, helper, pAccs.get(Integer.valueOf(a.getID())))).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new));
+			Collection<DatedAccomplishment> deltaAccs = CollectionUtils.getDelta(newAccs, pAccs.values());
 
 			// Start a transaction
 			ctx.startTX();
 			
-			// Clear the user's accomplishments
+			// Clear the user's accomplishments and rewrite everything
 			SetAccomplishment awdao = new SetAccomplishment(con);
 			for (Accomplishment a : pAccs.values())
 				awdao.clearAchievement(p.getID(), a);
@@ -95,7 +96,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			
 			// Write status variable
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("accs", newAccs, REQUEST);
+			ctx.setAttribute("accs", deltaAccs, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -120,8 +121,8 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 		DatedAccomplishment da = new DatedAccomplishment(helper.getPilotID(), dt, a);
 		if (da2 == null) return da;
 		
-		// Return only if the date has changed by >1 day
+		// Return updated accomplishment only if the date has changed by >1 day
 		Duration d = Duration.between(dt, da2.getDate());
-		return (d.abs().getSeconds() > 86400) ? da : null;
+		return (d.abs().getSeconds() > 86400) ? da : da2;
 	}
 }
