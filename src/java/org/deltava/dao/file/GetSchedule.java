@@ -45,7 +45,6 @@ public class GetSchedule extends ScheduleLoadDAO {
 		if (a == null) {
 			_status.addInvalidAirport(code.toUpperCase());
 			_status.addMessage("Unknown Airport at Line " + line + " - " + code);
-			a = new Airport(code, code, "Unknown - " + code);
 		}
 
 		return a;
