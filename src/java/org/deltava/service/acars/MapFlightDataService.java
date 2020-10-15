@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 8.6
+ * @version 9.1
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class MapFlightDataService extends WebService {
    public int execute(ServiceContext ctx) throws ServiceException {
       
 		// Get the DAO and the route data
-		int id = StringUtils.parse(ctx.getParameter("id"), 0); boolean loadAirspace = Boolean.valueOf(ctx.getParameter("showAirspace")).booleanValue();
+		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		Collection<? extends GeospaceLocation> routePoints = null; FlightInfo info = null;
 		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 		try {
@@ -55,7 +55,6 @@ public class MapFlightDataService extends WebService {
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
 				
 			// Check airspace
-			GetAirspace asdao = new GetAirspace(con);
 			for (GeospaceLocation rt : routePoints) {
 				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
 				if (re != null)
@@ -67,12 +66,6 @@ public class MapFlightDataService extends WebService {
 				if (rt.getAltitude() > 18000) {
 					if (re != null)
 						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
-				} else if (loadAirspace) {
-					List<Airspace> aSpaces = asdao.find(rt);
-					airspaces.addAll(aSpaces);
-					airspaces.addAll(Airspace.findRestricted(rt, 10));
-					if (re != null)
-						re.setAirspace(aSpaces.isEmpty() ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : aSpaces.get(0).getType());
 				}
 			}
 		} catch (DAOException de) {
