@@ -104,6 +104,25 @@
 </content:submenu>
 </c:if>
 
+<content:submenu title="Statistics" width="180">
+ <content:subitem><el:cmd url="airlinestats">Airline Totals</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="flightstats">Flight Statistics</el:cmd></content:subitem>
+<content:filter roles="HR,Operations">
+ <content:subitem><el:cmd url="charterstats">Charter Statistics</el:cmd></content:subitem>
+</content:filter>
+ <content:subitem><el:cmd url="simversionstats">Simulator Versions</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="econstats">Passenger Statistics</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="landingstats">Landing Statistics</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="landings">Optimal Landings</el:cmd></content:subitem>
+<content:filter roles="Fleet,HR,Operations,Developer"> 
+ <content:subitem><el:cmd url="fleetstats">Client Configurations</el:cmd></content:subitem>
+</content:filter>
+<content:filter roles="Developer,HR,Operations">
+ <content:subitem><el:cmd url="acarsbuildstats">ACARS Client Builds</el:cmd></content:subitem>
+</content:filter>
+ <content:subitem><el:cmd url="httpstats">Server Statistics</el:cmd></content:subitem>
+</content:submenu>
+
 <content:submenu title="Contact Us" width="170">
  <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
  <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
