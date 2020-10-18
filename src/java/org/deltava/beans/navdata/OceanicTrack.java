@@ -1,30 +1,32 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2013, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
 import java.time.Instant;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.cache.ExpiringCacheable;
 
 /**
  * A bean to store Oceanic Track (NAT/PACOT/AUSOT) information.
  * @author Luke
- * @version 7.2
+ * @version 9.1
  * @since 1.0
  */
 
 public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	
-	public static final Collection<? extends OceanicTrack> CONC_ROUTES = Arrays.asList(new ConcordeNAT("SM", "5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("SN", "4550N,4740N,4930N,4920N,4915N"), 
-		new ConcordeNAT("SO", "4815N,4820N,4830N,4640N,4450N,4260N"), new ConcordeNAT("SP", "4720N,4524N,4230N,3440N"));
+	public static final Collection<? extends OceanicTrack> CONC_ROUTES = List.of(new ConcordeNAT("SM", Direction.WEST, "5015N", "5020N", "5030N", "4940N", "4750N", "4653N", "4460N", "4265N", "4267N"), 
+		new ConcordeNAT("SN", Direction.EAST, "4067N", "4165N", "4360N", "4552N", "4550N", "4840N", "4930N", "4920N", "4915N"), new ConcordeNAT("SO", Direction.ALL, "4815N", "4820N", "4830N", "4740N", "4452N", "4260N"), 
+		new ConcordeNAT("SP", Direction.ALL, "4720N", "4524N", "4230N", "3440N"));
 
-	private static class ConcordeNAT extends OceanicTrack {
+	private static class ConcordeNAT extends OceanicTrack implements ExpiringCacheable {
+		private final Direction _d;
 
-		ConcordeNAT(String track, String route) {
+		ConcordeNAT(String track, Direction d, String... route) {
 			super(Type.NAT, track);
-			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
-				String wpCode = i.next();
-				Intersection wp = Intersection.parse(wpCode);
+			_d = d;
+			for (String wpt : route) {
+				Intersection wp = Intersection.parse(wpt);
 				wp.setAirway("NAT" + getTrack());
 				addWaypoint(wp);
 			}
@@ -37,14 +39,18 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 		
 		@Override
 		public final Direction getDirection() {
-			return Direction.ALL;
+			return _d;
+		}
+
+		@Override
+		public Instant getExpiryDate() {
+			return Instant.MAX;
 		}
 	}
 
     private Instant _date;
-    private Type _routeType;
-    
-    private String _trackID;
+    private final Type _routeType;
+    private final String _trackID;
     
     /**
      * Creates a new Oceanic Route for a given data.
@@ -54,8 +60,9 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      */
     public OceanicTrack(Type type, String code) {
         super(code, 1);
-        setType(type);
-        setTrack(code);
+        _routeType = type;
+        _trackID = code.toUpperCase();
+        setCode(type.name() + code);
     }
     
     /**
@@ -104,7 +111,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
     /**
      * Returns the Track ID.
      * @return the track ID
-     * @see OceanicTrack#setTrack(String)
      */
     public String getTrack() {
     	return _trackID;
@@ -135,26 +141,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      */
     public void setDate(Instant d) {
         _date = d;
-    }
-    
-    /**
-     * Updates the route type.
-     * @param type the route type code
-     * @see OceanicTrackInfo#getType()
-     */
-    public void setType(Type type) {
-        _routeType = type;
-    }
-    
-    /**
-     * Sets the Track ID, and updates the code to preface the route type in front of the track ID.
-     * @param id the Track ID
-     * @throws NullPointerException if id is null
-     * @see OceanicTrack#getTrack()
-     */
-    public void setTrack(String id) {
-    	_trackID = id.toUpperCase();
-    	setCode(_routeType.name() + id);
     }
     
 	/**
