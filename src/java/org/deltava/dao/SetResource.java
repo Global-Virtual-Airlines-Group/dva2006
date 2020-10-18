@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to write Web Resources to a database.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setInt(1, r.getID());
 				ps.setString(2, r.getURL());
 				ps.setString(3, r.getTitle());
@@ -45,8 +45,7 @@ public class SetResource extends DAO {
 			}
 			
 			// Get new database ID
-			if (r.getID() == 0)
-				r.setID(getNewID());
+			if (r.getID() == 0) r.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -58,7 +57,7 @@ public class SetResource extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void hit(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("UPDATE common.RESOURCES SET HITCOUNT=HITCOUNT+1 WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepare("UPDATE RESOURCES SET HITCOUNT=HITCOUNT+1 WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
@@ -72,7 +71,7 @@ public class SetResource extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("DELETE FROM common.RESOURCES WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepare("DELETE FROM RESOURCES WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
