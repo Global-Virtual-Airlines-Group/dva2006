@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to load Web Resource data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class GetResources extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Resource get(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.RESOURCES WHERE (ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM RESOURCES WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
 			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
@@ -48,7 +48,7 @@ public class GetResources extends DAO {
 	public Collection<Resource> getAll(String catName, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.RESOURCES ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES ");
 		if (catName != null)
 			sqlBuf.append("WHERE (CATEGORY=?) ");
 		
@@ -56,9 +56,7 @@ public class GetResources extends DAO {
 		sqlBuf.append(orderBy);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			if (catName != null)
-				ps.setString(1, catName);
-			
+			if (catName != null) ps.setString(1, catName);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -76,7 +74,7 @@ public class GetResources extends DAO {
 	public Collection<Resource> getAll(String catName, int id, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.RESOURCES WHERE ((ISPUBLIC=?) OR (AUTHOR=?)) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES WHERE ((ISPUBLIC=?) OR (AUTHOR=?)) ");
 		if (catName != null)
 			sqlBuf.append("AND (CATEGORY=?) ");
 		
@@ -86,9 +84,7 @@ public class GetResources extends DAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setBoolean(1, true);
 			ps.setInt(2, id);
-			if (catName != null)
-				ps.setString(3, catName);
-			
+			if (catName != null) ps.setString(3, catName);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
