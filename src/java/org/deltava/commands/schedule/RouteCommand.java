@@ -1,21 +1,21 @@
-// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.Instant;
 
-import org.deltava.beans.navdata.OceanicTrackInfo;
+import org.deltava.beans.navdata.OceanicTrackInfo.Type;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Oceanic Route data.
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -30,14 +30,8 @@ public class RouteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the route type and date
-		OceanicTrackInfo.Type rType;
-		Instant vd = Instant.now();
-		try {
-			rType = OceanicTrackInfo.Type.valueOf((String) ctx.getCmdParameter(OPERATION, "NAT"));
-			vd = StringUtils.parseInstant((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
-		} catch (Exception e) {
-			rType = OceanicTrackInfo.Type.NAT;
-		}
+		Type rType = EnumUtils.parse(Type.class, (String) ctx.getCmdParameter(OPERATION, "NAT"), Type.NAT);
+		Instant vd = StringUtils.parseInstant((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
 		
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());

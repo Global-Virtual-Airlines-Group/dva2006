@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 7.3
+ * @version 9.1
  * @since 1.0
  */
 
@@ -53,18 +53,17 @@ public class OceanicPlotService extends WebService {
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
 			tracks = dao.getOceanicTracks(trackType, dt);
+			if (trackType == OceanicTrackInfo.Type.NAT)
+				dao.loadConcordeNATs().forEach(tracks::addTrack);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
 		
-		// Add concorde routes if NAT
-		if (trackType == OceanicTrackInfo.Type.NAT)
-			tracks.addAll(OceanicTrack.CONC_ROUTES);
-
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
+		jo.put("timestamp", tracks.getDate().toEpochMilli());
 		jo.put("date", StringUtils.format(tracks.getDate(), ctx.isAuthenticated() ? ctx.getUser().getDateFormat() : "MM/dd/yyyy"));
 
 		// Build the track data
@@ -88,7 +87,8 @@ public class OceanicPlotService extends WebService {
 			jo.append("tracks", to);
 		}
 
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "tracks");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);

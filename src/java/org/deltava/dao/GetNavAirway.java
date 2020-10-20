@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -23,8 +23,12 @@ public class GetNavAirway extends GetNavData {
 	
 	private static final Logger log = Logger.getLogger(GetNavAirway.class);
 	private static final Cache<TerminalRoute> _rCache = CacheManager.get(TerminalRoute.class, "NavSIDSTAR");
-	private static final Cache<CacheableList<Airway>> _aCache = CacheManager.getCollection(Airway.class, "NavAirway"); 
 	private static final Cache<CacheableSet<String>> _rwCache = CacheManager.getCollection(String.class, "NavRunway");
+	
+	/**
+	 * Airway cache.
+	 */
+	protected static final Cache<CacheableList<Airway>> _aCache = CacheManager.getCollection(Airway.class, "NavAirway"); 
 
 	/**
 	 * Initializes the Data Access Object.

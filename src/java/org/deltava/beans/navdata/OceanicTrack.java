@@ -4,8 +4,6 @@ package org.deltava.beans.navdata;
 import java.util.*;
 import java.time.Instant;
 
-import org.deltava.util.cache.ExpiringCacheable;
-
 /**
  * A bean to store Oceanic Track (NAT/PACOT/AUSOT) information.
  * @author Luke
@@ -14,55 +12,21 @@ import org.deltava.util.cache.ExpiringCacheable;
  */
 
 public class OceanicTrack extends Airway implements OceanicTrackInfo {
-	
-	public static final Collection<? extends OceanicTrack> CONC_ROUTES = List.of(new ConcordeNAT("SM", Direction.WEST, "5015N", "5020N", "5030N", "4940N", "4750N", "4653N", "4460N", "4265N", "4267N"), 
-		new ConcordeNAT("SN", Direction.EAST, "4067N", "4165N", "4360N", "4552N", "4550N", "4840N", "4930N", "4920N", "4915N"), new ConcordeNAT("SO", Direction.ALL, "4815N", "4820N", "4830N", "4740N", "4452N", "4260N"), 
-		new ConcordeNAT("SP", Direction.ALL, "4720N", "4524N", "4230N", "3440N"));
-
-	private static class ConcordeNAT extends OceanicTrack implements ExpiringCacheable {
-		private final Direction _d;
-
-		ConcordeNAT(String track, Direction d, String... route) {
-			super(Type.NAT, track);
-			_d = d;
-			for (String wpt : route) {
-				Intersection wp = Intersection.parse(wpt);
-				wp.setAirway("NAT" + getTrack());
-				addWaypoint(wp);
-			}
-		}
-
-		@Override
-		public final boolean isFixed() {
-			return true;
-		}
-		
-		@Override
-		public final Direction getDirection() {
-			return _d;
-		}
-
-		@Override
-		public Instant getExpiryDate() {
-			return Instant.MAX;
-		}
-	}
 
     private Instant _date;
     private final Type _routeType;
     private final String _trackID;
     
     /**
-     * Creates a new Oceanic Route for a given data.
+     * Creates a new Oceanic Route.
      * @param type the route Type
      * @param code the route code
-     * @throws IllegalArgumentException if type is invalid
      */
     public OceanicTrack(Type type, String code) {
-        super(code, 1);
+        super(type.name() + code, 1);
         _routeType = type;
         _trackID = code.toUpperCase();
-        setCode(type.name() + code);
+        setHighLevel(true);
     }
     
     /**
@@ -89,14 +53,25 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      * @return the Direction
      */
     public Direction getDirection() {
-    	List<NavigationDataBean> wpl = getWaypoints();
-		if (wpl.size() < 2)
+		if (_waypoints.size() < 2)
 			return Direction.EAST;
 		
 		// Get the first two waypoints
-		NavigationDataBean wp1 = wpl.get(0);
-		NavigationDataBean wp2 = wpl.get(1);
+		NavigationDataBean wp1 = _waypoints.get(0);
+		NavigationDataBean wp2 = _waypoints.get(1);
 		return (wp1.getLongitude() < wp2.getLongitude()) ? Direction.EAST : Direction.WEST;
+    }
+    
+    /**
+     * Reverses an Oceanic Track's waypoints.
+     * @return an OceanicTrack with reversed waypoints
+     */
+    public OceanicTrack reverse() {
+    	OceanicTrack ot = new OceanicTrack(_routeType, _trackID);
+    	ot.setDate(getDate());
+    	_waypoints.forEach(ot::addWaypoint);
+    	Collections.reverse(ot._waypoints);
+    	return ot;
     }
     
 	/**
@@ -156,6 +131,23 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 		if ((awy != null) && (awy.indexOf(',') != -1))
 			nd.setAirway(awy);
 	}
+    
+    /**
+     * Checks if a route waypoint is really an Oceanic Track name.
+     * @param name the waypoint name
+     * @return TRUE if a valid Oceanic Track name, otherwise FALSE
+     */
+    public static boolean isNameValid(String name) {
+    	String n = name.toUpperCase(); boolean lastChar = Character.isLetter(n.charAt(n.length() - 1));
+    	for (Type t : Type.values()) {
+    		if (n.startsWith(t.name()) && lastChar && (n.length() == (t.name().length() + 1)))
+    			return true;
+    		if (n.startsWith("NAT") && lastChar && (n.length() == 5) && (n.charAt(3) == 'S'))
+    			return true;
+    	}
+
+    	return false;
+    }
   
 	@Override
 	public String toString() {
@@ -163,14 +155,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 		buf.append(_trackID);
 		buf.append('-');
 		buf.append(_date.toString());
-		buf.append('-');
-		for (Iterator<NavigationDataBean> i = getWaypoints().iterator(); i.hasNext(); ) {
-			NavigationDataBean wp = i.next();
-			buf.append(wp.getCode());
-			if (i.hasNext())
-				buf.append('.');
-		}
-		
 		return buf.toString();
 	}
 }
