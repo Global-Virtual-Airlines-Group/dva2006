@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.navdata.OceanicTrackInfo.Type;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.GeoComparator;
@@ -17,7 +18,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 7.3
+ * @version 9.1
  * @since 2.6
  */
 
@@ -90,28 +91,33 @@ public class GetNavRoute extends GetOceanicRoute {
 			aws.clear();
 			
 			// Check if we're referencing an Oceanic Track. Even if we can't find a perfect route, find one that starts at the starting point, and replace the next point on the NAT with the endpoint of this NAT
-			if ((x > 0) && ((wp.startsWith("NAT") || wp.startsWith("PACOT") || wp.startsWith("AUSOT")))) {
+			if ((x > 0) && OceanicTrack.isNameValid(wp)) {
 				OceanicTrackInfo.Type rt = OceanicTrackInfo.Type.valueOf(wp.substring(0, wp.indexOf('T') + 1));
 				DailyOceanicTracks tracks = getOceanicTracks(rt, _effectiveDate);
 				if (tracks.size() == 0)
 					tracks = getOceanicTracks(rt, null);
+				if (rt == Type.NAT)
+					loadConcordeNATs().forEach(tracks::addTrack);
 				
 				// Find either the specified NAT track, or the one that matches the waypoints
 				String prevWP = tkns.get(x - 1);
 				String nextWP = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : null;
 				OceanicTrack tr = tracks.getTrack(wp);
 				if ((tr == null) || (!tr.contains(prevWP) && !tr.contains(nextWP))) {
-					tr = tracks.find(prevWP, nextWP);
-					if (tr == null) {
-						tr = tracks.find(prevWP, null);
-						if ((tr != null) && tracks.contains(nextWP))
-							tkns.set(x+1, tr.getEnd().getCode());
-						else if ((tr != null) && (nextWP != null)) {
+					OceanicTrack tr2 = tracks.find(prevWP, nextWP);
+					if (tr2 == null) {
+						tr2 = tracks.find(prevWP, null);
+						if ((tr2 != null) && tracks.contains(nextWP))
+							tkns.set(x+1, tr2.getEnd().getCode());
+						else if ((tr2 != null) && (nextWP != null)) {
 							NavigationDataMap ndmap = get(nextWP);
-							NavigationDataBean nd = ndmap.get(wp, tr.getEnd());
+							NavigationDataBean nd = ndmap.get(wp, tr2.getEnd());
 							if (nd != null)
 								tkns.set(x+1, nd.getCode());
 						}
+						
+						if (tr2 != null)
+							tr = tr2;
 					}
 				}
 

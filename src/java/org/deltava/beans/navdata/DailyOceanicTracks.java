@@ -1,4 +1,4 @@
-// Copyright 2010, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2013, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.time.Instant;
 /**
  * A bean to store a daily collection of Oceanic Tracks. 
  * @author Luke
- * @version 7.3
+ * @version 9.1
  * @since 3.4
  */
 
@@ -61,15 +61,10 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 		_tracks.put(t.getCode(), t);
 	}
 	
-	public void addAll(final Collection<? extends OceanicTrack> tracks) {
-		tracks.forEach(t -> addTrack(t));
-	}
-	
 	/**
 	 * Returns an Oceanic Track with a specific code
 	 * @param code the Track code, which includes the track type and ID
 	 * @return an OceanicTrack bean, or null if not found
-	 * @throws NullPointerException if code is null
 	 */
 	public OceanicTrack getTrack(String code) {
 		return _tracks.get(code.toUpperCase());
@@ -83,8 +78,7 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	 */
 	public OceanicTrack find(String startWP, String endWP) {
 		for (OceanicTrack t : _tracks.values()) {
-			if (t.getSize() == 0)
-				continue;
+			if (t.getSize() == 0) continue;
 			
 			boolean isMatch = (startWP == null) ? true : startWP.equalsIgnoreCase(t.getStart().getCode());
 			isMatch &= (endWP == null) ? true : endWP.equalsIgnoreCase(t.getEnd().getCode());
