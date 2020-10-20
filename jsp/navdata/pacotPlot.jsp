@@ -61,14 +61,13 @@
 </content:region>
 </content:page>
 <div id="copyright" class="mapTextLabel"></div>
-<content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit" async>
+<script async>
 // Create map options
-var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:{lat:42,lng:-165}, zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
+const mapOpts = {center:{lat:42,lng:-165}, zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
@@ -86,14 +85,13 @@ golgotha.local.loader.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
-var jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
-var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+const jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
+const jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
+const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Add clouds and jet stream layers
-var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return golgotha.local.frLoad.getLayer(); }));
+const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
@@ -106,7 +104,6 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
 	golgotha.local.loader.loadGinsu();
-	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=golgotha.local.frLoad.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>
