@@ -1,8 +1,7 @@
-// Copyright 2007, 2009, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2013, 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.net.*;
-import java.math.BigInteger;
 
 /**
  * A utility class to handle TCP/IP network operations.
@@ -25,15 +24,6 @@ public class NetworkUtils {
 		super();
 	}
 
-	public static BigInteger pack(String addr) {
-		try {
-			InetAddress ia = InetAddress.getByName(addr);
-			return new BigInteger(ia.getAddress());
-		} catch (UnknownHostException uhe) {
-			throw new IllegalArgumentException(addr);
-		}
-	}
-	
 	/**
 	 * Returns an IP address type.
 	 * @param addr an IP address
