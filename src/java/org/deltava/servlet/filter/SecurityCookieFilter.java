@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -137,23 +137,27 @@ public class SecurityCookieFilter extends HttpFilter {
 			else if (req.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
-				AddressType sT = NetworkUtils.getType(savedAddr); AddressType rT = NetworkUtils.getType(remoteAddr);
-				boolean isOK = (sT != rT);
-				if (isOK) {
-					String savedOtherAddress = (String) s.getAttribute(OTHERADDR_ATTR_NAME);
-					if (savedOtherAddress != null)
-						isOK = savedOtherAddress.equals(remoteAddr);
-					else
-						s.setAttribute(OTHERADDR_ATTR_NAME, savedOtherAddress);
-				}
+				AddressType sT = NetworkUtils.getType(savedAddr); AddressType rT = NetworkUtils.getType(remoteAddr); boolean isSame = (sT == rT); boolean isOK = false;
+				String savedOtherAddress = (String) s.getAttribute(OTHERADDR_ATTR_NAME);
+				if (savedOtherAddress != null)
+					isOK = savedOtherAddress.equals(remoteAddr);
 
-				if (!isOK) {
-					con = _jdbcPool.getConnection();
-					GetIPLocation ipdao = new GetIPLocation(con);
-					IPBlock ipb = ipdao.get(savedAddr);
-					if ((ipb == null) || (!ipb.contains(remoteAddr)))
-						throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
+				// If the address types diverge, check the IP Block for IPv4, /64 for IPv6
+				if (!isOK && isSame) {
+					if (rT == AddressType.IPv6) {
+						CIDRBlock cb = new CIDRBlock(savedAddr, 64);
+						isOK = cb.isInRange(remoteAddr);
+					} else if (rT == AddressType.IPv4) {
+						con = _jdbcPool.getConnection();
+						GetIPLocation ipdao = new GetIPLocation(con);
+						IPBlock ipb = ipdao.get(savedAddr);
+						isOK = ((ipb != null) && (ipb.contains(remoteAddr)));
+					}
 				}
+				
+				log.info("Flipped HTTP session from " + savedAddr + " to " + remoteAddr);
+				if (!isOK)
+					throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
 			}
 		} catch (Exception se) {
 			log.warn(se.getMessage());
