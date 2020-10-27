@@ -13,7 +13,7 @@ public interface VersionInfo {
     public static final int MAJOR = 9;
     public static final int MINOR = 1;
     
-    public static final int BUILD = 767;
+    public static final int BUILD = 768;
     public static final int HOTFIX = 0;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2020 Global Virtual Airlines Group. All Rights Reserved.";
