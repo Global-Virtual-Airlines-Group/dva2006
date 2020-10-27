@@ -1,18 +1,19 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.filter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.Airport;
 
 /**
  * An interface for Airport bean filters.
  * @author Luke
- * @version 5.0
+ * @version 9.1
  * @since 1.0
  */
 
-public abstract class AirportFilter {
+public interface AirportFilter {
 
 	/**
 	 * Determines whether the Airport matches the criteria set by this Filter.
@@ -26,13 +27,7 @@ public abstract class AirportFilter {
 	 * @param airports the Airports
 	 * @return the filtered Collection
 	 */
-	public Collection<Airport> filter(Collection<Airport> airports) {
-		Collection<Airport> results = new LinkedHashSet<Airport>();
-		for (Airport ap : airports) {
-			if (accept(ap))
-				results.add(ap);
-		}
-		
-		return results;
+	public default Collection<Airport> filter(Collection<Airport> airports) {
+		return airports.stream().filter(this::accept).collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 }

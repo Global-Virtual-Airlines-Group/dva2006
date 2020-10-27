@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.filter;
 
 import org.deltava.beans.schedule.Airport;
@@ -6,11 +6,11 @@ import org.deltava.beans.schedule.Airport;
 /**
  * An AirportFilter to reverse another AirportFilter.
  * @author Luke
- * @version 5.1
+ * @version 9.1
  * @since 5.1
  */
 
-public class NOTFilter extends AirportFilter {
+public class NOTFilter implements AirportFilter {
 	
 	private final AirportFilter _filter;
 
