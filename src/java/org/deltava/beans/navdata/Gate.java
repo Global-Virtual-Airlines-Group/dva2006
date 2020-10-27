@@ -1,32 +1,32 @@
-// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
 
-import org.deltava.beans.UseCount;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
 
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 8.7
+ * @version 9.1
  * @since 5.1
  */
 
 public class Gate extends NavigationDataBean implements UseCount {
 
-	public enum Type {
+	/**
+	 * Gate types.
+	 */
+	public enum Type implements EnumDescription {
 		GATE, PARKING, DOCK;
-		
-		public String getDescription() {
-			return name().substring(0, 1).concat(name().substring(1).toLowerCase());
-		}
 	}
 	
 	private int _heading;
 	private int _number;
 	private Type _type = Type.GATE;
 	private int _useCount;
+	private Simulator _sim = Simulator.UNKNOWN;
 	
 	private boolean _isInternational;
 	private final Collection<Airline> _airlines = new TreeSet<Airline>();
@@ -54,6 +54,7 @@ public class Gate extends NavigationDataBean implements UseCount {
 		_useCount = g._useCount;
 		_isInternational = g._isInternational;
 		_airlines.addAll(g._airlines);
+		_sim = g._sim;
 	}
 	
 	/**
@@ -94,6 +95,14 @@ public class Gate extends NavigationDataBean implements UseCount {
 	 */
 	public boolean isInternational() {
 		return _isInternational;
+	}
+	
+	/**
+	 * Returns the Simulator this Gate exists in.
+	 * @return the Simulator
+	 */
+	public Simulator getSimulator() {
+		return _sim;
 	}
 	
 	/**
@@ -171,6 +180,14 @@ public class Gate extends NavigationDataBean implements UseCount {
 	 */
 	public void setIntl(boolean isIntl) {
 		_isInternational = isIntl;
+	}
+	
+	/**
+	 * Updates the Simulator that this Gate exists in.
+	 * @param s a Simulator
+	 */
+	public void setSimulator(Simulator s) {
+		_sim = s;
 	}
 	
 	/**
