@@ -110,8 +110,10 @@ public class AirportListService extends WebService {
 			// Add suplementary range filter
 			if (ctx.getParameter("airport") != null) {
 				Airport a = SystemData.getAirport(ctx.getParameter("airport"));
-				if (a != null)
+				if (a != null) {
 					filter.add(new GeoLocationFilter(a, StringUtils.parse(ctx.getParameter("dist"), 5)));
+					filter.add(new NOTFilter(new IATAFilter(a)));
+				}
 			}
 			
 			// Add supplementary runway lenght filter

@@ -41,7 +41,7 @@ return true;
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
-	cfg.airline = 'all';
+	cfg.airline = 'all'; cfg.useSched = false;
 	<c:if test="${empty airport}">
 	if (f.country.selectedIndex > 0) cfg.country = golgotha.form.getCombo(f.country);</c:if>
 	<c:if test="${!empty airport}">
