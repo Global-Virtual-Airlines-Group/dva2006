@@ -186,6 +186,7 @@ public class GetGates extends DAO {
 				Gate g = new Gate(rs.getDouble(4), rs.getDouble(5));
 				g.setCode(rs.getString(1));
 				g.setName(rs.getString(2));
+				g.setSimulator(Simulator.fromVersion(rs.getInt(3), Simulator.UNKNOWN));
 				g.setHeading(rs.getInt(6));
 				StringUtils.split(rs.getString(7), ",").stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(g::addAirline);
 				g.setIntl(rs.getBoolean(8));
