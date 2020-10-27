@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title><content:airline /> Flight Simulator Version Statistics</title>
+<title><content:airline /> Simulator Version Statistics</title>
 <content:css name="main" />
 <content:css name="view" />
 <content:css name="form" />
@@ -86,7 +86,7 @@
 <c:if test="${hasFSX}"> 
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
 </c:if>
-<c:if test="${hasFSX}">
+<c:if test="${hasP3D}">
  <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /></c:if><c:if test="${hasP3D3 && has64}"> + </c:if><c:if test="${hasP3D3}"><fmt:int value="${eLegs['P3D']}" /></c:if> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
 </c:if>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
@@ -107,7 +107,7 @@
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="11"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="11"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
