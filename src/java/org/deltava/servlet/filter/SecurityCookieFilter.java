@@ -139,9 +139,13 @@ public class SecurityCookieFilter extends HttpFilter {
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
 				AddressType sT = NetworkUtils.getType(savedAddr); AddressType rT = NetworkUtils.getType(remoteAddr); boolean isSame = (sT == rT); boolean isOK = false;
 				String savedOtherAddress = (String) s.getAttribute(OTHERADDR_ATTR_NAME);
-				if (savedOtherAddress != null)
+				if ((savedOtherAddress == null) && !isSame) { // Assume IPv4 <-> IPv6
+					s.setAttribute(OTHERADDR_ATTR_NAME, remoteAddr);
+					isOK = true;
+					log.warn("Adding " + remoteAddr + " as other address for " + p + " with " + savedAddr);
+				} else if (savedOtherAddress != null)
 					isOK = savedOtherAddress.equals(remoteAddr);
-
+					
 				// If the address types diverge, check the IP Block for IPv4, /64 for IPv6
 				if (!isOK && isSame) {
 					if (rT == AddressType.IPv6) {
