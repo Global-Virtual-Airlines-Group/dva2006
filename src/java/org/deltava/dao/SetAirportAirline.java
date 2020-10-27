@@ -204,6 +204,13 @@ public class SetAirportAirline extends DAO {
 		String oc = (oldCode == null) ? a.getIATA() : oldCode;
 		try {
 			startTransaction();
+			
+			// Clear out the airlines
+			try (PreparedStatement ps = prepare("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
+				ps.setString(1, oc);
+				ps.setString(2, SystemData.get("airline.code"));
+				executeUpdate(ps, 0);
+			}
 
 			// Update the airport data
 			try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, OLDCODE=? WHERE (IATA=?)")) {
@@ -232,13 +239,6 @@ public class SetAirportAirline extends DAO {
 					ps.setString(1, a.getIATA());
 					executeUpdate(ps, 0);
 				}
-			}
-			
-			// Clear out the airlines
-			try (PreparedStatement ps = prepare("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
-				ps.setString(1, oc);
-				ps.setString(2, SystemData.get("airline.code"));
-				executeUpdate(ps, 0);
 			}
 
 			// Write the airline data
