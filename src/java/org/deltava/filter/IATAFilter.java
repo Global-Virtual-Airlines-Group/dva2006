@@ -1,4 +1,4 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.filter;
 
 import java.util.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.schedule.Airport;
 /**
  * An Airport Filter to filter on selected IATA Airport codes. 
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 5.0
  */
 
-public class IATAFilter extends AirportFilter {
+public class IATAFilter implements AirportFilter {
 	
 	private final Collection<String> _airportCodes = new HashSet<String>();
 
@@ -37,6 +37,6 @@ public class IATAFilter extends AirportFilter {
 
 	@Override
 	public boolean accept(Airport a) {
-		return (a == null) ? false : _airportCodes.contains(a.getIATA());
+		return (a != null) && _airportCodes.contains(a.getIATA());
 	}
 }
