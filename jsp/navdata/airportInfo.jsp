@@ -22,7 +22,7 @@
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.update = function(combo) {
 	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(combo);
 	return true;
@@ -81,6 +81,10 @@ golgotha.local.update = function(combo) {
  <td class="data" colspan="2"><fmt:list value="${airlines}" delim=", " /></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">Flight Operations</td>
+ <td class="data" colspan="2">Departures: <span class="small ita"><fmt:list value="${dDays}" delim=", " empty="NONE" /></span>, Arrivals: <span class="small ita"><fmt:list value="${aDays}" delim=", " empty="NONE" /></span></td>
+</tr>
 <c:if test="${!empty wx}">
 <tr>
  <td class="label top">Current Weather</td>
@@ -170,7 +174,7 @@ google.maps.event.addListener(map, 'zoom_changed', function() {
 
 golgotha.onDOMReady(function() { golgotha.gate.load('${airport.ICAO}'); golgotha.airportLoad.setHelpers(document.forms[0].id); });
 </script>
-<script id="chartInit" async>
+<script async>
 google.charts.load('current', {'packages':['corechart']});
 const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
@@ -187,7 +191,7 @@ xmlreq.onreadystatechange = function() {
 	fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
 	fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
 	js.flights.forEach(function(h) {
-		var d = [h.hour, h.dd, h.di, h.ad, h.ai];
+		let d = [h.hour, h.dd, h.di, h.ad, h.ai];
 		fData.addRow(d);
 	});
 
