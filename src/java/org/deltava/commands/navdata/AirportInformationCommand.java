@@ -82,6 +82,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			ctx.setAttribute("dDays", rsdao.getDays(null, a, false), REQUEST);
 			ctx.setAttribute("aDays", rsdao.getDays(null, a, true), REQUEST);
+			ctx.setAttribute("schedAirlines", rsdao.getAirlines(null, a), REQUEST);
 
 			// Determine valid runways for winds
 			Collection<String> validRunwayIDs = new HashSet<String>();
