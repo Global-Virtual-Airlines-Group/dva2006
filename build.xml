@@ -276,8 +276,7 @@
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF"
-			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -287,8 +286,7 @@
 		</scp>
 		
 		<!-- Upload the common JAR files to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}"
-			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -298,8 +296,7 @@
 		</scp>
 
 		<!-- Upload the JAR files to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib"
-			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 	 		<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 	 			<include name="golgotha_web.jar" />
@@ -312,8 +309,7 @@
 		</scp>
 		
 		<!-- Upload the config file to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc"
-			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="etc" includes="*.*">
 				<exclude name="log4j.test.properties" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
@@ -324,8 +320,7 @@
 		</scp>
 
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" 
-			port="${http.dev.port}" verbose="yes" trust="yes" keyfile="${http.dev.key}">
+		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" port="${http.dev.port}" verbose="yes" trust="yes" keyfile="${http.dev.key}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
