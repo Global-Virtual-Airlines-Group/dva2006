@@ -140,6 +140,40 @@ public class GetRawSchedule extends DAO {
 	}
 	
 	/**
+	 * Returns the Airlines that service a particular Airport in a schedule source.
+	 * @param src the ScheduleSource or null for all
+	 * @param a the Airport
+	 * @return a Collection of Airline beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airline> getAirlines(ScheduleSource src, Airport a) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRLINE, COUNT(SRCLINE) AS CNT FROM RAW_SCHEDULE WHERE ((AIRPORT_D=?) OR (AIRPORT_A=?))");
+		if (src != null)
+			sqlBuf.append(" AND (SRC=?)");
+		
+		sqlBuf.append(" GROUP BY AIRLINE ORDER BY CNT DESC");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
+			ps.setString(2, a.getIATA());
+			if (src != null)
+				ps.setInt(3, src.ordinal());
+			
+			Collection<Airline> results = new LinkedHashSet<Airline>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(SystemData.getAirline(rs.getString(1)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the days of the week an Airport has flights from a particular schedule source.
 	 * @param src the ScheduleSource, or null for all
 	 * @param a the Airport
@@ -156,7 +190,7 @@ public class GetRawSchedule extends DAO {
 		if (src != null)
 			sqlBuf.append(" AND (SRC=?)");
 		
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, a.getIATA());
 			if (src != null)
 				ps.setInt(2, src.ordinal());
