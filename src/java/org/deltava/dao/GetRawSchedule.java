@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 8.0
  */
 
@@ -134,6 +134,45 @@ public class GetRawSchedule extends DAO {
 			ps.setInt(1, src.ordinal());
 			ps.setInt(2, line);
 			return execute(ps).stream().findFirst().orElse(null);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the days of the week an Airport has flights from a particular schedule source.
+	 * @param src the ScheduleSource, or null for all
+	 * @param a the Airport
+	 * @param isDestination TRUE if selecting arriving flights, otherwise FALSE
+	 * @return a Collection of DayOfWeek enums
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<DayOfWeek> getDays(ScheduleSource src, Airport a, boolean isDestination) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT DAYS FROM RAW_SCHEDULE WHERE (");
+		sqlBuf.append(isDestination ? "AIRPORT_D" : "AIRPORT_A");
+		sqlBuf.append("=?)");
+		if (src != null)
+			sqlBuf.append(" AND (SRC=?)");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
+			if (src != null)
+				ps.setInt(2, src.ordinal());
+			
+			Collection<DayOfWeek> results = new TreeSet<DayOfWeek>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int bitmap = rs.getInt(1);
+					for (DayOfWeek d : DayOfWeek.values()) {
+						if ((bitmap & (1 << d.ordinal())) != 0)
+							results.add(d);		
+					}
+				}
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
