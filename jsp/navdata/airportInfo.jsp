@@ -75,10 +75,10 @@ golgotha.local.update = function(combo) {
 </c:otherwise>
 </c:choose>
 </tr>
-<c:if test="${!empty airlines}">
+<c:if test="${!empty schedAirlines}">
 <tr>
  <td class="label top">Airlines Served</td>
- <td class="data" colspan="2"><fmt:list value="${airlines}" delim=", " /></td>
+ <td class="data" colspan="2"><fmt:list value="${schedAirlines}" delim=", " /></td>
 </tr>
 </c:if>
 <tr>
@@ -154,7 +154,7 @@ golgotha.local.update = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
@@ -173,8 +173,7 @@ google.maps.event.addListener(map, 'zoom_changed', function() {
 });
 
 golgotha.onDOMReady(function() { golgotha.gate.load('${airport.ICAO}'); golgotha.airportLoad.setHelpers(document.forms[0].id); });
-</script>
-<script async>
+
 google.charts.load('current', {'packages':['corechart']});
 const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
@@ -190,11 +189,7 @@ xmlreq.onreadystatechange = function() {
 	fData.addColumn('number', 'Hour of Day'); nf.format(fData, 0); 
 	fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
 	fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
-	js.flights.forEach(function(h) {
-		let d = [h.hour, h.dd, h.di, h.ad, h.ai];
-		fData.addRow(d);
-	});
-
+	js.flights.forEach(function(h) { fData.addRow([h.hour, h.dd, h.di, h.ad, h.ai]); });
 	golgotha.util.display('flightTimeChart', true);
 	const mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
 	fC.draw(fData,{title:'Flights by Hour of Day',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
