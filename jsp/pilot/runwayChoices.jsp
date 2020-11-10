@@ -7,10 +7,11 @@
 <html lang="en">
 <head>
 <title>Runway Options - ${pirep.flightCode}</title>
-<content:expire expires="30" />
+<content:expire expires="5" />
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body style="margin:8px">
@@ -19,7 +20,9 @@
 Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Variation at Airport: <fmt:dec value="${rwysD.magVar}" />&deg;<br />
 <br />
 <c:forEach var="rc" items="${rwysD.runways}">
-<span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading = ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
+<c:set var="onRunway" value="${rc.runway.contains(pirep.takeoffLocation) && (rc.headingDelta < 60)}" scope="page" />
+<c:set var="className" value="${onRunway ? 'pri bld' : 'sec bld'}" scope="page" />
+<span class="${className}">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading = ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
 <fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg; - <fmt:dec value="${rc.crossBearingDelta}" fmt="0.000" /><br />  
 </c:forEach>
 <br />
@@ -28,7 +31,9 @@ Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Var
 Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Variation at Airport: <fmt:dec value="${rwysA.magVar}" />&deg;<br />
 <br />
 <c:forEach var="rc" items="${rwysA.runways}">
-<span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading = ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
+<c:set var="onRunway" value="${rc.runway.contains(pirep.landingLocation) && (rc.headingDelta < 60)}" scope="page" />
+<c:set var="className" value="${onRunway ? 'pri bld' : 'sec bld'}" scope="page" />
+<span class="${className}">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading = ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
 <fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg; - <fmt:dec value="${rc.crossBearingDelta}" fmt="0.000" /><br />  
 </c:forEach>
 <br />
