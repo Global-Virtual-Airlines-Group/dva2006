@@ -214,11 +214,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 			return;
 		
 		double rcpHdg = GeoUtils.normalize(_heading + 180);
-		GeoLocation end = GeoUtils.bearingPointS(this, (_length / GeoLocation.FEET_MILES), _heading);
+		GeoLocation end = GeoUtils.bearingPointS(this, (_length * 1.0d / GeoLocation.FEET_MILES), _heading);
 		
         // Calculate runway box
-		double rwyOffsetSize = (450 / GeoLocation.FEET_MILES);
-		double rwyWidthSize = (_width / GeoLocation.FEET_MILES / 2);
+		double rwyOffsetSize = (450.0d / GeoLocation.FEET_MILES);
+		double rwyWidthSize = (_width * 1.0d / GeoLocation.FEET_MILES / 2);
 		
         GeoLocation ofsRwy = GeoUtils.bearingPointS(this, rwyOffsetSize, rcpHdg); GeoLocation ofsEnd = GeoUtils.bearingPointS(end, rwyOffsetSize, _heading);
         double lHdg = GeoUtils.normalize(_heading - 90); double rHdg = GeoUtils.normalize(_heading + 90);
