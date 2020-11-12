@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public final class IssueAccessControl extends AccessControl {
 		// Set access control variables
 		_canComment = _ctx.isUserInRole("Pilot") && _canRead && (isOpen || canReopen);
 		_canEdit = _canRead && ((isMine && isOpen) || isDev);
-		_canResolve = isDev;
+		_canResolve = isDev || (isOurAirline && _ctx.isUserInRole("Operations"));
 		_canReassign = isDev && isOpen;
 	}
 
