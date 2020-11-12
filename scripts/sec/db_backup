@@ -6,6 +6,7 @@
 arc_util="pbzip2 -p2 -9 -b20 -c"
 dump_opt="--single-transaction -e -K -n -q"
 dump_create_opt="--single-transaction -e -K -q"
+dump_file_opt="--single-transaction -q -K --hex-blob"
 
 # Log Starting
 echo `date +%H:%M:%S`' Starting'
@@ -64,7 +65,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` xacars | $arc_util > xacars.sql.b
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common AIRLINEINFO TZ METADATA COUNTRY AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS EQPROGRAMS EQAIRLINES AUTH AUTH_ALIAS AUTH_ROLES OCEANIC OCEANIC_ROUTES SYSINFODATA AUDIT_LOG | $arc_util > common.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` common ISSUES ISSUE_AIRLINES ISSUE_COMMENTS ISSUE_FILES | $arc_util > issues.sql.bz2
+$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` common ISSUES ISSUE_AIRLINES ISSUE_COMMENTS ISSUE_FILES | $arc_util > issues.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common NAVDATA NAVLEGACY NAVREGIONS NAVCYCLE SIDSTAR_META SIDSTAR_WAYPOINTS AIRWAYS RUNWAYS RUNWAY_RENUMBER GATES GATE_AIRLINES ROUTE_CACHE MAGVAR FIR FIRALIAS AIRSPACE | $arc_util > navdata.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common CHARTS CHARTIMGS CHARTURLS | $arc_util > charts.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common METARS TAFS | $arc_util > weather.sql.bz2
@@ -97,6 +98,11 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ign
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS | $arc_util > acars_positions.sql.bz2
 
+# Write help desk
+echo `date +%H:%M:%S`' Writing help desk'
+$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` dva HELPDESK HELPDESK_COMMENTS HELPDESK_FILES | $arc_util > dva_help.sql.bz2
+$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` afv HELPDESK HELPDESK_COMMENTS HELPDESK_FILES | $arc_util > afv_help.sql.bz2
+
 # Write flight statistics
 echo `date +%H:%M:%S`' Writing flight statistics'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > dva_stats.sql.bz2
@@ -118,6 +124,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --igno
  --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE \
  --ignore-table=dva.FLIGHTSTATS_LANDING --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES \
  --ignore-table=dva.RAW_SCHEDULE --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.RAW_SCHEDULE_AIRLINES \
+ --ignore-table=dva.HELPDESK_FILES --ignore-table=dva.HELPDESK --ignore-table=dva.HELPDESK_COMMENTS \
  --ignore-table=dva.FLIGHTSTATS_PILOT_DAY --ignore-table=dva.ONLINE_TRACK dva | $arc_util > dva.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dva_gscore.sql.bz2
 
@@ -127,6 +134,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --igno
  --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE \
  --ignore-table=afv.FLIGHTSTATS_LANDING --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES \
  --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES \
+ --ignore-table=afv.HELPDESK_FILES --ignore-table=afv.HELPDESK --ignore-table=afv.HELPDESK_COMMENTS \
  --ignore-table=afv.FLIGHTSTATS_PILOT_DAY --ignore-table=afv.ONLINE_TRACK afv | $arc_util > afv.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > afv_gscore.sql.bz2
 
