@@ -60,13 +60,13 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
-			List<Runway> toRwys = rwdao.getPopularRunways(a, null, true); toRwys.sort(rC);
-			List<Runway> ldgRwys = rwdao.getPopularRunways(null, a, false); ldgRwys.sort(rC);
+			List<Runway> toRwys = rwdao.getPopularRunways(a, true); toRwys.sort(rC);
+			List<Runway> ldgRwys = rwdao.getPopularRunways(a, false); ldgRwys.sort(rC);
 			
 			// Check for invalid runways
 			Collection<Runway> invalidRwys = new LinkedHashSet<Runway>();
-			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(r -> invalidRwys.add(r));
-			ldgRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(r -> invalidRwys.add(r));
+			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
+			ldgRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
 			toRwys.removeAll(invalidRwys); ldgRwys.removeAll(invalidRwys);
 			
 			// Save runways

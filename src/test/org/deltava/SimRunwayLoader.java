@@ -160,7 +160,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					rwy.setLength(Math.round(length));
 					rwy.setWidth(w.intValue());
 					rwy.setMagVar(mV.doubleValue());
-					rwy.setThreshold(Integer.parseInt(re.getChildTextTrim("ThresholdOffset")));
+					rwy.setThresholdLength(Integer.parseInt(re.getChildTextTrim("ThresholdOffset")));
 					rwy.setSurface(EnumUtils.parse(Surface.class, re.getChildTextTrim("Def").replace('-', '_'), Surface.UNKNOWN));
 					if (rwy.getSurface() == Surface.UNKNOWN)
 						log.warn("Unknown surface - " + re.getChildTextTrim("Def"));
@@ -175,7 +175,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						ps.setInt(8, rwy.getWidth());
 						ps.setDouble(9, rwy.getMagVar());
 						ps.setInt(10, rwy.getSurface().ordinal());
-						ps.setInt(11, rwy.getThreshold());
+						ps.setInt(11, rwy.getThresholdLength());
 						ps.setString(12, formatLocation(lat, lng));
 						ps.setInt(13, WGS84_SRID);
 						ps.addBatch();

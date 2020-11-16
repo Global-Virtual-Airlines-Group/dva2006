@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -421,7 +421,7 @@ public class GetNavData extends DAO {
 				r.setWidth(rs.getInt(8));
 				r.setMagVar(rs.getDouble(9));
 				r.setSurface(Surface.values()[rs.getInt(10)]);
-				r.setThreshold(rs.getInt(11));
+				r.setThresholdLength(rs.getInt(11));
 				// LL
 				r.setNewCode(rs.getString(13));
 				r.setFrequency(rs.getString(14));

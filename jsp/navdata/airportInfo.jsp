@@ -96,14 +96,14 @@ golgotha.local.update = function(combo) {
  <td class="label top">Takeoff Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${toRwys}">
 <c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures</span></div>
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures</span></div>
 </c:forEach></td>
 </tr>
 <tr>
  <td class="label top">Landing Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${ldgRwys}">
 <c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
 </c:forEach></td>
 </tr>
 <c:if test="${!empty runways}">

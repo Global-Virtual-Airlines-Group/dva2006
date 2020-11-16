@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.List;
@@ -6,13 +6,14 @@ import java.util.List;
 import com.vividsolutions.jts.geom.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.*;
 
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -76,12 +77,22 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	/**
-	 * Returns the lenght of the runway threshold.
+	 * Returns the length of the runway threshold.
 	 * @return the length in feet
-	 * @see Runway#setThreshold(int)
+	 * @see Runway#setThresholdLength(int)
 	 */
-	public int getThreshold() {
+	public int getThresholdLength() {
 		return _threshold;
+	}
+	
+	/**
+	 * Returns the postion of the displaced runway threshold, if any. 
+	 * @return the GeoLocation of the threshold
+	 */
+	public GeoLocation getThreshold() {
+		if (_threshold == 0) return new GeoPosition(this);
+		double thresholdM = _threshold * 1.0d / GeoLocation.FEET_MILES;
+		return GeoUtils.bearingPoint(this, thresholdM, _heading);
 	}
 	
 	/**
@@ -141,9 +152,9 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	/**
 	 * Updates the length of the runway threshold. 
 	 * @param len the length in feet
-	 * @see Runway#getThreshold()
+	 * @see Runway#getThresholdLength()
 	 */
-	public void setThreshold(int len) {
+	public void setThresholdLength(int len) {
 		_threshold = Math.max(0,  len);
 	}
 
@@ -229,6 +240,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		_geo = GeoUtils.toGeometry(List.of(sl, sr, er, el));
 	}
  
+	@Override
+	public int distanceFeet(GeoLocation l2) {
+		return (_threshold == 0) ? super.distanceFeet(l2) : getThreshold().distanceFeet(l2);
+	}
+	
 	/**
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.YELLOW
@@ -249,11 +265,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	
 	/**
 	 * Returns the Google Earth icon code.
-	 * @return 60
+	 * @return 60 (40 if displaced threshold)
 	 */
 	@Override
 	public int getIconCode() {
-		return 60;
+		return (_threshold == 0) ? 60 : 40;
 	}
 	
 	/**
