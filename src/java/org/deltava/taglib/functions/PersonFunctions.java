@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010, 2014, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public class PersonFunctions {
 	 * @return TRUE if the address is valid, otherwise FALSE
 	 */
 	public static boolean isEMailValid(Person usr) {
-		return (usr != null) && !usr.isInvalid();
+		return EMailAddress.isValid(usr);
 	}
 	
 	/**
