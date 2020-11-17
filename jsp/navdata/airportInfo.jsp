@@ -24,7 +24,9 @@
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.local.update = function(combo) {
+	if (!golgotha.form.check()) return false;
 	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(combo);
+	golgotha.form.submit(combo.parentElement);
 	return true;
 };
 </script>
@@ -181,7 +183,7 @@ xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
 	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
-	
+
 	// Display the chart
 	const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
 	const fData = new google.visualization.DataTable(); 
