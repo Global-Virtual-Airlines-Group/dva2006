@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2014, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -14,7 +14,7 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 8.5
+ * @version 9.1
  * @since 1.0
  */
 
@@ -31,15 +31,18 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	private String _body;
 	private String _contentType;
 	private DataSource _attach;
+	
+	private final boolean _ourDomain;
 
 	/**
 	 * Creates a new STMP envelope.
+	 * @param isOurDomain TRUE if from an SES-validated domain, otheriwse FALSE
 	 * @param from the originating address
-	 * @see SMTPEnvelope#getFrom()
 	 */
-	SMTPEnvelope(EMailAddress from) {
+	SMTPEnvelope(boolean isOurDomain, EMailAddress from) {
 		super();
 		_msgFrom = from;
+		_ourDomain = isOurDomain;
 	}
 
 	/**
@@ -134,6 +137,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	public boolean hasRecipients() {
 		return !(_msgTo.isEmpty() && _copyTo.isEmpty());
 	}
+	
+	/**
+	 * Returns whether this envelope originates from our e-mail domain, or is spoofing another domain.
+	 * @return TRUE if created using a validated SES domain, otherwise FALSE
+	 */
+	public boolean isOurDomain() {
+		return _ourDomain;
+	}
 
 	/**
 	 * Adds an attachment to the envelope.
@@ -179,7 +190,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getRecipients()
 	 */
 	public void addRecipient(EMailAddress addr) {
-		if ((addr != null) && !addr.isInvalid()) {
+		if (EMailAddress.isValid(addr)) {
 			try {
 				_msgTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {
@@ -218,8 +229,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getRecipients()
 	 */
 	public void addRecipients(Collection<EMailAddress> addrs) {
-		for (Iterator<EMailAddress> i = addrs.iterator(); i.hasNext();)
-			addRecipient(i.next());
+		addrs.forEach(this::addRecipient);
 	}
 
 	/**
@@ -228,7 +238,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getCopyTo()
 	 */
 	public void addCopyTo(EMailAddress addr) {
-		if ((addr != null) && !addr.isInvalid()) {
+		if (EMailAddress.isValid(addr)) {
 			try {
 				_copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {
@@ -252,14 +262,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 */
 	@Override
 	public Object clone() {
-		SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
+		SMTPEnvelope result = new SMTPEnvelope(_ourDomain, _msgFrom);
 		result._msgTo.addAll(_msgTo);
 		result._copyTo.addAll(_copyTo);
 		result._hdrs.putAll(_hdrs);
-		result.setContentType(_contentType);
-		result.setAttachment(_attach);
-		result.setSubject(_subject);
-		result.setBody(_body);
+		result._contentType =_contentType;
+		result._attach = _attach;
+		result._subject = _subject;
+		result._body = _body;
 		return result;
 	}
 

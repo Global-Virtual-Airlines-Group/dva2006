@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 8.5
+ * @version 9.1
  * @since 1.0
  */
 
@@ -32,8 +32,11 @@ public class Mailer {
 	 */
 	public Mailer(EMailAddress from) {
 		super();
-		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(SystemData.get("airline.domain"));
-		_env = new SMTPEnvelope(!isOurs ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
+		String domain = SystemData.get("airline.domain");
+		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(domain);
+		_env = new SMTPEnvelope(isOurs, !isOurs ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
+		if (!isOurs)
+			_env.addHeader("Reply-To", MailUtils.makeAddress("no-reply", domain, "DO NOT REPLY").getEmail());
 	}
 
 	/**
@@ -57,7 +60,7 @@ public class Mailer {
 	 * @param addr the recipient name/address
 	 */
 	public void send(EMailAddress addr) {
-		if ((addr != null) && !addr.isInvalid()) {
+		if (EMailAddress.isValid(addr)) {
 			_msgTo.add(addr);
 			send();
 		}
@@ -76,11 +79,7 @@ public class Mailer {
 	 * @param addrs a Collection of recipient names/addresses
 	 */
 	public void send(Collection<? extends EMailAddress> addrs) {
-		for (EMailAddress addr : addrs) {
-			if (!addr.isInvalid())
-				_msgTo.add(addr);
-		}
-		
+		addrs.stream().filter(EMailAddress::isValid).forEach(_msgTo::add);
 		send();
 	}
 
