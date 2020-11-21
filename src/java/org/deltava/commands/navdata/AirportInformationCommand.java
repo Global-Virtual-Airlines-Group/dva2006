@@ -68,6 +68,21 @@ public class AirportInformationCommand extends AbstractCommand {
 			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
 			ldgRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
 			toRwys.removeAll(invalidRwys); ldgRwys.removeAll(invalidRwys);
+			int maxLength = allRwys.values().stream().mapToInt(Runway::getLength).max().orElse(0);
+			
+			// Get Aircraft for runway length
+			String aCode = SystemData.get("airline.code");
+			GetAircraft acdao = new GetAircraft(con);
+			Collection<Aircraft> allAC = acdao.getAircraftTypes(aCode);
+			Collection<Aircraft> validAC = allAC.stream().filter(ac -> ac.isUsed(aCode)).filter(ac -> aircraftRunwayFilter(ac.getOptions(aCode), maxLength)).collect(Collectors.toList());
+			
+			// Calculate whether we show valid equipment, or invalid (to reduce size of list)
+			double validRatio = validAC.size() * 1.0d / allAC.size();
+			if (validRatio >= 0.5) {
+				Collection<Aircraft> invalidAC = allAC.stream().filter(ac -> !validAC.contains(ac)).collect(Collectors.toList());
+				ctx.setAttribute("invalidAC", invalidAC, REQUEST);
+			} else
+				ctx.setAttribute("validAC", validAC, REQUEST);
 			
 			// Save runways
 			ctx.setAttribute("toRwys", toRwys, REQUEST);
@@ -125,5 +140,13 @@ public class AirportInformationCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/navdata/airportInfo.jsp");
 		result.setSuccess(true);
+	}
+		
+	private static boolean aircraftRunwayFilter(AircraftPolicyOptions opts, int maxLength) {
+		
+		if ((opts.getTakeoffRunwayLength() > 0) && (opts.getTakeoffRunwayLength() > maxLength))
+			return false;
+		
+		return ((opts.getLandingRunwayLength() == 0) || (opts.getLandingRunwayLength() <= maxLength));
 	}
 }

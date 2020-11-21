@@ -107,7 +107,20 @@ golgotha.local.update = function(combo) {
 <c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
 </c:forEach></td>
+<c:if test="${!empty validAC}">
+<tr>
+ <td class="label top">Authorized Aircraft</td>
+ <td class="data" colspan="2"><span class="ita small">Due to runway lenghts, only the following ${validAC.size()} aircraft are authorized for operation in and out of this Airport:</span><br /><br />
+<fmt:list value="${validAC}" delim=", " /></td>
 </tr>
+</c:if>
+<c:if test="${!empty invalidAC}">
+<tr>
+ <td class="label top">Unauthorized Aircraft</td>
+ <td class="data" colspan="2" ><span class="ita small">Due to runway lenghts, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
+<fmt:list value="${invalidAC}" delim=", " /></td>
+</tr>
+</c:if>
 <c:if test="${!empty runways}">
 <tr>
  <td class="label top">Other Runways</td>
