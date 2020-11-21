@@ -14,12 +14,13 @@ import org.deltava.dao.*;
 import org.deltava.security.command.AircraftAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -125,6 +126,10 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Flush the caches
+		CacheManager.invalidate("AircraftInfo", true);
+		CacheManager.invalidate("AircraftInfoALL", true);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
