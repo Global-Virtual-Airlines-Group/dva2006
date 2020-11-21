@@ -14,12 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
 public class GetAircraft extends DAO {
 
+	private static final Cache<CacheableCollection<Aircraft>> _cCache = CacheManager.getCollection(Aircraft.class, "AircraftInfoALL");
 	private static final Cache<Aircraft> _cache = CacheManager.get(Aircraft.class, "AircraftInfo");
 
 	/**
@@ -69,11 +70,19 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Aircraft> getAll() throws DAOException {
+		CacheableCollection<Aircraft> results = _cCache.get("$ALL");
+		if (results != null)
+			return new ArrayList<Aircraft>(results);
+		
+		results = new CacheableList<Aircraft>("$ALL");
 		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRCRAFT")) {
-			return execute(ps);
+			results.addAll(execute(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		_cCache.add(results);
+		return new ArrayList<Aircraft>(results);
 	}
 
 	/**
@@ -92,12 +101,20 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
+		CacheableCollection<Aircraft> results = _cCache.get(airlineCode);
+		if (results != null)
+			return new ArrayList<Aircraft>(results);
+		
+		results = new CacheableList<Aircraft>(airlineCode);
 		try (PreparedStatement ps = prepare("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)")) {
 			ps.setString(1, airlineCode);
-			return execute(ps);
+			results.addAll(execute(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		_cCache.add(results);
+		return new ArrayList<Aircraft>(results);
 	}
 
 	/**
@@ -107,12 +124,22 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes(int pilotID) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) AND (PR.PILOT_ID=?) ORDER BY A.NAME")) {
+		Collection<String> aCodes = new LinkedHashSet<String>();
+		try (PreparedStatement ps = prepare("SELECT DISTINCT EQTYPE FROM PIREPS WHERE (PILOT_ID=?)")) {
 			ps.setInt(1, pilotID);
-			return execute(ps);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					aCodes.add(rs.getString(1));
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		Collection<Aircraft> results = new ArrayList<Aircraft>();
+		for (String ac : aCodes)
+			results.add(get(ac));
+		
+		return results;
 	}
 
 	/*
