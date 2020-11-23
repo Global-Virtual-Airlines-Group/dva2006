@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 9.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 				SetFlightReport frwdao = new SetFlightReport(con);
 				for (FlightReport fr : remainingFlights) {
 					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Released Flight Assignment");
-					frwdao.write(fr);
+					frwdao.writeHistory(fr.getStatusUpdates(), SystemData.get("airline.db"));
 				}
 			}
 
