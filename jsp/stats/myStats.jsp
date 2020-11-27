@@ -28,27 +28,27 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.drawGraphs = function(stData, clData, label) {
-	var data = new google.visualization.DataTable();
+	let data = new google.visualization.DataTable();
 	data.addColumn('date', 'Month');
 	for (var st = 1; st <= golgotha.local.data.maxStage; st++)
 		data.addColumn('number', 'Stage ' + st);
 
 	data.addRows(stData);	
-	var t = label + ' by Date/Stage'; const vs = {title:'Flight ' + label};
+	const t = label + ' by Date/Stage'; const vs = {title:'Flight ' + label};
 	golgotha.local.charts.stage.draw(data,{title:t,isStacked:true,fontSize:10,hAxis:golgotha.local.charts.hStyle,vAxis:vs,width:'100%'});
 
-	var data = new google.visualization.DataTable();
+	data = new google.visualization.DataTable();
 	data.addColumn('date', 'Month');
 	golgotha.local.data.sims.forEach(function(s) { data.addColumn('number', s); });
 	data.addRows(clData);	
-	var t = label +  ' by Date/Simulator';
+	const t2 = label +  ' by Date/Simulator';
 	golgotha.local.charts.sim.draw(data,{title:t,isStacked:true,fontSize:10,hAxis:golgotha.local.charts.hStyle,vAxis:vs,width:'100%'});
 	return true;
 };
 
 golgotha.local.swapTimeGraphs = function(rb) {
 	const isLegs = (rb.value == 'LEGS');
-	return golgotha.local.drawGraphs(isLegs ? golgotha.local.data.calendar : golgotha.local.data.calendarHours, isLegs ? golgotha.local.data.simCalendar : golgotha.local.data.simCalendarHours, isLegs ? 'Flights' : 'Hours');
+	return golgotha.local.drawGraphs(isLegs ? golgotha.local.data.calendar : golgotha.local.data.calendarHours, isLegs ? golgotha.local.data.simCalendar : golgotha.local.data.simCalendarHours, isLegs ? 'Legs' : 'Hours');
 };
 </script>
 </head>
