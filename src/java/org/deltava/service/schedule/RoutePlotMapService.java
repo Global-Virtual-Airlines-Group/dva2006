@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 8.7
+ * @version 9.1
  * @since 1.0
  */
 
@@ -246,6 +246,8 @@ public class RoutePlotMapService extends MapPlotService {
 			jo.put("airportD", JSONUtils.format(dr.getAirportD()));
 		if (dr.getAirportA() != null)
 			jo.put("airportA", JSONUtils.format(dr.getAirportA()));
+		if (dr.isPopulated())
+			jo.put("gcDistance", dr.getDistance());
 		
 		// Add ETOPS rating
 		JSONObject eo = new JSONObject();
@@ -280,8 +282,7 @@ public class RoutePlotMapService extends MapPlotService {
 			eo.put("warning", false);
 		
 		// Check for restricted Airspace
-		TaskTimer tt = new TaskTimer();
-		Collection<Airspace> rsts = AirspaceHelper.classify(dr, true); tt.stop();
+		Collection<Airspace> rsts = AirspaceHelper.classify(dr, true);
 		for (Airspace r : rsts) {
 			JSONObject ao = new JSONObject();
 			ao.put("id", r.getID());
@@ -366,7 +367,6 @@ public class RoutePlotMapService extends MapPlotService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("application/json", "utf-8");
-			ctx.setHeader("X-Airspace-Time", (int) tt.getMillis());
 			ctx.println(jo.toString(1));
 			ctx.commit();
 		} catch (IOException ie) {

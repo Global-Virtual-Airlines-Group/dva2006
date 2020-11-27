@@ -124,9 +124,14 @@ xmlreq.onreadystatechange = function() {
 
 	// Set the distance
 	const dstE = document.getElementById('rtDistance');
-	if ((dstE) && (js.distance > 0))
-		dstE.innerHTML = ' - ' + js.distance + ' miles';
-	else if (dstE)
+	if ((dstE) && (js.distance > 0)) {
+		let distDelta = (js.distance - js.gcDistance) * 1.0 / js.distance;
+		distDelta = Math.round(distDelta * 10000) / 100;
+		if (distDelta > 1)
+			dstE.innerHTML = ' - ' + js.distance + ' miles (' + distDelta + '% difference)';
+		else
+			dstE.innerHTML = ' - ' + js.distance + ' miles';
+	} else if (dstE)
 		dstE.innerHTML = '';
 
 	// Load the runways
