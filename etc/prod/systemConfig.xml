@@ -338,7 +338,7 @@
 		</banner_max>
 
 		<vatsim>
-			<status_url>http://cluster.data.vatsim.net/vatsim-data.json</status_url>
+			<status_url>https://data.vatsim.net/vatsim-data.json</status_url>
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
