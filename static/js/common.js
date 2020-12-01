@@ -93,7 +93,7 @@ golgotha.util.setHTML = function(e, content) {
 
 golgotha.form.resizeAll = function() {
 	const boxes = golgotha.util.getElementsByClass('resizable');
-	boxes.forEach(function(b) { golgotha.form.resize(boxes[x]); });
+	boxes.forEach(function(b) { golgotha.form.resize(b); });
 	return true;
 };
 
@@ -179,9 +179,6 @@ golgotha.onDOMReady = function(f) {
 		return document.attachEvent('onreadystatechange', f); 
 	else
 		return document.addEventListener('DOMContentLoaded', f);
-};
-
-golgotha.attach = function(f, name) {
 };
 
 golgotha.getChild = function(e, name) {
