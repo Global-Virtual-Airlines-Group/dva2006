@@ -62,12 +62,13 @@ public class RawTrackService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;
+	}
+	
+	@Override
+	public boolean isLogged() {
+		return false;
 	}
 }
