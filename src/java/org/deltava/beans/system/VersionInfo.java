@@ -14,7 +14,7 @@ public interface VersionInfo {
     public static final int MINOR = 1;
     
     public static final int BUILD = 770;
-    public static final int HOTFIX = 2;
+    public static final int HOTFIX = 3;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2020 Global Virtual Airlines Group. All Rights Reserved.";
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2020 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
