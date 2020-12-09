@@ -34,9 +34,10 @@ public class ErrorLogAccessControl extends AccessControl {
 	public void validate() {
 		validateContext();
 		
-		_canSubmit = _ctx.isAuthenticated();
+		boolean isAuth = _ctx.isAuthenticated();
+		_canSubmit = isAuth;
 		_canDelete = _ctx.isUserInRole("Developer");
-		_canRead = _ctx.isUserInRole("Developer") || (_ctx.isAuthenticated() && (_err != null) && (_err.getAuthorID() == _ctx.getUser().getID()));
+		_canRead = _ctx.isUserInRole("Developer") || (isAuth && (_err == null)) || (isAuth && (_err != null) && (_err.getAuthorID() == _ctx.getUser().getID()));
 	}
 
 	/**
