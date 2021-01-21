@@ -75,7 +75,7 @@ public class GetAircraft extends DAO {
 			return new ArrayList<Aircraft>(results);
 		
 		results = new CacheableList<Aircraft>("$ALL");
-		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRCRAFT")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRCRAFT")) {
 			results.addAll(execute(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -124,7 +124,7 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes(int pilotID) throws DAOException {
-		Collection<String> aCodes = new LinkedHashSet<String>();
+		Collection<String> aCodes = new TreeSet<String>();
 		try (PreparedStatement ps = prepare("SELECT DISTINCT EQTYPE FROM PIREPS WHERE (PILOT_ID=?)")) {
 			ps.setInt(1, pilotID);
 			try (ResultSet rs = ps.executeQuery()) {
