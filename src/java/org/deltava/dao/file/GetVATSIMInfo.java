@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 9.1
+ * @version 9.2
  * @since 9.0
  */
 
@@ -29,6 +29,8 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 	private static final Logger log = Logger.getLogger(GetVATSIMInfo.class);
 	
 	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss";
+	
+	private int _version = 2;
 
 	/**
 	 * Creates the Data Access Object.
@@ -36,6 +38,10 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 	 */
 	public GetVATSIMInfo(InputStream is) {
 		super(is);
+	}
+	
+	public void setVersion(int ver) {
+		_version = ver;
 	}
 
 	private static Instant parseDateTime(String dt) {
@@ -48,7 +54,62 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		Airport a = SystemData.getAirport(airportCode);
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
-
+	
+	private Controller parseController(JSONObject co) {
+		int id = 0;
+		try {
+			Controller c = new Controller(co.getInt("cid"), OnlineNetwork.VATSIM);
+			id = c.getID();
+			c.setName(co.getString((_version == 2) ? "realname" : "name"));
+			c.setServer(co.getString("server"));
+			c.setCallsign(co.getString("callsign"));
+			c.setPosition(co.optDouble("latitude"), co.optDouble("longitude"));
+			c.setRating(Rating.values()[co.getInt("rating")]);
+			c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
+			c.setLoginTime(parseDateTime(co.getString((_version == 2) ? "time_logon" : "logon_time")));
+			c.setRange(co.optInt((_version == 2) ? "visualrange" : "visual_range"));
+			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facilitytype", Facility.ATIS.ordinal())] : Facility.ATIS);
+			return c;
+		} catch (Exception e) {
+			log.error("Error parsing controller " + id + " - " + e.getMessage());
+			return null;
+		}
+	}
+	
+	private Pilot parsePilot(JSONObject po) {
+		int id = 0;
+		try {
+			Pilot p = new Pilot(po.getInt("cid"), OnlineNetwork.VATSIM);
+			p.setName(po.getString((_version == 2) ? "realname" : "name"));
+			p.setServer(po.getString("server"));
+			p.setCallsign(po.getString("callsign"));
+			p.setAltitude(po.getInt("altitude"));
+			p.setGroundSpeed(po.getInt("groundspeed"));
+			p.setHeading(po.getInt("heading"));
+			p.setPosition(po.getDouble("latitude"), po.getDouble("longitude"));
+			p.setLoginTime(parseDateTime(po.getString((_version == 2) ? "time_logon" : "logon_time")));
+			JSONObject fpo = po.optJSONObject("flight_plan");
+			if ((_version > 2) && (fpo != null)) {
+				p.setAirportD(getAirport(fpo.optString("departure")));
+				p.setAirportA(getAirport(fpo.optString("arrival")));	
+				p.setEquipmentCode(fpo.optString("aircraft"));
+				p.setRoute(po.optString("route", ""));
+				p.setComments(po.optString("remarks", ""));
+			} else if (_version == 2) {
+				p.setAirportD(getAirport(po.optString("planned_depairport")));
+				p.setAirportA(getAirport(po.optString("planned_destairport")));
+				p.setEquipmentCode(po.optString("planned_aircraft"));
+				p.setRoute(po.optString("planned_route", ""));
+				p.setComments(po.optString("planned_remarks", ""));
+			}
+			
+			return p;
+		} catch (Exception e) {
+			log.error("Error parsing pilot " + id + " - " + e.getMessage());
+			return null;
+		}
+	}
+	
 	@Override
 	public NetworkInfo getInfo() throws DAOException {
 
@@ -58,10 +119,17 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
+		
+		// Check that it's the right version
+		JSONObject go = jo.getJSONObject("general");
+		int v = go.optInt("version");
+		if (v != _version)
+			throw new IllegalArgumentException("Invalid VATSIM data feed version - " + v);
 
 		// Parse the servers
 		NetworkInfo info = new NetworkInfo(OnlineNetwork.VATSIM);
-		info.setValidDate(parseDateTime(jo.getJSONObject("general").getString("update_timestamp")));
+		info.setVersion(3);
+		info.setValidDate(parseDateTime(go.getString("update_timestamp")));
 		Map<String, Server> results = new TreeMap<String, Server>();
 		JSONArray sa = jo.getJSONArray("servers");
 		for (int x = 0; x < sa.length(); x++) {
@@ -73,65 +141,31 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			results.put(srv.getName(), srv);
 			info.add(srv);
 		}
-
-		// Parse the connections
-		JSONArray ca = jo.getJSONArray("clients");
-		for (int x = 0; x < ca.length(); x++) {
-			JSONObject co = ca.getJSONObject(x);
-			int id = StringUtils.parse(co.getString("cid"), 0);
-			NetworkUser.Type t = NetworkUser.Type.valueOf(co.getString("clienttype"));
-			if (t == NetworkUser.Type.RATING) continue;
-
-			// Create the object
-			ConnectedUser nt = null;
-			try {
-				switch (t) {
-				case PILOT:
-					Pilot p = new Pilot(id, OnlineNetwork.VATSIM);
-					p.setCallsign(co.getString("callsign"));
-					p.setAltitude(co.getInt("altitude"));
-					p.setGroundSpeed(co.getInt("groundspeed"));
-					p.setHeading(co.getInt("heading"));
-					p.setRoute(co.optString("planned_route", ""));
-					p.setComments(co.optString("planned_remarks", ""));
-					p.setEquipmentCode(co.optString("planned_aircraft"));
-					p.setAirportD(getAirport(co.optString("planned_depairport")));
-					p.setAirportA(getAirport(co.optString("planned_destairport")));
-					info.add(p);
-					nt = p;
-					break;
-
-				case ATC:
-					Controller c = new Controller(id, OnlineNetwork.VATSIM);
-					c.setCallsign(co.getString("callsign"));
-					c.setRating(Rating.values()[co.getInt("rating")]);
-					c.setFacility(Facility.values()[co.getInt("facilitytype")]);
-					c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
-					info.add(c);
-					nt = c;
-					break;
-
-				default:
-					continue;
-				}
-
-				nt.setLoginTime(parseDateTime(co.getString("time_logon")));
-				nt.setPosition(co.getDouble("latitude"), co.getDouble("longitude"));
-				nt.setName(co.getString("realname"));
-				nt.setServer(co.getString("server"));
-				Server srv = results.get(nt.getServer());
-				if (srv != null)
-					srv.setConnections(srv.getConnections() + 1);
-			} catch (Exception e) {
-				if (nt != null)
-					log.error("Error loading " + nt.getCallsign() + " - " + e.getMessage(), e);
-				else
-					log.error(e.getMessage(), e);
-				
-				log.error(co.toString());
-			}
+		
+		// Parse the pilots
+		JSONArray pa = jo.getJSONArray("pilots");
+		for (int x = 0; x < pa.length(); x++) {
+			JSONObject po = pa.getJSONObject(x);
+			info.add(parsePilot(po));
 		}
 
+		// Parse the controllers
+		JSONArray ca = jo.getJSONArray("controllers");
+		for (int x = 0; x < ca.length(); x++) {
+			JSONObject co = ca.getJSONObject(x);
+			info.add(parseController(co));
+		}
+		
+		// Parse the ATIS
+		ca = jo.getJSONArray("atis");
+		for (int x = 0; x < ca.length(); x++) {
+			JSONObject co = ca.getJSONObject(x);
+			info.add(parseController(co));
+		}
+		
+		// Calculate connection counts
+		info.getPilots().stream().map(p -> results.get(p.getServer())).filter(Objects::nonNull).forEach(s -> s.setConnections(s.getConnections() + 1));
+		info.getControllers().stream().map(p -> results.get(p.getServer())).filter(Objects::nonNull).forEach(s -> s.setConnections(s.getConnections() + 1));
 		return info;
 	}
 }
