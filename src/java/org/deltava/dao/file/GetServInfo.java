@@ -110,7 +110,7 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 								String name = tk.nextToken();
 								String val = tk.nextToken();
 								if ("VERSION".equalsIgnoreCase(name))
-									info.setVersion(val);
+									info.setVersion(StringUtils.parse(val, 7));
 								else if ("UPDATE".equalsIgnoreCase(name)) {
 									try {
 										info.setValidDate(StringUtils.parseInstant(val, "yyyyMMddHHmmss"));

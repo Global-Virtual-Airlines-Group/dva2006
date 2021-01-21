@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -7,13 +7,12 @@ import java.time.Instant;
 import org.deltava.beans.*;
 import org.deltava.comparators.GeoComparator;
 
-import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 8.6
+ * @version 9.2
  * @since 1.0
  */
 
@@ -41,8 +40,8 @@ public class NetworkInfo implements Cacheable {
     
     /**
      * Returns the ServInfo data format version.
-     * @return the data format version, usually 7
-     * @see NetworkInfo#setVersion(String)
+     * @return the data format version, usually 7 for legacy ServInfo
+     * @see NetworkInfo#setVersion(int)
      */
     public int getVersion() {
         return _version;
@@ -160,13 +159,7 @@ public class NetworkInfo implements Cacheable {
     public NetworkUser get(int networkID) {
     	Collection<NetworkUser> allUsers = new LinkedHashSet<NetworkUser>(_controllers.values());
     	allUsers.addAll(_pilots.values());
-    	for (Iterator<NetworkUser> i = allUsers.iterator(); i.hasNext(); ) {
-    		NetworkUser usr = i.next();
-    		if (usr.getID() == networkID)
-    			return usr;
-    	}
-    	
-    	return null;
+    	return allUsers.stream().filter(usr -> (usr.getID() == networkID)).findAny().orElse(null);
     }
     
     /**
@@ -181,11 +174,9 @@ public class NetworkInfo implements Cacheable {
     	
     	// Assign database IDs to active Pilots
     	for (NetworkUser usr : users) {
-    		String netID = String.valueOf(usr.getID());
-    		if (idMap.containsKey(netID)) {
-    			Integer id = idMap.get(netID);
-    			usr.setPilotID(id.intValue());
-    		}
+   			Integer id = idMap.get(String.valueOf(usr.getID()));
+   			if (id != null)
+   				usr.setPilotID(id.intValue());
     	}
     	
     	_hasPilotIDs = true;
@@ -196,8 +187,8 @@ public class NetworkInfo implements Cacheable {
      * @param version the data format, typically 7
      * @see NetworkInfo#getVersion()
      */
-    public void setVersion(String version) {
-    	_version = StringUtils.parse(version, 7);
+    public void setVersion(int version) {
+    	_version = version;
     }
     
     /**
@@ -218,7 +209,8 @@ public class NetworkInfo implements Cacheable {
      * @see NetworkInfo#add(Server)
      */
     public void add(Controller c) {
-        _controllers.put(c.getCallsign(), c);
+    	if (c != null)
+    		_controllers.put(c.getCallsign(), c);
     }
     
     /**
@@ -230,7 +222,8 @@ public class NetworkInfo implements Cacheable {
      * @see NetworkInfo#add(Server)
      */
     public void add(Pilot p) {
-        _pilots.put(p.getCallsign(), p);
+    	if (p != null)
+    		_pilots.put(p.getCallsign(), p);
     }
     
     /**
