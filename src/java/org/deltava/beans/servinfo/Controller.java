@@ -58,6 +58,10 @@ public class Controller extends ConnectedUser {
        return _type;
     }
     
+    public int getRange() {
+    	return _type.getRange();
+    }
+    
     /**
      * Sets the user name.
      * @param name the controller name
