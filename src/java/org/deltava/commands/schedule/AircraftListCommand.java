@@ -1,4 +1,4 @@
-// Copyright 2006, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AircraftAccessControl;
 /**
  * A Web Site Command to display aircraft data.
  * @author Luke
- * @version 7.0
+ * @version 9.1
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class AircraftListCommand extends AbstractViewCommand {
 			dao.setQueryMax(Math.round(vc.getCount() * 1.5f));
 			
 			// Calcualte access
-			List<Aircraft> results = dao.getAll();
+			List<Aircraft> results = new ArrayList<Aircraft>(dao.getAll());
 			Map<Aircraft, AircraftAccessControl> access = new HashMap<Aircraft, AircraftAccessControl>();
 			for (Iterator<Aircraft> i = results.iterator(); i.hasNext(); ) {
 				Aircraft a = i.next();

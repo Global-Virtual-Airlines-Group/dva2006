@@ -1,8 +1,10 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
@@ -19,6 +21,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetAircraft extends DAO {
+	
+	private static final Logger log = Logger.getLogger(GetAircraft.class);
 
 	private static final Cache<CacheableCollection<Aircraft>> _cCache = CacheManager.getCollection(Aircraft.class, "AircraftInfoALL");
 	private static final Cache<Aircraft> _cache = CacheManager.get(Aircraft.class, "AircraftInfo");
@@ -69,10 +73,10 @@ public class GetAircraft extends DAO {
 	 * @return a Collection of Aircraft beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Aircraft> getAll() throws DAOException {
+	public Collection<Aircraft> getAll() throws DAOException {
 		CacheableCollection<Aircraft> results = _cCache.get("$ALL");
 		if (results != null)
-			return new ArrayList<Aircraft>(results);
+			return results.clone();
 		
 		results = new CacheableList<Aircraft>("$ALL");
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRCRAFT")) {
@@ -81,8 +85,10 @@ public class GetAircraft extends DAO {
 			throw new DAOException(se);
 		}
 		
+		results.stream().filter(ac -> ac.getApps().isEmpty()).forEach(ac -> log.warn("No options for " + ac.getName()));
+		
 		_cCache.add(results);
-		return new ArrayList<Aircraft>(results);
+		return results.clone();
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class GetAircraft extends DAO {
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		CacheableCollection<Aircraft> results = _cCache.get(airlineCode);
 		if (results != null)
-			return new ArrayList<Aircraft>(results);
+			return results.clone();
 		
 		results = new CacheableList<Aircraft>(airlineCode);
 		try (PreparedStatement ps = prepare("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)")) {
@@ -114,7 +120,7 @@ public class GetAircraft extends DAO {
 		}
 		
 		_cCache.add(results);
-		return new ArrayList<Aircraft>(results);
+		return results.clone();
 	}
 
 	/**
