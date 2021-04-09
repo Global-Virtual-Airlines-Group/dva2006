@@ -429,6 +429,11 @@
 			<required>true</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>empty</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 
 	<tag>
@@ -476,6 +481,88 @@
 			<name>className</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Elite Level tag, use to format Elite lvel names with color</description>
+		<name>elite</name>
+		<tag-class>org.deltava.taglib.format.EliteFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>level</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.econ.EliteLevel</type>
+		</attribute>
+		<attribute>
+			<name>nameOnly</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Elite Progress tag, used to render an Elite level progress bar</description>
+		<name>eliteProgressBar</name>
+		<tag-class>org.deltava.taglib.format.EliteProgressTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>level</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.econ.EliteLevel</type>
+		</attribute>
+		<attribute>
+			<name>prev</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.econ.EliteLevel</type>
+		</attribute>
+		<attribute>
+			<name>progress</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>remainingClassName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>units</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>showUnits</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>percent</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 
