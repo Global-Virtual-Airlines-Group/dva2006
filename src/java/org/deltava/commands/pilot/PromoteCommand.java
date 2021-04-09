@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 1.0
  */
 
@@ -73,11 +73,11 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			
 			// Write the Pilot Profile
 			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(usr);
+			pwdao.write(usr, ctx.getDB());
 			
 			// Write the Status Update
 			SetStatusUpdate wdao = new SetStatusUpdate(con);
-			wdao.write(upd);
+			wdao.write(upd, ctx.getDB());
 			
 			// Invalidate the caches
 			GetPilotRecognition.invalidate(usr.getEquipmentType());

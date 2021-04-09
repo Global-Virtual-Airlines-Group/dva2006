@@ -19,7 +19,7 @@
 <c:if test="${googleMap}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -105,6 +105,11 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <el:text name="lonS" idx="*" size="2" max="2" value="${lonS}" /> seconds 
 <el:combo name="lonDir" idx="*" size="1" options="${lonDir}" value="${lonEW}" /></td>
 </tr>
+<tr>
+ <td class="label">Customs Zones</td>
+ <td class="data"><el:box name="isSchengen" value="true" idx="*" checked="${airport.isSchengen}" label="This Airport is located in the Schengen Zone" /><br />
+<el:box name="hasUSPFI" value="true" idx="*" checked="${airport.hasPFI}" label="This Airport has a US Customs Pre-Flight Inspection station" /></td>
+</tr>
 <c:if test="${airport.maximumRunwayLength > 0}">
 <tr>
  <td class="label">Maximum Runway Length</td>
@@ -148,26 +153,13 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <tr>
  <td colspan="2" class="mid"><el:img src="worldzones.png" caption="Time Zone Map" /></td>
 </tr>
-<c:if test="${isNew}">
-<c:if test="${!empty airport}">
+<c:if test="${isNew && !empty airport}">
 <tr class="title caps">
  <td colspan="2">AIRPORT LOCATION</td>
 </tr>
 <tr>
  <td colspan="2"><map:div ID="googleMap" height="550" /></td>
 </tr>
-</c:if>
-<content:secure secure="false">
-<c:if test="${isNew && (!empty param.id)}">
-<c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="page" />
-<tr class="title caps">
- <td colspan="2">AIRPORT INFORMATION</td>
-</tr>
-<tr>
- <td colspan="2" class="mid"><iframe id="airportLookup" style="width:97%; height:680px; scrolling:auto;" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
-</tr>
-</c:if>
-</content:secure>
 </c:if>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -184,7 +176,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 

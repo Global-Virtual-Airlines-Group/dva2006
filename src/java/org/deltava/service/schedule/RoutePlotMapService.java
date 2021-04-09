@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -67,8 +67,7 @@ public class RoutePlotMapService extends MapPlotService {
 		dr.setAirportD(SystemData.getAirport(req.optString("airportD")));
 		dr.setAirportA(SystemData.getAirport(req.optString("airportA")));
 		dr.setAirportL(SystemData.getAirport(req.optString("airportL")));
-		boolean isIntl = (dr.getAirportD() != null) && (dr.getAirportA() != null) && (!dr.getAirportD().getCountry().equals(dr.getAirportA().getCountry()));
-
+		
 		Aircraft a = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -96,13 +95,20 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
+				GateZone gz = switch (dr.getFlightType()) {
+					case USPFI -> GateZone.USPFI;
+					case INTERNATIONAL -> GateZone.INTERNATIONAL;
+					default -> GateZone.DOMESTIC;
+				};
+				
 				Collection<Gate> dGates = new LinkedHashSet<Gate>();
 				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim); 
-				dGates.addAll(filter(popGates, dr.getAirline(), isIntl));
-				if (dGates.size() < 2) {
-					dGates.addAll(popGates);
-					if (dGates.size() < 3)
-						dGates.addAll(gdao.getGates(dr.getAirportD(), sim));
+				dGates.addAll(filter(popGates, dr.getAirline(), gz));
+				if (dGates.size() < 3) {
+					Collection<Gate> allGates = gdao.getGates(dr.getAirportD(), sim);
+					filter(allGates, dr.getAirline(), gz).stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
+					if (dGates.isEmpty())
+						allGates.stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
 				}
 				
 				gates.addAll(dGates);
@@ -132,11 +138,7 @@ public class RoutePlotMapService extends MapPlotService {
 						popRunways.addAll(rwdao.getPopularRunways(dr.getAirportD(), null, true));
 					
 					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
-					for (Runway r : popRunways) {
-						String code = "RW" + r.getName();
-						if (sidRunways.contains(code))
-							runways.add(r);
-					}
+					popRunways.stream().filter(r -> sidRunways.contains("RW" + r.getName())).forEach(runways::add);
 					
 					// Sort runways based on wind heading
 					if ((wxD != null) && (wxD.getWindSpeed() > 0))
@@ -182,14 +184,16 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
+				GateZone gz = (dr.getFlightType() == FlightType.INTERNATIONAL) ? GateZone.INTERNATIONAL : GateZone.DOMESTIC;
 				routePoints.add(new AirportLocation(dr.getAirportA()));
 				Collection<Gate> aGates = new LinkedHashSet<Gate>();
-				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim); 
-				aGates.addAll(filter(popGates, dr.getAirline(), isIntl));
-				if (aGates.size() < 2) {
-					aGates.addAll(popGates);
-					if (aGates.size() < 3)
-						aGates.addAll(gdao.getGates(dr.getAirportA(), sim));
+				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim);
+				aGates.addAll(filter(popGates, dr.getAirline(), gz));
+				if (aGates.size() < 3) {
+					Collection<Gate> allGates = gdao.getGates(dr.getAirportA(), sim);
+					filter(allGates, dr.getAirline(), gz).stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
+					if (aGates.isEmpty())
+						allGates.stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
 				}
 				
 				gates.addAll(aGates);
@@ -234,7 +238,7 @@ public class RoutePlotMapService extends MapPlotService {
 
 		// Convert points to a JSON object
 		JSONObject jo = formatPoints(points);
-		jo.put("intl", isIntl);
+		jo.put("flightType", dr.getFlightType().name());
 		if (dr.getAirline() != null) {
 			JSONObject alo = new JSONObject();
 			alo.put("name", dr.getAirline().getName());
@@ -255,11 +259,21 @@ public class RoutePlotMapService extends MapPlotService {
 		eo.put("rating", er.getResult().toString());
 		eo.put("time", er.getResult().getTime());
 		AircraftPolicyOptions opts = (a == null) ? null : a.getOptions(SystemData.get("airline.code"));
-		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.validate(opts, er.getResult())) {
-			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
-			eo.put("range", erng.getRange());
+		ETOPS ae = (opts == null) ? ETOPS.ETOPS90 : opts.getETOPS();
+		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.isWarn(ae, er.getResult())) {
+			eo.put("range", ae.getRange());
 			eo.put("warning", true);
-			eo.put("aircraftRating", erng.toString());
+			eo.put("aircraftRating", ae.toString());
+			if (er.getWarningPoint() != null) {
+				NavigationDataBean wp = er.getWarningPoint();
+				JSONObject wo = new JSONObject();
+				wo.put("ll", JSONUtils.format(wp));
+				wo.put("pal", wp.getPaletteCode());
+				wo.put("icon", wp.getIconCode());
+				wo.put("info", wp.getInfoBox());
+				eo.put("warnPoint", wo);
+			}
+			
 			for (NavigationDataBean ap : er.getClosestAirports()) {
 				JSONObject apo = new JSONObject();
 				apo.put("ll", JSONUtils.format(ap));
@@ -270,13 +284,6 @@ public class RoutePlotMapService extends MapPlotService {
 				eo.append("airports", apo);
 			}
 			
-			NavigationDataBean wp = (NavigationDataBean) er.getWarningPoint();
-			JSONObject wo = new JSONObject();
-			wo.put("ll", JSONUtils.format(wp));
-			wo.put("pal", wp.getPaletteCode());
-			wo.put("icon", wp.getIconCode());
-			wo.put("info", wp.getInfoBox());
-			eo.put("warnPoint", wo);
 			JSONUtils.ensureArrayPresent(eo, "airports");
 		} else
 			eo.put("warning", false);
@@ -305,9 +312,10 @@ public class RoutePlotMapService extends MapPlotService {
 			go.put("pal", g.getPaletteCode());
 			go.put("icon", g.getIconCode());
 			go.put("airlines", g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet()));
-			go.put("isIntl", g.isInternational());
+			go.put("isIntl", (g.getZone() != GateZone.DOMESTIC) && (g.getZone() != GateZone.USPFI));
+			go.put("zone", g.getZone().getDescription());
 			go.put("useCount", g.getUseCount());
-			jo.put("info", g.getInfoBox());
+			go.put("info", g.getInfoBox());
 			jo.append(isDeparture ? "departureGates" : "arrivalGates", go);
 		}
 		
@@ -361,10 +369,8 @@ public class RoutePlotMapService extends MapPlotService {
 			jo.append("alternates", ao);
 		}
 		
-		// Ensure arrays are populated
-		JSONUtils.ensureArrayPresent(jo, "departureGates", "arrivalGates", "runways", "sid", "star", "wx", "alternates", "airspace");
-		
 		// Dump the XML to the output stream
+		JSONUtils.ensureArrayPresent(jo, "departureGates", "arrivalGates", "runways", "sid", "star", "wx", "alternates", "airspace");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.println(jo.toString(1));
@@ -379,14 +385,9 @@ public class RoutePlotMapService extends MapPlotService {
 	/*
 	 * Helper method to filter gates.
 	 */
-	private static List<Gate> filter(Collection<Gate> gates, Airline a, boolean isIntl) {
-		List<Gate> fdGates = gates.stream().filter(g -> (a != null) && g.getAirlines().contains(a)).collect(Collectors.toList());
-		if (isIntl) {
-			List<Gate> iGates = fdGates.stream().filter(Gate::isInternational).collect(Collectors.toList());
-			if (!iGates.isEmpty())
-				return iGates;
-		}
-		
-		return fdGates;
+	private static List<Gate> filter(Collection<Gate> gates, Airline a, GateZone gz) {
+		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
+		List<Gate> iGates = fdGates.stream().filter(g -> (g.getZone() == gz)).collect(Collectors.toList());
+		return iGates.isEmpty() ? fdGates : iGates;
 	}
 }

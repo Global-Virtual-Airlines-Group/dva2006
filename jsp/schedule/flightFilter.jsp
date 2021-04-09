@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.src,min:1,t:'Schedule Source'});

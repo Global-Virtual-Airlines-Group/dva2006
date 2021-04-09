@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -11,12 +11,10 @@ import org.deltava.beans.servlet.CommandLog;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to view the Command History Log.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -50,7 +48,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          GetPilotDirectory pdao = new GetPilotDirectory(con);
          int id = ctx.getID();
          if ((id == 0) && (ctx.getParameter("pilotName") != null)) {
-        	 Collection<Pilot> users = pdao.getByName(ctx.getParameter("pilotName"), SystemData.get("airline.db"));
+        	 Collection<Pilot> users = pdao.getByName(ctx.getParameter("pilotName"), ctx.getDB());
         	 users.forEach(usr -> IDs.add(Integer.valueOf(usr.getID())));
          } else
         	 IDs.add(Integer.valueOf(id));

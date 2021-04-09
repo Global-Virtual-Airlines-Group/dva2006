@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -13,11 +13,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Pilot extends Person implements ComboAlias, Cloneable {
+public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable {
 
 	private static final long serialVersionUID = -6034962522937668007L;
 	
@@ -28,6 +28,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private final Collection<String> _ratings = new TreeSet<String>();
 	private final Map<String, Role> _roles = new TreeMap<String, Role>();
 	private final Collection<String> _certs = new LinkedHashSet<String>();
+	private final Collection<PushEndpoint> _pushAddrs = new LinkedHashSet<PushEndpoint>();
 	private final Collection<DatedAccomplishmentID> _accIDs = new TreeSet<DatedAccomplishmentID>();
 
 	private long _miles;
@@ -85,6 +86,11 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	@Override
 	public Collection<String> getRoles() {
 		return _roles.values().stream().map(Role::getName).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Collection<PushEndpoint> getPushEndpoints() {
+		return _pushAddrs;
 	}
 	
 	/**
@@ -879,6 +885,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public void addRatings(Collection<String> ratings) {
 		_ratings.addAll(ratings);
+	}
+	
+	/**
+	 * Adds a Push Notification endpoint for this Pilot.
+	 * @param ep a PushEndpoint
+	 * @see Pilot#getPushEndpoints()
+	 */
+	public void addPushEndpoint(PushEndpoint ep) {
+		_pushAddrs.add(ep);
 	}
 
 	/**

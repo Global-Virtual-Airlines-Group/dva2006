@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.showReqCert = function(combo) {
 	const opt = combo.options[combo.selectedIndex];
 	golgotha.util.display('reqCertRow', (opt.text == 'Specific Certification'));

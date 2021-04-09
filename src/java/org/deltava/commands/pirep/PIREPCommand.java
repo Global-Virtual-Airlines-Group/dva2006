@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -14,6 +14,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.academy.Status;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.econ.FlightEliteScore;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
@@ -39,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -71,14 +72,14 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Check if we are doing a submit & save
 		boolean doSubmit = Boolean.valueOf(ctx.getParameter("doSubmit")).booleanValue();
-
 		FlightReport fr = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the original version from the database
+			final int id = ctx.getID();
 			GetFlightReports rdao = new GetFlightReports(con);
-			fr = rdao.get(ctx.getID());
+			fr = rdao.get(id, ctx.getDB());
 
 			// Check if we are creating a new flight report or editing one with an assignment
 			boolean doCreate = (fr == null);
@@ -121,8 +122,11 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			ScheduleRoute rt = new ScheduleRoute(ad, aa);
-			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), rt, SystemData.get("airline.db"));
-			if (doCreate && (!draftFlights.isEmpty()))
+			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), rt, ctx.getDB());
+			Optional<FlightReport> ofr = draftFlights.stream().filter(dfr -> (dfr.getID() == id)).findAny();
+			if (ofr.isPresent())
+				fr = ofr.get();
+			else if (doCreate && !draftFlights.isEmpty())
 				fr = draftFlights.get(0);
 
 			// Create a new PIREP bean if we're creating one, otherwise update the flight code
@@ -176,18 +180,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Figure out what network the flight was flown on and ensure we have an ID
-			OnlineNetwork net = null;
-			try {
-				net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
-				if (!p.hasNetworkID(net))
-					throw new IllegalStateException("No " + net + " ID");
-			} catch (Exception e) {
-				net = null;
-			} finally {
-				if (fr.getNetwork() != net) {
-					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((net == null) ? "Offline" : net) + " by " + ctx.getUser().getName());
-					fr.setNetwork(net);
-				}
+			OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null);
+			if ((net != null) && !p.hasNetworkID(net))
+				throw new IllegalStateException("No " + net + " ID");
+
+			if (fr.getNetwork() != net) {
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((net == null) ? "Offline" : net));
+				fr.setNetwork(net);
 			}
 			
 			// Get the flight time
@@ -200,8 +199,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Calculate the date
 			ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
-			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), StringUtils.parse(ctx.getParameter("dateM"), now.getMonthValue() - 1) + 1,
-					StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
+			Month mn = EnumUtils.parse(Month.class, ctx.getParameter("dateM"), now.getMonth());
+			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), mn.getValue(), StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
 			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
 			// Validate the date
@@ -320,7 +319,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Get the active airlines
 				allAirlines.values().stream().filter(Airline::getActive).forEach(a-> airlines.add(a));
 			} else {
-				FlightReport fr = dao.get(ctx.getID());
+				FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 				if (fr == null)
 					throw notFoundException("Invalid Flight Report - " + ctx.getID());
 
@@ -410,7 +409,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Get the DAOs and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
 			GetPilot pdao = new GetPilot(con);
-			FlightReport fr = dao.get(ctx.getID());
+			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			
@@ -418,6 +417,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(DatabaseID.PILOT));
+			
+			// If the flight report is a draft, then load it
+			if (fr.getStatus() == FlightStatus.DRAFT) {
+				final int id = fr.getID();
+				Collection<FlightReport> draftReports = dao.getDraftReports(p.getID(), fr, ctx.getDB());
+				fr = draftReports.stream().filter(dfr -> (dfr.getID() == id)).findFirst().orElse(fr);
+			}
 			
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
@@ -453,8 +459,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (ac.getCanDispose()) {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				org.deltava.dao.GetSchedule scdao = new org.deltava.dao.GetSchedule(con);
-				scdao.setSources(rsdao.getSources(true));
-				FlightTime ft = scdao.getFlightTime(fr);
+				scdao.setSources(rsdao.getSources(true, ctx.getDB()));
+				FlightTime ft = scdao.getFlightTime(fr, ctx.getDB());
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 			}
@@ -471,6 +477,27 @@ public class PIREPCommand extends AbstractFormCommand {
 			// If we're online and not on an event, list possible event
 			if (ac.getCanDispose() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
 				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr, SystemData.get("airline.code")), REQUEST);
+			
+			// Get the elite status if applicable
+			if (SystemData.getBoolean("econ.elite.enabled")) {
+				FlightEliteScore es = dao.getElite(fr.getID());
+				if (es != null) {
+					es.setAuthorID(fr.getAuthorID());
+					GetElite edao = new GetElite(con);	
+					ctx.setAttribute("eliteLevel", edao.get(es.getEliteLevel(), es.getYear(), ctx.getDB()), REQUEST);
+					ctx.setAttribute("eliteScore", es, REQUEST);
+				}
+			}
+			
+			// Get tour eligibility
+			if (fr.getDatabaseID(DatabaseID.TOUR) != 0) {
+				GetTour tdao = new GetTour(con);
+				Tour t = tdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
+				if (t != null) {
+					ctx.setAttribute("tour", t, REQUEST);
+					ctx.setAttribute("tourIdx", Integer.valueOf(t.getLegIndex(fr)), REQUEST);
+				}
+			}
 
 			// Get the Navdata DAO
 			GetNavRoute navdao = new GetNavRoute(con);
@@ -553,9 +580,9 @@ public class PIREPCommand extends AbstractFormCommand {
 					gdao.populate(info);
 					
 					// Load taxi times
-					GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
-					ctx.setAttribute("avgTaxiInTime", Duration.of(ttdao.getTaxiInTime(afr.getAirportA(), SystemData.get("airline.db")), ChronoUnit.SECONDS), REQUEST);
-					ctx.setAttribute("avgTaxiOutTime", Duration.of(ttdao.getTaxiOutTime(afr.getAirportD(), SystemData.get("airline.db")), ChronoUnit.SECONDS), REQUEST);
+					GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con); int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
+					ctx.setAttribute("avgTaxiInTime", ttdao.getTaxiTime(afr.getAirportA(), year), REQUEST);
+					ctx.setAttribute("avgTaxiOutTime", ttdao.getTaxiTime(afr.getAirportD(), year), REQUEST);
 					
 					// Build the route
 					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
@@ -589,7 +616,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						
 					if (rtePoints.isEmpty())
 						rtePoints.addAll(navdao.getRouteWaypoints(rb.getRoute(), info.getAirportD()));
-					rtePoints.forEach(wp -> rb.add(wp));
+					rtePoints.forEach(rb::add);
 
 					// Check the STAR
 					if ((info.getSTAR() == null) && (rb.getSTAR() != null)) {
@@ -694,7 +721,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							
 							// Move track data from the raw table
 							SetOnlineTrack twdao = new SetOnlineTrack(con);
-							twdao.write(fr.getID(), pd, SystemData.get("airline.db"));
+							twdao.write(fr.getID(), pd, ctx.getDB());
 							twdao.purgeRaw(trackID);
 							
 							// Save the route
@@ -751,6 +778,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				Collection<GeoLocation> rt = List.of(fr.getAirportD(), fr.getAirportA());
 				ctx.setAttribute("mapRoute", rt, REQUEST);
 				ctx.setAttribute("filedRoute", rt, REQUEST);
+				if (!hasTrack && (mapType == MapType.GOOGLE))
+					mapType = MapType.GOOGLEStatic;
 			}
 
 			// If we're set to use Google Maps, check API usage

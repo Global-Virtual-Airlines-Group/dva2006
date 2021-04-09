@@ -33,13 +33,14 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	protected static final TestingHistoryHelper initTestHistory(Pilot p, Connection c) throws DAOException {
 
 		// Load the PIREP beans
+		String db = SystemData.get("airline.db");
 		GetFlightReports frdao = new GetFlightReports(c);
 		Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
-		frdao.getCaptEQType(pireps);
+		frdao.loadCaptEQTypes(p.getID(), pireps, db);
 
 		// Get the Pilot's equipment program and all equipment types
 		GetEquipmentType eqdao = new GetEquipmentType(c);
-		EquipmentType eq = eqdao.get(p.getEquipmentType(), SystemData.get("airline.db"));
+		EquipmentType eq = eqdao.get(p.getEquipmentType(), db);
 
 		// Get the Pilot's applicant profile to get eq program hired into
 		GetApplicant adao = new GetApplicant(c);

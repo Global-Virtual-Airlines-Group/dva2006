@@ -185,6 +185,12 @@ return true;
 </c:if>
 </tr>
 </c:if>
+<c:if test="${access.canViewPush && (!empty pilot.pushEndpoints)}">
+<tr>
+ <td class="label top">Push Notifications</td>
+ <td colspan="${cspan}" class="data"><c:forEach var="ep" items="${pilot.pushEndpoints}" varStatus="hasMoreEP">${ep.host} - since <fmt:date className="sec" fmt="d" date="${ep.createdOn}" /><c:if test="${!hasMoreEP.last}"><br /></c:if></c:forEach></td>
+</tr>
+</c:if>
 <c:if test="${!empty acarsClientInfo}">
 <!-- ACARS client system data -->
 <tr class="title">

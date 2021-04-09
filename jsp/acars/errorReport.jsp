@@ -141,7 +141,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 </content:page>
 <content:googleAnalytics />
 </body>
-<script async>
+<script>
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
 	const xmlreq = new XMLHttpRequest();

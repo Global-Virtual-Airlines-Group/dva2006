@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2013, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -9,13 +9,14 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
 public class FTPConnection implements Closeable {
 
 	private final FTPClient _client = new FTPClient();
+	private final String _host;
 
 	class TempInputStream extends FileInputStream {
 
@@ -42,11 +43,7 @@ public class FTPConnection implements Closeable {
 	 */
 	public FTPConnection(String host) {
 		super();
-		try {
-			_client.setTimeout(5000);
-			_client.setRemoteHost(host);
-		} catch (Exception e) { // empty
-		}
+		_host = host;
 	}
 
 	/**
@@ -73,6 +70,8 @@ public class FTPConnection implements Closeable {
 	 */
 	public void connect(String user, String pwd) throws FTPClientException {
 		try {
+			_client.setTimeout(5000);
+			_client.setRemoteHost(_host);
 			_client.connect();
 			_client.login(user, pwd);
 			_client.setType(FTPTransferType.BINARY);
@@ -81,9 +80,6 @@ public class FTPConnection implements Closeable {
 		}
 	}
 
-	/**
-	 * Closes the connection. This swallows any exceptions.
-	 */
 	@Override
 	public void close() {
 		try {
@@ -107,8 +103,10 @@ public class FTPConnection implements Closeable {
 
 			// Create a temp file
 			File tmp = File.createTempFile(fName, "ftp");
-			_client.get(new FileOutputStream(tmp), fName);
-			return new TempInputStream(tmp);
+			try (OutputStream os = new FileOutputStream(tmp)) {
+				_client.get(os, fName);
+				return new TempInputStream(tmp);
+			}
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
@@ -122,8 +120,8 @@ public class FTPConnection implements Closeable {
 	 * @throws FTPClientException if an error occurs
 	 */
 	public InputStream get(String fName, File destFile) throws FTPClientException {
-		try {
-			_client.get(new FileOutputStream(destFile), fName);
+		try (OutputStream os = new FileOutputStream(destFile)) {
+			_client.get(os, fName);
 			return new FileInputStream(destFile);
 		} catch (Exception e) {
 			throw new FTPClientException(e);
@@ -136,8 +134,8 @@ public class FTPConnection implements Closeable {
 	 * @throws FTPClientException if an error occurs
 	 */
 	public void put(File f) throws FTPClientException {
-		try {
-			_client.put(new FileInputStream(f), f.getName());
+		try (InputStream is = new FileInputStream(f)) {
+			_client.put(is, f.getName());
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
@@ -172,8 +170,7 @@ public class FTPConnection implements Closeable {
 	public java.time.Instant getTimestamp(String dirName, String fName) throws FTPClientException {
 		try {
 			FTPFile[] files = _client.dirDetails(dirName);
-			for (int x = 0; x < files.length; x++) {
-				FTPFile f = files[x];
+			for (FTPFile f : files) {
 				if (f.getName().equals(fName) && !f.isDir())
 					return Instant.ofEpochMilli(f.lastModified().getTime());
 			}
@@ -194,13 +191,11 @@ public class FTPConnection implements Closeable {
 	public String getNewestDirectory(String dirName, FilenameFilter filter) throws FTPClientException {
 		try {
 			FTPFile[] files = _client.dirDetails(dirName);
-			if (files == null)
-				return null;
+			if (files == null) return null;
 			
 			// Iterate through the directories
 			FTPFile latest = null;
-			for (int x = 0; x < files.length; x++) {
-				FTPFile f = files[x];
+			for (FTPFile f : files) {
 				if (f.isDir() && !f.isLink()) {
 					boolean isOK = (filter == null) || (filter.accept(null, f.getName()));
 					if (isOK) {

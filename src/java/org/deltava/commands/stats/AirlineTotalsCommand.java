@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -9,12 +9,10 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -46,9 +44,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
 			tableStatus.addAll(tsdao.getStatus("xacars"));
 			tableStatus.addAll(tsdao.getStatus("geoip"));
 			tableStatus.addAll(tsdao.getStatus("postfix"));
-			tableStatus.addAll(tsdao.getStatus("teamspeak"));
 			tableStatus.addAll(tsdao.getStatus("online"));
-			tableStatus.addAll(tsdao.getStatus(SystemData.get("airline.db").toLowerCase()));
+			tableStatus.addAll(tsdao.getStatus(ctx.getDB().toLowerCase()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -56,17 +53,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
 		}
 
 		// Calculate database size
-		long dbSize = 0;
-		long dbRows = 0;
-		for (TableInfo info : tableStatus) {
-			dbSize += info.getSize();
-			dbSize += info.getIndexSize();
-			dbRows += info.getRows();
-		}
-
-		// Save database size
-		totals.setDBRows(dbRows);
-		totals.setDBSize(dbSize);
+		totals.setDBRows(tableStatus.stream().mapToLong(TableInfo::getRows).sum());
+		totals.setDBSize(tableStatus.stream().mapToLong(t -> t.getSize() + t.getIndexSize()).sum());
 
 		// Save the results in the request
 		ctx.setAttribute("totals", totals, REQUEST);

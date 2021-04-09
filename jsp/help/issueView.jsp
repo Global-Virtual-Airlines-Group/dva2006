@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
@@ -92,7 +92,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><span class="sec bld"><fmt:defaultMethod var="${issue.status}" method="description" /></span>
+ <td class="data"><span class="sec bld"><fmt:defaultMethod object="${issue.status}" method="description" /></span>
 <c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <c:if test="${access.canUpdateContent && (issue.comments.size() > 1)}">

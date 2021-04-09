@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -85,7 +85,7 @@ public class IssueCommand extends AbstractFormCommand {
 				
 				// Set default assignee
 				GetPilot pdao = new GetPilot(con);
-				Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), SystemData.get("airline.db"));
+				Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), ctx.getDB());
 				i.setAssignedTo(p.getID());
 			}
 			
@@ -136,19 +136,14 @@ public class IssueCommand extends AbstractFormCommand {
 				if (isNew && !CollectionUtils.isEmpty(roles)) {
 					for (Iterator<?> nri = roles.iterator(); nri.hasNext(); ) {
 						String roleName = String.valueOf(nri.next());
-						notifyPilots.addAll(pdao.getByRole(roleName, SystemData.get("airline.db")));
+						notifyPilots.addAll(pdao.getByRole(roleName, ctx.getDB()));
 					}
 				}
 
-				// Create the message
+				// Create the message and send
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctx);
-				for (Pilot p : notifyPilots) {
-					if (p.getStatus() == PilotStatus.ACTIVE)
-						mailer.setCC(p);
-				}
-				
-				// Send the message
+				notifyPilots.stream().filter(p-> p.getStatus() == PilotStatus.ACTIVE).forEach(mailer::setCC);
 				mailer.send(usr);
 				
 				// Save user info
@@ -187,8 +182,10 @@ public class IssueCommand extends AbstractFormCommand {
 		try {
 			Connection con = ctx.getConnection();
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			GetElite eldao = new GetElite(con);
 			
 			HelpDeskAccessControl ac = null;
+			PilotComparator cmp = new PilotComparator(PersonComparator.LASTNAME);
 			if (!isNew) {
 				//	Get the Issue
 				GetHelp idao = new GetHelp(con);
@@ -205,9 +202,12 @@ public class IssueCommand extends AbstractFormCommand {
 				// Save issue and access control
 				ctx.setAttribute("issue", i, REQUEST);
 				ctx.setAttribute("access", ac, REQUEST);
+				if (SystemData.getBoolean("econ.elite.enabled"))
+					ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID()), REQUEST);
 				
-				// Load Pilot IDs
-				ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
+				// Load Pilot data
+				List<Pilot> pilots = pdao.getByID(getPilotIDs(i), "PILOTS").values().stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
+				ctx.setAttribute("pilots", CollectionUtils.createMap(CollectionUtils.sort(pilots, cmp), Pilot::getID), REQUEST);
 			} else {
 				// Check access
 				ac = new HelpDeskAccessControl(ctx, null);
@@ -220,20 +220,20 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 			
 			// Get Assignees
-			Collection<Pilot> assignees = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
-			assignees.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("Signature", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("HelpDesk", SystemData.get("airline.db")));
+			Collection<Pilot> assignees = new TreeSet<Pilot>(cmp);
+			assignees.addAll(pdao.getByRole("HR", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("Instructor", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("AcademyAdmin", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("PIREP", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("Examination", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("Signature", ctx.getDB()));
+			assignees.addAll(pdao.getByRole("HelpDesk", ctx.getDB()));
 			List<Pilot> activeAssignees = assignees.stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
 			ctx.setAttribute("assignees", activeAssignees, REQUEST);
 			
 			// Get options for issue conversion
 			if (ac.getCanUpdateStatus() && !isNew)
-				ctx.setAttribute("devs", pdao.getByRole("Developer", SystemData.get("airline.db")), REQUEST);
+				ctx.setAttribute("devs", pdao.getByRole("Developer", ctx.getDB()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -276,9 +276,12 @@ public class IssueCommand extends AbstractFormCommand {
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 			
-			// Get Pilots
+			// Get Pilot data
 			GetPilot pdao = new GetPilot(con);
+			GetElite eldao = new GetElite(con);
 			ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
+			if (SystemData.getBoolean("econ.elite.enabled"))
+				ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -61,7 +61,7 @@ return true;
 
 golgotha.maps.acars.saveSettings = function()
 {
-var myType = 'terrain';
+let myType = 'terrain';
 if (map.getMapTypeId() == google.maps.MapTypeId.SATELLITE)
 	myType = 'sat';
 else if (map.getMapTypeId() == google.maps.MapTypeId.ROADMAP)
@@ -78,7 +78,7 @@ return true;
 };
 
 golgotha.maps.acars.clearSettings = function() {
-	var expiryDate = new Date().toGMTString();
+	const expiryDate = new Date().toGMTString();
 	document.cookie = 'acarsMapLat=; expires=' + expiryDate;
 	document.cookie = 'acarsMapLng=; expires=' + expiryDate;
 	document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate;
@@ -156,7 +156,7 @@ golgotha.maps.acars.showEarth = function() {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 const mapOpts = {center:golgotha.local.mapC, minZoom:3, maxZoom:17, zoom:${zoomLevel}, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
@@ -174,13 +174,13 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 
 // Build the weather layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-const hjsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY}, 'High Jet', 'wind-jet');
+const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, hjsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 
 // Add other layers
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return loaders.fir.getLayer(); }));

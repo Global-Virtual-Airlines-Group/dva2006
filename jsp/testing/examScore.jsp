@@ -19,7 +19,7 @@
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;

@@ -1,20 +1,22 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.system.MessageTemplate;
+import org.deltava.beans.system.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -53,13 +55,17 @@ public class GetMessageTemplate extends DAO {
 	public MessageTemplate get(String dbName, String name) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".MSG_TEMPLATES WHERE (NAME=?) LIMIT 1");
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT MT.*, GROUP_CONCAT(MTA.ACTION,?) AS ACTS FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".MSG_TEMPLATES MT LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".MSG_TEMPLATE_ACTIONS MTA ON (MT.NAME=MTA.NAME) WHERE (MT.NAME=?) GROUP BY MT.NAME LIMIT 1");
 		
 		MessageTemplate result = null;
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, name.toUpperCase());
+			ps.setString(1, ",");
+			ps.setString(2, name);
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List<MessageTemplate> results = execute(ps);
@@ -81,7 +87,8 @@ public class GetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<MessageTemplate> getAll() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM MSG_TEMPLATES")) {
+		try (PreparedStatement ps = prepare("SELECT MT.*, GROUP_CONCAT(MTA.ACTION,?) AS ACTS FROM MSG_TEMPLATES MT LEFT JOIN MSG_TEMPLATE_ACTIONS MTA ON (MT.NAME=MTA.NAME) GROUP BY MT.NAME")) {
+			ps.setString(1, ",");
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -98,8 +105,14 @@ public class GetMessageTemplate extends DAO {
 				MessageTemplate mt = new MessageTemplate(rs.getString(1));
 				mt.setSubject(rs.getString(2));
 				mt.setDescription(rs.getString(3));
-				mt.setBody(rs.getString(4));
-				mt.setIsHTML(rs.getBoolean(5));
+				mt.setNotifyContext(rs.getString(4));
+				mt.setBody(rs.getString(5));
+				mt.setIsHTML(rs.getBoolean(6));
+				mt.setNotificationTTL(rs.getInt(7));
+				Collection<String> acts = StringUtils.split(rs.getString(8), ",");
+				if (acts != null)
+					mt.setActionTypes(acts.stream().map(o -> NotifyActionType.values()[StringUtils.parse(o, 0)]).collect(Collectors.toList()));
+					
 				results.add(mt);
 			}
 		}

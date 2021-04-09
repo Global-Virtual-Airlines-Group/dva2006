@@ -1,4 +1,4 @@
-// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A voting service for Image Gallery images. 
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 5.0
  */
 
@@ -38,7 +38,7 @@ public class ImageLikeService extends WebService {
 		try {
 			Connection con = ctx.getConnection();
 			GetGallery idao = new GetGallery(con);
-			Image img = idao.getImageData(StringUtils.parseHex(ctx.getParameter("id")));
+			Image img = idao.getImageData(StringUtils.parseHex(ctx.getParameter("id")), ctx.getDB());
 			if (img == null)
 				throw new ServiceException(SC_NOT_FOUND, "Invalid Image ID", false);
 

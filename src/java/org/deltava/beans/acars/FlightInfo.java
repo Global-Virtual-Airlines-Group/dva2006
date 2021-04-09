@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
 import java.time.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.Recorder;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.OperatingSystem;
@@ -15,11 +15,11 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
-public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, ViewEntry {
+public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, ViewEntry {
 
 	private int _pilotID;
 	private int _positionCount;
@@ -90,7 +90,27 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public int getAuthorID() {
 		return _pilotID;
 	}
-
+	
+	@Override
+	public Airline getAirline() {
+		return FlightCodeParser.parse(_flightCode).getAirline();
+	}
+	
+	@Override
+	public int getFlightNumber() {
+		return FlightCodeParser.parse(_flightCode).getFlightNumber();
+	}
+	
+	@Override
+	public int getLeg() {
+		return 1;
+	}
+	
+	@Override
+	public OnlineNetwork getNetwork() {
+		return null;
+	}
+	
 	/**
 	 * Returns the flight's dispatcher ID.
 	 * @return the database ID of the dispatcher, or zero if none
@@ -131,13 +151,9 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _endTime;
 	}
 	
-	/**
-	 * Returns the duration of the Flight.
-	 * @return a Duration
-	 */
+	@Override
 	public Duration getDuration() {
-		Instant et = (_endTime == null) ? Instant.now() : _endTime;
-		return Duration.between(_startTime, et);
+		return (_endTime == null) ? Duration.between(_startTime, Instant.now()) : TimeSpan.super.getDuration();
 	}
 
 	/**
@@ -149,15 +165,11 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _flightCode;
 	}
 
-	/**
-	 * Returns the aircraft type for this flight.
-	 * @return the equipment code
-	 * @see FlightInfo#setEquipmentType(String)
-	 */
+	@Override
 	public String getEquipmentType() {
 		return _eqType;
 	}
-
+	
 	/**
 	 * Returns the filed altitude for this flight.
 	 * @return the altitude in feet or a flight level
@@ -285,11 +297,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _ap;
 	}
 
-	/**
-	 * Returns the Simulator used in this flight.
-	 * @return the Simulator
-	 * @see FlightInfo#setSimulator(Simulator)
-	 */
+	@Override
 	public Simulator getSimulator() {
 		return _sim;
 	}
@@ -492,10 +500,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _dispatchPlan;
 	}
 
-	/**
-	 * Returns the Flight Data Recorder used.
-	 * @return a Recorder
-	 */
+	@Override
 	public Recorder getFDR() {
 		return _fdr;
 	}

@@ -420,7 +420,7 @@
 		<tag-class>org.deltava.taglib.format.DefaultMethodTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
-			<name>var</name>
+			<name>object</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

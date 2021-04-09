@@ -20,7 +20,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.title, l:6, t:'Installer Title'});

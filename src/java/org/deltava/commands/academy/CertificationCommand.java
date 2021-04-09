@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 7.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			cert.setRoles(ctx.getParameters("enrollRoles"));
 			cert.setExams(ctx.getParameters("reqExams"));
 			cert.setRideEQ(ctx.getParameters("rideEQ"));
-			cert.setNetwork(OnlineNetwork.fromName(ctx.getParameter("network")));
+			cert.setNetwork(EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null));
 			cert.setNetworkRatingCode((cert.getNetwork() == null) ? null : ctx.getParameter("ratingCode"));
 			if ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS)) {
 				cert.setFlightCount(StringUtils.parse(ctx.getParameter("flightCount"), 1));
@@ -250,7 +250,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			
 			// Get associated documents
 			GetDocuments ddao = new GetDocuments(con);
-			ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), cert.getCode()), REQUEST);
+			ctx.setAttribute("docs", ddao.getByCertification(ctx.getDB(), cert.getCode()), REQUEST);
 			
 			// Get audit log
 			readAuditLog(ctx, cert);

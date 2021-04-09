@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -10,12 +10,12 @@ import org.deltava.beans.system.IPBlock;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
+import org.deltava.util.EnumUtils;
 
 /**
  * A Web Site Command to display Online Network FSD server information.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 3.4
  */
 
@@ -29,12 +29,8 @@ public class NetworkServersCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the network name
-		OnlineNetwork net = OnlineNetwork.fromName(ctx.getParameter("id"));
-		if (net == null)
-			net = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
-
 		// Get the network info
+		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("id"), OnlineNetwork.VATSIM);
 		NetworkInfo info = ServInfoHelper.getInfo(net);
 		ctx.setAttribute("netInfo", info, REQUEST);
 		ctx.setAttribute("totalUsers", Integer.valueOf(info.getServers().stream().mapToInt(Server::getConnections).sum()), REQUEST);

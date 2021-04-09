@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
 			for (Integer pirepID : IDs) {
-				FlightReport fr = frdao.get(pirepID.intValue());
+				FlightReport fr = frdao.get(pirepID.intValue(), ctx.getDB());
 				pilotIDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 				pireps.add(fr);
 				RunwayDistance rd = acdao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));

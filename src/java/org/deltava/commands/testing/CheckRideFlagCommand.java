@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.get(ctx.getID());
+			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			else if (!(fr instanceof FDRFlightReport))
@@ -69,7 +69,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 				// empty
 			} else if (cr.getStatus() == TestStatus.SUBMITTED) {
 				if (cr.getFlightID() != 0) {
-					FDRFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
+					FDRFlightReport ofr = frdao.getACARS(ctx.getDB(), cr.getFlightID()); 
 					if (ofr != null)
 						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
 				}
@@ -93,7 +93,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 				// Determine the equipment type based on the primary type or academy type
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				if (crs == null) {
-					Collection<String> eqTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+					Collection<String> eqTypes = eqdao.getPrimaryTypes(ctx.getDB(), fr.getEquipmentType());
 					if (eqTypes.isEmpty())
 						throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
 				
@@ -111,7 +111,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 						}
 					}
 				} else
-					cr.setEquipmentType(eqdao.getDefault(SystemData.get("airline.db")));
+					cr.setEquipmentType(eqdao.getDefault(ctx.getDB()));
 			}
 			
 			// Set academy fields

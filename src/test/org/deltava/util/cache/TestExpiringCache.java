@@ -2,6 +2,7 @@ package org.deltava.util.cache;
 
 import org.hansel.CoverageDecorator;
 
+import java.time.Instant;
 import java.util.*;
 
 import junit.framework.*;
@@ -13,10 +14,22 @@ public class TestExpiringCache extends TestCase {
 	private ExpiringCache<Cacheable> _cache;
 	private ExpiringCacheEntry<Cacheable> _entry;
 	private ExpiringCache<Cacheable>.ExpiringNullCacheEntry<Cacheable> _nullEntry;
+	
+	private static class ExpiringCacheableLong extends CacheableLong implements ExpiringCacheable {
+		private final Instant _expTime = Instant.now().plusSeconds(2);
+
+		public ExpiringCacheableLong(Object cacheKey, long value) {
+			super(cacheKey, value);
+		}
+
+		@Override
+		public Instant getExpiryDate() {
+			return _expTime;
+		}
+	}
 
 	public static Test suite() {
-		return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class,
-				ExpiringCacheEntry.class });
+		return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class, ExpiringCacheEntry.class });
 	}
 
 	@Override
@@ -133,5 +146,19 @@ public class TestExpiringCache extends TestCase {
 		_cache.addAll(objs);
 		assertEquals(1, _cache.getMaxSize());
 		assertEquals(1, _cache.size());
+	}
+	
+	public void testExpiringCacheable() {
+		assertEquals(0, _cache.size());
+		
+		CacheableLong cl = new ExpiringCacheableLong("FOO", 10);
+		assertTrue(cl instanceof ExpiringCacheable);
+		_cache.add(cl);
+		
+		assertEquals(1, _cache.size());
+		CacheableLong cl2 = (CacheableLong) _cache.get("FOO");
+		assertNotNull(cl2);
+		assertEquals(cl.getValue(), cl2.getValue());
+		assertTrue(cl2 instanceof ExpiringCacheable);
 	}
 }

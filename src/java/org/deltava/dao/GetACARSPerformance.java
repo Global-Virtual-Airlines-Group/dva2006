@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.TaskTimerData;
 /**
  * A Data Access Object to load ACARS client performance counter data from the database.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 8.6
  */
 
@@ -41,6 +41,7 @@ public class GetACARSPerformance extends DAO {
 					ttd.setTotal(rs.getLong(5));
 					ttd.setMin(rs.getInt(6));
 					ttd.setMax(rs.getInt(7));
+					ttd.setStdDev(rs.getDouble(8));
 					results.add(ttd);
 				}
 			}

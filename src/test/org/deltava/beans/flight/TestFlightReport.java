@@ -1,16 +1,13 @@
 package org.deltava.beans.flight;
 
-import java.time.Instant;
+import java.time.*;
 import java.util.*;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.AbstractBeanTestCase;
-import org.deltava.beans.Flight;
-import org.deltava.beans.Simulator;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
 
 public class TestFlightReport extends AbstractBeanTestCase {
     
@@ -43,23 +40,18 @@ public class TestFlightReport extends AbstractBeanTestCase {
         _fr.setAirline(new Airline("dvc", "Delta Virtual Connection"));
         assertEquals("DVC", _fr.getAirline().getCode());
         checkProperty("ID", Integer.valueOf(123));
-        checkProperty("firstName", "John");
-        checkProperty("lastName", "Smith");
-        checkProperty("rank", "Captain");
+        checkProperty("rank", Rank.C);
         checkProperty("remarks", "REMARKS");
         checkProperty("attributes", Integer.valueOf(1234));
-        checkProperty("createdOn", new Date(123456));
-        checkProperty("submittedOn", new Date(123457));
-        checkProperty("disposedOn", new Date(1234568));
-        checkProperty("date", new Date(12345));
+        checkProperty("submittedOn", Instant.ofEpochMilli(123457));
+        checkProperty("disposedOn", Instant.ofEpochMilli(1234568));
+        checkProperty("date", Instant.ofEpochMilli(12345));
         checkProperty("equipmentType", "CRJ-200");
         checkProperty("flightNumber", Integer.valueOf(_fr.getFlightNumber()));
         checkProperty("leg", Integer.valueOf(_fr.getLeg()));
         checkProperty("length", Integer.valueOf(21));
-        checkProperty("status", Integer.valueOf(2));
-        checkProperty("FSVersion", Integer.valueOf(2002));
-        _fr.setSimulator(Simulator.FS9);
-        assertEquals(Simulator.FS9, _fr.getSimulator());
+        checkProperty("status", FlightStatus.HOLD);
+        checkProperty("simulator", Simulator.FS2002);
     }
     
     public void testValidation() {
@@ -87,28 +79,21 @@ public class TestFlightReport extends AbstractBeanTestCase {
     }
     
     public void testAirports() {
-        try {
-            _fr.getDistance();
-            fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) {
-        	// empty
-        }
+    	assertFalse(_fr.isPopulated());
+    	assertEquals(-1, _fr.getDistance());
         
         Airport jfk = new Airport("JFK", "KJFK", "New York-Kennedy NY");
         jfk.setLocation(40.6397, -73.7789);
         checkProperty("airportA", jfk);
 
-        try {
-            _fr.getDistance();
-            fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) {
-        	// empty
-        }
+        assertFalse(_fr.isPopulated());
+    	assertEquals(-1, _fr.getDistance());
         
         Airport atl = new Airport("ATL", "KATL", "Atlanta GA");
         atl.setLocation(33.6404, -84.4269);
         checkProperty("airportD", atl);
-        
+
+        assertTrue(_fr.isPopulated());
         assertEquals(_fr.getDistance(), atl.getPosition().distanceTo(jfk.getPosition()));
     }
     
@@ -120,12 +105,6 @@ public class TestFlightReport extends AbstractBeanTestCase {
         assertEquals(0, _fr.getDatabaseID(DatabaseID.EVENT));
         _fr.setDatabaseID(DatabaseID.EVENT, 123);
         assertEquals(123, _fr.getDatabaseID(DatabaseID.EVENT));
-        try {
-            _fr.setDatabaseID(null, 123);
-            fail("NullPointerException expected");
-        } catch (NullPointerException npe) {
-        	// empty
-        }
 
         try {
             _fr.setDatabaseID(DatabaseID.EVENT, -1);
@@ -181,5 +160,29 @@ public class TestFlightReport extends AbstractBeanTestCase {
        assertEquals(2, _fr.getCaptEQType().size());
        assertTrue(_fr.getCaptEQType().contains("B757-200"));
        assertTrue(_fr.getCaptEQType().contains("B767-300"));
+    }
+    
+    public void testDateAdjust() {
+    	
+    	TZInfo.init("US/Eastern", null, null);
+    	TZInfo est = TZInfo.get("US/Eastern");
+    	assertNotNull(est);
+
+    	LocalDate sd = LocalDate.now().plusDays(1);
+    	LocalDateTime ldt = sd.atTime(2, 0);
+    	assertNotNull(ldt);
+    	_fr.setDate(ldt.toInstant(ZoneOffset.UTC));
+    	
+    	LocalDate pd = ZonedDateTime.ofInstant(_fr.getDate(), est.getZone()).toLocalDate();
+    	assertNotNull(pd);
+    	Duration timeDelta = Duration.between(pd.atStartOfDay(), sd.atStartOfDay());
+    	assertNotNull(timeDelta);
+    	assertFalse(timeDelta.isNegative());
+    	assertTrue(sd.getDayOfYear() != pd.getDayOfYear());
+    	
+    	Instant dt2 = _fr.getDate().minusSeconds(timeDelta.getSeconds());
+    	assertNotNull(dt2);
+    	LocalDate fd = ZonedDateTime.ofInstant(dt2, est.getZone()).toLocalDate();
+    	assertEquals(pd.getDayOfYear(), fd.getDayOfYear());
     }
 }

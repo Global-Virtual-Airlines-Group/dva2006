@@ -23,7 +23,7 @@
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -39,9 +39,8 @@ return true;
 </script></c:if>
 <c:if test="${isACARS}">
 <content:googleJS module="charts" />
-<content:json />
 <content:js name="acarsFlightMap" />
-<script async>
+<script>
 <c:if test="${googleMap}">
 golgotha.local.zoomTo = function(lat, lng, zoom) {
 	map.setZoom((zoom == null) ? 12 : zoom);
@@ -139,7 +138,7 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
-<c:if test="${isDivert}"> <span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
+<c:if test="${isDivert}">&nbsp;<span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
 </tr>
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
 <tr>
@@ -212,6 +211,8 @@ golgotha.local.showRunwayChoices = function() {
 <div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div></c:if>
 <c:if test="${!empty event}">
 <div class="pri bld caps">Flight Leg part of the ${event.name} Online Event</div></c:if>
+<c:if test="${!empty tour}">
+<div class="ter bld caps">Flight Leg is Stage <fmt:int value="${tourIdx}" /> in the ${tour.name} Tour</div></c:if>
 <c:if test="${fn:isAcademy(pirep)}">
 <div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div></c:if>
  </td>
@@ -219,6 +220,27 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Flight Distance</td>
  <td class="data pri bld"><fmt:distance value="${pirep.distance}" longUnits="true" /></td>
+</tr>
+<c:if test="${fn:isDraft(pirep)}">
+<c:if test="${!empty pirep.gateD || !empty pirep.timeD}">
+<tr>
+ <td class="label">Scheduled Departure</td>
+ <td class="data"><c:if test="${!empty pirep.gateD}">From <span class="ter bld">${pirep.gateD}</span></c:if><c:if test="${!empty pirep.gateD && !empty pirep.timeD}"> at </c:if>
+<c:if test="${!empty pirep.timeD}"><span class="bld"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${pirep.timeD}" /></span></c:if></td>
+</tr>
+</c:if>
+<c:if test="${!empty pirep.gateA || !empty pirep.timeA}">
+<tr>
+ <td class="label">Scheduled Arrival</td>
+ <td class="data"><c:if test="${!empty pirep.gateA}">From <span class="ter bld">${pirep.gateA}</span></c:if><c:if test="${!empty pirep.gateA && !empty pirep.timeA}"> at </c:if>
+<c:if test="${!empty pirep.timeA}"><span class="bld"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${pirep.timeA}" /></span></c:if></td>
+</tr>
+</c:if>
+</c:if>
+<content:defaultMethod object="${pirep}" method="flightType" var="flightType" />
+<tr>
+ <td class="label">Customs Zone</td>
+ <td class="data ter bld">${flightType.description}</td>
 </tr>
 <c:if test="${pirep.length > 0}">
 <tr>
@@ -242,8 +264,9 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 </c:if>
 <c:if test="${pirep.passengers > 0}">
+<c:set var="paxLabel" value="${fn:isDraft(pirep) ? 'Booked' : 'Carried'}" scope="page" />
 <tr>
- <td class="label">Passengers Carried</td>
+ <td class="label">Passengers ${paxLabel}</td>
  <td class="data"><fmt:int value="${pirep.passengers}" /> passengers (<fmt:dec value="${pirep.loadFactor * 100.0}" fmt="##0.00" />% full)</td>
 </tr>
 </c:if>
@@ -321,7 +344,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <tr class="acarsDiagData">
  <td class="label top">ACARS Client Timers</td>
  <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" fmt="#0.00" />ms
- Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
+ Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${tt.stdDev > 0}"> stdDev=<fmt:dec value="${tt.stdDev / tt.tickSize}" fmt="##0.00" />ms</c:if><c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
@@ -334,8 +357,8 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <c:forEach var="upd" items="${statusHistory}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
 <tr>
- <td class="ter bld mid"><fmt:defaultMethod var="${upd.type}" method="description" /></td>
- <td class="data"><fmt:date date="${upd.createdOn}" /> - <span class="sec bld">${empty updAuthor ? 'SYSTEM' : updAuthor.name}</span> - ${upd.description}</td>
+ <td class="ter bld mid"><fmt:defaultMethod object="${upd.type}" method="description" /></td>
+ <td class="data"><fmt:date date="${upd.date}" /> - <span class="sec bld">${empty updAuthor ? 'SYSTEM' : updAuthor.name}</span> - ${upd.description}</td>
 </tr>
 </c:forEach>
 </c:if>
@@ -389,6 +412,8 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <c:if test="${isACARS}">
 &nbsp;<el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" /></c:if>
 </c:if>
+<c:if test="${access.canCalculateLoad}">
+&nbsp;<el:cmdbutton url="calclf" link="${pirep}" label="CALCULATE PASSENGER LOAD" /></c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 <c:if test="${isACARS}"><span class="nophone">&nbsp;<el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span> <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" /></c:if>
 </content:filter>
@@ -405,7 +430,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <content:browser human="true">
 <c:choose>
 <c:when test="${googleMap}">
-<script async>
+<script>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
@@ -486,11 +511,11 @@ xreq.onreadystatechange = function() {
 	// Create formatting options
 	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 	const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
-	const va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
-	const va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
-	const s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
+	const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:lgStyle};
+	const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:lgStyle};
+	const s = [{targetAxisIndex:0},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
 	const chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
-	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Verdana',fontSize:10,colors:[pr,sc,'#b8b8d8']});
+	chart.draw(data,{series:s,vAxes:[va0,va1],hAxis:ha,fontName:'Verdana',fontSize:10,colors:[pr,sc,'#b8b8d8']});
 <c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
 	return true;
 };

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 2.1
  */
 
@@ -122,7 +122,7 @@ public class MyFlightsService extends WebService {
 		// Convert qualitative info into an array
 		for (int x = 0; x < qualCount.length; x++) {
 			JSONArray ea = new JSONArray();
-			ea.put(FlightScore.values()[x].getName());
+			ea.put(FlightScore.values()[x].getDescription());
 			ea.put(qualCount[x]);
 			jo.append("landingQuality", ea);
 		}
@@ -132,7 +132,7 @@ public class MyFlightsService extends WebService {
 		jo.put("maxStage", maxStage);
 		JSONArray jdo = new JSONArray(); JSONArray jdh = new JSONArray();
 		for (StageStatsEntry entry : stageStats) {
-			JSONObject jd = JSONUtils.format(entry.getDate());
+			JSONObject jd = JSONUtils.formatDate(entry.getDate());
 			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
 			da.put(jd); dh.put(jd);
 			
@@ -149,7 +149,7 @@ public class MyFlightsService extends WebService {
 		sims.forEach(s -> jo.append("sims", s.name()));
 		JSONArray jso = new JSONArray(); JSONArray jsh = new JSONArray();
 		for (SimStatsEntry entry : simStats) {
-			JSONObject jd = JSONUtils.format(entry.getDate());
+			JSONObject jd = JSONUtils.formatDate(entry.getDate());
 			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
 			da.put(jd); dh.put(jd);
 			sims.forEach(s -> { da.put(entry.getLegs(s)); dh.put(entry.getHours(s)); });

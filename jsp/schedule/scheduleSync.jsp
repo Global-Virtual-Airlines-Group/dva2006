@@ -11,7 +11,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.purgeOnly = false;
 golgotha.local.validate = function(f)
 {

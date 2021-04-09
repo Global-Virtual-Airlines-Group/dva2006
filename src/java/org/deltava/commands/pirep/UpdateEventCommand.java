@@ -1,4 +1,4 @@
-// Copyright 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Online Events linked to a Flight Report. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 5.3
  */
 
@@ -34,7 +34,7 @@ public class UpdateEventCommand extends AbstractCommand {
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.get(ctx.getID());
+			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			

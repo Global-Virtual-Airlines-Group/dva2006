@@ -1,14 +1,15 @@
-// Copyright 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.time.Instant;
 
 import org.deltava.beans.Pilot;
+import org.deltava.util.system.SystemData;
 
 /**
  * The execution context for a scheduled task.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -22,6 +23,7 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	 */
 	TaskContext() {
 		super();
+		setDB(SystemData.get("airline.db"));
 	}
 	
 	/**

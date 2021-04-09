@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="dva2006" version="3.1" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
+<web-app id="dva2006" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
 	<display-name>Delta Virtual Airlines 2006</display-name>
 	<description>Delta Virtual Airlines web site</description>
 
@@ -170,6 +170,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
+        <url-pattern>/tbrief/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityCookieFilter</filter-name>
         <url-pattern>/upload/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
@@ -187,6 +191,10 @@
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/ebrief/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityRequestWrapperFilter</filter-name>
+        <url-pattern>/tbrief/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
@@ -226,97 +234,82 @@
 		<servlet-name>dbImage</servlet-name>
 		<url-pattern>/charts/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>dbImage</servlet-name>
 		<url-pattern>/exam_rsrc/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>dbImage</servlet-name>
 		<url-pattern>/gallery/*</url-pattern>
 	</servlet-mapping>
-    
 	<servlet-mapping>
 		<servlet-name>sigImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
 		<servlet-name>trackImage</servlet-name>
 		<url-pattern>/track/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
     	<servlet-name>wxTile</servlet-name>
     	<url-pattern>/wx/*</url-pattern>
     </servlet-mapping>
-
 	<servlet-mapping>
     	<servlet-name>customTile</servlet-name>
     	<url-pattern>/tile/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
     	<servlet-name>dbImage</servlet-name>
     	<url-pattern>/event/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/fleet/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
 		<servlet-name>attachments</servlet-name>    
 		<url-pattern>/issue/*</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>attachments</servlet-name>    
         <url-pattern>/error_log/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>attachments</servlet-name>    
         <url-pattern>/ebrief/*</url-pattern>
     </servlet-mapping>
-    
+    <servlet-mapping>
+        <servlet-name>attachments</servlet-name>    
+        <url-pattern>/tbrief/*</url-pattern>
+    </servlet-mapping>
    	<servlet-mapping>
     	<servlet-name>attachments</servlet-name>
     	<url-pattern>/helpdesk/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>upload</servlet-name>
         <url-pattern>/upload/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/library/*</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/usrlibrary/*</url-pattern>
     </servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>fleetLibrary</servlet-name>
 		<url-pattern>/video/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>fleetLibrary</servlet-name>
 		<url-pattern>/newsletter/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>cmdController</servlet-name>
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
-	
 	<servlet-mapping>
 		<servlet-name>webService</servlet-name>
 		<url-pattern>*.ws</url-pattern>

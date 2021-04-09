@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class PilotAccessControl extends AccessControl {
 	private boolean _isOurs;
 	private boolean _canView;
 	private boolean _canViewEmail;
+	private boolean _canViewPush;
 	private boolean _canTakeLeave;
 	private boolean _canEdit;
 	private boolean _canChangeStatus;
@@ -63,6 +64,7 @@ public class PilotAccessControl extends AccessControl {
 		
 		// Check if we can view e-mail
 		_canViewEmail = (_p.getEmailAccess() != Person.HIDE_EMAIL) || isHR || _isOurs || _ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Signature");
+		_canViewPush = _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Developer");
 
 		// Set parameters
 		_canEdit = (_isOurs || isHR) && !_p.getIsForgotten();
@@ -128,6 +130,14 @@ public class PilotAccessControl extends AccessControl {
 	 */
 	public boolean getCanViewEmail() {
 		return _canViewEmail;
+	}
+	
+	/**
+	 * Returns if push notification endpoint data can be viewed.
+	 * @return TRUE if the endpoint data can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewPush() {
+		return _canViewPush;
 	}
 	
 	/**

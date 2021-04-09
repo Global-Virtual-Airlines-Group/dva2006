@@ -160,7 +160,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create map options

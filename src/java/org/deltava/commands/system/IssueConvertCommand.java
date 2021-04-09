@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.net.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 3.6
  */
 
@@ -60,7 +60,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Set default assignee
 			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), SystemData.get("airline.db"));
+			Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), ctx.getDB());
 			hi.setAssignedTo(p.getID());
 			mctx.addData("assignee", p);
 

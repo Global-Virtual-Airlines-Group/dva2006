@@ -24,14 +24,14 @@ select.localAP { background-color:#000810; }
 golgotha.maps.track = golgotha.maps.track || {};
 golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ)
 {
-var layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
+const layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
 layerOpts.myBaseURL = location.protocol + '//' + location.host + '/track/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 	if (zoom > this.maxZoom) return '';
-	var url = this.myBaseURL;
+	let url = this.myBaseURL;
 	for (var x = zoom; x > 0; x--) {
-		var digit1 = ((golgotha.maps.masks[x] & pnt.x) == 0) ? 0 : 1;
-		var digit2 = ((golgotha.maps.masks[x] & pnt.y) == 0) ? 0 : 2;
+		const digit1 = ((golgotha.maps.masks[x] & pnt.x) == 0) ? 0 : 1;
+		const digit2 = ((golgotha.maps.masks[x] & pnt.y) == 0) ? 0 : 2;
 		url += (digit1 + digit2);
 	}
 
@@ -69,12 +69,12 @@ return new google.maps.ImageMapType(layerOpts);
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script id="mapInit" async>
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+const mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
+const mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
 map.mapTypes.set('acars_trackmap', tmStyledMap);
 map.setMapTypeId('acars_trackmap');
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
@@ -90,13 +90,13 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	google.maps.event.trigger(this, 'zoom_changed');
 });
 
-var airportCoords = {};
+let airportCoords = {};
 <c:forEach var="ap" items="${localAP}">
 airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
 golgotha.maps.track.selectLocal = function(combo) {
 	if (combo.selectedIndex < 1) return false;
-	var o = combo[combo.selectedIndex];
-	var ll = airportCoords[o.getAttribute('icao')];
+	const o = combo[combo.selectedIndex];
+	const ll = airportCoords[o.getAttribute('icao')];
 	if (ll != null) map.panTo(ll);
 	return true;
 };

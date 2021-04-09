@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -19,12 +19,10 @@ import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 8.2
+ * @version 10.0
  * @since 3.1
  */
 
@@ -51,7 +49,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			
 			// Load the Flight Report
 			GetFlightReportACARS frdao = new GetFlightReportACARS(con);
-			FDRFlightReport afr = frdao.getACARS(SystemData.get("airline.db"), info.getID());
+			FDRFlightReport afr = frdao.getACARS(ctx.getDB(), info.getID());
 			if (afr == null)
 				throw notFoundException("Invalid ACARS Flight ID - " + info.getID());
 			
@@ -103,7 +101,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 
 				// Save the flight report
 				SetFlightReport frwdao = new SetFlightReport(con);
-				frwdao.writeACARS(afr, SystemData.get("airline.db"));
+				frwdao.writeACARS(afr, ctx.getDB());
 			} else
 				log.warn("Cannot update takeoff/touchdown - " + tdEntries.size() + " touchdown points");
 		} catch (DAOException de) {

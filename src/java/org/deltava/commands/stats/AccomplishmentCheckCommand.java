@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -18,12 +18,11 @@ import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 3.2
  */
 
@@ -76,7 +75,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			}
 			
 			// Load existing accomplishments, and recalculate
-			Map<Integer, DatedAccomplishment> pAccs = Collections.unmodifiableMap(CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID));
+			Map<Integer, DatedAccomplishment> pAccs = Collections.unmodifiableMap(CollectionUtils.createMap(adao.getByPilot(p, ctx.getDB()), Accomplishment::getID));
 			Collection<DatedAccomplishment> newAccs = accs.parallelStream().map(a -> accCheck(a, helper, pAccs.get(Integer.valueOf(a.getID())))).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new));
 			Collection<DatedAccomplishment> deltaAccs = CollectionUtils.getDelta(newAccs, pAccs.values());
 

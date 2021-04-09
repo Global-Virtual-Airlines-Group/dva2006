@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,13 +7,13 @@ import java.time.Instant;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
-
+import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.GeoLocation;
 
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -80,6 +80,20 @@ public abstract class DAO {
 	 */
 	protected static String formatLocation(GeoLocation loc) {
 		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
+	}
+	
+	/**
+	 * Converts a Database bean or an Integer into an Integer.
+	 * @param o the Object
+	 * @return an Integer
+	 */
+	protected static Integer toID(Object o) {
+		if (o instanceof Integer)
+			return (Integer) o;
+		else if (o instanceof DatabaseBean)
+			return Integer.valueOf(((DatabaseBean) o).getID());
+		
+		return null;
 	}
 
 	/**

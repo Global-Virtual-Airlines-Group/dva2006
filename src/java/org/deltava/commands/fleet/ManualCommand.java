@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class ManualCommand extends LibraryEditCommand {
 
 			// Get the Library entry
 			GetDocuments dao = new GetDocuments(con);
-			entry = dao.getManual(fName, SystemData.get("airline.db"));
+			entry = dao.getManual(fName, ctx.getDB());
 
 			// Check our access level
 			ManualAccessControl access = new ManualAccessControl(ctx, null);

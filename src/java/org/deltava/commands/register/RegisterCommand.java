@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -82,7 +82,7 @@ public class RegisterCommand extends AbstractCommand {
 				
 				// Check our size - if we're overriding then ignore this
 				GetStatistics stdao = new GetStatistics(con);
-				int size = stdao.getActivePilots(SystemData.get("airline.db"));
+				int size = stdao.getActivePilots(ctx.getDB());
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				
 				// Load IP data and guess the time zone
@@ -333,7 +333,7 @@ public class RegisterCommand extends AbstractCommand {
 			
 			// Set the default equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			a.setEquipmentType(eqdao.getDefault(SystemData.get("airline.db")));
+			a.setEquipmentType(eqdao.getDefault(ctx.getDB()));
 
 			// Get the e-mail originator
 			eMailFrom = pdao.getByCode(SystemData.get("registration.from"));

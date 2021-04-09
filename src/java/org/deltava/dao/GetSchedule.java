@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -35,6 +35,13 @@ public class GetSchedule extends DAO {
 	 */
 	public void setSources(Collection<ScheduleSourceInfo> srcs) {
 		srcs.forEach(src -> _srcs.put(src.getSource(), src));
+	}
+	
+	private ScheduleSourceInfo getSource(ScheduleSource src) {
+		if (_srcs.isEmpty())
+			throw new IllegalStateException("Schedule Sources not loaded");
+		
+		return _srcs.get(src);
 	}
 
 	/**
@@ -64,17 +71,6 @@ public class GetSchedule extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-	
-	/**
-	 * Return a particular flight from the Schedule database.
-	 * @param f the Flight to return, using the airline code, flight number and leg
-	 * @return a ScheduleEntry matching the criteria, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if f is null
-	 */
-	public ScheduleEntry get(Flight f) throws DAOException {
-		return get(f, SystemData.get("airline.db"));
 	}
 
 	/**
@@ -224,16 +220,6 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
-	 * Returns the average flight time for all flights in the Schedule database between two airports.
-	 * @param rp the RoutePair
-	 * @return a FlightTime bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public FlightTime getFlightTime(RoutePair rp) throws DAOException {
-		return getFlightTime(rp, SystemData.get("airline.db"));
-	}
-	
-	/**
 	 * Returns the most appropriate flight/leg number between two airports. 
 	 * @param sr the ScheduleRoute
 	 * @param hourOfDay the preferred hour of day (0-23)
@@ -271,9 +257,10 @@ public class GetSchedule extends DAO {
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(sr.getAirportD());
 					se.setAirportA(sr.getAirportA());
-					se.setSource(ScheduleSource.values()[rs.getInt(7)]);
+					se.setHistoric(rs.getBoolean(7));
+					se.setSource(ScheduleSource.values()[rs.getInt(8)]);
 					
-					ScheduleSourceInfo info = _srcs.get(se.getSource());
+					ScheduleSourceInfo info = getSource(se.getSource());
 					long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
 					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(effectiveDate));
 					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(effectiveDate));
@@ -298,10 +285,9 @@ public class GetSchedule extends DAO {
 		
 		// Build the SQL Statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, A.HISTORIC, AI.CODE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, S.TIME_D, S.TIME_A, A.HISTORIC, AI.CODE, S.SRC FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) "
-			+ "AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) "
+		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) "
 			+ "ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=AI.CODE,1,0), IF(A.HISTORIC=1,0,1), S.FLIGHT LIMIT 1");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -322,6 +308,13 @@ public class GetSchedule extends DAO {
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(rp.getAirportD());
 					se.setAirportA(rp.getAirportA());
+					se.setHistoric(rs.getBoolean(7));
+					se.setSource(ScheduleSource.values()[rs.getInt(9)]);
+					
+					ScheduleSourceInfo info = getSource(se.getSource());
+					long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
+					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(effectiveDate));
+					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(effectiveDate));
 				}
 			}
 			
@@ -414,7 +407,7 @@ public class GetSchedule extends DAO {
 				entry.setSource(ScheduleSource.values()[rs.getInt(13)]);
 				entry.setCodeShare(rs.getString(14));
 				
-				ScheduleSourceInfo info = _srcs.get(entry.getSource());
+				ScheduleSourceInfo info = getSource(entry.getSource());
 				long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
 				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(effectiveDate));
 				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(effectiveDate));

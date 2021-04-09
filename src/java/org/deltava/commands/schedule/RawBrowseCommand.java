@@ -45,23 +45,19 @@ public class RawBrowseCommand extends AbstractViewCommand {
 			AirportComparator ac = new AirportComparator(AirportComparator.NAME);
 			GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
 			List<Airport> airportsD = ridao.getOriginAirports(src, null);
+			List<Airport> airportsA = ridao.getArrivalAirports(src, aD);
 			Collections.sort(airportsD, ac);
-			
-			// Set departure airport if not specified
-			if ((aD == null) && (aA == null) && !airportsD.isEmpty())
-				aD = airportsD.get(0);
+			Collections.sort(airportsA, ac);
 			
 			// Load arrival airports
-			List<Airport> airportsA = ridao.getArrivalAirports(src, aD);
-			Collections.sort(airportsA, ac);
 			ctx.setAttribute("airportsD", airportsD, REQUEST);
 			ctx.setAttribute("airportsA", airportsA, REQUEST);
 			
-			// Determine optional filter date
-			Instant fdt = parseDateTime(ctx, "filter");
-			
 			// Search the schedule
+			Instant fdt = parseDateTime(ctx, "filter");
 			GetRawSchedule sdao = new GetRawSchedule(con);
+			sdao.setQueryStart(vc.getStart());
+			sdao.setQueryMax(vc.getCount());
 			if (fdt != null) {
 				LocalDate ld = LocalDate.ofInstant(fdt, ZoneOffset.UTC);
 				vc.setResults(sdao.list(src, aD, aA));

@@ -18,7 +18,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'}};
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
@@ -149,7 +149,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xmlreq = new XMLHttpRequest();

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -11,13 +11,11 @@ import org.deltava.beans.flight.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to build a flight assignment that consists of a single leg selected at random from the last
  * Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 8.1
+ * @version 10.0
  * @since 2.2
  */
 
@@ -57,8 +55,8 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 
 			// Create the Flight Assignment
 			SetAssignment awdao = new SetAssignment(con);
-			awdao.write(info, SystemData.get("airline.db"));
-			awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+			awdao.write(info, ctx.getDB());
+			awdao.assign(info, info.getPilotID(), ctx.getDB());
 
 			// Write the PIREPs to the database
 			ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);

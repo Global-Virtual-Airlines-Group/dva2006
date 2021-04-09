@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -14,13 +14,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
- * A Web Site command to display the Document Library. Note that this command will display library entries from other
- * Airlines, with the proviso that <i>all files are in the same library path</i>.
+ * A Web Site command to display the Document Library.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -44,7 +41,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 			// Get the documents
 			GetDocuments dao = new GetDocuments(con);
-			results.addAll(dao.getManuals(SystemData.get("airline.db")));
+			results.addAll(dao.getManuals(ctx.getDB()));
 
 			// Load the user's Flight Academy courses
 			GetAcademyCourses cdao = new GetAcademyCourses(con);

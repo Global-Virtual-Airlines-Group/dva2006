@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.flight.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 8.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -20,8 +20,9 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
     public static final int ORIGIN = 4;
     public static final int DESTINATION = 5;
     public static final int FLIGHTCODE = 6;
+    public static final int SUBMISSION = 7;
 
-    private static final String[] TYPES = { "Date", "Length", "Distance", "Equipment Type", "Origin", "Destination", "Flight Code" };
+    private static final String[] TYPES = { "Date", "Length", "Distance", "Equipment Type", "Origin", "Destination", "Flight Code", "Submission Date" };
 
     /**
      * Creates a new FlightReport comparator with a particular comparison type code.
@@ -57,12 +58,11 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
             case DATE:
                 if (f1.getStatus() == FlightStatus.DRAFT)
                     return -1;
-                else if (f2.getStatus() == FlightStatus.DRAFT)
+                if (f2.getStatus() == FlightStatus.DRAFT)
                     return 1;
-                else {
-                	tmpResult = f1.getDate().compareTo(f2.getDate());
-                    return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
-                }
+
+                tmpResult = f1.getDate().compareTo(f2.getDate());
+                return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
 
             case LENGTH:
                 tmpResult = Integer.compare(f1.getLength(), f2.getLength());
@@ -95,6 +95,15 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 // If the destination is equal, compare the origin airports
                 aO = f1.getAirportD();
                 return (aO == null) ? -1 : aO.compareTo(f2.getAirportD());
+                
+            case SUBMISSION:
+            	if (f1.getSubmittedOn() == null)
+            		return -1;
+            	if (f2.getSubmittedOn() == null)
+            		return 1;
+            	
+            	tmpResult = f1.getSubmittedOn().compareTo(f2.getSubmittedOn());
+            	return (tmpResult == 0) ? Integer.compare(f1.getID(), f2.getID()) : tmpResult;
                 
             case FLIGHTCODE:
             default:

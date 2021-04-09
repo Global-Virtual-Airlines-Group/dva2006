@@ -1,9 +1,11 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
+import java.time.Duration;
 
-import org.deltava.beans.flight.FlightStatus;
+import org.deltava.beans.acars.TaxiTime;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.cache.*;
@@ -11,13 +13,33 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 8.6
  */
 
 public class GetACARSTaxiTimes extends DAO {
 
-	private static final Cache<CacheableLong> _cache = CacheManager.get(CacheableLong.class, "TaxiTime");
+	private static final Cache<TaxiTime> _cache = CacheManager.get(TaxiTime.class, "TaxiTime");
+	
+	private static class TaxiTotal implements Comparable<TaxiTotal> {
+		private final String _icao;
+		private final int _year;
+		private long _outTotal;
+		private long _inTotal;
+		private int _outCount;
+		private int _inCount;
+		
+		TaxiTotal(String icao, int year) {
+			_icao = icao;
+			_year = year;
+		}
+
+		@Override
+		public int compareTo(TaxiTotal tt) {
+			int tmpResult = _icao.compareTo(tt._icao);
+			return (tmpResult == 0) ? Integer.compare(_year, tt._year) : tmpResult;
+		}
+	}
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -27,88 +49,75 @@ public class GetACARSTaxiTimes extends DAO {
 		super(c);
 	}
 	
-	private static String buildCacheKey(Airport a, String db, boolean isDeparture) {
-		StringBuilder buf = new StringBuilder(db);
-		buf.append('!').append(a.getICAO());
-		buf.append('!').append(isDeparture ? 'D' : 'A');
-		return buf.toString();
-	}
-
 	/**
-	 * Returns the average outbound taxi time for a particular Airport.
+	 * Retrieves the average taxi time for an Airport in a given year.
 	 * @param a the Airport
-	 * @param db the database name
-	 * @return the average taxi time, in seconds
+	 * @param year the year
+	 * @return a TaxiTime
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getTaxiOutTime(Airport a, String db) throws DAOException {
-		
-		// Check the cache
-		String key = buildCacheKey(a, db, true);
-		CacheableLong depTime = _cache.get(key);
-		if (depTime != null)
-			return depTime.intValue();
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, TAXI_TIME, TAKEOFF_TIME)) AS TX_TKO FROM ");
-		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".ACARS_PIREPS AP, ");
-		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.TAXI_TIME < AP.TAKEOFF_TIME) AND (AP.TAKEOFF_TIME < DATE_ADD(AP.TAXI_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_D=?) AND (P.STATUS=?)");
-		
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, a.getIATA());
-			ps.setInt(2, FlightStatus.OK.ordinal());
-			
-			int result = -1;
+	public TaxiTime getTaxiTime(Airport a, int year) throws DAOException {
+		TaxiTime tt = new TaxiTime(a.getICAO(), year);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR=?) GROUP BY ICAO")) {
+			ps.setString(1, a.getICAO());
+			ps.setInt(2, year);
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+				if (rs.next()) {
+					int inCount = rs.getInt(3); int outCount = rs.getInt(4);
+					tt.setInboundTime((inCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(1) / inCount));
+					tt.setOutboundTime((outCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(2) / outCount));
+				}
 			}
 			
-			_cache.add(new CacheableLong(key, result));
-			return result;
+			return tt;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Returns the average inbound taxi time for a particular Airport.
+	 * Retrieves the average taxi time for an Airport.
 	 * @param a the Airport
-	 * @param db the database name
-	 * @return the average taxi time, in seconds
+	 * @return a TaxiTime
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getTaxiInTime(Airport a, String db) throws DAOException {
+	public TaxiTime getTaxiTime(Airport a) throws DAOException {
 		
 		// Check the cache
-		String key = buildCacheKey(a, db, false);
-		CacheableLong arrTime = _cache.get(key);
-		if (arrTime != null)
-			return arrTime.intValue();
+		TaxiTime tt = _cache.get(a.getICAO());
+		if (tt != null)
+			return tt;
 		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, LANDING_TIME, END_TIME)) AS TX_LND FROM ");
-		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".ACARS_PIREPS AP, ");
-		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.LANDING_TIME < AP.END_TIME) AND (AP.END_TIME < DATE_ADD(AP.LANDING_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_A=?) AND (P.STATUS=?)");
-		
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, a.getIATA());
-			ps.setInt(2, FlightStatus.OK.ordinal());
-			
-			int result = -1;
+		Collection<TaxiTotal> rawResults = new ArrayList<TaxiTotal>(); 
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) GROUP BY ICAO, YEAR ORDER BY YEAR")) {
+			ps.setString(1, a.getICAO());
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+				while (rs.next()) {
+					TaxiTotal ttl = new TaxiTotal(a.getICAO(), rs.getInt(1));
+					ttl._inTotal = rs.getLong(2);
+					ttl._outTotal = rs.getLong(3);
+					ttl._inCount = rs.getInt(4);
+					ttl._outCount = rs.getInt(5);
+					rawResults.add(ttl);
+				}
 			}
-			
-			_cache.add(new CacheableLong(key, result));
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Aggregate the totals
+		TaxiTotal t = new TaxiTotal(a.getICAO(), 0);
+		for (TaxiTotal ttl : rawResults) {
+			t._inCount += ttl._inCount;
+			t._inTotal += ttl._inTotal;
+			t._outCount += ttl._outCount;
+			t._outTotal += ttl._outTotal;
+		}
+		
+		tt = new TaxiTime(a.getICAO(), 0);
+		tt.setInboundTime(Duration.ofSeconds(t._inTotal / t._inCount));
+		tt.setOutboundTime(Duration.ofSeconds(t._outTotal / t._outCount));
+		_cache.add(tt);
+		return tt;
 	}
 }

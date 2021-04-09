@@ -1,4 +1,4 @@
-// Copyright 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
@@ -7,11 +7,11 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store ACARS multi-player airline livery data.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 2.2
  */
 
-public class Livery implements Comparable<Livery>, java.io.Serializable, Auditable, ViewEntry {
+public class Livery implements Comparable<Livery>, Auditable, ViewEntry {
 
 	private final Airline _a;
 	private final String _code;
@@ -91,9 +91,6 @@ public class Livery implements Comparable<Livery>, java.io.Serializable, Auditab
 		return toString().hashCode();
 	}
 	
-	/**
-	 * Compares two Liveries by comparing their Airline, default setting and code.
-	 */
 	@Override
 	public int compareTo(Livery l2) {
 		int tmpResult = _a.compareTo(l2._a);

@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 6.3
  */
 
@@ -46,11 +46,11 @@ public class SetGates extends DAO {
 			
 			// Write gate data
 			int totalWrites = gates.stream().filter(g -> g.getAirlines().size() > 0).mapToInt(g -> g.getAirlines().size()).sum();
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, INTL) VALUES (?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, ZONE) VALUES (?, ?, ?, ?)")) {
 				for (Gate g : gates) {
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
-					ps.setBoolean(4, g.isInternational());
+					ps.setInt(4, g.getZone().ordinal());
 					for (Airline a : g.getAirlines()) {
 						ps.setString(3, a.getCode());
 						ps.addBatch();

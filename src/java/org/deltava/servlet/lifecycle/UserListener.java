@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 6.3
+ * @version 10.0
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class UserListener implements HttpSessionListener {
 			// Update the user's last login date
 			con = jdbcPool.getConnection();
 			SetPilotLogin pldao = new SetPilotLogin(con);
-			pldao.logout(p.getID());
+			pldao.logout(p.getID(), SystemData.get("airline.db"));
 		} catch (ConnectionPoolException cpe) {
 			log.warn(cpe.getMessage());
 		} catch (Exception ex) {

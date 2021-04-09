@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Amazone SES feedback SNS messages.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 8.5
  */
 
@@ -95,13 +95,13 @@ public class SESFeedbackService extends SNSReceiverService {
 						// Block if permanent
 						if (isPerm) {
 							p.setEmailInvalid(true);
-							pwdao.write(p);
+							pwdao.write(p, ctx.getDB());
 				            
 				            // Create the status entry
 				            StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 				            upd.setAuthorID(ctx.getUser().getID());
 				            upd.setDescription("E-Mail Address Invalidated by SES feedback");
-							suwdao.write(upd);
+							suwdao.write(upd, ctx.getDB());
 						}
 						
 						buf.append(p.getName());

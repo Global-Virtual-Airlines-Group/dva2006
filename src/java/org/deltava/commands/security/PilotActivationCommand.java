@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			// Check if we're full
 			if (!doForce) {
 				GetStatistics stdao = new GetStatistics(con);
-				int size = stdao.getActivePilots(SystemData.get("airline.db"));
+				int size = stdao.getActivePilots(ctx.getDB());
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				if (isFull)
 					ctx.setAttribute("airlineSize", Integer.valueOf(size), REQUEST);
@@ -120,7 +120,7 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Get the write DAO and save the pilot
 			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(p);
+			pwdao.write(p, ctx.getDB());
 			
 			// Clear address validation
 			SetAddressValidation avwdao = new SetAddressValidation(con);
@@ -132,7 +132,7 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Write the status update entry
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			sudao.write(upd);
+			sudao.write(upd, ctx.getDB());
 
 			// Get the authenticator and update the password
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {

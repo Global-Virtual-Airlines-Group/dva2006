@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 <c:forEach var="domain" items="${ourDomains}">
 golgotha.form.invalidDomains.push('${domain}');</c:forEach>

@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 4.1
  */
 
@@ -59,7 +59,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			RoutePathHelper rph = new RoutePathHelper(400, 800);
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
-			sdao.setSources(rsdao.getSources(true));
+			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 			Collection<ScheduleRoute> lnks = sdao.getRoutePairs(allowHistoric);
 			lnks.removeIf(sr -> ((maxDistance > 0) && (sr.getDistance() > maxDistance)));
 			rph.setLinks(lnks);
@@ -73,7 +73,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			for (RoutePair rtp : rts) {
 				totalDistance += rtp.getDistance();
 				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("RAND()");
-				ssc.setDBName(SystemData.get("airline.db"));
+				ssc.setDBName(ctx.getDB());
 				ssc.setAirportD(rtp.getAirportD());
 				ssc.setAirportA(rtp.getAirportA());
 				ssc.setLeg(0);

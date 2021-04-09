@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to delete Image Gallery images.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class GalleryDeleteCommand extends AbstractCommand {
 			
 			// Get the Gallery Image
 			GetGallery rdao = new GetGallery(con);
-			Image img = rdao.getImageData(ctx.getID());
+			Image img = rdao.getImageData(ctx.getID(), ctx.getDB());
 			if (img == null)
 				throw notFoundException("Unknown Image Gallery image - " + ctx.getID());
 			

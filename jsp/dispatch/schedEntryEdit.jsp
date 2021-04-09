@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if ((!golgotha.form.check()) || (!f.comments)) return false;
 	golgotha.form.validate({f:f.startDate, t:'Service Start Date'});

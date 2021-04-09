@@ -3,24 +3,19 @@ package org.deltava.beans.event;
 
 import java.nio.charset.StandardCharsets;
 
-import org.deltava.beans.*;
-
-import org.deltava.util.PDFUtils;
+import org.deltava.beans.DatabaseDocumentBean;
 
 /**
  * A bean to store an Online Event briefing.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 9.0
  */
 
-public class Briefing extends DatabaseBlobBean {
+public class Briefing extends DatabaseDocumentBean {
 	
-	private int _size;
-	private boolean _isPDF;
-
 	/**
-	 * Creates the bean.
+	 * Creates the bean from a binary blob.
 	 * @param data the briefing data
 	 */
 	public Briefing(byte[] data) {
@@ -29,48 +24,10 @@ public class Briefing extends DatabaseBlobBean {
 	}
 	
 	/**
-	 * Returns the file buffer.
-	 * @return the buffer
-	 * @throws IllegalStateException if not loaded
+	 * Creates the bean from a string.
+	 * @param data the briefing data
 	 */
-	public byte[] getBuffer() {
-		if (!isLoaded())
-			throw new IllegalStateException("Not loaded");
-		
-		return _buffer;
-	}
-
-	/**
-	 * Returns if the briefing format is PDF.
-	 * @return TRUE if PDF, otherwise FALSE
-	 */
-	public boolean getIsPDF() {
-		return isLoaded() ? PDFUtils.isPDF(_buffer) : _isPDF;
-	}
-
-	@Override
-	public int getSize() {
-		return isLoaded() ? super.getSize() : _size;
-	}
-	
-	/**
-	 * Forces the object type.
-	 * @param isPDF TRUE if a PDF, otherwise FALSE
-	 */
-	public void setForcePDF(boolean isPDF) {
-		_isPDF = isPDF;
-	}
-	
-	/**
-	 * Forces the object size.
-	 * @param size the size in bytes
-	 */
-	public void setForceSize(int size) {
-		_size = size;
-	}
-	
-	@Override
-	public String toString() {
-		return getIsPDF() ? "PDF" : new String(_buffer, StandardCharsets.UTF_8);
+	public Briefing(String data) {
+		this(data.getBytes(StandardCharsets.UTF_8));
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -15,12 +15,15 @@ import org.deltava.beans.hr.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.comparators.TestComparator;
+
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -93,8 +96,8 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 				}
 			}
 
-			// Save the remaining exam profiles in the request
-			ctx.setAttribute("exams", testHistory.getExams(), REQUEST);
+			// Save the remaining exam profiles in the request - sort by date rather than scored on
+			ctx.setAttribute("exams", CollectionUtils.sort(testHistory.getExams(), new TestComparator(TestComparator.DATE)), REQUEST);
 			ctx.setAttribute("availableExams", allExams, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

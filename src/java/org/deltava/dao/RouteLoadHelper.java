@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 3.4
  */
 
@@ -140,14 +140,6 @@ public final class RouteLoadHelper {
 				throw new DAOException(e);
 			}
 		}
-	}
-	
-	/**
-	 * Loads flight routes from filed ACARS Flight Reports in the current database.
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void loadPIREPRoutes() throws DAOException {
-		loadPIREPRoutes(SystemData.get("airline.db"));
 	}
 	
 	/**

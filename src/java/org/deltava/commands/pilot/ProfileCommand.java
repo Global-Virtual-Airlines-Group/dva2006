@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -530,7 +530,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Write the Pilot profile
 			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(p);
+			pwdao.write(p, ctx.getDB());
 			
 			// If we're marking Inactive/Retired, purge any Inactivity/Address Update records and remove from Child Authenticators
 			if ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)) {
@@ -648,7 +648,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get the Online Hours/Legs if not already loaded
 			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			frdao.getOnlineTotals(p, ctx.getDB());
 
 			// Save the pilot profile in the request
 			GetPilotBoard pbdao = new GetPilotBoard(con);
@@ -676,7 +676,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
-			Collection<StatusUpdate> upds = updao.getByUser(p.getID(), SystemData.get("airline.db"));
+			Collection<StatusUpdate> upds = updao.getByUser(p.getID(), ctx.getDB());
 			ctx.setAttribute("statusUpdates", upds, REQUEST);
 			
 			// Get Author IDs from Status Updates
@@ -715,7 +715,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// If it's in a different database check our role
-			boolean crossDB = !SystemData.get("airline.db").equalsIgnoreCase(usrInfo.getDB());
+			boolean crossDB = !ctx.getDB().equalsIgnoreCase(usrInfo.getDB());
 			if (crossDB && !ctx.isUserInRole("HR"))
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
@@ -787,7 +787,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			
 			// Get Accomplishments
 			GetAccomplishment acdao = new GetAccomplishment(con);
-			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
+			ctx.setAttribute("accs", acdao.getByPilot(p, ctx.getDB()), REQUEST);
 			
 			// Load instructor IDs
 			Collection<Integer> IDs = courses.stream().map(Course::getInstructorID).collect(Collectors.toSet());

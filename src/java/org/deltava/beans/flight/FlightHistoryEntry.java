@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 9.0
  */
 
-public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
+public class FlightHistoryEntry extends DatabaseBean implements AuditEntry {
 
 	private final HistoryType _type;
 	private final Instant _createdOn;
@@ -35,20 +35,24 @@ public class FlightHistoryEntry extends DatabaseBean implements AuthoredBean {
 		_desc = desc;
 	}
 	
-	/**
-	 * Returns the creation date of this status update.
-	 * @return the creation date/time
-	 */
-	public Instant getCreatedOn() {
+	@Override
+	public Instant getDate() {
 		return _createdOn;
 	}
 	
-	/**
-	 * Returns the description of this status update.
-	 * @return the description
-	 */
+	@Override
 	public String getDescription() {
 		return _desc;
+	}
+	
+	@Override
+	public String getAuditType() {
+		return "FlightReport";
+	}
+	
+	@Override
+	public String getAuditID() {
+		return getHexID();
 	}
 	
 	/**

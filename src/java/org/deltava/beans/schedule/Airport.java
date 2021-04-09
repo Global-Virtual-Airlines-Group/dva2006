@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Airport implements java.io.Serializable, Comparable<Airport>, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry {
+public class Airport implements Comparable<Airport>, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry {
 
 	/**
 	 * Enumeration for Airport code types.
@@ -42,6 +42,8 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	private String _supercededAirport;
 	private boolean _asdeX;
 	private boolean _hasGateData;
+	private boolean _isSchengen;
+	private boolean _hasUSPFI;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
 	private TZInfo _tz = TZInfo.UTC;
@@ -124,6 +126,23 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	public void setGateData(boolean hasData) {
 		_hasGateData = hasData;
 	}
+	
+	/**
+	 * Sets whether this Airport is in the Schengen Zone.
+	 * @param isSZ TRUE if in the Schengen Zone, otherwise FALSE
+	 * @see Airport#getIsSchengen()
+	 */
+	public void setIsSchengen(boolean isSZ) {
+		_isSchengen = isSZ;
+	}
+	
+	/**
+	 * Sets whether this Airport has a US Pre-Flight Inspection station.
+	 * @param hasPFI TRUE if a PFI present, otherwise FALSE
+	 */
+	public void setHasPFI(boolean hasPFI) {
+		_hasUSPFI = hasPFI;
+	}
 
 	/**
 	 * Sets this airport's name.
@@ -189,10 +208,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return _iata;
 	}
 
-	/**
-	 * Return this airport's ICAO Code.
-	 * @return The ICAO code
-	 */
 	@Override
 	public String getICAO() {
 		return _icao;
@@ -206,10 +221,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return _name;
 	}
 
-	/**
-	 * Return this airport's altitude.
-	 * @return the altitude in feet MSL
-	 */
 	@Override
 	public int getAltitude() {
 	   return _alt;
@@ -275,7 +286,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	public String getSupercededAirport() {
 		return _supercededAirport;
 	}
-
+	
 	/**
 	 * Returns this airport's latitude and longitude.
 	 * @return a GeoPosition object containing the airport's position
@@ -283,22 +294,30 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	public GeoPosition getPosition() {
 		return _position;
 	}
-
+	
 	/**
-	 * Return this airport's latitude.
-	 * @return this airport's latitude in degrees (and some fraction thereof)
-	 * @see GeoPosition#getLatitude()
+	 * Returns whether this Airport is in the Schengen Zone.
+	 * @return TRUE if in the Schengen Zone, otherwise FALSE
+	 * @see Airport#setIsSchengen(boolean)
 	 */
+	public boolean getIsSchengen() {
+		return _isSchengen;
+	}
+	
+	/**
+	 * Returns whether this Airport has a US customs pre-flight inspection station.
+	 * @return TRUE if PFI present, otherwise FALSE
+	 * @see Airport#setHasPFI(boolean)
+	 */
+	public boolean getHasPFI() {
+		return _hasUSPFI;
+	}
+
 	@Override
 	public final double getLatitude() {
 		return _position.getLatitude();
 	}
 
-	/**
-	 * Return this airport's longitude.
-	 * @return This airport's longitude in degrees (and some fraction thereof)
-	 * @see GeoPosition#getLongitude()
-	 */
 	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
@@ -322,9 +341,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return _hasGateData;
 	}
 	
-	/**
-	 * Sort the airports by comparing their IATA codes.
-	 */
 	@Override
 	public int compareTo(Airport a2) {
 		int tmpResult = _iata.compareTo(a2._iata);
@@ -377,10 +393,8 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 	 */
 	public void setAirlines(Collection<String> airlines) {
 		_aCodes.clear();
-		if (airlines != null) {
-			for (Iterator<String> i = airlines.iterator(); i.hasNext(); )
-				addAirlineCode(i.next());
-		}
+		if (airlines != null)
+			airlines.forEach(al -> addAirlineCode(al));
 	}
 
 	/**
@@ -410,37 +424,21 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return GeoUtils.isValid(_position);
 	}
 	
-   /**
-    * Return the default Google Maps icon color.
-    * @return org.deltava.beans.MapEntry.GREEN
-    */
 	@Override
    public String getIconColor() {
       return GREEN;
    }
    
-	/**
-	 * Returns the Google Earth palette code.
-	 * @return 2
-	 */
    @Override
 	public int getPaletteCode() {
 		return 2;
 	}
 	
-	/**
-	 * Returns the Google Earth icon code.
-	 * @return 48
-	 */
    @Override
 	public int getIconCode() {
 		return 48;
 	}
    
-   /**
-    * Returns the default Google Maps infobox text.
-    * @return an HTML String
-    */
 	@Override
    public String getInfoBox() {
       StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\"><span class=\"bld\">");
@@ -462,10 +460,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
       return buf.toString();
    }
 
-	/**
-	 * Compares airports by ensuring that both the IATA and ICAO code are the same. This leaves the possibility open of
-	 * airports having the same IATA code but different ICAO codes.
-	 */
 	@Override
 	public boolean equals(Object o2) {
 		if (o2 instanceof Airport) {
@@ -477,9 +471,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 			return false;
 	}
 
-	/**
-	 * Retrurns the hashcode of the IATA/ICAO values.
-	 */
 	@Override
 	public final int hashCode() {
 		return toString().hashCode();
@@ -493,9 +484,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return _hasGateData ? null : "opt1";
 	}
 
-	/**
-	 * Displays the airport name and IATA code.
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
@@ -508,9 +496,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		return _icao;
 	}
 	
-	/**
-	 * Clones the Airport object.
-	 */
 	@Override
 	public Object clone() {
 		Airport a2 = new Airport(_iata, _icao, _name);
@@ -522,6 +507,8 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Audit
 		a2._maxRunwayLength = _maxRunwayLength;
 		a2._hasGateData = _hasGateData;
 		a2._country = _country;
+		a2._isSchengen = _isSchengen;
+		a2._hasUSPFI = _hasUSPFI;
 		a2.setLocation(_position.getLatitude(), _position.getLongitude());
 		a2._aCodes.addAll(_aCodes);
 		return a2;

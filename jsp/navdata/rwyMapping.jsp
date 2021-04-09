@@ -115,7 +115,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.rwyData = JSON.parse('${json}');
 </script>
 </body>

@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,15 +12,14 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.util.FlightCodeParser;
-import org.deltava.util.StringUtils;
-import org.deltava.util.Tuple;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load the Delta flight schedule.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 9.0
  */
 
@@ -35,6 +34,8 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 	private LocalDate _effDate = LocalDate.now();
 	
 	private static final Logger log = Logger.getLogger(GetDeltaSchedule.class);
+	
+	private static final List<String> RESERVED = List.of("Page", "From");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -149,7 +150,9 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 	private static FlightData parse(String data) {
 		if (StringUtils.isEmpty(data)) return null;
 		List<String> tkns = StringUtils.split(data, " ");
-		if (tkns.size() < 14) return null;
+		if ((tkns.size() < 15) || RESERVED.contains(tkns.get(0))) return null;
+		int stops = StringUtils.parse(tkns.get(tkns.size() - 3), 1);
+		if (stops > 0) return null;
 		
 		FlightData fd = new FlightData();
 		fd.flightNumber = tkns.get(13);
@@ -171,7 +174,6 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 			csBuf.append(tkns.get(idx)).append(' ');
 
 		fd.codeShare = csBuf.toString().trim();
-		
 		StringBuilder dwBuf = new StringBuilder();
 		for (int ofs = 6; ofs < 13; ofs++) {
 			char c = tkns.get(ofs).charAt(0);

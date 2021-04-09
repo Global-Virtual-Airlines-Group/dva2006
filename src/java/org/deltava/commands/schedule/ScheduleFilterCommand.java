@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		try {
 			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
-			ctx.setAttribute("sources", rsdao.getSources(false), REQUEST);
+			ctx.setAttribute("sources", rsdao.getSources(false, ctx.getDB()), REQUEST);
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

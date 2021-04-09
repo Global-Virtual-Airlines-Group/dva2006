@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title>Testing Center - ${pilot.name} ($pilot.pilotCode)</title>
+<title>Testing Center - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
@@ -31,7 +31,7 @@ golgotha.local.validate = function(f, isCR) {
 };
 
 golgotha.local.doCR = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	if (!golgotha.local.validate(f, true)) return false;
 	f.action = 'currencyassign.do';
 	return f.submit();

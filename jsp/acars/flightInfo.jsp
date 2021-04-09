@@ -131,7 +131,7 @@
 </content:region>
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
-<script id="mapInit" async>
+<script id="mapInit">
 // Build the route line and map center
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />

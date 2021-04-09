@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -12,12 +12,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to display a Flight Assignment.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -47,7 +45,7 @@ public class AssignmentCommand extends AbstractCommand {
          
          // Load the Flight Reports for this Assignment
          GetFlightReports frdao = new GetFlightReports(con);
-         List<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
+         List<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), ctx.getDB());
          pireps.forEach(fr -> assign.addFlight(fr));
          ctx.setAttribute("assign", assign, REQUEST);
       } catch (DAOException de) {

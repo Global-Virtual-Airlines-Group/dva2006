@@ -36,6 +36,18 @@
 		</time>
 	</task>
 
+	<!-- Update Taxi Times -->
+	<task id="taxitimes" enabled="false">
+		<class>org.deltava.tasks.TaxiUpdateTask</class>
+		<time>
+			<min>40</min>
+			<hour>9</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
 	<!-- Download NAT Track data -->
 	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
@@ -184,7 +196,7 @@
 	<task id="metar" enabled="true">
 		<class>org.deltava.tasks.METARDownloadTask</class>
 		<time>
-			<min>5</min>
+			<min>5,15,30</min>
 			<hour>*</hour>
 			<mday>*</mday>
 			<month>*</month>
@@ -196,7 +208,7 @@
 	<task id="taf" enabled="true">
 		<class>org.deltava.tasks.TAFDownloadTask</class>
 		<time>
-			<min>30</min>
+			<min>30,40,55</min>
 			<hour>5,11,17,23</hour>
 			<mday>*</mday>
 			<month>*</month>
@@ -265,8 +277,8 @@
 	</task>
 
 	<!-- Flight Report Queue Warning -->
-	<task id="pirepqueuewarn" enabled="false">
-		<class>org.deltava.tasks.PIREPQueueWarningTask</class>
+	<task id="queuewarn" enabled="false">
+		<class>org.deltava.tasks.QueueWarningTask</class>
 		<time>
 			<min>0</min>
 			<hour>1,11,20</hour>

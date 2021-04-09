@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class FlightReport extends Flight implements AuthoredBean, CalendarEntry, ViewEntry {
+public class FlightReport extends Flight implements FlightData, AuthoredBean, CalendarEntry, ViewEntry {
 
 	/**
 	 * Flight flown without Equipment Type Rating.
@@ -117,7 +117,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_SIMFDR = 0x80000;
 	
 	/**
-	 * Flight logged using PilotEdge.
+	 * Flight flown on PilotEdge network.
 	 */
 	public static final int ATTR_PEDGE = 0x100000;
 	
@@ -132,6 +132,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_DIVERT = 0x400000;
 	
 	/**
+	 * Flight flown on POSCON network.
+	 */
+	public static final int ATTR_POSCON = 0x800000;
+	
+	/**
 	 * Attribute mask for all warnings.
 	 */
 	public static final int ATTR_WARN_MASK = 0x26B861;
@@ -139,7 +144,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
-	public static final int ATTR_ONLINE_MASK = 0x10000E;
+	public static final int ATTR_ONLINE_MASK = 0x90000E;
 	
 	/**
 	 * Attribute mask for ACARS/XACARS/simFDR flights.
@@ -221,6 +226,14 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public Duration getDuration() {
 		return Duration.ofSeconds(_length * 360);
 	}
+	
+	@Override
+	public Recorder getFDR() {
+		if (hasAttribute(ATTR_ACARS)) return Recorder.ACARS;
+		if (hasAttribute(ATTR_XACARS)) return Recorder.XACARS;
+		if (hasAttribute(ATTR_SIMFDR)) return Recorder.SIMFDR;
+		return null;
+	}
 
 	/**
 	 * Returns the remarks for this Flight Report.
@@ -267,11 +280,6 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		return _upds;
 	}
 
-	/**
-	 * Returns the date this flight was flown.
-	 * @return the date of this flight; the time component is undefined
-	 * @see FlightReport#setDate(Instant)
-	 */
 	@Override
 	public Instant getDate() {
 		return _date;
@@ -307,16 +315,23 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		return _dbIds.getOrDefault(idType, Integer.valueOf(0)).intValue();
 	}
 	
+	/**
+	 * Returns whether this Flight has a related database row ID.
+	 * @param idType the database row ID type
+	 * @return TRUE if the database row ID is not zero, otherwise FALSE
+	 * @throws NullPointerException if idType is null
+	 * @see FlightReport#setDatabaseID(DatabaseID, int)
+	 */
+	public boolean hasDatabaseID(DatabaseID idType) {
+		return _dbIds.containsKey(idType);
+	}
+	
 	@Override
 	public int getAuthorID() {
 		return getDatabaseID(DatabaseID.PILOT);
 	}
 
-	/**
-	 * Returns the Simulator used for this Flight.
-	 * @return the Simulator
-	 * @see FlightReport#setSimulator(Simulator)
-	 */
+	@Override
 	public Simulator getSimulator() {
 		return _fsVersion;
 	}
@@ -340,11 +355,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		return _status;
 	}
 
-	/**
-	 * Returns the Online Network used on this Flight.
-	 * @return an OnlineNetwork enum, or null
-	 * @see FlightReport#setNetwork(OnlineNetwork)
-	 */
+	@Override
 	public OnlineNetwork getNetwork() {
 		if (hasAttribute(ATTR_VATSIM))
 			return OnlineNetwork.VATSIM;
@@ -352,6 +363,8 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 			return OnlineNetwork.IVAO;
 		else if (hasAttribute(ATTR_PEDGE))
 			return OnlineNetwork.PILOTEDGE;
+		else if (hasAttribute(ATTR_POSCON))
+			return OnlineNetwork.POSCON;
 		else if (hasAttribute(ATTR_FPI))
 			return OnlineNetwork.FPI;
 		
@@ -475,7 +488,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public void addStatusUpdate(int authorID, HistoryType type, String msg) {
 		FlightHistoryEntry lastEntry = _upds.peekLast();
-		long lastUpdateTime = (lastEntry == null) ? 0 : lastEntry.getCreatedOn().toEpochMilli();
+		long lastUpdateTime = (lastEntry == null) ? 0 : lastEntry.getDate().toEpochMilli();
 		long createdOn = Math.max(System.currentTimeMillis(), lastUpdateTime + 1);
 		_upds.add(new FlightHistoryEntry(getID(), type, authorID, Instant.ofEpochMilli(createdOn), msg));
 	}

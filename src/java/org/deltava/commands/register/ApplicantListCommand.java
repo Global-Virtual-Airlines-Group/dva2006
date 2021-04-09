@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -11,12 +11,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display applicants.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -83,7 +82,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			
 			// Load the airline size
 			GetStatistics stdao = new GetStatistics(con);
-			ctx.setAttribute("airlineSize", Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
+			ctx.setAttribute("airlineSize", Integer.valueOf(stdao.getActivePilots(ctx.getDB())), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -16,21 +16,18 @@ import org.deltava.dao.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 2.1
  */
 
 public class ProgramRosterCommand extends AbstractViewCommand {
 	
-	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS",
-		"P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
-	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
-			"Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
+	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS", "P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date", "Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
 
 	/**
 	 * Executes the command.
@@ -61,7 +58,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			
 			// Get the eq program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(eqType, SystemData.get("airline.db"));
+			EquipmentType eq = eqdao.get(eqType, ctx.getDB());
 			Collection<String> examNames = eq.getExamNames();
 			if (ctx.isUserInRole("HR"))
 				ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
@@ -89,11 +86,11 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(CollectionUtils.createMap(vc.getResults(), Pilot::getID), SystemData.get("airline.db"));
+			frdao.getOnlineTotals(CollectionUtils.createMap(vc.getResults(), Pilot::getID), ctx.getDB());
 			
 			// Save promotion queue and access
 			if (canPromote) {
-				frdao.getOnlineTotals(promoPilots, SystemData.get("airline.db"));
+				frdao.getOnlineTotals(promoPilots, ctx.getDB());
 				ctx.setAttribute("promoQueue", promoPilots.values(), REQUEST);
 				ctx.setAttribute("promoAccess", accessMap, REQUEST);
 			}
@@ -131,8 +128,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			// Load checkride statistics
 			GetExamStatistics exsdao = new GetExamStatistics(con);
 			exsdao.setQueryMax(15);
-			ctx.setAttribute("crStats", exsdao.getCheckrideStatistics("DATE_FORMAT(C.CREATED, '%M %Y')", "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", 
-					false, 0, eq.getName()), REQUEST);
+			ctx.setAttribute("crStats", exsdao.getCheckrideStatistics("DATE_FORMAT(C.CREATED, '%M %Y')", "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", false, 0, eq.getName()), REQUEST);
 			
 			// Load flight report statistics for the past 14 days 
 			GetFlightReportStatistics psdao = new GetFlightReportStatistics(con);

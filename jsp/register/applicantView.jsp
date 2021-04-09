@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canApprove}">
 	if (!golgotha.form.check()) return false;
@@ -70,7 +70,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Applicant Status</td>
- <td class="data caps"><span class="sec bld"><fmt:defaultMethod var="${applicant.status}" method="description" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
+ <td class="data caps"><span class="sec bld"><fmt:defaultMethod object="${applicant.status}" method="description" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
 </tr>
 <c:if test="${!empty nameMatches}">
 <tr>

@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 3.2
  */
 
@@ -36,13 +36,8 @@ public class MapService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Get the network name
-		String networkName = ctx.getParameter("network");
-		if (networkName == null)
-			networkName = SystemData.get("online.default_network");
-		
 		// Get the network data
-		OnlineNetwork net = OnlineNetwork.valueOf(networkName.toUpperCase());
+		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), OnlineNetwork.VATSIM);
 		NetworkInfo info = ServInfoHelper.getInfo(net);
 		
 		// Populate pilot IDs if required
@@ -64,8 +59,7 @@ public class MapService extends WebService {
 		
 		// Display the pilots
 		List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
-		for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
-			Pilot usr = i.next();
+		for (Pilot usr : info.getPilots()) {
 			for (Iterator<?> ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted()); ) {
 				String code = (String) ci.next();
 				if (usr.getCallsign().startsWith(code))

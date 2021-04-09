@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to suspend inactive Flight Academy Courses. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 6.3
  */
 
@@ -58,7 +58,7 @@ public class CoursePurgeTask extends Task {
 			
 			// Load the inactive courses
 			GetAcademyInactivity idao = new GetAcademyInactivity(con);
-			Map<Integer, Integer> courseIDs = idao.getInactiveCourses(purgeDays, SystemData.get("airline.db"));
+			Map<Integer, Integer> courseIDs = idao.getInactiveCourses(purgeDays, ctx.getDB());
 			
 			// Invalidate the courses
 			for (Map.Entry<Integer, Integer> me : courseIDs.entrySet()) {
@@ -71,12 +71,12 @@ public class CoursePurgeTask extends Task {
 				Collection<String> rRatings = cert.getRideEQ().stream().filter(r -> academyEQ.contains(r) && p.hasRating(r)).collect(Collectors.toSet());
 				if (!rRatings.isEmpty()) {
 					p.removeRatings(rRatings);
-					pwdao.write(p);
+					pwdao.write(p, ctx.getDB());
 					
 					StatusUpdate upd = new StatusUpdate(c.getPilotID(), UpdateType.ACADEMY);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings removed: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
-					upwdao.write(upd);
+					upwdao.write(upd, ctx.getDB());
 				}
 				
 				// Create a status entry

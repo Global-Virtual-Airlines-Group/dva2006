@@ -48,7 +48,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map

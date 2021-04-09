@@ -86,7 +86,7 @@
 </content:region>
 </content:page>
 </body>
-<script async>
+<script>
 golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {

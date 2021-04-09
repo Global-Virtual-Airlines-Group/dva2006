@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -50,7 +50,7 @@ public class XInfoService extends XAService {
 			
 			// Get the user ID
 			GetPilot pdao = new GetPilot(con);
-			Pilot usr = pdao.getPilotByCode(uid.getUserID(), SystemData.get("airline.db"));
+			Pilot usr = pdao.getPilotByCode(uid.getUserID(), ctx.getDB());
 			if (usr == null)
 				throw new InvalidDataException("Unknown User ID");
 			else if (usr.getStatus() != PilotStatus.ACTIVE) {
@@ -60,7 +60,7 @@ public class XInfoService extends XAService {
 			
 			// Load draft PIREPs, checking for the flight number
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<FlightReport> flights = frdao.getDraftReports(usr.getID(), null, SystemData.get("airline.db"));
+			Collection<FlightReport> flights = frdao.getDraftReports(usr.getID(), null, ctx.getDB());
 			for (Iterator<FlightReport> i = flights.iterator(); i.hasNext(); ) {
 				FlightReport dfr = i.next();
 				if (dfr.getAirline().equals(f.getAirline()) && (dfr.getFlightNumber() == f.getFlightNumber())) {
@@ -73,12 +73,12 @@ public class XInfoService extends XAService {
 			if ((f != null) && (fr == null)) {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				GetSchedule sdao = new GetSchedule(con);
-				sdao.setSources(rsdao.getSources(true));
+				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				f.setLeg(0);
 				if (f.getAirline() == null)
 					f.setAirline(SystemData.getAirline(uid.getAirlineCode()));
 				
-				ScheduleEntry se = sdao.get(f);
+				ScheduleEntry se = sdao.get(f, ctx.getDB());
 				if (se != null)
 					fr = new FlightReport(se);
 			}

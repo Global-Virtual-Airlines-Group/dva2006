@@ -62,7 +62,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.flightBoard.network = '${network}';
 const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 

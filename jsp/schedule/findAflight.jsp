@@ -20,43 +20,31 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 golgotha.ff = golgotha.ff || {};
-golgotha.ff.validate = function(f)
+golgotha.ff.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (!golgotha.form.comboSet(f.eqType) && !golgotha.form.comboSet(f.airline) && !golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA))
+		throw new golgotha.event.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
+
+	golgotha.form.submit(f);
+	return true;
+};
+<c:if test="${!empty fafResults}">
+golgotha.ff.buildValidate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
-// Check that at least one option was selected
-const eqOK = golgotha.form.comboSet(f.eqType);
-const alOK = golgotha.form.comboSet(f.airline);
-const adOK = golgotha.form.comboSet(f.airportD);
-const aaOK = golgotha.form.comboSet(f.airportA);
-if (eqOK || adOK || aaOK || alOK) {
+const chks = (f.addFA  instanceof Array) ? f.addFA : [f.addFA];
+if (chks.length == 1) {
 	golgotha.form.submit(f);
+	chks[0].checked = true;
 	return true;
 }
 
-throw new golgotha.event.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
-};
-<c:if test="${!empty fafResults}">
-golgotha.ff. buildValidate = function(f)
-{
-if (!golgotha.form.check()) return false;
+for (var x = 0; ((!isOK) && (x < chks.length)); x++)
+	isOK |= chks[x].checked;
 
-var isOK = false;
-if (f.addFA.length) {
-	for (var x = 0; ((!isOK) && (x < f.addFA.length)); x++)
-		isOK |= f.addFA[x].checked;
-} else
-	isOK = f.addFA.checked;
-
-if (!isOK) {
-	alert('Please select at least one Flight Leg to add.');
-	return false;
-}
-
-golgotha.form.submit(f);
-return true;
+return isOK && golgotha.form.submit(f);
 };
 </c:if>
 golgotha.ff.updateAirline = function(cb)
@@ -102,6 +90,7 @@ golgotha.onDOMReady(function() {
 	cfg.doICAO = ${useICAO};
 	cfg.myRated = f.myEQTypes.checked;
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
+	golgotha.airportLoad.setText([f.airline,f.airportD,f.airportA]);
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
 	<c:if test="${!empty fafCriteria}">
 	f.airportD.updateAirportCode();

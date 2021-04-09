@@ -86,7 +86,7 @@
 <c:if test="${!empty avgTaxiOutTime && !empty pirep.taxiOutTime}">
 <tr>
  <td class="label">Outbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiOutTime}" /><span class="ita nophone"> (average: <fmt:duration t="mm:ss" duration="${avgTaxiOutTime}" />)</span></td>
+ <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiOutTime}" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></td>
 </tr>
 </c:if>
 <tr>
@@ -195,7 +195,7 @@
 <c:if test="${!empty avgTaxiInTime && !empty pirep.taxiInTime}">
 <tr>
  <td class="label">Inbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiInTime}" /><span class="ita nophone"> (average: <fmt:duration t="mm:ss" duration="${avgTaxiInTime}" />)</span></td>
+ <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiInTime}" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">

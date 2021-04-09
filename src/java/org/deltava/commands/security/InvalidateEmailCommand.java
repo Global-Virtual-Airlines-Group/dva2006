@@ -55,13 +55,11 @@ public class InvalidateEmailCommand extends AbstractCommand {
             // Start the transaction
             ctx.startTX();
             
-            // Write the e-mail address
+            // Write the e-mail address and status update
             SetPilot pwdao = new SetPilot(con);
-            pwdao.write(p);
-            
-            // Write the status update
             SetStatusUpdate updao = new SetStatusUpdate(con);
-            updao.write(upd);
+            pwdao.write(p, ctx.getDB());
+            updao.write(upd, ctx.getDB());
             
             // Write the address validation entry
             SetAddressValidation avwdao = new SetAddressValidation(con);
@@ -78,7 +76,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
         		 
                  // Write the e-mail address
                  SetPilot pwdao = new SetPilot(con);
-                 pwdao.write(p);
+                 pwdao.write(p, ctx.getDB());
         	 }
          }
          

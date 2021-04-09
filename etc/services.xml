@@ -54,6 +54,7 @@
 	<service id="gateupdate" class="org.deltava.service.navdata.GateUpdateService" />
 	<service id="ftstats" class="org.deltava.service.schedule.FlightTimeStatsService" />
 	<service id="schedexport" class="org.deltava.service.schedule.ExportService" />
+	<service id="tourleg" class="org.deltava.service.schedule.TourLegService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
@@ -96,6 +97,7 @@
 	<!-- ACARS Dispatch Services -->
 	<service id="navaidsearch" class="org.deltava.service.navdata.NavaidSearchService" />
 	<service id="xmlsidstar" class="org.deltava.service.navdata.XMLTerminalRouteService" />
+	<service id="xmlgate" class="org.deltava.service.navdata.XMLGateService" />
 	<service id="airacversion" class="org.deltava.service.navdata.AIRACVersionService" />
 
 	<!-- SID/STAR updating -->
@@ -135,6 +137,13 @@
 	<service id="taf" class="org.deltava.service.wx.TAFService" />
 	<service id="airportwx" class="org.deltava.service.wx.AirportWeatherService" />
 	<service id="tileseries" class="org.deltava.service.wx.SeriesListService" />
+	
+	<!-- Push Notification Services -->
+	<service id="pushstatus" class="org.deltava.service.push.StatusService" />
+	<service id="pushsub" class="org.deltava.service.push.SubscribeService" />
+	<service id="pushunsub" class="org.deltava.service.push.UnsubscribeService" />
+	<service id="pushclear" class="org.deltava.service.push.ClearEndpointsService" />
+	<service id="pushtest" class="org.deltava.service.push.TestService" />
 	
 	<!-- AWS Services -->
 	<service id="sesfeedback" class="org.deltava.service.aws.SESFeedbackService" />

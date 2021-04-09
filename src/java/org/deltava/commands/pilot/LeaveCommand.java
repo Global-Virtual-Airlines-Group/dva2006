@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class LeaveCommand extends AbstractCommand {
 			
 			// Write the status updat
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			sudao.write(upd);
+			sudao.write(upd, ctx.getDB());
 
 			// Commit the transaction
 			ctx.commitTX();

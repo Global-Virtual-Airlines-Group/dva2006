@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -17,12 +17,11 @@ import org.deltava.security.MultiUserSecurityContext;
 import org.deltava.security.command.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 3.4
  */
 
@@ -162,8 +161,8 @@ public class JobPostingCommand extends AbstractFormCommand {
 			
 			// Load hiring manager choices
 			Collection<Pilot> hMgrs = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			hMgrs.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-			hMgrs.addAll(pdao.getByRole("HireMgr", SystemData.get("airline.db")));
+			hMgrs.addAll(pdao.getByRole("HR", ctx.getDB()));
+			hMgrs.addAll(pdao.getByRole("HireMgr", ctx.getDB()));
 			hMgrs.addAll(pdao.getPilotsByRank(Rank.CP));
 			ctx.setAttribute("hireMgrs", hMgrs, REQUEST);
 			

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,12 +15,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.TransferAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -75,7 +73,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			
 			// Get the requested equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType newEQ = eqdao.get(txreq.getEquipmentType(), SystemData.get("airline.db"));
+			EquipmentType newEQ = eqdao.get(txreq.getEquipmentType(), ctx.getDB());
 			EquipmentType currEQ = eqdao.get(usr.getEquipmentType(), ud.getDB());
 			ctx.setAttribute("currentEQ", currEQ, REQUEST);
 			ctx.setAttribute("eqType", newEQ, REQUEST);

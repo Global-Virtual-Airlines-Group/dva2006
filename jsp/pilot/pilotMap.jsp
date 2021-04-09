@@ -23,13 +23,13 @@
 <script>
 golgotha.pilotMap.deleteMarker = function(id)
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('post', 'pilotmapclear.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
-		var mrk = golgotha.pilotMap.mrks[x];
+		const mrk = golgotha.pilotMap.mrks[x];
 		if (mrk.ID == id) {
 			golgotha.pilotMap.mrks.remove(mrk);
 			mrk.setMap(null);
@@ -94,11 +94,11 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
-var mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
@@ -109,7 +109,7 @@ golgotha.pilotMap.pBar.getDiv().style.top = '30px';
 map.controls[google.maps.ControlPosition.RIGHT_TOP].push(golgotha.pilotMap.pBar.getDiv());
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	hq.setMap(map);
-	var xmlreq = golgotha.pilotMap.generateXMLRequest();
+	const xmlreq = golgotha.pilotMap.generateXMLRequest();
 	xmlreq.send(null);	
 });
 </script>

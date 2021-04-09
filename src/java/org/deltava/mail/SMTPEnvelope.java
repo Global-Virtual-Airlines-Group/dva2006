@@ -9,7 +9,7 @@ import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 
 /**
  * A bean to aggregate SMTP message information.
@@ -18,7 +18,7 @@ import org.deltava.beans.EMailAddress;
  * @since 1.0
  */
 
-class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEnvelope> {
+class SMTPEnvelope implements NotificationEnvelope<Address> {
 
 	private final EMailAddress _msgFrom;
 	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
@@ -63,12 +63,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 		return _body;
 	}
 	
-	/**
-	 * Returns the creation date.
-	 * @return the date/time the envelope was created
-	 */
+	@Override
 	public Instant getCreatedOn() {
 		return _createdOn;
+	}
+	
+	@Override
+	public Protocol getProtocol() {
+		return Protocol.SMTP;
 	}
 
 	/**
@@ -117,6 +119,11 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 */
 	public Address[] getRecipients() {
 		return _msgTo.toArray(new InternetAddress[0]);
+	}
+	
+	@Override
+	public Address getEndpoint() {
+		return _msgTo.iterator().next();
 	}
 	
 	/**
@@ -286,14 +293,5 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 		// Get the first recipient
 		Address addr = _msgTo.iterator().next();
 		return addr.toString();
-	}
-	
-	/**
-	 * Compares two envelopes by comparing their creation date/times and recipients.
-	 */
-	@Override
-	public int compareTo(SMTPEnvelope e2) {
-		int tmpResult = _createdOn.compareTo(e2._createdOn);
-		return (tmpResult == 0) ? toString().compareTo(e2.toString()) : tmpResult;
 	}
 }

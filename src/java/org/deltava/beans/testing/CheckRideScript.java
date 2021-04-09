@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Check Ride scripts.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
-public abstract class CheckRideScript implements java.io.Serializable, Auditable, Comparable<CheckRideScript> {
+public abstract class CheckRideScript implements Auditable, Comparable<CheckRideScript> {
 
    protected String _programName;
    private String _desc;
@@ -61,9 +61,6 @@ public abstract class CheckRideScript implements java.io.Serializable, Auditable
       _desc = desc;
    }
    
-   /**
-    * Compares two check ride scripts by comparing their equipment types.
-    */
    @Override
    public int compareTo(CheckRideScript cs2) {
 	   return _programName.compareTo(cs2._programName);

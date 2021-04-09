@@ -1,4 +1,4 @@
-// Copyright 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.util.*;
@@ -10,12 +10,11 @@ import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display all IMAP mailboxes.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 2.2
  */
 
@@ -49,7 +48,7 @@ public class MailboxListCommand extends AbstractViewCommand {
         		IMAPConfiguration cfg = i.next();
         		Integer id = Integer.valueOf(cfg.getID());
         		UserData ud = udm.get(id);
-        		if ((ud == null) || (!ud.getDB().equals(SystemData.get("airline.db")))) {
+        		if ((ud == null) || (!ud.getDB().equals(ctx.getDB()))) {
         			i.remove();
         			udm.remove(id);
         		}

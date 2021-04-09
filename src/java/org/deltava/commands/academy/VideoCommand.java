@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 7.5
+ * @version 10.0
  * @since 1.0
  */
 
@@ -92,9 +92,9 @@ public class VideoCommand extends AbstractFormCommand {
 				mctxt.addData("video", video);
 
 				GetPilotDirectory pdao = new GetPilotDirectory(con);
-				pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-				pilots.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
-				pilots.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
+				pilots.addAll(pdao.getByRole("HR", ctx.getDB()));
+				pilots.addAll(pdao.getByRole("Instructor", ctx.getDB()));
+				pilots.addAll(pdao.getByRole("AcademyAdmin", ctx.getDB()));
 			}
 
 			// Start the transaction

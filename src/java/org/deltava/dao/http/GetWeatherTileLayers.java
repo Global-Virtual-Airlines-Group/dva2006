@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,20 +11,16 @@ import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load weather tile layers.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 8.0
  */
 
 public class GetWeatherTileLayers extends DAO {
-	
-	private static final Cache<CacheableCollection<WeatherTileLayer>> _cache = CacheManager.getCollection(WeatherTileLayer.class, "TWCSeriesList");
-	private static final String KEY = "$TWCSeriesList";
 	
 	/**
 	 * Loads available Weather tile layers.
@@ -33,16 +29,11 @@ public class GetWeatherTileLayers extends DAO {
 	 */
 	public Collection<WeatherTileLayer> getLayers() throws DAOException {
 		
-		// Check the cache
-		CacheableCollection<WeatherTileLayer> layers = _cache.get(KEY);
-		if (layers != null)
-			return layers;
-		
 		StringBuilder buf = new StringBuilder("https://api.weather.com/v3/TileServer/series/productSet?apiKey=");
 		buf.append(SystemData.get("security.key.twc"));
 		buf.append("&productSet=twcAll");
 		
-		layers = new CacheableSet<WeatherTileLayer>(KEY);
+		Collection<WeatherTileLayer> layers = new LinkedHashSet<WeatherTileLayer>();
 		try {
 			init (buf.toString());
 			try (InputStream in = getIn()) {
@@ -86,7 +77,6 @@ public class GetWeatherTileLayers extends DAO {
 			throw new DAOException(ie);
 		}
 		
-		_cache.add(layers);
 		return layers;
 	}
 }

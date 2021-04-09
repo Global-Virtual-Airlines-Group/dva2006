@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
@@ -61,7 +61,7 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statusOpts}" value="${issue.status}" /></td>
 </c:if>
 <c:if test="${!access.canResolve}">
- <td class="data bld"><fmt:defaultMethod var="${issue.status}" method="description" /></td>
+ <td class="data bld"><fmt:defaultMethod object="${issue.status}" method="description" /></td>
 </c:if>
 </tr>
 </c:if>

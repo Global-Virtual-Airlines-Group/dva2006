@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,12 +21,11 @@ import org.deltava.mail.*;
 import org.deltava.security.command.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -54,7 +53,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the DAO and the Flight Report to modify
 			GetFlightReports rdao = new GetFlightReports(con);
-			FlightReport fr = rdao.get(ctx.getID());
+			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Flight Report Not Found");
 
@@ -132,7 +131,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			if (fr.getStatus() == FlightStatus.OK) {
 				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
-				rdao.getCaptEQType(flights);
+				rdao.loadCaptEQTypes(p.getID(), flights, ctx.getDB());
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				flights.forEach(acchelper::add);
 			
@@ -165,7 +164,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the PIREP write DAO and perform the operation
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, fr.getStatus());
+			wdao.dispose(ctx.getDB(), ctx.getUser(), fr, fr.getStatus());
 
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {

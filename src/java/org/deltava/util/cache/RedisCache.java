@@ -1,14 +1,18 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.deltava.util.RedisUtils;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -17,7 +21,6 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	
 	private final String _bucket;
 	private final int _expiryTime;
-	private long _lastFlushTime;
 	private final LongAdder _errors = new LongAdder();
 	
 	/**
@@ -56,76 +59,60 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 		return expTime;
 	}
 	
-	/**
-	 * Returns the number of cache errors.
-	 * @return the number of errors
-	 */
 	@Override
 	public long getErrors() {
 		return _errors.longValue();
 	}
 
-	/**
-	 * Adds an entry to the cache.
-	 * @param entry the Cacheable object
-	 */
 	@Override
 	protected void addEntry(T entry) {
 		if (entry == null) return;
 		RedisUtils.write(createKey(entry.cacheKey()), getExpiryTime(entry), new RemoteCacheEntry<T>(entry));
 	}
-	
-	/**
-	 * Writes a null entry to the cache.
-	 * @param key the cache key
-	 */
+
+	@Override
+	public void addAll(Collection<? extends T> entries) {
+		if ((entries == null) || entries.isEmpty()) return;
+		try (Jedis jc = RedisUtils.getConnection()) {
+			Pipeline jp = jc.pipelined();
+			for (T entry : entries) {
+				long expiry = getExpiryTime(entry);
+				byte[] rawKey = RedisUtils.encodeKey(createKey(entry.cacheKey()));
+				byte[] data = RedisUtils.write(new RemoteCacheEntry<T>(entry));
+				long expTime = (expiry <= 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
+				jc.set(rawKey, data);
+				jc.expireAt(rawKey, expTime);
+			}
+			
+			jp.sync();
+		}
+	}
+
 	@Override
 	protected void addNullEntry(Object key) {
 		if (key == null) return;
 		RedisUtils.write(createKey(key), _expiryTime, new RemoteCacheEntry<T>(null));
 	}
 	
-	/**
-	 * Checks whether the cache contains a given key.
-	 * @param key the cache key
-	 * @return TRUE if the cache contains the key and is not expired, otherwsie FALSE
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean contains(Object key) {
-		String mcKey = createKey(key);
 		try {
-			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(mcKey);
-			if ((e != null) && (e.getCreatedOn() < _lastFlushTime)) {
-				RedisUtils.delete(mcKey);
-				return false;
-			} else if (e == null)
-				return false;
-			
-			return true;
+			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(createKey(key));
+			return (e != null);
 		} catch (Exception e) {
 			_errors.increment();
 			return false;
 		}
 	}
 
-	/**
-	 * Retrieves an object from the cache.
-	 * @param key the Cache key
-	 * @return the object, or null if not found 
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public T get(Object key) {
 		request();
-		String mcKey = createKey(key);
 		try {
-			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(mcKey);
-			if (e == null)
-				return null;
-			else if (e.getCreatedOn() < _lastFlushTime)
-				RedisUtils.delete(mcKey);
-			
+			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(createKey(key));
+			if (e == null) return null;
 			T data = e.get();
 			hit();
 			return data;
@@ -135,10 +122,6 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 		}
 	}
 	
-	/**
-	 * Removes an object from the cache.
-	 * @param key the cache key
-	 */
 	@Override
 	public void remove(Object key) {
 		try {
@@ -148,13 +131,10 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 		}
 	}
 
-	/**
-	 * Clears the cache. This does not expire any memcached objects, but simply causes
-	 * them to be discarded when fetched.
-	 */
 	@Override
 	public void clear() {
-		_lastFlushTime = System.currentTimeMillis();
+		Collection<String> keys = RedisUtils.keys(createKey("*"));
+		RedisUtils.delete(keys.toArray(new String[0]));
 	}
 	
 	/**
@@ -171,5 +151,11 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 			_errors.increment();
 			return 0;
 		}
+	}
+	
+	@Override
+	public int size() {
+		Collection<String> keys = RedisUtils.keys(createKey("*"));
+		return keys.size();
 	}
 }

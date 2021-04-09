@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -41,21 +41,28 @@ public class RoutePlotCommand extends AbstractCommand {
 			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(SystemData.get("airline.code")), REQUEST);
 			
 			// Look for a draft PIREP
+			final int id = ctx.getID(); Simulator sim = Simulator.UNKNOWN;
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport dfr = frdao.get(ctx.getID());
-			if ((dfr != null) && (dfr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID())) {
+			DraftFlightReport dfr = frdao.getDraftReports(ctx.getUser().getID(), null, ctx.getDB()).stream().filter(fr -> fr.getID() == id).map(DraftFlightReport.class::cast).findAny().orElse(null);
+			if (dfr != null) {
 				ctx.setAttribute("flight", dfr, REQUEST);
 				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
 				ctx.setAttribute("airportsD", getAirports(dfr.getAirportD()), REQUEST);
 				ctx.setAttribute("airportsA", getAirports(dfr.getAirportA()), REQUEST);
-				if (dfr.getSimulator() != Simulator.UNKNOWN)
-					ctx.setAttribute("sim", dfr.getSimulator(), REQUEST);
+				sim = dfr.getSimulator();
 				
 				// Get aircraft profile and SID runways
 				GetNavRoute navdao = new GetNavRoute(con);
 				Aircraft a = acdao.get(dfr.getEquipmentType());
 				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 				Collection<String> sidRwys = navdao.getSIDRunways(dfr.getAirportD());
+				
+				// Load gates
+				GetGates gdao = new GetGates(con);
+				Gate gD = gdao.getGate(dfr.getAirportD(), sim, dfr.getGateD());
+				Gate gA = gdao.getGate(dfr.getAirportA(), sim, dfr.getGateA());
+				ctx.setAttribute("gatesD", CollectionUtils.nonNull(gD), REQUEST);
+				ctx.setAttribute("gatesA", CollectionUtils.nonNull(gA), REQUEST);
 				
 				// Get departure runways
 				GetACARSRunways rwdao = new GetACARSRunways(con);
@@ -95,14 +102,19 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
 				ctx.setAttribute("airportsA", Collections.emptyList(), REQUEST);
-				
-				// Load the previous approved/submitted flight report
+				ctx.setAttribute("gatesD", Collections.emptyList(), REQUEST);
+				ctx.setAttribute("gatesA", Collections.emptyList(), REQUEST);
+			}
+			
+			// Determin the simulator from the previous approved/submitted flight report
+			if (sim == Simulator.UNKNOWN) {
 				frdao.setQueryMax(15);
 				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 				Optional<FlightReport> fr = results.stream().filter(fl -> (fl.getStatus() != FlightStatus.DRAFT) && (fl.getStatus() != FlightStatus.REJECTED)).findFirst();
 				if (fr.isPresent())
 					ctx.setAttribute("sim", fr.get().getSimulator(), REQUEST);
-			}
+			} else
+				ctx.setAttribute("sim", sim, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

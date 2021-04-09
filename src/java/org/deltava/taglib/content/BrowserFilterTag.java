@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 5.0
+ * @version 10.0
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -20,30 +20,12 @@ public class BrowserFilterTag extends BrowserInfoTag {
 	
 	private final boolean _html5Enabled = SystemData.getBoolean("html.v5");
 
-	private boolean _showIE8;
-	private boolean _showIE9;
 	private boolean _showMoz;
 	private boolean _showWebKit;
 	private boolean _showOpera;
 	private boolean _showHuman;
 	private boolean _showHTML4;
 	private boolean _showHTML5;
-	
-	/**
-	 * Marks this content as visible to Internet Explorer 8 users.
-	 * @param showIE TRUE if the content should be shown to IE8 users, otherwise FALSE
-	 */
-	public void setIe8(boolean showIE) {
-		_showIE8 = showIE;
-	}
-	
-	/**
-	 * Marks this content as visible to Internet Explorer 9 users.
-	 * @param showIE TRUE if the content should be shown to IE9 users, otherwise FALSE
-	 */
-	public void setIe9(boolean showIE) {
-		_showIE9 = showIE;
-	}
 	
 	/**
 	 * Marks this content as visible to WebKit/Safari/Chrome users.
@@ -111,12 +93,7 @@ public class BrowserFilterTag extends BrowserInfoTag {
 			return EVAL_BODY_INCLUDE;
 		
 		BrowserType bt = bctxt.getBrowserType();
-		if (bt == BrowserType.IE) {
-			if (_showIE8 && (bctxt.getMajor() == 8))
-				return EVAL_BODY_INCLUDE;
-			if (_showIE9 && (bctxt.getMajor() == 9))
-				return EVAL_BODY_INCLUDE;
-		} else if ((bt == BrowserType.FIREFOX) && _showMoz)
+		if ((bt == BrowserType.FIREFOX) && _showMoz)
 			return EVAL_BODY_INCLUDE;
 		else if (((bt == BrowserType.CHROME) || (bt == BrowserType.WEBKIT)) && _showWebKit)
 			return EVAL_BODY_INCLUDE;
@@ -137,14 +114,9 @@ public class BrowserFilterTag extends BrowserInfoTag {
 		return EVAL_PAGE;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
-		_showIE8 = false;
-		_showIE9 = false;
 		_showMoz = false;
 		_showWebKit = false;
 		_showOpera = false;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -163,10 +163,10 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					
 					if (usr.getPilotNumber() > 0)
 						p.setPilotNumber(usr.getPilotNumber());
-					pwdao.write(p);
+					pwdao.write(p, ctx.getDB());
 				} else if (p.getStatus() == PilotStatus.ACTIVE) {
 					p.setStatus(PilotStatus.RETIRED);
-					pwdao.write(p);
+					pwdao.write(p, ctx.getDB());
 				}
 			}
 			
@@ -183,7 +183,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			usr.setPilotNumber(newID.getUserID());
 			
 			// Write the pilot profile
-			pwdao.write(usr);
+			pwdao.write(usr, ctx.getDB());
 
 			// Write status updates
 			SetStatusUpdate sudao = new SetStatusUpdate(con);

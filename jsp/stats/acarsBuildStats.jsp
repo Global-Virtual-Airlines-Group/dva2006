@@ -49,7 +49,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function(cb) {
 	if (!golgotha.form.comboSet(cb)) return false;

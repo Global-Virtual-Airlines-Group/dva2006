@@ -70,7 +70,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * Returns the current size of the cache.
 	 * @return the number of entries in the cache
 	 */
-	public final int size() {
+	public int size() {
 		return _cache.size();
 	}
 

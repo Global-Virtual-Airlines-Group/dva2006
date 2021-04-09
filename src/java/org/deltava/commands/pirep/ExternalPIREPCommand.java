@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2011, 2012, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2011, 2012, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.0
  */
 
@@ -93,7 +93,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			if (ac.getCanDispose()) {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				GetSchedule scdao = new GetSchedule(con);
-				scdao.setSources(rsdao.getSources(true));
+				scdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				FlightTime ft = scdao.getFlightTime(fr, ud.getDB());
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				

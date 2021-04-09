@@ -1,67 +1,55 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.lang.reflect.Method;
-
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.util.StringUtils;
+import org.deltava.taglib.content.DefaultMethodValueTag;
 
 /**
  * A JSP tag to call default interface methods since EL is stupid.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 9.0
  */
 
-public class DefaultMethodTag extends TagSupport {
+public class DefaultMethodTag extends DefaultMethodValueTag {
 
-	private Object _o;
-	private String _methodName;
-
-	/**
-	 * Sets the object to execute against. 
-	 * @param o the Object
-	 */
-	public void setVar(Object o) {
-		_o = o;
-	}
-
-	/**
-	 * Sets the method name to find and call.
-	 * @param methodName the method name, minus get or set
-	 */
-	public void setMethod(String methodName) {
-		_methodName = methodName;
-	}
+	private String _value;
+	private String _empty;
 	
 	/**
-	 * Prints the results of the specified method to the JSP output stream.
-	 * @return EVAL_PAGE always
-	 * @throws JspException if an error occurs 
+	 * Sets the text to render if the object is null.
+	 * @param v the value
 	 */
+	public void setEmpty(String v) {
+		_empty = v;
+	}
+
+	@Override
+	public int doStartTag() throws JspException {
+		try {
+			_value = hasObject() ? String.valueOf(getValue()) : _empty;
+			return SKIP_BODY;
+		} catch (Exception e) {
+			throw new JspException(e);
+		}			
+	}
+	
 	@Override
 	public int doEndTag() throws JspException {
-		
-		// Get proper method name
-		if (!_methodName.endsWith("()"))
-			_methodName = StringUtils.getPropertyMethod(_methodName);
-		
 		try {
-			Method m = _o.getClass().getMethod(_methodName);
-			if (m == null)
-				throw new IllegalArgumentException("Cannot find " + _o.getClass().getName() + "#" + _methodName);
-			
-			// Execute and output
-			Object r = m.invoke(_o);
-			pageContext.getOut().write(String.valueOf(r));
+			pageContext.getOut().write(_value);
+			return EVAL_PAGE;
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
 			release();
 		}
-		
-		return EVAL_PAGE;
+	}
+	
+	@Override
+	public void release() {
+		super.release();
+		_empty = null;
 	}
 }

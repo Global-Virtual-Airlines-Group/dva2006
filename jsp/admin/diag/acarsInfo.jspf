@@ -22,7 +22,7 @@
  <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
 </el:table>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();

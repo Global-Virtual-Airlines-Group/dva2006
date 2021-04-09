@@ -15,7 +15,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.searchStr, l:5, t:'Search Term'});
@@ -83,7 +83,7 @@ golgotha.local.validate = function(f) {
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
- <td class="sec bld small nophone"><fmt:defaultMethod var="${issue.status}" method="description" /></td>
+ <td class="sec bld small nophone"><fmt:defaultMethod object="${issue.status}" method="description" /></td>
  <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></td>
  <td class="nophone"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>

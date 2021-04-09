@@ -1,24 +1,28 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.CacheManager;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
 public class SetFlightReport extends DAO {
+	
+	private static final Cache<CacheableList<YearlyTotal>> _eliteTotalCache = CacheManager.getCollection(YearlyTotal.class, "EliteYearlyTotal");
 	
 	/**
 	 * Initialize the Data Access Object.
@@ -101,7 +105,7 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS (PILOT_ID, RANKING, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, "
-			+ "SUBMITTED, EVENT_ID, ASSIGN_ID, PAX, LOADFACTOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "SUBMITTED, EVENT_ID, ASSIGN_ID, TOUR_ID, PAX, LOADFACTOR, FLIGHT_TYPE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		// Set the prepared statement parameters
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
@@ -122,8 +126,10 @@ public class SetFlightReport extends DAO {
 			ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
 			ps.setInt(16, fr.getDatabaseID(DatabaseID.EVENT));
 			ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
-			ps.setInt(18, fr.getPassengers());
-			ps.setDouble(19, fr.getLoadFactor());
+			ps.setInt(18, fr.getDatabaseID(DatabaseID.TOUR));
+			ps.setInt(19, fr.getPassengers());
+			ps.setDouble(20, fr.getLoadFactor());
+			ps.setInt(21, fr.getFlightType().ordinal());
 			executeUpdate(ps, 1);
 		}
 	}
@@ -137,7 +143,7 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, DISPOSAL_ID=?, SUBMITTED=?, "
-			+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, PAX=?, LOADFACTOR=? WHERE (ID=?)");
+			+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, TOUR_ID=?, PAX=?, LOADFACTOR=?, FLIGHT_TYPE=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
@@ -158,9 +164,32 @@ public class SetFlightReport extends DAO {
 			ps.setTimestamp(15, createTimestamp(fr.getDisposedOn()));
 			ps.setInt(16, fr.getDatabaseID(DatabaseID.ASSIGN));
 			ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
-			ps.setInt(18, fr.getPassengers());
-			ps.setDouble(19, fr.getLoadFactor());
-			ps.setInt(20, fr.getID());
+			ps.setInt(18, fr.getDatabaseID(DatabaseID.TOUR));
+			ps.setInt(19, fr.getPassengers());
+			ps.setDouble(20, fr.getLoadFactor());
+			ps.setInt(21, fr.getFlightType().ordinal());
+			ps.setInt(22, fr.getID());
+			executeUpdate(ps, 1);
+		}
+	}
+	
+	/*
+	 * Helper method to write draft flight reprot fields to the database.
+	 */
+	private void writeDraft(FlightReport fr, String dbName) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".PIREP_DRAFT WHERE (ID=?)")) {
+			ps.setInt(1, fr.getID());
+			executeUpdate(ps, 0);
+		}
+		
+		if (!(fr instanceof DraftFlightReport)) return;
+		DraftFlightReport dfr = (DraftFlightReport) fr;
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PIREP_DRAFT (ID, TIME_D, TIME_A, GATE_D, GATE_A) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setInt(1, dfr.getID());
+			ps.setTimestamp(2, (dfr.getTimeD() == null) ? null : Timestamp.valueOf(dfr.getTimeD().toLocalDateTime()));
+			ps.setTimestamp(3, (dfr.getTimeA() == null) ? null : Timestamp.valueOf(dfr.getTimeA().toLocalDateTime()));
+			ps.setString(4, dfr.getGateD());
+			ps.setString(5, dfr.getGateA());
 			executeUpdate(ps, 1);
 		}
 	}
@@ -216,7 +245,8 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean updatePaxCount(int pirepID) throws DAOException {
-		UserData ud = new UserData(SystemData.get("airline.db"), "PILOTS", SystemData.get("airline.domain"));
+		AirlineInformation ai = SystemData.getApp(null);
+		UserData ud = new UserData(ai.getDB(), "PILOTS", ai.getDomain());
 		return updatePaxCount(pirepID, ud);
 	}
 	
@@ -243,6 +273,50 @@ public class SetFlightReport extends DAO {
 		}
 	}
 	
+	/**
+	 * Writes Elite program scores to the database.
+	 * @param sc the FlightEliteScore
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeElite(FlightEliteScore sc, String dbName) throws DAOException {
+		String db = formatDBName(dbName);
+		try {
+			startTransaction();
+		
+			// Write the core entry
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + db + ".PIREP_ELITE (ID, LEVEL, YR, DISTANCE, SCORE) VALUES (?, ?, ?, ?, ?)")) {
+				ps.setInt(1, sc.getID());
+				ps.setString(2, sc.getEliteLevel());
+				ps.setInt(3, sc.getYear());
+				ps.setInt(4, sc.getDistance());
+				ps.setInt(5, sc.getPoints());
+				executeUpdate(ps, 1);
+			}
+		
+			// Write the child rows
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + db + ".PIREP_ELITE_ENTRIES (ID, SEQ, SCORE, BONUS, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
+				ps.setInt(1, sc.getID());
+				for (EliteScoreEntry ese : sc.getEntries()) {
+					ps.setInt(2, ese.getSequence());
+					ps.setInt(3, ese.getPoints());
+					ps.setBoolean(4, ese.isBonus());
+					ps.setString(5, ese.getMessage());
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, sc.getEntries().size());
+			}
+			
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		} finally {
+			_eliteTotalCache.remove(Integer.valueOf(sc.getAuthorID()));
+		}
+	}
+	
 	/*
 	 * Helper method to write promotion equipment types.
 	 */
@@ -254,15 +328,17 @@ public class SetFlightReport extends DAO {
 			executeUpdate(ps, 0);
 		}
 
-		// Queue the new records
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)")) {
-			ps.setInt(1, id);
-			for (String eqType : eqTypes) {
-				ps.setString(2, eqType);
-				ps.addBatch();
-			}
+		// Write the new records
+		if (!eqTypes.isEmpty()) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)")) {
+				ps.setInt(1, id);
+				for (String eqType : eqTypes) {
+					ps.setString(2, eqType);
+					ps.addBatch();
+				}
 
-			executeUpdate(ps, 1, eqTypes.size());
+				executeUpdate(ps, 1, eqTypes.size());
+			}
 		}
 	}
 
@@ -353,6 +429,7 @@ public class SetFlightReport extends DAO {
 			writeCore(fr, dbName);
 			writeComments(fr, dbName);
 			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType());
+			writeDraft(fr, dbName);
 			writeHistory(fr.getStatusUpdates(), dbName);
 			commitTransaction();
 		} catch (SQLException se) {
@@ -487,7 +564,7 @@ public class SetFlightReport extends DAO {
 				ps.setInt(1, upd.getID());
 				ps.setInt(2, upd.getAuthorID());
 				ps.setInt(3, upd.getType().ordinal());
-				ps.setTimestamp(4, createTimestamp(upd.getCreatedOn()));
+				ps.setTimestamp(4, createTimestamp(upd.getDate()));
 				ps.setString(5, upd.getDescription());
 				ps.addBatch();
 			}

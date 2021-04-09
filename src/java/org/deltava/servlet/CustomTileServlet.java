@@ -1,6 +1,8 @@
 // Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
+import java.time.Instant;
+import java.util.Collection;
 import java.io.IOException;
 
 import javax.servlet.http.*;
@@ -10,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.redis.GetTiles;
+import org.deltava.dao.file.GetTiles;
 import org.gvagroup.tile.PNGTile;
 
 /**
@@ -49,9 +51,13 @@ public class CustomTileServlet extends TileServlet {
 		byte[] data = EMPTY;
 		try {
 			GetTiles trdao = new GetTiles();
-			PNGTile pt = trdao.getTile(addr.getType(), null, addr);
-			if (pt != null)
-				data = pt.getData();
+			Collection<Instant> dates = trdao.getDates(addr.getType());
+			if (!dates.isEmpty()) {
+				Instant dt = dates.iterator().next();
+				PNGTile pt = trdao.getTile(addr.getType(), dt, addr);
+				if (pt != null)
+					data = pt.getData();
+			}
 		} catch (DAOException e) {
 			log.error("Error fetching " + addr, e);
 		}

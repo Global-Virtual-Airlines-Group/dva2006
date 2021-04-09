@@ -1,11 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
-import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -91,14 +90,14 @@ public class EventSaveCommand extends AbstractCommand {
 			} else if (!deletePDF) {
 				String btxt = ctx.getParameter("briefing");
 				if (!StringUtils.isEmpty(btxt))
-					e.setBriefing(new Briefing(btxt.getBytes(StandardCharsets.UTF_8)));
+					e.setBriefing(new Briefing(btxt));
 				else
 					e.setBriefing(null);
 			} else
 				e.setBriefing(null);
 
 			// Populate fields from the request
-			e.setNetwork(OnlineNetwork.fromName(ctx.getParameter("network")));
+			e.setNetwork(EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null));
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
 			if (!e.getCanSignup() && !StringUtils.isEmpty(ctx.getParameter("signupURL")))
 				e.setSignupURL(ctx.getParameter("signupURL"));

@@ -18,7 +18,7 @@
 <content:js name="airportRefresh" />
 <content:js name="datePicker" />
 <content:googleAnalytics eventSupport="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airline, t:'Airline'});
@@ -173,7 +173,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 const f = document.forms[0];
 const cfg = golgotha.airportLoad.config;
 cfg.doICAO = ${useICAO}; cfg.useSched = false;

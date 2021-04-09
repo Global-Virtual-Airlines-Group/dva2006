@@ -43,6 +43,8 @@ public class SetCoolerMessage extends DAO {
 			msg.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("CoolerThreads", Integer.valueOf(msg.getThreadID()));
 		}
 	}
 	
@@ -129,8 +131,6 @@ public class SetCoolerMessage extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
-		} finally {
-			CacheManager.invalidate("CoolerChannels", t.getChannel());
 		}
 	}
 	
@@ -178,8 +178,7 @@ public class SetCoolerMessage extends DAO {
 		try {
 			startTransaction();
 			lockThreadRow(id);
-			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
-					+ "VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1")) {
 				ps.setInt(1, id);
 				executeUpdate(ps, 0);
 			}

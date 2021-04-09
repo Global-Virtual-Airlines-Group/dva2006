@@ -6,6 +6,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Issue Updated</title>
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,8 +39,7 @@ The Issue <span class="pri bld">${issue.subject}</span> has been modified.<br />
 </c:otherwise>
 </c:choose>
 <br />
-The Issue will automatically be displayed within 3 seconds. If your browser does not return to the Issue, you can <el:cmd className="sec bld" url="issue" link="${issue}" op="read">click here</el:cmd>
-to display the Issue.<br />
+The Issue will automatically be displayed within 3 seconds. If your browser does not return to the Issue, you can <el:cmd className="sec bld" url="issue" link="${issue}" op="read">Click Here</el:cmd> to display the Issue.<br />
 <br />
 To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Click Here</el:cmd>.<br />
 <br />

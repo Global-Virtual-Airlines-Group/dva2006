@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		criteria.setAirportD(aD);
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setSortBy("AIRPORT_D, AIRPORT_A");
-		criteria.setDBName(SystemData.get("airline.db"));
+		criteria.setDBName(ctx.getDB());
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("AcademyAudit") || ctx.isUserInRole("AcademyAdmin") ? Inclusion.ALL : Inclusion.EXCLUDE);
 		criteria.setExcludeHistoric(Inclusion.ALL);
 
@@ -55,7 +55,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 
 			// Load schedule import metadata
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true, ctx.getDB());
 			ctx.setAttribute("scheduleSources", srcs, REQUEST);
 
 			// Load airports

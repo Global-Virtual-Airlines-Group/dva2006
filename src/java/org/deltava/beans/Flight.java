@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
@@ -65,13 +65,12 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
      * Returns a text representation of the Flight in the format "CODE### Leg #".
      * @return the flight code
      * @see Flight#getShortCode()
+     * @see Flight#getLegCode()
      * @see Flight#toString()
      */
     public String getFlightCode() {
         StringBuilder buf = new StringBuilder(_airline.getCode());
-        buf.append(df.format(_flightNumber));
-        buf.append(" Leg ");
-        buf.append(String.valueOf(_leg));
+        buf.append(df.format(_flightNumber)).append(" Leg ").append(_leg);
         return buf.toString();
     }
     
@@ -83,6 +82,17 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
     public String getShortCode() {
     	StringBuilder buf = new StringBuilder(_airline.getCode());
         buf.append(df.format(_flightNumber));
+        return buf.toString();
+    }
+    
+    /**
+     * Returns an abbreviated version of the Flight code with a dash instead of text.
+     * @return the flight code
+     * @see Flight#getFlightCode()
+     */
+    public String getLegCode() {
+    	StringBuilder buf = new StringBuilder(_airline.getCode());
+        buf.append(df.format(_flightNumber)).append('-').append(_leg);
         return buf.toString();
     }
 
@@ -170,20 +180,11 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
         _airportD = a;
     }
 
-    /**
-     * Compares this Flight to another Flight object by comparing Airline, Flight Number and Leg.
-     * @param o2 the object to compare with
-     * @throws ClassCastException if o2 is not a FlightNumber object
-     * @see Comparable#compareTo(Object)
-     */
     @Override
     public int compareTo(Object o2) {
     	return FlightNumber.compare(this, (FlightNumber) o2);
     }
 
-    /**
-     * Tests for equality by comparing the Airline Code, Flight Number and Leg.
-     */
     @Override
     public boolean equals(Object o) {
     	return (o instanceof FlightNumber) && (compareTo(o) == 0);

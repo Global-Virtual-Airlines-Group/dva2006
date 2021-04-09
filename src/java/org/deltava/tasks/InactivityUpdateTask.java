@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class InactivityUpdateTask extends Task {
 					ctx.startTX();
 					
 					// Write the update
-					sudao.write(upd);
+					sudao.write(upd, ctx.getDB());
 					
 					// Check if we have a flight academy entry
 					Course c = courses.get(id);
@@ -151,7 +151,7 @@ public class InactivityUpdateTask extends Task {
 
 					// Deactivate the Pilot and the email box
 					p.setStatus(PilotStatus.INACTIVE);
-					pwdao.write(p);
+					pwdao.write(p, ctx.getDB());
 					pewdao.disable(p.getID());
 					
 					// Remove the user from any destination directories
@@ -203,7 +203,7 @@ public class InactivityUpdateTask extends Task {
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.INACTIVITY);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
-					sudao.write(upd);
+					sudao.write(upd, ctx.getDB());
 
 					// Make sure we have a notification entry
 					iwdao.setInactivity(p.getID(), inactiveDays, true);

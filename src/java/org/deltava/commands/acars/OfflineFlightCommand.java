@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -12,20 +12,16 @@ import java.time.Instant;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
-import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.crypt.MessageDigester;
-import org.deltava.comparators.GeoComparator;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
@@ -34,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.4
  */
 
@@ -230,131 +226,34 @@ public class OfflineFlightCommand extends AbstractCommand {
 			CacheManager.invalidate("Pilots", ctx.getUser().cacheKey());
 			Pilot p = pdao.get(ctx.getUser().getID());
 			
+			// Init the helper
+			FlightSubmissionHelper fsh = new FlightSubmissionHelper(con, afr, p);
+			fsh.setAirlineInfo(SystemData.get("airline.code"), ctx.getDB());
+			fsh.setACARSInfo(inf);
+			
 			// Get the SID/STAR data
 			GetNavRoute nvdao = new GetNavRoute(con);
 			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.Type.SID, flight.getSID(), true));
 			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.Type.STAR, flight.getSTAR(), true));
 			
-			// Create comments field
-			Collection<String> comments = new LinkedHashSet<String>();
-			
 			// Check for Draft PIREPs by this Pilot
-			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr, SystemData.get("airline.db"));
-			if (!dFlights.isEmpty()) {
-				FlightReport fr = dFlights.get(0);
-				afr.setID(fr.getID());
-				afr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
-				afr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
-				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
-				afr.setAttribute(FlightReport.ATTR_DIVERT, fr.hasAttribute(FlightReport.ATTR_DIVERT));
-				if (!StringUtils.isEmpty(fr.getComments()))
-					comments.add(fr.getComments());
-			}
-			
-			// Check if this Flight Report counts for promotion
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), afr.getEquipmentType());
+			fsh.checkFlightReports();
 
-			// Loop through the eq types, not all may have the same minimum promotion stage length!!
-			if (promoEQ.contains(p.getEquipmentType())) {
-				FlightPromotionHelper helper = new FlightPromotionHelper(afr);
-				for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
-					String pType = i.next();
-					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-					boolean isOK = helper.canPromote(pEQ);
-					if (!isOK) {
-						i.remove();
-						comments.add("Not eligible for promotion: " + helper.getLastComment());
-					}
-				}
-				
-				afr.setCaptEQType(promoEQ);
-			}
+			// Check rating
+			fsh.checkRatings();
 			
-			// Check that the user has an online network ID
-			OnlineNetwork network = afr.getNetwork();
-			if ((network != null) && (!p.hasNetworkID(network))) {
-				afr.addStatusUpdate(0, HistoryType.SYSTEM, "No " + network.toString() + " ID, resetting Online Network flag");
-				afr.setNetwork(null);
-			} else if ((network == null) && (afr.getDatabaseID(DatabaseID.EVENT) != 0)) {
-				afr.addStatusUpdate(0, HistoryType.SYSTEM, "Filed offline, resetting Online Event flag");
-				afr.setDatabaseID(DatabaseID.EVENT, 0);
-			}
+			// Check Online Network / Event
+			fsh.checkOnlineNetwork();
+			fsh.checkOnlineEvent();
 			
-			// Check if it's an Online Event flight
-			GetEvent evdao = new GetEvent(con);
-			EventFlightHelper efr = new EventFlightHelper(afr);
-			if ((afr.getDatabaseID(DatabaseID.EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				List<Event> events = evdao.getPossibleEvents(afr, SystemData.get("airline.code"));
-				events.removeIf(e -> !efr.matches(e));
-				if (!events.isEmpty()) {
-					Event e = events.get(0);
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					afr.setDatabaseID(DatabaseID.EVENT, e.getID());
-				}
-			}
+			// Check aircraft
+			fsh.checkAircraft();
 			
-			// Check that the event hasn't expired
-			if (afr.getDatabaseID(DatabaseID.EVENT) != 0) {
-				Event e = evdao.get(afr.getDatabaseID(DatabaseID.EVENT));
-				if ((e != null) && !efr.matches(e)) {
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, efr.getMessage());
-					afr.setDatabaseID(DatabaseID.EVENT, 0);
-				} else {
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Unknown Online Event - " + afr.getDatabaseID(DatabaseID.EVENT));
-					afr.setDatabaseID(DatabaseID.EVENT, 0);
-				}
-			}
-			
-			// Check for historic aircraft
-			GetAircraft acdao = new GetAircraft(con);
-			Aircraft a = acdao.get(afr.getEquipmentType());
-			if (a == null)
-				throw notFoundException("Invalid equipment type - " + afr.getEquipmentType());
-			
-			// Check if the user is rated to fly the aircraft
-			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
-			afr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
-			EquipmentType eq = eqdao.get(p.getEquipmentType());
-			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
-				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
+			// Check Tour
+			fsh.checkTour();
 
-			// Check for excessive distance and diversion
-			afr.setAttribute(FlightReport.ATTR_RANGEWARN, (afr.getDistance() > opts.getRange()));
-			afr.setAttribute(FlightReport.ATTR_DIVERT, !afr.getAirportA().equals(inf.getAirportA()));
-
-			// Check for excessive weight
-			if ((a.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > a.getMaxTakeoffWeight()))
-				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-			else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
-				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-			
-			// Calculate the load factor
-			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
-			if (eInfo != null) {
-				LoadFactor lf = new LoadFactor(eInfo);
-				double loadFactor = lf.generate(afr.getSubmittedOn());
-				afr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
-				afr.setLoadFactor(loadFactor);
-			}
-			
-			// Check if it's a Flight Academy flight
-			GetRawSchedule rsdao  = new GetRawSchedule(con);
-			GetScheduleSearch sdao = new GetScheduleSearch(con);
-			sdao.setSources(rsdao.getSources(true));
-			ScheduleEntry sEntry = sdao.get(afr);
-			boolean isAcademy = a.getAcademyOnly() || ((sEntry != null) && sEntry.getAcademy());
-			Course c = null;
-			if (isAcademy) {
-				GetAcademyCourses crsdao = new GetAcademyCourses(con);
-				Collection<Course> courses = crsdao.getByPilot(ctx.getUser().getID());
-				c = courses.stream().filter(crs -> (crs.getStatus() == org.deltava.beans.academy.Status.STARTED)).findAny().orElse(null);
-				boolean isINS = p.isInRole("Instructor") ||  p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit") || p.isInRole("Examiner");
-				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null) || isINS);	
-				if (!afr.hasAttribute(FlightReport.ATTR_ACADEMY))
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, "Removed Flight Academy status - No active Course");
-			}
+			// Check if it's a Flight Academy flight / schedule
+			fsh.checkSchedule();
 			
 			// Combine offline and online position reports
 			Collection<ACARSRouteEntry> positions = new TreeSet<ACARSRouteEntry>(flight.getPositions().comparator());
@@ -364,97 +263,24 @@ public class OfflineFlightCommand extends AbstractCommand {
 				positions.addAll(posdao.getRouteEntries(inf.getID(), false));
 			}
 			
-			// Check ETOPS
-			ETOPSResult etopsClass = ETOPSHelper.classify(positions); 
-			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, etopsClass.getResult()));
-			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + etopsClass);
+			fsh.addPositions(positions);
 			
-			// Check prohibited airspace
-			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, false);
-			if (!rstAirspaces.isEmpty()) {
-				afr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
-				afr.addStatusUpdate(0, HistoryType.SYSTEM, "Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
-			}
+			// Check ETOPS / airspace
+			fsh.checkAirspace();
+			
+			// Calculate runway / gates
+			fsh.calculateGates();
+			fsh.calculateRunways();
+			
+			// Calculate the load factor
+			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA), false);
 			
 			// Check for inflight refueling and calculate fuel use
-			FuelUse fuelUse = FuelUse.validate(positions);
-			afr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
-			afr.setTotalFuel(fuelUse.getTotalFuel());
-			fuelUse.getMessages().forEach(fuelMsg -> afr.addStatusUpdate(0, HistoryType.SYSTEM, fuelMsg));
+			fsh.checkRefuel();
 
-			// Check the schedule database and check the route pair
-			FlightTime avgHours = sdao.getFlightTime(afr); ScheduleEntry onTimeEntry = null;
-			boolean isAssignment = (afr.getDatabaseID(DatabaseID.ASSIGN) != 0);
-			boolean isEvent = (afr.getDatabaseID(DatabaseID.EVENT) != 0);
-			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !inf.isScheduleValidated() && !isAssignment && !isEvent)
-				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
-			else if (avgHours.getFlightTime() > 0) {
-				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
-					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
-				
-				// Calculate timeliness of flight
-				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D");
-				ssc.setAirportD(afr.getAirportD()); ssc.setAirportA(afr.getAirportA()); ssc.setDBName(SystemData.get("airline.db"));
-				OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
-				afr.setOnTime(oth.validate(afr));
-				onTimeEntry = oth.getScheduleEntry();
-			}
-			
 			// Calculate average frame rate
 			afr.setAverageFrameRate(positions.stream().mapToInt(ACARSRouteEntry::getFrameRate).average().getAsDouble());
 				
-			// Save comments
-			if (!comments.isEmpty())
-				afr.setComments(StringUtils.listConcat(comments, "\r\n"));
-			
-			// Load the departure runway
-			GetNavAirway navdao = new GetNavAirway(con);
-			Runway rD = null;
-			if (afr.getTakeoffHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
-				Runway r = lr.getBestRunway();
-				if (r != null) {
-					int dist = r.distanceFeet(afr.getTakeoffLocation());
-					rD = new RunwayDistance(r, dist);
-					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < opts.getTakeoffRunwayLength()));
-					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !opts.getUseSoftRunways()));
-				}
-			}
-
-			// Load the arrival runway
-			Runway rA = null;
-			if (afr.getLandingHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
-				Runway r = lr.getBestRunway();
-				if (r != null) {
-					int dist = r.distanceFeet(afr.getLandingLocation());
-					rA = new RunwayDistance(r, dist);
-					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < opts.getLandingRunwayLength()));
-					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !opts.getUseSoftRunways()));
-				}
-			}
-			
-			// Calculate gates
-			Gate gD = null; Gate gA = null;
-			if (flight.getPositions().size() > 1) {
-				GeoComparator dgc = new GeoComparator(flight.getPositions().first(), true);
-				GeoComparator agc = new GeoComparator(flight.getPositions().last(), true);
-			
-				// Get the closest departure gate
-				GetGates gdao = new GetGates(con);
-				SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-				dGates.addAll(gdao.getAllGates(afr.getAirportD(), inf.getSimulator()));
-				gD = dGates.isEmpty() ? null : dGates.first();
-				
-				// Get the closest arrival gate
-				SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-				aGates.addAll(gdao.getAllGates(afr.getAirportA(), inf.getSimulator()));
-				gA = aGates.isEmpty() ? null : aGates.first();
-			}
-			
 			// Validate the dispatch route ID
 			if (inf.getRouteID() != 0) {
 				GetACARSRoute ardao = new GetACARSRoute(con);
@@ -484,8 +310,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			afr.setDatabaseID(DatabaseID.ACARS, inf.getID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
-			awdao.writeRunways(inf.getID(), rD, rA);
-			awdao.writeGates(inf.getID(), gD, gA);
+			awdao.writeRunways(inf.getID(), inf.getRunwayD(), inf.getRunwayA());
+			awdao.writeGates(inf.getID(), inf.getGateD(), inf.getGateA());
 			if (inf.isDispatchPlan())
 				awdao.writeDispatch(inf.getID(), inf.getDispatcherID(), inf.getRouteID());
 			if (!flight.getPositions().isEmpty())
@@ -494,8 +320,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = null;
-			if (c != null) {
-				List<CheckRide> cRides = exdao.getAcademyCheckRides(c.getID(), TestStatus.NEW);
+			if (fsh.getCourse() != null) {
+				List<CheckRide> cRides = exdao.getAcademyCheckRides(fsh.getCourse().getID(), TestStatus.NEW);
 				if (!cRides.isEmpty())
 					cr = cRides.get(0);
 			}
@@ -517,14 +343,14 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Write the PIREP
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(afr);
-			fwdao.writeACARS(afr, SystemData.get("airline.db"));
+			fwdao.writeACARS(afr, ctx.getDB());
 			if (fwdao.updatePaxCount(afr.getID()))
 				log.warn("Update Passnger count for PIREP #" + afr.getID());
 			
 			// Write ontime data if there is any
 			if (afr.getOnTime() != OnTime.UNKNOWN) {
 				SetACARSOnTime aowdao = new SetACARSOnTime(con);
-				aowdao.write(SystemData.get("airline.db"), afr, onTimeEntry);
+				aowdao.write(ctx.getDB(), afr, fsh.getOnTimeEntry());
 			}
 			
 			// Commit

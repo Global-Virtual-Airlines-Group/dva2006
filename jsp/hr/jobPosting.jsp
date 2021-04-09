@@ -18,7 +18,7 @@
 <c:choose>
 <c:when test="${access.canApply}">
 <c:set var="formURL" value="jobapply.do" scope="page" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -30,7 +30,7 @@ return true;
 </c:when>
 <c:when test="${access.canShortlist}">
 <c:set var="formURL" value="jobsl.do" scope="page" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -42,7 +42,7 @@ return true;
 </c:when>
 <c:when test="${access.canSelect}">
 <c:set var="formURL" value="jobapprove.do" scope="page" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -58,7 +58,7 @@ golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
 </c:choose>
-<script async>
+<script>
 golgotha.local.toggleBody = function(id)
 {
 const row = document.getElementById('desc' + id);
@@ -227,7 +227,7 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 </c:if>
 </el:form>
 <c:if test="${access.canComment}">
-<script async>
+<script>
 golgotha.local.commentValidate = function(f)
 {
 if (!golgotha.form.check()) return false;

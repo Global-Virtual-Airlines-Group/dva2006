@@ -4,7 +4,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.*;
 
 import org.deltava.dao.http.*;
 
@@ -17,31 +17,36 @@ public class TestTrackDAO extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.test.properties");
 	}
 	
-	public void testValidKeyNAT() throws Exception {
+	@Override
+	protected void tearDown() throws Exception {
+		LogManager.shutdown();
+		super.tearDown();
+	}
+	
+	public void testNAT() throws Exception {
 		
 		// Pull down the data
 		GetNATs dao = new GetNATs("https://www.notams.faa.gov/common/nat.html");
-		//dao.setSSLContext(ctx);
-
 		String natInfo = dao.getTrackInfo();
 		assertNotNull(natInfo);
 		
 		// Test that we can parse
 		Map<String, Collection<String>> results = dao.getWaypoints();
 		assertNotNull(results);
+		assertFalse(results.isEmpty());
 	}
 	
-	public void testValidKeyPACOT() throws Exception {
+	public void testPACOT() throws Exception {
 		
 		// Pull down the data
 		GetPACOTs dao = new GetPACOTs("https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks");
-		//dao.setSSLContext(ctx);
 		String pacotInfo = dao.getTrackInfo();
 		assertNotNull(pacotInfo);
 		
 		// Test that we can parse
 		Map<String, Collection<String>> results = dao.getWaypoints();
 		assertNotNull(results);
+		assertFalse(results.isEmpty());
 	}
 	
 	public void testAUSOT() throws Exception {
@@ -54,5 +59,6 @@ public class TestTrackDAO extends TestCase {
 		// Test that we can parse
 		Map<String, Collection<String>> results = dao.getWaypoints();
 		assertNotNull(results);
+		assertFalse(results.isEmpty());
 	}
 }

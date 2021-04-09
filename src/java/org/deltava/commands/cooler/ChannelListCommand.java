@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -7,7 +7,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
-import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Water Cooler channels.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -30,15 +29,12 @@ public class ChannelListCommand extends AbstractCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the default airline
-		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code").toUpperCase());
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the channels for the user's role
 			GetCoolerChannels dao = new GetCoolerChannels(con);
-			List<Channel> channels = dao.getChannels(airline, ctx.getRoles());
+			List<Channel> channels = dao.getChannels(SystemData.getApp(null), ctx.getRoles());
 			channels.remove(Channel.ALL);
 			channels.remove(Channel.SHOTS);
 			ctx.setAttribute("channels", channels, REQUEST);
@@ -68,6 +64,5 @@ public class ChannelListCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/cooler/channelList.jsp");
 		result.setSuccess(true);
-		ctx.setExpiry(300);
 	}
 }

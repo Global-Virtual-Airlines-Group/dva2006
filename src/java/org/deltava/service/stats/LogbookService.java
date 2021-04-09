@@ -1,4 +1,4 @@
-// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export a Pilot's log book in CSV format. 
  * @author Luke
- * @version 6.1
+ * @version 10.0
  * @since 3.6
  */
 
@@ -45,7 +45,7 @@ public class LogbookService extends WebService {
 		try {
 			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
 			pireps = frdao.getByPilot(userID, new ScheduleSearchCriteria("DATE, PR.SUBMITTED"));
-			frdao.getCaptEQType(pireps);
+			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {

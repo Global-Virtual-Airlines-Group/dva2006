@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:favicon />
-<script async>
+<script>
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>

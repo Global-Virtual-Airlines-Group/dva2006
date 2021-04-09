@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 5.2
  */
 
@@ -62,7 +62,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			if (lf != null) {
 				GetRawSchedule rsdao = new GetRawSchedule(con); 
 				GetSchedule sdao = new GetSchedule(con);
-				sdao.setSources(rsdao.getSources(true));
+				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				int outFlightCount = sdao.getFlights(lf.getAirportA()).size();
 				hasFlight = (outFlightCount > 0);
 				ctx.setAttribute("hasFlight", Boolean.valueOf(hasFlight), REQUEST);
@@ -146,8 +146,8 @@ public class ReturnCharterCommand extends AbstractCommand {
 
 			// Create the Flight Assignment
 			SetAssignment awdao = new SetAssignment(con);
-			awdao.write(info, SystemData.get("airline.db"));
-			awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+			awdao.write(info, ctx.getDB());
+			awdao.assign(info, info.getPilotID(), ctx.getDB());
 			
 			// Write the Flight leg
 			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());

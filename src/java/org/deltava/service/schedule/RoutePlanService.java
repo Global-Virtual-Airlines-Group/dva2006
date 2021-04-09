@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 2.2
  */
 
@@ -39,6 +39,10 @@ public class RoutePlanService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the airports and altitude
+		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		if (a == null)
+			a = SystemData.getAirline(SystemData.get("airline.code"));
+		
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		String alt = ctx.getParameter("cruiseAlt");
@@ -50,13 +54,13 @@ public class RoutePlanService extends WebService {
 		// Validate the airports
 		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FSX);
 		if (aD == null)
-			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
+			throw error(SC_BAD_REQUEST, String.format("Invalid Departure Airport - %s", ctx.getParameter("airportD")), false);
 		else if (aA == null)
-			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
+			throw error(SC_BAD_REQUEST, String.format("Invalid Arrival Airport - %s", ctx.getParameter("airportA")), false);
 
 		// Update the flight plan
 		FlightPlanGenerator fpgen = FlightPlanGenerator.create(sim);
-		fpgen.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
+		fpgen.setAirline(a);
 		fpgen.setAirports(aD, aA);
 		fpgen.setCruiseAltitude(alt);
 
@@ -70,11 +74,12 @@ public class RoutePlanService extends WebService {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
 			GetGates gdao = new GetGates(con);
+			Gate gD = gdao.getGate(aD, sim, ctx.getParameter("gateD"));
+			Gate gA = gdao.getGate(aA, sim, ctx.getParameter("gateA"));
 			
 			// Load the departure gate
 			if (fpgen instanceof MSFSGenerator) {
 				MSFSGenerator fsgen = (MSFSGenerator) fpgen;
-				Gate gD = gdao.getGate(aD, sim, ctx.getParameter("gateD"));
 				fsgen.setGateD(gD);
 			}
 
@@ -121,25 +126,34 @@ public class RoutePlanService extends WebService {
 				if (ac == null)
 					ac = acdao.get(ctx.getUser().getEquipmentType());
 				
+				// Init the schedule DAO
 				GetSchedule sdao = new GetSchedule(con);
-				GetFlightReports frdao = new GetFlightReports(con);
-				ScheduleRoute rt = new ScheduleRoute(aD, aA);
-				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), rt, SystemData.get("airline.db"));
+				GetRawSchedule rsdao = new GetRawSchedule(con);
+				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				ctx.startTX();
 				
+				// Load Draft flights
+				GetFlightReports frdao = new GetFlightReports(con);
+				ScheduleRoute rt = new ScheduleRoute(a, aD, aA);
+				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), rt, ctx.getDB());
+				
 				AssignmentInfo ai = null;
-				FlightReport dfr = dFlights.isEmpty() ? null : dFlights.get(0);
+				DraftFlightReport dfr = dFlights.isEmpty() ? null : (DraftFlightReport) dFlights.get(0);
 				if (dfr == null) {
-					ScheduleEntry schedInfo = sdao.getFlightNumber(rt, SystemData.get("airline.db"));
+					ScheduleEntry schedInfo = sdao.getFlightNumber(rt, 12, ctx.getDB());
 					if (schedInfo == null) {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);
 						dfr.setAirportA(aD);
 						dfr.setEquipmentType(ac.getName());
 						dfr.setAuthorID(ctx.getUser().getID());
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
 					} else {
 						dfr = new DraftFlightReport(schedInfo);
 						dfr.setEquipmentType(ac.getName());
+						dfr.setTimeD(schedInfo.getTimeD().toLocalDateTime());
+						dfr.setTimeA(schedInfo.getTimeA().toLocalDateTime());
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Created via Route Plotter from %s", schedInfo.getShortCode()));
 						
 						// Create a flight assignment
 						ai = new AssignmentInfo(ac.getName());
@@ -154,15 +168,15 @@ public class RoutePlanService extends WebService {
 				dfr.setSimulator(sim);
 				dfr.setRank(ctx.getUser().getRank());
 				dfr.setDate(Instant.now());
-				if (dfr.getID() == 0)
-					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
-				else if (!newRoute.equals(dfr.getRoute()))
+				if (gD != null) dfr.setGateD(gD.getName());
+				if (gA != null) dfr.setGateA(gA.getName());
+				if (!newRoute.equals(dfr.getRoute()))
 					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Updated Route via Route Plotter");
 				
 				// Save the flight assignment
 				if (ai != null) {
 					SetAssignment awdao = new SetAssignment(con);
-					awdao.write(ai, SystemData.get("airline.db"));
+					awdao.write(ai, ctx.getDB());
 				}
 				
 				// Save the route and commit
@@ -179,7 +193,7 @@ public class RoutePlanService extends WebService {
 		}
 
 		// Flush the output buffer
-		String fileName = aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension();
+		String fileName = String.format("%s-%s.%s", aD.getICAO(), aA.getICAO(), fpgen.getExtension());
 		try {
 			ctx.setContentType(fpgen.getMimeType(), fpgen.getEncoding());
 			ctx.setHeader("X-Plan-Filename", fileName);
@@ -193,10 +207,6 @@ public class RoutePlanService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;

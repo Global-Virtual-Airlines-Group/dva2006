@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for Pilots.
  * @author Luke
- * @version 6.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -104,8 +104,8 @@ public class PilotSearchCommand extends AbstractCommand {
 					if (p != null)
 						results.add(p);
 				} else {
-					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))));
-					Pilot p = dao.getPilotByCode(id.getUserID(), SystemData.get("airline.db"));
+					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(ctx.getDB())));
+					Pilot p = dao.getPilotByCode(id.getUserID(), ctx.getDB());
 					if (p != null)
 						results.add(p);
 				}
@@ -117,8 +117,8 @@ public class PilotSearchCommand extends AbstractCommand {
 						sizes.put(app.getCode(), Integer.valueOf(stdao.getActivePilots(app.getDB())));
 					}
 				} else {
-					results.addAll(dao.search(SystemData.get("airline.db"), fName, lName, eMail, ratings));
-					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))));
+					results.addAll(dao.search(ctx.getDB(), fName, lName, eMail, ratings));
+					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(ctx.getDB())));
 				}
 			}
 			
@@ -140,7 +140,7 @@ public class PilotSearchCommand extends AbstractCommand {
 			UserData usrInfo = udmap.get(p.getID());
 
 			// Calculate the access level
-			PilotAccessControl access = SystemData.get("airline.db").equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : new CrossAppPilotAccessControl(ctx, p);
+			PilotAccessControl access = ctx.getDB().equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : new CrossAppPilotAccessControl(ctx, p);
 			access.validate();
 
 			// Save the access level in the map, indexed by pilot ID

@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read system logging tables. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 9.0
  */
 
@@ -92,7 +92,7 @@ public class GetSystemLog extends DAO {
 		if (result != null)
 			return result;
 		
-		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (DATE(USAGE_DATE)= CURDATE()) GROUP BY DT LIMIT 1")) {
+		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (USAGE_DATE>CURDATE()) GROUP BY DT LIMIT 1")) {
 			ps.setString(1, methodName);
 			try (ResultSet rs = ps.executeQuery()) {
 				result = new APIUsage(Instant.now(), methodName);

@@ -1,17 +1,17 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.Helper;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.servinfo.PositionData;
 
 /**
  * A utility class to determine what Online Events a flight may have participated in. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 9.0
  */
 
@@ -19,8 +19,8 @@ import org.deltava.beans.servinfo.PositionData;
 public class EventFlightHelper {
 
 	private final FlightReport _fr;
-	private final Collection<PositionData> _onlineData = new TreeSet<PositionData>();
-	private String _msg;
+	private int _timeBuffer = 30;
+	private final Collection<String> _msgs = new ArrayList<String>();
 	
 	/**
 	 * Initializes the Helper.
@@ -32,19 +32,19 @@ public class EventFlightHelper {
 	}
 	
 	/**
-	 * Adds the Flight's online track data.
-	 * @param trackData a Collection of PositionData beans
+	 * Returns the analysis messages.
+	 * @return a Collection of messages
 	 */
-	public void addOnlineTrack(Collection<PositionData> trackData) {
-		_onlineData.addAll(trackData);
+	public Collection<String> getMessages() {
+		return _msgs;
 	}
-
+	
 	/**
-	 * Returns the analysis message.
-	 * @return the message
+	 * Sets the time buffer around the Online Event start/end times.
+	 * @param min the buffer in minutes
 	 */
-	public String getMessage() {
-		return _msg;
+	public void setTimeBuffer(int min) {
+		_timeBuffer = Math.max(0, min);
 	}
 	
 	/**
@@ -56,36 +56,34 @@ public class EventFlightHelper {
 		try {
 			// Check that the network/route match
 			if (e.getNetwork() != _fr.getNetwork()) throw new IllegalArgumentException("Flight not flown on " + e.getNetwork());
+			if (!(_fr instanceof FDRFlightReport)) throw new IllegalArgumentException("Flight not flown using ACARS/XACARS/simFDR");
 			if (e.getRoutes().stream().filter(_fr::matches).findAny().isEmpty()) throw new IllegalArgumentException("Flight not valid Event route");
 		
 			// Calculate takeoff/landing times
-			Instant takeoffTime = null; Instant landingTime = null;
-			if (_fr instanceof FDRFlightReport) {
-				FDRFlightReport ffr = (FDRFlightReport) _fr;
-				takeoffTime = ffr.getTakeoffTime();
-				landingTime = ffr.getLandingTime();
-			} else {
-				if (_onlineData.size() < 3) throw new IllegalArgumentException("Insufficient Online Track data for non-FDR Flight");
-				takeoffTime = _onlineData.stream().filter(pd -> ((pd.getAirSpeed() > 90) && pd.distanceTo(_fr.getAirportD()) < 20)).map(PositionData::getDate).findFirst().orElse(null);
-				landingTime = _onlineData.stream().filter(pd -> ((pd.getAirSpeed() < 30) && pd.distanceTo(_fr.getAirportA()) < 20)).map(PositionData::getDate).findFirst().orElse(null);
-			}
+			FDRFlightReport ffr = (FDRFlightReport) _fr;
+			if (ffr.getTakeoffTime() == null) throw new IllegalArgumentException("No takeoff time recorded");
+			if (ffr.getLandingTime() == null) throw new IllegalArgumentException("No landing time recorded");
 		
-			// Check if takeoff or landing was at a featured airport
-			boolean hasFA = !e.getFeaturedAirports().isEmpty();
-			boolean faTakeoff = !hasFA || e.getFeaturedAirports().contains(_fr.getAirportD());
-			boolean faLanding = !hasFA || e.getFeaturedAirports().contains(_fr.getAirportA());
+			// Check takeoff / landing times - only give them grace on the back end
+			Instant edb = e.getEndTime().plus(_timeBuffer, ChronoUnit.MINUTES);
+			boolean ttOK = ffr.getTakeoffTime().isAfter(e.getStartTime()) && ffr.getTakeoffTime().isBefore(e.getEndTime());
+			if (!ttOK) {
+				Duration td = Duration.between(e.getStartTime(), ffr.getTakeoffTime());
+				_msgs.add(String.format("Takeoff time %d minutes %s Online Event started", Long.valueOf(td.toMinutes()), td.isNegative() ? "before" : "after"));	
+			} else
+				_msgs.add("Takeoff during Online Event");
 			
-			// Check takeoff / landing times
-			boolean ttOK = (takeoffTime != null) && takeoffTime.isAfter(e.getStartTime()) && takeoffTime.isBefore(e.getEndTime());
-			boolean ltOK = (landingTime != null) && landingTime.isAfter(e.getStartTime()) && landingTime.isBefore(e.getEndTime());
-		
-			// If takeoff at a Featured Airport, ensure it occured within event times
-			boolean takeoffOK = faTakeoff && ttOK;
-			boolean landingOK = faLanding && ltOK;
-			_msg = "TakeoffTimeOK=" + ttOK + ", LandingTimeOK=" + ltOK + ", TakeoffOK=" + takeoffOK + ", LandingOK=" + landingOK;
-			return takeoffOK || landingOK;
+			boolean ltOK = ffr.getLandingTime().isAfter(e.getStartTime()) && ffr.getLandingTime().isBefore(e.getEndTime());
+			boolean ltGrace = ffr.getLandingTime().isAfter(e.getStartTime()) && ffr.getLandingTime().isBefore(edb);
+			if (!ltOK) {
+				Duration ld = Duration.between(e.getEndTime(), ffr.getLandingTime());
+				_msgs.add(String.format("Landing time %d minutes %s Online Event ended", Long.valueOf(ld.toMinutes()), ld.isNegative() ? "before" : "after"));
+			} else
+				_msgs.add("Landing during Online Event");
+			
+			return ttOK && (ltOK || ltGrace);
 		} catch (IllegalArgumentException ie) {
-			_msg = ie.getMessage();
+			_msgs.add(ie.getMessage());
 			return false;
 		}
 	}

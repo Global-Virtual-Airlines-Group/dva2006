@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2020 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2020, 2021 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A bean for tracking development issues.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
+public class Issue extends DatabaseBean implements AuthoredBean, Auditable, ViewEntry {
 	
 	public enum IssueType implements EnumDescription {
 		BUG, ENHANCEMENT;
@@ -402,7 +402,12 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setSubject(String subj) {
 	  _subject = subj.trim();
 	}
-
+	
+	@Override
+	public String getAuditID() {
+		return getHexID();
+	}
+	
 	@Override
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err", "opt3"};

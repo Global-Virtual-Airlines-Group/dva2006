@@ -1,23 +1,26 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.AuditLog;
-import org.deltava.beans.system.MessageTemplate;
-
+import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.MessageAccessControl;
 
 import org.deltava.util.BeanUtils;
+import org.deltava.util.CollectionUtils;
+import org.deltava.util.EnumUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 7.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -32,7 +35,8 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Check if we're creating a new template
-		boolean isNew = (ctx.getCmdParameter(Command.ID, null) == null);
+		String id = (String) ctx.getCmdParameter(Command.ID, null);
+		boolean isNew = StringUtils.isEmpty(id);
 		
 		// Check our access
 		MessageAccessControl access = new MessageAccessControl(ctx, null);
@@ -57,9 +61,9 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			
 			// Get the DAO and the message
 			GetMessageTemplate dao = new GetMessageTemplate(con);
-			MessageTemplate msg = dao.get((String) ctx.getCmdParameter(Command.ID, null));
+			MessageTemplate msg = dao.get(ctx.getDB(), id);
 			if (msg == null)
-				throw notFoundException("Invalid Message Template - " + ctx.getCmdParameter(Command.ID, null));
+				throw notFoundException("Invalid Message Template - " + id);
 			
 			// Update our access to calculate deletion rights
 			access = new MessageAccessControl(ctx, msg);
@@ -68,6 +72,7 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			// Save the template in the request
 			ctx.setAttribute("access", access, REQUEST);
 			ctx.setAttribute("template", msg, REQUEST);
+			ctx.setAttribute("ctxValues", CollectionUtils.nonNull(msg.getNotifyContext()), REQUEST);
 			readAuditLog(ctx, msg);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -123,6 +128,9 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			mt.setDescription(ctx.getParameter("desc"));
 			mt.setBody(ctx.getParameter("body"));
 			mt.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
+			mt.setNotificationTTL(StringUtils.parse(ctx.getParameter("ttl"), 3600));
+			mt.setNotifyContext(StringUtils.isEmpty(ctx.getParameter("ctx")) ? null : ctx.getParameter("ctx"));
+			mt.setActionTypes(ctx.getParameters("actions", Collections.emptyList()).stream().map(at -> EnumUtils.parse(NotifyActionType.class, at, null)).filter(Objects::nonNull).collect(Collectors.toList()));
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(omt, mt);

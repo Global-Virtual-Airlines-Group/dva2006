@@ -144,7 +144,7 @@ return true;
 </content:page>
 <div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map

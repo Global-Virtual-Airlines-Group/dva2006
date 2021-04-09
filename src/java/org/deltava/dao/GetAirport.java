@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -67,11 +67,13 @@ public class GetAirport extends DAO {
 						a.setTZ(TZInfo.get(rs.getString(3)));
 						a.setLocation(rs.getDouble(6), rs.getDouble(7));
 						a.setASDE(rs.getBoolean(8));
-						a.setSupercededAirport(rs.getString(9));
-						a.setAltitude(rs.getInt(10));
-						a.setRegion(rs.getString(11));
-						a.setGateData(rs.getInt(13) > 0);
-						int maxRunway = rs.getInt(12);
+						a.setHasPFI(rs.getBoolean(9));
+						a.setIsSchengen(rs.getBoolean(10));
+						a.setSupercededAirport(rs.getString(11));
+						a.setAltitude(rs.getInt(12));
+						a.setRegion(rs.getString(13));
+						a.setGateData(rs.getInt(15) > 0);
+						int maxRunway = rs.getInt(14);
 						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					}
 				}
@@ -132,11 +134,13 @@ public class GetAirport extends DAO {
 					a.setTZ(TZInfo.get(rs.getString(3)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setASDE(rs.getBoolean(8));
-					a.setSupercededAirport(rs.getString(9));
-					a.setAltitude(rs.getInt(10));
-					a.setRegion(rs.getString(11));
-					a.setGateData(rs.getInt(13) > 0);
-					int maxRunway = rs.getInt(12);
+					a.setHasPFI(rs.getBoolean(9));
+					a.setIsSchengen(rs.getBoolean(10));
+					a.setSupercededAirport(rs.getString(11));
+					a.setAltitude(rs.getInt(12));
+					a.setRegion(rs.getString(13));
+					a.setGateData(rs.getInt(15) > 0);
+					int maxRunway = rs.getInt(14);
 					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					if (al != null)
 						a.addAirlineCode(al.getCode());
@@ -245,11 +249,13 @@ public class GetAirport extends DAO {
 						a.setCountry(Country.get(rs.getString(5)));
 						a.setLocation(rs.getDouble(6), rs.getDouble(7));
 						a.setASDE(rs.getBoolean(8));
-						a.setSupercededAirport(rs.getString(9));
-						a.setAltitude(rs.getInt(10));
-						a.setRegion(rs.getString(11));
-						a.setGateData(rs.getInt(13) > 0);
-						int maxRunway = rs.getInt(12);
+						a.setHasPFI(rs.getBoolean(9));
+						a.setIsSchengen(rs.getBoolean(10));
+						a.setSupercededAirport(rs.getString(11));
+						a.setAltitude(rs.getInt(12));
+						a.setRegion(rs.getString(13));
+						a.setGateData(rs.getInt(15) > 0);
+						int maxRunway = rs.getInt(14);
 						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					
 						// Save in the map

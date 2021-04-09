@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,13 +9,15 @@ import org.deltava.beans.*;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A Data Access Object to load VATSIM/IVAO data tracks. This DAO can load from the ONLINE_TRACKS table
  * in each Airline's database, which stores track data already associated with a Flight Report. It can also load "raw" metadta
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.4
  */
 
@@ -190,7 +192,7 @@ public class GetOnlineTrack extends DAO {
 			Collection<OnlineNetwork> networks = new HashSet<OnlineNetwork>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					networks.add(OnlineNetwork.fromName(rs.getString(1)));
+					networks.add(EnumUtils.parse(OnlineNetwork.class, rs.getString(1), null));
 			}
 			
 			return networks;

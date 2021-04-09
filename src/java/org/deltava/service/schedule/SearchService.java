@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,14 +15,13 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
-import org.deltava.util.JSONUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to search the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 9.0
  */
 
@@ -45,6 +44,7 @@ public class SearchService extends WebService {
 		ssc.setMaxResults(Math.min(250, StringUtils.parse(ctx.getParameter("max"), 50)));
 		ssc.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
 		ssc.setDistanceRange(StringUtils.parse(ctx.getParameter("distanceRange"), (ssc.getDistance() == 0) ? 0 : 250));
+		ssc.setDBName(ctx.getDB());
 		
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		Collection<ScheduleSourceInfo> srcs = new ArrayList<ScheduleSourceInfo>();
@@ -53,7 +53,7 @@ public class SearchService extends WebService {
 			
 			// Get effective dates
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			srcs.addAll(rsdao.getSources(true));
+			srcs.addAll(rsdao.getSources(true, ctx.getDB()));
 			
 			// Search the schedule
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
@@ -85,25 +85,13 @@ public class SearchService extends WebService {
 		}
 		
 		// Add the schedule entries
-		for (ScheduleEntry se : results) {
-			JSONObject so = new JSONObject();
-			so.put("airline", se.getAirline().getCode());
-			so.put("flight", se.getFlightNumber());
-			so.put("leg", se.getLeg());
-			so.put("distance", se.getDistance());
-			so.put("eqType", se.getEquipmentType());
-			so.put("airportD", JSONUtils.format(se.getAirportD()));
-			so.put("airportA", JSONUtils.format(se.getAirportA()));
-			so.put("timeD", se.getTimeD().toEpochSecond() * 1000);
-			so.put("timeA", se.getTimeA().toEpochSecond() * 1000);
-			so.put("duration", se.getDuration().toMillis());
-			ro.accumulate("results", so);
-		}
+		results.forEach(se -> ro.accumulate("results", JSONUtils.format(se)));
+		JSONUtils.ensureArrayPresent(ro, "results");
 		
 		// Dump the JSON to the output stream
-		JSONUtils.ensureArrayPresent(ro, "results");
 		try {
 			ctx.setContentType("application/json", "utf-8");
+			ctx.setExpiry(15);
 			ctx.println(ro.toString());
 			ctx.commit();
 		} catch (Exception e) {

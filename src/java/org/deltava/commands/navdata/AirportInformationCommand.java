@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Simulator;
+import org.deltava.beans.acars.TaxiTime;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.METAR;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 6.3
  */
 
@@ -63,6 +64,11 @@ public class AirportInformationCommand extends AbstractCommand {
 			List<Runway> toRwys = rwdao.getPopularRunways(a, true); toRwys.sort(rC);
 			List<Runway> ldgRwys = rwdao.getPopularRunways(a, false); ldgRwys.sort(rC);
 			
+			// Get taxi times
+			GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
+			TaxiTime ttAvg = ttdao.getTaxiTime(a);
+			TaxiTime ttYr = ttdao.getTaxiTime(a, LocalDate.now().getYear());
+			
 			// Check for invalid runways
 			Collection<Runway> invalidRwys = new LinkedHashSet<Runway>();
 			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
@@ -88,6 +94,10 @@ public class AirportInformationCommand extends AbstractCommand {
 			ctx.setAttribute("toRwys", toRwys, REQUEST);
 			ctx.setAttribute("ldgRwys", ldgRwys, REQUEST);
 			ctx.setAttribute("invalidRwys", invalidRwys, REQUEST);
+			
+			// Save taxi times
+			ctx.setAttribute("taxiTime", ttAvg, REQUEST);
+			ctx.setAttribute("taxiTimeCY", ttYr, REQUEST);
 			
 			// Save destinations
 			GetScheduleAirport sadao = new GetScheduleAirport(con);

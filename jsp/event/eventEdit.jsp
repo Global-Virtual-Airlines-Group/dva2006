@@ -19,7 +19,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 golgotha.local.updateSignups = function() {
 	const f = document.forms[0];
 	const tg = !f.canSignup.checked;
@@ -146,7 +146,7 @@ golgotha.onDOMReady(function() {
 <c:set var="hasTextBriefing" value="${!empty event.briefing && !event.briefing.isPDF}" scope="page" />
 <tr>
  <td class="label top">Briefing Text</td>
- <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="5" resize="true">${hasTextBriefing ? event.briefing : ''}</el:textbox></td>
+ <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="5" resize="true">${hasTextBriefing ? event.briefing.text : ''}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">Attach File</td>

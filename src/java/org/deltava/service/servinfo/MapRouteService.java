@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 1.0
  */
 
@@ -76,7 +76,7 @@ public class MapRouteService extends WebService {
 			}
 
 			// Populate the route if required
-			if (!p.isPopulated()) {
+			if (!p.isRoutePopulated()) {
 				GetNavRoute navdao = new GetNavRoute(con);
 
 				// Split the route
@@ -148,10 +148,6 @@ public class MapRouteService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

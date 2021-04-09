@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -191,7 +191,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			
 			// Validate that the name is not a duplicate
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Map<Integer, Pilot> matches = pdao.getByID(pdao.checkUnique(a, SystemData.get("airline.db")), "PILOTS");
+			Map<Integer, Pilot> matches = pdao.getByID(pdao.checkUnique(a, ctx.getDB()), "PILOTS");
 			for (Iterator<Integer> i = matches.keySet().iterator(); i.hasNext(); ) {
 				int id = i.next().intValue();
 				if (id == a.getPilotID())

@@ -54,6 +54,12 @@ public class TestCommandContext extends TestCase {
         assertEquals(s, _ctxt.getSession());
     }
     
+    public void testDB() {
+    	assertNull(_ctxt.getDB());
+    	_ctxt.setDB("dva-db");
+    	assertEquals("dva-db", _ctxt.getDB());
+    }
+    
     public void testParameters() throws Exception {
     	assertNull(_ctxt.getCmdParameter(Command.ID, null));
     	assertNull(_ctxt.getCmdParameter(Command.OPERATION, null));

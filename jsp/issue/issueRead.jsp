@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
 	if (!golgotha.form.check()) return false;
@@ -62,11 +62,11 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><span class="sec bld"><fmt:defaultMethod var="${issue.status}" method="description" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
+ <td class="data"><span class="sec bld"><fmt:defaultMethod object="${issue.status}" method="description" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Issue Priority</td>
- <td class="data pri bld"><fmt:defaultMethod var="${issue.priority}" method="description" /></td>
+ <td class="data pri bld"><fmt:defaultMethod object="${issue.priority}" method="description" /></td>
 </tr>
 <tr>
  <td class="label">Airlines</td>
@@ -74,15 +74,15 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Security</td>
- <td class="data"><fmt:defaultMethod var="${issue.security}" method="description" /></td>
+ <td class="data"><fmt:defaultMethod object="${issue.security}" method="description" /></td>
 </tr>
 <tr>
  <td class="label">Area</td>
- <td class="data"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
+ <td class="data"><fmt:defaultMethod object="${issue.area}" method="description" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data sec"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
+ <td class="data sec"><fmt:defaultMethod object="${issue.type}" method="description" /></td>
 </tr>
 <c:if test="${issue.majorVersion > 0}">
 <tr>
@@ -134,6 +134,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
  <el:box name="emailAll" value="true" idx="*" label="Send Comments to all Participants" checked="${multiComment}" /></td>
 </tr>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

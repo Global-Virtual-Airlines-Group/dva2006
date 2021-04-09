@@ -1,16 +1,17 @@
-// Copyright 2010, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 8.1
+ * @version 10.0
  * @since 2.8
  */
 
@@ -18,6 +19,9 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
+	
+	private String _gateD;
+	private String _gateA;
 	
 	/**
 	 * Creates a new Flight Report object with a given Flight.
@@ -41,8 +45,7 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	}
 
 	/**
-	 * Returns the scheduled departure time <i>in local time</i>. The date portion
-	 * should be ignored.
+	 * Returns the scheduled departure time <i>in local time</i>. The date portion should be ignored.
 	 * @return the departure date/time
 	 */
 	@Override
@@ -51,13 +54,28 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	}
 	
 	/**
-	 * Returns the scheduled arrival time <i>in local time</i>. The date portion
-	 * should be ignored.
+	 * Returns the scheduled arrival time <i>in local time</i>. The date portion should be ignored.
 	 * @return the arrival date/time
 	 */
 	@Override
 	public ZonedDateTime getTimeA() {
 		return _timeA;
+	}
+	
+	/**
+	 * Returns the departure Gate name.
+	 * @return the name or null if not defined
+	 */
+	public String getGateD() {
+		return _gateD;
+	}
+	
+	/**
+	 * Returns the arrival Gate name.
+	 * @return the name or null if not defined
+	 */
+	public String getGateA() {
+		return _gateA;
 	}
 	
 	/**
@@ -76,6 +94,22 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 */
 	public void setTimeA(LocalDateTime dt) {
 		_timeA = ZonedDateTime.of(dt, getAirportA().getTZ().getZone());
+	}
+	
+	/**
+	 * Updates the departure Gate name.
+	 * @param name the Gate name or null if not defined
+	 */
+	public void setGateD(String name) {
+		_gateD = name;
+	}
+	
+	/**
+	 * Updates the arrival Gate name.
+	 * @param name the Gate name or null if not defined
+	 */
+	public void setGateA(String name) {
+		_gateA = name;
 	}
 	
 	/**

@@ -1,14 +1,15 @@
 // Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
 
 import org.deltava.beans.*;
+
 import org.deltava.taglib.ContentHelper;
 import org.deltava.util.system.SystemData;
 
@@ -59,10 +60,6 @@ public class FormTag extends ElementTag {
 		}
     }
     
-    /**
-     * Opens this FORM element by writing a &gt;FORM&lt; tag.
-     * @throws JspException if an I/O error occurs;  
-     */
     @Override
     public int doStartTag() throws JspException {
     		super.doStartTag();
@@ -76,23 +73,19 @@ public class FormTag extends ElementTag {
     		}
         
         // Set the ACTION URL
-        try {
-        	StringBuilder url = new StringBuilder(_action);
-            if (_id != null) {
-                url.append("?id=");
-                url.append(URLEncoder.encode(_id, "UTF-8"));
-            }
+       	StringBuilder url = new StringBuilder(_action);
+           if (_id != null) {
+               url.append("?id=");
+               url.append(URLEncoder.encode(_id, StandardCharsets.UTF_8));
+           }
 
-            if (_opName != null) {
-                url.append((_id == null) ? "?" : "&amp;");
-                url.append("op=");
-                url.append(URLEncoder.encode(_opName, "UTF-8"));
-            }
+           if (_opName != null) {
+               url.append((_id == null) ? "?" : "&amp;");
+               url.append("op=");
+               url.append(URLEncoder.encode(_opName, StandardCharsets.UTF_8));
+           }
             
-            _data.setAttribute("action", url.toString());
-        } catch (UnsupportedEncodingException uee) {
-            throw new JspException("UTF-8 encoding not supported - Laws of Universe no longer apply");
-        }
+           _data.setAttribute("action", url.toString());
         
         // Update the encoding type if uploads are permitted
         if (_allowUpload)
@@ -107,10 +100,6 @@ public class FormTag extends ElementTag {
         return EVAL_BODY_INCLUDE;
     }
     
-    /**
-     * Closes this FORM element by writing a &gt;/FORM&lt; tag.
-     * @throws JspException if an I/O error occurs
-     */
     @Override
     public int doEndTag() throws JspException {
         try {
@@ -238,9 +227,6 @@ public class FormTag extends ElementTag {
     	_spinner = doSpinner;
     }
     
-    /**
-     * Releases the tag's state variables.
-     */
     @Override
     public void release() {
         super.release();

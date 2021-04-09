@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 				case LEGACY:
 				case MANUAL:
 					GetRawSchedule rsdao = new GetRawSchedule(con);
-					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false);
+					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
 					try (InputStream is = new FileInputStream(f)) {
 						GetSchedule dao = new GetSchedule(ss, is);
 						dao.setAircraft(acdao.getAircraftTypes());
@@ -157,12 +157,17 @@ public class ScheduleImportCommand extends AbstractCommand {
 					continue;
 				}
 				
-				Collection<String> eqTypes = sedao.getEquipmentTypes(rse, rse.getAirline());
+				List<Aircraft> eqTypes = sedao.getEquipmentTypes(rse, rse.getAirline()).stream().map(acType -> allAC.get(acType)).filter(ac -> (ac != null) && (ac.getHistoric() == rse.getHistoric())).collect(Collectors.toList());
 				if (eqTypes.isEmpty())
-					eqTypes = sedao.getEquipmentTypes(rse, null);
+					sedao.getEquipmentTypes(rse, null).stream().map(acType -> allAC.get(acType)).filter(ac -> (ac != null) && (ac.getHistoric() == rse.getHistoric())).forEach(eqTypes::add);
 				
+				// Determine variable equipment
 				if (eqTypes.isEmpty()) {
 					List<Aircraft> possibleEQ = airlineEQ.get(rse.getAirline()).stream().filter(ac -> (ac.getOptions(appCode).getRange() > rse.getDistance())).collect(Collectors.toList());
+					boolean hasHistoric = possibleEQ.stream().anyMatch(ac -> ac.getHistoric() == rse.getHistoric());
+					if (hasHistoric)
+						possibleEQ.removeIf(ac -> ac.getHistoric() != rse.getHistoric());
+					
 					if (!possibleEQ.isEmpty()) {
 						Collections.shuffle(possibleEQ); Aircraft ac = possibleEQ.get(0); 
 						rse.setEquipmentType(ac.getName());
@@ -172,7 +177,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 						log.warn("Variable equipment for " + rse.getShortCode() + " (" + rse.getAirportD().getIATA() + "-" + rse.getAirportA().getIATA() + "), no available aircraft!");
 				}
 				else
-					rse.setEquipmentType(eqTypes.iterator().next());
+					rse.setEquipmentType(eqTypes.get(0).getName());
 			}
 
 			// Save the data
@@ -193,7 +198,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Load schedule sources
 			CacheManager.invalidate("ScheduleSource");
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<ScheduleSourceInfo> stats = rsdao.getSources(false);
+			Collection<ScheduleSourceInfo> stats = rsdao.getSources(false, ctx.getDB());
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 			
 			// Save the status

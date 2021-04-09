@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -15,12 +15,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.FileEntryAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to display user-sharable files.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -44,7 +42,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
 			GetLibrary dao = new GetLibrary(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
-			vc.setResults(dao.getFiles(SystemData.get("airline.db")));
+			vc.setResults(dao.getFiles(ctx.getDB()));
 
 			// Get the author data
 			Collection<Integer> IDs = vc.getResults().stream().map(FileEntry::getAuthorID).collect(Collectors.toSet());

@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 8.7
+ * @version 10.0
  * @since 1.0
  */
 
@@ -128,10 +128,14 @@ public class AirportListService extends WebService {
 			}
 			
 			// Add forced airport
-			GetAirport adao = new GetAirport(con);
-			allAirports.putAll(adao.getAll());
-			if (!StringUtils.isEmpty(ctx.getParameter("add")))
-				airports.add(adao.get(ctx.getParameter("add")));
+			boolean noCache = Boolean.valueOf(ctx.getParameter("noCache")).booleanValue();
+			if (noCache) {
+				GetAirport adao = new GetAirport(con);
+				allAirports.putAll(adao.getAll());
+				if (!StringUtils.isEmpty(ctx.getParameter("add")))
+					airports.add(adao.get(ctx.getParameter("add")));
+			} else
+				allAirports.putAll(SystemData.getAirports());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -172,10 +176,6 @@ public class AirportListService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public boolean isLogged() {
 		return false;

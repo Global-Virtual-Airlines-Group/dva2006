@@ -7,10 +7,12 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object for writing Examination Profiles and Check Ride scripts.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -89,6 +91,8 @@ public class SetExamProfile extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("ExamProfiles", ExamProfile.class);
 		}
 	}
 
@@ -143,9 +147,10 @@ public class SetExamProfile extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("ExamProfiles", ExamProfile.class);
 		}
 	}
-
 
 	/**
 	 * Writes a Check Ride script to the database. This call can handle both INSERT and UPDATE operations.
@@ -216,6 +221,8 @@ public class SetExamProfile extends DAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("ExamProfiles", ExamProfile.class);
 		}
 	}
 }

@@ -30,8 +30,6 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 	
 	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss";
 	
-	private int _version = 2;
-
 	/**
 	 * Creates the Data Access Object.
 	 * @param is the InputStream to read
@@ -40,10 +38,6 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		super(is);
 	}
 	
-	public void setVersion(int ver) {
-		_version = ver;
-	}
-
 	private static Instant parseDateTime(String dt) {
 		int pos = dt.indexOf('.');
 		String dt2 = (pos > -1) ? dt.substring(0, pos) : dt;
@@ -55,19 +49,19 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
 	
-	private Controller parseController(JSONObject co) {
+	private static Controller parseController(JSONObject co) {
 		int id = 0;
 		try {
 			Controller c = new Controller(co.getInt("cid"), OnlineNetwork.VATSIM);
 			id = c.getID();
-			c.setName(co.getString((_version == 2) ? "realname" : "name"));
+			c.setName(co.getString("name"));
 			c.setServer(co.getString("server"));
 			c.setCallsign(co.getString("callsign"));
 			c.setPosition(co.optDouble("latitude"), co.optDouble("longitude"));
 			c.setRating(Rating.values()[co.getInt("rating")]);
 			c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
-			c.setLoginTime(parseDateTime(co.getString((_version == 2) ? "time_logon" : "logon_time")));
-			c.setRange(co.optInt((_version == 2) ? "visualrange" : "visual_range"));
+			c.setLoginTime(parseDateTime(co.getString("logon_time")));
+			c.setRange(co.optInt("visual_range"));
 			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facilitytype", Facility.ATIS.ordinal())] : Facility.ATIS);
 			return c;
 		} catch (Exception e) {
@@ -76,31 +70,25 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		}
 	}
 	
-	private Pilot parsePilot(JSONObject po) {
+	private static Pilot parsePilot(JSONObject po) {
 		int id = 0;
 		try {
 			Pilot p = new Pilot(po.getInt("cid"), OnlineNetwork.VATSIM);
-			p.setName(po.getString((_version == 2) ? "realname" : "name"));
+			p.setName(po.getString("name"));
 			p.setServer(po.getString("server"));
 			p.setCallsign(po.getString("callsign"));
 			p.setAltitude(po.getInt("altitude"));
 			p.setGroundSpeed(po.getInt("groundspeed"));
 			p.setHeading(po.getInt("heading"));
 			p.setPosition(po.getDouble("latitude"), po.getDouble("longitude"));
-			p.setLoginTime(parseDateTime(po.getString((_version == 2) ? "time_logon" : "logon_time")));
+			p.setLoginTime(parseDateTime(po.getString("logon_time")));
 			JSONObject fpo = po.optJSONObject("flight_plan");
-			if ((_version > 2) && (fpo != null)) {
+			if (fpo != null) {
 				p.setAirportD(getAirport(fpo.optString("departure")));
 				p.setAirportA(getAirport(fpo.optString("arrival")));	
 				p.setEquipmentCode(fpo.optString("aircraft"));
 				p.setRoute(po.optString("route", ""));
 				p.setComments(po.optString("remarks", ""));
-			} else if (_version == 2) {
-				p.setAirportD(getAirport(po.optString("planned_depairport")));
-				p.setAirportA(getAirport(po.optString("planned_destairport")));
-				p.setEquipmentCode(po.optString("planned_aircraft"));
-				p.setRoute(po.optString("planned_route", ""));
-				p.setComments(po.optString("planned_remarks", ""));
 			}
 			
 			return p;
@@ -123,12 +111,12 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		// Check that it's the right version
 		JSONObject go = jo.getJSONObject("general");
 		int v = go.optInt("version");
-		if (v != _version)
+		if (v != 3)
 			throw new IllegalArgumentException("Invalid VATSIM data feed version - " + v);
 
 		// Parse the servers
 		NetworkInfo info = new NetworkInfo(OnlineNetwork.VATSIM);
-		info.setVersion(3);
+		info.setVersion(v);
 		info.setValidDate(parseDateTime(go.getString("update_timestamp")));
 		Map<String, Server> results = new TreeMap<String, Server>();
 		JSONArray sa = jo.getJSONArray("servers");

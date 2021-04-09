@@ -1,20 +1,25 @@
-// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
+import java.time.Instant;
 
 import javax.activation.DataSource;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.EMailAddress;
-import org.deltava.util.MailUtils;
+import org.json.*;
+
+import org.deltava.beans.*;
+import org.deltava.beans.system.*;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -24,6 +29,7 @@ public class Mailer {
 
 	private final SMTPEnvelope _env;
 	private final Collection<EMailAddress> _msgTo = new LinkedHashSet<EMailAddress>();
+	private final Collection<PushEndpoint> _pushTo = new LinkedHashSet<PushEndpoint>();
 	private MessageContext _ctx;
 
 	/**
@@ -60,10 +66,14 @@ public class Mailer {
 	 * @param addr the recipient name/address
 	 */
 	public void send(EMailAddress addr) {
-		if (EMailAddress.isValid(addr)) {
-			_msgTo.add(addr);
+		boolean doSend = false;
+		if (addr instanceof PushAddress)
+			doSend |= _pushTo.addAll(((PushAddress)addr).getPushEndpoints());
+		if (EMailAddress.isValid(addr))
+			doSend |= _msgTo.add(addr);
+		
+		if (doSend)
 			send();
-		}
 	}
 
 	/**
@@ -79,15 +89,72 @@ public class Mailer {
 	 * @param addrs a Collection of recipient names/addresses
 	 */
 	public void send(Collection<? extends EMailAddress> addrs) {
+		addrs.stream().filter(PushAddress.class::isInstance).map(PushAddress.class::cast).flatMap(pa -> pa.getPushEndpoints().stream()).forEach(_pushTo::add);
 		addrs.stream().filter(EMailAddress::isValid).forEach(_msgTo::add);
 		send();
 	}
+	
+	private void sendSMTP(EMailAddress addr) {
+		_env.setRecipient(addr);
+		_ctx.setRecipient(addr);
+		_env.setSubject(_ctx.getSubject());
+		_env.setBody(_ctx.getBody()); // calculate body and subject
+		
+		// Determine the content type and queue it up
+		_env.setContentType((_ctx.getTemplate() != null) && _ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
+		MailerDaemon.push((SMTPEnvelope) _env.clone());
+	}
+	
+	private void sendPush(PushEndpoint ep) {
+		
+		JSONObject mo = new JSONObject();
+		mo.put("lang", "en");
+		mo.put("requireInteraction", true);
+		mo.put("title", SystemData.get("airline.name"));
+		mo.put("body", _ctx.getSubject());
+		mo.put("icon", String.format("/%s/favicon/favicon-32x32.png", SystemData.get("path.img")));
+		
+		// Get context object
+		Object ID = Integer.valueOf(ep.getID());
+		MessageTemplate mt = _ctx.getTemplate();
+		if (!StringUtils.isEmpty(mt.getNotifyContext())) {
+			Object ctx = _ctx.execute(mt.getNotifyContext()); 
+			if (ctx instanceof DatabaseBean)
+				ID = Integer.valueOf(((DatabaseBean) ctx).getID());
+		}
+		
+		// Add the actions
+		for (NotifyActionType at : mt.getActionTypes()) {
+			NotifyAction act = NotifyAction.create(at, ID);
+			JSONObject ao = new JSONObject();
+			ao.put("title", act.getDescription());
+			ao.put("action", at.getURL());
+			ao.put("url", act.getURL());
+			ao.put("id", ID);
+			mo.accumulate("actions", ao);
+		}
+		
+		// Add a URL if no other actions
+		if (mt.getActionTypes().isEmpty())
+			mo.put("url", String.format("https://%s", SystemData.get("airline.url")));
+
+		// Create the envelope
+		JSONUtils.ensureArrayPresent(mo, "actions");
+		VAPIDEnvelope env = new VAPIDEnvelope(ep);
+		env.setExpirationTime(Instant.now().plusSeconds(mt.getNotificationTTL()));
+		env.setBody(mo.toString());
+		MailerDaemon.push(env);
+	}
 
 	/*
-	 * Generates and sends the e-mail message. The recipient object is added to the messaging context under the name
-	 * &quot;recipient&quot;.
+	 * Generates and sends the e-mail message. The recipient object is added to the messaging context under the name &quot;recipient&quot;.
 	 */
 	private void send() {
+		if (_msgTo.isEmpty() && _pushTo.isEmpty()) {
+			log.warn("Cannot send email - no recipients");
+			return;
+		}
+		
 		// If we're in test mode, send back to the sender only
 		if (SystemData.getBoolean("smtp.testMode")) {
 			log.warn("STMP Test Mode enabled - sending to " + _env.getFrom().getEmail());
@@ -104,23 +171,14 @@ public class Mailer {
 			return;
 		}
 
-		// Loop through the recipients
+		// Loop through the SMTP recipients
 		_env.addHeader("X-Golgotha-template", _ctx.getTemplate().getName());
 		_env.addHeader("X-Golgotha-mass", String.valueOf(_msgTo.size() > 1));
-		for (EMailAddress addr : _msgTo) {
-			_env.setRecipient(addr);
-			_ctx.setRecipient(addr);
-			_env.setSubject(_ctx.getSubject());
-			_env.setBody(_ctx.getBody()); // calculate body and subject
-
-			// Determine the content type
-			_env.setContentType((_ctx.getTemplate() != null) && _ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
-
-			// Queue the message up
-			MailerDaemon.push((SMTPEnvelope) _env.clone());
-		}
-
-		// Clear out addresses
+		_msgTo.forEach(this::sendSMTP);
 		_msgTo.clear();
+		
+		// Loop through the Push recipeints
+		_pushTo.forEach(this::sendPush);
+		_pushTo.clear();
 	}
 }

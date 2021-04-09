@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,12 +14,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display performance metrics.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -71,7 +70,7 @@ public class DashboardCommand extends AbstractCommand {
 			results.put("pirepApproval", metrics);
 			if (dao.isPilotID()) {
 				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
-				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
+				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(ctx.getDB() + ".PILOTS"), "PILOTS");
 				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
@@ -83,7 +82,7 @@ public class DashboardCommand extends AbstractCommand {
 			results.put("examGrading", metrics);
 			if (dao.isPilotID()) {
 				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
-				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
+				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(ctx.getDB() + ".PILOTS"), "PILOTS");
 				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
@@ -95,7 +94,7 @@ public class DashboardCommand extends AbstractCommand {
 			results.put("rideGrading", metrics);
 			if (dao.isPilotID()) {
 				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
-				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
+				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(ctx.getDB() + ".PILOTS"), "PILOTS");
 				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
@@ -107,7 +106,7 @@ public class DashboardCommand extends AbstractCommand {
 			results.put("pirepStats", metrics);
 			if (dao.isPilotID()) {
 				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
-				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
+				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(ctx.getDB() + ".PILOTS"), "PILOTS");
 				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
@@ -119,7 +118,7 @@ public class DashboardCommand extends AbstractCommand {
 			results.put("acarsStats", metrics);
 			if (dao.isPilotID()) {
 				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
-				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
+				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(ctx.getDB() + ".PILOTS"), "PILOTS");
 				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}

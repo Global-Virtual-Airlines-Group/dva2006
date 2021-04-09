@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -13,12 +13,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.NominationAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to display Senior Captain nominations.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 3.3
  */
 
@@ -83,7 +81,7 @@ public class NominationCenterCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
-			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			frdao.getOnlineTotals(pilots, ctx.getDB());
 			
 			// Save status
 			ctx.setAttribute("pilots", pilots, REQUEST);

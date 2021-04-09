@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 3.2
  */
 
@@ -47,6 +47,10 @@ public class AccomplishmentHistoryHelper {
 		private int _onlineLegs;
 		private long _miles;
 		private long _pax;
+		private int _domLegs;
+		private int _intlLegs;
+		private int _szLegs;
+		private int _tourLegs;
 		
 		private int _dspFlights;
 		private double _dspHours;
@@ -79,11 +83,19 @@ public class AccomplishmentHistoryHelper {
 			_airportA.add(fr.getAirportA());
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
+			if (fr.getDatabaseID(DatabaseID.TOUR) != 0) _tourLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
 			incLeg(_eqLegs, fr.getEquipmentType());
 			incLeg(_daLegs, fr.getAirportD().getIATA());
 			incLeg(_aaLegs, fr.getAirportA().getIATA());
 			fr.getCaptEQType().forEach(eq -> incLeg(_pLegs, eq));
+			FlightType ft = fr.getFlightType();
+			if (ft == FlightType.DOMESTIC) 
+				_domLegs++;
+			else if (ft == FlightType.SCHENGEN)
+				_szLegs++;
+			else
+				_intlLegs++;
 			if (fr.getSubmittedOn() == null)
 				fr.setSubmittedOn(fr.getDate());
 		}
@@ -150,6 +162,22 @@ public class AccomplishmentHistoryHelper {
 			return _miles;
 		}
 		
+		public int getDomesticLegs() {
+			return _domLegs;
+		}
+		
+		public int getInternationalLegs() {
+			return _intlLegs;
+		}
+		
+		public int getSchengenLegs() {
+			return _szLegs;
+		}
+		
+		public int getTourLegs() {
+			return _tourLegs;
+		}
+		
 		public long getPassengers() {
 			return _pax;
 		}
@@ -199,7 +227,6 @@ public class AccomplishmentHistoryHelper {
 	 * @param p the Pilot
 	 */
 	public AccomplishmentHistoryHelper(Pilot p) {
-		super();
 		_usr = p;
 	}
 	
@@ -257,61 +284,41 @@ public class AccomplishmentHistoryHelper {
 	 * Returns how far a pilot is towards a particular Accomplishment.
 	 */
 	private long progress(Accomplishment a, AccomplishmentCounter cnt) {
-		switch (a.getUnit()) {
-			case LEGS:
-				return cnt.getLegs();
-			case MILES:
-				return cnt.getMiles();
-			case PAX:
-				return cnt.getPassengers();
-			case OLEGS:
-				return cnt.getOnlineLegs();
-			case HLEGS:
-				return cnt.getHistoricLegs();
-			case EVENTS:
-				return cnt.getEvents();
-			case AIRPORTS:
-				return AccomplishmentFilter.filter(cnt.getAirports(), a).size();
-			case AIRPORTA:
-				return AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
-			case AIRPORTD:
-				return AccomplishmentFilter.filter(cnt.getDepartureAirports(), a).size();
-			case ADLEGS:
-				return a.getChoices().stream().map(ap -> cnt.getDepartureLegs(ap)).mapToInt(Integer::intValue).sum();
-			case AALEGS:
-				return a.getChoices().stream().map(ap -> cnt.getArrivalLegs(ap)).mapToInt(Integer::intValue).sum();
-			case AIRCRAFT:
-				return AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
-			case COUNTRIES:
-				return AccomplishmentFilter.filter(cnt.getCountries(), a).size();
-			case CONTINENTS:
-				return AccomplishmentFilter.filter(cnt.getContinents(), a).size();
-			case STATES:
-				return AccomplishmentFilter.filter(cnt.getStates(), a).size();
-			case AIRLINES:
-				return AccomplishmentFilter.filter(cnt.getAirlines(), a).size();
-			case DFLIGHTS:
-				return cnt.getDispatchedFlights();
-			case DHOURS:
-				return (long) cnt.getDispatchHours();
-			case EQLEGS:
-				return a.getChoices().stream().map(eqType -> cnt.getEquipmentLegs(eqType)).mapToInt(Integer::intValue).sum();
-			case PROMOLEGS:
-				return a.getChoices().stream().map(eqType -> cnt.getPromotionLegs(eqType)).mapToInt(Integer::intValue).sum();
-			case MEMBERDAYS:
-				Duration d = Duration.between(_usr.getCreatedOn(), Instant.now());
-				return d.toDays();
-			default:
-				return 0;
-		}
+		return switch (a.getUnit()) {
+			case LEGS -> cnt.getLegs();
+			case MILES -> cnt.getMiles();
+			case DOMESTIC -> cnt.getDomesticLegs();
+			case INTL -> cnt.getInternationalLegs();
+			case SCHENGEN -> cnt.getSchengenLegs();
+			case PAX -> cnt.getPassengers();
+			case OLEGS -> cnt.getOnlineLegs();
+			case HLEGS -> cnt.getHistoricLegs();
+			case TLEGS -> cnt.getTourLegs();
+			case EVENTS -> cnt.getEvents();
+			case AIRPORTS -> AccomplishmentFilter.filter(cnt.getAirports(), a).size();
+			case AIRPORTA -> AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
+			case AIRPORTD -> AccomplishmentFilter.filter(cnt.getDepartureAirports(), a).size();
+			case ADLEGS -> a.getChoices().stream().map(ap -> cnt.getDepartureLegs(ap)).mapToInt(Integer::intValue).sum();
+			case AALEGS -> a.getChoices().stream().map(ap -> cnt.getArrivalLegs(ap)).mapToInt(Integer::intValue).sum();
+			case AIRCRAFT -> AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
+			case COUNTRIES -> AccomplishmentFilter.filter(cnt.getCountries(), a).size();
+			case CONTINENTS -> AccomplishmentFilter.filter(cnt.getContinents(), a).size();
+			case STATES -> AccomplishmentFilter.filter(cnt.getStates(), a).size();
+			case AIRLINES -> AccomplishmentFilter.filter(cnt.getAirlines(), a).size();
+			case DFLIGHTS -> cnt.getDispatchedFlights();
+			case DHOURS -> (long) cnt.getDispatchHours();
+			case EQLEGS -> a.getChoices().stream().map(eqType -> cnt.getEquipmentLegs(eqType)).mapToInt(Integer::intValue).sum();
+			case PROMOLEGS -> a.getChoices().stream().map(eqType -> cnt.getPromotionLegs(eqType)).mapToInt(Integer::intValue).sum();
+			case MEMBERDAYS -> Duration.between(_usr.getCreatedOn(), Instant.now()).toDays();
+			default -> 0;
+		};
 	}
 	
 	/*
 	 * Determines whether a Pilot has achieved a particular Accomplishment using a specific set of totals.
 	 */
 	private Result has(Accomplishment a, AccomplishmentCounter cnt) {
-		if (!a.getActive())
-			return Result.NOTYET;
+		if (!a.getActive()) return Result.NOTYET;
 		
 		long value = progress(a, cnt);
 		if (value < a.getValue())

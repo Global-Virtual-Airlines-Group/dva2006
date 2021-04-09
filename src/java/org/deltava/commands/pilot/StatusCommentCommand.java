@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -12,12 +12,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to save Status History commands for a Pilot.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 1.0
  */
 
@@ -55,7 +53,7 @@ public class StatusCommentCommand extends AbstractCommand {
 
 			// Load the status update entries
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
-			Collection<StatusUpdate> updates = sudao.getByUser(usr.getID(), SystemData.get("airline.db")); 
+			Collection<StatusUpdate> updates = sudao.getByUser(usr.getID(), ctx.getDB()); 
 			ctx.setAttribute("statusUpdates", updates, REQUEST);
 			
 			// Load authors
@@ -77,9 +75,9 @@ public class StatusCommentCommand extends AbstractCommand {
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription(ctx.getParameter("comment"));
 			
-			// Write the Command
+			// Write the updaate
 			SetStatusUpdate wdao = new SetStatusUpdate(con);
-			wdao.write(upd);
+			wdao.write(upd, ctx.getDB());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

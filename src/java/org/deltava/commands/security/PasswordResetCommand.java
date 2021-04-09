@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -67,9 +67,9 @@ public class PasswordResetCommand extends AbstractCommand {
 
 			// Get the Directory name
 			GetPilot dao = new GetPilot(con);
-			List<Pilot> users = dao.getByName(buf.toString(), SystemData.get("airline.db"));
+			List<Pilot> users = dao.getByName(buf.toString(), ctx.getDB());
 			if (users.size() == 0) {
-				ctx.setMessage("User " + buf.toString() + " not found");
+				ctx.setMessage("User " + buf + " not found");
 				ctx.release();
 				return;
 			} else if (users.size() > 1) {

@@ -4,8 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
 
@@ -16,14 +14,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
 public class GetAircraft extends DAO {
 	
-	private static final Logger log = Logger.getLogger(GetAircraft.class);
-
 	private static final Cache<CacheableCollection<Aircraft>> _cCache = CacheManager.getCollection(Aircraft.class, "AircraftInfoALL");
 	private static final Cache<Aircraft> _cache = CacheManager.get(Aircraft.class, "AircraftInfo");
 
@@ -84,8 +80,6 @@ public class GetAircraft extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		results.stream().filter(ac -> ac.getApps().isEmpty()).forEach(ac -> log.warn("No options for " + ac.getName()));
 		
 		_cCache.add(results);
 		return results.clone();
