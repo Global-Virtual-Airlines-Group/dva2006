@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -84,7 +84,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
 		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
-		criteria.setDBName(SystemData.get("airline.db"));
+		criteria.setDBName(ctx.getDB());
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
 		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
 		criteria.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
@@ -95,8 +95,8 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
 		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
 		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
-		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 200))
-			criteria.setMaxResults(200);
+		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 250))
+			criteria.setMaxResults(250);
 
 		// Set equipment type(s)
 		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
@@ -125,7 +125,7 @@ public class FindFlightCommand extends AbstractCommand {
 
 				// Load schedule import metadata
 				GetRawSchedule rsdao = new GetRawSchedule(con);
-				Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
+				Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true, ctx.getDB());
 
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);

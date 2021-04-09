@@ -1,13 +1,14 @@
-// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
+import org.deltava.util.StringUtils;
+
 /**
- * A JSP tag to generate an XHTML button. Buttons will have a CSS class name of
- * BUTTON unless it is explicitly overridden.
+ * A JSP tag to generate an XHTML button. Buttons will have a CSS class name of BUTTON unless it is explicitly overridden.
  * @author Luke
- * @version 5.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -21,11 +22,6 @@ public class ButtonTag extends ElementTag {
 		_data.setAttribute("type", "button");
 	}
 
-	/**
-	 * Ensures that the button contains the CSS <b>button</b> class.
-	 * @return SKIP_BODY always
-	 * @throws JspException if an error occurs
-	 */
 	@Override
 	public int doStartTag() throws JspException {
 		_classes.add("button");
@@ -49,9 +45,6 @@ public class ButtonTag extends ElementTag {
 		return EVAL_PAGE;
 	}
 
-	/**
-	 * Releases state and readies the tag for another invocation.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -89,4 +82,13 @@ public class ButtonTag extends ElementTag {
 	public void setKey(String accessKey) {
 		_data.setAttribute("accesskey", accessKey);
 	}
+	
+    /**
+     * Sets the tab index of this field. This does nothing if a negative, zero or non-numeric value is passed.
+     * @param index the tab index, or * if it should be retrieved from the parent form.
+     * @see ElementTag#setNumericAttr(String, int, int)
+     */
+    public void setIdx(String index) {
+        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : StringUtils.parse(index, 0), 1);
+    }
 }

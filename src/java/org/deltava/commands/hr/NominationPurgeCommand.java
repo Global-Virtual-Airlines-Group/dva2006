@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.NominationAccessControl;
 /**
  * A Web Site Command to reject all pending Senior Captain nominations.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 3.3
  */
 
@@ -60,7 +60,7 @@ public class NominationPurgeCommand extends AbstractCommand {
 				ctx.startTX();
 				
 				// Write the updates
-				sudao.write(upd);
+				sudao.write(upd, ctx.getDB());
 				nwdao.update(nom);
 				
 				// Commit

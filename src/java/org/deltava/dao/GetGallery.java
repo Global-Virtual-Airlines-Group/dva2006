@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -8,12 +8,11 @@ import java.time.ZonedDateTime;
 import org.deltava.beans.gallery.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -27,16 +26,6 @@ public class GetGallery extends DAO {
 		super(c);
 	}
 
-	/**
-	 * Returns the metadata associated with a particular Gallery image in the current database.
-	 * @param id the Image id
-	 * @return an Image, or null if the id was not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Image getImageData(int id) throws DAOException {
-		return getImageData(id, SystemData.get("airline.db"));
-	}
-	
 	/**
 	 * Returns the metadata associated with a particular Gallery image.
 	 * @param id the Image id

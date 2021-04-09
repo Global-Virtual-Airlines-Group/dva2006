@@ -11,7 +11,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="fileSaver" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
 	const srcs = [];
@@ -53,7 +53,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.local.download = function(srcs) {
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('post', '/schedexport.ws', true);

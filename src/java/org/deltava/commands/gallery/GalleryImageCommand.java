@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to display a Image Gallery Image.
  * @author Luke
- * @version 5.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 			// Get the DAO and the image if we're editing an existing image
 			if (!isNew) {
 				GetGallery rdao = new GetGallery(con);
-				img = rdao.getImageData(ctx.getID());
+				img = rdao.getImageData(ctx.getID(), ctx.getDB());
 				if (img == null)
 					throw notFoundException("Cannot find Gallery image " + ctx.getID());
 
@@ -111,7 +111,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 
 				// Get the DAO and the image
 				GetGallery dao = new GetGallery(con);
-				img = dao.getImageData(ctx.getID());
+				img = dao.getImageData(ctx.getID(), ctx.getDB());
 				if (img == null)
 					throw notFoundException("Cannot find Gallery image " + ctx.getID());
 
@@ -158,7 +158,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 
 			// Get the DAO and the image
 			GetGallery dao = new GetGallery(con);
-			img = dao.getImageData(ctx.getID());
+			img = dao.getImageData(ctx.getID(), ctx.getDB());
 			if (img == null)
 				throw notFoundException("Cannot find Gallery image " + ctx.getID());
 

@@ -19,7 +19,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <c:if test="${acarsEnabled}">
-<content:json />
 <content:googleJS module="charts" /></c:if>
 </head>
 <content:copyright visible="false" />

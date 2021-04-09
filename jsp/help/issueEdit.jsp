@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -87,7 +87,7 @@ golgotha.local.checkAssignee = function(combo) {
 </c:if>
 <tr>
  <td class="label">Issue Title</td>
- <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="2" value="${issue.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld" required="true" size="64" max="128" idx="2" value="${issue.subject}" /></td>
 </tr>
 <tr>
  <td class="label top">Issue Description</td>
@@ -165,7 +165,7 @@ golgotha.local.checkAssignee = function(combo) {
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script async>
+<script>
 golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
 <content:googleAnalytics />

@@ -1,22 +1,22 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.NavigationDataBean;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
 
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Pilot extends ConnectedUser {
+public class Pilot extends ConnectedUser implements RoutePair {
 
 	private int _altitude;
 	private int _gSpeed;
@@ -39,20 +39,12 @@ public class Pilot extends ConnectedUser {
 		super(id, net);
 	}
 
-	/**
-	 * Returns the destination Airport from the Flight Plan.
-	 * @return the destination Airport
-	 * @see Pilot#setAirportA(Airport)
-	 */
+	@Override
 	public Airport getAirportA() {
 		return _airportA;
 	}
 
-	/**
-	 * Returns the origin Airport from the Flight Plan.
-	 * @return the origin Airport
-	 * @see Pilot#setAirportD(Airport)
-	 */
+	@Override
 	public Airport getAirportD() {
 		return _airportD;
 	}
@@ -125,7 +117,7 @@ public class Pilot extends ConnectedUser {
 	 * Returns if the waypoint collection has been populated.
 	 * @return TRUE if the waypoints have been loaded, otherwise FALSE
 	 */
-	public boolean isPopulated() {
+	public boolean isRoutePopulated() {
 		return !_wps.isEmpty();
 	}
 	
@@ -278,10 +270,14 @@ public class Pilot extends ConnectedUser {
 		buf.append(getCallsign());
 		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
-		buf.append(")<br /><br />Flying from ");
-		buf.append(_airportD.getICAO());
-		buf.append(" to ");
-		buf.append(_airportA.getICAO());
+		buf.append(")<br /><br />");
+		if (isPopulated()) {
+			buf.append("Flying from ");
+			buf.append(_airportD.getICAO());
+			buf.append(" to ");
+			buf.append(_airportA.getICAO());	
+		}
+		
 		buf.append("<br />Position: ");
 		buf.append(StringUtils.format(_position, true, GeoLocation.ALL));
 		buf.append("<br />Altitude: ");

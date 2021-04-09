@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -32,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -52,7 +52,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	@Override
 	public void contextInitialized(ServletContextEvent e) {
 		e.getServletContext().setAttribute("startedOn", java.time.Instant.now());
-		_daemonGroup.setDaemon(true);
 
 		// Initialize system data
 		SystemData.init();

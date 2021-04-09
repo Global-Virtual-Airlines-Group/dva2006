@@ -8,10 +8,25 @@
 <html lang="en">
 <head>
 <title><content:airline /> Pilot Center - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
+<content:sysdata var="pushPubKey" name="security.key.push.pub" />
 <content:expire expires="10" />
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<c:if test="${!empty pushPubKey}">
+<content:js name="push" /></c:if>
+<script>
+golgotha.push.pubKey = '${pushPubKey}';
+golgotha.onDOMReady(function() { 
+	golgotha.push.init().then(function() {
+		golgotha.util.display('pushRow', true);
+		golgotha.util.display('pushsub', !golgotha.push.isSubscribed);
+		golgotha.util.display('pushunsub', golgotha.push.isSubscribed);	
+	}, function() { console.log('Error loading push status'); });
+
+	return true;
+});
+</script>
 <content:captcha action="pilotcenter" />
 <content:pics />
 <content:favicon />
@@ -56,8 +71,11 @@
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
+<content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 <content:attr attr="isHROperations" value="true" roles="HR,Operations" />
+<content:attr attr="hasTourAccess" value="true" roles="Event,Operations" />
+<content:attr attr="hasEliteAccess" value="${eliteEnabled}" roles="HR,Operations" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -79,6 +97,13 @@ You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.re
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
  <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing a valid, verified e-mail address. You may update your e-mail address and start the validation process.</td>
+</tr>
+<tr>
+ <td class="mid bld">Push Notifications</td>
+ <td class="data"><c:if test="${!empty pilot.pushEndpoints}" ><span id="pushclear">You have <fmt:quantity single="Push Notification endpoint" value="${pilot.pushEndpoints.size()}" /> defined. <a href="javascript:void golgotha.push.clear()" class="sec bld">Click Here</a> to clear them.<br />
+ To test your Push Notifications, <a href="javascript:void golgotha.push.test(true)" class="ter bld">Click Here</a>.<br /><br /></span></c:if>
+<span id ="pushsub"  style="display:none;">You can <a href="javascript:void golgotha.push.sub()" class="bld">Subscribe</a> to browser Push Notifications in this browser in addition to e-mail.</span>
+<span id="pushunsub" style="display:none;">You can <a href="javascript:void golgotha.push.unsub()" class="bld">Unsubscribe</a> from browser Push Notifications this browser.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
@@ -128,8 +153,7 @@ You are an ACARS Flight Dispatcher and have dispatched <fmt:int value="${pilot.d
  <td class="mid"><el:cmd className="bld" url="acceligibility">Accomplishment Eligibility</el:cmd></td>
 <td class="data">
 <c:if test="${empty accs}">
-You have not achieved any Pilot Accomplishments yet.
-</c:if>
+You have not achieved any Pilot Accomplishments yet.</c:if>
 <c:if test="${!empty accs}">
 You have achieved the following Accomplishments:<br />
 <br />
@@ -150,6 +174,23 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <td class="data">You can search the <content:airline /> Pilot Roster based on a Pilot's name or E-Mail Address.</td>
 </tr>
 
+<c:if test="${eliteEnabled && (!empty eliteStatus) && (currentEliteTotal.legs > 1)}">
+<content:sysdata var="eliteName" name="econ.elite.name" />
+<c:set var="legsRemaining" value="${nextEliteLevel.legs - currentEliteTotal.legs}" scope="page" />
+<c:set var="dstRemaining" value="${nextEliteLevel.distance - currentEliteTotal.distance}" scope="page" />
+<!-- ${eliteName} -->
+<tr class="title caps">
+ <td colspan="2" style="color:#ffffff; background-color:#${eliteStatus.level.hexColor};"><content:airline />&nbsp;${eliteName} PROGRAM</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="eliteinfo" className="bld"><span style="color:#${eliteStatus.level.hexColor}">My ${eliteName}</span></el:cmd></td>
+ <td class="data">${eliteYear} Flight Legs: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> | ${eliteYear} Flight Distance: <fmt:distance className="sec bld" value="${currentEliteTotal.distance}" /><br /> 
+ Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}.
+<c:if test="${nextEliteLevel.isVisible}"><br />
+<br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> and </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" /> </c:if>remaining to 
+ reach ${eliteName}&nbsp;<span class="bld" style="color:#${nextEliteLevel.hexColor}">${nextEliteLevel.name}</span> status.</c:if></td> 
+</tr>
+</c:if>
 <c:if test="${helpDeskEnabled}">
 <!-- Help Desk Section -->
 <tr class="title caps">
@@ -372,6 +413,12 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
  can have our automated system <el:cmd url="findflight">randomly select flights</el:cmd> for you to fly.</td>
 </tr>
+<c:if test="${tourAccess}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="tours">Flight Tours</el:cmd></td>
+ <td class="data">You can view, create and modify Flight Tour profiles.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="pri bld" url="charts" linkID="${pilot.homeAirport}">Approach Charts</el:cmd></td>
  <td class="data">We have airport, instrument approach, departure and arrival charts airports served by <content:airline />.</td>
@@ -623,6 +670,17 @@ pilot Certification.</td>
 </content:filter>
 </tr>
 </content:filter>
+<c:if test="${hasEliteAccess}">
+<c:set var="upcomingYear" value="${java.time.LocalDate.now().year}" scope="page" />
+<tr>
+ <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd></td>
+ <td class="data">You can view and update <span class="pri bld">${eliteName}</span> Status levels for previous and current years.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="elitelevelset">Calculate Upcoming ${eliteName} levels</el:cmd></td>
+ <td class="data">You can calculate the requirements for upcoming ${eliteName} levels for ${upcomingYear}.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
  <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride scoring delays and Flight Report logging.</td>
@@ -696,7 +754,8 @@ pilot Certification.</td>
  <td class="data">You can add new written examinations or modify the examinations to change the number of questions, passing score, or additional ratings granted upon successful completion of an examination.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd><br />
+<el:cmd className="bld" url="qpsearch">Search Question Profiles</el:cmd></td>
  <td class="data">You can add new examination questions or modify existing examination questions.</td>
 </tr>
 <tr>

@@ -18,8 +18,8 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<c:if test="${!isAssign}"><content:json />
-<content:js name="airportRefresh" /></c:if>
+<content:json />
+<content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <content:captcha action="pirepEdit" />
@@ -63,7 +63,7 @@ golgotha.local.saveSubmit = function() {
 };
 
 golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
-	mCombo.selectedIndex = d.getMonth() - 1;
+	mCombo.selectedIndex = d.getMonth();
 	golgotha.local.setDaysInMonth(mCombo);
 	dCombo.selectedIndex = d.getDate() - 1;
 	return true;
@@ -71,13 +71,13 @@ golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
 
 golgotha.local.setDaysInMonth = function(combo) {
 	const y = new Date().getFullYear();
-	const isLeapYear = (((y % 4) == 0) && (y != 2100));
+	const isLeapYear = (((y % 4) == 0) && ((y % 100) != 0));
 	const dCombo = document.forms[0].dateD;
 	const daysInMonth = [31, (isLeapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	const dd = dCombo.selectedIndex;
 	dCombo.options.length = daysInMonth[combo.selectedIndex];
-	for (var x = 1; x <= daysInMonth[combo.selectedIndex]; x++)
-		dCombo.options[x-1] = new Option(x);
+	for (var x = 0; x < daysInMonth[combo.selectedIndex]; x++)
+		dCombo.options[x] = new Option(x + 1);
 
 	dCombo.selectedIndex = Math.min(dd, dCombo.options.length - 1);
 	return true;
@@ -106,6 +106,11 @@ golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.config.doICAO = ${useICAO};
+	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
+
+	const d = new Date(${pirepYear},${pirepMonth - 1},${pirepDay});
+	golgotha.local.initDateCombos(f.dateM, f.dateD, d);
+	f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
 });
 
 golgotha.local.hoursCalc = function(f)
@@ -127,17 +132,15 @@ const tmpHours = (h + (m / 60));
 const hrs = Math.round(tmpHours * 10) / 10;
 const combo = f.flightTime;
 for (x = 0; x < combo.options.length; x++) {
-    var opt = combo.options[x];
+    const opt = combo.options[x];
     if (opt.text == hrs) {
         opt.selected = true;
-        return true;
+        break;
     }
 }
 
 return true;
 };
-
-golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode; });
 <content:browser html4="true">
 // Set PIREP date limitations
 <fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
@@ -175,14 +178,14 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec">${!empty pirep ? pirep.status.description : 'NEW'} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
+ <td class="data bld sec"><fmt:defaultMethod object="${pirep.status}" method="description" empty="NEW" /><c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
 <c:choose>
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="this.updateAirlineCode(); golgotha.local.loadAirports()" className="req" firstEntry="[ AIRLINE ]" />
- <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="this.updateAirlineCode(); golgotha.local.loadAirports()" required="true" firstEntry="[ AIRLINE ]" />
+ <el:text name="airlineCode" size="2" max="3" idx="*" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -204,13 +207,11 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Departed from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${apD}" required="true" value="${pirep.airportD}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportD" idx="*" airport="${pirep.airportD}" /></td>
+ <td class="data"><el:combo name="airportD" size="1" options="${apD}" required="true" value="${pirep.airportD}" onChange="void this.updateAirportCode()" /> <el:airportCode combo="airportD" idx="*" airport="${pirep.airportD}" /></td>
 </tr>
 <tr>
  <td class="label">Arrived at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${apA}" required="true" value="${pirep.airportA}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportA" idx="*" airport="${pirep.airportA}" /></td>
+ <td class="data"><el:combo name="airportA" size="1" options="${apA}" required="true" value="${pirep.airportA}" onChange="void this.updateAirportCode()" /> <el:airportCode combo="airportA" idx="*" airport="${pirep.airportA}" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -276,12 +277,5 @@ golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = g
 <content:copyright />
 </content:region>
 </content:page>
-<content:browser html4="true">
-<script async>
-const f = document.forms[0];
-const d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
-golgotha.local.initDateCombos(f.dateM, f.dateD, d);
-f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
-</script></content:browser>
 </body>
 </html>

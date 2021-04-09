@@ -1,19 +1,19 @@
-// Copyright 2006, 2007, 2010, 2011, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2014, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -110,13 +110,8 @@ public class GetAcademyCertifications extends DAO {
 				+ "LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND (CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;")) {
 			ps.setInt(1, Status.COMPLETE.ordinal());
 			Collection<Certification> results = execute(ps);
-			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
-				Certification c = i.next();
-				if (visibleOnly && !c.getVisible()) {
-					i.remove();
-					continue;
-				}
-				
+			results.removeIf(cr -> { return (visibleOnly && !cr.getVisible()); } );
+			for (Certification c : results) {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
@@ -194,7 +189,7 @@ public class GetAcademyCertifications extends DAO {
 				cert.setRideCount(rs.getInt(8));
 				cert.setEquipmentProgram(rs.getString(9));
 				cert.setFlightCount(rs.getInt(10));
-				cert.setNetwork(OnlineNetwork.fromName(rs.getString(11)));
+				cert.setNetwork(EnumUtils.parse(OnlineNetwork.class, rs.getString(11), null));
 				cert.setNetworkRatingCode(rs.getString(12));
 				cert.setDescription(rs.getString(13));
 				if (cert.getReqs() == Certification.REQ_SPECIFIC)

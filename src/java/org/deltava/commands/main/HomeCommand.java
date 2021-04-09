@@ -1,17 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
+import java.time.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
-import java.time.Duration;
-import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.system.HTTPContextData;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -26,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 9.1
+ * @version 9.2
  * @since 1.0
  */
 
@@ -73,7 +72,8 @@ public class HomeCommand extends AbstractCommand {
 		}
 		
 		// Build a list of choices
-		List<DynContent> cList = new ArrayList<DynContent>(Arrays.asList(DynContent.values()));
+		boolean isSpider = (reqctx.getBrowserType() == BrowserType.SPIDER);
+		List<DynContent> cList = new ArrayList<DynContent>(isSpider ? List.of(DynContent.NEW_HIRES) : List.of(DynContent.values()));
 
 		// Check if ACARS has anyone connected
 		ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);

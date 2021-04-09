@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Write the USERDATA record
 			SetUserData uddao = new SetUserData(con);
-			UserData uloc = new UserData(SystemData.get("airline.db"), "PILOTS", SystemData.get("airline.domain"));
+			UserData uloc = new UserData(ctx.getDB(), "PILOTS", SystemData.get("airline.domain"));
 			uddao.write(uloc);
 
 			// Save the new database ID and status
@@ -150,8 +150,8 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Write the status updates
 			SetStatusUpdate updao = new SetStatusUpdate(con);
-			updao.write(upd);
-			updao.write(upd2);
+			updao.write(upd, ctx.getDB());
+			updao.write(upd2, ctx.getDB());
 
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
@@ -163,7 +163,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			mctxt.addData("cp", cp);
 			if (SystemData.getBoolean("users.pirep.acars_only")) {
 				p.setACARSRestriction(Restriction.NOMANUAL);
-				pwdao.write(p);
+				pwdao.write(p, ctx.getDB());
 			}
 
 			// Get the authenticator and add the user

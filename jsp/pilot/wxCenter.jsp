@@ -23,16 +23,14 @@
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
 <script>
-var loaders = {};
+const loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
-loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
 loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-loaders.series.setData('future_radar_ff', 0.45, 'radarFF');
+loaders.series.setData('futureRadar', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
 loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 
 golgotha.local.loadWX = function(code)
 {
@@ -44,7 +42,7 @@ if (code.length < 4) {
 var useFA = false;
 <content:filter roles="Route,Dispatch">
 // Check for FlightAware Weather
-var f = document.forms[0];
+const f = document.forms[0];
 useFA = f.useFA.checked;</content:filter>
 	
 // Build the XML Request
@@ -56,7 +54,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Load the weather data
 	for (var i = 0; i < js.wx.length; i++) {
-		var wx = js.wx[i];
+		const wx = js.wx[i];
 
 		// Check for an existing marker
 		var mrk = golgotha.local.wxMarkers[wx.code];
@@ -88,7 +86,7 @@ xmlreq.onreadystatechange = function() {
 
 		mrk.code = wx.icao; mrk.isOpen = false;
 		if (wx.tabs.length == 0) {
-			var label = wx.firstChild;
+			const label = wx.firstChild;
 			if (label)
 				mrk.infoLabel = label.data;
 		} else {
@@ -96,7 +94,7 @@ xmlreq.onreadystatechange = function() {
 			for (var x = 0; x < wx.tabs.length; x++) {
 				var tab = wx.tabs[x];
 				eval('mrk.' + tab.type + ' = tab.content');
-				var wxData = tab.content.replace(/\n/g, '<br />');
+				const wxData = tab.content.replace(/\n/g, '<br />');
 				mrk.tabs.push({name:tab.name, content:wxData});
 			}
 		}
@@ -196,7 +194,7 @@ return true;
 <div id="zoomLevel" class="mapTextLabel"></div>
 <div id="seriesRefresh" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
 const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
@@ -211,22 +209,15 @@ google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 // Add preload progress bar
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
 
-// Create the jetstream layers
-const jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
-const jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
-const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
-
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'High Jet'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes

@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,12 +18,11 @@ import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to receive simFDR position updates.
  * @author Luke
- * @version 8.3
+ * @version 10.0
  * @since 8.3
  */
 
@@ -59,7 +58,7 @@ public class PositionUpdateService extends SimFDRService {
 			GetPilot pdao = new GetPilot(con);
 			UserID id = new UserID(ctx.getRequest().getHeader("X-simFDR-User"));
 			if (id.hasAirlineCode())
-				p = pdao.getPilotByCode(id.getUserID(), SystemData.get("airline.db"));
+				p = pdao.getPilotByCode(id.getUserID(), ctx.getDB());
 			else
 				p = pdao.get(id.getUserID());
 			if (p == null)

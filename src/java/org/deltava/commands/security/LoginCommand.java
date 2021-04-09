@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.time.Duration;
 import java.time.Instant;
 
 import javax.servlet.http.*;
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -120,7 +121,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			List<Pilot> users = dao.getByName(fullName.toString(), SystemData.get("airline.db")).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList());
+			List<Pilot> users = dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList());
 			if (users.size() == 0) {
 				log.warn("Unknown User Name - \"" + fullName + "\"");
 				throw new SecurityException("Unknown User Name - \"" + fullName + "\"");
@@ -181,7 +182,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Load online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			frdao.getOnlineTotals(p, ctx.getDB());
 			
 			// Get IP address info
 			GetIPLocation ipdao = new GetIPLocation(con);
@@ -214,11 +215,11 @@ public class LoginCommand extends AbstractCommand {
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			p.setLastLogin(Instant.now());
 			p.setLoginHost(ctx.getRequest().getRemoteHost());
-			wdao.login(p.getID(), p.getLoginHost());
+			wdao.login(p.getID(), p.getLoginHost(), ctx.getDB());
 			
 			// Save login hostname/IP address forever
 			SetSystemData syswdao = new SetSystemData(con);
-			syswdao.login(SystemData.get("airline.db"), p.getID(), remoteAddr, p.getLoginHost());
+			syswdao.login(ctx.getDB(), p.getID(), remoteAddr, p.getLoginHost());
 			
 			// Clear LOA if done today
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
@@ -227,8 +228,8 @@ public class LoginCommand extends AbstractCommand {
 
 			// Check if we've surpassed the notificaton interval
 			if (returnToActive) {
-				long interval = (System.currentTimeMillis() - p.getLastLogin().toEpochMilli()) / 1000;
-				if ((interval / 86400) < SystemData.getInt("users.notify_days", 30))
+				Duration d = Duration.between(p.getLastLogin(), Instant.now());
+				if (d.toDays() < SystemData.getInt("users.notify_days", 30))
 					returnToActive = false;
 			}
 
@@ -237,7 +238,7 @@ public class LoginCommand extends AbstractCommand {
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(p.getID());
 				upd.setDescription("Returned from Leave of Absence");
-				sudao.write(upd);
+				sudao.write(upd, ctx.getDB());
 			}
 
 			// Clear the inactivity interval (if any)

@@ -1,17 +1,14 @@
-// Copyright 2004, 2005, 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.util.*;
-
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A class for supporting JSP tags that generate HTML input elements.
  * @author Luke
- * @version 5.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -32,21 +29,6 @@ public abstract class FormElementTag extends ElementTag {
     protected FormElementTag(String elementName, boolean validateParent) {
         super(elementName);
         _validateParent = validateParent;
-    }
-    
-    /**
-     * Private helper method to return the parent form tag.
-     */
-    private FormTag getParentFormTag() {
-    	return (FormTag) TagSupport.findAncestorWithClass(this, FormTag.class);
-    }
-    
-    /**
-     * Private helper method to get and increment the current tab index count for the parent form tag.
-     */
-    private int getFormIndexCount() {
-    	FormTag parent = getParentFormTag();
-    	return (parent == null) ? 0 : parent.incTabIndex();
     }
     
     /**
@@ -88,12 +70,7 @@ public abstract class FormElementTag extends ElementTag {
      * @param values a comma-delimited list of values
      */
     public void setDelimValues(String values) {
-        StringTokenizer tkns = new StringTokenizer(values, ",");
-        List<String> l = new ArrayList<String>();
-        while (tkns.hasMoreTokens())
-            l.add(tkns.nextToken());
-        
-        _value = l;
+    	_value = StringUtils.split(values, ",");
     }
     
     /**

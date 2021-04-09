@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.*;
 
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -85,7 +85,7 @@ public class CollectionUtils {
 	}
 	
 	/**
-	 * Sorts a Collection using a particular Comparator.
+	 * Clones and sorts a Collection using a particular Comparator.
 	 * @param c the Collection to sort
 	 * @param cmp the Comparator
 	 * @return a sorted Collection
@@ -117,12 +117,49 @@ public class CollectionUtils {
 	 * @param entry the value
 	 */
 	public static <K, V> void addMapCollection(Map<K, Collection<V>> m, K key, V entry) {
+		addMapCollection(m, key, entry, LinkedHashSet::new);
+	}
+
+	/**
+	 * Adds an entry to a Collection contained as a Map value, allowing a specific Collection constructor.
+	 * @param m the Map
+	 * @param key the key
+	 * @param entry the value
+	 * @param cf the Collection {@link Supplier}
+	 */
+	public static <K, V> void addMapCollection(Map<K, Collection<V>> m, K key, V entry, Supplier<Collection<V>> cf) {
 		Collection<V> c = m.get(key);
 		if (c == null) {
-			c = new LinkedHashSet<V>();
+			c = cf.get();
 			m.put(key, c);
 		}
 		
-		c.add(entry);
+		c.add(entry);		
+	}
+	/**
+	 * Creates a Collection of non-null values.
+	 * @param values the values to add
+	 * @return a Collection of non-null values
+	 */
+	@SafeVarargs
+	public static <T> Collection<T> nonNull(T... values) {
+		return nonNull(ArrayList::new, values);
+	}
+	
+	/**
+	 * Creates a Collection of non-null values.
+	 * @param cf the Collection factory function
+	 * @param values the values to add
+	 * @return a Collection of non-null values
+	 */
+	@SafeVarargs
+	public static <T> Collection<T> nonNull(Supplier<Collection<T>> cf, T... values) {
+		Collection<T> c = cf.get();
+		for (T v : values) {
+			if (v != null)
+				c.add(v);
+		}
+		
+		return c;
 	}
 }

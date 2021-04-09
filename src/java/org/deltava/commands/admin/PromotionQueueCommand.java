@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -8,14 +8,13 @@ import org.deltava.beans.Pilot;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.security.command.*;
 
-import org.deltava.util.system.SystemData;
+import org.deltava.security.command.*;
 
 /**
  * A Web Site Command to display Pilots eligible for Promotion.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
@@ -44,7 +43,7 @@ public class PromotionQueueCommand extends AbstractViewCommand {
 			
 			// Load PIREP totals
 			GetFlightReports prdao = new GetFlightReports(con);
-			prdao.getOnlineTotals(queue, SystemData.get("airline.db"));
+			prdao.getOnlineTotals(queue, ctx.getDB());
 			vc.setResults(queue.values());
 		} catch (DAOException de) {
 			throw new CommandException(de);

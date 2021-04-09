@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,12 +13,11 @@ import org.deltava.dao.*;
 import org.deltava.security.command.InstructionAccessControl;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to log Flight Academy instruction flights.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -177,8 +176,8 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			
 			// Load instructor lists
 			if (ctx.isUserInRole("HR")) {
-				List<Pilot> insList = pdao.getByRole("Instructor", SystemData.get("airline.db"));
-				insList.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
+				List<Pilot> insList = pdao.getByRole("Instructor", ctx.getDB());
+				insList.addAll(pdao.getByRole("HR", ctx.getDB()));
 				ctx.setAttribute("instructors", insList, REQUEST);	
 			} else
 				ctx.setAttribute("instructors", Collections.singleton(ctx.getUser()), REQUEST);

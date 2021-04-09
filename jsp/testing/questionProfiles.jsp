@@ -16,7 +16,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 </script>
 </head>

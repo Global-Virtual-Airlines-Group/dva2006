@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -198,7 +198,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 					StatusUpdate upd2 = new StatusUpdate(usr.getID(), UpdateType.ACADEMY);
 					upd2.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings added: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
-					uwdao.write(ud.getDB(), upd2);
+					uwdao.write(upd2, ud.getDB());
 				}
 			} else if (op == Status.COMPLETE) {
 				academyEQ.removeIf(r -> !usr.hasRating(r));
@@ -210,12 +210,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 					StatusUpdate upd2 = new StatusUpdate(usr.getID(), UpdateType.ACADEMY);
 					upd2.setAuthorID(ctx.getUser().getID());
 					upd2.setDescription("Ratings removed: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
-					uwdao.write(ud.getDB(), upd2);
+					uwdao.write(upd2, ud.getDB());
 				}
 			}
 			
 			// Write the Status Update
-			uwdao.write(ud.getDB(), upd);
+			uwdao.write(upd, ud.getDB());
 			
 			// Send the completion to VATSIM
 			if ((op == Status.COMPLETE) && (crt.getNetwork() != null)) {

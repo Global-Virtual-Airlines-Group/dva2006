@@ -19,7 +19,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -110,7 +110,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:when test="${!empty event.briefing}">
 <tr class="nophone">
  <td class="label top">Flight Briefing</td>
- <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="2">${event.briefing}</el:textbox></td>
+ <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="2">${event.briefing.text}</el:textbox></td>
 </tr>
 </c:when>
 </c:choose>

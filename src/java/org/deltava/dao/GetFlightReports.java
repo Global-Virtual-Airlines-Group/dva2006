@@ -1,12 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-
-import org.apache.log4j.Logger;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RouteStats;
@@ -17,13 +17,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
 public class GetFlightReports extends DAO {
-
-	private static final Logger log = Logger.getLogger(GetFlightReports.class);
 
 	/**
 	 * Initializes the DAO with a given JDBC connection.
@@ -31,16 +29,6 @@ public class GetFlightReports extends DAO {
 	 */
 	public GetFlightReports(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Returns a PIREP with a particular database ID.
-	 * @param id the database ID
-	 * @return the Flight Report, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public FlightReport get(int id) throws DAOException {
-		return get(id, SystemData.get("airline.db"));
 	}
 
 	/**
@@ -64,10 +52,9 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (PR.ID=?) LIMIT 1");
 
+		// Execute the query, if nothing returned then give back null, otherwise load primary eq types and route
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
-
-			// Execute the query, if nothing returned then give back null, otherwise load primary eq types and route
 			FlightReport fr = execute(ps).stream().findFirst().orElse(null);
 			if (fr != null) {
 				fr.setCaptEQType(getCaptEQType(fr.getID(), dbName));
@@ -276,7 +263,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Loads all Flight Reports for a Pilot for a particular date range.
 	 * @param id the Pilot database ID
@@ -286,8 +273,31 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getLogbookCalendar(int id, java.time.Instant startDate, int days) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
-				+ "WHERE (PR.PILOT_ID=?) AND (PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID")) {
+		return getLogbookCalendar(id, SystemData.get("airline.db"), startDate, days);
+	}
+	
+	/**
+	 * Loads all Flight Reports for a Pilot for a particular date range.
+	 * @param id the Pilot database ID
+	 * @param dbName the database name
+	 * @param startDate the start date
+	 * @param days the number of days forward to include
+	 * @return a List of FlightReports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getLogbookCalendar(int id, String dbName, java.time.Instant startDate, int days) throws DAOException {
+		
+		// Build the SQL statements
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND (PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			ps.setTimestamp(2, createTimestamp(startDate));
 			ps.setTimestamp(3, createTimestamp(startDate));
@@ -390,28 +400,11 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(".PIREPS FR WHERE (FR.STATUS=?) AND FR.PILOT_ID IN (");
 
 		// Append the Pilot IDs
-		int setSize = 0;
-		for (Pilot p : pilots.values()) {
-			if ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0)) {
-				setSize++;
-				sqlBuf.append(String.valueOf(p.getID()));
-				sqlBuf.append(',');
-			}
-		}
-
-		// If we are not querying any pilots, abort
-		if (log.isDebugEnabled())
-			log.debug("Uncached set size = " + setSize);
-		if (setSize == 0)
-			return;
-
-		// Strip out trailing comma
-		if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-			sqlBuf.setLength(sqlBuf.length() - 1);
-
-		// Close the SQL statement
+		Collection<Integer> IDs = pilots.values().stream().filter(p -> ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0))).map(Pilot::getID).collect(Collectors.toSet());
+		if (IDs.isEmpty()) return;
+		sqlBuf.append(StringUtils.listConcat(IDs, ","));
 		sqlBuf.append(") GROUP BY FR.PILOT_ID LIMIT ");
-		sqlBuf.append(String.valueOf(setSize));
+		sqlBuf.append(IDs.size());
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
@@ -454,7 +447,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, S.TIME_D, S.TIME_A, PRT.ROUTE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PRT.ROUTE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
@@ -462,7 +455,7 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_ROUTE PRT ON (PR.ID=PRT.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S ON (S.AIRLINE=PR.AIRLINE) AND (S.FLIGHT=PR.FLIGHT) AND (S.LEG=PR.LEG) AND (S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".PIREP_DRAFT PD ON (PR.ID=PD.ID) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if (rp != null)
@@ -565,17 +558,17 @@ public class GetFlightReports extends DAO {
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
-			boolean hasACARS = (md.getColumnCount() > 66);
-			boolean hasComments = (md.getColumnCount() > 23);
-			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
-			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
-			boolean hasOnTime = (md.getColumnCount() > 71);
+			boolean hasACARS = (md.getColumnCount() > 68);
+			boolean hasComments = (md.getColumnCount() > 25);
+			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
+			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
+			boolean hasOnTime = (md.getColumnCount() > 73);
 
 			// Iterate throught the results
 			while (rs.next()) {
 				FlightStatus status = FlightStatus.values()[rs.getInt(4)];
 				int attr = rs.getInt(13);
-				boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
+				boolean isACARS = (hasACARS && (rs.getInt(27) != 0));
 				boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
 				boolean isSimFDR = isACARS && ((attr & FlightReport.ATTR_SIMFDR) != 0);
 				boolean isDraft = (hasSchedTimes && (status == FlightStatus.DRAFT));
@@ -613,85 +606,89 @@ public class GetFlightReports extends DAO {
 				p.setDisposedOn(toInstant(rs.getTimestamp(18)));
 				p.setDatabaseID(DatabaseID.EVENT, rs.getInt(19));
 				p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(20));
-				p.setPassengers(rs.getInt(21));
-				p.setLoadFactor(rs.getDouble(22));
+				p.setDatabaseID(DatabaseID.TOUR, rs.getInt(21));
+				p.setPassengers(rs.getInt(22));
+				p.setLoadFactor(rs.getDouble(23));
+				// skip #24 - flight type is calculated
 				if (hasComments) {
-					p.setComments(rs.getString(23));
-					p.setRemarks(rs.getString(24));
+					p.setComments(rs.getString(25));
+					p.setRemarks(rs.getString(26));
 				}
 			
-				// Load scheduled times
+				// Load scheduled times/gates/route
 				if (isDraft) {
 					DraftFlightReport dp = (DraftFlightReport) p;
-					Timestamp dts = rs.getTimestamp(25);
+					Timestamp dts = rs.getTimestamp(27);
 					if (dts != null) {	
 						dp.setTimeD(dts.toLocalDateTime());
-						dp.setTimeA(rs.getTimestamp(26).toLocalDateTime());
+						dp.setTimeA(rs.getTimestamp(28).toLocalDateTime());
 					}
 				
+					dp.setGateD(rs.getString(29));
+					dp.setGateA(rs.getString(30));
 					if (hasDraftRoute)
-						dp.setRoute(rs.getString(27));
+						dp.setRoute(rs.getString(31));
 				}
 
 				// Load generic ACARS pirep data
 				if (isACARS || isXACARS) {
 					FDRFlightReport ap = (FDRFlightReport) p;
 					ap.setAttribute(FlightReport.ATTR_ACARS, true);
-					ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(26));
-					ap.setStartTime(toInstant(rs.getTimestamp(27)));
-					ap.setTaxiTime(toInstant(rs.getTimestamp(28)));
-					ap.setTaxiWeight(rs.getInt(29));
-					ap.setTaxiFuel(rs.getInt(30));
-					ap.setTakeoffTime(toInstant(rs.getTimestamp(31)));
-					ap.setTakeoffDistance(rs.getInt(32));
-					ap.setTakeoffSpeed(rs.getInt(33));
-					ap.setTakeoffN1(rs.getDouble(34));
-					ap.setTakeoffHeading(rs.getInt(35));
-					ap.setTakeoffLocation(new GeoPosition(rs.getDouble(36), rs.getDouble(37), rs.getInt(38)));
-					ap.setTakeoffWeight(rs.getInt(39));
-					ap.setTakeoffFuel(rs.getInt(40));
-					ap.setLandingTime(toInstant(rs.getTimestamp(41)));
-					ap.setLandingDistance(rs.getInt(42));
-					ap.setLandingSpeed(rs.getInt(43));
-					ap.setLandingVSpeed(rs.getInt(44));
-					// Load column #45 with DVA ACARS only
-					ap.setLandingN1(rs.getDouble(46));
-					ap.setLandingHeading(rs.getInt(47));
-					ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
-					ap.setLandingWeight(rs.getInt(51));
-					ap.setLandingFuel(rs.getInt(52));
-					// Load column #53 with DVA ACARS only
-					ap.setEndTime(toInstant(rs.getTimestamp(54)));
-					ap.setGateWeight(rs.getInt(55));
-					ap.setGateFuel(rs.getInt(56));
-					ap.setTotalFuel(rs.getInt(57));
+					ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(28));
+					ap.setStartTime(toInstant(rs.getTimestamp(29)));
+					ap.setTaxiTime(toInstant(rs.getTimestamp(30)));
+					ap.setTaxiWeight(rs.getInt(31));
+					ap.setTaxiFuel(rs.getInt(32));
+					ap.setTakeoffTime(toInstant(rs.getTimestamp(33)));
+					ap.setTakeoffDistance(rs.getInt(34));
+					ap.setTakeoffSpeed(rs.getInt(35));
+					ap.setTakeoffN1(rs.getDouble(36));
+					ap.setTakeoffHeading(rs.getInt(37));
+					ap.setTakeoffLocation(new GeoPosition(rs.getDouble(38), rs.getDouble(39), rs.getInt(40)));
+					ap.setTakeoffWeight(rs.getInt(41));
+					ap.setTakeoffFuel(rs.getInt(42));
+					ap.setLandingTime(toInstant(rs.getTimestamp(43)));
+					ap.setLandingDistance(rs.getInt(44));
+					ap.setLandingSpeed(rs.getInt(45));
+					ap.setLandingVSpeed(rs.getInt(46));
+					// Load column #47 with DVA ACARS only
+					ap.setLandingN1(rs.getDouble(48));
+					ap.setLandingHeading(rs.getInt(49));
+					ap.setLandingLocation(new GeoPosition(rs.getDouble(50), rs.getDouble(51), rs.getInt(52)));
+					ap.setLandingWeight(rs.getInt(53));
+					ap.setLandingFuel(rs.getInt(54));
+					// Load column #55 with DVA ACARS only
+					ap.setEndTime(toInstant(rs.getTimestamp(56)));
+					ap.setGateWeight(rs.getInt(57));
+					ap.setGateFuel(rs.getInt(58));
+					ap.setTotalFuel(rs.getInt(59));
 				}
 			
 				// Load DVA ACARS pirep data
 				if (isACARS && !isXACARS) {
 					ACARSFlightReport ap = (ACARSFlightReport) p;
-					ap.setLandingG(rs.getDouble(45));
-					ap.setLandingCategory(ILSCategory.values()[rs.getInt(53)]);
-					ap.setPaxWeight(rs.getInt(58));
-					ap.setCargoWeight(rs.getInt(59));
-					ap.setTime(0, rs.getInt(60));
-					ap.setTime(1, rs.getInt(61));
-					ap.setTime(2, rs.getInt(62));
-					ap.setTime(4, rs.getInt(63));
-					ap.setFDE(rs.getString(64));
-					ap.setAircraftCode(rs.getString(65));
-					ap.setSDK(rs.getString(66));
-					ap.setCapabilities(rs.getLong(67));
-					ap.setHasReload(rs.getBoolean(68));
-					ap.setAverageFrameRate(rs.getInt(69) / 10d);
-					ap.setClientBuild(rs.getInt(70));
-					ap.setBeta(rs.getInt(71));
+					ap.setLandingG(rs.getDouble(47));
+					ap.setLandingCategory(ILSCategory.values()[rs.getInt(55)]);
+					ap.setPaxWeight(rs.getInt(60));
+					ap.setCargoWeight(rs.getInt(61));
+					ap.setTime(0, rs.getInt(62));
+					ap.setTime(1, rs.getInt(63));
+					ap.setTime(2, rs.getInt(64));
+					ap.setTime(4, rs.getInt(65));
+					ap.setFDE(rs.getString(66));
+					ap.setAircraftCode(rs.getString(67));
+					ap.setSDK(rs.getString(68));
+					ap.setCapabilities(rs.getLong(69));
+					ap.setHasReload(rs.getBoolean(70));
+					ap.setAverageFrameRate(rs.getInt(71) / 10d);
+					ap.setClientBuild(rs.getInt(72));
+					ap.setBeta(rs.getInt(73));
 					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(72)]);
+						ap.setOnTime(OnTime.values()[rs.getInt(74)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(70));
-					ap.setMinorVersion(rs.getInt(71));
+					ap.setMajorVersion(rs.getInt(72));
+					ap.setMinorVersion(rs.getInt(73));
 				}
 
 				results.add(p);
@@ -711,13 +708,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
-		for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
-			FlightReport fr = i.next();
-			sqlBuf.append(String.valueOf(fr.getID()));
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
+		sqlBuf.append(StringUtils.listConcat(pireps.stream().map(DatabaseBean::getID).collect(Collectors.toList()), ","));
 		sqlBuf.append("))");
 
 		// Convert PIREPs to a Map for lookup
@@ -734,6 +725,34 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the Elite program score for a Flight Report. 
+	 * @param id the Flight Report database ID
+	 * @return a FlightEliteScore bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FlightEliteScore getElite(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PE.*, PEE.SCORE, PEE.BONUS, PEE.REMARKS FROM PIREP_ELITE PE, PIREP_ELITE_ENTRIES PEE WHERE (PE.ID=PEE.ID) AND (PE.ID=?) ORDER BY PEE.SEQ")) {
+			ps.setInt(1, id);
+			FlightEliteScore sc = null;
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					if (sc == null) {
+						sc = new FlightEliteScore(id);
+						sc.setEliteLevel(rs.getString(2), rs.getInt(3));
+						sc.setDistance(rs.getInt(4));
+					}
+					
+					sc.add(rs.getInt(5), rs.getString(7), rs.getBoolean(6));
+				}
+			}
+			
+			return sc;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/*
 	 * Helper method to route data.
@@ -744,18 +763,48 @@ public class GetFlightReports extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ROUTE FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
-		String rt = null;
 		
 		// Build the prepared statement and execute the query
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					rt = rs.getString(1);
+				return rs.next() ? rs.getString(1) : null;
 			}
 		}
+	}
+	
+	/**
+	 * Load promotion flags for a large number of Flight Reports from a single Pilot. This is usally more efficient than a large set query. 
+	 * @param pilotID the Pilot's database ID
+	 * @param pireps a Collection of FlightReport beans
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void loadCaptEQTypes(int pilotID, Collection<FlightReport> pireps, String dbName) throws DAOException {
 		
-		return rt;
+		// Build the SQL statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PEQ.ID, PEQ.EQTYPE FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PROMO_EQ PEQ, ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS P WHERE (P.ID=PEQ.ID) AND (P.PILOT_ID=?)");
+		
+		Map<Integer, FlightReport> pMap = CollectionUtils.createMap(pireps, FlightReport::getID);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setFetchSize(Math.min(pireps.size(), 1000));
+			ps.setInt(1, pilotID);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Integer id = Integer.valueOf(rs.getInt(1));
+					FlightReport fr = pMap.get(id);
+					if (fr != null)
+						fr.setCaptEQType(rs.getString(2));
+				}
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/*

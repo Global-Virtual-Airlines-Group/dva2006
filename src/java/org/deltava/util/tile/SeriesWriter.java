@@ -1,12 +1,13 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import org.deltava.dao.DAOException;
+import org.gvagroup.tile.ImageSeries;
 
 /**
  * An interface to describe Data Access Objects to write ImageSeries beans. 
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 5.0
  */
 
@@ -17,5 +18,12 @@ public interface SeriesWriter {
 	 * @param is the ImageSeries
 	 * @throws DAOException if an error occurs
 	 */
-	public void write(org.gvagroup.tile.ImageSeries is) throws DAOException;
+	public void write(ImageSeries is) throws DAOException;
+	
+	/**
+	 * Purges an ImageSeries.
+	 * @param is the ImageSeries
+	 * @throws DAOException if an error occurs
+	 */
+	public void purge(ImageSeries is) throws DAOException;
 }

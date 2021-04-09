@@ -1,10 +1,12 @@
-// Copyright 2009, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
+
+import org.deltava.beans.flight.FlightType;
 
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 2.6
  */
 
@@ -55,6 +57,18 @@ public interface RoutePair {
     @SuppressWarnings("unlikely-arg-type")
     default boolean includes(String code) {
     	return isPopulated() && (getAirportD().equals(code) || getAirportA().equals(code));
+    }
+    
+    /**
+     * Returns the flight type for customs/gate purposes.
+     * @return a FlightType enumeration
+     */
+    default FlightType getFlightType() {
+    	if (!isPopulated()) return FlightType.UNKNOWN;
+    	if (getAirportD().getCountry().equals(getAirportA().getCountry())) return FlightType.DOMESTIC;
+    	if (getAirportD().getHasPFI() && "US".equals(getAirportA().getCountry().getCode())) return FlightType.USPFI;
+    	if (getAirportD().getIsSchengen() & getAirportA().getIsSchengen()) return FlightType.SCHENGEN;
+    	return FlightType.INTERNATIONAL;
     }
     
     /**

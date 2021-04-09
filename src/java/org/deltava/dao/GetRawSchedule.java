@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 8.0
  */
 
@@ -27,16 +27,6 @@ public class GetRawSchedule extends DAO {
 	 */
 	public GetRawSchedule(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Returns all raw schedule sources from the current airline's database.
-	 * @param isLoaded TRUE to only include loaded sources, otherwise FALSE
-	 * @return a Collection of ScheduleSourceInfo beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<ScheduleSourceInfo> getSources(boolean isLoaded) throws DAOException {
-		return getSources(isLoaded, SystemData.get("airline.db"));
 	}
 	
 	/**

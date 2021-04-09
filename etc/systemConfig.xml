@@ -286,10 +286,10 @@
 		
 		<!-- Download locations -->
 		<url>
-			<metar>ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/</metar>
-			<taf>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/stations/</taf>
-			<metarCycle>ftp://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
-			<tafCycle>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
+			<metar>ftp://tgftp.cp.ncep.noaa.gov/data/observations/metar/stations/</metar>
+			<taf>ftp://tgftp.cp.ncep.noaa.gov/data/forecasts/taf/stations/</taf>
+			<metarCycle>ftp://tgftp.cp.ncep.noaa.gov/data/observations/metar/cycles/</metarCycle>
+			<tafCycle>ftp://tgftp.cp.ncep.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
 		</url>	
 	</weather>
 
@@ -332,7 +332,7 @@
 		</banner_max>
 
 		<vatsim>
-			<status_url>http://cluster.data.vatsim.net/vatsim-data.json</status_url>
+			<status_url>https://data.vatsim.net/v3/vatsim-data.json</status_url>
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
@@ -352,7 +352,7 @@
         </pilotedge>
 
 		<ivao>
-			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
+			<status_url>https://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
 			<url>http://www.ivao.aero/</url>
 			<local>
@@ -412,6 +412,10 @@
 				<site>6LeME9UUAAAAAJrBAkDrmbXZPtohNT9clL65c0dm</site>
 				<secret>6LeME9UUAAAAAP2XT0uFlsZxZdbhhJpvUt3Mhv05</secret>
 			</recaptcha>
+			<push>
+				<pub>BByMXptLsMPS8TSacmLR1MnxGKPsF1jCubl41PSvTQ67F1lwKXAE7_AebQxC8QHf3hyl8WEPjR_OpTJa78urWaY</pub>
+				<pvt>MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCCE3wh2-pWvk8ypmmyE695wwOQFrwOZwbuVmfDeXiWToA</pvt>
+			</push>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
@@ -530,6 +534,7 @@
 		<upload>/home/www/upload</upload>
 		<httplog>/var/log/www</httplog>
 		<archive>/home/www/pos_archive</archive>
+		<tile>/var/cache/tile</tile>
 	</path>
 	
 	<!-- SMTP Server configuration -->
@@ -743,5 +748,18 @@
 		<hourlyFactor type="Double">0.125</hourlyFactor>
 		<yearlyCycleLength type="Integer">1420</yearlyCycleLength>
 		<hourlyCycleLength type="Integer">24</hourlyCycleLength>
+		
+		<!-- Frequent Pilot / Elite program -->
+		<elite>
+			<enabled type="Boolean">true</enabled>
+			<name>SkyMiles Medallion</name>
+			<points>SkyMiles</points>
+			<distance>Medallion Miles</distance>
+			<scorer>org.deltava.beans.flight.EliteScorer</scorer>
+			<round>
+				<leg type="Integer">5</leg>
+				<distance type="Integer">1000</distance>
+			</round>
+		</elite>
 	</econ>
 </config>

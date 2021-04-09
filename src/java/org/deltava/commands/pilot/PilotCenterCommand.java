@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -11,6 +11,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.Restriction;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -68,8 +69,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Calculate total legs/hours
 			int totalLegs = 0; double totalHours = 0;
-			for (Iterator<Pilot> i = profiles.values().iterator(); i.hasNext(); ) {
-				Pilot usr = i.next();
+			for (Pilot usr : profiles.values()) {
 				totalLegs += usr.getLegs();
 				totalHours += usr.getHours();
 			}
@@ -89,7 +89,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Check for manual PIREP ability
 			GetFlightReports frdao = new GetFlightReports(con);
-			int heldPIREPs = frdao.getHeld(p.getID(), SystemData.get("airline.db"));
+			int heldPIREPs = frdao.getHeld(p.getID(), ctx.getDB());
 			boolean manualPIREP = (p.getACARSRestriction() != Restriction.NOMANUAL);
 			manualPIREP &= (heldPIREPs < SystemData.getInt("users.pirep.maxHeld", 5));
 			ctx.setAttribute("manualPIREP", Boolean.valueOf(manualPIREP), REQUEST);
@@ -107,6 +107,28 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
+			
+			// Load elite status
+			if (SystemData.getBoolean("econ.elite.enabled")) {
+				GetElite eldao = new GetElite(con);
+				int currentYear = EliteLevel.getYear(Instant.now());
+				List<EliteStatus> myStatus = eldao.getStatus(p.getID(), currentYear);
+				if (!myStatus.isEmpty()) {
+					EliteStatus myCurrentStatus = myStatus.get(myStatus.size() - 1);
+					ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
+					ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
+					
+					// Get our totals
+					GetEliteStatistics esdao = new GetEliteStatistics(con);
+					List<YearlyTotal> eliteTotals = esdao.getEliteTotals(p.getID());
+					ctx.setAttribute("currentEliteTotal", eliteTotals.stream().filter(yt -> yt.getYear() == currentYear).findFirst().orElse(new YearlyTotal(currentYear, p.getID())), REQUEST);
+					ctx.setAttribute("eliteTotals", eliteTotals, REQUEST);
+					
+					// Display next level
+					TreeSet<EliteLevel> levels = eldao.getLevels(currentYear);
+					ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
+				}
+			}
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			frdao.setQueryMax(10);
@@ -118,7 +140,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (lastFlight != null) {
 				GetSchedule schdao = new GetSchedule(con);
 				GetRawSchedule rsdao = new GetRawSchedule(con);
-				schdao.setSources(rsdao.getSources(true));
+				schdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				int outFlightCount = schdao.getFlights(lastFlight.getAirportA()).size();
 				boolean rCharter = ((outFlightCount == 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
 				ctx.setAttribute("needReturnCharter", Boolean.valueOf(rCharter), REQUEST);
@@ -126,7 +148,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Get online hours
 			GetFlightReports prdao = new GetFlightReports(con);
-			prdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			prdao.getOnlineTotals(p, ctx.getDB());
 			
 			// If we're a dispatcher, load dispatch totals
 			if (ctx.isUserInRole("Dispatch")) {
@@ -136,7 +158,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Load Accomplishments
 			GetAccomplishment acdao = new GetAccomplishment(con);
-			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
+			ctx.setAttribute("accs", acdao.getByPilot(p, ctx.getDB()), REQUEST);
 
 			// Get the schedule size
 			GetScheduleInfo sdao = new GetScheduleInfo(con);

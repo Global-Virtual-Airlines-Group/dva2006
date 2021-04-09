@@ -404,6 +404,11 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>idx</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
 	</tag>
 	
 	<!-- Command Button tag, for defining HTML buttons that execute commands -->
@@ -446,6 +451,11 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>org.deltava.beans.DatabaseBean</type>
+		</attribute>
+		<attribute>
+			<name>idx</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>post</name>

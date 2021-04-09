@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,13 +6,12 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.deltava.beans.acars.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to determine whether a new ACARS client is available.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -36,23 +35,20 @@ public class UpdateAvailableService extends WebService {
 		
 		// Get channel
 		UpdateChannel ch = UpdateChannel.RELEASE;
-		if (cInfo.getClientType() == ClientType.PILOT) {
-			try {
-				ch = UpdateChannel.valueOf(ctx.getParameter("channel").toUpperCase());
-			} catch (Exception e) {
-				if (cInfo.isBeta())
-					ch = UpdateChannel.BETA;
-			}
-		}
+		if (cInfo.getClientType() == ClientType.PILOT)
+			ch = EnumUtils.parse(UpdateChannel.class, ctx.getParameter("channel"), cInfo.isBeta() ? UpdateChannel.BETA : UpdateChannel.RELEASE);
 
 		ClientInfo latest = null; boolean isForced = false;
 		try {
 			GetACARSBuilds abdao = new GetACARSBuilds(ctx.getConnection());
 			latest = abdao.getLatestBuild(cInfo);
+			isForced = !abdao.isValid(cInfo);
 			
 			// Check for a forced upgrade
-			ClientInfo forced = abdao.getLatestBuild(cInfo, true);
-			isForced = (forced != null) && (forced.compareTo(cInfo) > 0);
+			if (!isForced) {
+				ClientInfo forced = abdao.getLatestBuild(cInfo, true);
+				isForced |= (forced != null) && (forced.compareTo(cInfo) > 0);
+			}
 			
 			// If we're a beta, check the beta release
 			if (ch == UpdateChannel.BETA) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,16 +10,19 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
 public class GetExamProfiles extends DAO {
+	
+	private static final Cache<CacheableCollection<ExamProfile>> _cache = CacheManager.getCollection(ExamProfile.class, "ExamProfiles");
 
 	/**
 	 * Initialize the Data Access Object.
@@ -28,27 +31,6 @@ public class GetExamProfiles extends DAO {
 	public GetExamProfiles(Connection c) {
 		super(c);
 	}
-
-	/**
-	 * Loads an Examination profile.
-	 * @param examName the examination name
-	 * @return an ExamProfile bean, or null if the exam was not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public ExamProfile getExamProfile(String examName) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT EI.*, COUNT(E.ID), SUM(E.PASS), COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) "
-			+ "LEFT JOIN exams.QE_INFO QE ON (EI.NAME=QE.EXAM_NAME) WHERE (EI.NAME=?) GROUP BY EI.NAME LIMIT 1")) {
-			ps.setString(1, examName);
-
-			// Execute the query - return null if not found
-			List<ExamProfile> results = execute(ps);
-			loadAirlines(results);
-			loadScorers(results);
-			return results.stream().findFirst().orElse(null);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 	
 	/**
 	 * Returns all Examination Profiles.
@@ -56,12 +38,20 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getAllExamProfiles() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT EI.*, COUNT(E.ID), SUM(E.PASS), COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) "
-			+ "LEFT JOIN exams.QE_INFO QE ON (EI.NAME=QE.EXAM_NAME) GROUP BY EI.NAME ORDER BY EI.STAGE, EI.NAME")) {
-			List<ExamProfile> results = execute(ps);
+		
+		// Check the cache
+		CacheableCollection<ExamProfile> results = _cache.get(ExamProfile.class);
+		if (results != null)
+			return new ArrayList<ExamProfile>(results);
+		
+		results = new CacheableList<ExamProfile>(ExamProfile.class);
+		try (PreparedStatement ps = prepare("SELECT EI.*, COUNT(E.ID), SUM(E.PASS), COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO EI LEFT JOIN exams.EXAMS E ON (EI.NAME=E.NAME) LEFT JOIN "
+			+ "exams.QE_INFO QE ON (EI.NAME=QE.EXAM_NAME) GROUP BY EI.NAME ORDER BY EI.STAGE, EI.NAME")) {
+			results.addAll(execute(ps));
 			loadAirlines(results);
 			loadScorers(results);
-			return results;
+			_cache.add(results);
+			return new ArrayList<ExamProfile>(results);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -75,6 +65,16 @@ public class GetExamProfiles extends DAO {
 	public List<ExamProfile> getExamProfiles() throws DAOException {
 		AirlineInformation ai = SystemData.getApp(null);
 		return getAllExamProfiles().stream().filter(ep -> ep.getAirlines().contains(ai)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Loads an Examination profile.
+	 * @param examName the examination name
+	 * @return an ExamProfile bean, or null if the exam was not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public ExamProfile getExamProfile(String examName) throws DAOException {
+		return getAllExamProfiles().stream().filter(ep -> ep.getName().equals(examName)).findFirst().orElse(null);
 	}
 
 	/**

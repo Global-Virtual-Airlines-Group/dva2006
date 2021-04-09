@@ -1,16 +1,15 @@
-// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 /**
  * An enumeration to store GFS pressure levels.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 5.2
  */
 
 public enum PressureLevel {
-
-	LOW(875, 4000), MIDLOW(625, 12000), MID(475, 20000), LOJET(325, 28000), JET(275, 32000), HIGH(225, 38000);
+	LOW(850, 5000), MIDLOW(650, 12000), MID(500, 18000), LOJET(300, 30000), JET(250, 34000), HIGH(200, 38600);
 	
 	private final int _mb;
 	private final int _alt;

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class TransferPurgeTask extends Task {
 					if (cr != null)
 						exwdao.delete(cr);
 					txwdao.delete(tx.getID());
-					swdao.write(upd);
+					swdao.write(upd, ctx.getDB());
 					
 					// Commit the transaction
 					ctx.commitTX();

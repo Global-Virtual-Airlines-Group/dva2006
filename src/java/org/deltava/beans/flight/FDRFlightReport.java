@@ -1,20 +1,20 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
 import java.time.*;
 
-import org.deltava.beans.GeospaceLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 8.3
+ * @version 10.0
  * @since 1.0
  */
 
-public abstract class FDRFlightReport extends FlightReport {
+public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
 	
 	private final Map<StateChange, Instant> _stateChangeTimes = new HashMap<StateChange, Instant>();
 	
@@ -53,22 +53,12 @@ public abstract class FDRFlightReport extends FlightReport {
 		super(a, flightNumber, leg);
 	}
 	
-	/**
-	 * Returns the software used to record this Flight.
-	 * @return a Recorder
-	 */
-	public abstract Recorder getFDR();
-	
 	@Override
 	public final Duration getDuration() {
 		return getBlockTime();
 	}
 
-    /**
-     * Returns the start time of this flight.
-     * @return the start date/time
-     * @see FDRFlightReport#setStartTime(Instant)
-     */
+	@Override
     public Instant getStartTime() {
         return _stateChangeTimes.get(StateChange.START);
     }
@@ -259,10 +249,7 @@ public abstract class FDRFlightReport extends FlightReport {
     	return _landingPos;
     }
 
-    /**
-     * Returns the end date/time of the flight.
-     * @return the date/time the flight ended at the gate
-     */
+    @Override
     public Instant getEndTime() {
         return _stateChangeTimes.get(StateChange.END);
     }

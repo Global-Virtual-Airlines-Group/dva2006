@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,12 +6,11 @@ import java.sql.*;
 import org.deltava.beans.*;
 
 import org.deltava.util.cache.CacheManager;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to track user logins and logouts.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -25,16 +24,6 @@ public class SetPilotLogin extends PilotWriteDAO {
 		super(c);
 	}
 	
-	/**
-	 * Write the pilot's last login date to the database. This also resets the Pilot's status to ACTIVE, if on leave. 
-	 * @param id the Pilot's database ID
-	 * @param hostName the host from which the Pilot is logging in from 
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void login(int id, String hostName) throws DAOException {
-		login(id, hostName, SystemData.get("airline.db"));
-	}
-
 	/**
 	 * Write the pilot's last login date to the database. This also resets the Pilot's status to ACTIVE, if on leave. 
 	 * @param id the Pilot's database ID
@@ -63,10 +52,17 @@ public class SetPilotLogin extends PilotWriteDAO {
 	/**
 	 * Write the pilot's last logout date to the database. 
 	 * @param id the Pilot's database ID
+	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void logout(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)")) {
+	public void logout(int id, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {

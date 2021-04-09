@@ -14,7 +14,6 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:json />
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="markermanager" />
@@ -27,15 +26,16 @@
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script>
-var loaders = {};
-loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
+golgotha.local.loaders = golgotha.local.loaders || {};
+golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
+golgotha.local.loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
+golgotha.local.loaders.series.setData('temp', 0.275, 'wxTemp');
+golgotha.local.loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
+golgotha.local.loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
+golgotha.local.loaders.series.setData('sat', 0.325, 'wxSat');
+golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 
-golgotha.routePlot.keepRoute = ${fn:length(flight.route) > 0};
+golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
     golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
@@ -63,7 +63,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Aircraft</td>
- <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="void golgotha.routePlot.updateRoute(false)" /></td>
+ <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
@@ -78,7 +78,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
- <td class="data"><el:combo name="gateD" size="1" idx="*" options="${emptyList}" firstEntry="[ GATE ]" onChange="golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="gateD" size="1" idx="*" options="${gatesD}" firstEntry="-" value="${flight.gateD}" onChange="golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="wxDr" style="display:none;">
  <td class="label">Origin Weather</td>
@@ -92,7 +92,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>
- <td class="data"><el:combo name="gateA" size="1" idx="*" options="${emptyList}" firstEntry="[ GATE ]" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="gateA" size="1" idx="*" options="${gatesA}" firstEntry="-" value="${flight.gateA}" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="wxAr" style="display:none;">
  <td class="label top">Destination Weather</td>
@@ -160,7 +160,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" /></td>
+ <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" onChange="void golgotha.routePlot.togglePax()" /><br />
+<el:box name="precalcPax" ID="precalcPax" value="true"  idx="*" label="Precalculate load factor and passenger count for Flight" /></td>
 </tr>
 </el:table>
 
@@ -176,24 +177,15 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script id="mapInit" async>
+<script id="mapInit">
 const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
-try {
-	golgotha.routePlot.hasBlob = !!new Blob;
-} catch (e) {}
-
-// Reset form links if blob download supported
-if (golgotha.routePlot.hasBlob) {
-	f.onsubmit = function() { return false; };
-	const btn = document.getElementById('SaveButton');
-	btn.onclick = golgotha.routePlot.download;
-}
-
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airline = 'all';
 golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
+golgotha.routePlot.validateBlob(f);
+golgotha.routePlot.togglePax();
 <c:choose>
 <c:when test="${empty flight}">
 // Load the airports
@@ -212,21 +204,17 @@ const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts)
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-
-// Create the jetstream layers
-const jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-const hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
-const ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+google.maps.event.addListener(map, 'zoom_changed', function() { document.forms[0].noRecenter.checked = (map.zoom > 4); });
 
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('twcRadarHcMosaic'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('temp'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('windSpeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('windSpeedGust'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('sat'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
@@ -239,8 +227,9 @@ golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	loaders.series.loadGinsu();
+	golgotha.local.loaders.series.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
+	return true;
 });
 </script>
 </body>

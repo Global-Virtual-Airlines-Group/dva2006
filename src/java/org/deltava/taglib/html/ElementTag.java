@@ -1,9 +1,10 @@
-// Copyright 2005, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
 
 import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.taglib.*;
 import org.deltava.util.StringUtils;
@@ -11,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for supporting JSP Tags that render HTML elements.
  * @author Luke
- * @version 6.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -29,10 +30,24 @@ public abstract class ElementTag extends BrowserInfoTag {
 		super();
 		_data = new XMLRenderer(elementName);
 	}
+	
+    /**
+     * Returns the parent form tag.
+     * @return the parent FormTag, or null
+     */
+    protected FormTag getParentFormTag() {
+    	return (FormTag) TagSupport.findAncestorWithClass(this, FormTag.class);
+    }
+    
+    /**
+     * Gets and increments the current tab index count for the parent form tag.
+     * @return the tabIndex
+     */
+    protected int getFormIndexCount() {
+    	FormTag parent = getParentFormTag();
+    	return (parent == null) ? 0 : parent.incTabIndex();
+    }
 
-	/**
-	 * Resets this tag's data when its lifecycle is complete.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -84,21 +99,12 @@ public abstract class ElementTag extends BrowserInfoTag {
 			_data.setAttribute(attrName, String.valueOf(value));
 	}
 
-	/**
-	 * Updates this tag's page context and its JSP output writer.
-	 * @param ctxt the new JSP page context
-	 */
 	@Override
 	public void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		_out = ctxt.getOut();
 	}
 
-	/**
-	 * Executed post tag setup. Concatenates CSS classes into a single string.
-	 * @return EVAL_BODY_INCLUDE always
-	 * @throws JspException if an error occurs
-	 */
 	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();

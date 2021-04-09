@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.acars.Restriction;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 8.6
+ * @version 9.2
  * @since 1.0
  */
 
@@ -20,6 +20,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _ourPIREP;
 	private boolean _canCreate;
 	private boolean _canEdit;
+	private boolean _canCalculateLoad;
 	private boolean _canSubmit;
 	private boolean _canHold;
 	private boolean _canRelease;
@@ -40,9 +41,6 @@ public class PIREPAccessControl extends AccessControl {
 		_pirep = fr;
 	}
 
-	/**
-	 * Calculates access rights.
-	 */
 	@Override
 	public void validate() {
 		validateContext();
@@ -78,6 +76,7 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
+		_canCalculateLoad = isDraft && _ourPIREP && (_pirep.getLoadFactor() <= 0);
 		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR) && !noManual;
 		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightStatus.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
@@ -130,6 +129,14 @@ public class PIREPAccessControl extends AccessControl {
 	   return _canSubmit;
 	}
 
+	/**
+	 * Returns if the load factor for this PIREP can be calculated in advance.
+	 * @return TRUE if can be calculated (draft, ours, load factor not set), otherwise FALSE
+	 */
+	public boolean getCanCalculateLoad() {
+		return _canCalculateLoad;
+	}
+	
 	/**
 	 * Returns if the PIREP can be held.
 	 * @return TRUE if it can be held, otherwise FALSE

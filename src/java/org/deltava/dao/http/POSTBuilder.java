@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to build POST bodies.
  * @author Luke
- * @version 9.0
+ * @version 9.2
  * @since 3.4
  */
 
@@ -23,7 +23,7 @@ class POSTBuilder extends LinkedHashMap<String, String> {
 	 */
 	public void addIfPresent(String key, String value) {
 		if (!StringUtils.isEmpty(value))
-			put(key, value);
+			put(key, String.valueOf(value));
 	}
 	
 	/**

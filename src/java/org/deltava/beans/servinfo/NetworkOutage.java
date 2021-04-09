@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A bean to track Online Network data feed outages.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 8.6
  */
 
@@ -51,10 +51,10 @@ public class NetworkOutage implements TimeSpan {
 		return _endTime;
 	}
 	
+	@Override
 	public Duration getDuration() {
-		return Duration.between(_startTime, _endTime);
+		return (_endTime == null) ? Duration.between(getStartTime(), Instant.now()) : TimeSpan.super.getDuration();
 	}
-	
 	
 	/**
 	 * Updates the start of the outage.

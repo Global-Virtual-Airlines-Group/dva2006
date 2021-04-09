@@ -1,11 +1,11 @@
-// Copyright 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.json.*;
 
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 5.0
  */
 
@@ -41,7 +41,7 @@ public class FlightStatsService extends WebService {
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.get(StringUtils.parse(ctx.getParameter("id"), 0));
+			FlightReport fr = frdao.get(StringUtils.parse(ctx.getParameter("id"), 0), ctx.getDB());
 			if (fr == null)
 				throw error(SC_NOT_FOUND, "Invalid Flight Report", false);
 			
@@ -61,14 +61,21 @@ public class FlightStatsService extends WebService {
 		}
 		
 		// Determine if sim time went backwards
-		boolean fwdTime = true; Instant lt = Instant.EPOCH;
+		boolean fwdTime = true; Instant lt = Instant.EPOCH, ft = null;
 		for (Iterator<? extends GeoLocation> i = routePoints.iterator(); i.hasNext() && fwdTime; ) {
 			GeoLocation loc = i.next();
 			if (loc instanceof ACARSRouteEntry) {
 				ACARSRouteEntry ae = (ACARSRouteEntry) loc;
+				ft = (ft == null) ? ae.getSimUTC() : ft;
 				fwdTime &= (ae.getSimUTC() != null) && !ae.getSimUTC().isBefore(lt); // equal or after
 				lt = ae.getSimUTC();
 			}
+		}
+		
+		// Determine how far forward time went
+		if (fwdTime && (ft != null)) {
+			Duration td = Duration.between(ft, lt);
+			fwdTime = !td.isNegative() && (td.toHours() < 24);
 		}
 		
 		// Go through the rows
@@ -99,12 +106,16 @@ public class FlightStatsService extends WebService {
 		// Adjust maximum speed and altitude
 		maxAlt = (maxAlt + 10000 - (maxAlt % 10000));
 		maxSpeed = (maxSpeed + 100 - (maxSpeed % 100));
+		int altInterval = maxAlt / 5;
 		jo.put("maxAlt", maxAlt);
 		jo.put("maxSpeed", maxSpeed);
+		jo.put("altInterval", altInterval);
 		jo.put("isSimTime", fwdTime);
-		JSONUtils.ensureArrayPresent(jo, "data");
+		for (int x = 0; x <= 5; x++)
+			jo.append("altIntervals", Integer.valueOf(altInterval * x));
 		
 		// Dump to the output stream
+		JSONUtils.ensureArrayPresent(jo, "data");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
@@ -117,10 +128,6 @@ public class FlightStatsService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

@@ -49,7 +49,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${home}" />
 const mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: mapTypes};

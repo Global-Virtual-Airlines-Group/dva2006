@@ -1164,6 +1164,12 @@
 		<roles>PIREP,HR</roles>
 	</command>
 
+	<command id="calclf">
+		<name>Calculate Load Factor</name>
+		<class>org.deltava.commands.pirep.LoadCalculateCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="dispose">
 		<name>PIREP Disposal</name>
 		<class>org.deltava.commands.pirep.PIREPDisposalCommand</class>
@@ -1254,7 +1260,21 @@
 		<roles>HR,Signature</roles>
 	</command>
 
-	<command id="accomplishments">
+	<command id="wxcenter">
+		<name>Weather Center</name>
+		<class>org.deltava.commands.main.WeatherCenterCommand</class>
+		<roles>Pilot</roles>	
+	</command>
+
+	<command id="wxfinder">
+		<name>Airport Weather Finder</name>	
+		<class>org.deltava.commands.main.WeatherFinderCommand</class>
+		<roles>Pilot</roles>	
+	</command>
+
+
+	<!-- Accomplishment commands -->
+		<command id="accomplishments">
 		<name>Accomplishment Profile List</name>
 		<class>org.deltava.commands.stats.AccomplishmentListCommand</class>
 		<roles>HR,Operations,PIREP</roles>
@@ -1296,19 +1316,65 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="wxcenter">
-		<name>Weather Center</name>
-		<class>org.deltava.commands.main.WeatherCenterCommand</class>
-		<roles>Pilot</roles>	
+
+	<!-- Tour commands -->
+	<command id="tours">
+		<name>Tour Profile List</name>
+		<class>org.deltava.commands.stats.TourListCommand</class>
+		<roles>Pilot</roles>
 	</command>
 
-	<command id="wxfinder">
-		<name>Airport Weather Finder</name>	
-		<class>org.deltava.commands.main.WeatherFinderCommand</class>
-		<roles>Pilot</roles>	
+	<command id="tour">
+		<name>Tour Profile</name>
+		<class>org.deltava.commands.stats.TourCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="tourdelete">
+		<name>Tour Profile Delete</name>
+		<class>org.deltava.commands.stats.TourDeleteCommand</class>
+		<roles>Operations,Event</roles>
 	</command>
 
 
+	<!-- Elite commands -->
+	<command id="elitelevels">
+		<name>Elite Levels</name>
+		<class>org.deltava.commands.econ.EliteLevelListCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
+	<command id="elitelevel">
+		<name>Elite Level</name>
+		<class>org.deltava.commands.econ.EliteLevelCommand</class>
+		<roles>Operations,HR</roles>
+	</command>	
+
+	<command id="eliteinfo">
+		<name>Elite Pilot Status</name>
+		<class>org.deltava.commands.econ.EliteInfoCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="elitelevelset">
+		<name>Elite Levels Set</name>
+		<class>org.deltava.commands.econ.EliteLevelSetCommand</class>
+		<roles>Operations</roles>
+	</command>
+	
+	<command id="eliterecalc">
+		<name>Elite Status Recalculate</name>
+		<class>org.deltava.commands.econ.EliteStatusCalculateCommand</class>
+		<roles>Operations,HR,PIREP</roles>
+	</command>
+
+	<command id="elitestats">
+		<name>Elite Statistics</name>
+		<class>org.deltava.commands.econ.EliteStatsCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
+	
 	<!-- Flight Assignment commands -->
 	<command id="findflight">
 		<name>Find A Flight</name>
@@ -1651,6 +1717,12 @@
 		<name>Examination Profile Delete</name>
 		<class>org.deltava.commands.testing.ExamProfileDeleteCommand</class>
 		<roles>HR,TestAdmin,AcademyAdmin</roles>
+	</command>
+
+	<command id="qpsearch">
+		<name>Question Profile Search</name>
+		<class>org.deltava.commands.testing.QuestionProfileSearchCommand</class>
+		<roles>HR,Examination,TestAdmin,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="qprofiles">

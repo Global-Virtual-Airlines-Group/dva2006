@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -56,22 +56,22 @@ public class GetCoolerChannels extends DAO {
 		Channel c = _cache.get(channelName);
 		if (c != null) return c;
 
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?) LIMIT 1")) {
-			ps.setString(1, channelName);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE (T.CHANNEL=C.CHANNEL) AND (T.HIDDEN=?) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT FROM common.COOLER_CHANNELS C WHERE (C.CHANNEL=?) LIMIT 1")) {
+			ps.setBoolean(1, false);
+			ps.setString(2, channelName);
 
 			// Execute the query - if nothing is returned, return null
 			try (ResultSet rs = ps.executeQuery()) {
 				if (!rs.next()) return null;
-
-				// Initialize the channel
 				c = new Channel(channelName);
 				c.setDescription(rs.getString(2));
 				c.setActive(rs.getBoolean(3));
 				c.setAllowNewPosts(rs.getBoolean(4));
+				c.setLastThreadID(rs.getInt(5));
 			}
 
 			// Load the roles and airlines
-			loadInfo(Map.of(c.getName(), c));
+			loadInfo(c);
 			_cache.add(c);
 			return c;
 		} catch (SQLException se) {
@@ -82,62 +82,40 @@ public class GetCoolerChannels extends DAO {
 	/**
 	 * Retrieves all Channels for a particular airline.
 	 * @param al the Airline
-	 * @param showHidden TRUE if hidden threads should be returned in the last post
 	 * @param showInactive TRUE if inactive channels should be returned, otherwise FALSE 
 	 * @return a List of Channel beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Channel> getChannels(AirlineInformation al, boolean showHidden, boolean showInactive) throws DAOException {
+	public List<Channel> getChannels(AirlineInformation al, boolean showInactive) throws DAOException {
 
-		// Build the SQL statement optionally showing locked threads
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
-		if (!showHidden)
-			sqlBuf.append("(T.HIDDEN=?) AND ");
-		sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN "
-			+ "common.COOLER_THREADS T ON (T.CHANNEL=C.CHANNEL) ");
+		// Build the SQL statement optionally showing inactive channels
+		StringBuilder sqlBuf = new StringBuilder("SELECT CHANNEL FROM common.COOLER_CHANNELS");
 		if (!showInactive)
-			sqlBuf.append("WHERE (C.ACTIVE=?) ");
-		sqlBuf.append("GROUP BY C.CHANNEL");
+			sqlBuf.append(" WHERE (ACTIVE=?)");
 
-		Map<String, Channel> results = new TreeMap<String, Channel>();
+		Collection<String> names = new LinkedHashSet<String>();
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			int pos = 0;
-			if (!showHidden)
-				ps.setBoolean(++pos, false);
-			if (!showInactive)
-				ps.setBoolean(++pos, true);
-
-			// Execute the query - we store results in a map for now
+			if (!showInactive) ps.setBoolean(1, true);
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Channel c = new Channel(rs.getString(1));
-					c.setDescription(rs.getString(2));
-					c.setActive(rs.getBoolean(3));
-					c.setAllowNewPosts(rs.getBoolean(4));
-					c.setLastThreadID(rs.getInt(5));
-					c.setPostCount(rs.getInt(6));
-					c.setThreadCount(rs.getInt(7));
-					c.setViewCount(rs.getInt(8));
-					results.put(c.getName(), c);
-				}
+				while (rs.next())
+					names.add(rs.getString(1));
 			}
-
-			// Load the roles and airlines
-			loadInfo(results);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Parse through the results and strip out from the airline - since it's cheaper to do it here than in the query
-		Collection<Channel> channels = results.values().stream().filter(c -> ((al == null) || c.hasAirline(al.getCode()))).collect(Collectors.toCollection(TreeSet::new));
-				
-		// Add to cache
-		_cache.addAll(channels);
-
+		
+		// Load from the cache
+		List<Channel> channels = new ArrayList<Channel>();
+		for (String name : names) {
+			Channel c = get(name);
+			if ((al == null) || c.hasAirline(al.getCode()))
+				channels.add(c);
+		}
+		
 		// Add the "special" channels
-		channels.add(Channel.ALL);
-		channels.add(Channel.SHOTS);
-		return new ArrayList<Channel>(channels);
+		channels.add(0, Channel.ALL);
+		channels.add(1, Channel.SHOTS);
+		return channels;
 	}
 
 	/**
@@ -152,28 +130,37 @@ public class GetCoolerChannels extends DAO {
 
 		// Check if we are querying for the admin role; in this case return everything
 		if (roles.contains("Developer"))
-			return getChannels(null, true, true);
+			return getChannels(null, true);
 
 		// Check if we can display locked threads
-		List<Channel> channels = getChannels(al, roles.contains("Moderator"), false);
+		List<Channel> channels = getChannels(al, false);
 		return channels.stream().filter(ch -> RoleUtils.hasAccess(roles, ch.getReadRoles())).collect(Collectors.toList());
 	}
 
 	/*
-	 * Helper method to load Channel roles and airlines.
+	 * Helper method to load Channel roles, airlines and totals.
 	 */
-	private void loadInfo(Map<String, Channel> channels) throws SQLException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO")) {
+	private void loadInfo(Channel c) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO WHERE (CHANNEL=?)")) {
+			ps.setString(1,  c.getName());
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Channel c = channels.get(rs.getString(1));
-					if (c != null) {
-						Channel.InfoType inf = Channel.InfoType.values()[rs.getInt(2)];
-						if (inf == Channel.InfoType.AIRLINE)
-							c.addAirline(rs.getString(3));
-						else
-							c.addRole(inf, rs.getString(3));
-					}
+					Channel.InfoType inf = Channel.InfoType.values()[rs.getInt(2)];
+					if (inf == Channel.InfoType.AIRLINE)
+						c.addAirline(rs.getString(3));
+					else
+						c.addRole(inf, rs.getString(3));
+				}
+			}
+		}
+		
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(POSTS), COUNT(DISTINCT ID), SUM(VIEWS) FROM common.COOLER_THREADS WHERE (CHANNEL=?)")) {
+			ps.setString(1, c.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					c.setPostCount(rs.getInt(1));
+					c.setThreadCount(rs.getInt(2));
+					c.setViewCount(rs.getInt(3));
 				}
 			}
 		}
@@ -192,18 +179,13 @@ public class GetCoolerChannels extends DAO {
 		if (idSet.isEmpty())
 			return Collections.emptyMap();
 
-		// Init the prepared statement
+		// Init the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT T.* FROM common.COOLER_THREADS T WHERE (T.ID IN (");
-		for (Iterator<Integer> i = idSet.iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
+		sqlBuf.append(StringUtils.listConcat(idSet, ","));
+		sqlBuf.append("))");
 
 		// Close and prepare the statement
 		List<Message> results = new ArrayList<Message>();
-		sqlBuf.append("))");
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {

@@ -1,4 +1,4 @@
-golgotha.airportLoad = golgotha.airportLoad || {config:{doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false}};
+golgotha.airportLoad = golgotha.airportLoad || {config:{doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false, noCache:false}};
 golgotha.airportLoad.config.clone = function() {
 	let o = {};
 	for (p in this) {
@@ -41,19 +41,28 @@ golgotha.airportLoad.setHelpers = function(combos, addSIDSTARHook) {
 	return true;
 };
 
+golgotha.airportLoad.setText = function(combos) {
+	if (combos == null) return false;
+	combos = (combos instanceof Array) ? combos : [combos];
+	combos.forEach(function(cb) {
+		const txt = cb.form[cb.name + 'Code'];
+		if (!txt) return false;
+		cb.txt = txt;
+	});
+	return true;
+};
+
 golgotha.airportLoad.updateAirlineCode = function() {
-	let txt = this.form[this.name + 'Code'];
-	if (!txt) return false;
+	if (!this.txt) return false;
 	const o = this.options[this.selectedIndex];
-	txt.value = o.value;
+	this.txt.value = o.value;
 	return true;
 };
 
 golgotha.airportLoad.updateAirportCode = function() {
-	let txt = this.form[this.name + 'Code'];
-	if (!txt) return false;
+	if (!this.txt) return false;
 	const o = this.options[this.selectedIndex];
-	txt.value = golgotha.airportLoad.config.getCode(o);
+	this.txt.value = golgotha.airportLoad.config.getCode(o);
 	return true;
 };
 
@@ -129,7 +138,7 @@ golgotha.airportLoad.loadAirports = function(opts)
 {
 const oldCode = golgotha.form.getCombo(this); let combo = this;
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'airports.ws?' + opts.URLParams(), true);
+xmlreq.open('get', 'airports.ws?' + opts.URLParams(), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const o = combo.options[combo.selectedIndex];
@@ -139,11 +148,13 @@ xmlreq.onreadystatechange = function() {
 	golgotha.airportLoad.setOptions(combo, jsData, opts);
 	combo.setAirport(oldCode, isChanged);
 	combo.disabled = false;
+	if (combo.txt) combo.txt.disabled = false;
 	golgotha.event.beacon('Airports', 'Load Airport List');
 	return true;
 };
 
 combo.disabled = true;
+if (combo.txt) combo.txt.disabled = true;
 xmlreq.send(null);
 return true;
 };
@@ -152,7 +163,7 @@ golgotha.airportLoad.loadSIDSTAR = function(code, type)
 {
 const oldValue = golgotha.form.getCombo(this); let combo = this;
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
+xmlreq.open('get', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);

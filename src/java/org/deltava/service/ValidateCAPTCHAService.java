@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,10 +12,12 @@ import org.deltava.beans.system.*;
 import org.deltava.commands.HTTPContext;
 import org.deltava.dao.http.GetGoogleCAPTCHA;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Service to validate Google RECAPTCHA tokens.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 9.0
  */
 
@@ -50,9 +52,12 @@ public class ValidateCAPTCHAService extends WebService {
 			GetGoogleCAPTCHA cdao = new GetGoogleCAPTCHA();
 			cdao.setConnectTimeout(2500);
 			cdao.setReadTimeout(3500);
-			CAPTCHAResult cr = cdao.validate(sr.readLine(), ctx.getRequest().getRemoteAddr());
-			s = ctx.getRequest().getSession(true);
-			s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);	
+			String rsp = sr.readLine(); 
+			if (!StringUtils.isEmpty(rsp)) {
+				CAPTCHAResult cr = cdao.validate(rsp, ctx.getRequest().getRemoteAddr());
+				s = ctx.getRequest().getSession(true);
+				s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);
+			}
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}

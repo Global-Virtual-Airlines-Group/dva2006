@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -386,7 +386,7 @@ public class GetEvent extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Briefing b = new Briefing(null); 
+					Briefing b = new Briefing(new byte[0]); 
 					b.setID(rs.getInt(1));
 					b.setForcePDF(rs.getBoolean(2));
 					b.setForceSize(rs.getInt(3));

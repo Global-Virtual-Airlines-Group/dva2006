@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -98,7 +98,7 @@ public class XPIREPService extends XAService {
 			xfr.setMinorVersion(fi.getBeta());
 			xfr.addStatusUpdate(xfr.getAuthorID(), HistoryType.LIFECYCLE, "Submitted via XACARS");
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr, SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr, ctx.getDB());
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				xfr.setID(fr.getID());
@@ -123,14 +123,14 @@ public class XPIREPService extends XAService {
 			
 			// Check if this Flight Report counts for promotion
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), xfr.getEquipmentType());
+			Collection<String> promoEQ = eqdao.getPrimaryTypes(ctx.getDB(), xfr.getEquipmentType());
 
 			// Loop through the eq types, not all may have the same minimum promotion stage length!!
 			if (promoEQ.contains(usr.getEquipmentType())) {
 				FlightPromotionHelper helper = new FlightPromotionHelper(xfr);
 				for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
 					String pType = i.next();
-					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+					EquipmentType pEQ = eqdao.get(pType, ctx.getDB());
 					boolean isOK = helper.canPromote(pEQ);
 					if (!isOK) {
 						i.remove();
@@ -206,12 +206,12 @@ public class XPIREPService extends XAService {
 			// Check if it's a Flight Academy flight
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
-			sdao.setSources(rsdao.getSources(true));
-			ScheduleEntry sEntry = sdao.get(xfr);
+			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
+			ScheduleEntry sEntry = sdao.get(xfr, ctx.getDB());
 			xfr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
 			
 			// Check the schedule database and check the route pair
-			FlightTime avgHours = sdao.getFlightTime(xfr);
+			FlightTime avgHours = sdao.getFlightTime(xfr, ctx.getDB());
 			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !xfr.hasAttribute(FlightReport.ATTR_CHARTER))
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
@@ -286,7 +286,7 @@ public class XPIREPService extends XAService {
 			xwdao.delete(flightID);
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(xfr);
-			fwdao.writeACARS(xfr, SystemData.get("airline.db"));
+			fwdao.writeACARS(xfr, ctx.getDB());
 			if (fwdao.updatePaxCount(xfr.getID()))
 				log.warn("Update Passnger count for PIREP #" + xfr.getID());
 			

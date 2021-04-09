@@ -22,7 +22,7 @@
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 golgotha.local.update = function(combo) {
 	if (!golgotha.form.check()) return false;
 	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(combo);
@@ -87,6 +87,13 @@ golgotha.local.update = function(combo) {
  <td class="label">Flight Operations</td>
  <td class="data" colspan="2">Departures: <span class="small ita"><fmt:list value="${dDays}" delim=", " empty="NONE" /></span>, Arrivals: <span class="small ita"><fmt:list value="${aDays}" delim=", " empty="NONE" /></span></td>
 </tr>
+<c:if test="${airport.isSchengen || airport.hasPFI}">
+<tr>
+ <td class="label top">Customs Zones</td>
+ <td class="data bld caps" colspan="2"><c:if test="${airport.isSchengen}"><div class="ter">This Airport is part of the Schengen Area</div></c:if>
+<c:if test="${airport.hasPFI}"><span class="pri">This Airport has a US Customs Pre-Flight Inspection station</span></c:if></td>
+</tr>
+</c:if>
 <c:if test="${!empty wx}">
 <tr>
  <td class="label top">Current Weather</td>
@@ -130,6 +137,11 @@ golgotha.local.update = function(combo) {
 </c:forEach></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label top">Taxi Times</td>
+ <td class="data" colspan="2">Inbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - <fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
+Outbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - <fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
+</tr>
 <content:filter roles="Schedule,Operations">
 <c:if test="${!empty invalidRwys}">
 <tr>
@@ -169,7 +181,7 @@ golgotha.local.update = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 

@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script async>
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {

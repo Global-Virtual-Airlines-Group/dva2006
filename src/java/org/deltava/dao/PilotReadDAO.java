@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -71,8 +71,7 @@ abstract class PilotReadDAO extends DAO {
 	}
 
 	/**
-	 * Returns a Pilot based on a given full name. This method does not use first/last name splitting since this can be
-	 * unpredictable.
+	 * Returns a Pilot based on a given full name. This method does not use first/last name splitting since this can be unpredictable.
 	 * @param fullName the Full Name of the Pilot
 	 * @param dbName the database name to search
 	 * @return a Collection of Pilot beans
@@ -81,29 +80,13 @@ abstract class PilotReadDAO extends DAO {
 	public final List<Pilot> getByName(String fullName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
-		sqlBuf.append(db);
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(db);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(db);
-		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) GROUP BY P.ID");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) GROUP BY P.ID");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setString(2, fullName);
-
-			// Execute the query and get the result
-			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(ps), Pilot::getID);
-			loadIMAddrs(results, dbName);
-			loadRatings(results, dbName);
-			loadRoles(results);
-			loadAccomplishments(results, dbName);
-
-			// Add the result to the cache and return
-			_cache.addAll(results.values());
-			return new ArrayList<Pilot>(results.values());
+			ps.setString(1, fullName);
+			return new ArrayList<Pilot>(getByID(executeIDs(ps), "PILOTS").values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -205,6 +188,7 @@ abstract class PilotReadDAO extends DAO {
 				loadRatings(ucMap, dbName);
 				loadRoles(ucMap);
 				loadAccomplishments(ucMap, dbName);
+				loadPushEndpoints(ucMap, dbName);
 			} catch (SQLException se) {
 				log.error("Query = " + sqlBuf.toString());
 				throw new DAOException(se);
@@ -322,6 +306,7 @@ abstract class PilotReadDAO extends DAO {
 		loadRatings(tmpMap, dbName);
 		loadRoles(tmpMap);
 		loadAccomplishments(tmpMap, dbName);
+		loadPushEndpoints(tmpMap, dbName);
 	}
 
 	/**
@@ -410,6 +395,38 @@ abstract class PilotReadDAO extends DAO {
 			}
 		}
 	}
+	
+   /**
+    * Loads push notification endpoints for a group of Pilots.
+    * @param pilots a Map of Pilots, indexed by database ID
+    * @param dbName the database name
+    * @throws SQLException if a JDBC error occurs
+    */
+	protected final void loadPushEndpoints(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty()) return;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOT_PUSH WHERE (ID IN (");
+		sqlBuf.append(StringUtils.listConcat(pilots.keySet(), ","));
+		sqlBuf.append("))");
+		
+		// Execute the query
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+		   try (ResultSet rs = ps.executeQuery()) {
+			   while (rs.next()) {
+				   Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+				   if (p == null) continue;
+				   PushEndpoint pe = new PushEndpoint(rs.getInt(1), rs.getString(5));
+				   pe.setCreatedOn(toInstant(rs.getTimestamp(2)));
+				   pe.setAuth(rs.getString(3));
+				   pe.setPub256DH(rs.getString(4));
+				   p.addPushEndpoint(pe);
+			   }
+		   }
+	   }
+   }
 	
 	/**
 	 * Load the equipment ratings for a group of Pilots.

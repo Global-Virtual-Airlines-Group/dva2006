@@ -1,11 +1,12 @@
-// Copyright 2007, 2008, 2009, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2015, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import java.text.*;
-import java.time.Instant;
+import java.time.*;
+import java.nio.file.attribute.FileTime;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -18,55 +19,22 @@ import org.deltava.crypt.MessageDigester;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.XMLUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 2.4
  */
 
 public class XMLTerminalRouteService extends DownloadService {
 	
 	private static final Logger log = Logger.getLogger(XMLTerminalRouteService.class);
+	private static final String XML_ZIP = "xmlsidstar.zip";
 	
 	private Metadata _md;
-
-	private static class Metadata {
-		private final String _hash;
-		private final String _hashType;
-		private int _airportCount;
-		private final Instant _created = Instant.now();
-		
-		protected Metadata(String hash, String hashType) {
-			super();
-			_hash = hash;
-			_hashType = hashType;
-		}
-		
-		public String getHash() {
-			return _hash;
-		}
-		
-		public String getHashType() {
-			return _hashType;
-		}
-		
-		public int getAirportCount() {
-			return _airportCount;
-		}
-		
-		public Instant getCreatedOn() {
-			return _created;
-		}
-		
-		public void setAirportCount(int cnt) {
-			_airportCount = cnt;
-		}
-	}
 
 	/**
 	 * Executes the Web Service.
@@ -77,17 +45,13 @@ public class XMLTerminalRouteService extends DownloadService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Ensure we are a dispatcher
-		if (!ctx.isUserInRole("Pilot"))
-			throw error(SC_UNAUTHORIZED, "Not in Pilot role", false);
-		
 		// Check if the file exists
 		File cacheDir = new File(SystemData.get("schedule.cache"));
 		File f = new File(cacheDir, "sidstar.zip");
-		long age = Long.MAX_VALUE;
+		Duration d = null;
 		if (f.exists()) {
 			Instant fileAge = Instant.ofEpochMilli(f.lastModified());
-			age = System.currentTimeMillis() - f.lastModified();
+			d = Duration.between(fileAge, Instant.now());
 			if ((_md != null) && fileAge.isAfter(_md.getCreatedOn())) {
 				log.warn("Terminal Routes updated, clearing metadata");
 				_md = null;
@@ -98,8 +62,8 @@ public class XMLTerminalRouteService extends DownloadService {
 		}
 		
 		// Check the cache
-		if ((age < 3600_000) && (f.length() > 10240) && (_md != null)) {
-			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
+		if ((d != null) && (d.toHours() < 8) && (f.length() > 10240) && (_md != null)) {
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", XML_ZIP));
 			ctx.setContentType("application/zip");
 			ctx.setHeader("max-age", 1800);
 			ctx.setHeader("X-Airport-Count", _md.getAirportCount());
@@ -110,85 +74,47 @@ public class XMLTerminalRouteService extends DownloadService {
 		}
 
 		// Get the DAO and the SIDs/STARs
-		Collection<TerminalRoute> routes = null;
+		Map<String, Collection<TerminalRoute>> routes = new TreeMap<String, Collection<TerminalRoute>>();
 		try {
 			GetNavRoute navdao = new GetNavRoute(ctx.getConnection());
-			routes = navdao.getAll();
+			navdao.getAll().forEach(tr -> CollectionUtils.addMapCollection(routes, tr.getICAO(), tr));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
 
-		// Format routes
-		int apCount = 0; final NumberFormat df = new DecimalFormat("#0.000000");
+		// Convert to XML
+		Map<String, String> docs = new TreeMap<String, String>();
+		routes.entrySet().parallelStream().map(XMLTerminalRouteService::formatXML).forEach(me -> docs.put(me.getKey(), me.getValue()));
+		routes.clear();
+		
 		try {
-			Document doc = null;
-			String lastAirport = null;
-			Element re = new Element("routes");
-			try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(f))) {
-				try (PrintWriter pw = new PrintWriter(zout)) {
-					for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext();) {
-						TerminalRoute tr = i.next();
-						boolean isNewAirport = !tr.getICAO().equals(lastAirport);
-						if (isNewAirport) {
-							if (doc != null) {
-								pw.println(XMLUtils.format(doc, "UTF-8"));
-								pw.flush();
-							}
-
-							lastAirport = tr.getICAO();
-							ZipEntry ze = new ZipEntry("ss_" + tr.getICAO() + ".xml");
-							ze.setMethod(ZipEntry.DEFLATED);
-							doc = new Document();
-							re = new Element("routes");
-							doc.setRootElement(re);
-							zout.putNextEntry(ze);
-							apCount++;
-						}
-
-						// Create the SID/STAR element
-						Element tre = new Element(tr.getType().name().toLowerCase());
-						tre.setAttribute("name", tr.getName());
-						tre.setAttribute("id", tr.getCode());
-						tre.setAttribute("transition", tr.getTransition());
-						tre.setAttribute("runway", tr.getRunway());
-						re.addContent(tre);
-
-						// Add the waypoint elements
-						int mrkID = 0;
-						for (NavigationDataBean ai : tr.getWaypoints()) {
-							Element we = new Element("wp");
-							we.setAttribute("code", ai.getCode());
-							we.setAttribute("idx", String.valueOf(++mrkID));
-							we.setAttribute("lat", df.format(ai.getLatitude()));
-							we.setAttribute("lon", df.format(ai.getLongitude()));
-							we.setAttribute("type", ai.getType().getName());
-							if (ai.getRegion() != null)
-								we.setAttribute("region", ai.getRegion());
-							tre.addContent(we);
-						}
-
-						i.remove();
-					}
-
-					// Write the last entry
-					if (doc != null) {
-						pw.println(XMLUtils.format(doc, "UTF-8"));
-						pw.flush();
-					}
+			int apCount = 0;
+			try (ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(f), 262144))) {
+				for (Iterator<Map.Entry<String, String>> i = docs.entrySet().iterator(); i.hasNext(); ) {
+					Map.Entry<String, String> me = i.next();
+					ZipEntry ze = new ZipEntry("ss_" + me.getKey() + ".xml");
+					ze.setMethod(ZipEntry.DEFLATED);
+					ze.setCreationTime(FileTime.from(Instant.now()));
+					zout.putNextEntry(ze);
+					PrintWriter pw = new PrintWriter(zout);
+					pw.print(me.getValue());
+					pw.flush();
+					i.remove();
+					apCount++;
 				}
 			}
 			
 			// Calculate the metadata
 			MessageDigester md = new MessageDigester("SHA-256", 8192);
-			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 65536)) {
+			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
 				_md = new Metadata(MessageDigester.convert(md.digest(is)), md.getAlgorithm());
 				_md.setAirportCount(apCount);
 			}
 
 			// Format and write
-			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", XML_ZIP));
 			ctx.setContentType("application/zip");
 			ctx.setExpiry(1800);
 			ctx.setHeader("X-Airport-Count", _md.getAirportCount());
@@ -202,10 +128,38 @@ public class XMLTerminalRouteService extends DownloadService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
+	private static Map.Entry<String, String> formatXML(Map.Entry<String, Collection<TerminalRoute>> me) {
+		final NumberFormat df = new DecimalFormat("#0.000000");
+		Document doc = new Document();
+		Element re = new Element("routes");
+		re.setAttribute("icao", me.getKey());
+		doc.setRootElement(re);
+		for (TerminalRoute tr : me.getValue()) {
+			Element tre = new Element(tr.getType().name().toLowerCase());
+			tre.setAttribute("name", tr.getName());
+			tre.setAttribute("id", tr.getCode());
+			tre.setAttribute("transition", tr.getTransition());
+			tre.setAttribute("runway", tr.getRunway());
+			re.addContent(tre);			
+
+			// Add the waypoint elements
+			int mrkID = 0;
+			for (NavigationDataBean ai : tr.getWaypoints()) {
+				Element we = new Element("wp");
+				we.setAttribute("code", ai.getCode());
+				we.setAttribute("idx", String.valueOf(++mrkID));
+				we.setAttribute("lat", df.format(ai.getLatitude()));
+				we.setAttribute("lon", df.format(ai.getLongitude()));
+				we.setAttribute("type", ai.getType().getName());
+				if (ai.getRegion() != null)
+					we.setAttribute("region", ai.getRegion());
+				tre.addContent(we);
+			}
+		}
+		
+		return Map.entry(me.getKey().toLowerCase(), XMLUtils.format(doc, "UTF-8"));
+	}
+	
 	@Override
 	public boolean isSecure() {
 		return true;

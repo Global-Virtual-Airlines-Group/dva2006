@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.2
  */
 
@@ -38,7 +38,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 		
 		// Build the search criteria
 		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria("RAND()");
-		criteria.setDBName(SystemData.get("airline.db"));
+		criteria.setDBName(ctx.getDB());
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("maxLength"), 0));
 		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("maxLengthRange"), 0));
 		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("avoidVisitedDestination")).booleanValue());
@@ -89,7 +89,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Load the schedule entries - allow multiple legs
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
-			sdao.setSources(rsdao.getSources(true));
+			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 			sdao.setQueryMax(1);
 			for (int x = 0; x < totalLegs; x++) {
 				List<ScheduleEntry> legs = sdao.search(criteria);	
