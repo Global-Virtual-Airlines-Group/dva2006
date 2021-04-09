@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -9,12 +9,10 @@ import org.deltava.beans.cooler.SignatureImage;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to approve a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 2.3
  */
 
@@ -42,7 +40,7 @@ public class SignatureApproveCommand extends AbstractCommand {
 			// If not authorized, give it the "seal of approval"
 			if (!isAuth) {
 				SignatureImage si = new SignatureImage(p.getID());
-				si.load(idao.getSignatureImage(ctx.getID(), SystemData.get("airline.db")));
+				si.load(idao.getSignatureImage(ctx.getID(), ctx.getDB()));
 				si.watermark("Approved Signature", si.getWidth() - 120, si.getHeight() - 4);
 				p.load(si.getImage("png"));
 				
@@ -58,7 +56,7 @@ public class SignatureApproveCommand extends AbstractCommand {
 				SetStatusUpdate sudao = new SetStatusUpdate(con);
 				SetSignatureImage swdao = new SetSignatureImage(con);
 				swdao.write(p, si.getWidth(), si.getHeight(), "png", true);
-				sudao.write(upd);
+				sudao.write(upd, ctx.getDB());
 				ctx.commitTX();
 			}
 		} catch (Exception e) {

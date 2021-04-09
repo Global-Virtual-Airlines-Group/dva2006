@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2015, 2016, 2019, 2020 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2016, 2019, 2020, 2021 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import org.deltava.commands.*;
@@ -7,7 +7,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site command to export raw Flight Schedule data in CSV format.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class ScheduleExportCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       try {
     	  GetRawSchedule dao = new GetRawSchedule(ctx.getConnection());
-    	  ctx.setAttribute("srcInfo", dao.getSources(true), REQUEST);
+    	  ctx.setAttribute("srcInfo", dao.getSources(true, ctx.getDB()), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

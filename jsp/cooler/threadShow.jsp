@@ -346,7 +346,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script async>
+<script>
 const postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>

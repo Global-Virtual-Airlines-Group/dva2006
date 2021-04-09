@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.deltava.beans.Flight;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse flight codes.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -44,7 +44,9 @@ public class FlightCodeParser {
 		StringBuilder fNumber = new StringBuilder();
 		
 		// Split based on leg
-		int lPos = fCode.indexOf(" Leg ");
+		int lPos = Math.max(fCode.indexOf(" Leg "), fCode.indexOf('-'));
+		boolean legDash = (fCode.indexOf('-') > -1);
+		
 		String code = (lPos < 1) ? fCode : fCode.substring(0, lPos); 
 		for (int x = 0; x < code.length(); x++) {
 			char c = Character.toUpperCase(code.charAt(x));
@@ -64,7 +66,7 @@ public class FlightCodeParser {
 			a = SystemData.getAirline(defaultAirlineCode);
 		
 		int fNum = Math.min(9999, StringUtils.parse(fNumber.toString(), 1));
-		int lNum = (lPos < 1) ? 1 : StringUtils.parse(fCode.substring(lPos + 5), 1);
+		int lNum = (lPos < 1) ? 1 : StringUtils.parse(fCode.substring(lPos + (legDash ? 1 : 5)), 1);
 		return new ScheduleEntry(a, fNum, lNum);
 	}
 }

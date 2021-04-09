@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

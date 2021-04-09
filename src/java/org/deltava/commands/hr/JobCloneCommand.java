@@ -1,4 +1,4 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -14,12 +14,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.JobPostingAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to clone a Job posting.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 3.7
  */
 
@@ -67,8 +65,8 @@ public class JobCloneCommand extends AbstractCommand {
 			// Load hiring manager choices
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Collection<Pilot> hMgrs = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			hMgrs.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-			hMgrs.addAll(pdao.getByRole("HireMgr", SystemData.get("airline.db")));
+			hMgrs.addAll(pdao.getByRole("HR", ctx.getDB()));
+			hMgrs.addAll(pdao.getByRole("HireMgr", ctx.getDB()));
 			hMgrs.addAll(pdao.getPilotsByRank(Rank.CP));
 			ctx.setAttribute("hireMgrs", hMgrs, REQUEST);
 			

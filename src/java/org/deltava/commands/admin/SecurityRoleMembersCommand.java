@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2014, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display all members of all security roles.
  * @author Luke
- * @version 5.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -38,9 +38,8 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
          Collection<?> roles = (List<?>) SystemData.getObject("security.roles");
          for (Iterator<?> i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
-            List<Pilot> pilots = new ArrayList<Pilot>();
-            pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db"), false));
-            Collections.sort(pilots, cmp);
+            Collection<Pilot> pilots = new TreeSet<Pilot>(cmp);
+            pilots.addAll(dao.getByRole(roleName, ctx.getDB(), false));
             results.put(roleName, pilots);
          }
          

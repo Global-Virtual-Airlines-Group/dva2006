@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.4
  */
 
@@ -213,7 +213,7 @@ public final class OfflineFlightParser {
 		afr.setCapabilities(StringUtils.parse(ae.getAttributeValue("capabilities", "0"), 0, true));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());
-		afr.setNetwork(OnlineNetwork.fromName(ie.getChildTextTrim("network")));
+		afr.setNetwork(EnumUtils.parse(OnlineNetwork.class, ie.getChildTextTrim("network"), null));
 		
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the runways used.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 4.0
  */
 
@@ -33,7 +33,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 
 			// Get the PIREP
 			GetFlightReportACARS prdao = new GetFlightReportACARS(con);
-			FlightReport fr = prdao.get(ctx.getID());
+			FlightReport fr = prdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report ID - " + ctx.getID());
 			else if (!fr.hasAttribute(FlightReport.ATTR_ACARS))

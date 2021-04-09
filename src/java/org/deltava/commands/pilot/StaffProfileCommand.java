@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to create new Staff Profiles.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 1.0
  */
 
@@ -81,7 +81,7 @@ public class StaffProfileCommand extends AbstractCommand {
 
 			// Save the status update
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
-			swdao.write(upd);
+			swdao.write(upd, ctx.getDB());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

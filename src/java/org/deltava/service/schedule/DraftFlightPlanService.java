@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.flightplan.FlightPlanGenerator;
 /**
  * A Web Service to generate a Flight Plan from a draft Flight Report.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 8.0
  */
 
@@ -40,7 +40,7 @@ public class DraftFlightPlanService extends WebService {
 			// Get the flight report
 			int id = StringUtils.parse(ctx.getParameter("id"), 0);
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.get(id);
+			FlightReport fr = frdao.get(id, ctx.getDB());
 			if (fr == null)
 				throw error(SC_BAD_REQUEST, "Invalid Flight Report ID - " + id, false);
 
@@ -86,7 +86,7 @@ public class DraftFlightPlanService extends WebService {
 		// Flush the output buffer
 		String fileName = rb.getAirportD().getICAO() + "-" + rb.getAirportA().getICAO() + "." + gen.getExtension();
 		try {
-			ctx.setContentType(gen.getMimeType(), "windows-1252");
+			ctx.setContentType(gen.getMimeType(), gen.getEncoding());
 			ctx.setHeader("X-Plan-Filename", fileName);
 			ctx.setHeader("Content-disposition", "attachment; filename=" + fileName);
 			ctx.println(gen.generate(rb.getPoints()));
@@ -98,10 +98,6 @@ public class DraftFlightPlanService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;

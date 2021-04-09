@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.coolerImg, ext:['gif','jpg','png'], t:'Signature Image'});

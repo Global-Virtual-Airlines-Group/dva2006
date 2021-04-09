@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -8,29 +8,28 @@ import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.gallery.Image;
 import org.deltava.beans.stats.Accomplishment;
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
-
-import org.deltava.security.command.CoolerThreadAccessControl;
-import org.deltava.security.command.GalleryAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 7.4
+ * @version 10.0
  * @since 1.0
  */
 
 public class ThreadCommand extends AbstractCommand {
 
-	private static final List<String> SCORES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
-	private static final List<String> COLORS = Arrays.asList("blue", "black", "green", "red", "purple", "grey", "brown", "orange", "pink", "yellow");
+	private static final List<String> SCORES = List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+	private static final List<String> COLORS = List.of("blue", "black", "green", "red", "purple", "grey", "brown", "orange", "pink", "yellow");
 
 	private static final int MIN_GALLERY_ID = 100;
 
@@ -142,10 +141,14 @@ public class ThreadCommand extends AbstractCommand {
 			GetACARSDispatchStats dspstdao = new GetACARSDispatchStats(con);
 			
 			// Get the authors, accomploshments and online totals for each user
+			GetElite eldao = new GetElite(con);
 			GetAccomplishment accdao = new GetAccomplishment(con);
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
+			Map<Integer, EliteStatus> eStatus = new HashMap<Integer, EliteStatus>();
 			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
 			for (String dbTableName : udm.getTableNames()) {
+				AirlineInformation ai = SystemData.getApp(dbTableName.substring(0, dbTableName.indexOf('.')));
+				
 				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserData.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
@@ -155,6 +158,8 @@ public class ThreadCommand extends AbstractCommand {
 					
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
+					if (ai.getHasElite())
+						eStatus.putAll(eldao.getStatus(pilots.values(), EliteLevel.getYear(mt.getLastUpdatedOn()), dbTableName));
 				} else
 					users.putAll(adao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
@@ -162,10 +167,10 @@ public class ThreadCommand extends AbstractCommand {
 			// Get Flight Academy certifications
 			boolean showAll = ctx.isUserInRole("HR") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("AcademyAdmin") || ctx.isUserInRole("AcademyAudit");
 			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs(), !showAll);
-			for (Integer id : certs.keySet()) {
-				Person cp = users.get(id);
+			for (Map.Entry<Integer, Collection<String>> cme : certs.entrySet()) {
+				Person cp = users.get(cme.getKey());
 				if ((cp != null) && (cp instanceof Pilot))
-					((Pilot) cp).addCertifications(certs.get(id));
+					((Pilot) cp).addCertifications(cme.getValue());
 			}
 			
 			// Aggregate totals for pilots
@@ -218,7 +223,7 @@ public class ThreadCommand extends AbstractCommand {
 			if (ctx.isUserInRole("Moderator") || ctx.isUserInRole("HR")) {
 				ctx.setAttribute("channel", c, REQUEST);
 				boolean isAdmin = ctx.isUserInRole("Admin");
-				Collection<Channel> channels = cdao.getChannels(isAdmin ? null : airline, isAdmin, isAdmin);
+				Collection<Channel> channels = cdao.getChannels(isAdmin ? null : airline, isAdmin);
 				channels.remove(Channel.ALL);
 				channels.remove(Channel.SHOTS);
 				ctx.setAttribute("channels", channels, REQUEST);
@@ -240,6 +245,7 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("access", ac, REQUEST);
 			ctx.setAttribute("pilots", users, REQUEST);
 			ctx.setAttribute("accomplishments", accs, REQUEST);
+			ctx.setAttribute("eliteStatus", eStatus, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

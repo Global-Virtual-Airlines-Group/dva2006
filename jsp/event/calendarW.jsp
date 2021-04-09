@@ -17,7 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script async>
+<script>
 golgotha.local.switchType = function(combo) {
 	self.location = '/eventcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;

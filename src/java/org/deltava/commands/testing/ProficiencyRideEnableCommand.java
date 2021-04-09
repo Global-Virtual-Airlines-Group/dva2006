@@ -1,4 +1,4 @@
-// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to enable Proficiency Check Rides for a Pilot.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 8.0
  */
 
@@ -134,7 +134,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				p.setProficiencyCheckRides(true);
 				p.removeRatings(ratingDelta);
 				SetPilot pwdao = new SetPilot(con);
-				pwdao.write(p);
+				pwdao.write(p, ctx.getDB());
 				
 				// Write status updates
 				SetStatusUpdate swdao = new SetStatusUpdate(con);

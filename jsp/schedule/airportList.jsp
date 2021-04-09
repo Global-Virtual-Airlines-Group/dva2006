@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.updateSort = function() {
 	const f = document.forms[0];
 	f.action = '/airports.do';

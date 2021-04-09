@@ -32,6 +32,7 @@ protected void tearDown() throws Exception {
       assertEquals(12.345, _g.getLatitude(), 0.0001);
       assertEquals(-23.456, _g.getLongitude(), 0.0001);
       assertEquals(Navaid.GATE, _g.getType());
+      assertEquals(GateZone.DOMESTIC, _g.getZone());
       
       assertNotNull(_g.getPosition());
       assertEquals(_g.getLatitude(), _g.getPosition().getLatitude(), 0.0001);
@@ -62,7 +63,7 @@ protected void tearDown() throws Exception {
    
    public void testClone() throws Exception {
 	   _g.setHeading(123);
-	   _g.setIntl(true);
+	   _g.setZone(GateZone.INTERNATIONAL);
 	   _g.setUseCount(11);
 	   _g.setCode("KATL");
 	   _g.setName("GATE 15");
@@ -75,7 +76,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(_g.getName(), g2.getName());
 	   assertEquals(_g.getLatitude(), g2.getLatitude(), 0.0001);
 	   assertEquals(_g.getLongitude(), g2.getLongitude(), 0.0001);
-	   assertEquals(_g.isInternational(), g2.isInternational());
+	   assertEquals(_g.getZone(), g2.getZone());
 	   assertEquals(_g.getHeading(), g2.getHeading());
 	   assertEquals(_g.getGateType(), g2.getGateType());
 	   assertEquals(_g.getAirlines().size(), g2.getAirlines().size());

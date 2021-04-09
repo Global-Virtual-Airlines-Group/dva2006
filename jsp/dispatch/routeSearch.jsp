@@ -19,7 +19,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) {
@@ -122,7 +122,7 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);

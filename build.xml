@@ -225,12 +225,18 @@
 		<yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${java.io.tmpdir}/build/min/js">
 			<fileset dir="static/js" >
 				<include name="*.js" />
+				<exclude name="push*.js" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/min.cache.txt" />
 				</modified>
 			</fileset>
 		</yuicompress>
+		<copy todir="${java.io.tmpdir}/build/min/js">
+			<fileset dir="static/js">
+				<include name="push.js" />
+			</fileset>
+		</copy>
 		<move todir="${java.io.tmpdir}/build/min/js" includeemptydirs="false">
 			<fileset dir="${java.io.tmpdir}/build/min/js">
 				<include name="*.js" />

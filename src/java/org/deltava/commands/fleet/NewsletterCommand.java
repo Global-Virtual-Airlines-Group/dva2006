@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -69,7 +69,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			
 			// Get the DAO and the Library entry
 			GetDocuments dao = new GetDocuments(con);
-			nws = dao.getNewsletter(fName, SystemData.get("airline.db"));
+			nws = dao.getNewsletter(fName, ctx.getDB());
 			
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, nws);

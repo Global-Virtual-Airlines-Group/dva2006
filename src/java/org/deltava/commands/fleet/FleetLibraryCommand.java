@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Fleet Library.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public void execute(CommandContext ctx) throws CommandException {
             Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
             for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
                AirlineInformation info = (AirlineInformation) i.next();
-               if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
+               if (info.getDB().equalsIgnoreCase(ctx.getDB()))
                   results.addAll(0, dao.getFleet(info.getDB(), false));
                else {
                   Collection<Installer> entries = dao.getFleet(info.getDB(), false);
@@ -65,7 +65,7 @@ public void execute(CommandContext ctx) throws CommandException {
                }
             }
          } else
-            results.addAll(dao.getFleet(SystemData.get("airline.db"), true));
+            results.addAll(dao.getFleet(ctx.getDB(), true));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

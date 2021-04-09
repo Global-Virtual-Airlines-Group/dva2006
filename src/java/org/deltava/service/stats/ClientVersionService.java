@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS client build statistics.
  * @author Luke
- * @version 8.2
+ * @version 10.0
  * @since 8.2
  */
 
@@ -55,7 +55,7 @@ public class ClientVersionService extends WebService {
 		jo.put("stats", ja);
 		for (ClientBuildStats entry : stats) {
 			JSONObject eo = new JSONObject();
-			eo.put("week", JSONUtils.format(entry.getDate()));
+			eo.put("week", JSONUtils.formatDate(entry.getDate()));
 			for (Integer b : builds) {
 				JSONObject bo = new JSONObject();
 				Tuple<Integer, Double> data = entry.getCount(b.intValue());
@@ -81,10 +81,6 @@ public class ClientVersionService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;

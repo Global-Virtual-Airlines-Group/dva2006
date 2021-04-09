@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 9.0
+ * @version 9.2
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    private boolean _canTransfer;
    private boolean _allowMulti;
    private boolean _histRestricted;
+   private String _eliteName;
 
    /**
     * Creates a new Airline Information bean.
@@ -91,9 +92,28 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    /**
     * Returns whether the airline allows Pilots to be members of multiple virtual airlines.
     * @return TRUE if multiple profiles allowed, otherwise FALSE
+    * @see AirlineInformation#setAllowMultiAirline(boolean)
     */
    public boolean getAllowMultiAirline() {
 	   return _allowMulti;
+   }
+   
+   /**
+    * Returns whether the Airlien has an elite status program.
+    * @return TRUE if an elite program exists, otherwise FALSE
+    * @see AirlineInformation#setEliteProgram(String)
+    */
+   public boolean getHasElite() {
+	   return (_eliteName != null) && (_eliteName.length() > 1);
+   }
+   
+   /**
+    * Retruns the name of the Airline's elite status program.
+    * @return the program name
+    * @see AirlineInformation#setEliteProgram(String)
+    */
+   public String getEliteProgram() {
+	   return _eliteName;
    }
    
    /**
@@ -141,6 +161,16 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
     */
    public void setAllowMultiAirline(boolean allowMulti) {
 	   _allowMulti = allowMulti;
+   }
+   
+   /**
+    * Updates the name of this Airline's elite status program.
+    * @param programName the program name
+    * @see AirlineInformation#getHasElite()
+    * @see AirlineInformation#getEliteProgram()
+    */
+   public void setEliteProgram(String programName) {
+	   _eliteName = programName;
    }
    
    @Override

@@ -82,7 +82,7 @@ return true;
 </el:form>
 <content:copyright />
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit" async>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 var mapOpts = {center:golgotha.local.mapC, minZoom:3, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 

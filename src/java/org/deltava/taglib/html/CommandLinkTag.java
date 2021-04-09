@@ -1,13 +1,12 @@
-// Copyright 2005, 2006, 2007, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.time.ZonedDateTime;
 import java.time.format.*;
 import java.util.*;
 
-import java.io.UnsupportedEncodingException;
-
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -18,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 8.3
+ * @version 10.0
  * @since 1.0
  */
 
@@ -109,9 +108,6 @@ public class CommandLinkTag extends LinkTag {
 		_cmdParams.put("startDate", df.format(dt));
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -121,8 +117,7 @@ public class CommandLinkTag extends LinkTag {
 	}
 
 	/**
-	 * Renders the start of the HREF tag to the JSP output stream. The HREF tag will not be rendered
-	 * if the linkID parameter is &quot;0x0&quot;.
+	 * Renders the start of the HREF tag to the JSP output stream. The HREF tag will not be rendered if the linkID parameter is &quot;0x0&quot;.
 	 * @return TagSupport.EVAL_BODY_INCLUDE
 	 * @throws JspException if an error occurs 
 	 */
@@ -146,29 +141,21 @@ public class CommandLinkTag extends LinkTag {
 			url.append(_domain);
 		}
 		
-		url.append('/');
-		url.append(_cmdName);
-		url.append(".do");
+		url.append('/').append(_cmdName).append(".do");
 		if (!_cmdParams.isEmpty())
 			url.append('?');
 		
 		// Append the parameters
-		try {
-			for (Iterator<Map.Entry<String, String>> i = _cmdParams.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, String> me = i.next();
-				url.append(me.getKey());
-				url.append('=');
-				url.append(URLEncoder.encode(me.getValue(), "UTF-8"));
-				if (i.hasNext())
-					url.append("&amp;");
-			}
-
-			// Update the HREF and call the superclass renderer
-			_data.setAttribute("href", url.toString());
-		} catch (UnsupportedEncodingException uee) {
-			throw new JspException("UTF-8 encoding not supported - Laws of Universe no longer apply");
+		for (Iterator<Map.Entry<String, String>> i = _cmdParams.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, String> me = i.next();
+			url.append(me.getKey()).append('=');
+			url.append(URLEncoder.encode(me.getValue(), StandardCharsets.UTF_8));
+			if (i.hasNext())
+				url.append("&amp;");
 		}
 
+		// Update the HREF and call the superclass renderer
+		_data.setAttribute("href", url.toString());
 		return super.doStartTag();
 	}
 

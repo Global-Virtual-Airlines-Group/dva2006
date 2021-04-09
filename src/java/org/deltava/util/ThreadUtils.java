@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 5.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class ThreadUtils {
 	 * @return TRUE if the ThreadGroup is alive, otherwise FALSE 
 	 */
 	public static boolean isAlive(ThreadGroup tg) {
-		return ((tg != null) && !tg.isDestroyed());
+		return ((tg != null) && (tg.activeCount() > 0));
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class ThreadUtils {
 				t.interrupt();
 				t.join(waitTime);
 			} catch (InterruptedException ie) {
-				log.warn("Cannot kill thread [" + t.getName() + "]");
+				log.warn("Cannot kill thread [" + t.getName() + "] after " + waitTime + "ms");
 			}
 		}
 	}
@@ -107,21 +107,12 @@ public class ThreadUtils {
 		final List<Thread> threadPool = new ArrayList<Thread>(tPool);
 		do {
 			sleep(125);
-			for (Iterator<? extends Thread> i = threadPool.iterator(); i.hasNext(); ) {
-				Thread worker = i.next();
-				if (!worker.isAlive())
-					i.remove();
-			}
-		} while (!threadPool.isEmpty() && (!Thread.currentThread().isInterrupted()));
+			threadPool.removeIf(w -> !w.isAlive());
+		} while (!threadPool.isEmpty() && !Thread.currentThread().isInterrupted());
 		
 		// If we're interrupted, shut the threads down
-		if (Thread.currentThread().isInterrupted()) {
-			for (Iterator<? extends Thread> i = threadPool.iterator(); i.hasNext(); ) {
-				Thread worker = i.next();
-				if (worker.isAlive())
-					worker.interrupt();
-			}
-		}
+		if (Thread.currentThread().isInterrupted())
+			threadPool.forEach(w -> w.interrupt());
 	}
 
 	/**
@@ -132,11 +123,7 @@ public class ThreadUtils {
 		final Collection<Future<?>> fPool = new ArrayList<Future<?>>(futures);
 		do {
 			sleep(125);
-			for (Iterator<Future<?>> i = fPool.iterator(); i.hasNext(); ) {
-				Future<?> f = i.next();
-				if (f.isDone())
-					i.remove();
-			}
+			fPool.removeIf(f -> f.isDone());
 		} while (!fPool.isEmpty() && (!Thread.currentThread().isInterrupted()));
 	}
 }

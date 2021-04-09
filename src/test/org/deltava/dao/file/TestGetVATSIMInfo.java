@@ -25,7 +25,7 @@ public class TestGetVATSIMInfo extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
 			assertNotNull(c);
 		
 		// Load the airports/time zones
@@ -47,13 +47,16 @@ public class TestGetVATSIMInfo extends TestCase {
 	@SuppressWarnings("static-method")
 	public void testLoad() throws Exception {
 		
-		File f = new File("data", "vatsim-data.json");
-		assertTrue(f.exists());
+		File f3 = new File("data", "vatsim-data-v3.json");
+		assertTrue(f3.exists());
 		
-		try (InputStream is = new FileInputStream(f)) {
-			GetVATSIMInfo dao = new GetVATSIMInfo(is);	
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f3), 102400)) {
+			GetVATSIMInfo dao = new GetVATSIMInfo(is);
 			NetworkInfo inf = dao.getInfo();
 			assertNotNull(inf);
+			assertFalse(inf.getServers().isEmpty());
+			assertFalse(inf.getPilots().isEmpty());
+			assertFalse(inf.getControllers().isEmpty());
 		}
 	}
 }

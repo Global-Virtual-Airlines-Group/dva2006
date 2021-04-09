@@ -17,7 +17,7 @@
 <content:js name="datePicker" />
 <content:captcha action="threadCreate" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
 golgotha.local.imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
 golgotha.local.imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }

@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 8.4
+ * @version 10.0
  * @since 6.1
  */
 
@@ -24,11 +24,7 @@ public class RedisUtils {
 	 */
 	public static final String LATENCY_KEY = "$LATENCYTEST";
 	
-	/**
-	 * The Jedis connection pool.
-	 */
-	protected static JedisPool _client;
-	
+	private static JedisPool _client;
 	private static int _db;
 
 	// static class
@@ -165,8 +161,10 @@ public class RedisUtils {
 		byte[] data = write(value);
 		long expTime = (expiry <= 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
 		try (Jedis jc = getConnection()) {
+			Pipeline jp = jc.pipelined();
 			jc.set(rawKey, data);
 			jc.expireAt(rawKey, expTime);
+			jp.sync();
 		}
 	}
 
@@ -185,12 +183,27 @@ public class RedisUtils {
 	}
 
 	/**
-	 * Deletes a key from Redis.
-	 * @param key the key
+	 * Deletes keys from Redis.
+	 * @param keys the keys
 	 */
-	public static void delete(String key) {
+	public static void delete(String... keys) {
 		try (Jedis jc = getConnection()) {
-			jc.del(encodeKey(key));
+			Pipeline jp = jc.pipelined();
+			for (String k : keys)
+				jc.del(encodeKey(k));
+			
+			jp.sync();
+		}
+	}
+	
+	/**
+	 * Returns all keys matching a particular pattern.
+	 * @param pattern the key pattern
+	 * @return a Collection of keys
+	 */
+	public static Collection<String> keys(String pattern) {
+		try (Jedis jc = getConnection()) {
+			return jc.keys(pattern);
 		}
 	}
 	

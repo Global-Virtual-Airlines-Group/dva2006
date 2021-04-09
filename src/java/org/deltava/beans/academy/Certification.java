@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Certification implements java.io.Serializable, ComboAlias, ViewEntry, Auditable, Comparable<Certification> {
+public class Certification implements ComboAlias, ViewEntry, Auditable, Comparable<Certification> {
 	
 	public static final int REQ_ANY = 0;
 	public static final int REQ_ANYPRIOR = 1;
@@ -525,10 +525,6 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 		return _code;
 	}
 	
-	/**
-	 * Returns the CSS class name if displayed in a view table.
-	 * @return the CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
 		return _active ? null : "opt1";

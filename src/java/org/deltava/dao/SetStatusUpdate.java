@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,12 +8,10 @@ import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -36,21 +34,12 @@ public class SetStatusUpdate extends DAO {
 	}
 	
 	/**
-	 * Writes the Status Update log entry to <i>the current database</i>.
-	 * @param update the Status Update entry
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(StatusUpdate update) throws DAOException {
-	   write(SystemData.get("airline.db"), update);
-	}
-
-	/**
 	 * Writes the Status Update log entry to a database.
-	 * @param dbName the database name
 	 * @param update the Status Update entry
+	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(String dbName, StatusUpdate update) throws DAOException {
+	public void write(StatusUpdate update, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 3.3
  */
 
@@ -158,7 +158,7 @@ public class NominationCommand extends AbstractFormCommand {
 			
 			// Load the equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			ctx.setAttribute("eqType", eqdao.get(p.getEquipmentType(), SystemData.get("airline.db")), REQUEST);
+			ctx.setAttribute("eqType", eqdao.get(p.getEquipmentType(), ctx.getDB()), REQUEST);
 			
 			// Save in request
 			ctx.setAttribute("nom", n, REQUEST);
@@ -166,7 +166,7 @@ public class NominationCommand extends AbstractFormCommand {
 			
 			// Load nominee's status history
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
-			Collection<StatusUpdate> updates = sudao.getByUser(n.getID(), SystemData.get("airline.db"));
+			Collection<StatusUpdate> updates = sudao.getByUser(n.getID(), ctx.getDB());
 			ctx.setAttribute("statusUpdates", updates, REQUEST);
 			
 			// Load nominee's exam history
@@ -185,7 +185,7 @@ public class NominationCommand extends AbstractFormCommand {
 			// Load Pilots
 			GetFlightReports frdao = new GetFlightReports(con);
 			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
-			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			frdao.getOnlineTotals(pilots, ctx.getDB());
 			ctx.setAttribute("authors", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

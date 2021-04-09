@@ -4,8 +4,7 @@ package org.deltava.beans.flight;
 import java.util.*;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.navdata.NavigationDataBean;
-import org.deltava.beans.schedule.*;
+import org.deltava.beans.navdata.*;
 
 import org.deltava.comparators.GeoComparator;
 
@@ -19,11 +18,11 @@ import org.deltava.comparators.GeoComparator;
 public class ETOPSResult {
 	
 	private final ETOPS _e;
-	private final SortedSet<NavigationDataBean> _airports;
-	private final GeoLocation _warnPoint;
+	private final SortedSet<AirportLocation> _airports;
+	private final NavigationDataBean _warnPoint;
 	private final Collection<String> _msgs = new ArrayList<String>();
 	
-	private class GeoCodeComparator implements Comparator<NavigationDataBean> {
+	private class GeoCodeComparator implements Comparator<AirportLocation> {
 		private final GeoComparator _cp;
 		
 		GeoCodeComparator(GeoLocation cp) {
@@ -32,7 +31,7 @@ public class ETOPSResult {
 		}
 
 		@Override
-		public int compare(NavigationDataBean nd1, NavigationDataBean nd2) {
+		public int compare(AirportLocation nd1, AirportLocation nd2) {
 			int tmpResult = _cp.compare(nd1, nd2);
 			return (tmpResult == 0) ? nd1.compareTo(nd2) : tmpResult;
 		}
@@ -45,8 +44,8 @@ public class ETOPSResult {
 	ETOPSResult(ETOPS e) {
 		super();
 		_e = e;
-		_warnPoint = new GeoPosition();
-		_airports = new TreeSet<NavigationDataBean>(new GeoCodeComparator(_warnPoint));
+		_warnPoint = null;
+		_airports = new TreeSet<AirportLocation>(new GeoCodeComparator(_warnPoint));
 	}
 
 	/**
@@ -59,8 +58,8 @@ public class ETOPSResult {
 		super();
 		_e = e;
 		_msgs.addAll(msgs);
-		_warnPoint = (loc == null) ? new GeoPosition() : loc;
-		_airports = new TreeSet<NavigationDataBean>(new GeoCodeComparator(_warnPoint));
+		_warnPoint = loc;
+		_airports = new TreeSet<AirportLocation>(new GeoCodeComparator(_warnPoint));
 	}
 
 	/**
@@ -83,15 +82,15 @@ public class ETOPSResult {
 	 * Returns the Airport closest to the maximum distance point.
 	 * @return the closest Airport
 	 */
-	public List<NavigationDataBean> getClosestAirports() {
-		return new ArrayList<NavigationDataBean>(_airports);
+	public List<AirportLocation> getClosestAirports() {
+		return new ArrayList<AirportLocation>(_airports);
 	}
 
 	/**
 	 * Returns the farthest point from a diversion airport.
-	 * @return the GeoLocation
+	 * @return a NavigationDataBean representing the warning point
 	 */
-	public GeoLocation getWarningPoint() {
+	public NavigationDataBean getWarningPoint() {
 		return _warnPoint;
 	}
 	
@@ -105,9 +104,9 @@ public class ETOPSResult {
 	
 	/**
 	 * Adds a diversion airport to the helper.
-	 * @param a a NavigationDataBean
+	 * @param a an AirportLocation
 	 */
-	public void add(NavigationDataBean a) {
+	public void add(AirportLocation a) {
 		_airports.add(a);
 	}
 	

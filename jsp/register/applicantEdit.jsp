@@ -16,7 +16,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

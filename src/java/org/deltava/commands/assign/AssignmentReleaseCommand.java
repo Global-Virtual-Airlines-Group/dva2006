@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -13,12 +13,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -48,7 +46,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
+			Collection<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), ctx.getDB());
 
 			// Delete PIREPs in draft status, and remove the Assignment ID for the others
 			Collection<FlightReport> remainingFlights = pireps.stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).collect(Collectors.toList());
@@ -64,8 +62,8 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			if (!remainingFlights.isEmpty()) {
 				SetFlightReport frwdao = new SetFlightReport(con);
 				for (FlightReport fr : remainingFlights) {
-					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Released Flight Assignment");
-					frwdao.writeHistory(fr.getStatusUpdates(), SystemData.get("airline.db"));
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Released Flight Assignment");
+					frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				}
 			}
 

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 3.2
  */
 
@@ -272,6 +272,11 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, Auditabl
 			tmpResult = Integer.compare(_value, a2._value);
 			
 		return (tmpResult == 0) ? _name.compareTo(a2._name) : tmpResult;
+	}
+	
+	@Override
+	public boolean isCrossApp() {
+		return false;
 	}
 
 	@Override

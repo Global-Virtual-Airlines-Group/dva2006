@@ -1,10 +1,10 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration of Pilot status update types.
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 8.7
  */
 
@@ -14,7 +14,7 @@ public enum UpdateType {
 	STATUS_CHANGE("Status Change"), SECURITY_ADD("Added Security Role"), RATING_REMOVE("Removed Rating"), SECURITY_REMOVE("Removed Security Role"),
 	EXTPROMOTION("Promotion"), AIRLINE_TX("Airline Transfer"), INACTIVITY("Inactivity Notice"), ACADEMY("Academy Update"), CERT_ADD("Pilot Certification"),
 	SR_CAPTAIN("Senior Captain"), SUSPENDED("Account Suspended"), LOA("Leave of Absence"),EXT_AUTH("External Authentication"), CONTENT_WARN("Content Warning"),
-	CURRENCY("Currency Policy");
+	CURRENCY("Currency Policy"), ELITE("Frequent Flyer"), TOUR("Tour Completion");
 	
 	private final String _desc;
 	

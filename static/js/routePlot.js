@@ -17,6 +17,7 @@ if (golgotha.form.comboSet(f.star)) o.star = golgotha.form.getCombo(f.star);
 if ((f.route) && (f.route.value.length > 0)) o.route = f.route.value;
 if (f.cruiseAlt) o.cruiseAlt = f.cruiseAlt.value;
 o.saveDraft = ((f.saveDraft) && f.saveDraft.checked);
+o.precalcPax = ((f.precalcPax) && f.precalcPax.enabled && f.precalcPax.checked);
 o.getInactive = golgotha.routePlot.getInactive;
 o.etopsCheck = golgotha.routePlot.etopsCheck;
 for (var j = 0; ((f.simVersion) && (j < f.simVersion.length)); j++) {
@@ -38,6 +39,7 @@ golgotha.routePlot.generateGate = function(g, al) {
 	else if (g.useCount > 0)
 		opts = golgotha.routePlot.gateIcons.pop;
 
+	if (g.info) opts.info = g.info;
 	const gmrk = new golgotha.maps.IconMarker(opts, g.ll);
 	gmrk.gate = g.name;
 	return gmrk;
@@ -73,7 +75,7 @@ combo.options.length = data.length + 1;
 combo.options[0] = new Option('-', '');
 for (var i = 0; i < data.length; i++) {
 	const g = data[i];
-	const o = new Option(g.name + ' (' + g.useCount + ' flights)', g.name);
+	const o = new Option(g.name + ' [' + g.zone + '] (' + g.useCount + ' flights)', g.name);
 	o.ll = g.ll;
 	combo.options[i+1] = o; 
 	if (oldCode == g.name) combo.selectedIndex = (i+1);
@@ -194,10 +196,15 @@ xmlreq.onreadystatechange = function() {
 	golgotha.routePlot.updateGates(f.gateA, js.arrivalGates);
 	golgotha.routePlot.dGates.clearMarkers(); golgotha.routePlot.aGates.clearMarkers();
 	golgotha.routePlot.dGates.hide(); golgotha.routePlot.aGates.hide();
-	js.arrivalGates.forEach(function(gateData) { golgotha.routePlot.dGates.addMarker(golgotha.routePlot.generateGate(gateData, js.airline), 10); });
+	js.arrivalGates.forEach(function(gateData) {
+		const gmrk = golgotha.routePlot.generateGate(gateData, js.airline);
+	 	google.maps.event.addListener(gmrk, 'dblclick', function() { golgotha.form.setCombo(f.gateA, this.gate); alert('Arrival Gate set to ' + this.gate); golgotha.routePlot.plotMap(); });
+		golgotha.routePlot.aGates.addMarker(gmrk, 10); 
+	});
+
 	js.departureGates.forEach(function(gateData) {
-		var gmrk = golgotha.routePlot.generateGate(gateData, js.airline);
-		google.maps.event.addListener(gmrk, 'dblclick', function(e) { golgotha.form.setCombo(f.gateD, this.gate); alert('Departure Gate set to ' + this.gate); golgotha.routePlot.plotMap(); });
+		const gmrk = golgotha.routePlot.generateGate(gateData, js.airline);
+		google.maps.event.addListener(gmrk, 'dblclick', function() { golgotha.form.setCombo(f.gateD, this.gate); alert('Departure Gate set to ' + this.gate); golgotha.routePlot.plotMap(); });
 		golgotha.routePlot.dGates.addMarker(gmrk, 10);
 	});
 
@@ -354,10 +361,32 @@ return true;
 
 golgotha.routePlot.toggleGates = function(gts) {
 	gts.toggle();
-	if (gts.visible() && map.getZoom() < 14) map.setZoom(14);
+	if (gts.visible() && (map.getZoom() < 14)) map.setZoom(14);
 	if (gts.mapCenter) map.setCenter(gts.mapCenter);
 	golgotha.util.display('gateLegendRow', golgotha.routePlot.gatesVisible());
 	return true;
+};
+
+golgotha.routePlot.validateBlob = function(f) {
+	try {
+		golgotha.routePlot.hasBlob = !!new Blob;
+	} catch (e) {}
+
+	// Reset form links if blob download supported
+	if (golgotha.routePlot.hasBlob) {
+		f.onsubmit = function() { return false; };
+		const btn = document.getElementById('SaveButton');
+		btn.onclick = golgotha.routePlot.download;
+	}
+
+	return true;
+};
+
+golgotha.routePlot.togglePax = function() {
+	const f = document.forms[0];
+	const isOK = golgotha.form.comboSet(f.eqType) && golgotha.form.comboSet(f.airportD) && golgotha.form.comboSet(f.airportA);
+	golgotha.util.disable(f.precalcPax, !isOK || !f.saveDraft.checked);
+	return isOK && f.saveDraft.checked;
 };
 
 golgotha.routePlot.download = function() {
@@ -367,7 +396,12 @@ golgotha.routePlot.download = function() {
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
 	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+		if (xmlreq.readyState != 4) return false;
+		if (xmlreq.status != 200) {
+			alert('Error ' + xmlreq.statusText + ' generating flight plan');
+			return false;
+		}
+
 		const ct = xmlreq.getResponseHeader('Content-Type');
 		const b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
 		saveAs(b, xmlreq.getResponseHeader('X-Plan-Filename'));

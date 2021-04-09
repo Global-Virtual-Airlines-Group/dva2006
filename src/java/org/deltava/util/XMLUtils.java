@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.jdom2.*;
@@ -7,7 +7,7 @@ import org.jdom2.output.*;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 4.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -46,6 +46,16 @@ public class XMLUtils {
 	public static Element createElement(String name, String value) {
 		return createElement(name, value, false);
 	}
+
+	/**
+	 * Creates a new XML document element if the value is not null or empty.
+	 * @param name the element name
+	 * @param value the element value
+	 * @return the XML element, or null
+	 */
+	public static Element createIfPresent(String name, String value) {
+		return StringUtils.isEmpty(value) ? null : createElement(name, value, false);
+	}
 	
 	/**
 	 * Creates a new XML document element, with an embedded child element.
@@ -60,6 +70,17 @@ public class XMLUtils {
 		e2.setText(value);
 		e.addContent(e2);
 		return e;
+	}
+	
+	/**
+	 * Adds a child XML document element to an existing element, if it is not null 
+	 * @param be the base element
+	 * @param e the child element
+	 * @return if e is not null
+	 */
+	public static boolean addIfPresent(Element be, Element e) {
+		if (e != null) be.addContent(e);
+		return (e != null);
 	}
 	
 	/**

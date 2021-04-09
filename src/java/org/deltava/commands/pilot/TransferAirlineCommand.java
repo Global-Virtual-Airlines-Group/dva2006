@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			StatusUpdate su = new StatusUpdate(p.getID(), UpdateType.AIRLINE_TX);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDescription("Transferred to " + aInfo.getName());
-			sudao.write(su);
+			sudao.write(su, ctx.getDB());
 
 			// Check if the user already exists in the new airline database
 			if (isExisting) {
@@ -197,14 +197,14 @@ public class TransferAirlineCommand extends AbstractCommand {
 			su = new StatusUpdate(newUser.getID(), UpdateType.AIRLINE_TX);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDescription("Transferred from " + SystemData.get("airline.name"));
-			sudao.write(aInfo.getDB(), su);
+			sudao.write(su, aInfo.getDB());
 			
 			// List new ratings
 			su = new StatusUpdate(newUser.getID(), UpdateType.RATING_ADD);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDate(Instant.now().plusSeconds(1));
 			su.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));
-			sudao.write(aInfo.getDB(), su);
+			sudao.write(su, aInfo.getDB());
 			
 			// Assign any incomplete courses to the new pilot
 			SetAcademy awdao = new SetAcademy(con);

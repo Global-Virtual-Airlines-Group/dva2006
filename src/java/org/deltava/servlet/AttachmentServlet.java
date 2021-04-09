@@ -1,4 +1,4 @@
-// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -11,20 +11,25 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.ACARSError;
+import org.deltava.beans.event.Briefing;
 import org.deltava.beans.event.Event;
+import org.deltava.beans.stats.Tour;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
+
 import org.deltava.security.SecurityContext;
 import org.deltava.security.command.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.*;
 
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 7.3
  */
 
@@ -33,7 +38,7 @@ public class AttachmentServlet extends DownloadServlet {
 	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
-		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues");
+		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues"), TOUR("tbrief", "Flight Tour Briefings");
 		
 		private final String _urlPart;
 		private final String _realm;
@@ -135,7 +140,7 @@ public class AttachmentServlet extends DownloadServlet {
 				
 				buffer = iFile.getBuffer();
 				rsp.setContentType("application/octet-stream");
-				rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=%s", iFile.getName()));
 				break;
 				
 			case ERROR:
@@ -155,7 +160,7 @@ public class AttachmentServlet extends DownloadServlet {
 				
 				buffer = err.getLogData();
 				rsp.setContentType("text/plain");
-				rsp.setHeader("Content-disposition", "attachment; filename=acars_error_" + dbID + ".log");
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=acars_error_%d.log", Integer.valueOf(dbID)));
 				rsp.setIntHeader("max-age", 3600);
 				break;
 				
@@ -190,11 +195,24 @@ public class AttachmentServlet extends DownloadServlet {
 					throw new NotFoundException("Invalid Event - " + url.getLastPath());
 				
 				// Get the briefing
-				buffer = e.getBriefing().getBuffer();
-				boolean isPDF = PDFUtils.isPDF(buffer);
+				Briefing eb = e.getBriefing();
+				buffer = eb.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
-				rsp.setContentType(isPDF ? "application/pdf" : "text/plain");
-				rsp.setHeader("Content-disposition", "attachment; filename=eventBriefing_" + dbID + (isPDF ? ".pdf" : ".txt"));
+				rsp.setContentType(eb.getContentType());
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=eventBriefing_%d.%s", Integer.valueOf(dbID), eb.getExtension()));
+				break;
+				
+			case TOUR:
+				GetTour tdao = new GetTour(c);
+				Tour t = tdao.get(dbID, SystemData.get("airline.db"));
+				if ((t == null) || (t.getSize() < 1))
+					throw new NotFoundException("Invalid Flight Tour - " + url.getLastPath());
+				
+				// Get the briefing
+				buffer = t.getBuffer();
+				rsp.setIntHeader("max-age", 3600);
+				rsp.setContentType(t.getContentType());
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=tourBriefing_%d.%s", Integer.valueOf(dbID), t.getExtension()));
 				break;
 				
 			default:

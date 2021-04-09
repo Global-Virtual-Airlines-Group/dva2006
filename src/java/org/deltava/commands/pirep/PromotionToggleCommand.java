@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -12,12 +12,11 @@ import org.deltava.dao.*;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to toggle whether a Flight Report counts for promotion to Captain.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -35,7 +34,7 @@ public class PromotionToggleCommand extends AbstractCommand {
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.get(ctx.getID());
+			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			
@@ -55,13 +54,13 @@ public class PromotionToggleCommand extends AbstractCommand {
 				fwdao.clearPromoEQ(fr.getID());
 			} else {
 				GetEquipmentType eqdao = new GetEquipmentType(con);
-				Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+				Collection<String> pTypeNames = eqdao.getPrimaryTypes(ctx.getDB(), fr.getEquipmentType());
 				
 				// Check the types
 				FlightPromotionHelper helper = new FlightPromotionHelper(fr);
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pType = i.next();
-					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+					EquipmentType pEQ = eqdao.get(pType, ctx.getDB());
 					if (!helper.canPromote(pEQ))
 						i.remove();
 				}
@@ -72,9 +71,8 @@ public class PromotionToggleCommand extends AbstractCommand {
 				}
 			}
 			
-			// Save comments and commit
-			fwdao.writeHistory(fr.getStatusUpdates(), SystemData.get("airline.db"));
-			fwdao.writeComments(fr);
+			// Save history and commit
+			fwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

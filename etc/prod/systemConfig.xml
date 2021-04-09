@@ -290,10 +290,10 @@
 
 		<!-- Download locations -->
 		<url>
-			<metar>ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/</metar>
-			<taf>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/stations/</taf>
-			<metarCycle>ftp://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
-			<tafCycle>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
+			<metar>ftp://tgftp.cp.ncep.noaa.gov/data/observations/metar/stations/</metar>
+			<taf>ftp://tgftp.cp.ncep.noaa.gov/data/forecasts/taf/stations/</taf>
+			<metarCycle>ftp://tgftp.cp.ncep.noaa.gov/data/observations/metar/cycles/</metarCycle>
+			<tafCycle>ftp://tgftp.cp.ncep.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
 		</url>
 	</weather>
 
@@ -334,11 +334,11 @@
 		<banner_max>
 			<x type="Integer">800</x>
 			<y type="Integer">256</y>
-			<size type="Integer">131072</size>
+			<size type="Integer">524288</size>
 		</banner_max>
 
 		<vatsim>
-			<status_url>https://data.vatsim.net/vatsim-data.json</status_url>
+			<status_url>https://data.vatsim.net/v3/vatsim-data.json</status_url>
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
@@ -358,7 +358,7 @@
         </pilotedge>
 
 		<ivao>
-			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
+			<status_url>https://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
 			<url>https://www.ivao.aero/</url>
 			<local>
@@ -416,6 +416,10 @@
 				<site>***REMOVED***</site>
 				<secret>***REMOVED***</secret>
 			</recaptcha>
+			<push>
+				<pub>***REMOVED***</pub>
+				<pvt>***REMOVED***</pvt>
+			</push>
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
@@ -538,6 +542,7 @@
 		<archive>/home/www/pos_archive</archive>
 		<video>/home/www/video</video>
 		<upload>/home/www/upload</upload>
+		<tile>/var/cache/tile</tile>
 	</path>
 	
 	<smtp>

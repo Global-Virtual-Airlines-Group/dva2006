@@ -19,7 +19,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});

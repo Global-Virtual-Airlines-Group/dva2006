@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 7.3
+ * @version 10.0
  * @since 1.0
  */
 
@@ -24,6 +24,8 @@ public abstract class ConnectionContext {
 	private final ConnectionPool _pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 	private Connection _con;
 	private boolean _autoCommit;
+	
+	private String _dbName;
 	
 	public static class ConnectionPoolException extends DAOException {
 		
@@ -75,6 +77,22 @@ public abstract class ConnectionContext {
     private void checkConnection() {
        if (_con == null)
           throw new IllegalStateException("No JDBC Connection reserved");
+    }
+    
+    /**
+     * Returns the default database name.
+     * @return the database name
+     */
+    public String getDB() {
+    	return _dbName;
+    }
+    
+    /**
+     * Updates the default database name.
+     * @param dbName the database name
+     */
+    public void setDB(String dbName) {
+    	_dbName = dbName;
     }
     
     /**

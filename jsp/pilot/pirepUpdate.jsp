@@ -37,34 +37,38 @@ To Submit this Flight Report for approval,</span> <el:cmd className="sec bld" ur
 <div class="updateHdr">Flight Report Submitted</div>
 <br />
 This <content:airline /> Flight Report has been submitted for review and approval. Once this Report has been approved, your flight legs and hours will be automatically updated and you will be notified via e-mail.<br />
-<c:if test="${captEQ}">
+<c:if test="${fn:isPromoLeg(pirep)}">
 <br />
 This Flight Leg counts as one of the <fmt:int className="sec bld" value="${promoteLegs}" /> Flight Legs required for promotion to Captain in the <span class="pri bld">${eqType.name}</span> program.<br />
 </c:if>
-<c:if test="${notRated}">
+<c:if test="${!fn:isRated(pirep)}">
 <br />
 <span class="warn bld">You do not appear to have a type rating in the ${pirep.equipmentType}. This may be the result of our database being out of date or otherwise inaccurate.</span> This may cause a delay in your
 Flight Report being approved. Please be aware that we cannot credit flights flown using unrated aircraft.<br />
 </c:if>
-<c:if test="${unknownRoute}">
+<c:if test="${fn:routeWarn(pirep)}">
 <br />
-<span class="warn bld">Your flight between ${pirep.airportD.name} and ${pirep.airportA.name} does not currently appear in the <content:airline /> flight schedule.</span> This may cause a delay in your
-Flight Report being approved.<br />
+<span class="warn bld">Your flight between ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) and ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />) does not currently appear in  
+the <content:airline /> flight schedule.</span> This may cause a delay in your Flight Report being approved.<br />
 </c:if>
-<c:if test="${timeWarning}">
+<c:if test="${fn:timeWarn(pirep)}">
 <br />
-<span class="warn bld">Your have logged <fmt:dec value="${pirep.length / 10.0}" /> flight hours for 
-your flight between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" />. 
-The <content:airline /> flight schedule lists the average duration of flights between these two airports 
-(including delays and turnaround time) as <fmt:dec value="${avgTime / 10}" /> hours.</span> This may cause 
-a delay in your Flight Report being approved.<br />
+<span class="warn bld">Your have logged <fmt:dec value="${pirep.length / 10.0}" /> flight hours for your flight between ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) and ${pirep.airportA.name } 
+(<fmt:airport airport="${pirep.airportA}" />). The <content:airline /> Flight Schedule lists the average duration of flights between these two airports (including delays and turnaround time) as <fmt:dec value="${avgTime / 10}" /> 
+hours.</span> This may cause a delay in your Flight Report being approved.<br />
 </c:if>
-<c:if test="${rangeWarning}">
+<c:if test="${fn:rangeWarn(pirep)}">
 <br />
-<span class="warn bld">The flight leg between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" /> 
-is <fmt:distance value="${pirep.distance}" longUnits="true" />, and appears to exceed the maximum range of the ${pirep.equipmentType}.</span> 
-This may cause a delay in your Flight Report being approved.<br />
+<span class="warn bld">The flight leg between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" /> is <fmt:distance value="${pirep.distance}" longUnits="true" />, and appears to 
+exceed the maximum range of the ${pirep.equipmentType}.</span> This may cause a delay in your Flight Report being approved.<br />
 </c:if>
+</c:if>
+<c:if test="${calcLoadFactor}">
+<div class="updateHdr">Pre-Flight Load Factor Calculated</div>
+<br />
+A pre-flight load factor of <fmt:dec value="${pirep.loadFactor * 100}" fmt="##0.00" />% has been calculated for this flight. If the flight is flown in the ${pirep.equipmentType}, <fmt:int value="${pirep.passengers}" /> passengers will be boarded. 
+For dispatch purposes, <content:airline /> assumes a passenger weight of <fmt:weight value="${175}" /> and baggage of <fmt:weight value="${30}" /> per passenger.<br />
+<br />
 </c:if>
 <c:if test="${isApprove}">
 <div class="updateHdr">Flight Report Approved</div>
@@ -116,7 +120,6 @@ This Flight Report has been succesfully deleted from the database.<br />
 <content:airline /> ACARS data for this Flight Report has been succesfully deleted from the database.<br />
 <br />
 </c:if>
-
 <content:filter roles="PIREP"><c:if test="${isApprove || isReject || isHold || isDeleted}">
 To return to the <content:airline /> submitted Flight Report queue, <el:cmd url="pirepqueue" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${fn:EventID(pirep) > 0}">
@@ -127,11 +130,9 @@ To view this flight's Online Event, <el:cmd url="event" linkID="${fn:EventID(pir
 To return to the <content:airline /> Flight Academy Check Ride queue, <el:cmd url="academyridequeue" className="sec bld">Click Here</el:cmd>.<br />
 </c:if></content:filter>
 <c:if test="${!isDeleted}">
-To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
-</c:if>
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <c:if test="${isOurs}">
-To return to your Log Book, <el:cmd url="logbook" className="sec bld">Click Here</el:cmd>.<br />
-</c:if>
+To return to your Log Book, <el:cmd url="logbook" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <br />
 <content:copyright />
 </content:region>

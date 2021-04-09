@@ -1,4 +1,4 @@
-// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -10,6 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.Gate;
+import org.deltava.beans.navdata.GateZone;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 6.3
  */
 
@@ -44,8 +45,7 @@ public class GateUpdateService extends WebService {
 		if (a == null)
 			return SC_NOT_FOUND;
 		
-		JSONTokener jt = new JSONTokener(ctx.getParameter("data"));
-		JSONArray ja = new JSONArray(jt);
+		JSONArray ja = new JSONArray(new JSONTokener(ctx.getParameter("data")));
 		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.FSX);
 		try {
 			Connection con = ctx.getConnection();
@@ -62,7 +62,8 @@ public class GateUpdateService extends WebService {
 				for (int y = 0; (ga != null) && (y < ga.length()); y++)
 					g.addAirline(SystemData.getAirline(ga.getString(y)));
 				
-				g.setIntl(!g.getAirlines().isEmpty() && go.optBoolean("intl"));
+				GateZone gz = GateZone.values()[go.optInt("zone", (go.optBoolean("intl") ? GateZone.INTERNATIONAL : GateZone.DOMESTIC).ordinal())];
+				g.setZone(gz);
 				updGates.add(g);
 			}
 			

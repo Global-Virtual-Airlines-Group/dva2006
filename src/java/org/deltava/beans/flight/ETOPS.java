@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.ComboAlias;
@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration of ETOPS classifications. 
  * @author Luke
- * @version 8.7
+ * @version 10.0
  * @since 4.1
  */
 
@@ -21,7 +21,7 @@ public enum ETOPS implements ComboAlias {
 	
 	ETOPS(int time) {
 		_time = time;
-		_range = (int)Math.round(time / EO_SPEED / 60f); // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
+		_range = (int)Math.round(time * EO_SPEED / 60f);
 	}
 
 	/**

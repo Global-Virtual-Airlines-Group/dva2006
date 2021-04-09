@@ -1,14 +1,14 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * A bean to store ACARS client task timer statistics.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 8.6
  */
 
-public class TaskTimerData implements Comparable<TaskTimerData> {
+public class TaskTimerData implements java.io.Serializable, Comparable<TaskTimerData> {
 	
 	private final String _name;
 	private final int _tickSize;
@@ -17,6 +17,7 @@ public class TaskTimerData implements Comparable<TaskTimerData> {
 	private long _total;
 	private int _min;
 	private int _max;
+	private double _stdDev;
 
 	/**
 	 * Creates the bean.
@@ -84,6 +85,14 @@ public class TaskTimerData implements Comparable<TaskTimerData> {
 	public int getMax() {
 		return _max;
 	}
+	
+	/**
+	 * Returns the standard deviation.
+	 * @return the standard deviation in ticks
+	 */
+	public double getStdDev() {
+		return _stdDev;
+	}
 
 	/**
 	 * Updates the total execution time.
@@ -115,6 +124,14 @@ public class TaskTimerData implements Comparable<TaskTimerData> {
 	 */
 	public void setMax(int m) {
 		_max = Math.max(_min, m);
+	}
+	
+	/**
+	 * Updates the standard deviation.
+	 * @param sd the standard deviation in ticks
+	 */
+	public void setStdDev(double sd) {
+		_stdDev = sd;
 	}
 
 	@Override

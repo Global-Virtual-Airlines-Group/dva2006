@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all Online networks.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 3.1
  */
 
@@ -74,9 +74,9 @@ public class OnlineTrackTask extends Task {
 				for (Pilot p : info.getPilots()) {
 					if (!networkIDs.containsKey(String.valueOf(p.getID())))
 						continue;
-					else if ((p.getAirportD().getICAO().length() != 4) || (p.getAirportA().getICAO().length() != 4))
+					else if ((p.getPilotID() == 0) || !p.isPopulated())
 						continue;
-					else if (p.getPilotID() == 0)
+					else if ((p.getAirportD().getICAO().length() != 4) || (p.getAirportA().getICAO().length() != 4))
 						continue;
 					
 					// Check if we've already opened a flight track for this Pilot

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Airport and Airline information.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 8.0
  */
 
@@ -153,7 +153,7 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 
 			// Write the airport data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, HAS_USPFI, IS_SCHENGEN, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setString(1, a.getIATA());
 				ps.setString(2, a.getICAO());
 				ps.setString(3, a.getTZ().getID());
@@ -162,7 +162,9 @@ public class SetAirportAirline extends DAO {
 				ps.setDouble(6, a.getLatitude());
 				ps.setDouble(7, a.getLongitude());
 				ps.setBoolean(8, a.getASDE());
-				ps.setString(9, a.getSupercededAirport());
+				ps.setBoolean(9, a.getHasPFI());
+				ps.setBoolean(10, a.getIsSchengen());
+				ps.setString(11, a.getSupercededAirport());
 				executeUpdate(ps, 1);
 			}
 			
@@ -206,14 +208,14 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 			
 			// Clear out the airlines
-			try (PreparedStatement ps = prepare("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
 				ps.setString(1, oc);
 				ps.setString(2, SystemData.get("airline.code"));
 				executeUpdate(ps, 0);
 			}
 
 			// Update the airport data
-			try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, OLDCODE=? WHERE (IATA=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, HAS_USPFI=?, IS_SCHENGEN=?, OLDCODE=? WHERE (IATA=?)")) {
 				ps.setString(1, a.getICAO());
 				ps.setString(2, a.getTZ().getID());
 				ps.setString(3, a.getName());
@@ -222,20 +224,22 @@ public class SetAirportAirline extends DAO {
 				ps.setString(6, a.getIATA());
 				ps.setBoolean(7, a.getASDE());
 				ps.setString(8, a.getCountry().getCode());
-				ps.setString(9, a.getSupercededAirport());
-				ps.setString(10, oc);
+				ps.setBoolean(9,  a.getHasPFI());
+				ps.setBoolean(10, a.getIsSchengen());
+				ps.setString(11, a.getSupercededAirport());
+				ps.setString(12, oc);
 				executeUpdate(ps, 1);
 			}
 			
 			// Ensure the superceded airports are interchangeable
 			if (a.getSupercededAirport() != null) {
-				try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)")) {
 					ps.setString(1, a.getIATA());	
 					ps.setString(2, a.getSupercededAirport());
 					executeUpdate(ps, 0);
 				}
 			} else {
-				try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET OLDCODE=NULL WHERE (OLDCODE=?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRPORTS SET OLDCODE=NULL WHERE (OLDCODE=?)")) {
 					ps.setString(1, a.getIATA());
 					executeUpdate(ps, 0);
 				}
@@ -417,6 +421,9 @@ public class SetAirportAirline extends DAO {
 		}
 	}
 	
+	/*
+	 * Helper method to write AircraftPolicyOptions to the database.
+	 */
 	private void writeAppData(Aircraft a) throws SQLException {
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE, ACRANGE, ETOPS, SEATS, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setString(1, a.getName());

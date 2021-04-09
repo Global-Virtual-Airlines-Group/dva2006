@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -26,12 +26,11 @@ import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -52,7 +51,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		ctx.setAttribute("opName", opName, REQUEST);
 		FlightStatus op = FlightStatus.fromVerb(opName);
 		if (op == null)
-			throw new CommandException("Invalid Operation - " + opName, false);
+			throw new CommandException(String.format("Invalid Operation - %s", opName), false);
 
 		// Initialize the Message Context
 		MessageContext mctx = new MessageContext();
@@ -64,7 +63,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Get the DAO and the Flight Report to modify
 			GetFlightReports rdao = new GetFlightReports(con);
-			FlightReport fr = rdao.get(ctx.getID());
+			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Flight Report Not Found");
 
@@ -96,6 +95,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPREJECT"));
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Rejected"); 
+				if (fr.getDatabaseID(DatabaseID.TOUR) != 0) {
+					fr.setDatabaseID(DatabaseID.TOUR, 0);
+					fr.addStatusUpdate(0, HistoryType.SYSTEM, "Removed Flight Tour leg");
+				}
+				
 				isOK = access.getCanReject();
 				break;
 
@@ -113,9 +117,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				comments.add(ctx.getParameter("dComments"));
 			
 			// Update Online Network
-			OnlineNetwork newNetwork = OnlineNetwork.fromName(ctx.getParameter("network"));
+			OnlineNetwork newNetwork = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null);
 			if ((newNetwork != fr.getNetwork()) ) {
-				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((newNetwork == null) ? "Offline" : newNetwork) + " by " + ctx.getUser().getName());
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, String.format("Updated online network from %s to %s by %s", fr.getNetwork(), ((newNetwork == null) ? "Offline" : newNetwork), ctx.getUser().getName()));
 				fr.setNetwork(newNetwork);
 			}
 
@@ -136,8 +140,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			boolean isRated = allRatings.contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
-				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updating NotRated flag for " + p.getName() + ", eq=" + fr.getEquipmentType() + " ratings = " + p.getRatings());
-				log.warn("NotRated was " + fr.hasAttribute(FlightReport.ATTR_NOTRATED) + ", now " + !isRated);
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, String.format("Updating NotRated flag for %s, eq = %s, ratings = %s", p.getName(), fr.getEquipmentType(), p.getRatings()));
 				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			}
 
@@ -155,18 +158,18 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Start a JDBC transaction
 			ctx.startTX();
-
+			
 			// Load the flights for accomplishment purposes
 			if (op == FlightStatus.OK) {
 				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
-				rdao.getCaptEQType(pireps);
+				rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(acchelper::add);
 
 				// Load accomplishments - only save the ones we haven't obtained yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
 				Collection<Accomplishment> allAccs = accdao.getAll();
-				Collection<Accomplishment> pAccs = accdao.getByPilot(p, SystemData.get("airline.db")).stream().map(Accomplishment::new).collect(Collectors.toList());
+				Collection<Accomplishment> pAccs = accdao.getByPilot(p, ctx.getDB()).stream().map(Accomplishment::new).collect(Collectors.toList());
 				Collection<Accomplishment> accs = allAccs.stream().filter(a -> !pAccs.contains(a)).collect(Collectors.toList());
 				
 				// Add the approved PIREP
@@ -193,17 +196,40 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// Log Accomplishments
 				if (!accs.isEmpty())
 					ctx.setAttribute("accomplishments", accs, REQUEST);
+				
+				// Check for Tour completion
+				if (fr.getDatabaseID(DatabaseID.TOUR) != 0) {
+					GetTour trdao = new GetTour(con);
+					Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
+					TourFlightHelper tfh = new TourFlightHelper(fr, false);
+					tfh.addFlights(pireps);
+					
+					int idx = tfh.isLeg(t);
+					if (idx == 0) {
+						fr.setDatabaseID(DatabaseID.TOUR, 0);
+						tfh.getMessages().forEach(msg -> fr.addStatusUpdate(0, HistoryType.SYSTEM, msg));
+					} else {
+						tfh.addFlights(List.of(fr));
+						if (tfh.isComplete(t)) {
+							fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Tour %s completed", t.getName()));
+							StatusUpdate upd = new StatusUpdate(fr.getAuthorID(), UpdateType.TOUR);
+							upd.setAuthorID(ctx.getUser().getID());
+							upd.setDescription(String.format("Tour %s completed (%d legs)", t.getName(), Integer.valueOf(idx)));
+							upds.add(upd);
+						}
+					}
+				}
 			}
 
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, op);
+			wdao.dispose(ctx.getDB(), ctx.getUser(), fr, op);
 
 			// If this is part of a flight assignment, load it
 			GetAssignment fadao = new GetAssignment(con);
 			AssignmentInfo assign = (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) ? null : fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
 			if (assign != null) {
-				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), ctx.getDB());
 				flights.forEach(assign::addFlight);
 			}
 
@@ -227,7 +253,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				dfr.setEquipmentType(fr.getEquipmentType());
 				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
 				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
-				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Diversion completion flight to " + fInfo.getAirportA().getIATA());
+				dfr.setLoadFactor(fr.getLoadFactor());
+				dfr.setPassengers(fr.getPassengers());
+				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Diversion completion flight to %s", fInfo.getAirportA().getIATA()));
 
 				// Create a new flight assignment
 				AssignmentInfo newAssign = new AssignmentInfo(fr.getEquipmentType());
@@ -241,16 +269,16 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 				// Save the assignment
 				SetAssignment fawdao = new SetAssignment(con);
-				fawdao.write(newAssign, SystemData.get("airline.db"));
+				fawdao.write(newAssign, ctx.getDB());
 				wdao.write(dfr);
 			}
 
 			// If we're approving and have not assigned a Pilot Number yet, assign it
 			if ((op == FlightStatus.OK) && (p.getPilotNumber() == 0)) {
 				SetPilot pwdao = new SetPilot(con);
-				pwdao.assignID(p, SystemData.get("airline.db"));
+				pwdao.assignID(p, ctx.getDB());
 				ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
-				fr.addStatusUpdate(0, HistoryType.SYSTEM, "Assigned Pilot ID " + p.getPilotCode());
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Assigned Pilot ID %s", p.getPilotCode()));
 
 				// Create status update
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
@@ -261,7 +289,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
 			if (((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) && (assign != null)) {
-				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), ctx.getDB());
 				flights.forEach(assign::addFlight);
 
 				// If the assignment is complete, then mark it as such
@@ -302,7 +330,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				if (hasTrack) {
 					SetOnlineTrack twdao = new SetOnlineTrack(con);
 					Collection<PositionData> onlineEntries = tdao.get(fr.getID());
-					try (OutputStream os = new FileOutputStream(ArchiveHelper.getOnline(fr.getID()))) {
+					try (OutputStream os = new BufferedOutputStream(new FileOutputStream(ArchiveHelper.getOnline(fr.getID())))) {
 						SetSerializedOnline owdao = new SetSerializedOnline(os);
 						owdao.archive(fr.getID(), onlineEntries);
 					} catch (IOException ie) {
@@ -326,7 +354,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 						String currentCycle = mddao.get("navdata.cycle");
 						ArchivedRoute arcRt = new ArchivedRoute(fr.getID(), StringUtils.parse(currentCycle, -1));
 						rb.getPoints().forEach(arcRt::addWaypoint);
-						try (OutputStream os = new FileOutputStream(ArchiveHelper.getRoute(fr.getID()))) {
+						try (OutputStream os = new BufferedOutputStream(new FileOutputStream(ArchiveHelper.getRoute(fr.getID())))) {
 							SetSerializedRoute rtw = new SetSerializedRoute(os);
 							rtw.archive(arcRt);
 						} catch (IOException ie) {
@@ -335,7 +363,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					}
 				}
 
-				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("acarsArchive", Boolean.valueOf(fr instanceof FDRFlightReport), REQUEST);
 			}
 
 			// Commit and Invalidate the pilot again to reflect the new totals

@@ -73,6 +73,10 @@ public class GetURL extends DAO {
 			if (!_forceDL && (statusCode == SC_NOT_MODIFIED))
 				return outF;
 			
+			// If we're an error, throw a status code exception
+			if (statusCode >= SC_BAD_REQUEST)
+				throw new HTTPDAOException(_url, statusCode);
+			
 			// Download the file
 			try (InputStream in = getIn(); OutputStream out = new FileOutputStream(_outFile)) {
 				byte[] buffer = new byte[16384];
@@ -108,6 +112,10 @@ public class GetURL extends DAO {
 			int statusCode = getResponseCode();
 			if (!_forceDL && (statusCode == SC_NOT_MODIFIED))
 				return null;
+			
+			// If we're an error, throw a status code exception
+			if (statusCode >= SC_BAD_REQUEST)
+				throw new HTTPDAOException(_url, statusCode);
 			
 			// Download the file
 			try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {

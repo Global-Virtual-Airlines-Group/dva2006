@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -127,7 +127,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['mp4', 'mkv', 'm4v']});
 var dt = document.getElementById('dropTarget');

@@ -104,7 +104,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();

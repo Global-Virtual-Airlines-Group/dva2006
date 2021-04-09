@@ -52,7 +52,7 @@
 	<cache id="TAF" max="256" expires="1800" />
 	<cache id="FlightAwareMETAR" max="256" expires="1800" />
 	<cache id="FlightAwareTAF" max="256" expires="1800" />
-	<cache id="TWCSeriesList" max="4" expires="20" />
+	<cache id="TWCSeriesList" max="3" expires="150" />
 
 	<!-- ServInfo caches -->
 	<cache id="ServInfoData" remote="true" expires="300" />
@@ -64,6 +64,7 @@
 	<cache id="Accomplishments" max="192" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
 	<cache id="ScheduleSource" remote="true" expires="3600" />
+	<cache id="ExamProfiles" expires="14400" max="3" />
 
 	<cache id="MessageTemplate" max="32" />
 	<cache id="LibraryDLCount" max="144" expires="3600" />

@@ -21,7 +21,7 @@
 <content:json /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
-<script async>
+<script>
 golgotha.exam.expiry = ${exam.expiryDate.toEpochMilli()};
 <c:if test="${exam.routePlot}">
 golgotha.exam.rpQuestions = ${rpQuestions};

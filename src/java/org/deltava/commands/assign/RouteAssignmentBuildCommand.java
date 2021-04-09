@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -12,12 +12,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build multi-leg flight assignments.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -51,14 +50,14 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 			// Get the legs
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule sdao = new GetSchedule(con);
-			sdao.setSources(rsdao.getSources(true));
+			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 			for (int leg = 1; leg <= legCount; leg++) {
 				String fCode = ctx.getParameter("leg" + leg);
 				if (StringUtils.isEmpty(fCode))
 					break;
 
 				// Get the schedule entry and create the leg
-				ScheduleEntry se = sdao.get(FlightCodeParser.parse(fCode));
+				ScheduleEntry se = sdao.get(FlightCodeParser.parse(fCode), ctx.getDB());
 				DraftFlightReport dfr = new DraftFlightReport(se);
 				dfr.setTimeD(se.getTimeD().toLocalDateTime());
 				dfr.setTimeA(se.getTimeA().toLocalDateTime());
@@ -77,8 +76,8 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 			
 			// Write the assignment
 			SetAssignment awdao = new SetAssignment(con);
-			awdao.write(info, SystemData.get("airline.db"));
-			awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+			awdao.write(info, ctx.getDB());
+			awdao.assign(info, info.getPilotID(), ctx.getDB());
 			
 			// Write the flight reports
 			SetFlightReport pwdao = new SetFlightReport(con);

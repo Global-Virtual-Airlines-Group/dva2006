@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 6.3
  */
 
@@ -61,9 +61,21 @@ public class GateService extends WebService {
 		JSONObject jo = new JSONObject();
 		jo.put("icao", a.getICAO());
 		jo.put("ll", JSONUtils.format(a));
+		jo.put("hasUSPFI", a.getHasPFI());
+		jo.put("isSchengen", a.getIsSchengen());
 		if (aa != null) {
 			jo.put("icao2", aa.getICAO());
 			jo.put("ll2", JSONUtils.format(aa));
+			jo.put("hasUSPFI2", aa.getHasPFI());
+			jo.put("isSchengen2", aa.getIsSchengen());
+		}
+		
+		// Write gate zones
+		for (GateZone gz : GateZone.values()) {
+			JSONObject zo = new JSONObject();
+			zo.put("id", gz.name());
+			zo.put("description", gz.getDescription());
+			jo.accumulate("zones", zo);
 		}
 		
 		// Write gates
@@ -71,17 +83,17 @@ public class GateService extends WebService {
 			JSONObject go = new JSONObject();
 			go.put("id", g.getName());
 			go.put("ll", JSONUtils.format(g));
-			go.put("isIntl", g.isInternational());
+			go.put("isIntl", (g.getZone() != GateZone.DOMESTIC));
+			go.put("zone", g.getZone().ordinal());
 			go.put("useCount", g.getUseCount());
 			go.put("info", g.getInfoBox());
 			go.put("airlines", new JSONArray());
-			for (Airline al : g.getAirlines())
-				go.accumulate("airlines", al.getCode());
-			
+			g.getAirlines().forEach(al -> go.accumulate("airlines", al.getCode()));
 			jo.accumulate("gates", go);
 		}
 		
 		// Write the JSON document
+		JSONUtils.ensureArrayPresent(jo, "gates", "zones");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(60);

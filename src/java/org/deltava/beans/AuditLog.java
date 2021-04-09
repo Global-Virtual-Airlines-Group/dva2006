@@ -1,24 +1,28 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 import java.time.Instant;
 
 import org.deltava.util.BeanUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A bean to store an audit log record. 
  * @author Luke
- * @version 7.4
+ * @version 10.0
  * @since 7.4
  */
 
 public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	
+	public static final String COMMON = "COMMON";
+	
 	private final String _type;
 	private final String _id;
 	private int _authorID;
 	private Instant _createdOn;
+	private String _app = COMMON;
 	
 	private String _remoteAddr;
 	private String _remoteHost;
@@ -36,6 +40,9 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 		if (delta.isEmpty()) return null;
 		AuditLog ae = new AuditLog(a, authorID);
 		ae.setDate(Instant.now());
+		if (!a.isCrossApp())
+			ae.setApplication(SystemData.get("airline.code"));
+		
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<BeanUtils.PropertyChange> i = delta.iterator(); i.hasNext(); ) {
 			BeanUtils.PropertyChange bc = i.next();
@@ -89,6 +96,14 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	public Instant getDate() {
 		return _createdOn;
 	}
+	
+	/**
+	 * Returns the application name.
+	 * @return the application name, or COMMON for shared objects
+	 */
+	public String getApplication() {
+		return _app;
+	}
 
 	@Override
 	public String getDescription() {
@@ -134,6 +149,14 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	}
 	
 	/**
+	 * Updates the application name.
+	 * @param appName the name, or COMMON for shared objects
+	 */
+	public void setApplication(String appName) {
+		_app = appName;
+	}
+	
+	/**
 	 * Updates the IP address for this audit entry.
 	 * @param addr the address
 	 */
@@ -168,9 +191,6 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 		return ((a.hashCode() == hashCode()) && (compareTo(a) == 0));
 	}
 
-	/**
-	 * Compres two log entries by comparing their creation date/times.
-	 */
 	@Override
 	public int compareTo(AuditLog ae2) {
 		return _createdOn.compareTo(ae2._createdOn);

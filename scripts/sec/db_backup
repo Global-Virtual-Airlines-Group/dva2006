@@ -15,8 +15,8 @@ echo `date +%H:%M:%S`' Starting'
 cd /home/backup/db
 
 # Set up mysql utility aliases
-mysql="/usr/local/mysql/bin/mysql -h iris.gva.aws --skip-column-names"
-mysqldump="/usr/local/mysql/bin/mysqldump -h iris.gva.aws"
+mysql="/usr/local/mysql/bin/mysql -h mysql.gva.aws --skip-column-names"
+mysqldump="/usr/local/mysql/bin/mysqldump -h mysql.gva.aws"
 
 # Dump core table
 echo `date +%H:%M:%S`' Writing mySQL configuration'
@@ -33,7 +33,6 @@ $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` exams > exams
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` dva > dva.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` afv > afv.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` stats > stats.sql
-$mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` teamspeak > teamspeak.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` geoip > geoip.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` weather > weather.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` rcmail > rcmail.sql
@@ -46,8 +45,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` postfix | $arc_util > postfix.sql
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` rcmail | $arc_util > rcmail.sql.bz2
 
 # Dump TeamSpeak data
-echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` teamspeak | $arc_util > teamspeak.sql.bz2
+echo `date +%H:%M:%S`' Writing Voice configuration'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` murmur | $arc_util > murmur.sql.bz2
 
 # Dump GeoIP data

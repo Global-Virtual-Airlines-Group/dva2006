@@ -1,21 +1,22 @@
-// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
-import java.time.Instant;
 import java.util.*;
+import java.time.Instant;
+
+import redis.clients.jedis.*;
 
 import org.deltava.dao.DAOException;
+
 import org.deltava.util.RedisUtils;
 import org.deltava.util.tile.SeriesWriter;
 
 import org.gvagroup.tile.*;
 
-import redis.clients.jedis.Jedis;
-
 /**
  * A Data Access Object to write map tiles to Redis. 
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 5.0
  */
 
@@ -35,10 +36,12 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
 		try (Jedis j = RedisUtils.getConnection()) {
+			Pipeline jp = j.pipelined();
 			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(Boolean.TRUE));
 			j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(is.size())));
 			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(new ArrayList<TileAddress>(is.keySet())));
 			is.entrySet().forEach(me -> j.setex(RedisUtils.encodeKey(createKey(me.getKey().getName())), _expiry, RedisUtils.write(me.getValue())));
+			jp.sync();
 		}
 	}
 	
@@ -47,6 +50,7 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 	 * @param is the ImageSeries
 	 * @throws DAOException if an error occured
 	 */
+	@Override
 	public void purge(ImageSeries is) throws DAOException {
 		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().toEpochMilli());
 		try {
@@ -54,14 +58,15 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 			boolean hasSeries = (RedisUtils.get(createKey("$ME")) != null);
 			if (!hasSeries) return;
 		
-			@SuppressWarnings("unchecked")
-			Collection<TileAddress> keys = (Collection<TileAddress>) RedisUtils.get(createKey("$KEYS"));
+			Collection<?> keys = (Collection<?>) RedisUtils.get(createKey("$KEYS"));
 			if (keys != null) {
 				try (Jedis j = RedisUtils.getConnection()) {
-					j.expire(RedisUtils.encodeKey(createKey("$SIZE")), 0);
-					j.expire(RedisUtils.encodeKey(createKey("$KEYS")), 0);
-					j.expire(RedisUtils.encodeKey(createKey("$ME")), 0);
-					keys.forEach(k -> j.expire(RedisUtils.encodeKey(createKey(k.getName())), 0));
+					Pipeline jp = j.pipelined();
+					j.del(RedisUtils.encodeKey(createKey("$SIZE")));
+					j.del(RedisUtils.encodeKey(createKey("$KEYS")));
+					j.del(RedisUtils.encodeKey(createKey("$ME")));
+					keys.forEach(k -> j.del(RedisUtils.encodeKey(createKey(((TileAddress)k).getName()))));
+					jp.sync();
 				}
 			}
 		} catch (Exception e) {

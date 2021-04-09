@@ -1,22 +1,23 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
+import org.deltava.util.Tuple;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.1
  */
 
@@ -24,6 +25,7 @@ public class GetFlightReportStatistics extends DAO {
 
 	private static final int MAX_VSPEED = -2500;
 	private static final int OPT_VSPEED = -225;
+	
 	private static final Cache<CacheableList<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
 	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache = CacheManager.getCollection(FlightStatsEntry.class, "FlightStats");
 	
@@ -38,11 +40,6 @@ public class GetFlightReportStatistics extends DAO {
 		
 		public int getInactiveRoutes() {
 			return _inactiveRoutes;
-		}
-		
-		@Override
-		public int getDistance() {
-			return isPopulated() ? getAirportD().distanceTo(getAirportA()) : -1;
 		}
 		
 		public void setInactiveRoutes(int cnt) {
@@ -99,6 +96,39 @@ public class GetFlightReportStatistics extends DAO {
 	private static String getCacheKey(String ps) {
 		int ofs = ps.indexOf("SELECT");
 		return (ofs == -1) ? ps : ps.substring(ofs);
+	}
+	
+	
+	/**
+	 * Returns Airports with flights.
+	 * @param isACARS TRUE to include only ACARS flights, otherwise FALSE 
+	 * @return a Collection of RoutePair objects
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<RoutePair> getAirport(boolean isACARS) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM PIREPS WHERE (STATUS=?) AND (DATE > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
+		if (isACARS)
+			sqlBuf.append(" AND ((ATTR & ?)> 0)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, _dayFilter);
+			if (isACARS) ps.setInt(3, FlightReport.ATTR_ACARS);
+			
+			Collection<RoutePair> results = new ArrayList<RoutePair>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					RoutePair rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					results.add(rp);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
@@ -462,6 +492,50 @@ public class GetFlightReportStatistics extends DAO {
 	}
 	
 	/**
+	 * Loads flight/distance percentiles by Pilot for a one year interval.
+	 * @param startDate the start date
+	 * @param granularity the percentile granularity
+	 * @param isAvg TRUE to do the average across the percentile, FALSE for the base
+	 * @return a PercentileStatsEntry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, boolean isAvg) throws DAOException {
+		LocalDateTime sd = startDate.atStartOfDay();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY LEGS, DST")) {
+			ps.setTimestamp(1, createTimestamp(sd.toInstant(ZoneOffset.UTC)));
+			ps.setTimestamp(2, createTimestamp(sd.plusYears(1).minusSeconds(1).toInstant(ZoneOffset.UTC)));
+			ps.setInt(3, FlightStatus.OK.ordinal());
+
+			// Load the raw results
+			List<Tuple<Integer, Integer>> rawResults = new ArrayList<Tuple<Integer, Integer>>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					rawResults.add(Tuple.create(Integer.valueOf(rs.getInt(2)), Integer.valueOf(rs.getInt(3))));
+			}
+			
+			// Average the percentile (you may want to do just the minimum)
+			PercentileStatsEntry results = new PercentileStatsEntry(sd.toInstant(ZoneOffset.UTC), granularity);
+			results.setTotal(rawResults.size());
+			for (int pct = 0; pct < 100; pct += granularity) {
+				int startIdx = rawResults.size() * pct / 100;
+				int endIdx = isAvg ? Math.min(rawResults.size() - 1, rawResults.size() * (pct + 1) / 100) : startIdx + 1;
+				
+				int legs = 0; int distance = 0; int pilots = (endIdx - startIdx);
+				for (int idx = startIdx; idx < endIdx; idx++) {
+					Tuple<Integer, Integer> tp = rawResults.get(idx);
+					legs += tp.getLeft().intValue(); distance += tp.getRight().intValue();
+				}
+				
+				results.setPercentile(pct, legs / pilots, distance / pilots);
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the number of Charter flights flown by a Pilot in a particular time interval.
 	 * @param pilotID the Pilot's datbase ID
 	 * @param days the number of days, zero for all
@@ -563,6 +637,28 @@ public class GetFlightReportStatistics extends DAO {
 			}
 			
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all the Flight Reports without an Elite score. 
+	 * @return a Collection of Flight Report database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getUnscoredFlights() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT P.ID, PE.ID AS EID FROM PIREPS P LEFT JOIN PIREP_ELITE PE ON (P.ID=PE.ID) WHERE (P.STATUS=?) AND (P.DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) HAVING (EID IS NULL)")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, (_dayFilter < 1) ? 7 : _dayFilter);
+			
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
+			return results;	
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

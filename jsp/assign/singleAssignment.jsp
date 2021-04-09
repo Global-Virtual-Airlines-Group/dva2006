@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);

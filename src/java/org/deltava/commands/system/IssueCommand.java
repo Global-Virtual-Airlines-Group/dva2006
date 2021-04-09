@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,11 +20,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class IssueCommand extends AbstractFormCommand {
+public class IssueCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving an Issue.
@@ -38,7 +38,7 @@ public class IssueCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 
 			// Read the issue
-			Issue i = null;
+			Issue i = null, oi = null;
 			IssueAccessControl access;
 			if (isNew) {
 				// Check our access
@@ -60,7 +60,7 @@ public class IssueCommand extends AbstractFormCommand {
 				// Assign to default user for that issue type
 				GetPilot dao2 = new GetPilot(con);
 				String attr = "issue_track.assignto." + i.getArea().name().toLowerCase();
-				Pilot p = dao2.getPilotByCode(SystemData.getInt(attr), SystemData.get("airline.db"));
+				Pilot p = dao2.getPilotByCode(SystemData.getInt(attr), ctx.getDB());
 				i.setAssignedTo(p.getID());
 			} else {
 				GetIssue dao = new GetIssue(con);
@@ -74,6 +74,7 @@ public class IssueCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot save Issue " + ctx.getID());
 
+				oi = BeanUtils.clone(i);
 				i.setSubject(ctx.getParameter("subject"));
 				i.setArea(EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), IssueArea.WEBSITE));
 			}
@@ -94,23 +95,34 @@ public class IssueCommand extends AbstractFormCommand {
 
 			// Set the version
 			StringTokenizer tkns = new StringTokenizer(ctx.getParameter("version"), ".");
-			i.setMajorVersion(Integer.parseInt(tkns.nextToken()));
-			i.setMinorVersion(Integer.parseInt(tkns.nextToken()));
+			i.setMajorVersion(StringUtils.parse(tkns.nextToken(), VersionInfo.MAJOR));
+			i.setMinorVersion(StringUtils.parse(tkns.nextToken(), VersionInfo.MINOR));
 
 			// If we can resolve the issue, update the status
-			if ((access.getCanResolve()) && (ctx.getParameter("status") != null)) {
+			if (access.getCanResolve() && (ctx.getParameter("status") != null)) {
 				i.setStatus(EnumUtils.parse(IssueStatus.class, ctx.getParameter("status"), i.getStatus()));
 				if ((i.getStatus() != IssueStatus.OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(Instant.now());
 			}
 
 			// If we can reassign the issue, update the assignee
-			if ((access.getCanReassign()) && (ctx.getParameter("assignedTo") != null))
-				i.setAssignedTo(Integer.parseInt(ctx.getParameter("assignedTo")));
+			if (access.getCanReassign() && (ctx.getParameter("assignedTo") != null))
+				i.setAssignedTo(StringUtils.parse(ctx.getParameter("assignedTo"), 0));
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oi, i);
+			AuditLog ae = AuditLog.create(i, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
 
-			// Get the save DAO and write the issue
+			// Write the issue
 			SetIssue dao2 = new SetIssue(con);
 			dao2.write(i);
+			
+			// Write the audit log and commit
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 
 			// Send the notification if it's a new issue
 			boolean sendIssue = Boolean.valueOf(ctx.getParameter("emailIssue")).booleanValue();
@@ -144,6 +156,7 @@ public class IssueCommand extends AbstractFormCommand {
 			// Update the status for the JSP
 			ctx.setAttribute("opName", (i.getID() == 0) ? "Created" : "Updated", REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -272,6 +285,7 @@ public class IssueCommand extends AbstractFormCommand {
 			// Save the issue and the access in the request
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
+			readAuditLog(ctx, i);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

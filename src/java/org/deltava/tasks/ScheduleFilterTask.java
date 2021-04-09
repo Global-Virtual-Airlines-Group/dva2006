@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 8.0
  */
 
@@ -40,7 +40,7 @@ public class ScheduleFilterTask extends Task {
 			
 			// Load the airline/source mappings
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true);
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true, ctx.getDB());
 			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines();
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());

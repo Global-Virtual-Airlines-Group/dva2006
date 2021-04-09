@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 8.1
+ * @version 10.0
  * @since 2.1
  */
 
@@ -138,8 +138,8 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 			// Create the Flight Assignment
 			SetAssignment awdao = new SetAssignment(con);
-			awdao.write(info, SystemData.get("airline.db"));
-			awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+			awdao.write(info, ctx.getDB());
+			awdao.assign(info, info.getPilotID(), ctx.getDB());
 
 			// Write the Flight leg
 			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());

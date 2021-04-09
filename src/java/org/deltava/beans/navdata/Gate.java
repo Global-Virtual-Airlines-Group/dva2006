@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 5.1
  */
 
-public class Gate extends NavigationDataBean implements UseCount {
+public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 
 	/**
 	 * Gate types.
@@ -28,7 +28,7 @@ public class Gate extends NavigationDataBean implements UseCount {
 	private int _useCount;
 	private Simulator _sim = Simulator.UNKNOWN;
 	
-	private boolean _isInternational;
+	private GateZone _zone = GateZone.DOMESTIC;
 	private final Collection<Airline> _airlines = new TreeSet<Airline>();
 
 	/**
@@ -41,18 +41,19 @@ public class Gate extends NavigationDataBean implements UseCount {
 	}
 	
 	/**
-	 * Clones an existing gate.
+	 * Clones an existing gate, with the option to override usage counts.
 	 * @param g the Gate
+	 * @param usage the new usage count
 	 */
-	public Gate(Gate g) {
+	public Gate(Gate g, int usage) {
 		this(g.getLatitude(), g.getLongitude());
 		setCode(g.getCode());
 		setName(g.getName());
 		setRegion(g.getRegion());
 		_heading = g._heading;
 		_number = g._number;
-		_useCount = g._useCount;
-		_isInternational = g._isInternational;
+		_useCount = usage;
+		_zone = g._zone;
 		_airlines.addAll(g._airlines);
 		_sim = g._sim;
 	}
@@ -90,11 +91,11 @@ public class Gate extends NavigationDataBean implements UseCount {
 	}
 	
 	/**
-	 * Returns whether this Gate is used for international flights.
-	 * @return TRUE if used for international flights, otherwise FALSE
+	 * Returns whether this Gate is used for international flights or other special customs zones.
+	 * @return a GateZone
 	 */
-	public boolean isInternational() {
-		return _isInternational;
+	public GateZone getZone() {
+		return _zone;
 	}
 	
 	/**
@@ -105,13 +106,18 @@ public class Gate extends NavigationDataBean implements UseCount {
 		return _sim;
 	}
 	
-	/**
-	 * Returns the number of times this Gate was used in a flight.
-	 * @return the number of flights
-	 */
 	@Override
 	public int getUseCount() {
 		return _useCount;
+	}
+
+	/**
+	 * Returns whether a Gate serves a paticular Airline.
+	 * @param a the Airline
+	 * @return TRUE if a is null or the Airline uses this Gate, otherwise FALSE
+	 */
+	public boolean hasAirline(Airline a) {
+		return (a == null) || _airlines.contains(a);
 	}
 	
 	/**
@@ -175,11 +181,11 @@ public class Gate extends NavigationDataBean implements UseCount {
 	}
 	
 	/**
-	 * Marks this gate as used for international flights.
-	 * @param isIntl TRUE if used for international flights, otherwise FALSE
+	 * Updates the customs zone used for this Gate.
+	 * @param z a GateZone
 	 */
-	public void setIntl(boolean isIntl) {
-		_isInternational = isIntl;
+	public void setZone(GateZone z) {
+		_zone = z;
 	}
 	
 	/**
@@ -190,19 +196,25 @@ public class Gate extends NavigationDataBean implements UseCount {
 		_sim = s;
 	}
 	
-	/**
-	 * Return the default Google Maps icon color.
-	 * @return org.deltava.beans.MapEntry.GREY
-	 */
+	@Override
+	public String getComboAlias() {
+		return getName();
+	}
+
+	@Override
+	public String getComboName() {
+		StringBuilder buf = new StringBuilder(getName());
+		buf.append(" [").append(_zone.getDescription()).append("] (");
+		buf.append(_useCount).append(" flights)");
+		return buf.toString();
+	}
+
+	
 	@Override
 	public String getIconColor() {
 		return GREY;
 	}
 
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
@@ -223,12 +235,14 @@ public class Gate extends NavigationDataBean implements UseCount {
 				buf.append('s');
 			
 			buf.append(":<br />");
-			for (Airline a : _airlines)
-				buf.append(a.getName()).append("<br />");
+			_airlines.forEach(a -> buf.append(a.getName()).append("<br />"));
 		}
 		
-		if (_isInternational)
-			buf.append("<br /><span class=\"sec bld ita\">INTERNATIONAL FLIGHTS</span>");
+		if (_zone != GateZone.DOMESTIC) {
+			buf.append("<br /><span class=\"sec bld ita caps\">");
+			buf.append(_zone.getDescription());
+			buf.append("</span>");
+		}
 		
 		buf.append("</div>");
 		return buf.toString();

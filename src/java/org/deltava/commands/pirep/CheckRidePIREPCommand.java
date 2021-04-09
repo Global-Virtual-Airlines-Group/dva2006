@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -10,12 +10,10 @@ import org.deltava.beans.testing.CheckRide;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to view Flight Reports from a Check Ride.
  * @author Luke
- * @version 5.0
+ * @version 10.0
  * @since 2.0
  */
 
@@ -53,7 +51,7 @@ public class CheckRidePIREPCommand extends AbstractCommand {
 				throw notFoundException("Invalid ACARS Flight ID - " + cr.getFlightID());
 
 			// Check if we're loading from another DB
-			crossDB = !SystemData.get("airline.db").equals(ud.getDB());
+			crossDB = !ctx.getDB().equals(ud.getDB());
 			pirepID = crossDB ? cr.getID() : afr.getID();
 		} catch (DAOException de) {
 			throw new CommandException(de);

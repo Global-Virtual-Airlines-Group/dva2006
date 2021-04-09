@@ -1,4 +1,4 @@
-// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class to perform java bean operations.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 7.4
  */
 
@@ -92,7 +92,8 @@ public class BeanUtils {
 			try {
 				Object p1 = pu.getProperty(o, propertyName);
 				Object p2 = pu.getProperty(n, propertyName);
-				if (!p1.equals(p2))
+				boolean dataChange = (p1 == null) ? (p1 != p2) : !p1.equals(p2);
+				if (dataChange)
 					results.add(new PropertyChange(propertyName, String.valueOf(p1), String.valueOf(p2)));
 			} catch (Exception e) {
 				log.error(e.getMessage() + " on " + o.getClass().getSimpleName() + "::" + propertyName);

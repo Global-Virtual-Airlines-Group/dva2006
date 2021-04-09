@@ -71,7 +71,7 @@ return elements;
 // Tile URL generation functions
 golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return '/wx/tile/' + name + '/u' + ts + '/'; };
 golgotha.maps.util.TWCOverlayLayer = function(name, ts, size, noStencil) {
-	var url = golgotha.maps.protocol + '://' + golgotha.maps.tileHost + '/v3/TileServer/tile?product=' + name + '&ts=' + (ts/1000) + '&apiKey=' + golgotha.maps.keys.twc;
+	let url = self.location.protocol + '//' + golgotha.maps.tileHost + '/v3/TileServer/tile?product=' + name + '&ts=' + (ts/1000) + '&apiKey=' + golgotha.maps.keys.twc;
 	if (noStencil) url += '&stencil=false';
 	return url;
 };
@@ -159,7 +159,7 @@ golgotha.maps.WeatherLayer.prototype.preload = function(map, handler, tileLoadHa
 		var src = ov.makeURL(vizTiles[x], map.getZoom());
 		var img = new Image();
 		img.loadCount = 1;
-		img.onload = function(e) {
+		img.onload = function() {
 			imgsToLoad.remove(this.src);
 			try { delete this.loadCount; } catch (err) { this.loadCount = undefined; }
 			if (tileLoadHandler != null) tileLoadHandler.call();
@@ -171,7 +171,7 @@ golgotha.maps.WeatherLayer.prototype.preload = function(map, handler, tileLoadHa
 			return true;
 		};
 		
-		img.onerror = function(e) {
+		img.onerror = function() {
 			console.log('Error ' + this.loadCount + ' loading ' + this.src);
 			if (this.loadCount > 1) {
 				this.onload();

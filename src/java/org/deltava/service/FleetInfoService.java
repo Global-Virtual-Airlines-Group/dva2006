@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2015, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 8.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class FleetInfoService extends WebService {
 		Collection<Installer> entries = null;
 		try {
 			GetLibrary dao = new GetLibrary(ctx.getConnection());
-			entries = dao.getFleet(SystemData.get("airline.db"), false);
+			entries = dao.getFleet(ctx.getDB(), false);
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -67,6 +67,7 @@ public class FleetInfoService extends WebService {
 
 		try {
 		   ctx.setContentType("text/plain", "utf-8");
+		   ctx.setExpiry(30);
 		   ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(SC_CONFLICT, "I/O Error");
