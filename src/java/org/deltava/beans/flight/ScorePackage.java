@@ -1,16 +1,17 @@
-// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.acars.ACARSRouteEntry;
+import org.deltava.beans.acars.RouteEntry;
 import org.deltava.beans.navdata.Runway;
 
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 8.7
+ * @version 9.2
  * @since 8.0
  */
 
@@ -57,10 +58,11 @@ public class ScorePackage {
 	
 	/**
 	 * Adds data to the scoring package.
-	 * @param e an ACARSRouteEntry
+	 * @param re an ACARSRouteEntry
 	 */
-	public void add(ACARSRouteEntry e) {
-		_data.add(e);
+	public void add(RouteEntry re) {
+		if (re instanceof ACARSRouteEntry)
+			_data.add((ACARSRouteEntry) re);
 	}
 	
 	/**
