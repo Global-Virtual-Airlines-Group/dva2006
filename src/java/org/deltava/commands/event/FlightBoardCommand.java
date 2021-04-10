@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2012, 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2012, 2014, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -53,10 +53,12 @@ public class FlightBoardCommand extends AbstractCommand {
 						usr.setHighlighted(true);
 				}
 				
-				if (!usr.getAirportD().hasPosition())
-					airportIDs.add(usr.getAirportD().getICAO());
-				if (!usr.getAirportA().hasPosition())
-					airportIDs.add(usr.getAirportA().getICAO());
+				if (usr.isPopulated()) {
+					if (!usr.getAirportD().hasPosition())
+						airportIDs.add(usr.getAirportD().getICAO());
+					if (!usr.getAirportA().hasPosition())
+						airportIDs.add(usr.getAirportA().getICAO());
+				}
 			}
 			
 			// Get the airports only
@@ -67,14 +69,14 @@ public class FlightBoardCommand extends AbstractCommand {
 			// Update the pilots with the proper airport data
 			for (Pilot usr : info.getPilots()) {
 				// Update the departure airport
-				if (navaids.contains(usr.getAirportD().getICAO()) && !usr.getAirportD().hasPosition()) {
+				if (usr.isPopulated() && navaids.contains(usr.getAirportD().getICAO()) && !usr.getAirportD().hasPosition()) {
 					AirportLocation al = (AirportLocation) navaids.get(usr.getAirportD().getICAO());
 					usr.getAirportD().setName(al.getName());
 					usr.getAirportD().setLocation(al.getLatitude(), al.getLongitude());
 				}
 
 				// Update the arrival airport
-				if (navaids.contains(usr.getAirportA().getICAO()) && !usr.getAirportA().hasPosition()) {
+				if (usr.isPopulated() && navaids.contains(usr.getAirportA().getICAO()) && !usr.getAirportA().hasPosition()) {
 					AirportLocation al = (AirportLocation) navaids.get(usr.getAirportA().getICAO());
 					usr.getAirportA().setName(al.getName());
 					usr.getAirportA().setLocation(al.getLatitude(), al.getLongitude());
