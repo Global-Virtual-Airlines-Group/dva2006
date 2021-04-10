@@ -138,18 +138,18 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		}
 
 		// Parse the controllers
-		JSONArray ca = jo.getJSONArray("controllers");
+		/* JSONArray ca = jo.getJSONArray("controllers");
 		for (int x = 0; x < ca.length(); x++) {
 			JSONObject co = ca.getJSONObject(x);
 			info.add(parseController(co));
 		}
 		
 		// Parse the ATIS
-		ca = jo.getJSONArray("atis");
+		JSONArray ca = jo.getJSONArray("atis");
 		for (int x = 0; x < ca.length(); x++) {
 			JSONObject co = ca.getJSONObject(x);
 			info.add(parseController(co));
-		}
+		} */
 		
 		// Calculate connection counts
 		info.getPilots().stream().map(p -> results.get(p.getServer())).filter(Objects::nonNull).forEach(s -> s.setConnections(s.getConnections() + 1));
