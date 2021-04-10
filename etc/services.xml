@@ -66,6 +66,7 @@
 	<service id="mytracks" class="org.deltava.service.stats.MyTrackService" />
 	<service id="simstats" class="org.deltava.service.stats.SimulatorStatsService" />
 	<service id="acarsbuildstats" class="org.deltava.service.stats.ClientVersionService" />
+	<service id="elitestats" class="org.deltava.service.stats.EliteStatsService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />

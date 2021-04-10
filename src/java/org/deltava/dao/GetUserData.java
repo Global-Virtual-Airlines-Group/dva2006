@@ -4,8 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
@@ -16,13 +14,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 9.0
+ * @version 9.2
  * @since 1.0
  */
 
 public class GetUserData extends DAO {
-
-	private static final Logger log = Logger.getLogger(GetUserData.class);
 
 	private static final Cache<UserData> _usrCache = CacheManager.get(UserData.class, "UserData");
 
@@ -138,37 +134,21 @@ public class GetUserData extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, "
 			+ "common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON ((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
 
-		// Strip out entries already in the cache
-		if (log.isDebugEnabled())
-			log.debug("Raw set size = " + ids.size());
-
-		int querySize = 0;
 		UserDataMap result = new UserDataMap();
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 			Integer id = i.next();
 
 			// Pull from the cache if at all possible; this is an evil query
 			UserData usr = _usrCache.get(id);
-			if (usr == null) {
-				querySize++;
-				sqlBuf.append(id.toString());
-				if (i.hasNext())
-					sqlBuf.append(',');
-			} else
+			if (usr != null) {
 				result.put(id, usr);
+				i.remove();
+			}
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		if (log.isDebugEnabled())
-			log.debug("Uncached set size = " + querySize);
-
-		if (querySize > 0) {
-			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-				sqlBuf.setLength(sqlBuf.length() - 1);
-			sqlBuf.append(")) GROUP BY UD.ID");
-
-			// Execute the query
-			setQueryMax(querySize);
+		if (ids.size() > 0) {
+			sqlBuf.append(StringUtils.listConcat(ids, ",")).append(")) GROUP BY UD.ID");
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, ",");
 				Map<Integer, UserData> results = CollectionUtils.createMap(execute(ps), UserData::getID);
@@ -222,9 +202,10 @@ public class GetUserData extends DAO {
 				AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
 				info.setDB(rs.getString(3));
 				info.setDomain(rs.getString(4));
-				info.setCanTransfer(rs.getBoolean(5));
-				info.setHistoricRestricted(rs.getBoolean(6));
-				info.setAllowMultiAirline(rs.getBoolean(7));
+				info.setEliteProgram(rs.getString(5));
+				info.setCanTransfer(rs.getBoolean(6));
+				info.setHistoricRestricted(rs.getBoolean(7));
+				info.setAllowMultiAirline(rs.getBoolean(8));
 				results.add(info);
 			}
 		}
