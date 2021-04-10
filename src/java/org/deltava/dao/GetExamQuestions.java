@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 9.1
+ * @version 9.2
  * @since 2.1
  */
 
@@ -137,6 +137,25 @@ public class GetExamQuestions extends DAO {
 			}
 			
 			return st;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Searches Examination questions for a particular phrase or substring. 
+	 * @param searchStr the substring
+	 * @return a List of QuestionpProfile beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<QuestionProfile> search(String searchStr) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI "
+				+ "ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (LOCATE(?, Q.QUESTION) > 0) GROUP BY Q.ID")) {
+			ps.setString(1, searchStr);
+			
+			List<QuestionProfile> results = execute(ps);
+			loadStatistics(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
