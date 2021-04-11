@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 2.6
  */
 
@@ -81,9 +81,14 @@ public class GetNavRoute extends GetOceanicRoute {
 			return cr.getWaypoints();
 		} else if (obj != null)
 			obj = null;
+		
+		// Get the route text, remove double spaces
+		String rt2 = route;
+		while (rt2.indexOf("  ") > -1)
+			rt2 = rt2.replace("  ", " ");
 
 		// Get the route text
-		List<String> tkns = StringUtils.split(route, " ");
+		List<String> tkns = StringUtils.split(rt2, " ");
 		GeoLocation lastPosition = start; Collection<Airway> aws = new ArrayList<Airway>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
