@@ -76,7 +76,7 @@ public class MapRouteService extends WebService {
 			}
 
 			// Populate the route if required
-			if (!p.isRoutePopulated()) {
+			if (p.isPopulated() && !p.isRoutePopulated()) {
 				GetNavRoute navdao = new GetNavRoute(con);
 
 				// Split the route
@@ -121,6 +121,7 @@ public class MapRouteService extends WebService {
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
 		trackInfo.forEach(loc -> jo.append("track", JSONUtils.format(loc)));
+		jo.put("route", p.getRoute());
 		for (GeoLocation loc : p.getWaypoints()) {
 			jo.append("route", JSONUtils.format(loc));
 			if (!(loc instanceof NavigationDataBean)) continue;
