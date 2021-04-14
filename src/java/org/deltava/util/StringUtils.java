@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -408,10 +408,19 @@ public final class StringUtils {
 	 * @param dt the date/time
 	 * @param fmtPattern the formatter pattern
 	 * @return the formatted date/time
-	 * @see DateFormat#format(Date)
 	 */
 	public static String format(Instant dt, String fmtPattern) {
 		return format(ZonedDateTime.ofInstant(dt, ZoneOffset.UTC), fmtPattern);
+	}
+	
+	/**
+	 * Formats a date into a string using a particular pattern.
+	 * @param d the date
+	 * @param fmtPattern the formatter pattern
+	 * @return the formatted date
+	 */
+	public static String format(LocalDate d, String fmtPattern) {
+		return DateTimeFormatter.ofPattern(fmtPattern).format(d);
 	}
 
 	/**
@@ -419,7 +428,6 @@ public final class StringUtils {
 	 * @param dt the date/time
 	 * @param fmtPattern the formatter pattern
 	 * @return the formatted date/time
-	 * @see DateFormat#format(Date)
 	 */
 	public static String format(ZonedDateTime dt, String fmtPattern) {
 		return DateTimeFormatter.ofPattern(fmtPattern).format(dt);
@@ -477,6 +485,11 @@ public final class StringUtils {
 		return results;
 	}
 	
+	/**
+	 * Parses a line of CSV-fomratted text.
+	 * @param data the text
+	 * @return a CSVTokens object
+	 */
 	public static CSVTokens parseCSV(String data) {
 		return new CSVTokens(data);
 	}
