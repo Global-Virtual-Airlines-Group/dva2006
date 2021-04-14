@@ -9,6 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -172,6 +173,20 @@ public class RoutePlanService extends WebService {
 				if (gA != null) dfr.setGateA(gA.getName());
 				if (!newRoute.equals(dfr.getRoute()))
 					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Updated Route via Route Plotter");
+				
+				// Calculate load factor if requested
+				boolean doPax = Boolean.valueOf(ctx.getParameter("precalcPax")).booleanValue();
+				if (doPax) {
+					EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
+					AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
+					if ((eInfo != null) && (opts != null)) {
+						LoadFactor lf = new LoadFactor(eInfo);
+						double loadFactor = lf.generate(dfr.getDate());
+						dfr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
+						dfr.setLoadFactor(loadFactor);
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Requested pre-flight Load Factor");
+					}
+				}
 				
 				// Save the flight assignment
 				if (ai != null) {
