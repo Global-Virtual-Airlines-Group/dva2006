@@ -1,5 +1,6 @@
 package org.deltava.util;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import junit.framework.Test;
@@ -120,6 +121,9 @@ public class TestStringUtils extends TestCase {
     
     public void testFormat() {
        assertEquals("01234", StringUtils.format(1234, "00000"));
+       LocalDate ld = LocalDate.of(1999, 12, 31);
+       assertNotNull(ld);
+       assertEquals("1999/12/31", StringUtils.format(ld, "yyyy/MM/dd"));
     }
     
     public void testStripComma() {
