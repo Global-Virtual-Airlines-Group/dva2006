@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -175,7 +175,22 @@ public class GetNavData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
+	/**
+	 * Returns all Runways in the database.
+	 * @return a List of Runways
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Runway> getRunways() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, RR.NEWCODE, N.FREQ FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
+			+ "LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) ORDER BY R.ICAO, R.NAME, R.SIMVERSION")) {
+			ps.setInt(1, Navaid.RUNWAY.ordinal());
+			return executeRunway(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Returns information about a particular airport Runway.
 	 * @param a the ICAOAirport

@@ -97,8 +97,7 @@
 
 	<!-- ACARS Dispatch Services -->
 	<service id="navaidsearch" class="org.deltava.service.navdata.NavaidSearchService" />
-	<service id="xmlsidstar" class="org.deltava.service.navdata.XMLTerminalRouteService" />
-	<service id="xmlgate" class="org.deltava.service.navdata.XMLGateService" />
+	<service id="xmlclientdata" class="org.deltava.service.navdata.XMLClientDataService" />
 	<service id="airacversion" class="org.deltava.service.navdata.AIRACVersionService" />
 
 	<!-- SID/STAR updating -->
