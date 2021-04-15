@@ -115,7 +115,7 @@ class XMLFormatter {
 		doc.setRootElement(re);
 		for (Runway r : me.getValue()) {
 			Element rwe = new Element("runway");			
-			rwe.setAttribute("name", r.getName());
+			rwe.addContent(XMLUtils.createElement("name", r.getName()));
 			rwe.setAttribute("lat", df.format(r.getLatitude()));
 			rwe.setAttribute("lng", df.format(r.getLongitude()));			
 			rwe.setAttribute("width", String.valueOf(r.getWidth()));
