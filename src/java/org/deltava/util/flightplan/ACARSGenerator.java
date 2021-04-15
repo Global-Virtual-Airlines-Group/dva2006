@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.jdom2.*;
 
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -17,8 +18,9 @@ import org.deltava.util.XMLUtils;
  * @since 10.0
  */
 
-public class ACARSGenerator extends FlightPlanGenerator {
+public class ACARSGenerator extends MSFSGenerator {
 	
+	private Runway _rD;
 	private Airport _aL;
 	
 	private Aircraft _ac;
@@ -27,24 +29,59 @@ public class ACARSGenerator extends FlightPlanGenerator {
 	private Gate _gD;
 	private Gate _gA;
 	
+	private Simulator _sim;
+	
+	/**
+	 * Updates the passenger count.
+	 * @param pax the number of passengers
+	 */
 	public void setPassengerCount(int pax) {
 		_paxCount = pax;
 	}
 	
+	/**
+	 * Updates the Aircraft used.
+	 * @param a the Aircraft
+	 */
 	public void setAircraft(Aircraft a) {
 		_ac = a;
 	}
 	
+	/**
+	 * Updates the destination alternate airport.
+	 * @param a the Airport
+	 */
 	public void setAirportL(Airport a) {
 		_aL = a;
 	}
 	
+	@Override
 	public void setGateD(Gate g) {
 		_gD = g;
 	}
 	
+	/**
+	 * Updates the arrival Gate.
+	 * @param g the Gate
+	 */
 	public void setGateA(Gate g) {
 		_gA = g;
+	}
+	
+	/**
+	 * Updates the departure Runway. 
+	 * @param r the Runway
+	 */
+	public void setRunwayD(Runway r) {
+		_rD = r;
+	}
+	
+	/**
+	 * Updates the simulator used.
+	 * @param s the Simulator
+	 */
+	public void setSimulator(Simulator s) {
+		_sim = s;
 	}
 
 	@Override
@@ -63,12 +100,14 @@ public class ACARSGenerator extends FlightPlanGenerator {
 		re.addContent(format(_aD, "airportD"));
 		re.addContent(format(_aA, "airportA"));
 		XMLUtils.addIfPresent(re, format(_aL, "airportL"));
+		re.addContent(XMLUtils.createElement("sim", _sim.name()));
 		re.addContent(XMLUtils.createElement("flightType", rp.getFlightType().name()));
 		re.addContent(XMLUtils.createElement("altitude", _altitude));
 		re.addContent(XMLUtils.createElement("eqType", _ac.getName()));
 		XMLUtils.addIfPresent(re, XMLUtils.createIfPresent("pax", (_paxCount < 1) ? null : String.valueOf(_paxCount)));
 		XMLUtils.addIfPresent(re, format(_gD, "gateD"));
 		XMLUtils.addIfPresent(re, format(_gA, "gateA"));
+		XMLUtils.addIfPresent(re, format(_rD, "runwayD"));
 		
 		// Add the waypoints
 		Element rte = new Element("route"); re.addContent(rte);
@@ -116,9 +155,9 @@ public class ACARSGenerator extends FlightPlanGenerator {
 		return e;
 	}
 	
-	private static Element format(Runway r) {
+	private static Element format(Runway r, String elementName) {
 		if (r == null) return null;
-		Element e = new Element("runway");
+		Element e = new Element(elementName);
 		e.setAttribute("name", r.getName());
 		e.setAttribute("icao", r.getCode());
 		e.setAttribute("lat", String.valueOf(r.getLatitude()));
@@ -127,7 +166,15 @@ public class ACARSGenerator extends FlightPlanGenerator {
 		e.setAttribute("length", String.valueOf(r.getLength()));
 		e.setAttribute("sfc", r.getSurface().name());
 		e.setAttribute("isHardSfc", String.valueOf(r.getSurface().isHard()));
+		if (r instanceof UseCount)
+			e.setAttribute("useCount", String.valueOf(((UseCount) r).getUseCount()));
+			
 		return e;
+	}
+	
+	@Override
+	public final String getExtension() {
+		return "als";
 	}
 	
 	@Override
