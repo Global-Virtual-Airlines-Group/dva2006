@@ -50,6 +50,7 @@ class XMLFormatter {
 			ge.setAttribute("lat", df.format(g.getLatitude()));
 			ge.setAttribute("lng", df.format(g.getLongitude()));
 			ge.setAttribute("zone", g.getZone().name());
+			ge.setAttribute("type", g.getGateType().name());
 			g.getAirlines().forEach(al -> ge.addContent(XMLUtils.createElement("airline", al.getCode(), false)));
 			re.addContent(ge);
 		}
