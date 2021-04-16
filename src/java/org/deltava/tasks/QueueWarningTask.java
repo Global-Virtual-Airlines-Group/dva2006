@@ -3,8 +3,9 @@ package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.DisposalQueueStats;
 
 import org.deltava.dao.*;
@@ -65,15 +66,21 @@ public class QueueWarningTask extends Task {
 			GetPilotRecognition pqdao = new GetPilotRecognition(con);
 			Collection<Integer> IDs = pqdao.getPromotionQueue(null);
 			if (!IDs.isEmpty()) {
-				MessageContext mctxt = new MessageContext();
-				mctxt.setTemplate(mtdao.get("PROMOQUEUEWARN"));
-				mctxt.addData("promoQueueSize", Integer.valueOf(IDs.size()));
-
-				// Load the recipients
+				// Determine programs waiting for promotion
+				Collection<Pilot> promoPilots = pdao.getByID(IDs, "PILOTS").values();
+				Collection<String> eqPrograms = promoPilots.stream().map(Pilot::getEquipmentType).collect(Collectors.toSet());
+				
+				// Load recipients
 				Collection<EMailAddress> usrs = new LinkedHashSet<EMailAddress>();
-				usrs.addAll(pdao.getByRole("PIREP", ctx.getDB()));
 				usrs.addAll(pdao.getByRole("HR", ctx.getDB()));
+				usrs.addAll(pdao.getByRole("Operations", ctx.getDB()));
+				pdao.getByRole("PIREP", ctx.getDB()).stream().filter(p -> eqPrograms.contains(p.getEquipmentType())).forEach(usrs::add);
+				
+				// Send the message
 				if (!usrs.isEmpty()) {
+					MessageContext mctxt = new MessageContext();
+					mctxt.setTemplate(mtdao.get("PROMOQUEUEWARN"));
+					mctxt.addData("promoQueueSize", Integer.valueOf(IDs.size()));
 					m.setContext(mctxt);
 					m.send(usrs);
 				}
