@@ -357,11 +357,11 @@ public class FlightSubmissionHelper {
 		if ((_info != null) && (_fr.getLoadFactor() <= 0) && (_info.getLoadFactor() <= 0)) {
 			LoadFactor lf = new LoadFactor(econ);
 			double loadFactor = lf.generate(_fr.getDate());
-			log.info(String.format("Calculated load factor of %4.3f, was %4.3f for Flight %d", Double.valueOf(loadFactor), Double.valueOf(_fr.getLoadFactor()), Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS))));
+			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Calculated load factor of %4.3f, was %4.3f for Flight %d", Double.valueOf(loadFactor), Double.valueOf(_fr.getLoadFactor()), Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS))));
 			_fr.setLoadFactor(loadFactor);
 		} else if ((_info != null) && (_info.getLoadFactor() > 0) && !hasCustomCabin) {
 			_fr.setLoadFactor(_info.getLoadFactor());
-			log.info(String.format("Using Flight %d data load factor of %4.3f", Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS)), Double.valueOf(_info.getLoadFactor())));
+			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Using Flight %d data load factor of %4.3f", Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS)), Double.valueOf(_info.getLoadFactor())));
 		}
 		
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
