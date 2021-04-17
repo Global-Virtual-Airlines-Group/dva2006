@@ -121,6 +121,8 @@ public class Mailer {
 			Object ctx = _ctx.execute(mt.getNotifyContext()); 
 			if (ctx instanceof DatabaseBean)
 				ID = Integer.valueOf(((DatabaseBean) ctx).getID());
+			else
+				log.warn("Context object " + mt.getNotifyContext() + " not a DatabaseBean");
 		}
 		
 		// Add the actions
