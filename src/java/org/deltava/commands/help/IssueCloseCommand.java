@@ -1,4 +1,4 @@
-// Copyright 2007, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to mark a Help Desk Issue as Closed.  
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -43,11 +43,19 @@ public class IssueCloseCommand extends AbstractCommand {
 			
 			// Update the status
 			i.setStatus(IssueStatus.CLOSED);
+			IssueComment ic = new IssueComment(ctx.getUser().getID());
+			ic.setBody("Closed Help Desk Issue");
+			ic.setID(i.getID());
+			i.addComment(ic);
 			
 			// Save the issue
+			ctx.startTX();
 			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(i);
+			iwdao.write(ic);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

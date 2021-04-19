@@ -147,6 +147,7 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
  <td><el:file name="attach" className="small" size="96" max="160" /></td>
 </tr>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

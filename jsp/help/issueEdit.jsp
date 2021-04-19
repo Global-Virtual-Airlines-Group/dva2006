@@ -147,6 +147,7 @@ golgotha.local.checkAssignee = function(combo) {
 </c:forEach>
 </c:if>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

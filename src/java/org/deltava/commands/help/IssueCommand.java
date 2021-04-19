@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class IssueCommand extends AbstractFormCommand {
+public class IssueCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Method called when saving the form.
@@ -42,7 +42,7 @@ public class IssueCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the Issue
-			Issue i = null;
+			Issue i = null, oi = null;
 			HelpDeskAccessControl ac = null;
 			if (!isNew) {
 				GetHelp idao = new GetHelp(con);
@@ -57,6 +57,7 @@ public class IssueCommand extends AbstractFormCommand {
 					throw securityException("Cannot Update Issue");
 				
 				// Determine if we're reassigning
+				oi = BeanUtils.clone(i);
 				int newAssignee = StringUtils.parse(ctx.getParameter("assignedTo"), i.getAssignedTo());
 				if (newAssignee != i.getAssignedTo()) {
 					i.setAssignedTo(newAssignee);
@@ -94,11 +95,15 @@ public class IssueCommand extends AbstractFormCommand {
 			if (ac.getCanUpdateStatus())
 				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oi, i);
+			AuditLog ae = AuditLog.create(i, delta, ctx.getUser().getID());
 			
 			// Save the issue
 			ctx.startTX();
 			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(i);
+			writeAuditLog(ctx, ae);
 			
 			// Get attachment
 			FileUpload fu = ctx.getFile("attach");
@@ -165,10 +170,7 @@ public class IssueCommand extends AbstractFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
-		if (isNew)
-			result.setURL("hdissues.do");
-		else
-			result.setURL("hdissue", null, ctx.getID());
+		result.setURL("hdissue", null, ctx.getID());
 	}
 
 	/**
@@ -204,6 +206,9 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("access", ac, REQUEST);
 				if (SystemData.getBoolean("econ.elite.enabled"))
 					ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID()), REQUEST);
+				
+				// Get audit log
+				readAuditLog(ctx, i);
 				
 				// Load Pilot data
 				List<Pilot> pilots = pdao.getByID(getPilotIDs(i), "PILOTS").values().stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
@@ -271,6 +276,9 @@ public class IssueCommand extends AbstractFormCommand {
 				GetHelpTemplate tmpdao = new GetHelpTemplate(con);
 				ctx.setAttribute("rspTemplates", tmpdao.getAll(), REQUEST);
 			}
+			
+			// Get audit log
+			readAuditLog(ctx, i);
 			
 			// Save in request
 			ctx.setAttribute("issue", i, REQUEST);
