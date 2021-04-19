@@ -101,6 +101,9 @@
  <content:subitem><el:cmd url="poproutes">Popular Routes</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="dspstats">Top Dispatchers</el:cmd></content:subitem>
+<content:filter roles="Developer">
+ <content:subitem><el:cmd url="acarserrors">ACARS Error Reports</el:cmd></content:subitem> 
+</content:filter>
 </content:submenu>
 </c:if>
 
