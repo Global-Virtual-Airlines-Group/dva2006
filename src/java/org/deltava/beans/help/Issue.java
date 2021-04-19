@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Help Desk Issues.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
-public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
+public class Issue extends DatabaseBean implements Auditable, AuthoredBean, ViewEntry {
 	
 	private int _authorID;
 	private int _assigneeID;
@@ -290,6 +290,16 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 			throw new IllegalArgumentException("Comment count cannot be negative");
 		
 		_commentCount = comments;
+	}
+	
+	@Override
+	public String getAuditID() {
+		return getHexID();
+	}
+	
+	@Override
+	public boolean isCrossApp() {
+		return false;
 	}
 
 	@Override
