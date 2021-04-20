@@ -1,11 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoField;
+
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -13,17 +12,16 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
 import org.deltava.util.*;
-import org.deltava.util.log.SyntheticRequest;
-import org.deltava.util.log.SyntheticResponse;
+import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
 
-import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.*;
 
 /**
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -254,6 +252,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * {@link Task#execute(TaskContext)} method.
      * @param usr overrides the user executing the Task if not null
      */
+    @Trace(dispatcher=true)
     public void run(Pilot usr) {
     	setStartTime(Instant.now());
     	_runCount++;
@@ -297,9 +296,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	}
     }
     
-    /**
-     * Compares two Tasks by comparing their names.
-     */
     @Override
     public int compareTo(Task t2) {
     	return _name.compareTo(t2._name);
@@ -310,9 +306,6 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	return _name.hashCode();
     }
     
-    /**
-     * Uncaught exception logger for child threads.
-     */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
     	log.error("Error in child thread " + t.getName(), e);
