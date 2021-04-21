@@ -36,11 +36,16 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
 		try (Jedis j = RedisUtils.getConnection()) {
+			RedisUtils.write("$ME", _expiry, Boolean.TRUE);
+			RedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
+			RedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
 			Pipeline jp = j.pipelined();
-			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(Boolean.TRUE));
-			j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(is.size())));
-			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(new ArrayList<TileAddress>(is.keySet())));
-			is.entrySet().forEach(me -> j.setex(RedisUtils.encodeKey(createKey(me.getKey().getName())), _expiry, RedisUtils.write(me.getValue())));
+			for (Map.Entry<TileAddress, PNGTile> me : is.entrySet()) {
+				byte[] k = RedisUtils.encodeKey(createKey(me.getKey().getName()));
+				j.set(k, me.getValue().getData());
+				j.expireAt(k, _expiry);
+			}
+			
 			jp.sync();
 		}
 	}
