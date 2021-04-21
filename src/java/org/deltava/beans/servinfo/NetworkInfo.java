@@ -95,38 +95,18 @@ public class NetworkInfo implements Cacheable {
     	// Strip out based on distance and facility type
     	Collection<Controller> results = new LinkedHashSet<Controller>();
     	for (Map.Entry<String, Controller> me : _controllers.entrySet()) {
-    		Controller c = me.getValue(); int maxDistance = 200;
-    		switch (c.getFacility()) {
-    			case OBS:
-    			case DEL:
-    				maxDistance = 30;
-    				break;
-    				
-    			case GND:
-    				maxDistance = 60;
-    				break;
-
-    			case APP:
-    				maxDistance = 350;
-    				break;
-    				
-    			case CTR:
-    				maxDistance = 1500;
-    				break;
-    				
-    			case FSS:
-    				maxDistance = 2500;
-    				break;
-
-    			case TWR:
-    			case ATIS:
-    			default:
-    				maxDistance = 125;
-    				break;
-    		}
+    		Controller c = me.getValue(); 
+    		int maxDistance = switch (c.getFacility()) {
+    			case OBS, DEL -> Math.max(c.getRange(),  30);
+    			case GND -> Math.max(c.getRange(),  60);
+    			case APP -> Math.max(c.getRange(),  350);
+    			case CTR -> Math.max(c.getRange(),  1500);
+    			case FSS -> Math.max(c.getRange(),  2500);
+    			default -> Math.max(c.getRange(),  125);
+    		};
     		
     		// Add if we're not too far away
-    		if (gl.distanceTo(c.getPosition()) <= maxDistance)
+    		if ((c.getPosition() != null) && (gl.distanceTo(c.getPosition()) <= maxDistance))
     			results.add(c);
     	}
     	

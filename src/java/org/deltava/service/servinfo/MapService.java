@@ -80,7 +80,7 @@ public class MapService extends WebService {
 		if (doATC) {
 			for (Iterator<Controller> i = info.getControllers().iterator(); i.hasNext(); ) {
 				Controller usr = i.next();
-				if ((usr.getFacility() != Facility.FSS) && (usr.getFacility() != Facility.CTR) && (usr.getFacility() != Facility.APP))
+				if ((usr.getPosition() == null) || ((usr.getFacility() != Facility.FSS) && (usr.getFacility() != Facility.CTR) && (usr.getFacility() != Facility.APP)))
 					continue;
 
 				JSONObject ao = new JSONObject();

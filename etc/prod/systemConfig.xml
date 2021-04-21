@@ -339,12 +339,14 @@
 
 		<vatsim>
 			<status_url>https://data.vatsim.net/v3/vatsim-data.json</status_url>
+			<transceiver_url>https://data.vatsim.net/v3/transceivers-data.json</transceiver_url>
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
 			<url>https://www.vatsim.net/</url>
 			<local>
 				<info>/var/cache/servinfo/vatsim.info</info>
+				<transceiver>/var/cache/servinfo/vatsim.tcv</transceiver>
 			</local>
 		</vatsim>
 		

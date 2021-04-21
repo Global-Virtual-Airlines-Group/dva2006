@@ -4,22 +4,22 @@ package org.deltava.dao.file;
 import java.io.*;
 import java.util.*;
 
-import org.json.*;
 
+import org.json.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.RadioPosition;
 
 import org.deltava.dao.DAOException;
 
 /**
- * 
+ * A Data Access Object to load VATSIM radio position data.
  * @author Luke
  * @version 10.0
  * @since 10.0
  */
 
 public class GetVATSIMTransceivers extends DAO {
-
+	
 	/**
 	 * Creates the Data Access Object.
 	 * @param is the InputStream to read
@@ -28,6 +28,11 @@ public class GetVATSIMTransceivers extends DAO {
 		super(is);
 	}
 
+	/**
+	 * Load the radio positions.
+	 * @return a Collection of RadioPosition beans
+	 * @throws DAOException if an error occurs
+	 */
 	public Collection<RadioPosition> load() throws DAOException {
 		
 		JSONArray ja = null;
@@ -48,7 +53,8 @@ public class GetVATSIMTransceivers extends DAO {
 				rp.addPosition(new GeoPosition(tlo.getDouble("latDeg"), tlo.getDouble("lonDeg"), alt));
 			}
 			
-			results.add(rp);
+			if (!rp.getPositions().isEmpty())
+				results.add(rp);
 		}
 		
 		return results;
