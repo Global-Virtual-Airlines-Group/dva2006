@@ -38,12 +38,12 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.15.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.22.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20210307.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-3.14.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.12.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.12.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.12.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-3.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.24.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
