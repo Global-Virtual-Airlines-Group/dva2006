@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import java.util.*;
@@ -7,12 +7,12 @@ import org.deltava.beans.wx.*;
 import org.deltava.dao.DAOException;
 import org.deltava.util.*;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.*;
 
 /**
  * A Data Access Object to write wind data to Redis.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 5.4
  */
 
@@ -36,14 +36,17 @@ public class SetWinds extends RedisDAO {
 			Collection<Object> keys = new ArrayList<Object>();
 			RedisUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
 			try (Jedis j = RedisUtils.getConnection()) {
+				Pipeline jp = j.pipelined();
 				for (WindData w : wd) {
 					byte[] key = RedisUtils.encodeKey(createKey(w.cacheKey()));
-					j.setex(key, _expiry, RedisUtils.write(w));
+					j.set(key, RedisUtils.write(w));
+					j.expireAt(key, _expiry);
 					keys.add(key);
 				}
 				
-				j.setex(RedisUtils.encodeKey(createKey("$KEYS")), _expiry, RedisUtils.write(keys));
-				j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(keys.size())));
+				jp.sync();
+				RedisUtils.write("$KEYS", _expiry, keys);
+				RedisUtils.write("$SIZE", _expiry, Integer.valueOf(keys.size()));
 			}
 		}
 	}
