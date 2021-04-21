@@ -57,7 +57,6 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			c.setName(co.getString("name"));
 			c.setServer(co.getString("server"));
 			c.setCallsign(co.getString("callsign"));
-			c.setPosition(co.optDouble("latitude"), co.optDouble("longitude"));
 			c.setRating(Rating.values()[co.getInt("rating")]);
 			c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
 			c.setLoginTime(parseDateTime(co.getString("logon_time")));
@@ -138,18 +137,18 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		}
 
 		// Parse the controllers
-		/* JSONArray ca = jo.getJSONArray("controllers");
+		JSONArray ca = jo.getJSONArray("controllers");
 		for (int x = 0; x < ca.length(); x++) {
 			JSONObject co = ca.getJSONObject(x);
 			info.add(parseController(co));
 		}
 		
 		// Parse the ATIS
-		JSONArray ca = jo.getJSONArray("atis");
+		ca = jo.getJSONArray("atis");
 		for (int x = 0; x < ca.length(); x++) {
 			JSONObject co = ca.getJSONObject(x);
 			info.add(parseController(co));
-		} */
+		}
 		
 		// Calculate connection counts
 		info.getPilots().stream().map(p -> results.get(p.getServer())).filter(Objects::nonNull).forEach(s -> s.setConnections(s.getConnections() + 1));
