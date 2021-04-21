@@ -61,7 +61,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
 			c.setLoginTime(parseDateTime(co.getString("logon_time")));
 			c.setRange(co.optInt("visual_range"));
-			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facilitytype", Facility.ATIS.ordinal())] : Facility.ATIS);
+			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facility", Facility.ATIS.ordinal())] : Facility.ATIS);
 			return c;
 		} catch (Exception e) {
 			log.error("Error parsing controller " + id + " - " + e.getMessage());
