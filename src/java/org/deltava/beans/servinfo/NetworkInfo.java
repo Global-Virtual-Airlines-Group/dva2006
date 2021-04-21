@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 9.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -283,6 +283,16 @@ public class NetworkInfo implements Cacheable {
     		Collections.sort(results, new GeoComparator(loc));
     	
     	return results.isEmpty() ? null : results.get(0);
+    }
+    
+    public void merge(Collection<RadioPosition> positions) {
+    	for (RadioPosition rp : positions) {
+    		Controller c = _controllers.get(rp.getCallsign());
+    		if (c != null) {
+    			GeoLocation loc = rp.getCenter();
+    			c.setPosition(loc.getLatitude(), loc.getLongitude());
+    		}
+    	}
     }
     
     @Override

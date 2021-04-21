@@ -2,11 +2,12 @@ package org.deltava.dao.file;
 
 import java.io.*;
 import java.sql.*;
+import java.util.*;
 
 import org.apache.log4j.*;
 
 import org.deltava.beans.servinfo.NetworkInfo;
-
+import org.deltava.beans.servinfo.RadioPosition;
 import org.deltava.dao.*;
 import org.deltava.util.system.SystemData;
 
@@ -25,7 +26,7 @@ public class TestGetVATSIMInfo extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
 			assertNotNull(c);
 		
 		// Load the airports/time zones
@@ -47,7 +48,17 @@ public class TestGetVATSIMInfo extends TestCase {
 	@SuppressWarnings("static-method")
 	public void testLoad() throws Exception {
 		
-		File f3 = new File("data", "vatsim-data-v3.json");
+		File ft = new File("data", "transceivers-data.json");
+		assertTrue(ft.exists());
+		
+		Collection<RadioPosition> positions = new ArrayList<RadioPosition>();
+		try (InputStream is = new BufferedInputStream(new FileInputStream(ft), 65536)) {
+			GetVATSIMTransceivers tdao = new GetVATSIMTransceivers(is);
+			positions.addAll(tdao.load());
+		}
+		
+		assertFalse(positions.isEmpty());
+		File f3 = new File("data", "vatsim-data.json");
 		assertTrue(f3.exists());
 		
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f3), 102400)) {
@@ -57,6 +68,7 @@ public class TestGetVATSIMInfo extends TestCase {
 			assertFalse(inf.getServers().isEmpty());
 			assertFalse(inf.getPilots().isEmpty());
 			assertFalse(inf.getControllers().isEmpty());
+			inf.merge(positions);
 		}
 	}
 }
