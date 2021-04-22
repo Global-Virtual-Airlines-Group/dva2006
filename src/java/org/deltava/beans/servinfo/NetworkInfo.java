@@ -3,6 +3,7 @@ package org.deltava.beans.servinfo;
 
 import java.util.*;
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.comparators.GeoComparator;
@@ -248,30 +249,27 @@ public class NetworkInfo implements Cacheable {
      * @return a Controller bean, or null if the frequency was not found
      */
     public Controller getControllerByFrequency(String freq, GeoLocation loc) {
-    	if ("122.8".equals(freq))
-    		return null;
-    	
-    	List<Controller> results = new ArrayList<Controller>();
-    	for (Iterator<Controller> i = _controllers.values().iterator(); i.hasNext(); ) {
-    		Controller ctr = i.next();
-    		if (freq.equals(ctr.getFrequency()))
-    			results.add(ctr);
-    	}
+    	if ("122.8".equals(freq)) return null;
+    	List<Controller> results = _controllers.values().stream().filter(c -> freq.equals(c.getFrequency())).collect(Collectors.toList());
 
     	// Sort by distance if a location specified
-    	if (loc != null)
+    	if ((loc != null) && (results.size() > 1)) {
+    		results.removeIf(c -> (c.getPosition() == null));
     		Collections.sort(results, new GeoComparator(loc));
+    	}
     	
     	return results.isEmpty() ? null : results.get(0);
     }
     
+    /**
+     * Merges a Collection of radio positions to determine controller locations.
+     * @param positions a Collection of RadioPosition beans
+     */
     public void merge(Collection<RadioPosition> positions) {
     	for (RadioPosition rp : positions) {
     		Controller c = _controllers.get(rp.getCallsign());
-    		if (c != null) {
-    			GeoLocation loc = rp.getCenter();
-    			c.setPosition(loc.getLatitude(), loc.getLongitude());
-    		}
+    		if (c != null)
+    			c.addPosition(rp);
     	}
     }
     
@@ -283,6 +281,7 @@ public class NetworkInfo implements Cacheable {
     	ni2._pilots.putAll(_pilots);
     	ni2._controllers.putAll(_controllers);
     	ni2._servers.putAll(_servers);
+    	ni2._hasPilotIDs = _hasPilotIDs;
     	return ni2;
     }
     

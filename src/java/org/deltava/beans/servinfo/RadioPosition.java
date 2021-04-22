@@ -1,8 +1,6 @@
 // Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import java.util.*;
-
 import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -13,18 +11,24 @@ import org.deltava.beans.schedule.GeoPosition;
  * @since 10.0
  */
 
-public class RadioPosition {
+public class RadioPosition implements java.io.Serializable, GeospaceLocation, Comparable<RadioPosition> {
 	
 	private final String _callsign;
-	private final Collection<GeospaceLocation> _positions = new ArrayList<GeospaceLocation>();
+	private final String _freq;
+	private final int _seq;
+	private GeospaceLocation _pos = new GeoPosition();
 	
 	/**
 	 * Creates the bean.
-	 * @param callSign the callsign
+	 * @param callsign the callsign
+	 * @param seq the sequence number
+	 * @param freq the frequency
 	 */
-	public RadioPosition(String callSign) {
+	public RadioPosition(String callsign, int seq, String freq) {
 		super();
-		_callsign = callSign;
+		_callsign = callsign.toUpperCase();
+		_seq = seq;
+		_freq = freq;
 	}
 	
 	/**
@@ -34,46 +38,64 @@ public class RadioPosition {
 	public String getCallsign() {
 		return _callsign;
 	}
-
+	
 	/**
-	 * Returns all of the transceiver locations.
-	 * @return a Collection of GeospaceLocation beans
+	 * Returns the radio frequncy.
+	 * @return the frequency
 	 */
-	public Collection<GeospaceLocation> getPositions() {
-		return _positions;
+	public String getFrequency() {
+		return _freq;
+	}
+	
+	public int getSequence() {
+		return _seq;
+	}
+	
+	@Override
+	public double getLatitude() {
+		return _pos.getLatitude();
 	}
 
-	/**
-	 * Returns the average of the transceiver locations.
-	 * @return a GeospaceLocation
-	 */
-	public GeospaceLocation getCenter() {
-		if (_positions.isEmpty()) return null;
-		double lat = 0; double lng = 0; int alt = 0;
-		for (GeospaceLocation loc : _positions) {
-			lat += loc.getLatitude();
-			lng += loc.getLongitude();
-			alt += loc.getAltitude();
-		}
-		
-		return new GeoPosition(lat / _positions.size(), lng / _positions.size(), alt / _positions.size());
+	@Override
+	public double getLongitude() {
+		return _pos.getLongitude();
+	}
+
+	@Override
+	public int getAltitude() {
+		return _pos.getAltitude();
 	}
 	
 	/**
-	 * Adds a transceiver location.
-	 * @param loc the GeospaceLocation
+	 * Updates the transceiver location.
+	 * @param lat the latitude in degrees
+	 * @param lng the longitude in degrees
+	 * @param alt the altitude in feet above MSL
 	 */
-	public void addPosition(GeospaceLocation loc) {
-		_positions.add(loc);
+	public void setPosition(double lat, double lng, int alt) {
+		_pos = new GeoPosition(lat, lng, alt);
 	}
 	
 	@Override
 	public int hashCode() {
-		return _callsign.hashCode();
+		return toString().hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder(_callsign);
+		buf.append('-').append(_seq);
+		return buf.toString();
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof RadioPosition) && (hashCode() == o.hashCode()));
+	}
+
+	@Override
+	public int compareTo(RadioPosition rp) {
+		int tmpResult = _callsign.compareTo(rp._callsign);
+		return (tmpResult == 0) ? Integer.compare(_seq, rp._seq) : tmpResult;
 	}
 }
