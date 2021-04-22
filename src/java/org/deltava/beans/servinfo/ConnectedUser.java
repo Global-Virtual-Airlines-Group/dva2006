@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 3.4
  */
 
@@ -64,7 +64,6 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	 * @see ConnectedUser#getLatitude()
 	 * @see ConnectedUser#getLongitude()
 	 * @see ConnectedUser#setPosition(double, double)
-	 * @see ConnectedUser#setPosition(String, String)
 	 */
 	public GeoLocation getPosition() {
 		return _position;
@@ -84,22 +83,10 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	 * latitudes in the Northern Hemisphere.
 	 * @param lat the latitude in degrees
 	 * @param lon the longitude in degrees
-	 * @see ConnectedUser#setPosition(String, String)
 	 * @see ConnectedUser#getPosition()
 	 */
 	public void setPosition(double lat, double lon) {
 		_position = GeoUtils.normalize(lat, lon);
-	}
-	
-	/**
-	 * Updates the User's position.
-	 * @param lat a String containing the latitude
-	 * @param lon a String containing the longitude
-	 * @see ConnectedUser#setPosition(double, double)
-	 * @see ConnectedUser#getPosition()
-	 */
-	public void setPosition(String lat, String lon) {
-		setPosition(StringUtils.parse(lat, 0.0d), StringUtils.parse(lon, 0.0d));
 	}
 	
 	/**
