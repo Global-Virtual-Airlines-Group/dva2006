@@ -57,8 +57,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 			c.setName(co.getString("name"));
 			c.setServer(co.getString("server"));
 			c.setCallsign(co.getString("callsign"));
-			c.setRating(Rating.values()[co.getInt("rating")]);
-			c.setFrequency(co.optString("frequency", Controller.OBS_FREQ));
+			c.setRating(Rating.values()[co.optInt("rating", Rating.OBS.ordinal())]);
 			c.setLoginTime(parseDateTime(co.getString("logon_time")));
 			c.setRange(co.optInt("visual_range"));
 			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facility", Facility.ATIS.ordinal())] : Facility.ATIS);

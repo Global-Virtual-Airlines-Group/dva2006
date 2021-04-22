@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -150,8 +150,8 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 										Controller c = new Controller(id, _net);
 										c.setCallsign(si.get(SITokens.CALLSIGN));
 										c.setName(si.get(SITokens.NAME));
-										c.setFrequency(si.get(SITokens.FREQ));
-										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
+										RadioPosition rp = new RadioPosition(c.getCallsign(), 1, si.get(SITokens.FREQ));
+										rp.setPosition(StringUtils.parse(si.get(SITokens.LAT), 0.0), StringUtils.parse(si.get(SITokens.LON), 0.0), 0);
 										c.setRating(Rating.values()[StringUtils.parse(si.get(SITokens.RATING), 1)]);
 										c.setServer(si.get(SITokens.SERVER).toUpperCase());
 										if (c.getFacility() != Facility.ATIS) {
@@ -184,7 +184,7 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 										p.setName(si.get(SITokens.NAME));
 										p.setAirportD(getAirport(si.get(SITokens.AIRPORT_D)));
 										p.setAirportA(getAirport(si.get(SITokens.AIRPORT_A)));
-										p.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
+										p.setPosition(StringUtils.parse(si.get(SITokens.LAT), 0.0), StringUtils.parse(si.get(SITokens.LON), 0.0));
 										p.setEquipmentCode(si.get(SITokens.EQCODE));
 										p.setAltitude(StringUtils.parse(si.get(SITokens.ALT), 0));
 										p.setHeading(StringUtils.parse(si.get(SITokens.HDG), 0));
