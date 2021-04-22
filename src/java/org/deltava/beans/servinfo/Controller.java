@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
+import java.util.*;
+
 import org.deltava.beans.OnlineNetwork;
 
 import org.deltava.util.StringUtils;
@@ -8,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 9.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -20,8 +22,9 @@ public class Controller extends ConnectedUser {
 	public static final String OBS_FREQ = "199.998";
    
    private Facility _type = Facility.OBS;
-   private String _freq;
    private int _range;
+   
+   private final SortedSet<RadioPosition> _freqs = new TreeSet<RadioPosition>();
 
     /**
      * Initializes the bean with a particular user ID.
@@ -32,10 +35,6 @@ public class Controller extends ConnectedUser {
         super(id, net);
     }
 
-    /**
-     * Returns the user type.
-     * @return NetworkUser.Type.ATC
-     */
     @Override
     public final Type getType() {
         return Type.ATC;
@@ -44,10 +43,10 @@ public class Controller extends ConnectedUser {
     /**
      * Returns the Controller's communication frequency.
      * @return the frequency
-     * @see Controller#setFrequency(String)
+     * @see Controller#addPosition(RadioPosition)
      */
     public String getFrequency() {
-    	return _freq;
+    	return _freqs.isEmpty() ? OBS_FREQ : _freqs.first().getFrequency();
     }
     
     /**
@@ -68,10 +67,16 @@ public class Controller extends ConnectedUser {
     	return (_range <= 0) ? _type.getRange() : _range;
     }
     
-    /**
-     * Sets the user name.
-     * @param name the controller name
-     */
+    public Collection<RadioPosition> getRadios() {
+    	return _freqs;
+    }
+    
+    public void addPosition(RadioPosition rp) {
+    	if (_freqs.isEmpty())
+    		super.setPosition(rp.getLatitude(), rp.getLongitude());
+    	_freqs.add(rp);
+    }
+    
     @Override
     public final void setName(String name) {
     	String n = name.trim();
@@ -85,12 +90,6 @@ public class Controller extends ConnectedUser {
     	}
     }
     
-    /**
-     * Updates the Controller's callsign.
-     * @param cs the callsign
-     * @throws NullPointerException if cs is null
-     * @see ConnectedUser#getCallsign()
-     */
     @Override
     public void setCallsign(String cs) {
     	super.setCallsign(cs);
@@ -105,15 +104,6 @@ public class Controller extends ConnectedUser {
      */
     public void setFacility(Facility ft) {
     	_type = ft;
-    }
-    
-    /**
-     * Updates the Controller's communication frequency.
-     * @param freq the frequency
-     * @see Controller#getFrequency()
-     */
-    public void setFrequency(String freq) {
-    	_freq = freq;
     }
     
     /**
@@ -139,14 +129,9 @@ public class Controller extends ConnectedUser {
      * @see Controller#getFrequency()
      */
     public boolean hasFrequency() {
-    	return !StringUtils.isEmpty(_freq) && !OBS_FREQ.equals(_freq);
+    	return !OBS_FREQ.equals(getFrequency());
     }
     
-    /**
-     * Returns the Google Maps icon color.
-     * @return the color as defined by COLORS and faclity type
-     * @see Controller#getFacility()
-     */
     @Override
     public String getIconColor() {
     	return _type.getColor();
