@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class Pilot extends ConnectedUser implements RoutePair {
+public class Pilot extends ConnectedUser implements RoutePair, GeospaceLocation {
 
 	private int _altitude;
 	private int _gSpeed;
@@ -49,11 +49,7 @@ public class Pilot extends ConnectedUser implements RoutePair {
 		return _airportD;
 	}
 
-	/**
-	 * Returns the current altitude.
-	 * @return the altitude in feet above Mean Sea Level
-	 * @see Pilot#setAltitude(int)
-	 */
+	@Override
 	public int getAltitude() {
 		return _altitude;
 	}
