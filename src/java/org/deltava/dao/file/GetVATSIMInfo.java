@@ -72,6 +72,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		int id = 0;
 		try {
 			Pilot p = new Pilot(po.getInt("cid"), OnlineNetwork.VATSIM);
+			id = p.getID();
 			p.setName(po.getString("name"));
 			p.setServer(po.getString("server"));
 			p.setCallsign(po.getString("callsign"));
@@ -85,8 +86,8 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 				p.setAirportD(getAirport(fpo.optString("departure")));
 				p.setAirportA(getAirport(fpo.optString("arrival")));	
 				p.setEquipmentCode(fpo.optString("aircraft"));
-				p.setRoute(po.optString("route", ""));
-				p.setComments(po.optString("remarks", ""));
+				p.setRoute(fpo.optString("route", ""));
+				p.setComments(fpo.optString("remarks", ""));
 			}
 			
 			return p;
