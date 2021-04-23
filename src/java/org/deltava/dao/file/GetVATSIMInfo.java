@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 9.2
+ * @version 10.0
  * @since 9.0
  */
 
