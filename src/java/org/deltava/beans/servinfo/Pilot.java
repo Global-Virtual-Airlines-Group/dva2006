@@ -53,6 +53,11 @@ public class Pilot extends ConnectedUser implements RoutePair, GeospaceLocation 
 	public int getAltitude() {
 		return _altitude;
 	}
+	
+	@Override
+	public boolean isPopulated() {
+		return RoutePair.super.isPopulated() && _airportD.hasPosition() && _airportA.hasPosition();
+	}
 
 	/**
 	 * Returns the User's Flight Plan comments.
@@ -237,16 +242,16 @@ public class Pilot extends ConnectedUser implements RoutePair, GeospaceLocation 
 		
 		// Only generate a route if both airports have positions
 		Collection<GeoLocation> route = new ArrayList<GeoLocation>();
-		if ((_airportD.hasPosition()) && (_airportA.hasPosition())) {
-			route.add(_airportD);
-			if (!_wps.isEmpty())
-				route.addAll(_wps);
-			else
-				route.add(_position);
-			
-			route.add(_airportA);
-		}
-	
+		if (!isPopulated())
+			return route;
+		
+		route.add(_airportD);
+		if (!_wps.isEmpty())
+			route.addAll(_wps);
+		else
+			route.add(_position);
+		
+		route.add(_airportA);
 		return route;
 	}
 	
