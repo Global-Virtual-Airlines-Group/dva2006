@@ -78,6 +78,7 @@ public final class StringUtils {
 	 * @throws NullPointerException if the string is null
 	 */
 	public static String properCase(String s) {
+		if (isEmpty(s)) return s;
 		StringBuilder buf = new StringBuilder(s.length() + 2);
 		buf.append(Character.toUpperCase(s.charAt(0))); // Convert first character to uppercase always
 		for (int x = 1; x < s.length(); x++) {
