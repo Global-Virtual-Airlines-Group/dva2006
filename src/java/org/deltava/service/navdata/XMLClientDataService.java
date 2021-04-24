@@ -36,7 +36,7 @@ public class XMLClientDataService extends DownloadService {
 	private static final String XML_ZIP = "xmldata.zip";
 	private static final String XML_LEGACY_ZIP = "xmlsidstar.zip";
 	
-	private Metadata _md;
+	private final Map<String, Metadata> _md = new HashMap<String, Metadata>();
 
 	/**
 	 * Executes the Web Service.
@@ -50,6 +50,7 @@ public class XMLClientDataService extends DownloadService {
 		// Determine if we are pulling old/new format data
 		boolean isOld = Boolean.valueOf(ctx.getParameter("legacy")).booleanValue();
 		final String ZIP_NAME = isOld ? XML_LEGACY_ZIP : XML_ZIP;
+		Metadata md = _md.get(ZIP_NAME);
 
 		// Check if the file exists
 		File cacheDir = new File(SystemData.get("schedule.cache"));
@@ -58,23 +59,23 @@ public class XMLClientDataService extends DownloadService {
 		if (f.exists()) {
 			Instant fileAge = Instant.ofEpochMilli(f.lastModified());
 			d = Duration.between(fileAge, Instant.now());
-			if ((_md != null) && fileAge.isAfter(_md.getCreatedOn())) {
+			if ((md != null) && fileAge.isAfter(md.getCreatedOn())) {
 				log.warn("Terminal Routes updated, clearing metadata");
-				_md = null;
+				_md.remove(ZIP_NAME);
 			}
-		} else if (_md != null) {
+		} else if (md != null) {
 			log.warn("Terminal Routes deleted, clearing metadata");
-			_md = null;
+			_md.remove(ZIP_NAME);
 		}
 		
 		// Check the cache
-		if ((d != null) && (d.toHours() < 8) && (f.length() > 10240) && (_md != null)) {
+		if ((d != null) && (d.toHours() < 8) && (f.length() > 10240) && (md != null)) {
 			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", ZIP_NAME));
 			ctx.setContentType("application/zip");
 			ctx.setHeader("max-age", 1800);
-			ctx.setHeader(isOld ? "X-Airport-Count" : "X-File-Count", _md.getAirportCount());
-			ctx.setHeader("X-Signature", _md.getHash());
-			ctx.setHeader("X-Signature-Type", _md.getHashType());
+			ctx.setHeader(isOld ? "X-Airport-Count" : "X-File-Count", md.getAirportCount());
+			ctx.setHeader("X-Signature", md.getHash());
+			ctx.setHeader("X-Signature-Type", md.getHashType());
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		}
@@ -127,19 +128,19 @@ public class XMLClientDataService extends DownloadService {
 			}
 			
 			// Calculate the metadata
-			MessageDigester md = new MessageDigester("SHA-256", 8192);
+			MessageDigester mdg = new MessageDigester("SHA-256", 8192);
 			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
-				_md = new Metadata(MessageDigester.convert(md.digest(is)), md.getAlgorithm());
-				_md.setAirportCount(apCount);
+				md = new Metadata(MessageDigester.convert(mdg.digest(is)), mdg.getAlgorithm());
+				md.setAirportCount(apCount);
 			}
 
 			// Format and write
 			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", ZIP_NAME));
 			ctx.setContentType("application/zip");
 			ctx.setExpiry(1800);
-			ctx.setHeader(isOld ? "X-Airport-Count" : "X-File-Count", _md.getAirportCount());
-			ctx.setHeader("X-Signature", _md.getHash());
-			ctx.setHeader("X-Signature-Type", _md.getHashType());
+			ctx.setHeader(isOld ? "X-Airport-Count" : "X-File-Count", md.getAirportCount());
+			ctx.setHeader("X-Signature", md.getHash());
+			ctx.setHeader("X-Signature-Type", md.getHashType());
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
