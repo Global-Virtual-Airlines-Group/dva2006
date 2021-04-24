@@ -1,20 +1,18 @@
-//Copyright 2005, 2006, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
-
-import org.deltava.beans.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.util.MailUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to send information about a duplicate pilot registration to HR.
  * @author James
  * @author Luke
- * @version 8.5
+ * @version 10.0
  * @since 1.0
  */
 
@@ -27,6 +25,11 @@ public class DuplicatePilotCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the origin address
+		String fromAddr = ctx.getParameter("email");
+		if (StringUtils.isEmpty(fromAddr))
+			throw securityException("No Address");
 		
 		// Create e-mail message context
 		MessageContext mctxt = new MessageContext();
@@ -47,10 +50,9 @@ public class DuplicatePilotCommand extends AbstractCommand {
 		mctxt.addData("airlineName", ctx.getParameter("airline"));
 		
 		// Send the message to HR
-		Mailer mailer = new Mailer(MailUtils.makeAddress(ctx.getParameter("email")));
-		EMailAddress em = MailUtils.makeAddress(SystemData.get("airline.mail.hr"));
+		Mailer mailer = new Mailer(MailUtils.makeAddress(fromAddr));
 		mailer.setContext(mctxt);
-		mailer.send(em);
+		mailer.send(MailUtils.makeAddress(SystemData.get("airline.mail.hr")));
 	
 		// Get command result
 		CommandResult result = ctx.getResult();
