@@ -115,8 +115,8 @@ public class GetACARSTaxiTimes extends DAO {
 		}
 		
 		tt = new TaxiTime(a.getICAO(), 0);
-		tt.setInboundTime(Duration.ofSeconds(t._inTotal / t._inCount));
-		tt.setOutboundTime(Duration.ofSeconds(t._outTotal / t._outCount));
+		tt.setInboundTime((t._inCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._inTotal / t._inCount));
+		tt.setOutboundTime((t._outCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._outTotal / t._outCount));
 		_cache.add(tt);
 		return tt;
 	}
