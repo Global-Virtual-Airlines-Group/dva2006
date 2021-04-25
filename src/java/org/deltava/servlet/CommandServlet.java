@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -91,7 +91,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 						swdao.logAPIRequests(APILogger.drain());
 					} catch (ConnectionPoolException | DAOException de) {
-						tlog.warn("Error writing command result staitistics - " + de.getMessage());
+						tlog.warn(String.format("Error writing command result staitistics - %s", de.getMessage()));
 					} finally {
 						pool.release(c);
 					}
@@ -237,7 +237,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 			// Execute the command
 			if (log.isDebugEnabled())
-				log.debug("Executing " + req.getMethod() + " " + cmd.getName());
+				log.debug(String.format("Executing %s %s", req.getMethod(), cmd.getName()));
 
 			cmd.execute(ctxt);
 			CommandResult result = ctxt.getResult();
@@ -245,7 +245,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 			// Check for empty result
 			if (result.getURL() == null) {
-				ControllerException ce = new CommandException("Null result URL from " + req.getRequestURI(), false);
+				ControllerException ce = new CommandException(String.format("Null result URL from %s", req.getRequestURI()), false);
 				ce.setForwardURL("/home.do");
 				ce.setStatusCode(HttpServletResponse.SC_OK);
 				ce.setWarning(true);
@@ -261,17 +261,17 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 					break;
 					
 				case REDIRECT:
-					if (log.isDebugEnabled()) log.debug("Redirecting to " + result.getURL());
+					if (log.isDebugEnabled()) log.debug(String.format("Redirecting to %s", result.getURL()));
 					rsp.sendRedirect(result.getURL());
 					break;
 					
 				case HTTPCODE:
-					if (log.isDebugEnabled()) log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
+					if (log.isDebugEnabled()) log.debug(String.format("Setting HTTP status %d", Integer.valueOf(result.getHttpCode())));
 					rsp.setStatus(result.getHttpCode());
 					break;
 					
 				default:
-					if (log.isDebugEnabled()) log.debug("Forwarding to " + result.getURL());
+					if (log.isDebugEnabled()) log.debug(String.format("Forwarding to %s", result.getURL()));
 					RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
 					rd.forward(req, rsp);
 			}
@@ -296,12 +296,16 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			// Log the error
 			String usrName = null;
 			if (req.getUserPrincipal() == null)
-				usrName = (isSpider ? "Spider" : "Anonymous") + " (" + req.getRemoteHost() + ")";
+				usrName = String.format("%s (%s)", isSpider ? "Spider" : "Anonymous", req.getRemoteHost());
 			else
 				usrName = req.getUserPrincipal().getName();
+			
+			StringBuilder urlBuf = new StringBuilder(req.getRequestURI());
+			if (!StringUtils.isEmpty(req.getQueryString()))
+				urlBuf.append('?').append(req.getQueryString());
 
-			log.log(logLevel, "Error on " + req.getRequestURI());
-			log.log(logLevel, usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
+			log.log(logLevel, String.format("Error on %s", urlBuf.toString()));
+			log.log(logLevel, String.format("%s executing %s - %s", usrName, cmd.getName(), e.getMessage()), logStackDump ? e : null);
 
 			// Redirect to the error page
 			try {
@@ -311,19 +315,19 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
-				log.error("Error forwarding - " + fe.getMessage(), fe);
+				log.error(String.format("Error forwarding - %s", fe.getMessage()), fe);
 				try {
 					rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				} catch (Exception ee) {
-					log.error("Error sending error code - " + ee.getMessage());
+					log.error(String.format("Error sending error code - %s", ee.getMessage()));
 				}
 			}
 		} finally {
 			long execTime = tt.stop();
 			if (execTime < MAX_EXEC_TIME) {
-				if (log.isDebugEnabled()) log.debug("Completed in " + String.valueOf(execTime) + " ms");
+				if (log.isDebugEnabled()) log.debug(String.format("Completed in %d ms", Long.valueOf(execTime)));
 			} else
-				log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
+				log.warn(String.format("%s completed in %d ms", cmd.getID(), Long.valueOf(execTime)));
 
 			// Create the command result statistics entry
 			CommandLog cmdLog = new CommandLog(cmd.getID(), ctxt.getResult());
@@ -337,13 +341,13 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t != _logThread) {
-			log.error("Unknown thread - " + t.getName(), e);
+			log.error(String.format("Unknown thread - %s", t.getName()), e);
 			return;
 		}
 		
 		_logThread = new CommandLogger(_maxCmdLogSize);
 		_logThread.setUncaughtExceptionHandler(this);
 		_logThread.start();
-		log.error("Restarted " + t.getName(), e);
+		log.error(String.format("Restarted %s", t.getName()), e);
 	}
 }
