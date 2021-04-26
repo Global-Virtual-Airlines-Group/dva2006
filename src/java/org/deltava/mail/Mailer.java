@@ -118,7 +118,7 @@ public class Mailer {
 		Object ID = Integer.valueOf(ep.getID());
 		MessageTemplate mt = _ctx.getTemplate();
 		if (!StringUtils.isEmpty(mt.getNotifyContext())) {
-			Object ctx = _ctx.execute(mt.getNotifyContext()); 
+			Object ctx = _ctx.evaluate(mt.getNotifyContext()); 
 			if (ctx instanceof DatabaseBean)
 				ID = Integer.valueOf(((DatabaseBean) ctx).getID());
 			else
