@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Equipment Program Updated</title>
@@ -27,17 +26,15 @@
 The Equipment Profile for the <span class="pri bld">${eqType.name}</span> program has been successfully updated.<br />
 <br />
 <c:if test="${isRename}">
-This Equipment Profile has been renamed. It was formerly called the <span class="sec bld">${oldName}</span>
-program, and all Pilots in this program have been updated.<br />
+This Equipment Profile has been renamed. It was formerly called the <span class="sec bld">${oldName}</span> program, and all Pilots in this program have been updated.<br />
 <br />
 </c:if>
 <c:if test="${!empty updatedPilots}">
 The following <content:airline /> Pilots have had their equipment type ratings updated:<br />
 <br />
-<c:forEach var="pilot" items="${fn:keys(updatedRatings)}">
+<c:forEach var="pilot" items="${updatedRatings.keySet()}">
 <c:set var="ratings" value="${updatedRatings[pilot]}" scope="page" />
-${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> - 
-added <fmt:list value="${ratings}" delim=", " />.<br />
+${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> - added <fmt:list value="${ratings}" delim=", " />.<br />
 </c:forEach>
 <br />
 </c:if>
