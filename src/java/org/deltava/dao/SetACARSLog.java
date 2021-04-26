@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -120,6 +120,21 @@ public class SetACARSLog extends DAO {
 			if (beta > -1)
 				ps.setInt(2, beta);
 			
+			return executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Purges all ACARS Error messages for a given user from the error log.
+	 * @param userID the user's database ID
+	 * @return the number of reports deleted
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purgeByUser(int userID) throws DAOException {
+		try (PreparedStatement ps = prepare("DELETE FROM acars.ERRORS WHERE (USERID=?)")) {
+			ps.setInt(1, userID);
 			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

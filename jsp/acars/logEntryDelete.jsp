@@ -57,6 +57,13 @@ To view this flight's ACARS log entry, <el:cmd url="acarsinfo" link="${info}" cl
 <div class="updateHdr">ACARS Client Error Log Entry Removed</div>
 <br />
 The ACARS Client Error log entry has been successfully removed from the database.<br />
+</c:if>
+<c:if test="${errorPurge}">
+<div class="updateHdr">ACARS Client Error Logs Purged</div>
+<br />
+<fmt:int value="${errorsPurged}" />&nbsp;<content:airline /> ACARS Client error log reports have been deleted from the database.<br />
+</c:if>
+<c:if test="${errorDelete || errorPurge}">
 <br />
 To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserrors" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
