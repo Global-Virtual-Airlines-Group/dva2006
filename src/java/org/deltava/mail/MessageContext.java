@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 8.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -222,6 +222,15 @@ public class MessageContext {
     }
     
     /**
+     * Evalutes and formats a given macro argument.
+     * @param arg the argument macro
+     * @return the formatting String result
+     */
+    String execute(String arg) {
+    	return String.valueOf(evaluate(arg)); 
+    }
+    
+    /**
      * Determines the value of a given macro argument via recursive reflection. The argument is in the following format: 
      * <i>name</i>.[<i>method</i> OR <i>field</i> ...] which can be repeated numerous times. For example the
      * macro pirep.getAirportA.getIATA will get the named object called "pirep", and then execute the getAirportA()
@@ -230,8 +239,9 @@ public class MessageContext {
      * matching a given component is found, then execution fails.
      * @param arg the argument macro
      * @return the value of the argument macro, or an empty String ("") if execution fails
+     * @see MessageContext#execute(String)
      */
-    String execute(String arg) {
+    Object evaluate(String arg) {
     	if (log.isDebugEnabled())
     		log.debug("Evaluating " + arg);
     	
@@ -247,9 +257,9 @@ public class MessageContext {
 
         if (!hasData(objName)) {
         	if (_mt == null)
-        		log.warn("Cannot evaluate " + objName);
+        		log.warn(String.format("Cannot evaluate %s", objName));
         	else
-        		log.warn("Cannot evaluate " + objName + " in " + _mt.getName());
+        		log.warn(String.format("Cannot evaluate %s in %s", objName, _mt.getName()));
         	
         	return "";
         }
@@ -271,7 +281,7 @@ public class MessageContext {
                     Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), (Class []) null);
                     objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
-                    log.warn("Error reading " + objName + "." + methodName + " - " + e.getClass().getName());
+                    log.warn(String.format("Error reading %s.%s - %s", objName, methodName, e.getClass().getName()));
                     return "";
                 }
             } else if (hasMethod(objValue, methodName)) {
@@ -279,7 +289,7 @@ public class MessageContext {
                     Method m = objValue.getClass().getMethod(methodName, (Class []) null);
                     objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
-                    log.warn("Error invoking " + objName + "." + methodName + "() - " + e.getClass().getName());
+                    log.warn(String.format("Error invoking %s.%s() - %s", objName, methodName, e.getClass().getName()));
                     return "";
                 }
             } else if (hasField(objValue, methodName)) {
@@ -287,14 +297,14 @@ public class MessageContext {
                     Field f = objValue.getClass().getField(methodName);
                     objValue = f.get(objValue);
                 } catch (Exception e) {
-                    log.warn("Error getting " + objName + "." + methodName + " - " + e.getClass().getName());
+                    log.warn(String.format("Error getting %s.%s - %s", objName, methodName, e.getClass().getName()));
                     return "";
                 }
             } else {
             	if (_mt == null)
-            		log.warn("Cannot evaluate " + objName + " at " + methodName);
+            		log.warn(String.format("Cannot evaluate %s at %s", objName, methodName));
             	else
-            		log.warn("Cannot evaluate " + objName + " at " + methodName + " in " + _mt.getName());
+            		log.warn(String.format("Cannot evaluate %s at %s in %s", objName, methodName, _mt.getName()));
             	
                 return "";
             }
@@ -367,7 +377,6 @@ public class MessageContext {
         	}
         }
 
-        // Get the last object value, convert to a String and return
-        return String.valueOf(objValue);
+        return objValue;
     }
 }

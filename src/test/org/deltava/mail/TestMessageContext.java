@@ -1,10 +1,14 @@
 package org.deltava.mail;
 
+import java.util.Map;
+
 import org.deltava.beans.DistanceUnit;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
@@ -28,6 +32,12 @@ public class TestMessageContext extends TestCase {
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
+        
+        AirlineInformation ai = new AirlineInformation("DVA", "Delta Virtual Airlines");
+        ai.setDomain("deltava.org");
+        SystemData.add("apps", Map.of(ai.getCode(), ai));
+        SystemData.add("airline.code", ai.getCode());
+        
         _ctxt = new MessageContext();
     }
 
