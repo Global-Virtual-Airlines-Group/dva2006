@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 8.6
+ * @version 10.0
  * @since 1.0
  */
 
@@ -112,13 +112,13 @@ public class BuildCommand extends AbstractCommand {
 			
 			// If we have a leg, find the last one and update airline and src airport
 			if ((info != null) && (criteria != null)) {
-				AssignmentLeg lastLeg = null;
-				for (AssignmentLeg al : info.getAssignments())
-					lastLeg = al;
-		
+				DraftFlightReport lastLeg = info.getFlights().stream().filter(DraftFlightReport.class::isInstance).map(DraftFlightReport.class::cast).reduce((fst, snd) -> snd).orElse(null);
 				if (lastLeg != null) {
 					criteria.setAirline(lastLeg.getAirline());
 					criteria.setAirportD(lastLeg.getAirportA());
+					criteria.setHourA(-1);
+					int h = (lastLeg.getTimeA() == null) ? -1 : lastLeg.getTimeA().getHour();
+					criteria.setHourD((h > 22) ? -1 : (h+1));
 				}
 				
 				results.clear();
