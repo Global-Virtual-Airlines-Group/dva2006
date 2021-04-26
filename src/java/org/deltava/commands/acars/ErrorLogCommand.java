@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2106, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2106, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -16,13 +16,17 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
 public class ErrorLogCommand extends AbstractViewCommand {
 	
-	private static final String[] FILTER_OPTS = {"All Reports", "By Author", "By Client Build"};
+	/**
+	 * Log view/purge filter types.
+	 */
+	static final String[] FILTER_OPTS = {"All Reports", "By Author", "By Client Build"};
+	
 	private static final int ALL = 0;
 	private static final int AUTHOR = 1;
 	private static final int CLIENT = 2;

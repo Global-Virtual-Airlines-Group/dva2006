@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import org.deltava.commands.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to purge ACARS client error reports. 
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 9.1
  */
 
@@ -24,10 +24,16 @@ public class ErrorLogPurgeCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the purge type
+		int searchType = StringUtils.arrayIndexOf(ErrorLogCommand.FILTER_OPTS, ctx.getParameter("viewType"));
+		if (searchType < 1)
+			throw notFoundException("Invalid purge criteria - " + ctx.getParameter("viewType"));
 
 		// Get the build
 		int build = StringUtils.parse(ctx.getParameter("build"), 0);
 		int beta = StringUtils.parse(ctx.getParameter("beta"), -1);
+		int userID = StringUtils.parse(ctx.getParameter("author"), -1);
 		
 		// Check our access
 		ErrorLogAccessControl ac = new ErrorLogAccessControl(ctx, null);
@@ -37,7 +43,9 @@ public class ErrorLogPurgeCommand extends AbstractCommand {
 		
 		try {
 			SetACARSLog wdao = new SetACARSLog(ctx.getConnection());
-			wdao.purgeError(build, beta);
+			int recordsPurged = (searchType == 1) ? wdao.purgeByUser(userID) : wdao.purgeError(build, beta);
+			ctx.setAttribute("purgeCount", Integer.valueOf(recordsPurged), REQUEST);
+			ctx.setAttribute("errorPurge", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -46,8 +54,8 @@ public class ErrorLogPurgeCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(ResultType.REDIRECT);
-		result.setURL("acarserrors.do");
+		result.setType(ResultType.REQREDIRECT);
+		result.setURL("/jsp/acars/logEntryDelete.jsp");
 		result.setSuccess(true);
 	}
 }
