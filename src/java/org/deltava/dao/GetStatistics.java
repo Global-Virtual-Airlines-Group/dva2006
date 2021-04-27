@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public class GetStatistics extends DAO  {
 
 	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 1800);
 	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 1800);
-	private static final Cache<AirlineTotals> _aCache = new ExpiringCache<AirlineTotals>(1, 1800);
+	private static final Cache<AirlineTotals> _aCache = new ExpiringCache<AirlineTotals>(2, 3600);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -48,14 +48,16 @@ public class GetStatistics extends DAO  {
 
 			result = new AirlineTotals(Instant.now());
 			try {
-				try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), SUM(IF((P.ATTR & ?) > 0, 1, 0)), ROUND(SUM(IF((P.ATTR & ?) > 0, P.FLIGHT_TIME, 0)), 1), "
-					+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) FROM PIREPS P LEFT JOIN "
-					+ "ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)")) {
+				try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), SUM(IF(P.ATTR & ?,1,0)), ROUND(SUM(IF(P.ATTR & ?, P.FLIGHT_TIME, 0)), 1), "
+					+ "SUM(IF(P.ATTR & ?, P.DISTANCE, 0)), SUM(IF(P.ATTR & ?,1,0)), ROUND(SUM(IF(P.ATTR & ?, P.FLIGHT_TIME, 0)), 1), SUM(IF(P.ATTR & ?, P.DISTANCE, 0)) FROM PIREPS P WHERE (P.STATUS=?)")) {
 					ps.setQueryTimeout(25);
 					ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
 					ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 					ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-					ps.setInt(4, FlightStatus.OK.ordinal());
+					ps.setInt(4, FlightReport.ATTR_FDR_MASK);
+					ps.setInt(5, FlightReport.ATTR_FDR_MASK);
+					ps.setInt(6, FlightReport.ATTR_FDR_MASK);
+					ps.setInt(7, FlightStatus.OK.ordinal());
 
 					// Count all airline totals
 					try (ResultSet rs = ps.executeQuery()) {
