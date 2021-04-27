@@ -61,7 +61,7 @@ The ACARS Client Error log entry has been successfully removed from the database
 <c:if test="${errorPurge}">
 <div class="updateHdr">ACARS Client Error Logs Purged</div>
 <br />
-<fmt:int value="${errorsPurged}" />&nbsp;<content:airline /> ACARS Client error log reports have been deleted from the database.<br />
+<fmt:int value="${purgeCount}" />&nbsp;<content:airline /> ACARS Client error log reports have been deleted from the database.<br />
 </c:if>
 <c:if test="${errorDelete || errorPurge}">
 <br />
