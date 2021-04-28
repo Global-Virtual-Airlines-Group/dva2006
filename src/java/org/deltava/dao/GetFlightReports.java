@@ -379,9 +379,7 @@ public class GetFlightReports extends DAO {
 	 * @see GetFlightReports#getOnlineTotals(Map, String)
 	 */
 	public void getOnlineTotals(Pilot p, String dbName) throws DAOException {
-		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>(2);
-		pilots.put(Integer.valueOf(p.getID()), p);
-		getOnlineTotals(pilots, dbName);
+		getOnlineTotals(Map.of(Integer.valueOf(p.getID()), p), dbName);
 	}
 
 	/**
