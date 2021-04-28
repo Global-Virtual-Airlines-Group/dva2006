@@ -312,12 +312,9 @@ public class FlightSubmissionHelper {
 	
 	/**
 	 * Checks this Flight for in-flight refueling.
-	 * @throws IllegalStateException if Position Data is not loaded
 	 */
 	public void checkRefuel() {
-		if (!_fr.hasAttribute(FlightReport.ATTR_ACARS)) return;
-		if (!hasPositionData()) throw new IllegalStateException("Position Data not loaded");
-		
+		if (!_fr.hasAttribute(FlightReport.ATTR_ACARS) || !hasPositionData()) return;
 		ACARSFlightReport afr = (ACARSFlightReport) _fr;
 		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).collect(Collectors.toList());
 		FuelUse use = FuelUse.validate(fuelData);
@@ -406,7 +403,7 @@ public class FlightSubmissionHelper {
 		boolean isTour = (_fr.getDatabaseID(DatabaseID.TOUR) != 0);
 		FlightTime avgHours = sdao.getFlightTime(_fr, _db);
 		if ((avgHours.getType() == RoutePairType.UNKNOWN) && !isAcademy && !isAssignment && !isEvent && !isTour) {
-			log.warn("No flights found between " + _fr.getAirportD() + " and " + _fr.getAirportA());
+			log.warn(String.format("No flights found between %s and %s", _fr.getAirportD(), _fr.getAirportA()));
 			boolean wasValid = _info.isScheduleValidated() && _info.matches(_fr);
 			if (!wasValid)
 				_fr.setAttribute(FlightReport.ATTR_ROUTEWARN, !_fr.hasAttribute(FlightReport.ATTR_CHARTER));
@@ -475,10 +472,10 @@ public class FlightSubmissionHelper {
 	
 	/**
 	 * Checks this Flight for ETOPS and prohibited airspace violations.
-	 * @throws IllegalStateException if position data is not loaded
 	 */
 	public void checkAirspace() {
-		if (!hasPositionData()) throw new IllegalStateException("Position Data not loaded");
+		if (!hasPositionData())
+			_fr.addStatusUpdate(0, HistoryType.SYSTEM, "No Position Data for Airspace/Fuel checks");
 		
 		// Check ETOPS
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
