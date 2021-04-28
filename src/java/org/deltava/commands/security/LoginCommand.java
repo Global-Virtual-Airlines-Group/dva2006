@@ -1,20 +1,20 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import java.net.*;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.time.Duration;
-import java.time.Instant;
 
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.stats.*;
+import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -123,15 +123,15 @@ public class LoginCommand extends AbstractCommand {
 			GetPilotDirectory dao = new GetPilotDirectory(con);
 			List<Pilot> users = dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList());
 			if (users.size() == 0) {
-				log.warn("Unknown User Name - \"" + fullName + "\"");
-				throw new SecurityException("Unknown User Name - \"" + fullName + "\"");
+				String msg = String.format("Unknown User Name - \"%s\"", fullName);
+				log.warn(msg);
+				throw new SecurityException(msg);
 			} else if (users.size() > 1) {
 				if (code != null) {
 					try {
-						int id = StringUtils.parseHex(code);
-						p = dao.get(id);
+						p = dao.get(StringUtils.parseHex(code));
 					} catch (Exception e) {
-						log.warn("Cannot parse pilot ID - " + code);
+						log.warn(String.format("Cannot parse pilot ID - %s", code));
 					}
 				}
 				
@@ -153,10 +153,10 @@ public class LoginCommand extends AbstractCommand {
 			GetSystemData sysdao = new GetSystemData(con);
 			BlacklistEntry be = sysdao.getBlacklist(remoteAddr);
 			if (be != null)
-				throw new SecurityException("Login prohibited from " + be);
+				throw new SecurityException(String.format("Login prohibited from %s", be));
 			
 			// Get the authenticator and try to authenticate
-			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+			try (org.deltava.security.Authenticator auth = (org.deltava.security.Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
 				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				auth.authenticate(p, ctx.getParameter("pwd"));
 			}
@@ -164,20 +164,34 @@ public class LoginCommand extends AbstractCommand {
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;
 			if (p.getStatus() == PilotStatus.ONLEAVE) {
-				log.info("Returning " + p.getName() + " from Leave");
+				log.info(String.format("Returning %s from Leave", p.getName()));
 				returnToActive = true;
 				p.setStatus(PilotStatus.ACTIVE);
 			} else if (p.getStatus() != PilotStatus.ACTIVE) {
 				if (p.getStatus() == PilotStatus.SUSPENDED) {
-					log.warn(p.getName() + " status = Suspended, setting cookie");
+					log.warn(String.format("%s status = Suspended, setting cookie", p.getName()));
 					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
 					wc.setPath("/");
 					wc.setMaxAge(86400 * 180);
 					ctx.addCookie(wc);
 				} else
-					log.warn(p.getName() + " status = " + p.getStatus().getDescription());
+					log.warn(String.format("%s status = %s", p.getName(), p.getStatus().getDescription()));
 				
-				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
+				throw new SecurityException(String.format("You are not an Active Pilot at %s", SystemData.get("airline.name")));
+			}
+			
+			// Calculate anniversary accomplishments
+			Collection<DatedAccomplishment> pAnvAccs = new ArrayList<DatedAccomplishment>();
+			GetAccomplishment acmdao = new GetAccomplishment(con);
+			List<Accomplishment> anvAccs = acmdao.getByUnit(AccomplishUnit.MEMBERDAYS);
+			AccomplishmentHistoryHelper accHelper = new AccomplishmentHistoryHelper(p);
+			List<DatedAccomplishment> pAccs = new ArrayList<DatedAccomplishment>(acmdao.getByPilot(p, ctx.getDB()));
+			anvAccs.removeIf(acc -> pAccs.contains(acc));
+			for (Accomplishment acc : anvAccs) {
+				if (accHelper.has(acc) != Result.NOTYET) {
+					DatedAccomplishment da = new DatedAccomplishment(p.getID(), accHelper.achieved(acc), acc);
+					pAnvAccs.add(da);
+				}
 			}
 
 			// Load online/ACARS totals
@@ -221,6 +235,11 @@ public class LoginCommand extends AbstractCommand {
 			SetSystemData syswdao = new SetSystemData(con);
 			syswdao.login(ctx.getDB(), p.getID(), remoteAddr, p.getLoginHost());
 			
+			// Write accomplishments
+			SetAccomplishment accwdao = new SetAccomplishment(con);
+			for (DatedAccomplishment da : pAnvAccs)
+				accwdao.achieve(da.getPilotID(), da, da.getDate());
+			
 			// Clear LOA if done today
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			if (returnToActive)
@@ -256,7 +275,7 @@ public class LoginCommand extends AbstractCommand {
 			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
-				log.info("Invalidated e-mail address for " + p.getName());
+				log.info(String.format("Invalidated e-mail address for %s", p.getName()));
 				s.setAttribute("addr", av);
 				s.setAttribute("next_url", "validate.do");
 			} else if (!StringUtils.isEmpty(ctx.getParameter("redirectTo")))
@@ -322,7 +341,7 @@ public class LoginCommand extends AbstractCommand {
 		
 		// Clear warning cookie if valid
 		if (ctx.getCookie("dvaAuthStatus") != null) {
-			log.warn("Resetting Suspended warning cookie for " + p.getName());
+			log.warn(String.format("Resetting Suspended warning cookie for %s", p.getName()));
 			Cookie wc = new Cookie("dvaAuthStatus", "");
 			wc.setMaxAge(0);
 			ctx.addCookie(wc);

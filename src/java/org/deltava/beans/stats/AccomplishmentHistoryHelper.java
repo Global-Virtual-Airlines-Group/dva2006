@@ -396,8 +396,10 @@ public class AccomplishmentHistoryHelper {
 		
 		// Check join date
 		AccomplishUnit u = a.getUnit();
-		if (u == AccomplishUnit.MEMBERDAYS)
-			return _usr.getCreatedOn().plus(a.getValue(), ChronoUnit.DAYS);
+		if (u == AccomplishUnit.MEMBERDAYS) {
+			LocalDate ld = LocalDate.ofInstant(_usr.getCreatedOn().plus(a.getValue(), ChronoUnit.DAYS), ZoneOffset.UTC);
+			return LocalDateTime.of(ld, LocalTime.of(12, 0)).toInstant(ZoneOffset.UTC);
+		}
 			
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
