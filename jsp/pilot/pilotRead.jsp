@@ -71,17 +71,23 @@ return true;
 <c:if test="${pilot.noExams}"> <span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
 </c:if></td>
 </tr>
-<c:if test="${acarsEnabled && access.canChangeStatus}">
+<c:if test="${acarsEnabled}">
+<c:if test="${access.canChangeStatus}">
 <tr>
  <td class="label">ACARS Capabilities</td>
  <td colspan="${cspan}" class="data">${pilot.ACARSRestriction.name}
 <c:if test="${pilot.noTimeCompression}"> <span class="warn bld">NO ACARS TIME COMPRESSION</span></c:if></td>
 </tr>
 </c:if>
-<c:if test="${acarsEnabled && (empty pilot.pilotCode)}">
+<c:if test="${empty pilot.pilotCode}">
 <tr>
  <td class="label">ACARS User ID</td>
  <td colspan="${cspan}" class="data"><span class="ita">No Pilot ID assigned.</span> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
+</tr>
+</c:if>
+<tr>
+ <td class="label">ACARS Update Channel</td>
+ <td colspan="${cspan}" class="data ter bld">${pilot.ACARSUpdateChannel.description}</td>
 </tr>
 </c:if>
 <c:if test="${access.canChangeRoles}">

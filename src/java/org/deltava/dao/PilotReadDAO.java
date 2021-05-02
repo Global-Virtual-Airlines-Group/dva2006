@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.Restriction;
+import org.deltava.beans.acars.UpdateChannel;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.DatedAccomplishmentID;
@@ -263,28 +264,29 @@ abstract class PilotReadDAO extends DAO {
 				p.setNoCooler(rs.getBoolean(43));
 				p.setNoTimeCompression(rs.getBoolean(44));
 				p.setACARSRestriction(Restriction.values()[rs.getInt(45)]);
-				p.setEmailInvalid(rs.getBoolean(46));
-				p.setLDAPName(rs.getString(47));
-				p.setMotto(rs.getString(48));
+				p.setACARSUpdateChannel(UpdateChannel.values()[rs.getInt(46)]);
+				p.setEmailInvalid(rs.getBoolean(47));
+				p.setLDAPName(rs.getString(48));
+				p.setMotto(rs.getString(49));
 
-				// Check if this result set has columns 49-52, which is the PIREP totals
-				if (columnCount > 51) {
-					p.setLegs(rs.getInt(49));
-					p.setMiles(rs.getLong(50));
-					p.setHours(rs.getDouble(51));
-					p.setLastFlight(expandDate(rs.getDate(52)));
+				// Check if this result set has columns 50-53, which is the PIREP totals
+				if (columnCount > 52) {
+					p.setLegs(rs.getInt(50));
+					p.setMiles(rs.getLong(51));
+					p.setHours(rs.getDouble(52));
+					p.setLastFlight(expandDate(rs.getDate(53)));
 				}
 
-				// Check if this result set has columns 53/54, which is the signature data
-				if (columnCount > 53) {
-					p.setSignatureExtension(rs.getString(53));
-					p.setSignatureModified(toInstant(rs.getTimestamp(54)));
+				// Check if this result set has columns 54/55, which is the signature data
+				if (columnCount > 54) {
+					p.setSignatureExtension(rs.getString(54));
+					p.setSignatureModified(toInstant(rs.getTimestamp(55)));
 				}
 
-				// Check if this result set has columns 55/56, which are online legs/hours
-				if (columnCount > 55) {
-					p.setOnlineLegs(rs.getInt(55));
-					p.setOnlineHours(rs.getDouble(56));
+				// Check if this result set has columns 56/57, which are online legs/hours
+				if (columnCount > 56) {
+					p.setOnlineLegs(rs.getInt(56));
+					p.setOnlineHours(rs.getDouble(57));
 				}
 
 				results.add(p);

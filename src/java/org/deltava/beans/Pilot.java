@@ -2,10 +2,10 @@
 package org.deltava.beans;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.Instant;
+import java.util.stream.Collectors;
 
-import org.deltava.beans.acars.Restriction;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 
 import org.deltava.util.StringUtils;
@@ -61,6 +61,7 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	private boolean _noTimeCompression;
 
 	private Restriction _ACARSRestrict;
+	private UpdateChannel _acarsClientUpd = UpdateChannel.RELEASE;
 	private MapType _mapType;
 	
 	private String _sigExt;
@@ -188,6 +189,15 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	 */
 	public Restriction getACARSRestriction() {
 		return _ACARSRestrict;
+	}
+	
+	/**
+	 * Returns the Pilot's ACARS client update channel.
+	 * @return an UpdateChannel
+	 * @see Pilot#setACARSUpdateChannel(UpdateChannel)
+	 */
+	public UpdateChannel getACARSUpdateChannel() {
+		return _acarsClientUpd;
 	}
 	
 	/**
@@ -585,6 +595,15 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	 */
 	public void setACARSRestriction(Restriction r) {
 		_ACARSRestrict = r;
+	}
+	
+	/**
+	 * Updates the Pilot's ACARS client update channel.
+	 * @param ch an UpdateChannel
+	 * @see Pilot#setACARSUpdateChannel(UpdateChannel)
+	 */
+	public void setACARSUpdateChannel(UpdateChannel ch) {
+		_acarsClientUpd = ch;
 	}
 	
 	/**
