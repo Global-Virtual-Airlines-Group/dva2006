@@ -177,7 +177,7 @@ public class EquipmentCommand extends AbstractAuditFormCommand {
 					// Save the pilot
 					p.addRatings(addedRatings);
 					updatedRatings.put(p, addedRatings);
-					pwdao.addRatings(p, addedRatings);
+					pwdao.addRatings(p, addedRatings, ctx.getDB());
 				}
 				
 				// Write the status updates
