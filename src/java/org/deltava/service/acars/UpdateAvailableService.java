@@ -33,11 +33,14 @@ public class UpdateAvailableService extends WebService {
 		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
 			cInfo.setClientType(ClientType.ATC);
 		
-		// Get channel
+		// Get channel - override with pilot preferences
 		UpdateChannel ch = UpdateChannel.RELEASE;
-		if (cInfo.getClientType() == ClientType.PILOT)
+		if (cInfo.getClientType() == ClientType.PILOT) {
 			ch = EnumUtils.parse(UpdateChannel.class, ctx.getParameter("channel"), cInfo.isBeta() ? UpdateChannel.BETA : UpdateChannel.RELEASE);
-
+			if (ctx.isAuthenticated() && (cInfo.getClientBuild() > 155))
+				ch = ctx.getUser().getACARSUpdateChannel();
+		}
+		
 		ClientInfo latest = null; boolean isForced = false;
 		try {
 			GetACARSBuilds abdao = new GetACARSBuilds(ctx.getConnection());
@@ -51,10 +54,12 @@ public class UpdateAvailableService extends WebService {
 			}
 			
 			// If we're a beta, check the beta release
-			if (ch == UpdateChannel.BETA) {
+			if ((ch == UpdateChannel.BETA) || ((cInfo.getClientType() == ClientType.PILOT) && (ch == UpdateChannel.RC))) {
 				ClientInfo beta = abdao.getLatestBeta(cInfo);
-				if ((beta != null) && (beta.getClientBuild() >= cInfo.getClientBuild()) && (beta.compareTo(latest) > 0))
-					latest = beta;
+				if ((beta != null) && (beta.getClientBuild() >= cInfo.getClientBuild()) && (beta.compareTo(latest) > 0)) {
+					if ((ch == UpdateChannel.BETA) || ((ch == UpdateChannel.RC) && beta.isRC()))
+						latest = beta;
+				}
 			}
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());			
@@ -62,12 +67,14 @@ public class UpdateAvailableService extends WebService {
 			ctx.release();
 		}
 		
-		if (latest == null) return SC_OK;
+		if (latest == null) return SC_NOT_MODIFIED;
 		
 		// Set header with latest data
-		ctx.setHeader("X-Update-Channel", ch.toString().toLowerCase());
 		ctx.setHeader("X-Force-Upgrade", String.valueOf(isForced));
 		ctx.setHeader("X-Update-Latest", latest.toString());
+		ctx.setHeader("X-Update-RC", String.valueOf(latest.isRC()));
+		if (ctx.isAuthenticated())
+			ctx.setHeader("X-Update-Channel", ch.toString().toLowerCase());
 		
 		// Check if we're running a beta
 		if ((latest.getClientBuild() < cInfo.getClientBuild()) && cInfo.isBeta() && (ch == UpdateChannel.RELEASE))

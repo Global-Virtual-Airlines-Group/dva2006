@@ -106,6 +106,7 @@
 	<!-- ACARS client autoupdate -->
 	<service id="incupdatecheck" class="org.deltava.service.acars.UpdateAvailableService" />
 	<service id="incupdate" class="org.deltava.service.acars.UpdateDownloadService" />
+	<service id="updchannel" class="org.deltava.service.acars.UpdateChannelService" />
 
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />

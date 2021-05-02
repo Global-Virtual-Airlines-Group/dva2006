@@ -8,7 +8,6 @@ import org.deltava.beans.stats.GeocodeResult;
 
 import org.deltava.beans.*;
 import org.deltava.util.cache.CacheManager;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to update Pilot profiles.
@@ -40,8 +39,8 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
-			+ "RANKING=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, PROF_CR=?, "
-			+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+			+ "RANKING=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, ACARS_UPDCH=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, "
+			+ "PROF_CR=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			startTransaction();
@@ -78,15 +77,16 @@ public class SetPilot extends PilotWriteDAO {
 				ps.setBoolean(30, p.getNoCooler());
 				ps.setBoolean(31, p.getNoTimeCompression());
 				ps.setInt(32, p.getACARSRestriction().ordinal());
-				ps.setBoolean(33, p.isInvalid());
-				ps.setString(34, p.getLDAPName());
-				ps.setString(35, p.getMotto());
-				ps.setBoolean(36, p.getIsPermanent());
-				ps.setBoolean(37, p.getIsForgotten());
-				ps.setBoolean(38, p.getProficiencyCheckRides());
-				ps.setString(39, p.getFirstName());
-				ps.setString(40, p.getLastName());
-				ps.setInt(41, p.getID());
+				ps.setInt(33, p.getACARSUpdateChannel().ordinal());
+				ps.setBoolean(34, p.isInvalid());
+				ps.setString(35, p.getLDAPName());
+				ps.setString(36, p.getMotto());
+				ps.setBoolean(37, p.getIsPermanent());
+				ps.setBoolean(38, p.getIsForgotten());
+				ps.setBoolean(39, p.getProficiencyCheckRides());
+				ps.setString(40, p.getFirstName());
+				ps.setString(41, p.getLastName());
+				ps.setInt(42, p.getID());
 				executeUpdate(ps, 1);
 			}
 			
@@ -193,11 +193,12 @@ public class SetPilot extends PilotWriteDAO {
 	 * Adds equipment ratings to a particular Pilot.
 	 * @param p the Pilot bean
 	 * @param ratings a Collection of ratings
+	 * @param db the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void addRatings(Pilot p, Collection<String> ratings) throws DAOException {
+	public void addRatings(Pilot p, Collection<String> ratings, String db) throws DAOException {
 		try {
-			writeRatings(p.getID(), ratings, SystemData.get("airline.db"), false);
+			writeRatings(p.getID(), ratings, db, false);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

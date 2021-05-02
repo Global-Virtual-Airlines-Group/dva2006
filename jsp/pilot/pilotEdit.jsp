@@ -106,6 +106,7 @@ golgotha.onDOMReady(function() {
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:tz var="timeZones" />
@@ -117,6 +118,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="mapTypes" className="org.deltava.beans.MapType" />
 <content:enum var="acarsRest" className="org.deltava.beans.acars.Restriction" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
+<content:enum var="updateChannels" className="org.deltava.beans.acars.UpdateChannel" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="schemes" name="html.schemes" />
@@ -149,13 +151,16 @@ golgotha.onDOMReady(function() {
  <td colspan="${cspan}" class="data"><el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br />
-<el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /><br />
-<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" /></td>
+<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" />
+<c:if test="${acarsEnabled}">
+<br /><el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /></c:if></td>
 </tr>
+<c:if test="${acarsEnabled}">
 <tr>
  <td class="label">ACARS Capabilities</td>
  <td colspan="${cspan}" class="data"><el:combo name="ACARSrestrict" size="1" idx="*" options="${acarsRest}" value="${pilot.ACARSRestriction.name}" /></td>
 </tr>
+</c:if>
 </c:if>
 <c:if test="${pilot.ID == pageContext.request.userPrincipal.ID}">
 <tr>
@@ -198,6 +203,12 @@ golgotha.onDOMReady(function() {
  <td colspan="${cspan}" class="data"><el:combo name="homeAirport" size="1" idx="*" required="true" options="${airports}" value="${homeAirport}" onChange="void this.updateAirportCode()" />
  <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="label">ACARS Update Channel</td>
+ <td colspan="${cspan}" class="data"><el:combo name="acarsUpdateChannel" size="1" idx="*" required="true" options="${updateChannels}" value="${pilot.ACARSUpdateChannel}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">VATSIM ID</td>
  <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(pilot, 'VATSIM')}" size="10" max="9" /></td>

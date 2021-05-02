@@ -1,10 +1,10 @@
-// Copyright 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * A bean to store ACARS client versions.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -13,6 +13,7 @@ public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, jav
 	private final int _version;
 	private final int _build;
 	private final int _beta;
+	private boolean _isRC;
 	
 	private ClientType _type = ClientType.PILOT;
 
@@ -58,12 +59,12 @@ public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, jav
 		return _type;
 	}
 	
-	public boolean isATC() {
-		return (_type == ClientType.ATC);
-	}
-	
-	public boolean isDispatch() {
-		return (_type == ClientType.DISPATCH);
+	/**
+	 * Returns if this build is a Release Candidate beta.
+	 * @return TRUE if a release candidate, otherwise FALSE
+	 */
+	public boolean isRC() {
+		return _isRC;
 	}
 	
 	/**
@@ -74,15 +75,22 @@ public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, jav
 		_type = ct;
 	}
 	
+	/**
+	 * Updates whether this build is a Release Candidate beta.
+	 * @param isRC TRUE if a release candidate, otherwise FALSE
+	 */
+	public void setIsRC(boolean isRC) {
+		_isRC = isRC;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(String.valueOf(_version));
-		buf.append('.');
-		buf.append(_build);
-		if (isBeta()) {
-			buf.append('b');
-			buf.append(_beta);
-		}
+		buf.append('.').append(_build);
+		if (isBeta())
+			buf.append('b').append(_beta);
+		if (isRC()) 
+			buf.append(" (RC)");
 		
 		return buf.toString();
 	}
