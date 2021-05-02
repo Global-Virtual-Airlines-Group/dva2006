@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 4.1
  */
 
@@ -27,7 +27,7 @@ public class GetACARSBuilds extends DAO {
 	public GetACARSBuilds(Connection c) {
 		super(c);
 	}
-
+	
 	/**
 	 * Returns the latest beta version for a particular ACARS build.
 	 * @param ver the ClientVersion
@@ -51,6 +51,7 @@ public class GetACARSBuilds extends DAO {
 				}
 			}
 			
+			setReleaseCanadidate(inf);
 			return inf;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -100,6 +101,7 @@ public class GetACARSBuilds extends DAO {
 				}
 			}
 			
+			setReleaseCanadidate(inf);
 			return inf;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -153,7 +155,7 @@ public class GetACARSBuilds extends DAO {
 		}
 			
 		// Check the beta version
-		if (isOK && inf.isBeta() && !inf.isDispatch()) {
+		if (isOK && inf.isBeta() && (inf.getClientType() != ClientType.DISPATCH)) {
 			try (PreparedStatement ps = prepare("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)")) {
 				ps.setString(1, (role == AccessRole.CONNECT) ? "minBeta" : "minUploadBeta");
 				ps.setInt(2, inf.getVersion());
@@ -234,6 +236,20 @@ public class GetACARSBuilds extends DAO {
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		}
+	}
+	
+	/*
+	 * Helper method to determine if the current ACARS client beta is a release candidate.
+	 */
+	private void setReleaseCanadidate(ClientInfo inf) throws SQLException {
+		if ((inf ==  null) || !inf.isBeta() || (inf.getClientType() != ClientType.PILOT)) return;
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) LIMIT 1")) {
+			ps.setString(1, "isRC");
+			ps.setInt(2, inf.getVersion());
+			try (ResultSet rs = ps.executeQuery()) {
+				inf.setIsRC(rs.next() && rs.getBoolean(1));
+			}
 		}
 	}
 }
