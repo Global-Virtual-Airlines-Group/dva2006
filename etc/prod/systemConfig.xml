@@ -552,6 +552,7 @@
 		<tls type="Boolean">true</tls>
 		<user>AKIAIEJ5ZVSVUD26YCPA</user>
 		<pwd>AhU8YMg83cLd6ZpGVV1vJ2VM2kHSiu6x7KLRBPt3SWLy</pwd>
+		<multiChannel type="Boolean">false</multiChannel>
 	
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
