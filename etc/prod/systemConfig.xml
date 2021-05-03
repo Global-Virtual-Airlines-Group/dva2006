@@ -552,6 +552,7 @@
 		<tls type="Boolean">true</tls>
 		<user>***REMOVED***</user>
 		<pwd>***REMOVED***</pwd>
+		<multiChannel type="Boolean">false</multiChannel>
 	
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
