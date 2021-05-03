@@ -544,6 +544,7 @@
 		<server>localhost</server>
 		<port type="Integer">25</port>
 		<tls type="Boolean">false</tls>
+		<multiChannel type="Boolean">false</multiChannel>
 
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
