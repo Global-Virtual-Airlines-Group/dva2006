@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class TestService extends WebService {
 	
-	private static final List<NotifyActionType> ACTION_TYPES = List.of(NotifyActionType.HOME, NotifyActionType.PILOTCENTER);
+	private static final List<NotifyActionType> ACTION_TYPES = List.of(NotifyActionType.PILOTCENTER, NotifyActionType.LOGBOOK);
 
 	/**
 	 * Executes the Web Service.
@@ -72,8 +72,7 @@ public class TestService extends WebService {
 			NotifyAction act = NotifyAction.create(at, Integer.valueOf(p.getID()));
 			JSONObject ao = new JSONObject();
 			ao.put("title", act.getDescription());
-			ao.put("action", at.getURL());
-			ao.put("url", act.getURL());
+			ao.put("action", act.getURL());
 			ao.put("id", p.getID());
 			mo.accumulate("actions", ao);
 		}

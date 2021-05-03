@@ -17,7 +17,7 @@ function handlePushEvent(e) {
 
 function handleClick(e) {
 	console.log('click');
-	const url = '/' + e.action + '.do';
+	const url = '/' + e.action;
 	const p = clients.matchAll({ includeUncontrolled: true, type: 'window' }).then(function(r) {
 		for (const client of r) {
 			if (client.url === url) {
@@ -26,10 +26,10 @@ function handleClick(e) {
 				return true;
 			}
 		}
-		
+
 	  	clients.openWindow(new URL(url, self.location.origin).href);
 		e.notification.close();
 	});
 
 	return p;
-};
+};	
