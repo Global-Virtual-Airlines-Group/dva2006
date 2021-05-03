@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Notice to Airmen (NOTAM) RSS feed.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -51,24 +51,21 @@ public class NoticeSyndicationService extends WebService {
 		doc.setRootElement(re);
 
 		// Create the RSS channel
-		String proto = ctx.getRequest().getScheme();
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " NOTAMs"));
-		ch.addContent(XMLUtils.createElement("link", proto + "://" + ctx.getRequest().getServerName() + "/notams.do", true));
+		ch.addContent(XMLUtils.createElement("link", "https://" + ctx.getRequest().getServerName() + "/notams.do", true));
 		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " Notices to Airmen"));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
 		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
-		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.news"))));
-
-		// Add the channel
+		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.news")));
 		re.addContent(ch);
 
 		// Convert the entries to RSS items
 		for (News n : entries) {
 			try {
-				URL url = new URL(proto, ctx.getRequest().getServerName(), "/notam.do?id=" + StringUtils.formatHex(n.getID()));
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/notam.do?id=" + StringUtils.formatHex(n.getID()));
 
 				// Create the RSS item element
 				Element item = new Element("item");

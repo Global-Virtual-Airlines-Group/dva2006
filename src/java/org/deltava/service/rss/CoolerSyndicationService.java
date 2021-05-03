@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 7.5
+ * @version 10.0
  * @since 1.0
  */
 
@@ -96,24 +96,21 @@ public class CoolerSyndicationService extends WebService {
 		doc.setRootElement(re);
 
 		// Create the RSS channel
-		String proto = ctx.getRequest().getScheme();
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " " + forumName));
 		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " " + forumName + " Message Threads"));
-		ch.addContent(XMLUtils.createElement("link", proto + "://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
+		ch.addContent(XMLUtils.createElement("link", "https://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
 		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
-		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.cooler"))));
-		
-		// Add the channel to the document
+		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.cooler")));
 		re.addContent(ch);
 
 		// Convert the threads into RSS items
 		for (MessageThread mt : threads) {
 			try {
-				URL url = new URL(proto, ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 			
 				// Create the RSS item element
 				Element item = new Element("item");
