@@ -58,6 +58,7 @@ public class GetURL extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public File download() throws DAOException {
+		File tmp = null;
 		try {
 			File outF = new File(_outFile);
 			if (_lastModified == -1)
@@ -78,7 +79,8 @@ public class GetURL extends DAO {
 				throw new HTTPDAOException(_url, statusCode);
 			
 			// Download the file
-			try (InputStream in = getIn(); OutputStream out = new FileOutputStream(_outFile)) {
+			tmp = File.createTempFile("dl-url", "$$$", outF.getParentFile());
+			try (InputStream in = getIn(); OutputStream out = new FileOutputStream(tmp)) {
 				byte[] buffer = new byte[16384];
 				int bytesRead = in.read(buffer);
 				while (bytesRead > 0) {
@@ -87,11 +89,14 @@ public class GetURL extends DAO {
 				}
 			}
 			
+			if (outF.exists()) outF.delete();
+			tmp.renameTo(outF);
 			return outF;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		} finally {
 			reset();
+			if (tmp != null) tmp.delete();
 		}
 	}
 	
