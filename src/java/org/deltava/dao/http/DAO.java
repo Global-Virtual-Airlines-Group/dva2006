@@ -1,24 +1,66 @@
-// Copyright 2009, 2010, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.net.*;
-import java.util.Base64;
+import java.util.*;
+import java.util.zip.*;
+import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
+
 import org.deltava.beans.system.VersionInfo;
+
+import org.deltava.util.StringUtils;
 
 /**
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 2.4
  */
 
 public abstract class DAO {
+	
+	/**
+	 * HTTP compression enumeration.
+	 */
+	public enum Compression {
+		NONE, GZIP, COMPRESS, DEFLATE, BROTLI;
+		
+		/**
+		 * Returns the value for the accept-encoding header.
+		 * @return the header value
+		 */
+		public String getEncoding() {
+			return switch (this) {
+			case NONE -> "*";
+			case BROTLI -> "br";
+			default -> name().toLowerCase();
+			};
+		}
+		
+		/**
+		 * Determines compression type from a Content-Encoding header value.
+		 * @param hdr the header value
+		 * @return a Compression
+		 */
+		static Compression fromHeader(String hdr) {
+			for (int x = 0; x < values().length; x++) {
+				Compression c = values()[x];
+				if (c.getEncoding().equalsIgnoreCase(hdr))
+					return c;
+			}
+			
+			return Compression.NONE;
+		}
+	}
 
 	private String _method = "GET";
+	private final Collection<Compression> _compression = new HashSet<Compression>();
+	private Compression _rspCompression = Compression.NONE;
 
 	private int _readTimeout = 4500;
 	private int _connectTimeout = 2500;
@@ -32,6 +74,14 @@ public abstract class DAO {
 	private void checkConnected() {
 		if (_urlcon == null)
 			throw new IllegalStateException("Not Initialized");
+	}
+	
+	/**
+	 * Returns the response compression type.
+	 * @return a Compression enumeration value
+	 */
+	public Compression getCompression() {
+		return _rspCompression;
 	}
 
 	/**
@@ -67,6 +117,15 @@ public abstract class DAO {
 	public void setReturnErrorStream(boolean returnErrStream) {
 		_getErrorStream = returnErrStream;
 	}
+	
+	/**
+	 * Updates the allowed compression for this request.
+	 * @param cmps the Compression values
+	 */
+	public void setCompression(Compression... cmps) {
+		_compression.clear();
+		_compression.addAll(Arrays.asList(cmps));
+	}
 
 	/**
 	 * Helper method to open the connection.
@@ -79,8 +138,9 @@ public abstract class DAO {
 			if (!_urlcon.getURL().equals(u))
 				throw new InterruptedIOException("Already connected to " + _urlcon.getURL().toExternalForm());
 		}
-
+		
 		// Set timeouts and other stuff
+		_rspCompression = Compression.NONE;
 		_urlcon = u.openConnection();
 		_urlcon.setConnectTimeout(_connectTimeout);
 		_urlcon.setReadTimeout(_readTimeout);
@@ -92,6 +152,7 @@ public abstract class DAO {
 		}
 
 		setRequestHeader("User-Agent", VersionInfo.USERAGENT);
+		setRequestHeader("Accept-Encoding", StringUtils.listConcat(_compression.stream().map(Compression::getEncoding).collect(Collectors.toSet()), ", "));
 	}
 
 	/**
@@ -147,7 +208,19 @@ public abstract class DAO {
 		checkConnected();
 
 		try {
-			return _urlcon.getInputStream();
+			String hdr = _urlcon.getHeaderField("Content-Encoding");
+			if (!StringUtils.isEmpty(hdr)) {
+				List<String> enc = StringUtils.split(hdr, ", ");
+				for (String e : enc)
+					_rspCompression = Compression.fromHeader(e);
+			}
+			
+			return switch (_rspCompression) {
+			case GZIP -> new GZIPInputStream(_urlcon.getInputStream());
+			case DEFLATE -> new InflaterInputStream(_urlcon.getInputStream(), new Inflater(true));
+			case BROTLI -> new BrotliCompressorInputStream(_urlcon.getInputStream());
+			default -> _urlcon.getInputStream();
+			};
 		} catch (IOException ie) {
 			if (_getErrorStream)
 				return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection) _urlcon).getErrorStream() : null;
@@ -180,6 +253,7 @@ public abstract class DAO {
 		if (_urlcon instanceof HttpURLConnection)
 			((HttpURLConnection) _urlcon).disconnect();
 
+		_compression.clear();
 		_urlcon = null;
 	}
 }
