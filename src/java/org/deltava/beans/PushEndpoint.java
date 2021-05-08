@@ -37,6 +37,10 @@ public class PushEndpoint extends DatabaseBean {
 		return _url;
 	}
 	
+	/**
+	 * Returns the endpoint host.
+	 * @return the host name 
+	 */
 	public String getHost() {
 		try {
 			URL url = new URL(_url);
@@ -107,6 +111,6 @@ public class PushEndpoint extends DatabaseBean {
 	}
 	
 	public boolean equals(PushEndpoint pe) {
-		return (getID() == pe.getID()) && _url.equals(pe._url);
+		return (pe != null) && (getID() == pe.getID()) && _url.equals(pe._url);
 	}
 }
