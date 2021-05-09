@@ -98,7 +98,7 @@ public class SESFeedbackService extends SNSReceiverService {
 							pwdao.write(p, ctx.getDB());
 				            
 				            // Create the status entry
-				            StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
+				            StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ADDRINVALID);
 				            upd.setAuthorID(ctx.getUser().getID());
 				            upd.setDescription("E-Mail Address Invalidated by SES feedback");
 							suwdao.write(upd, ctx.getDB());
