@@ -74,7 +74,7 @@ public class TestMailerDaemon extends TestCase {
 		// Wait
 		Thread.sleep(5000);
 		
-		assertTrue(_md.getInvalidEndpoints().isEmpty());
+		assertTrue(MailerDaemon.getInvalidEndpoints().isEmpty());
 	}
 	
 	public void testSendEMail() throws Exception {

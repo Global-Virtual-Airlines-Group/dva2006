@@ -46,7 +46,7 @@ public class MailerDaemon implements Runnable {
 	private final String _vapidErrorsTo = String.format("mailto:%s", SystemData.get("airline.mail.webmaster"));
 
 	private static final BlockingQueue<NotificationEnvelope<?>> _queue = new PriorityBlockingQueue<NotificationEnvelope<?>>();
-	private final BlockingQueue<PushEndpoint> _invalidEndpoints = new LinkedBlockingQueue<PushEndpoint>();
+	private static final BlockingQueue<PushEndpoint> _invalidEndpoints = new LinkedBlockingQueue<PushEndpoint>();
 
 	private static class SMTPAuth extends Authenticator {
 		@Override
@@ -85,7 +85,7 @@ public class MailerDaemon implements Runnable {
 	 * Returns any invalid push endpoints.
 	 * @return a Collection of PushEndpoints
 	 */
-	public Collection<PushEndpoint> getInvalidEndpoints() {
+	public static Collection<PushEndpoint> getInvalidEndpoints() {
 		Collection<PushEndpoint> eps = new LinkedHashSet<PushEndpoint>();
 		_invalidEndpoints.drainTo(eps);
 		return eps;
