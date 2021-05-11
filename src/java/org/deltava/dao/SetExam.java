@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.testing.*;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -57,6 +58,8 @@ public class SetExam extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TestingHistory", Integer.valueOf(ex.getAuthorID()));
 		}
 	}
 
@@ -153,6 +156,8 @@ public class SetExam extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TestingHistory", Integer.valueOf(ex.getAuthorID()));
 		}
 	}
 
@@ -223,6 +228,8 @@ public class SetExam extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TestingHistory", Integer.valueOf(cr.getAuthorID()));
 		}
 	}
 	
@@ -324,6 +331,8 @@ public class SetExam extends DAO {
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TestingHistory", Integer.valueOf(t.getAuthorID()));
 		}
 	}
 }
