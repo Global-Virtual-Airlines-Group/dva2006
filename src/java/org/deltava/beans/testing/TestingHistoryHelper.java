@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -12,22 +12,23 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.Cacheable;
 import org.deltava.util.system.SystemData;
 
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
 @Helper(Test.class)
-public final class TestingHistoryHelper {
+public final class TestingHistoryHelper implements Cacheable {
 	
-	private static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
+	private transient static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
-	private static final int CP_STAGE = 6;
+	private transient static final int CP_STAGE = 6;
 	
 	private final String _airlineCode = SystemData.get("airline.code");
 	private final String _qName = _airlineCode + " " + Examination.QUESTIONNAIRE_NAME;
@@ -545,5 +546,10 @@ public final class TestingHistoryHelper {
 		Collection<String> results = new TreeSet<String>();
 		getQualifiedPrograms().stream().map(EquipmentType::getRatings).forEach(results::addAll);
 		return results;
+	}
+	
+	@Override
+	public Object cacheKey() {
+		return _usr.cacheKey();
 	}
 }
