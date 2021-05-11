@@ -16,24 +16,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script>
-golgotha.local.search = function(aD, aA)
-{
-const f = document.forms[0];
-f.airportD.value = aD;
-f.airportA.value = aA;
-f.action = '/dsprsearch.do';
-f.submit();
-return true;	
+golgotha.local.search = function(aD, aA) {
+	const f = document.forms[0];
+	f.airportD.value = aD;
+	f.airportA.value = aA;
+	f.action = '/dsprsearch.do';
+	f.submit();
+	return true;	
 };
 <c:if test="${access.canCreate}">
-golgotha.local.plot = function(aD, aA)
-{
-const f = document.forms[0];
-f.airportD.value = aD;
-f.airportA.value = aA;
-f.action = '/dsprouteplot.do';
-f.submit();
-return true;	
+golgotha.local.plot = function(aD, aA) {
+	const f = document.forms[0];
+	f.airportD.value = aD;
+	f.airportA.value = aA;
+	f.action = '/dsprouteplot.do';
+	f.submit();
+	return true;	
 };
 </c:if>
 </script>
@@ -83,7 +81,8 @@ return true;
  (<fmt:airport airport="${route.airportA}" />)</td>
 </c:otherwise>
 </c:choose>
- <td><fmt:distance value="${route.distance}" /></td>
+<content:defaultMethod var="dst" object="${route}" method="distance" />
+ <td><fmt:distance value="${dst}" /></td>
  <td class="bld"><fmt:int value="${route.flights}" /> flights</td>
 <c:set var="allRoutes" value="${route.routes + route.inactiveRoutes}" scope="page" />
 <c:if test="${allRoutes > 0}">
