@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view">
+<view:table cmd="questionnaires">
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:10%">&nbsp;</td>
@@ -51,7 +51,7 @@
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>&nbsp;</td>
 </tr>
-</el:table>
+</view:table>
 <content:copyright />
 </content:region>
 </content:page>
