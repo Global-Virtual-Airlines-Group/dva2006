@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -11,17 +11,21 @@ import org.deltava.beans.testing.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.Cache;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 8.0
+ * @version 10.0
  * @since 1.0
  */
 
 public abstract class AbstractTestHistoryCommand extends AbstractCommand {
+	
+	private static final Cache<TestingHistoryHelper> _cache = CacheManager.get(TestingHistoryHelper.class, "TestingHistory");
 
 	/**
 	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
@@ -31,6 +35,11 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	protected static final TestingHistoryHelper initTestHistory(Pilot p, Connection c) throws DAOException {
+		
+		// Check the cache
+		TestingHistoryHelper helper = _cache.get(p.cacheKey());
+		if (helper != null)
+			return helper;
 
 		// Load the PIREP beans
 		String db = SystemData.get("airline.db");
@@ -49,7 +58,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
-		TestingHistoryHelper helper = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
+		helper = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
 		helper.setEquipmentTypes(eqdao.getAll());
 		if (p.getProficiencyCheckRides() && SystemData.getBoolean("testing.currency.enabled"))
 			helper.applyExpiration(SystemData.getInt("testing.currency.validity", 365));
@@ -71,6 +80,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 			}
 		}
 		
+		_cache.add(helper);
 		return helper;
 	}
 }
