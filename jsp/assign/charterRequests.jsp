@@ -37,7 +37,7 @@ golgotha.local.updateAuthor = function(cb) {
 <tr class="title caps">
  <td colspan="2" class="left"><span class="nophone"><content:airline />&nbsp;</span>CHARTER FLIGHT REQUESTS<c:if test="${!empty pilot}"><span class="nophone"> - ${pilot.name} (${pilot.pilotCode})</span></c:if></td>
  <td class="nophone">&nbsp;</td>
- <td class="nophone"><el:cmdbutton url="chreq" label="NEW CHARTER REQUEST" /></td>
+ <td class="nophone"><el:cmdbutton url="chreq" label="NEW CHARTER REQUEST" op="edit" /></td>
 <c:choose><c:when test="${showAuthors}"><td class="right"><el:combo name="author" size="1" firstEntry="[ SELECT PILOT ]" value="${pilot}" options="${authors}" onChange="void golgotha.local.updateAuthor(this)" /></td></c:when>
 <c:otherwise><td>&nbsp;</td></c:otherwise></c:choose>
 </tr>

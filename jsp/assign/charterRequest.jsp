@@ -32,7 +32,7 @@
 <c:if test="${!empty chreq.disposedOn}">
 <tr>
  <td class="label">Disposed on</td>
- <td class="data"><span class="sec bld">${disposedBy.name}</span><span class="bld"> (${disposedBy.pilotCode})</span> on <fmt:date date="${chreq.disposedOn}"  className="pri bld" /></td>
+ <td class="data"><span class="bld">${disposedBy.name} (${disposedBy.pilotCode})</span> on <fmt:date date="${chreq.disposedOn}" /></td>
 </tr>
 </c:if>
 <tr>
@@ -47,9 +47,15 @@
  <td class="label">Airline</td>
  <td class="data sec bld">${chreq.airline.name}</td>
 </tr>
+<content:defaultMethod var="dst" object="${chreq}" method="distance" />
+<content:defaultMethod var="flightType" object="${chreq}" method="flightType" />
+<tr>
+ <td class="label">Flight Information</td>
+ <td class="data"><fmt:distance value="${dst}" className="bld" />, Flight type: <span class="sec bld"><fmt:defaultMethod object="${flightType}" method="description" /></span></td> 
+</tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data">${chreq.equipmentType}</td>
+ <td class="data">${chreq.equipmentType}<c:if test="${dst > opts.range}">&nbsp;<span class="warn bld caps">Flight Distance exceeds maximum Aircraft Range</span></c:if></td>
 </tr>
 <c:if test="${!empty chreq.comments}">
 <tr>
