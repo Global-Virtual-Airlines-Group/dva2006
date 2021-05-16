@@ -141,7 +141,7 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:points var="crPoints" items="${correctRoute}" />
 <map:line var="crLine" src="crPoints" width="2" color="#af7f7f" transparency="0.65" geodesic="true" />
 crLine.setMap(map);
-<c:if test="${fn:sizeof(answerRoute) > 2}">
+<c:if test="${answerRoute.size() > 2}">
 <map:points var="arPoints" items="${answerRoute}" />
 <map:line var="arLine" src="arPoints" width="2" color="#4080af" transparency="0.8" geodesic="true" />
 arLine.setMap(map);

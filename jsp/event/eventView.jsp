@@ -70,7 +70,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
  <td class="label">Online Network</td>
  <td colspan="5" class="data pri bld">${event.network}</td>
 </tr>
-<c:if test="${fn:sizeof(event.airlines) > 1}">
+<c:if test="${event.airlines.size() > 1}">
 <tr>
  <td class="label">Organized by</td>
  <td colspan="5" class="data bld">${event.owner.name}</td> 
@@ -145,7 +145,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${!empty event.charts}">
 <!-- Chart Section -->
 <tr class="title caps">
- <td colspan="6" class="left">NAVIGATION CHARTS - <fmt:int value="${fn:sizeof(event.charts)}" /> CHARTS</td>
+ <td colspan="6" class="left">NAVIGATION CHARTS - <fmt:int value="${event.charts.size()}" /> CHARTS</td>
 </tr>
 <tr class="title caps">
  <td colspan="2">CHART NAME</td>
@@ -177,7 +177,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${!empty event.dispatchRoutes}">
 <!-- Dispatch Route Section -->
 <tr class="title caps">
- <td colspan="6" class="left">ACARS DISPATCH ROUTES - <fmt:int value="${fn:sizeof(event.dispatchRoutes)}" /> ROUTES</td>
+ <td colspan="6" class="left">ACARS DISPATCH ROUTES - <fmt:int value="${event.dispatchRoutes.size()}" /> ROUTES</td>
 </tr>
 <tr class="title caps">
  <td>ID</td>
@@ -201,7 +201,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${event.canSignup}">
 <!-- Signups Section -->
 <tr class="title caps">
- <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS
+ <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${event.signups.size()}" /> PILOTS
 <c:if test="${!empty signupPredict}"><span class="nophone"> (EXPECTED TURNOUT - <fmt:int value="${signupPredict}" /> PILOTS)</span></c:if></td>
 </tr>
 <tr class="title caps mid">
@@ -256,7 +256,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${!empty pireps}">
 <!-- Flight Reports Section -->
 <tr class="title caps">
- <td colspan="6" class="left">LOGGED FLIGHT REPORTS - <fmt:int value="${fn:sizeof(pireps)}" /> FLIGHT LEGS</td>
+ <td colspan="6" class="left">LOGGED FLIGHT REPORTS - <fmt:int value="${pireps.size()}" /> FLIGHT LEGS</td>
 </tr>
 <tr class="title caps">
  <td>DATE</td>

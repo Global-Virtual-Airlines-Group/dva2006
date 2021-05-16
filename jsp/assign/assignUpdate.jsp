@@ -4,11 +4,11 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Flight Assignment Updated</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,8 +27,7 @@
 <br />
 This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
 <br />
-<fmt:int value="${fn:sizeof(assign.flights)}" /> draft Flight Reports have been pre-populated within
-our database.<br />
+<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br />
 <br />
 <c:forEach var="pirep" items="${assign.flights}">
 <el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><br />
@@ -61,8 +60,7 @@ This <content:airline /> Flight Assigment has been successfully released.<br />
 <br />
 This <content:airline /> Flight Assigment has been successfully reserved by ${pilot.rank.name} ${pilot.name}.<br />
 <br />
-<fmt:int value="${fn:sizeof(assign.flights)}" /> draft Flight Reports have been pre-populated within
-our database.<br />
+<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br />
 </c:when>
 <c:otherwise>
 <div class="updateHdr">Flight Assignment Updated</div>
@@ -72,8 +70,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 </c:choose>
 <c:if test="${isPreApprove}">
 <br />
-<span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular 
-<content:airline /> Flight Schedule.</span><br />
+<span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular <content:airline /> Flight Schedule.</span><br />
 </c:if>
 <br />
 <c:if test="${!empty pilot}">

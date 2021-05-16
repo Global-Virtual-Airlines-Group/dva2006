@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
@@ -12,11 +11,9 @@
 <content:menu attr="isSideMenu" maxWidth="15%">
 <c:if test="${!isSideMenu}">
 <content:authUser var="user">
-<c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
- <content:menuitem width="${itemLength}">${user.name}</content:menuitem>
+ <content:menuitem width="${user.name.length() * 10}">${user.name}</content:menuitem>
 <content:superUser var="superUser">
-<c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
- <content:menuitem width="${itemLength}">${superUser.name}</content:menuitem>
+ <content:menuitem width="${superUser.name.length() * 10}">${superUser.name}</content:menuitem>
 </content:superUser>
 </content:authUser>
 </c:if>
@@ -74,6 +71,7 @@
 <c:if test="${acarsEnabled}">
 <content:submenu title="ACARS" width="170">
  <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+ <content:subitem><el:link url="/acars">Download Client</el:link></content:subitem>
  <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
  <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
  <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>

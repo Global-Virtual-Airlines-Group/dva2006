@@ -49,7 +49,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${!empty myHeld}">
 <!-- Flight Reports held by ${user.name} -->
 <tr class="title">
- <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myHeld)}" /> FLIGHT REPORTS HELD BY ${user.name}</td>
+ <td colspan="7" class="left caps"><fmt:int value="${myHeld.size()}" /> FLIGHT REPORTS HELD BY ${user.name}</td>
 </tr>
 <c:forEach var="pirep" items="${myHeld}">
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
@@ -72,7 +72,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${!empty myEQType}">
 <!-- Flight Reports in the ${myEQ.name} program -->
 <tr class="title">
- <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myEQType)}" /> FLIGHT REPORTS FOR THE ${myEQ.name} PROGRAM</td>
+ <td colspan="7" class="left caps"><fmt:int value="${myEQType.size()}" /> FLIGHT REPORTS FOR THE ${myEQ.name} PROGRAM</td>
 </tr>
 <c:forEach var="pirep" items="${myEQType}">
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
@@ -95,7 +95,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 </c:if>
 <c:if test="${subLists}">
 <tr class="title">
- <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(viewContext.results)}" /> PENDING FLIGHT REPORTS</td>
+ <td colspan="7" class="left caps"><fmt:int value="${viewContext.results.size()}" /> PENDING FLIGHT REPORTS</td>
 </tr>
 </c:if>
 <!-- Table Flight Report Data -->

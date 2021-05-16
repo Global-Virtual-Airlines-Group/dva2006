@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <c:if test="${!empty mb.address}">
@@ -56,7 +55,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Mailbox Aliases</td>
- <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="${(fn:sizeof(mb.aliases) > 4) ? fn:sizeof(mb.aliases) : 4}" resize="true">${aliases}</el:textbox></td>
+ <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="${(mb.aliases.size() > 4) ? mb.aliases.size() : 4}" resize="true">${aliases}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

@@ -150,10 +150,10 @@ golgotha.local.toggleBody = function(id, type) {
 <tr class="title caps">
  <td colspan="2">ASSIGN CHECK RIDE</td>
 </tr>
-<c:if test="${fn:sizeof(txReq.checkRideIDs) >= maxRides}">
+<c:if test="${txReq.checkRideIDs.size() >= maxRides}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data warn bld caps">${pilot.name} has already been assigned <fmt:int value="${fn:sizeof(txReq.checkRideIDs)}" /> Check Rides</td>
+ <td class="data warn bld caps">${pilot.name} has already been assigned <fmt:int value="${txReq.checkRideIDs.size()}" /> Check Rides</td>
 </tr>
 </c:if>
 <tr>

@@ -33,7 +33,7 @@
 </tr>
 
 <!-- Table Statistics Data -->
-<c:forEach var="mdK" items="${fn:keys(data)}">
+<c:forEach var="mdK" items="${data.keySet()}">
 <c:set var="mdV" value="${data[mdK]}" scope="page" />
 <tr class="view">
  <td class="pri bld">${mdK}</td>

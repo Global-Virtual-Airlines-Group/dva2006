@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Unserviced Airports</title>
@@ -40,9 +39,9 @@ golgotha.local.validate = function(f) {
 <c:if test="${totalResults == 0}">
 <div class="pri bld">There are no Airports listed for an Airline without at least one corresponding entry in the <content:airline /> Flight Schedule.</div>
 </c:if>
-<c:forEach var="airline" items="${fn:keys(results)}">
+<c:forEach var="airline" items="${results.keySet()}">
 <c:set var="airports" value="${results[airline]}" scope="page" />
-The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer served by <span class="pri bld">${airline.name}</span>:<br />
+The following <fmt:int value="${airports.size()}" /> airports are no longer served by <span class="pri bld">${airline.name}</span>:<br />
 <br />
 <c:forEach var="airport" items="${airports}">
 <el:cmd url="airport" linkID="${airport.IATA}" op="edit" className="bld">${airport.name}</el:cmd> (${airport.ICAO} / ${airport.IATA})<br />

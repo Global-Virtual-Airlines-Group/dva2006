@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title>ACARS Log Entry Removal</title>
@@ -38,16 +37,12 @@ To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec b
 </c:if>
 <c:if test="${conDelete}">
 <div class="updateHdr">ACARS Connection Log Entry Removed</div>
-<c:if test="${fn:sizeof(deletedIDs) > 0}">
+<c:if test="${deletedIDs.size() > 0}">
 <br />
-The ACARS Connection log entries for Connections <fmt:list value="${deletedIDs}" delim=", " /> have 
-been successfully removed from the database. All Text Messages for these Connections have also been 
-removed.<br />
+The ACARS Connection log entries for Connections <fmt:list value="${deletedIDs}" delim=", " /> have been successfully removed from the database. All Text Messages for these Connections have also been removed.<br />
 </c:if>
-<c:if test="${fn:sizeof(skippedIDs) > 0}">
-The ACARS Connection log entries for Connections <fmt:list value="${skippedIDs}" delim=", " /> have 
-associated Flight Information entries and therefore cannot be removed from the ACARS log database. 
-The Flight Information log entries must be removed first.<br />
+<c:if test="${skippedIDs.size() > 0}">
+The ACARS Connection log entries for Connections <fmt:list value="${skippedIDs}" delim=", " /> have associated Flight Information entries and therefore cannot be removed from the ACARS log database. The Flight Information log entries must be removed first.<br />
 </c:if>
 </c:if>
 <c:if test="${!empty info && !infoDelete}">
