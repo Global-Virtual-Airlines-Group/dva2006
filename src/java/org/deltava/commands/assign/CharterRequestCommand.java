@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.assign.CharterRequest;
+import org.deltava.beans.schedule.Aircraft;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
@@ -157,6 +158,12 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("author", pdao.get(req.getAuthorID()), REQUEST);
 			ctx.setAttribute("disposedBy", pdao.get(req.getDisposalID()), REQUEST);
+			
+			// Load the Aircraft
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft eq = acdao.get(req.getEquipmentType());
+			ctx.setAttribute("eq", eq, REQUEST);
+			ctx.setAttribute("opts", eq.getOptions(ctx.getDB().toUpperCase()), REQUEST);
 			
 			// Save in the request
 			ctx.setAttribute("chreq", req, REQUEST);
