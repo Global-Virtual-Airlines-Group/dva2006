@@ -107,13 +107,23 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			a = SystemData.getAirline(SystemData.get("airline.code"));
 
 		// Build the leg
-		AssignmentLeg leg = new AssignmentLeg(a, StringUtils.parse(ctx.getParameter("flight"), 1), StringUtils.parse(
-				ctx.getParameter("leg"), 1));
+		AssignmentLeg leg = new AssignmentLeg(a, StringUtils.parse(ctx.getParameter("flight"), 1), StringUtils.parse(ctx.getParameter("leg"), 1));
 		leg.setEquipmentType(info.getEquipmentType());
 		leg.setAirportD(aD);
 		leg.setAirportA(aA);
 		info.addAssignment(leg);
 		info.setPilotID(ctx.getID());
+		
+		// Build the Charter Request
+		CharterRequest creq = new CharterRequest();
+		creq.setAuthorID(ctx.getUser().getID());
+		creq.setCreatedOn(Instant.now());
+		creq.setAirportD(aD);
+		creq.setAirportA(aA);
+		creq.setDisposalID(ctx.getUser().getID());
+		creq.setDisposedOn(creq.getCreatedOn().plusSeconds(1));
+		creq.setStatus(CharterRequest.RequestStatus.APPROVED);
+		creq.setComments("Pre-Approved Flight");
 
 		try {
 			Connection con = ctx.getConnection();
@@ -131,7 +141,6 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			fr.setRank(usr.getRank());
 			fr.setDate(info.getAssignDate());
 			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
-			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Pre-Approved Flight");
 
 			// Start the transaction
 			ctx.startTX();
@@ -140,10 +149,12 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			SetAssignment awdao = new SetAssignment(con);
 			awdao.write(info, ctx.getDB());
 			awdao.assign(info, info.getPilotID(), ctx.getDB());
+			awdao.write(creq);
 
 			// Write the Flight leg
 			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());
 			info.addFlight(fr);
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Pre-Approved Flight - Request %d", Integer.valueOf(creq.getID())));
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
 			ctx.commitTX();

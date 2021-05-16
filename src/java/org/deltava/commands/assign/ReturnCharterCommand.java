@@ -130,7 +130,18 @@ public class ReturnCharterCommand extends AbstractCommand {
 			leg.setAirportD(lf.getAirportA());
 			leg.setAirportA(lf.getAirportD());
 			info.addAssignment(leg);
-			info.setPilotID(ctx.getID());
+			info.setPilotID(p.getID());
+			
+			// Build the Charter Request
+			CharterRequest creq = new CharterRequest();
+			creq.setAirportD(leg.getAirportD());
+			creq.setAirportA(leg.getAirportA());
+			creq.setAuthorID(p.getID());
+			creq.setCreatedOn(Instant.now());
+			creq.setDisposedOn(creq.getCreatedOn().plusSeconds(1));
+			creq.setDisposalID(p.getID());
+			creq.setStatus(CharterRequest.RequestStatus.APPROVED);
+			creq.setComments("Return Charter Flight");
 			
 			// Build the PIREP
 			FlightReport fr = new FlightReport(leg);
@@ -139,7 +150,6 @@ public class ReturnCharterCommand extends AbstractCommand {
 			fr.setRank(p.getRank());
 			fr.setDate(info.getAssignDate());
 			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
-			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Return Charter Flight");
 			
 			// Start the transaction
 			ctx.startTX();
@@ -148,10 +158,12 @@ public class ReturnCharterCommand extends AbstractCommand {
 			SetAssignment awdao = new SetAssignment(con);
 			awdao.write(info, ctx.getDB());
 			awdao.assign(info, info.getPilotID(), ctx.getDB());
+			awdao.write(creq);
 			
 			// Write the Flight leg
 			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());
 			info.addFlight(fr);
+			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Return Charter - Request %d", Integer.valueOf(creq.getID())));
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
 			
