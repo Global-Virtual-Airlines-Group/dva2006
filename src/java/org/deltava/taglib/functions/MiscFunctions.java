@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -20,25 +20,6 @@ public class MiscFunctions {
 	// static class
 	private MiscFunctions() {
 		super();
-	}
-	
-	/**
-	 * A JSP-friendly way of getting the size of a Collection.
-	 * @param c the Collection
-	 * @return the number of elements
-	 * @see Collection#size()
-	 */
-	public static int sizeof(Collection<?> c) {
-		return (c != null) ? c.size() : 0;
-	}
-	
-	/**
-	 * A JSP function to return the size of a string.
-	 * @param o the string (or object)
-	 * @return the length of the string, or zero if null
-	 */
-	public static int length(Object o) {
-		return (o == null) ? 0 : String.valueOf(o).length();
 	}
 	
 	/**
