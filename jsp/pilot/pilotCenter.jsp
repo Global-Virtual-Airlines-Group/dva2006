@@ -134,9 +134,9 @@ You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.re
 <br />
 Your Chief Pilot is <a class="bld" href="mailto:${CP.email}">${CP.name}</a>.<br />
 <c:if test="${!empty asstCP}">
-<c:if test="${fn:sizeof(asstCP) == 1}">
+<c:if test="${asstCP.size() == 1}">
 Your Assistant Chief Pilot is </c:if>
-<c:if test="${fn:sizeof(asstCP) > 1}">
+<c:if test="${asstCP.size() > 1}">
 Your Assistant Chief Pilots are </c:if>
 <c:forEach var="aCP" items="${asstCP}" varStatus="acpStatus">
 <a class="bld" href="mailto:${aCP.email}">${aCP.name}</a><c:if test="${!acpStatus.last}">, </c:if></c:forEach>.
@@ -246,6 +246,12 @@ Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" 
  You can request a Return Charter flight to return to your previous airport.</td>
 </tr>
 </c:if>
+<c:if test="${!needReturnCharter && (pilot.legs > 5)}">
+<tr>
+ <td class="mid"><el:cmd url="chreq" op="edit" className="bld">Request Charter Flight</el:cmd></td>
+ <td class="data">You can request approval for a Charter Flight, which is a flight leg not included in the <content:airline /> Flight Schedule.</td>
+</tr>
+</c:if>
 <c:if test="${pilot.legs > 0}">
 <tr>
  <td class="mid bld">Flight Information</td>
@@ -285,6 +291,10 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepsdk">Aircraft SDK Flight Reports</el:cmd></td>
  <td class="data">You can review <content:airline /> ACARS Flight Reports flown using custom Aircraft SDKs.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="chreqs">Charter Flight Requests</el:cmd></td>
+ <td class="data">You can review <content:airline /> Charter Flight Requests.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Operations,Examination">
@@ -328,6 +338,12 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="mid"><el:cmd className="bld" url="fleetlibrary">Fleet Library</el:cmd></td>
  <td class="data">Our Fleet Library contains the official <content:airline /> Fleet - a collection of aircraft, panels manuals and sound schemes.</td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="mid"><el:link url="/acars" className="bld">Download ACARS Client</el:link></td>
+ <td class="data">You can download the <content:airline /> ACARS pilot client to log your flights, load fuel and payload and submit flight data to <content:airline />.</td>
+</tr>
+</c:if>
 <c:if test="${fileLibEnabled}">
 <content:filter roles="Fleet,HR">
 <tr>

@@ -40,8 +40,7 @@ golgotha.local.validate = function(f) {
 <c:forEach var="route" items="${event.routes}">
 <c:set var="routeSignups" value="${fn:routeSignups(event, route.routeID)}" scope="page" />
 <tr class="title caps">
- <td colspan="2">ROUTE #<fmt:int value="${route.routeID}" /><c:if test="${!empty route.name}"> - ${route.name}</c:if>
- (<fmt:int value="${fn:sizeof(routeSignups)}" /> SIGNED UP PILOTS)</td>
+ <td colspan="2">ROUTE #<fmt:int value="${route.routeID}" /><c:if test="${!empty route.name}"> - ${route.name}</c:if> (<fmt:int value="${routeSignups.size()}" /> SIGNED UP PILOTS)</td>
 </tr>
 <c:forEach var="signup" items="${routeSignups}">
 <c:set var="loc" value="${userLocs[signup.pilotID]}" scope="page" />

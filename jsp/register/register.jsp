@@ -50,7 +50,7 @@ if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return f
 	
 // Create the AJAX request
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
+xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const dupes = (parseInt(xmlreq.responseText) > 0);
@@ -259,10 +259,10 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
  select your preferred equipment type program in each stage below. You may be placed in a different program than the one you
  selected depending on demand and pilot numbers.</span></td>
 </tr>
-<c:forEach var="stage" items="${fn:keys(eqTypes)}">
+<c:forEach var="stage" items="${eqTypes.keySet()}">
 <c:set var="stageEQ" value="${eqTypes[stage]}" scope="page" />
 <c:set var="sXparam" value="s${stage}prefs" scope="page" />
-<c:if test="${fn:sizeof(stageEQ) > 1}">
+<c:if test="${stageEQ.size() > 1}">
 <tr>
  <td class="label">Stage <fmt:int value="${stage}" /></td>
  <td class="data" colspan="${cspan}"><el:check name="${sXparam}" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param[sXparam]}" /></td>

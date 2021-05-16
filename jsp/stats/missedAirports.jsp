@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Unvisited Airports - ${pilot.name}</title>
@@ -35,7 +34,7 @@
 <c:set var="airline" value="${allAirlines[entry.key]}" scope="page" />
 <c:set var="aps" value="${entry.value}" scope="page" />
 <tr class="title">
- <td colspan="5" class="left caps">${airline.name} - <fmt:int value="${fn:sizeof(aps)}" /> AIRPORTS</td>
+ <td colspan="5" class="left caps">${airline.name} - <fmt:int value="${aps.size()}" /> AIRPORTS</td>
  <td class="right"><span class="und" onclick="void golgotha.util.toggleExpand(this, 'ap${airline.code}')">COLLAPSE</span></td>
 </tr>
 <tr class="title ap${airline.code}">
@@ -48,13 +47,13 @@
 </tr>
 <c:forEach var="ap" items="${aps}">
 <c:set var="srcList" value="${srcAirports[ap]}" scope="page" />
-<c:set var="srcSize" value="${fn:sizeof(srcList)}" scope="page" />
+<c:set var="srcSize" value="${srcList.size()}" scope="page" />
 <tr class="ap${airline.code}">
  <td class="pri bld"><el:cmd url="airportinfo" linkID="${ap.IATA}">${ap.name}</el:cmd></td>
  <td class="bld nophone">${ap.ICAO}</td>
  <td class="sec">${ap.IATA}</td>
  <td class="small nophone">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
- <td class="bld"><fmt:int value="${fn:sizeof(ap.airlineCodes)}" /></td>
+ <td class="bld"><fmt:int value="${ap.airlineCodes.size()}" /></td>
 <c:choose>
 <c:when test="${srcSize == 0}">
  <td class="left error bld nophone">NO FLIGHTS TO/FROM THIS AIRPORT</td>

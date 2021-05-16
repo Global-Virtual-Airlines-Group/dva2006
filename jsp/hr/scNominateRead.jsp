@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Senior Captain Nomination - ${pilot.name}</title>
@@ -86,13 +87,13 @@ return true;
 </c:forEach>
 </c:if>
 <c:set var="showExamToggle" value="true" scope="page" />
-<c:set var="examCollapse" value="${fn:sizeof(exams) >= 10}" scope="page" />
+<c:set var="examCollapse" value="${exams.size() >= 10}" scope="page" />
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 <c:set var="showCourseToggle" value="true" scope="page" />
-<c:set var="courseCollapse" value="${fn:sizeof(courses) >= 10}" scope="page" />
+<c:set var="courseCollapse" value="${courses.size() >= 10}" scope="page" />
 <%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <c:set var="showStatusToggle" value="true" scope="page" />
-<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) > 10}" scope="page" />
+<c:set var="statusCollapse" value="${statusUpdates.size() > 10}" scope="page" />
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <c:if test="${access.canNominate}">
 <tr class="title caps">

@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Routes</title>
@@ -69,7 +68,7 @@ golgotha.local.validate = function(f) {
 <tr class="title caps">
  <td colspan="8" class="left">DISPATCH ROUTE SEARCH RESULTS</td>
 </tr>
-<c:if test="${fn:sizeof(results) > 0}">
+<c:if test="${results.size() > 0}">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:5%">ID</td>
@@ -103,7 +102,7 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </c:if>
 </c:forEach>
 </c:if>
-<c:if test="${fn:sizeof(results) == 0}">
+<c:if test="${results.size() == 0}">
 <tr>
  <td colspan="8" class="pri bld">No ACARS Dispatcher Routes between these Airports were found.</td>
 </tr>

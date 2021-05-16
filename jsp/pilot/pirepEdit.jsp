@@ -183,14 +183,14 @@ return true;
 <c:choose>
 <c:when test="${!isAssign}">
 <tr>
- <td class="label">Airline Name</td>
+ <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="this.updateAirlineCode(); golgotha.local.loadAirports()" required="true" firstEntry="[ AIRLINE ]" />
  <el:text name="airlineCode" size="2" max="3" idx="*" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 </c:when>
 <c:otherwise>
 <tr>
- <td class="label">Airline Name</td>
+ <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" idx="*" size="1" firstEntry="${pirep.airline}" options="${emptyList}" /></td>
 </tr>
 </c:otherwise>

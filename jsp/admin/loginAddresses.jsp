@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Login Address Lookup</title>
@@ -72,7 +71,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${doSearch}">
 <view:table cmd="loginaddrs">
 <tr class="title caps">
- <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${fn:sizeof(addrs)}" /> RESULTS</c:if></td>
+ <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${addrs.size()}" /> RESULTS</c:if></td>
 </tr>
 <c:if test="${empty addrs}">
 <tr>

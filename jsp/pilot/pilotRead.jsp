@@ -329,22 +329,22 @@ Applicant profile for ${pilot.name}.</td>
 </c:if>
 <content:authUser>
 <c:set var="showExamToggle" value="true" scope="page" />
-<c:set var="examCollapse" value="${fn:sizeof(exams) >= 10}" scope="page" />
+<c:set var="examCollapse" value="${exams.size() >= 10}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 <content:authUser>
 <c:set var="showCourseToggle" value="true" scope="page" />
-<c:set var="courseCollapse" value="${fn:sizeof(courses) >= 10}" scope="page" />
+<c:set var="courseCollapse" value="${courses.size() >= 10}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <content:authUser>
 <c:set var="showStatusToggle" value="true" scope="page" />
-<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) >= 15}" scope="page" />
+<c:set var="statusCollapse" value="${statusUpdates.size() >= 15}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <content:authUser>
 <c:set var="showDeliveryToggle" value="true" scope="page" />
-<c:set var="deliveryCollapse" value="${fn:sizeof(emailDelivery) >= 15}" scope="page" />
+<c:set var="deliveryCollapse" value="${emailDelivery.size() >= 15}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotEMailDelivery.jspf" %>
 </el:table>

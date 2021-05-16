@@ -131,14 +131,14 @@ golgotha.exam.maps = [];
 // Create map
 const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
-var map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:points var="crPoints" items="${correctRoute}" />
 <map:line var="crLine" src="crPoints" width="2" color="#af7f7f" transparency="0.6" geodesic="true" />
 crLine.setMap(map);
-<c:if test="${fn:sizeof(answerRoute) > 2}">
+<c:if test="${answerRoute.size() > 2}">
 <map:points var="arPoints" items="${answerRoute}" />
 <map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.8" geodesic="true" />
 arLine.setMap(map);

@@ -36,7 +36,7 @@
 </tr>
 
 <!-- Table Data -->
-<c:forEach var="acc" items="${fn:keys(accs)}">
+<c:forEach var="acc" items="${accs.keySet()}">
 <c:set var="msg" value="${accs[acc]}" scope="page" />
 <view:row entry="${msg}">
  <td class="bld"><fmt:accomplish accomplish="${acc}" /></td>

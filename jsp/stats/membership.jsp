@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Membership Statistics</title>
@@ -50,13 +49,12 @@ golgotha.local.validate = function(f) {
  <td colspan="3" class="left caps">MEMBERSHIP QUANTILES</td>
 </tr>
 <c:set var="qCount" value="0" scope="page" />
-<c:forEach var="qLabel" items="${fn:keys(quantiles)}">
+<c:forEach var="qLabel" items="${quantiles.keySet()}">
 <c:set var="qJoinDate" value="${quantiles[qLabel]}" scope="page" />
 <c:set var="qCount" value="${qCount + 1}" scope="page" />
 <tr>
  <td class="label"><fmt:int value="${qCount}" /></td>
- <td class="data" colspan="2">Joined on or before <span class="pri bld"><fmt:date date="${qJoinDate}" fmt="d" /></span> 
-(<fmt:int value="${totals.activePilots * qLabel / 100}" /> pilots)</td>
+ <td class="data" colspan="2">Joined on or before <span class="pri bld"><fmt:date date="${qJoinDate}" fmt="d" /></span> (<fmt:int value="${totals.activePilots * qLabel / 100}" /> pilots)</td>
 </tr>
 </c:forEach>
 
@@ -68,8 +66,7 @@ golgotha.local.validate = function(f) {
 
 <tr>
  <td class="label"><fmt:int value="${jDateStat.ID}" /> Days ago</td>
- <td class="data">Period of <span class="pri bld"><fmt:date date="${jDateStat.date}" fmt="d" /></span> 
- (<fmt:int value="${jDateStat.count}" /> Pilots joined)</td>
+ <td class="data">Period of <span class="pri bld"><fmt:date date="${jDateStat.date}" fmt="d" /></span> (<fmt:int value="${jDateStat.count}" /> Pilots joined)</td>
  <td class="data"><el:img y="12" x="${(jDateStat.count * 450) / maxCount}" src="cooler/bar_blue.png" caption="${jDateStat.date}" /></td>
 </tr>
 </c:forEach>

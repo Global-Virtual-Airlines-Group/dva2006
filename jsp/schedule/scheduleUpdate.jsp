@@ -84,7 +84,7 @@ To synchronize another airline's schedule entries, please <el:cmd className="sec
 <br />
 To return to the list of airports, <el:cmd url="airports" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-This airport is serviced by <fmt:int value="${fn:sizeof(airport.airlineCodes)}" /> airlines:<br />
+This airport is serviced by <fmt:int value="${airport.airlineCodes.size()}" /> airlines:<br />
 <br />
 <c:forEach var="aCode" items="${airport.airlineCodes}">
 <c:set var="al" value="${airlines[aCode]}" scope="page" />

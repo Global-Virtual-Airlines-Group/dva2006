@@ -16,24 +16,23 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script type="text/javascript">
+<script>
 golgotha.local.switchType = function(combo) {
-	var cType = combo.options[combo.selectedIndex].value;
+	const cType = combo.options[combo.selectedIndex].value;
 	self.location = '/busycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (!f.comments) return false;
-golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
-golgotha.form.validate({f:f.startDate, t:'Busy Start Date'});
-golgotha.form.validate({f:f.startTime, t:'Busy Start Time'});
-golgotha.form.validate({f:f.endDate, t:'Busy End Date'});
-golgotha.form.validate({f:f.endTime, t:'Busy End Time'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (!f.comments) return false;
+	golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
+	golgotha.form.validate({f:f.startDate, t:'Busy Start Date'});
+	golgotha.form.validate({f:f.startTime, t:'Busy Start Time'});
+	golgotha.form.validate({f:f.endDate, t:'Busy End Date'});
+	golgotha.form.validate({f:f.endTime, t:'Busy End Time'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -60,8 +59,7 @@ return true;
 </tr>
 </el:table>
 <div class="mid">
-<calendar:month date="cDate" startDate="${startDate}" entries="${fn:keys(accessMap)}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="busycalendar">
+<calendar:month date="cDate" startDate="${startDate}" entries="${accessMap.keySet()}" topBarClass="dayHdr"	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="busycalendar">
 <calendar:entry name="busy">
 <c:set var="ins" value="${pilots[busy.ID]}" scope="page" />
 <c:set var="busyAccess" value="${accessMap[busy]}" scope="page" />

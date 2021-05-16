@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title>Promotion Eligibility - ${pilot.name}</title>
@@ -36,7 +35,7 @@
 </tr>
 
 <!-- Table Data -->
-<c:forEach var="eqType" items="${fn:keys(eqData)}">
+<c:forEach var="eqType" items="${eqData.keySet()}">
 <c:set var="msg" value="${eqData[eqType]}" scope="page" />
 <view:row entry="${msg}">
  <td class="pri bld">${eqType.name}</td>

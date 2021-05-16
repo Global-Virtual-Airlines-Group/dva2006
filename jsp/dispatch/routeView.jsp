@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
@@ -74,7 +73,7 @@
  <td class="label top">Flight Route</td>
  <td class="data" colspan="3">${route.route}</td>
 </tr>
-<c:if test="${fn:sizeof(waypoints) > 0}">
+<c:if test="${waypoints.size() > 0}">
 <tr>
  <td class="data" colspan="4"><map:div ID="googleMap" height="500" /></td>
 </tr>
@@ -92,8 +91,8 @@
 <content:copyright />
 </content:region>
 </content:page>
-<c:if test="${fn:sizeof(waypoints) > 0}">
-<script id="mapInit">
+<c:if test="${waypoints.size() > 0}">
+<script>
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="pnts" items="${waypoints}" />

@@ -172,7 +172,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 <tr class="title caps left">
  <td colspan="3">LATEST <content:airline /> ACARS FLIGHT DEPARTURES AND ARRIVALS</td>
 </tr>
-<c:forEach var="tl" items="${fn:keys(toLand)}">
+<c:forEach var="tl" items="${toLand.keySet()}">
 <c:set var="info" value="${toLand[tl]}" scope="page" />
 <tr>
  <td class="priB" style="width:115px;">${info.flightCode}</td>

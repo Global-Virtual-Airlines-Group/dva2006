@@ -97,11 +97,11 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </c:if>
 <content:filter roles="HR">
 <!-- All Senior Captain nominations -->
-<c:forEach var="nomStatus" items="${fn:keys(allNoms)}">
+<c:forEach var="nomStatus" items="${allNoms.keySet()}">
 <c:set var="noms" value="${allNoms[nomStatus]}" scope="page" />
 <c:if test="${!empty noms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" />&nbsp;${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void golgotha.sc.toggleAll()">SHOW ALL COMMENTS</a></td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${noms.size()}" />&nbsp;${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void golgotha.sc.toggleAll()">SHOW ALL COMMENTS</a></td>
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
@@ -128,7 +128,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </content:filter>
 <c:if test="${!empty myEQNoms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(myEQNoms)}" />&nbsp;${user.equipmentType} PILOTS NOMINATED</td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${myEQNoms.size()}" />&nbsp;${user.equipmentType} PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${myEQNoms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
@@ -164,7 +164,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:if test="${!empty myNoms}">
 <!-- My Nominations -->
 <tr class="title caps">
- <td class="left" colspan="${cspan}">MY SENIOR CAPTAIN NOMINATIONS - <fmt:int value="${fn:sizeof(myNoms)}" /> PILOTS NOMINATED</td>
+ <td class="left" colspan="${cspan}">MY SENIOR CAPTAIN NOMINATIONS - <fmt:int value="${myNoms.size()}" /> PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${myNoms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
@@ -211,7 +211,7 @@ Sorry, you are unable to nominate anyone for the rank of Senior Captain at this 
 <content:airline /> for at least <fmt:int value="${minAge}" /> days. In order to best understand the qualities needed to improve your virtual airline, it's best to have been a member for a while!<br /> 
 <br />
 </c:when>
-<c:when test="${(fn:sizeof(myNoms) >= maxNoms) && !access.canNominateUnlimited}">
+<c:when test="${(myNoms.size() >= maxNoms) && !access.canNominateUnlimited}">
 <br />
 Sorry, but you have already nominated <fmt:int value="${maxNoms}" /> <content:airline /> pilots for promotion to Senior Captain this calendar quarter. In order to ensure that nominations are reserved 
 for the most deserving individuals, we limit the number of nomnations that can be made every quarter.<br />

@@ -75,7 +75,7 @@ return true;
 <c:if test="${!empty nameMatches}">
 <tr>
  <td class="label top" rowspan="2">Duplicate Users</td>
- <td class="data bld caps"><span class="error caps"><fmt:int value="${fn:sizeof(nameMatches)}" /> DUPLICATE USER NAMES/EMAIL DETECTED - PLEASE VALIDATE</span></td>
+ <td class="data bld caps"><span class="error caps"><fmt:int value="${nameMatches.size()}" /> DUPLICATE USER NAMES/EMAIL DETECTED - PLEASE VALIDATE</span></td>
 </tr>
 <tr>
  <td class="data">
@@ -289,10 +289,10 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </c:if>
 </c:if>
 </tr>
-<c:if test="${!empty fn:keys(applicant.typeChoices)}">
+<c:if test="${!empty applicant.typeChoices.keySet()}">
 <tr>
  <td class="label top">Program Preference</td>
- <td class="data"><c:forEach var="eqStage" items="${fn:keys(applicant.typeChoices)}">
+ <td class="data"><c:forEach var="eqStage" items="${applicant.typeChoices.keySet()}">
 <c:set var="eqStagePref" value="${applicant.typeChoices[eqStage]}" scope="page" />
 Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 </tr>

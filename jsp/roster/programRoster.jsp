@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Program Roster - ${eqType.name}</title>
@@ -73,8 +72,7 @@
 <c:if test="${!empty examQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${fn:sizeof(examQueue)}" /> EXAMS
- - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgExamQueue')">COLLAPSE</span></td>
+ <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${examQueue.size()}" /> EXAMS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgExamQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgExamQueue">
@@ -103,8 +101,7 @@
 <c:if test="${!empty crQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${fn:sizeof(crQueue)}" /> CHECK RIDES
- - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgRideQueue')">COLLAPSE</span></td>
+ <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${crQueue.size()}" /> CHECK RIDES - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgRideQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgRideQueue">
@@ -136,8 +133,7 @@
 <c:if test="${!empty txQueue}">
 <view:table cmd="prgroster">
 <tr class="title">
- <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${fn:sizeof(txQueue)}" /> TRANSFERS
- - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
+ <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${txQueue.size()}" /> TRANSFERS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -170,8 +166,7 @@
 <c:if test="${!empty promoQueue}">
 <view:table cmd="prgroster">
 <tr class="title">
- <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS
- - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
+ <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${promoQueue.size()}" /> PILOTS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgPromoQueue">
@@ -293,7 +288,7 @@
  <td class="left" colspan="2">STATUS TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
 <c:set var="maxCount" value="${metrics.maxStatusCount}" scope="page" />
-<c:forEach var="st" items="${fn:keys(metrics.statusCounts)}">
+<c:forEach var="st" items="${metrics.statusCounts.keySet()}">
 <c:set var="stCount" value="${metrics.statusCounts[st]}" scope="page" />
 <tr>
  <td class="label">${st}</td>
@@ -305,7 +300,7 @@
  <td class="left" colspan="2">RANK TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
 <c:set var="maxCount" value="${metrics.maxRankCount}" scope="page" />
-<c:forEach var="rnk" items="${fn:keys(metrics.rankCounts)}">
+<c:forEach var="rnk" items="${metrics.rankCounts.keySet()}">
 <c:set var="rnkCount" value="${metrics.rankCounts[rnk]}" scope="page" />
 <tr>
  <td class="label">${rnk.name}</td>
@@ -317,7 +312,7 @@
  <td class="left" colspan="2">HIRE DATE TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
 <c:set var="maxCount" value="${metrics.maxHireCount}" scope="page" />
-<c:forEach var="hd" items="${fn:keys(metrics.hireCounts)}">
+<c:forEach var="hd" items="${metrics.hireCounts.keySet()}">
 <c:set var="hireCount" value="${metrics.hireCounts[hd]}" scope="page" />
 <tr>
  <td class="label"><fmt:date fmt="d" date="${hd}" d="MMMM yyyy" /></td>

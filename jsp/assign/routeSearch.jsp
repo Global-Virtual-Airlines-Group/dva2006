@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Route Search</title>
@@ -122,9 +121,9 @@ golgotha.onDOMReady(function() {
 
 <c:set var="lastAirport" value="${rp.airportD}" scope="page" />
 <c:set var="legNum" value="0" scope="page" />
-<c:forEach var="aA" items="${fn:keys(results)}">
+<c:forEach var="aA" items="${results.keySet()}">
 <c:set var="flights" value="${results[aA]}" scope="page" />
-<c:set var="flightCount" value="${fn:sizeof(flights)}" scope="page" />
+<c:set var="flightCount" value="${flights.size()}" scope="page" />
 <c:set var="legNum" value="${legNum + 1}" scope="page" />
 <tr class="title caps">
  <td colspan="8" class="left">LEG <fmt:int value="${legNum}" /> - <span class="nophone"><fmt:quantity value="${flightCount}" single="flight" /> FROM

@@ -24,32 +24,26 @@
 <c:when test="${isApply}">
 <div class="updateHdr"><content:airline /> Job Application Saved</div>
 <br />
-${user.firstName}, thank you for your application to become a part of the <content:airline /> volunteer staff,
-in the role of <span class="pri bld">${job.title}</span>! We appreciate your willingness to contribute back to
-this community. We are currently accepting applications for this position until <fmt:date fmt="d" date="${job.closesOn}" />,
-and will be contacting you after that date about your application.<br />
+${user.firstName}, thank you for your application to become a part of the <content:airline /> volunteer staff, in the role of <span class="pri bld">${job.title}</span>! We appreciate your willingness to contribute back to
+this community. We are currently accepting applications for this position until <fmt:date fmt="d" date="${job.closesOn}" />, and will be contacting you after that date about your application.<br />
 <c:if test="${saveProfile}">
 <br />
-Your application text has been saved in a separate location, for re-use when applying for other volunteer
-opportunities at <content:airline />.<br /></c:if>
+Your application text has been saved in a separate location, for re-use when applying for other volunteer opportunities at <content:airline />.<br /></c:if>
 <br />
 Thank you again for your contribution!<br />
 </c:when>
 <c:when test="${isSave}">
 <div class="updateHdr"><content:airline /> Job Posting Updated</div>
 <br />
-The Job Posting for <span class="pri bld">${job.title}</span> has been saved, and will be available for applications
-until <fmt:date fmt="d" date="${job.closesOn}" />.<br />
+The Job Posting for <span class="pri bld">${job.title}</span> has been saved, and will be available for applications until <fmt:date fmt="d" date="${job.closesOn}" />.<br />
 <c:if test="${job.staffOnly}">
 <br />
-<span class="sec bld">This Job Posting is currently restricted to existing members of the <content:airline /> volunteer
-staff. Individuals who are not members of the staff cannot view or apply for this position.</span><br /></c:if>
+<span class="sec bld">This Job Posting is currently restricted to existing members of the <content:airline /> volunteer staff. Individuals who are not members of the staff cannot view or apply for this position.</span><br /></c:if>
 </c:when>
 <c:when test="${isShortlisted}">
 <div class="updateHdr"><content:airline /> Job Posting Shortlist Created</div>
 <br />
-A list of shortlisted applicants for the <span class="pri bld">${job.title}</span> Job Posting has been generated. The
-following applicants are on the shortlist:<br />
+A list of shortlisted applicants for the <span class="pri bld">${job.title}</span> Job Posting has been generated. The following applicants are on the shortlist:<br />
 <ul>
 <c:forEach var="app" items="${shortlist}">
 <li><el:cmd url="profile" link="${app}">${app.firstName} ${app.lastName}</el:cmd></li>
@@ -61,8 +55,7 @@ To return to this <content:airline /> Job Posting, <el:cmd url="job" className="
 <c:when test="${isSelected}">
 <div class="updateHdr"><content:airline /> Job Posting Hire Selected</div>
 <br />
-One or more shortlisted applicants for the <span class="pri bld">${job.title}</span> Job Posting has been selected. The
-following shortlisted applicants have been selected:<br />
+One or more shortlisted applicants for the <span class="pri bld">${job.title}</span> Job Posting has been selected. The following shortlisted applicants have been selected:<br />
 <ul>
 <c:forEach var="app" items="${selected}">
 <li><el:cmd url="profile" link="${app}">${app.firstName} ${app.lastName}</el:cmd></li>
@@ -78,7 +71,7 @@ To return to this <content:airline /> Job Posting, <el:cmd url="job" className="
 The <content:airline /> Job Posting for <span class="pri bld">${job.title}</span> has been completed, and 
 <c:forEach var="app" items="${selectedApps}" varStatus="appStatus">
 <span class="bld">${app.name}</span><c:if test="${!acpStatus.last}">, </c:if></c:forEach>
- ${(fn:sizeof(selectedApps) > 1) ? 'were' : 'was' } recorded as hired.<br />
+ ${(selectedApps.size() > 1) ? 'were' : 'was' } recorded as hired.<br />
 <br />
 To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
 </c:when>

@@ -1,9 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${thread.poll}">
-<c:set var="totalVotes" value="${fn:sizeof(thread.votes)}" scope="page" />
+<c:set var="totalVotes" value="${thread.votes.size()}" scope="page" />
 <!-- Pilot Poll -->
 <tr>
  <td class="label top caps">Poll Results<br />(<fmt:int value="${totalVotes}" /> vote<c:if test="${totalVotes != 1}">s</c:if>)</td>
