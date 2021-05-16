@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 9.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -102,8 +102,6 @@ public class SetAssignment extends DAO {
       sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?)");
       try (PreparedStatement ps = prepare(sqlBuf.toString())) {
     	  ps.setInt(1, assignID);
-
-    	  // Write the legs
     	  for (AssignmentLeg leg : legs) {
     		  ps.setString(2, leg.getAirline().getCode());
     		  ps.setInt(3, leg.getFlightNumber());
@@ -208,5 +206,45 @@ public class SetAssignment extends DAO {
          rollbackTransaction();
          throw new DAOException(se);
       }
+   }
+  
+   /**
+    * Writes a Charter flight request to the database.
+    * @param req the CharterRequest
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void write(CharterRequest req) throws DAOException {
+	   try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO CHARTER_REQUESTS (ID, AUTHOR_ID, CREATED, AIRPORT_D, AIRPORT_A, AIRLINE, EQTYPE, DISPOSAL_ID, DISPOSED, STATUS, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		   ps.setInt(1, req.getID());
+		   ps.setInt(2, req.getAuthorID());
+		   ps.setTimestamp(3, createTimestamp(req.getCreatedOn()));
+		   ps.setString(4, req.getAirportD().getIATA());
+		   ps.setString(5, req.getAirportA().getIATA());
+		   ps.setString(6, req.getAirline().getCode());
+		   ps.setString(7, req.getEquipmentType());
+		   ps.setInt(8, req.getDisposalID());
+		   ps.setTimestamp(9, createTimestamp(req.getDisposedOn()));
+		   ps.setInt(10, req.getStatus().ordinal());
+		   ps.setString(11, req.getComments());
+		   executeUpdate(ps, 1);
+		   if (req.getID() == 0)
+			   req.setID(getNewID());
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+  
+   /**
+    * Deletes a Charter flight request from the database.
+    * @param req the CharterRequest
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void delete(CharterRequest req) throws DAOException {
+	   try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM CHARTER_REQUESTS WHERE (ID=?) LIMIT 1")) {
+		   ps.setInt(1, req.getID());
+		   executeUpdate(ps, 0);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
    }
 }
