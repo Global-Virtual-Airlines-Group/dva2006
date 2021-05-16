@@ -140,7 +140,7 @@ return true;
 </tr>
 <c:if test="${access.canViewApplicants && (!empty apps)}">
 <tr class="title">
- <td colspan="2" class="left caps"><fmt:int value="${fn:sizeof(apps)}" /> Applications for this Position</td>
+ <td colspan="2" class="left caps"><fmt:int value="${apps.size()}" /> Applications for this Position</td>
 </tr>
 <c:forEach var="app" items="${apps}">
 <c:set var="pilot" value="${pilots[app.authorID]}" scope="page" />

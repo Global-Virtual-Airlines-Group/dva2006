@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Examination / Question Updated</title>
@@ -29,7 +28,7 @@ This Pilot Examination Question has been succesfully updated in the database.<br
 <br />
 To view this Question, <el:cmd url="qprofile" link="${question}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-This Question has been included in <fmt:int value="${fn:sizeof(question.exams)}" /> Pilot Examinations. To view all Questions in these Examinations, select one from the list below:<br />
+This Question has been included in <fmt:int value="${question.exams.size()}" /> Pilot Examinations. To view all Questions in these Examinations, select one from the list below:<br />
 <br />
 <c:forEach var="exam" items="${question.exams}">
 <el:cmd url="qprofiles" linkID="${exam}">${exam}</el:cmd><br />

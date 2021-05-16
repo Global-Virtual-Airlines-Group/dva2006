@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Client Error Report</title>
@@ -79,7 +78,7 @@
 <c:if test="${!empty stateData}">
 <tr>
  <td class="label top">State Data</td>
- <td class="data"><c:forEach var="k" items="${fn:keys(stateData)}">
+ <td class="data"><c:forEach var="k" items="${stateData.keySet()}">
 ${k} = ${stateData[k]}<br /></c:forEach></td>
 </tr>
 </c:if>

@@ -403,7 +403,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 &nbsp;<el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" /></content:filter></c:if>
 </c:if>
 <c:if test="${access.canDispose && (empty checkRide)}">
-<c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="page" />
+<c:set var="bLabel" value="${(pirep.captEQType.size() == 0) ? 'SET' : 'CLEAR'}" scope="page" />
 &nbsp;<el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" /></c:if>
 <c:if test="${access.canEdit}">
 &nbsp;<el:cmdbutton url="pirep" link="${pirep}" op="edit" label="EDIT REPORT" /></c:if>

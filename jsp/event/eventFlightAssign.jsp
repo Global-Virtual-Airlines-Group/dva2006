@@ -3,7 +3,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Online Event Assignments Created</title>
@@ -23,7 +22,7 @@
 <content:region id="main">
 <div class="updateHdr">Online Event Flight Assignments Created</div>
 <br />
-<fmt:int value="${fn:sizeof(event.signups)}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
+<fmt:int value="${event.signups.size()}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
 <br />
 To return to this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br />
 <br />

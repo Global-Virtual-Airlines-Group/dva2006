@@ -4,8 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- TCP/IP network mask Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${addrInfo} -
- <span class="und" onclick="void golgotha.util.toggleExpand(this, 'netMaskUser')">EXPAND</span></td>
+ <td colspan="2"><fmt:int value="${netmaskUsers.size()}" /> USERS REGISTERED FROM ${addrInfo} - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'netMaskUser')">EXPAND</span></td>
 </tr>
 <c:forEach var="person" items="${netmaskUsers}">
 <tr class="netMaskUser" style="display:none;">
@@ -13,13 +12,11 @@
 <c:if test="${fn:isPilot(person)}">
 <c:set var="rowColor" value="${fn:isSuspended(person) ? ' error' : ''}" scope="page" />
  <td class="data"><c:if test="${fn:isSuspended(person)}"><span class="error bld">SUSPENDED USER </span></c:if>
-<el:cmd url="profile" link="${person}">${person.name}</el:cmd> <a href="mailto:${person.email}" class="small">${person.email}</a>,
- <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /></span></td>
+<el:cmd url="profile" link="${person}">${person.name}</el:cmd> <a href="mailto:${person.email}" class="small">${person.email}</a>, <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /></span></td>
 </c:if>
 <c:if test="${!fn:isPilot(person)}">
  <td class="data"><el:cmd url="applicant" link="${person}">${person.name}</el:cmd>
- <a href="mailto:${person.email}" class="small">${person.email}</a>, <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /> 
-from ${person.registerAddress} (${person.registerHostName})</span></td>
+ <a href="mailto:${person.email}" class="small">${person.email}</a>, <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /> from ${person.registerAddress} (${person.registerHostName})</span></td>
 </c:if>
 </tr>
 </c:forEach>

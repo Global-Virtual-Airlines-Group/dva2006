@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Duplicate Pilot Search</title>
@@ -127,7 +126,7 @@ return true;
 </c:otherwise>
 </c:choose>
 </view:table>
-<c:if test="${fn:sizeof(results) > 1}">
+<c:if test="${results.size() > 1}">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">MERGE SELECTED PILOTS</td>

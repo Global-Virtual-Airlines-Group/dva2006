@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Security Roles</title>
@@ -44,7 +43,7 @@
  <td colspan="7">SECURITY ROLE - ${role}</td>
 </tr>
 
-<c:if test="${fn:sizeof(members) > 0}">
+<c:if test="${members.size() > 0}">
 <c:forEach var="pilot" items="${members}">
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
@@ -57,7 +56,7 @@
 </view:row>
 </c:forEach>
 </c:if>
-<c:if test="${fn:sizeof(members) == 0}">
+<c:if test="${members.size() == 0}">
 <tr>
  <td class="pri mid bld" colspan="7">NO MEMBERS OF THIS ROLE</td>
 </tr>

@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Service Calendar</title>
@@ -68,7 +67,7 @@ return true;
 <div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
 <fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" default=" " />
 <c:if test="${entry.hasFlights}">
-<br /><span class="bld"><fmt:int value="${fn:sizeof(entry.flights)}" /> Flights dispatched</span></c:if></div>
+<br /><span class="bld"><fmt:int value="${entry.flights.size()}" /> Flights dispatched</span></c:if></div>
 </c:otherwise>
 </c:choose>
 <calendar:spacer><hr /></calendar:spacer>

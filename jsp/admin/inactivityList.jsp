@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Inactivity Purge Preview</title>
@@ -25,7 +24,7 @@
 <content:region id="main">
 <view:table cmd="inactivelist">
 <tr class="title caps">
- <td colspan="6" class="left"><content:airline /> PILOT INACTIVITY PURGE PREVIEW - <fmt:int value="${fn:sizeof(fn:keys(results))}" /> PILOTS</td>
+ <td colspan="6" class="left"><content:airline /> PILOT INACTIVITY PURGE PREVIEW - <fmt:int value="${results.size()}" /> PILOTS</td>
 </tr>
 <c:if test="${!empty results}">
 <!-- Table Header Bar -->
@@ -40,7 +39,7 @@
 </c:if>
 
 <!-- Table Pilot Data -->
-<c:forEach var="pilot" items="${fn:keys(results)}">
+<c:forEach var="pilot" items="${results.keySet()}">
 <view:row entry="${pilot}">
 <c:if test="${empty pilot.pilotCode}">
  <td class="pri bld">N / A</td>

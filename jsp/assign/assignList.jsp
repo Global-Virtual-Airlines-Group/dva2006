@@ -83,7 +83,7 @@ golgotha.local.setStatus = function(combo) {
  <td class="pri bld">NOT ASSIGNED</td>
 </c:if>
  <td class="sec bld">${assign.equipmentType}</td>
- <td><fmt:int value="${fn:sizeof(assign.assignments)}" /> flights</td>
+ <td><fmt:int value="${assign.assignments.size()}" /> flights</td>
  <td><fmt:date fmt="d" date="${assign.assignDate}" default="-" /></td>
  <td><fmt:date fmt="d" date="${assign.completionDate}" default="-" /></td>
 </view:row>
