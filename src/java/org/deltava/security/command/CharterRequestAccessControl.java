@@ -43,8 +43,8 @@ public class CharterRequestAccessControl extends AccessControl {
 		}
 		
 		boolean isOurs = (_req.getAuthorID() == _ctx.getUser().getID());
-		boolean hasRole = _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR");
-		_canView = isOurs || hasRole;
+		boolean hasRole = _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR");
+		_canView = isOurs || hasRole || _ctx.isUserInRole("PIREP");
 		_canEdit = isOurs && (_req.getStatus() == RequestStatus.PENDING);
 		_canDispose = hasRole && (_req.getStatus() == RequestStatus.PENDING);
 	}
