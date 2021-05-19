@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2008, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008, 2009, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import com.newrelic.api.agent.Trace;
 /**
  * A Web Site Command.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @since 1.0
  */
 
@@ -36,7 +36,6 @@ public interface Command {
 		}
 	}
 	
-    public static final Scope APPLICATION = Scope.APP;
     public static final Scope REQUEST = Scope.REQ;
     public static final Scope SESSION = Scope.SES;
     public static final Scope PAGE = Scope.PAG;
