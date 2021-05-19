@@ -122,7 +122,6 @@ public class TestCommandContext extends TestCase {
     public void testAttributes() {
     	_ctxt.setAttribute("req_attr", "REQ", Command.REQUEST);
     	assertEquals("REQ", _ctxt.getRequest().getAttribute("req_attr"));
-    	_ctxt.setAttribute("app_attr", "APP", Command.APPLICATION);
     	_ctxt.setAttribute("ses_attr", "SES", Command.SESSION);
     	assertEquals("SES", _ctxt.getSession().getAttribute("ses_attr"));
     }
