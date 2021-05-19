@@ -109,7 +109,7 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 			// Save status attributes and commit
 			ctx.commitTX();
 			ctx.setAttribute("req", req, REQUEST);
-			ctx.setAttribute("isApproved", Boolean.valueOf(st == RequestStatus.APPROVED), APPLICATION);
+			ctx.setAttribute("isApproved", Boolean.valueOf(st == RequestStatus.APPROVED), REQUEST);
 			ctx.setAttribute("reqStatus", st, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
