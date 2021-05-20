@@ -7,11 +7,11 @@ import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.assign.CharterRequest;
-import org.deltava.beans.schedule.Aircraft;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.comparators.AirlineComparator;
 
@@ -71,6 +71,22 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			ctx.setAttribute("req", req, REQUEST);
 			ctx.setAttribute("isEdit", Boolean.valueOf(!isNew), REQUEST);
 			ctx.setAttribute("isCreate", Boolean.valueOf(isNew), REQUEST);
+			
+			// Send notification
+			if (isNew) {
+				MessageContext mctx = new MessageContext();				
+				mctx.addData("chreq", req);
+				mctx.addData("user", ctx.getUser());
+				
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctx.setTemplate(mtdao.get("CHREQNEW"));
+				
+				// Send the message
+				GetPilotDirectory pdao = new GetPilotDirectory(con);
+				Mailer mailer = new Mailer(ctx.getUser());
+				mailer.setContext(mctx);
+				mailer.send(pdao.getByRole("Operations", ctx.getDB(), true));
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -164,6 +180,10 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			Aircraft eq = acdao.get(req.getEquipmentType());
 			ctx.setAttribute("eq", eq, REQUEST);
 			ctx.setAttribute("opts", eq.getOptions(ctx.getDB().toUpperCase()), REQUEST);
+			
+			// Check the schedule
+			GetSchedule sdao = new GetSchedule(con);
+			ctx.setAttribute("airlines", sdao.getAirlines(req), REQUEST);
 			
 			// Save in the request
 			ctx.setAttribute("chreq", req, REQUEST);

@@ -1,17 +1,17 @@
 // Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
-import java.sql.Connection;
 import java.time.Instant;
+import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.assign.CharterRequest.RequestStatus;
-import org.deltava.beans.flight.DatabaseID;
-import org.deltava.beans.flight.FlightReport;
-import org.deltava.beans.flight.HistoryType;
+import org.deltava.beans.flight.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.CharterRequestAccessControl;
 
@@ -37,6 +37,7 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 		if (st == RequestStatus.PENDING)
 			throw new CommandException("Invalid Charter Request status - " + ctx.getParameter("op"), false); 
 		
+		MessageContext mctx = new MessageContext(); Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -54,8 +55,12 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 			
 			// Load the Pilot
 			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.get(req.getAuthorID());
+			p = pdao.get(req.getAuthorID());
 			ctx.setAttribute("pilot", p, REQUEST);
+			
+			// Load the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctx.setTemplate(mtdao.get((st == RequestStatus.REJECTED) ? "CHREQREJECT" : "CHREQAPPROVE"));
 			
 			// Update fields
 			req.setStatus(st);
@@ -77,8 +82,8 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 				// Build the leg
 				AssignmentLeg leg = new AssignmentLeg(req.getAirline(), 9000 + (p.getPilotNumber() % 1000), 1);
 				leg.setEquipmentType(req.getEquipmentType());
-				leg.setAirportD(req.getAirportA());
-				leg.setAirportA(req.getAirportD());
+				leg.setAirportD(req.getAirportD());
+				leg.setAirportA(req.getAirportA());
 				info.addAssignment(leg);
 				info.setPilotID(p.getID());
 			
@@ -108,6 +113,8 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 			
 			// Save status attributes and commit
 			ctx.commitTX();
+			mctx.addData("chreq", req);
+			mctx.addData("user", ctx.getUser());
 			ctx.setAttribute("req", req, REQUEST);
 			ctx.setAttribute("isApproved", Boolean.valueOf(st == RequestStatus.APPROVED), REQUEST);
 			ctx.setAttribute("reqStatus", st, REQUEST);
@@ -117,6 +124,11 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Send the notification
+		Mailer mailer = new Mailer(ctx.getUser());
+		mailer.setContext(mctx);
+		mailer.send(p);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
