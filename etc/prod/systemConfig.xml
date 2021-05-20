@@ -507,6 +507,7 @@
 		<!-- Charter calculations -->
 		<charter>
 			<count_days type="Integer">90</count_days>
+			<requests type="Boolean">false</requests>
 		</charter>
 
 		<!-- FlightAware download data -->
