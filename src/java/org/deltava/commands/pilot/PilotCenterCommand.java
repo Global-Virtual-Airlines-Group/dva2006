@@ -171,6 +171,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
 				ctx.setAttribute("pirepQueueStats", frqdao.getDisposalQueueStats(eqType), REQUEST);
 				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType, isAcademy)), REQUEST);
+				
+				// Get Charter requests
+				GetCharterRequests crqdao = new GetCharterRequests(con);
+				ctx.setAttribute("charterRequestQueueSize", Integer.valueOf(crqdao.getPendingCount()), REQUEST);
 			}
 			
 			// Initialize the testing history helper and check for test lockout

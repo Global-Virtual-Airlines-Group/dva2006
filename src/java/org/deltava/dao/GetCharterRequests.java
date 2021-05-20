@@ -54,6 +54,22 @@ public class GetCharterRequests extends DAO {
 	}
 	
 	/**
+	 * Returns the number of pending Charter requests.
+	 * @return the number of pending requests
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getPendingCount() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT COUNT(ID) FROM CHARTER_REQUESTS WHERE (STATUS=?)")) {
+			ps.setInt(1, CharterRequest.RequestStatus.PENDING.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the database IDs of all Pilots who have created a Charter flight Request.
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
