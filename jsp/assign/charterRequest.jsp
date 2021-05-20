@@ -63,6 +63,11 @@
  <td class="data"><fmt:text value="${chreq.comments}" /></td>
 </tr>
 </c:if>
+<c:if test="${!empty airlines}">
+<tr>
+ <td colspan="2" class="title caps mid caps"><span class="nophone">Route currently served by </span><fmt:list value="${airlines}" delim=", " /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
