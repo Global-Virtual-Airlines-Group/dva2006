@@ -14,12 +14,17 @@ public enum NotifyActionType implements EnumDescription {
 	HOME("Home Page", "home"), PILOTCENTER("Pilot Center", "pilotcenter"), PIREPQUEUE("Flight Queue", "pirepqueue"), PROMOQUEUE("Promotion Queue", "promoqueue"), LOGBOOK("Log Book", "logbook", true), 
 	TESTCENTER("Testing Center", "testcenter", true), TXQUEUE("Transfer Queue", "txrequests"), PIREP("Flight Report", "pirep", true), CHECKRIDE("Check Ride", "checkride", true), EXAM("Examination", "exam", true),
 	TRANSFER("Program Transfer", "txreqview", true), EVENTCALENDAR("Event Calendar", "eventcalendar"), EVENT("Online Event", "event", true), THREAD("Message Thread", "thread", true), 
-	ISSUE("Development Issue", "issue", true), HELP("Help Desk Issue", "hdissue", true);
+	ISSUE("Development Issue", "issue", true), HELP("Help Desk Issue", "hdissue", true), CHREQ("Charter Flight Request", "chreq", true);
 	
 	private final String _url;
 	private final String _desc;
 	private final boolean _hasID;
 	
+	/**
+	 * Creates an Action Type without an ID.
+	 * @param desc the description
+	 * @param url the base URL
+	 */
 	NotifyActionType(String desc, String url) {
 		this(desc, url, false);
 	}
