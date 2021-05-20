@@ -72,6 +72,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
+<content:sysdata var="charterReqEnabled" name="schedule.charter.requests" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 <content:attr attr="isHROperations" value="true" roles="HR,Operations" />
 <content:attr attr="hasTourAccess" value="true" roles="Event,Operations" />
@@ -246,7 +247,7 @@ Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" 
  You can request a Return Charter flight to return to your previous airport.</td>
 </tr>
 </c:if>
-<c:if test="${!needReturnCharter && (pilot.legs > 5)}">
+<c:if test="${!needReturnCharter && charterReqEnabled && (pilot.legs > 5)}">
 <tr>
  <td class="mid"><el:cmd url="chreq" op="edit" className="bld">Request Charter Flight</el:cmd></td>
  <td class="data">You can request approval for a Charter Flight, which is a flight leg not included in the <content:airline /> Flight Schedule.</td>
@@ -294,7 +295,7 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="chreqs">Charter Flight Requests</el:cmd></td>
- <td class="data">You can review <content:airline /> Charter Flight Requests.</td>
+ <td class="data">You can review <content:airline /> Charter Flight Requests.<c:if test="${charterRequestQueueSize > 0}"> There are <fmt:int value="${charterRequestQueueSize}" /> pending Charter Flight Requests.</c:if></td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Operations,Examination">
