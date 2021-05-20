@@ -1494,19 +1494,13 @@
 	<command id="chreqs">
 		<name>Charter Flight Requests</name>
 		<class>org.deltava.commands.assign.CharterRequestsCommand</class>
-		<roles>Pilot</roles>
+		<roles>PIREP,Operations</roles>
 	</command>
 	
 	<command id="chreq">
 		<name>Charter Flight Request</name>
 		<class>org.deltava.commands.assign.CharterRequestCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
-	<command id="chreq">
-		<name>Charter Flight Request</name>
-		<class>org.deltava.commands.assign.CharterRequestCommand</class>
-		<roles>Pilot</roles>
+		<roles>PIREP,Operations</roles>
 	</command>
 
 	<command id="chreqdsp">
