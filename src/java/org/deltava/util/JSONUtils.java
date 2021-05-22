@@ -68,6 +68,8 @@ public class JSONUtils {
 		jo.put("lat", a.getLatitude());
 		jo.put("lng", a.getLongitude());
 		jo.put("alt", a.getAltitude());
+		jo.put("hasUSPFI", a.getHasPFI());
+		jo.put("isSchengen", a.getIsSchengen());
 		return jo;
 	}
 	
