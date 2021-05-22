@@ -84,7 +84,9 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * @param dt the departure date/time
 	 */
 	public void setTimeD(LocalDateTime dt) {
-		_timeD = ZonedDateTime.of(dt, getAirportD().getTZ().getZone());
+		ZoneId tz = getAirportD().getTZ().getZone();
+		LocalDate ld = LocalDate.ofInstant(getDate(), tz);
+		_timeD = ZonedDateTime.of(LocalDateTime.of(ld, dt.toLocalTime()), tz);
 	}
 	
 	/**
@@ -93,7 +95,13 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * @param dt the arrival date/time
 	 */
 	public void setTimeA(LocalDateTime dt) {
-		_timeA = ZonedDateTime.of(dt, getAirportA().getTZ().getZone());
+		ZoneId tz = getAirportA().getTZ().getZone();
+		LocalDate ld = LocalDate.ofInstant(getDate(), tz);
+		ZonedDateTime zdt = ZonedDateTime.of(LocalDateTime.of(ld, dt.toLocalTime()), tz);
+		if ((_timeD != null) && zdt.isBefore(_timeD))
+			zdt = zdt.plusDays(1);
+		
+		_timeA = zdt;
 	}
 	
 	/**
@@ -130,6 +138,7 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
 	@Override
 	public Duration getDuration() {
+		if ((_timeD == null) || (_timeA == null)) return Duration.ZERO;
 		Duration d = Duration.between(_timeD.toInstant(), _timeA.toInstant());
 		return d.isNegative() ? d.negated() : d;
 	}

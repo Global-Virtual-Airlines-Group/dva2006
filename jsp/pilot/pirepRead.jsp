@@ -226,14 +226,20 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Scheduled Departure</td>
  <td class="data"><c:if test="${!empty pirep.gateD}">From <span class="ter bld">${pirep.gateD}</span></c:if><c:if test="${!empty pirep.gateD && !empty pirep.timeD}"> at </c:if>
-<c:if test="${!empty pirep.timeD}"><span class="bld"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${pirep.timeD}" /></span></c:if></td>
+<c:if test="${!empty pirep.timeD}"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${pirep.timeD}" /></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty pirep.gateA || !empty pirep.timeA}">
 <tr>
  <td class="label">Scheduled Arrival</td>
  <td class="data"><c:if test="${!empty pirep.gateA}">From <span class="ter bld">${pirep.gateA}</span></c:if><c:if test="${!empty pirep.gateA && !empty pirep.timeA}"> at </c:if>
-<c:if test="${!empty pirep.timeA}"><span class="bld"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${pirep.timeA}" /></span></c:if></td>
+<c:if test="${!empty pirep.timeA}"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${pirep.timeA}" /></c:if></td>
+</tr>
+</c:if>
+<c:if test="${pirep.duration.toSeconds() > 0}">
+<tr>
+ <td class="label">Scheduled Flight Time</td>
+ <td class="data bld"><fmt:duration duration="${pirep.duration}" t="HH:mm" /><c:if test="${pirep.timeA.dayOfYear != pirep.timeD.dayOfYear}">&nbsp;<span class="small ter bld caps">Flight Arrives on <fmt:date date="${pirep.timeA}" fmt="d" /></span></c:if></td> 
 </tr>
 </c:if>
 </c:if>
