@@ -61,7 +61,7 @@ able to accept cookies from <span class="sec bld">${domain}</span> in order to l
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" idx="*" size="10" max="16" required="true" value="${fname}" />&nbsp;<el:text name="lastName" idx="*" size="16" max="24" required="true" value="${lname}" /></td>
+ <td class="data"><el:text name="firstName" idx="*" size="12" max="32" required="true" value="${fname}" />&nbsp;<el:text name="lastName" idx="*" size="16" max="32" required="true" value="${lname}" /></td>
 </tr>
 <tr>
  <td class="label">Password</td>
