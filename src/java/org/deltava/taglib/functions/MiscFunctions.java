@@ -23,15 +23,6 @@ public class MiscFunctions {
 	}
 	
 	/**
-	 * A JSP function to return a Map's keys.
-	 * @param m the Map
-	 * @return a Collection of keys, or null if m is null
-	 */
-	public static <T> Collection<T> keys(Map<T, Object> m) {
-		return (m == null) ? null : m.keySet();
-	}
-
-	/**
 	 * A JSP-friendly function to get an element from a List. Equivalent to {@link List#get(int) }.
 	 * @param l the List containing the elements
 	 * @param idx the element position within the List
