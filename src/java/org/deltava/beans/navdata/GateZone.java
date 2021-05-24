@@ -9,7 +9,7 @@ package org.deltava.beans.navdata;
  */
 
 public enum GateZone implements org.deltava.beans.EnumDescription {
-	DOMESTIC("Domestic"), INTERNATIONAL("International"), USPFI("US Pre-Flight Inspection");
+	DOMESTIC("Domestic"), INTERNATIONAL("International"), USPFI("US Departures");
 	
 	private final String _desc;
 	
