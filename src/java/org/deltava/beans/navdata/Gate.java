@@ -250,12 +250,16 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 
 	@Override
 	public int getPaletteCode() {
-		return 3;
+		return (_zone == GateZone.USPFI) ? 2 : 3;
 	}
 
 	@Override
 	public int getIconCode() {
-		return 52;
+		return switch (_zone) {
+			case USPFI -> 16;
+			case INTERNATIONAL -> 48;
+			default -> 52;
+		};
 	}
 
 	@Override
