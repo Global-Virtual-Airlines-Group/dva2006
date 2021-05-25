@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.Airline;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write Gate data. 
@@ -30,6 +31,7 @@ public class SetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Collection<Gate> gates) throws DAOException {
+		Collection<String> cacheKeys = new HashSet<String>();
 		try {
 			startTransaction();
 			
@@ -48,6 +50,7 @@ public class SetGates extends DAO {
 			int totalWrites = gates.stream().filter(g -> g.getAirlines().size() > 0).mapToInt(g -> g.getAirlines().size()).sum();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, ZONE) VALUES (?, ?, ?, ?)")) {
 				for (Gate g : gates) {
+					cacheKeys.add(String.format("AP-%s-%s", g.getCode(), g.getSimulator().name()));
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
 					ps.setInt(4, g.getZone().ordinal());
@@ -64,6 +67,8 @@ public class SetGates extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			cacheKeys.forEach(k -> CacheManager.invalidate("Gates", k));
 		}
 	}
 }
