@@ -9,12 +9,12 @@ import org.json.*;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.Simulator;
-import org.deltava.beans.navdata.Gate;
-import org.deltava.beans.navdata.GateZone;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
@@ -62,7 +62,7 @@ public class GateUpdateService extends WebService {
 				for (int y = 0; (ga != null) && (y < ga.length()); y++)
 					g.addAirline(SystemData.getAirline(ga.getString(y)));
 				
-				GateZone gz = GateZone.values()[go.optInt("zone", (go.optBoolean("intl") ? GateZone.INTERNATIONAL : GateZone.DOMESTIC).ordinal())];
+				GateZone gz = GateZone.values()[go.getInt("zone")];
 				g.setZone(gz);
 				updGates.add(g);
 			}
