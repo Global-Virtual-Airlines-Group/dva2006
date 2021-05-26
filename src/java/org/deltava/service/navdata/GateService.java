@@ -42,7 +42,7 @@ public class GateService extends WebService {
 			return SC_NOT_FOUND;
 		
 		// Get simulator version
-		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.FSX);
+		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
 		Collection<Gate> gates = new LinkedHashSet<Gate>();
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
@@ -60,18 +60,15 @@ public class GateService extends WebService {
 		// Create the JSON
 		JSONObject jo = new JSONObject();
 		jo.put("icao", a.getICAO());
-		jo.put("ll", JSONUtils.format(a));
-		jo.put("hasUSPFI", a.getHasPFI());
-		jo.put("isSchengen", a.getIsSchengen());
-		if (aa != null) {
-			jo.put("icao2", aa.getICAO());
-			jo.put("ll2", JSONUtils.format(aa));
-			jo.put("hasUSPFI2", aa.getHasPFI());
-			jo.put("isSchengen2", aa.getIsSchengen());
-		}
+		jo.put("airportD", JSONUtils.format(a));
+		jo.put("maxUse", gates.stream().mapToInt(Gate::getUseCount).max().orElse(0));
+		if (aa != null)
+			jo.put("airportA", JSONUtils.format(aa));
 		
 		// Write gate zones
-		for (GateZone gz : GateZone.values()) {
+		List<GateZone> zones = new ArrayList<GateZone>(Arrays.asList(GateZone.values()));
+		if (!a.getHasPFI()) zones.remove(GateZone.USPFI);
+		for (GateZone gz : zones) {
 			JSONObject zo = new JSONObject();
 			zo.put("id", gz.name());
 			zo.put("description", gz.getDescription());
@@ -83,7 +80,6 @@ public class GateService extends WebService {
 			JSONObject go = new JSONObject();
 			go.put("id", g.getName());
 			go.put("ll", JSONUtils.format(g));
-			go.put("isIntl", (g.getZone() != GateZone.DOMESTIC));
 			go.put("zone", g.getZone().ordinal());
 			go.put("useCount", g.getUseCount());
 			go.put("info", g.getInfoBox());
@@ -95,8 +91,8 @@ public class GateService extends WebService {
 		// Write the JSON document
 		JSONUtils.ensureArrayPresent(jo, "gates", "zones");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
-			ctx.setExpiry(60);
+			ctx.setContentType("application/json", "utf-8");
+			ctx.setExpiry(30);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
@@ -106,19 +102,11 @@ public class GateService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
