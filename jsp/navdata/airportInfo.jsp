@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Airport Information</title>
@@ -18,17 +17,27 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
-<content:json />
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
 <script>
-golgotha.local.update = function(combo) {
+golgotha.gate.hasPFI = ${airport.hasPFI};
+golgotha.local.update = function(cb) {
 	if (!golgotha.form.check()) return false;
-	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(combo);
-	golgotha.form.submit(combo.parentElement);
+	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(cb);
+	golgotha.form.submit(cb.parentElement);
 	return true;
 };
+
+golgotha.onDOMReady(function() {
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
+	cfg.doICAO = ${useICAO};
+	golgotha.airportLoad.setHelpers([f.airportA, f.id]);
+	golgotha.airportLoad.setText([f.airportA]);
+	golgotha.gate.load({id:'${airport.ICAO}'}); 
+	return true;
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -104,27 +113,27 @@ golgotha.local.update = function(combo) {
 <tr>
  <td class="label top">Takeoff Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${toRwys}">
-<c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
+<c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures</span></div>
 </c:forEach></td>
 </tr>
 <tr>
  <td class="label top">Landing Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${ldgRwys}">
-<c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
+<c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
 </c:forEach></td>
 <c:if test="${!empty validAC}">
 <tr>
  <td class="label top">Authorized Aircraft</td>
- <td class="data" colspan="2"><span class="ita small">Due to runway lenghts, only the following ${validAC.size()} aircraft are authorized for operation in and out of this Airport:</span><br /><br />
+ <td class="data" colspan="2"><span class="ita small">Due to runway lengths, only the following ${validAC.size()} aircraft are authorized for operation in and out of this Airport:</span><br /><br />
 <fmt:list value="${validAC}" delim=", " /></td>
 </tr>
 </c:if>
 <c:if test="${!empty invalidAC}">
 <tr>
  <td class="label top">Unauthorized Aircraft</td>
- <td class="data" colspan="2" ><span class="ita small">Due to runway lenghts, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
+ <td class="data" colspan="2" ><span class="ita small">Due to runway lengths, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
 <fmt:list value="${invalidAC}" delim=", " /></td>
 </tr>
 </c:if>
@@ -132,9 +141,8 @@ golgotha.local.update = function(combo) {
 <tr>
  <td class="label top">Other Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${runways}">
-<c:set var="isActive" value="${fn:contains(validRunways, rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg;</div> 
-</c:forEach></td>
+<c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg;</div></c:forEach></td>
 </tr>
 </c:if>
 <tr>
@@ -153,12 +161,12 @@ Outbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.o
 </content:filter>
 <tr id="flightTimeChart" style="display:none;">
  <td class="label top">Flight Time Distribution</td>
- <td class="data"><div id="ftChart" style="height:250px;"></div></td>
+ <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
 </tr>
 <c:if test="${!empty connectingAirports}">
-<tr>
+<tr id="airportARow">
  <td class="label">Connecting Airport</td>
- <td class="data" colspan="2"><el:combo name="airportA" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${connectingAirports}" onChange="void golgotha.local.updateAirportA(this, '${airport.ICAO}')" /></td>
+ <td class="data" colspan="2"><el:combo name="airportA" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${connectingAirports}" onChange="void golgotha.local.updateAirportA(this, '${airport.ICAO}')" /> <el:airportCode combo="airportA" idx="*" /></td>
 </tr>
 </c:if>
 <tr>
@@ -169,8 +177,8 @@ Outbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.o
  | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
  <td class="mid">&nbsp;<content:filter roles="Schedule,Operations"><c:if test="${!empty airlines}"><a id="editLink" href="javascript:void golgotha.gate.edit()">EDIT GATE DATA</a>
 <el:combo ID="airlineCombo" name="airline"  size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]"  style="display:none;" onChange="void golgotha.gate.updateAirline(this)" />
-<a id="saveLink" style="display:none;" href="javascript:void golgotha.gate.save()">SAVE GATE DATA</a>
-<span id="helpText" style="display:none;" class="small"><br />Double-click to associate a gate with <span id="airlineName"></span>, right-click to mark a gate as International</span></c:if></content:filter></td>
+<a id="saveLink" style="display:none;" href="javascript:void golgotha.gate.save()">SAVE GATE DATA</a>&nbsp;<a id="viewLink" style="display:none;" href="javascript:void golgotha.gate.view()">STOP DATA EDITING</a> 
+<span id="helpText" style="display:none;" class="small"><br />Double-click to associate a gate with <span id="airlineName"></span>, right-click to mark a gate as International<c:if test="${airport.hasPFI}">, middle-click to mark a gate as US PFI</c:if></span></c:if></content:filter></td>
 </tr>
 <tr>
  <td colspan="3"><map:div ID="googleMap" height="570" /></td>
@@ -198,8 +206,6 @@ google.maps.event.addListener(map, 'zoom_changed', function() {
 	map.toggle(golgotha.local.ourGates, (map.getZoom() > 10));
 	return true;
 });
-
-golgotha.onDOMReady(function() { golgotha.gate.load('${airport.ICAO}'); golgotha.airportLoad.setHelpers(document.forms[0].id); });
 
 google.charts.load('current', {'packages':['corechart']});
 const xmlreq = new XMLHttpRequest();
