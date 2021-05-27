@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Iterator;
@@ -14,11 +14,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class to support tag to handle Page Up/Down links at the bottom of a view page.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
-public abstract class ScrollTag extends LinkTag {
+abstract class ScrollTag extends LinkTag {
     
     protected TableTag _viewTag;
     protected ScrollBarTag _scrollBarTag;
@@ -57,16 +57,13 @@ public abstract class ScrollTag extends LinkTag {
      * @param params a Map of paramater name/value pairs
      * @return the Query String
      */
-    protected static String buildParameters(Map<String, Object> params) {
+    protected static String buildParameters(Map<String, String> params) {
         StringBuilder url = new StringBuilder();
-        
-        // Loop through the parameters
-        for (Iterator<Map.Entry<String, Object>> i = params.entrySet().iterator(); i.hasNext(); ) {
-        	Map.Entry<String, Object> pe = i.next();
-            String[] pValues = (String[]) pe.getValue();
+        for (Iterator<Map.Entry<String, String>> i = params.entrySet().iterator(); i.hasNext(); ) {
+        	Map.Entry<String, String> pe = i.next();
             url.append(StringUtils.stripInlineHTML(pe.getKey()));
             url.append('=');
-            url.append(StringUtils.stripInlineHTML(pValues[0]));
+            url.append(StringUtils.stripInlineHTML(pe.getValue()));
             if (i.hasNext())
                 url.append("&amp;");
         }

@@ -1,7 +1,5 @@
 package org.deltava.taglib.view;
 
-import org.deltava.taglib.AbstractScrollTagTestCase;
-
 public class TestPageUpTag extends AbstractScrollTagTestCase {
 
     private PageUpTag _tag;
