@@ -37,20 +37,16 @@ public class PageDownTag extends ScrollTag {
             return SKIP_BODY;
         
         // Add Reserved parameters to the map
-        // Yes, converting to a string array is stupid
         ViewContext<?> vc = _scrollBarTag.getContext();
-        Map<String, Object> params = vc.getParameters();
-        params.put(ViewContext.START, new String[] { String.valueOf(vc.getStart() + vc.getCount()) } );
-        params.put(ViewContext.COUNT, new String[] { String.valueOf(vc.getCount()) } );
+        Map<String, String> params = vc.getParameters();
+        params.put(ViewContext.START, String.valueOf(vc.getStart() + vc.getCount()));
+        params.put(ViewContext.COUNT, String.valueOf(vc.getCount()));
         if (vc.getSortType() != null)
-            params.put(ViewContext.SORTBY, new String[] { vc.getSortType() } );
+            params.put(ViewContext.SORTBY, vc.getSortType());
         
-        // Get the view command name
+        // Get the view command name with parameters
         StringBuilder url = new StringBuilder(_viewTag.getCmd());
-        url.append(".do?");
-        
-        // Append the query parameters
-        url.append(buildParameters(params));
+        url.append(".do?").append(buildParameters(params));
        
         // Set the link and call the superclass renderer
         _data.setAttribute("href", url.toString());
@@ -68,10 +64,11 @@ public class PageDownTag extends ScrollTag {
 	public int doEndTag() throws JspException {
 
         // Check if we're at the start of the view; if so render nothing
-        if (!_scrollBarTag.isViewEnd())
-        	super.doEndTag();
-
-        release();
-        return EVAL_PAGE;
+    	try {
+    		if (!_scrollBarTag.isViewEnd()) super.doEndTag();
+    		return EVAL_PAGE;
+    	} finally {
+    		release();
+    	}
     }
 }

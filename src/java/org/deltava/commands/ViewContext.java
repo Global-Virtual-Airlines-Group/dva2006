@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store scrollable view page parameters.
  * @author Luke
- * @version 7.2
+ * @version 10.0
  * @param <T> the result object type
  * @since 1.0
  */
@@ -40,9 +40,9 @@ public class ViewContext<T extends Object> {
     /**
      * Reserved request parameter names. 
      */
-    private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
+    private static final List<String> RESERVED_PARAMS = List.of(START, COUNT, SORTBY);
 
-    private final Map<String, Object> _params = new HashMap<String, Object>();
+    private final Map<String, String> _params = new HashMap<String, String>();
     private Collection<T> _results;
     
     private final int _start;
@@ -61,11 +61,9 @@ public class ViewContext<T extends Object> {
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
-        _params.putAll(req.getParameterMap());
-        for (int x = 0; x < ViewContext.RESERVED_PARAMS.length; x++) {
-            String rParam = ViewContext.RESERVED_PARAMS[x];
-            if (_params.containsKey(rParam))
-                _params.remove(rParam);
+        for (Map.Entry<String, String[]> me : req.getParameterMap().entrySet()) {
+        	if (!RESERVED_PARAMS.contains(me.getKey()))
+        		_params.put(me.getKey(), me.getValue()[0]);
         }
     }
     
@@ -101,7 +99,7 @@ public class ViewContext<T extends Object> {
      * Returns all the request parameters for this view slice, minus any reserved parameters
      * @return the parameters to the request
      */
-    public Map<String, Object> getParameters() {
+    public Map<String, String> getParameters() {
         return _params;
     }
     
