@@ -74,7 +74,7 @@ public class GetAircraft extends DAO {
 		if (results != null) {
 			if (_queryStart > results.size()) return Collections.emptyList();
 			List<Aircraft> acList = new ArrayList<Aircraft>(results);
-			return acList.subList(_queryStart, Math.min(acList.size(), _queryStart + _queryMax));
+			return (acList.subList(_queryStart, (_queryMax == 0) ? acList.size() : Math.min(acList.size(), _queryStart + _queryMax)));
 		}
 		
 		results = new CacheableList<Aircraft>("$ALL");
@@ -108,7 +108,7 @@ public class GetAircraft extends DAO {
 		if (results != null) {
 			if (_queryStart > results.size()) return Collections.emptyList();
 			List<Aircraft> acList = new ArrayList<Aircraft>(results);
-			return acList.subList(_queryStart, Math.min(acList.size(), _queryStart + _queryMax));
+			return (acList.subList(_queryStart, (_queryMax == 0) ? acList.size() : Math.min(acList.size(), _queryStart + _queryMax)));
 		}
 		
 		results = new CacheableList<Aircraft>(airlineCode);
