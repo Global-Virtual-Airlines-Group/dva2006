@@ -83,6 +83,7 @@ public class BuildCommand extends AbstractCommand {
 			for (Flight f : fList) {
 				info.addAssignment(new AssignmentLeg(f));
 				DraftFlightReport fr = new DraftFlightReport(f);
+				fr.setDate(info.getAssignDate());
 				if (eqOv != null)
 					fr.setEquipmentType(eqOv);
 				
