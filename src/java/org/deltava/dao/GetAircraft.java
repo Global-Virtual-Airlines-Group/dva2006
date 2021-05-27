@@ -71,8 +71,11 @@ public class GetAircraft extends DAO {
 	 */
 	public Collection<Aircraft> getAll() throws DAOException {
 		CacheableCollection<Aircraft> results = _cCache.get("$ALL");
-		if (results != null)
-			return results.clone();
+		if (results != null) {
+			if (_queryStart > results.size()) return Collections.emptyList();
+			List<Aircraft> acList = new ArrayList<Aircraft>(results);
+			return acList.subList(_queryStart, Math.min(acList.size(), _queryStart + _queryMax));
+		}
 		
 		results = new CacheableList<Aircraft>("$ALL");
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRCRAFT")) {
@@ -102,8 +105,11 @@ public class GetAircraft extends DAO {
 	 */
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		CacheableCollection<Aircraft> results = _cCache.get(airlineCode);
-		if (results != null)
-			return results.clone();
+		if (results != null) {
+			if (_queryStart > results.size()) return Collections.emptyList();
+			List<Aircraft> acList = new ArrayList<Aircraft>(results);
+			return acList.subList(_queryStart, Math.min(acList.size(), _queryStart + _queryMax));
+		}
 		
 		results = new CacheableList<Aircraft>(airlineCode);
 		try (PreparedStatement ps = prepare("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)")) {
