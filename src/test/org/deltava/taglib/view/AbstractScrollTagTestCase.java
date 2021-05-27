@@ -1,9 +1,9 @@
-package org.deltava.taglib;
+package org.deltava.taglib.view;
 
 import javax.servlet.jsp.*;
 
 import org.deltava.commands.ViewContext;
-import org.deltava.taglib.view.*;
+import org.deltava.taglib.AbstractTagTestCase;
 
 public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
 

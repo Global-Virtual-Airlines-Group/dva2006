@@ -1,4 +1,4 @@
-// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.deltava.commands.ViewContext;
 /**
  * A JSP tag to handle Page Up links at the bottom of a view page.
  * @author Luke
- * @version 7.0
+ * @version 10.0
  * @since 1.0
  */
 
@@ -37,20 +37,16 @@ public class PageUpTag extends ScrollTag {
             return SKIP_BODY;
         
         // Add Reserved parameters to the map
-        // And yes, converting to a String array is stupid
         ViewContext<?> vc = _scrollBarTag.getContext();
-        Map<String, Object> params = vc.getParameters();
-        params.put(ViewContext.START, new String[] { String.valueOf(vc.getPreviousStart()) } );
-        params.put(ViewContext.COUNT, new String[] { String.valueOf(vc.getCount()) } );
+        Map<String, String> params = vc.getParameters();
+        params.put(ViewContext.START, String.valueOf(vc.getPreviousStart()));
+        params.put(ViewContext.COUNT, String.valueOf(vc.getCount()));
         if (vc.getSortType() != null)
-            params.put(ViewContext.SORTBY, new String[] { vc.getSortType() } );        
+            params.put(ViewContext.SORTBY, vc.getSortType());        
         
-        // Get the view command name
+        // Get the view command name with parameters
         StringBuilder url = new StringBuilder(_viewTag.getCmd());
-        url.append(".do?");
-        
-        // Append the query parameters
-        url.append(buildParameters(params));
+        url.append(".do?").append(buildParameters(params));
         
         // Set the link and call the superclass renderer
         _data.setAttribute("href", url.toString());
@@ -68,10 +64,11 @@ public class PageUpTag extends ScrollTag {
 	public int doEndTag() throws JspException {
     	
         // Check if we're at the start of the view; if so render nothing
-        if (!_scrollBarTag.isViewStart())
-            super.doEndTag();
-        	
-        release();
-        return EVAL_PAGE;
+    	try {
+    		if (!_scrollBarTag.isViewStart()) super.doEndTag();
+    		return EVAL_PAGE;
+    	} finally {
+    		release();
+    	}
     }
 }
