@@ -121,6 +121,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		creq.setAirportD(aD);
 		creq.setAirportA(aA);
 		creq.setAirline(a);
+		creq.setEquipmentType(leg.getEquipmentType());
 		creq.setDisposalID(ctx.getUser().getID());
 		creq.setDisposedOn(creq.getCreatedOn().plusSeconds(1));
 		creq.setStatus(CharterRequest.RequestStatus.APPROVED);
