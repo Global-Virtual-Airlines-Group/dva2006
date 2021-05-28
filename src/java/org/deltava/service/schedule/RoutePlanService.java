@@ -146,11 +146,13 @@ public class RoutePlanService extends WebService {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);
 						dfr.setAirportA(aD);
+						dfr.setDate(Instant.now());
 						dfr.setEquipmentType(ac.getName());
 						dfr.setAuthorID(ctx.getUser().getID());
 						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
 					} else {
 						dfr = new DraftFlightReport(schedInfo);
+						dfr.setDate(Instant.now());
 						dfr.setEquipmentType(ac.getName());
 						dfr.setTimeD(schedInfo.getTimeD().toLocalDateTime());
 						dfr.setTimeA(schedInfo.getTimeA().toLocalDateTime());
@@ -160,7 +162,7 @@ public class RoutePlanService extends WebService {
 						ai = new AssignmentInfo(ac.getName());
 						ai.setPilotID(ctx.getUser());
 						ai.setStatus(AssignmentStatus.RESERVED);
-						ai.setAssignDate(Instant.now());
+						ai.setAssignDate(dfr.getDate());
 						ai.addAssignment(new AssignmentLeg(dfr));
 						ai.addFlight(dfr);
 					}
@@ -168,7 +170,6 @@ public class RoutePlanService extends WebService {
 					
 				dfr.setSimulator(sim);
 				dfr.setRank(ctx.getUser().getRank());
-				dfr.setDate(Instant.now());
 				if (gD != null) dfr.setGateD(gD.getName());
 				if (gA != null) dfr.setGateA(gA.getName());
 				if (!newRoute.equals(dfr.getRoute()))
