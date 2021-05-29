@@ -141,7 +141,7 @@ public class GetFIR extends DAO {
 		String pt = formatLocation(loc);
 		try {
 			String id = null; boolean isOceanic = false;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?)) ORDER BY OCEANIC, ID")) {
 				ps.setString(1, pt);
 				ps.setInt(2, WGS84_SRID);
 				try (ResultSet rs = ps.executeQuery()) {
@@ -155,7 +155,7 @@ public class GetFIR extends DAO {
 			if (id != null)
 				return get(id, isOceanic);
 			
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?)) ORDER BY OCEANIC, ID")) {
 				ps.setString(1, pt);
 				ps.setInt(2, WGS84_SRID);
 				try (ResultSet rs = ps.executeQuery()) {
