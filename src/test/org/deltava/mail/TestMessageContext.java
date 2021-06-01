@@ -76,6 +76,7 @@ public class TestMessageContext extends TestCase {
     	p.setDistanceType(DistanceUnit.KM);
     	p.setTZ(TZInfo.UTC);
     	p.setAirportCodeType(Airport.Code.ICAO);
+    	p.setID(10000);
     	
     	_ctxt.setRecipient(p);
     	_ctxt.addData("name", "ContextName");
@@ -84,9 +85,13 @@ public class TestMessageContext extends TestCase {
     	_ctxt.addData("longNumber", Long.valueOf(3008123));
     	_ctxt.addData("pi", Double.valueOf(Math.PI));
     	_ctxt.addData("ap", new Airport("ATL", "KATL", "Atlanta GA"));
+    	_ctxt.addData("pilot", p);
+    	_ctxt.addData("id", Integer.valueOf(p.getID()));
     	
     	// Test raw and inferred formatting
     	assertEquals("ContextName", _ctxt.execute("name"));
+    	assertEquals("10000", _ctxt.execute("pilot.ID"));
+    	assertEquals("10,000", _ctxt.execute("id"));
         assertEquals("java.lang.String", _ctxt.execute("name.getClass.getName"));
         assertEquals("300", _ctxt.execute("distance"));
         assertEquals("java.lang.Integer", _ctxt.execute("distance.getClass.getName"));
