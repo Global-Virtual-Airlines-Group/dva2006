@@ -324,6 +324,7 @@ public class MessageContext {
         			fmt = fmt.substring(0, fmt.indexOf('.'));
         		
         		long value = ((Number) objValue).longValue();
+        		if (objName.equals("ID")) return String.valueOf(value);
         		if (fmtType == FormatType.DISTANCE) {
         			double cv = value * to.getDistanceType().getFactor();
         			StringBuilder buf = new StringBuilder(StringUtils.format(cv, fmt));
