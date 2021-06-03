@@ -3,6 +3,7 @@ package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Inclusion;
 import org.deltava.beans.assign.*;
@@ -69,13 +70,12 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			if (!ofr.isPresent())
 				throw notFoundException("No flights logged");
 			
-			criteria.setAirportD(ofr.get().getAirportA());
-			
 			// Save the user
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 			ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 
 			// Get additional parameters if we are redoing a search
+			criteria.setAirportD(ofr.get().getAirportA());
 			if (ctx.getParameter("eqType") != null) {
 				criteria.setEquipmentType(ctx.getParameter("eqType"));
 				criteria.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
@@ -96,6 +96,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 				if (ai == null) {
 					String eqType = legs.isEmpty() ? "RANDOM" : legs.get(0).getEquipmentType();
 					ai = new AssignmentInfo(eqType);
+					ai.setAssignDate(Instant.now());
 				}
 				
 				// Re-search if a distance query was used
@@ -110,6 +111,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 					ScheduleEntry entry = legs.get(0);
 					ai.addAssignment(new AssignmentLeg(entry));
 					DraftFlightReport fr = new DraftFlightReport(entry);
+					fr.setDate(ai.getAssignDate());
 					fr.setTimeD(entry.getTimeD().toLocalDateTime());
 					fr.setTimeA(entry.getTimeA().toLocalDateTime());
 					fr.setAttribute(FlightReport.ATTR_HISTORIC, entry.getHistoric());

@@ -1,9 +1,8 @@
 // Copyright 2008, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
-import java.util.*;
-import java.sql.Connection;
 import java.time.Instant;
+import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
@@ -61,15 +60,14 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 			// Write the PIREPs to the database
 			ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
 			SetFlightReport pwdao = new SetFlightReport(con);
-			for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
-				FlightReport fr = i.next();
+			for (FlightReport fr : info.getFlights()) {
 				fr.setDate(info.getAssignDate());
 				fr.setRank(ctx.getUser().getRank());
 				fr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
+				fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());
 				pwdao.write(fr);
 			}
 
-			// Commit the transaction
 	        ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
