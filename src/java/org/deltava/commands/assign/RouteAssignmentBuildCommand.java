@@ -59,10 +59,10 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 				// Get the schedule entry and create the leg
 				ScheduleEntry se = sdao.get(FlightCodeParser.parse(fCode), ctx.getDB());
 				DraftFlightReport dfr = new DraftFlightReport(se);
+				dfr.setDate(info.getAssignDate());
 				dfr.setTimeD(se.getTimeD().toLocalDateTime());
 				dfr.setTimeA(se.getTimeA().toLocalDateTime());
 				dfr.setRank(ctx.getUser().getRank());
-				dfr.setDate(info.getAssignDate());
 				dfr.setEquipmentType((eqOv == null) ? se.getEquipmentType() : eqOv);
 				dfr.setRemarks(dfr.getDraftComments());
 				
