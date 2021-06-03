@@ -185,16 +185,42 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getEventAirports() throws DAOException {
+		Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())")) {
-			Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
-			
 			Collection<Airport> results = new LinkedHashSet<Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
+					Airport aD = cloneAirport(rs.getString(1));
 					airlines.forEach(al -> aD.addAirlineCode(al.getCode()));
 					results.add(aD);
-					Airport aA = (Airport) SystemData.getAirport(rs.getString(2)).clone();
+					Airport aA = cloneAirport(rs.getString(2));
+					airlines.forEach(al -> aA.addAirlineCode(al.getCode()));
+					results.add(aA);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Airports with active Flight Tours.
+	 * @return a Collection of Airports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getTourAirports() throws DAOException {
+		Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TL.AIRPORT_D, TL.AIRPORT_A FROM TOUR_LEGS TL, TOURS T WHERE (TL.ID=T.ID) AND (T.ACTIVE=?) AND (T.START_DATE<=NOW()) AND (T.END_DATE>=NOW())")) {
+			ps.setBoolean(1, true);
+			Collection<Airport> results = new LinkedHashSet<Airport>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Airport aD = cloneAirport(rs.getString(1));
+					airlines.forEach(al -> aD.addAirlineCode(al.getCode()));
+					results.add(aD);
+					Airport aA = cloneAirport(rs.getString(2));
 					airlines.forEach(al -> aA.addAirlineCode(al.getCode()));
 					results.add(aA);
 				}
@@ -327,5 +353,13 @@ public class GetAirport extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+
+	/*
+	 * Helper method to lookup an airport based on IATA/ICAO code and clone it.
+	 */
+	private static Airport cloneAirport(String code) {
+		Airport a = SystemData.getAirport(code);
+		return (a == null) ? null : (Airport) a.clone();
 	}
 }
