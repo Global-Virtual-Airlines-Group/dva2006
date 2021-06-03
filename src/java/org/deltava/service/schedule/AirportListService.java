@@ -91,10 +91,13 @@ public class AirportListService extends WebService {
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				filter.add(new IATAFilter(dao.getConnectingAirports(a, !isDest, SystemData.getAirline(al))));
 			} else if (useSched) {
+				GetAirport adao = new GetAirport(con);
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
 				schedAirports.addAll(dao.getOriginAirports(null));
 				schedAirports.addAll(dao.getDestinationAirports(null));
+				schedAirports.addAll(adao.getTourAirports());
+				schedAirports.addAll(adao.getEventAirports());
 				filter.add(new IATAFilter(schedAirports));
 			}
 			
