@@ -103,22 +103,19 @@ public class CoolerSyndicationService extends WebService {
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
+		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
 		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.cooler")));
 		re.addContent(ch);
 
 		// Convert the threads into RSS items
 		for (MessageThread mt : threads) {
 			try {
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
-			
 				// Create the RSS item element
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", mt.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
 				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
-			
-				// Add the item element
 				ch.addContent(item);
 			} catch (MalformedURLException mue) {
 				// empty

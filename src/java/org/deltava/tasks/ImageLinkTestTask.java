@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 8.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class ImageLinkTestTask extends Task {
 		public void run() {
 			HttpClient hc = new HttpClient();
 			hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-			hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+			hc.getParams().setParameter("http.useragent",  VersionInfo.getUserAgent());
 			hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
 			hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(8250));
 			hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(8250));
@@ -113,9 +113,6 @@ public class ImageLinkTestTask extends Task {
 		_mimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {

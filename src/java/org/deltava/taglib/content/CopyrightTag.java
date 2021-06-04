@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice.
  * @author Luke
- * @version 9.1
+ * @version 10.0
  * @since 1.0
  */
 
@@ -32,7 +32,6 @@ public class CopyrightTag extends TagSupport {
 	 * @return TagSupport#EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	public int doEndTag() throws JspException {
 		try {
@@ -42,16 +41,11 @@ public class CopyrightTag extends TagSupport {
 				jw.print("<div class=\"small copyright\">");
 				jw.print(pageContext.getServletContext().getServletContextName());
 				jw.print(' ');
-				jw.print(VersionInfo.APPNAME );
+				jw.print(VersionInfo.getAppName());
 				jw.print(' ');
 				jw.print(VersionInfo.HTML_COPYRIGHT);
 				jw.print(" (Build ");
-				jw.print(VersionInfo.BUILD);
-				if (VersionInfo.HOTFIX > 0) {
-					jw.print('.');
-					jw.print(VersionInfo.HOTFIX);
-				}
-				
+				jw.print(VersionInfo.getFullBuild());
 				jw.print(")</div>");
 
 				// Display disclaimer
@@ -65,16 +59,11 @@ public class CopyrightTag extends TagSupport {
 				jw.print("<!-- ");
 				jw.print(pageContext.getServletContext().getServletContextName());
 				jw.print(' ');
-				jw.print(VersionInfo.APPNAME);
+				jw.print(VersionInfo.getAppName());
 				jw.print(' ');
 				jw.print(VersionInfo.TXT_COPYRIGHT);
 				jw.print(" (Build ");
-				jw.print(String.valueOf(VersionInfo.BUILD));
-				if (VersionInfo.HOTFIX > 0) {
-					jw.print('.');
-					jw.print(VersionInfo.HOTFIX);
-				}
-				
+				jw.print(VersionInfo.getFullBuild());
 				jw.println(") -->");
 			}
 		} catch (Exception e) {

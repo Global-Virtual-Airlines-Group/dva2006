@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 7.4
+ * @version 10.0
  * @since 1.0
  */
 
@@ -93,7 +93,7 @@ public class LinkImageCommand extends AbstractCommand {
 				// Init the HTTP client
 				HttpClient hc = new HttpClient();
 				hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-				hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+				hc.getParams().setParameter("http.useragent",  VersionInfo.getUserAgent());
 				hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
 				hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(2500));
 				hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(2000));
