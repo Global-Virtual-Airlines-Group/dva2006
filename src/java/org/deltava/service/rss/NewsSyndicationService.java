@@ -58,7 +58,7 @@ public class NewsSyndicationService extends WebService {
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
+		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
 		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.news")));
 		re.addContent(ch);
 		

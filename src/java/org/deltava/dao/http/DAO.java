@@ -151,7 +151,7 @@ public abstract class DAO {
 			urlcon.setInstanceFollowRedirects(true);
 		}
 
-		setRequestHeader("User-Agent", VersionInfo.USERAGENT);
+		setRequestHeader("User-Agent", VersionInfo.getUserAgent());
 		setRequestHeader("Accept-Encoding", StringUtils.listConcat(_compression.stream().map(Compression::getEncoding).collect(Collectors.toSet()), ", "));
 	}
 

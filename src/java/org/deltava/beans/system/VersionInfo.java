@@ -2,23 +2,55 @@
 package org.deltava.beans.system;
 
 /**
- * An interface to store version info constants.
+ * A class to store version info constants.
  * @author Luke
  * @version 10.0
  * @since 1.0
  */
 
-public interface VersionInfo {
+public class VersionInfo {
 
     public static final int MAJOR = 10;
     public static final int MINOR = 0;
     
-    public static final int BUILD = 784;
-    public static final int HOTFIX = 4;
+    public static final int BUILD = 785;
+    public static final int HOTFIX = 0;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2021 Global Virtual Airlines Group. All Rights Reserved.";
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2021 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
-    public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
-    public static final String USERAGENT = "Golgotha/" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + "-b" + String.valueOf(BUILD);
+    // static class
+    private VersionInfo() {
+    	super();
+    }
+    
+    /**
+     * Returns the full build number, optionally including the hotfix.
+     * @return the full build number
+     */
+    @SuppressWarnings("unused")
+	public static String getFullBuild() {
+    	if (HOTFIX < 1) return String.valueOf(BUILD);
+    	StringBuilder buf = new StringBuilder();
+    	buf.append(BUILD);
+    	buf.append('.');
+    	buf.append(HOTFIX);
+    	return buf.toString();
+    }
+    
+    /**
+     * Returns the application name and version.
+     * @return the app name/version
+     */
+    public static String getAppName() {
+    	return String.format("(Golgotha v%d.%d)", Integer.valueOf(MAJOR), Integer.valueOf(MINOR));
+    }
+    
+    /**
+     * Returns the application HTTP user agent name.
+     * @return the user agent name
+     */
+    public static String getUserAgent() {
+    	return String.format("Golgotha/%d.%d-b%s", Integer.valueOf(MAJOR), Integer.valueOf(MINOR), getFullBuild());
+    }
 }

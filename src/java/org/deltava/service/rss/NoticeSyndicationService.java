@@ -58,16 +58,15 @@ public class NoticeSyndicationService extends WebService {
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
+		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
 		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.news")));
 		re.addContent(ch);
 
 		// Convert the entries to RSS items
 		for (News n : entries) {
 			try {
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/notam.do?id=" + StringUtils.formatHex(n.getID()));
-
 				// Create the RSS item element
+				URL url = new URL("https", ctx.getRequest().getServerName(), "/notam.do?id=" + StringUtils.formatHex(n.getID()));
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", n.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
