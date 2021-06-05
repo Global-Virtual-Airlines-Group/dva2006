@@ -36,13 +36,13 @@ public class IssueCommand extends AbstractAuditFormCommand {
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
-		boolean sendIssue = false;
+		boolean sendIssue = false; Issue i = null;
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the Issue
-			Issue i = null, oi = null;
+			Issue oi = null;
 			HelpDeskAccessControl ac = null;
 			if (!isNew) {
 				GetHelp idao = new GetHelp(con);
@@ -170,7 +170,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
-		result.setURL("hdissue", null, ctx.getID());
+		result.setURL("hdissue", null, i.getID());
 	}
 
 	/**
