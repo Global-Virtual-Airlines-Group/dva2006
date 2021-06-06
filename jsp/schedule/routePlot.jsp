@@ -177,7 +177,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script id="mapInit">
+<script>
 const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
@@ -186,17 +186,17 @@ golgotha.airportLoad.config.airline = 'all';
 golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
 golgotha.routePlot.validateBlob(f);
 golgotha.routePlot.togglePax();
-<c:choose>
-<c:when test="${empty flight}">
-// Load the airports
-f.airportD.loadAirports(golgotha.airportLoad.config);
-window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 700);
-</c:when>
-<c:otherwise>
-golgotha.routePlot.keepRoute = ${(!empty sid) || (!empty star)}; 
-golgotha.routePlot.updateRoute(${!empty rwy}, false);
-</c:otherwise>
-</c:choose>
+golgotha.local.mapInit = function() {
+<c:choose><c:when test="${empty flight}">
+	f.airportD.loadAirports(golgotha.airportLoad.config);
+	window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 700);
+</c:when><c:otherwise>
+	golgotha.routePlot.keepRoute = ${(!empty sid) || (!empty star)}; 
+	golgotha.routePlot.updateRoute(${!empty rwy}, false);
+</c:otherwise></c:choose>
+	return true;
+};
+
 // Create the map
 const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -229,6 +229,7 @@ golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.local.loaders.series.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
+	golgotha.local.mapInit();
 	return true;
 });
 </script>
