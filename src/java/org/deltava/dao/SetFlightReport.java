@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -452,8 +452,8 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, "
 			+ "TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, "
-			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, "
-			+ "CARGO_WEIGHT, CAPABILITIES) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, "
+			+ "PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, TIME_BOARD, TIME_DEBOARD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -507,7 +507,7 @@ public class SetFlightReport extends DAO {
 					ps.setString(36, afr.getFDE());
 					ps.setString(37, afr.getAircraftCode());
 					ps.setString(38, afr.getSDK());
-					ps.setBoolean(39, afr.getHasReload());
+					ps.setInt(39, afr.getRestoreCount());
 					ps.setInt(40, afr.getClientBuild());
 					ps.setInt(41, afr.getBeta());
 					ps.setDouble(42, afr.getLandingG());
@@ -516,6 +516,8 @@ public class SetFlightReport extends DAO {
 					ps.setInt(45, afr.getPaxWeight());
 					ps.setInt(46, afr.getCargoWeight());
 					ps.setLong(47, afr.getCapabilities());
+					ps.setInt(48, afr.getBoardTime());
+					ps.setInt(49, afr.getDeboardTime());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
 					ps.setInt(32, 0);
@@ -534,6 +536,8 @@ public class SetFlightReport extends DAO {
 					ps.setInt(45, 0);
 					ps.setInt(46, 0);
 					ps.setLong(47, 0);
+					ps.setInt(48, 0);
+					ps.setInt(49, 0);
 				}
 
 				executeUpdate(ps, 1);
