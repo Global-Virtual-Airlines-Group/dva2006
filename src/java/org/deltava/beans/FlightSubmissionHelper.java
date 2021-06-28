@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 10.0
  */
 
@@ -40,6 +40,7 @@ public class FlightSubmissionHelper {
 	private static final Logger log = Logger.getLogger(FlightSubmissionHelper.class);
 	
 	private final FlightReport _fr;
+	private final boolean _isACARS;
 	private final Pilot _p;
 	private FlightInfo _info;
 	private int _trackID;
@@ -66,6 +67,7 @@ public class FlightSubmissionHelper {
 		_c = c;
 		_fr = fr;
 		_p = p;
+		_isACARS = (_fr.hasAttribute(FlightReport.ATTR_ACARS) || _fr.hasAttribute(FlightReport.ATTR_SIMFDR)) && (_fr instanceof ACARSFlightReport);
 	}
 	
 	/**
@@ -300,13 +302,13 @@ public class FlightSubmissionHelper {
 		_fr.setAttribute(FlightReport.ATTR_HISTORIC, _ac.getHistoric());
 		_fr.setAttribute(FlightReport.ATTR_RANGEWARN, (_fr.getDistance() > opts.getRange()));
 
-		if (!_fr.hasAttribute(FlightReport.ATTR_ACARS)) return;
-		ACARSFlightReport afr = (ACARSFlightReport) _fr;
+		if (!_isACARS && _fr.hasAttribute(FlightReport.ATTR_XACARS)) return;
+		FDRFlightReport ffr = (FDRFlightReport) _fr;
 		
 		// Check for excessive weight
-		if ((_ac.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > _ac.getMaxTakeoffWeight()))
+		if ((_ac.getMaxTakeoffWeight() != 0) && (ffr.getTakeoffWeight() > _ac.getMaxTakeoffWeight()))
 			_fr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-		else if ((_ac.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > _ac.getMaxLandingWeight()))
+		else if ((_ac.getMaxLandingWeight() != 0) && (ffr.getLandingWeight() > _ac.getMaxLandingWeight()))
 			_fr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 	}
 	
@@ -314,7 +316,7 @@ public class FlightSubmissionHelper {
 	 * Checks this Flight for in-flight refueling.
 	 */
 	public void checkRefuel() {
-		if (!_fr.hasAttribute(FlightReport.ATTR_ACARS) || !hasPositionData()) return;
+		if (!_isACARS || !hasPositionData()) return;
 		ACARSFlightReport afr = (ACARSFlightReport) _fr;
 		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).collect(Collectors.toList());
 		FuelUse use = FuelUse.validate(fuelData);
@@ -372,9 +374,10 @@ public class FlightSubmissionHelper {
 	
 	/**
 	 * Checks the Flight Schedule to ensure the flight is valid, and sets any optional diversion/Flight Academy flags.
+	 * @return the average flight time as a Duration
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void checkSchedule() throws DAOException {
+	public Duration checkSchedule() throws DAOException {
 		
 		GetRawSchedule rsdao = new GetRawSchedule(_c);
 		GetScheduleSearch sdao = new GetScheduleSearch(_c);
@@ -407,23 +410,40 @@ public class FlightSubmissionHelper {
 			boolean wasValid = _info.isScheduleValidated() && _info.matches(_fr);
 			if (!wasValid)
 				_fr.setAttribute(FlightReport.ATTR_ROUTEWARN, !_fr.hasAttribute(FlightReport.ATTR_CHARTER));
-		} else {
-			int minHours = (int) ((avgHours.getFlightTime() * 0.75) - 5); // fixed 0.5 hour
-			int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + 5);
-			if ((_fr.getLength() < minHours) || (_fr.getLength() > maxHours))
-				_fr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			
-			// Calculate timeliness of flight
-			if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT) && _fr.hasAttribute(FlightReport.ATTR_ACARS)) {
-				ACARSFlightReport afr = (ACARSFlightReport) _fr;
-				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(_db);
-				ssc.setAirportD(_fr.getAirportD()); ssc.setAirportA(_fr.getAirportA());
-				ssc.setExcludeHistoric(_fr.getAirline().getHistoric() ? Inclusion.INCLUDE : Inclusion.EXCLUDE);
-				OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
-				afr.setOnTime(oth.validate(afr));
-				_onTimeEntry = oth.getScheduleEntry();
+			return Duration.ZERO;
+		}
+		
+		Duration ft = avgHours.getFlightTime();
+		Duration minTime = Duration.ofSeconds((long)(ft.toSeconds() * 0.75 - 1800));
+		Duration maxTime = Duration.ofSeconds((long)(ft.toSeconds() * 1.15 + 1800));
+			
+		// Determine flight length, use block time if ACARS/simFDR
+		Duration bt = _fr.getDuration();
+		if (_isACARS) {
+			ACARSFlightReport afr = (ACARSFlightReport) _fr;
+			bt = bt.minusSeconds(afr.getBoardTime() + afr.getDeboardTime());
+			if (bt.isNegative()) {
+				_fr.addStatusUpdate(0, HistoryType.SYSTEM, "Boarding/Deboarding Time exceeds Flight Time");
+				bt = Duration.ofMinutes(12);
 			}
 		}
+			
+		if ((bt.compareTo(minTime) < 0) || (bt.compareTo(maxTime) > 0))
+			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
+			
+		// Calculate timeliness of flight
+		if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT) && _isACARS) {
+			ACARSFlightReport afr = (ACARSFlightReport) _fr;
+			ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(_db);
+			ssc.setAirportD(_fr.getAirportD()); ssc.setAirportA(_fr.getAirportA());
+			ssc.setExcludeHistoric(_fr.getAirline().getHistoric() ? Inclusion.INCLUDE : Inclusion.EXCLUDE);
+			OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
+			afr.setOnTime(oth.validate(afr));
+			_onTimeEntry = oth.getScheduleEntry();
+		}
+		
+		return ft;
 	}
 	
 	/**
@@ -432,7 +452,7 @@ public class FlightSubmissionHelper {
 	 */
 	public void calculateRunways() throws DAOException {
 		
-		if (!_fr.hasAttribute(FlightReport.ATTR_ACARS)) return;
+		if (!_isACARS) return;
 		ACARSFlightReport afr = (ACARSFlightReport) _fr;
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
 		
