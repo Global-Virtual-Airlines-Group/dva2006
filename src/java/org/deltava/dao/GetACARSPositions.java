@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 9.1
+ * @version 10.1
  * @since 4.1
  */
 
@@ -62,8 +62,8 @@ public class GetACARSPositions extends GetACARSData {
 		try {
 			Map<Long, GeospaceLocation> results = new LinkedHashMap<Long, GeospaceLocation>();
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, "
-				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED, ACARS_CONNECTED, ENC_N1, ENC_N2 FROM acars.POSITIONS WHERE "
-				+ "(FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
+				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED, ACARS_CONNECTED, RESTORE_COUNT, ENC_N1, ENC_N2 FROM "
+				+ "acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
 				ps.setInt(1, flightID);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -106,8 +106,9 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setGroundOperations(rs.getInt(37));
 						entry.setNetworkConnected(rs.getBoolean(38));
 						entry.setACARSConnected(rs.getBoolean(39));
-						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(40));
-						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(41));
+						entry.setRestoreCount(rs.getInt(40));
+						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(41));
+						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(42));
 						for (int eng = 0; eng < n1.length; eng++) {
 							entry.setN1(eng, n1[eng]);
 							entry.setN2(eng, n2[eng]);
@@ -259,7 +260,7 @@ public class GetACARSPositions extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public double getFrameRate(int flightID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT AVG(FRAMERATE) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")){
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AVG(FRAMERATE) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")) {
 			ps.setInt(1, flightID);
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getDouble(1) : 0;
