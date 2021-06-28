@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 7.0
  */
 
@@ -102,7 +102,7 @@ final class OfflineFlightParser {
 		afr.setSimulator(inf.getSimulator());
 		afr.setDate(Instant.now());
 		afr.setSubmittedOn(afr.getDate());
-		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
+		afr.setRestoreCount(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue() ? 1 : 0);
 		afr.setFDE(ie.getChildTextTrim("airFile"));
 		afr.setSDK(ie.getChildTextTrim("sdk"));
 		afr.setCapabilities(StringUtils.parse(ie.getAttributeValue("capabilities", "0"), 0, true));
@@ -180,6 +180,8 @@ final class OfflineFlightParser {
 		afr.setTime(1, StringUtils.parse(ie.getChildTextTrim("time1X"), 0));
 		afr.setTime(2, StringUtils.parse(ie.getChildTextTrim("time2X"), 0));
 		afr.setTime(4, StringUtils.parse(ie.getChildTextTrim("time4X"), 0));
+		afr.setBoardTime(StringUtils.parse(ie.getChildTextTrim("timeBoard"), 0));
+		afr.setDeboardTime(StringUtils.parse(ie.getChildTextTrim("timeDeboard"), 0));
 		of.setFlightReport(afr);
 		return of;
 	}
@@ -226,6 +228,7 @@ final class OfflineFlightParser {
 		pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
 		pos.setGroundOperations(StringUtils.parse(pe.getChildTextTrim("groundOps"), 0));
 		pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
+		pos.setRestoreCount(StringUtils.parse(pe.getChildTextTrim("restoreCount"), 0));
 		pos.setNAV1(pe.getChildTextTrim("nav1"));
 		pos.setNAV2(pe.getChildTextTrim("nav2"));
 		pos.setADF1(pe.getChildTextTrim("adf1"));

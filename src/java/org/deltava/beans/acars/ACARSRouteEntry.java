@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 9.1
+ * @version 10.1
  * @since 1.0
  */
 
@@ -59,6 +59,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _groundOps;
 	private boolean _networkConnected;
 	private boolean _acarsConnected;
+	private int _restoreCount;
 
 	private static final ACARSFlags[] AP_FLAGS = { ACARSFlags.AP_APR, ACARSFlags.AP_HDG, ACARSFlags.AP_NAV, ACARSFlags.AP_ALT, ACARSFlags.AP_GPS , ACARSFlags.AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -375,6 +376,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Rerturns the number of times an ACARS flight restore had been performed thus far.
+	 * @return the numer of flight restores
+	 * @see ACARSRouteEntry#setRestoreCount(int)
+	 */
+	public int getRestoreCount() {
+		return _restoreCount;
+	}
+	
+	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
 	 * @see ACARSRouteEntry#getRadarAltitude()
@@ -667,6 +677,14 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setAutopilotType(AutopilotType ap) {
 		_ap = ap;
+	}
+	
+	/**
+	 * Updates the number of times ACARS has restored the flight thus far. 
+	 * @param cnt the number of flight restores
+	 */
+	public void setRestoreCount(int cnt) {
+		_restoreCount = cnt;
 	}
 	
 	private String getATCData(int idx) {
