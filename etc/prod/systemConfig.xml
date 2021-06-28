@@ -236,6 +236,13 @@
 		<log_stack type="Boolean">true</log_stack>
 	</jdbc>
 	
+	<!-- Redis data configuration -->
+	<redis>
+		<addr>localhost</addr>
+		<port type="Integer">6379</port>
+		<db type="Integer">0</db>
+	</redis>
+	
 	<html>
 		<table>
 			<viewSize type="Integer">60</viewSize>
