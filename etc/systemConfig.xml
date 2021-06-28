@@ -197,6 +197,7 @@
 		<url>jdbc:mysql://localhost/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
+		<socket>/var/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
@@ -224,6 +225,13 @@
 		<auto_commit type="Boolean">true</auto_commit>
 		<log_stack type="Boolean">true</log_stack>
 	</jdbc>
+
+	<!-- Redis data configuration -->
+	<redis>
+		<addr>localhost</addr>
+		<port type="Integer">6379</port>
+		<db type="Integer">0</db>
+	</redis>
 	
 	<html>
 		<v5 type="Boolean">false</v5>
