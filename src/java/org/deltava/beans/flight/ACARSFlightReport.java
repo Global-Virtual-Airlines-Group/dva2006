@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -19,6 +19,8 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	public static final String GENERIC_SDK = "Generic";
 	
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
+    private int _boardTime;
+    private int _deboardTime;
     
     private ILSCategory _ils;
     private double _landingG;
@@ -37,7 +39,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     
     private double _avgFrames;
     
-    private boolean _hasReload;
+    private int _restoreCount;
     private int _clientBuild;
     private int _beta;
     
@@ -98,6 +100,26 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     }
     
     /**
+     * Returns the amount of time spent loading passengers/cargo. 
+     * @return the amount of time in seconds
+     * @see ACARSFlightReport#setBoardTime(int)
+     * @see ACARSFlightReport#getDeboardTime()
+     */
+    public int getBoardTime() {
+    	return _boardTime;
+    }
+    
+    /**
+     * Returns the amount of time spent unloading passengers/cargo.
+     * @return the amount of time in seconds
+     * @see ACARSFlightReport#setDeboardTime(int)
+     * @see ACARSFlightReport#getBoardTime()
+     */
+    public int getDeboardTime() {
+    	return _deboardTime;
+    }
+    
+    /**
      * Returns the length of the fllight <i>in hours multiplied by ten</i>. This is done to avoid rounding errors when
      * using a floating point number. ACARS Flight Reports will use the time at 1x, 2x, and 4x acceleration to calculate
      * the flight length if the length field is not already populated. This assumes that the ACARS client has performed
@@ -144,12 +166,12 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	}
 
     /**
-     * Returns if the flight was reloaded by ACARS mid-flight.
-     * @return TRUE if reloaded, otherwise FALSE
-     * @see ACARSFlightReport#setHasReload(boolean)
+     * Returns the number of ACARS in-flight resotres on this flight.
+     * @return the number of flight restores
+     * @see ACARSFlightReport#setRestoreCount(int)
      */
-    public boolean getHasReload() {
-    	return _hasReload;
+    public int getRestoreCount() {
+    	return _restoreCount;
     }
     
     /**
@@ -253,6 +275,26 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     }
     
     /**
+     * Updates the amount of time spent loading passengers/cargo.
+     * @param secs the time in seconds
+     * @see ACARSFlightReport#getBoardTime()
+     * @see ACARSFlightReport#setDeboardTime(int)
+     */
+    public void setBoardTime(int secs) {
+    	_boardTime = Math.max(0, secs);
+    }
+    
+    /**
+     * Updates the amount of time spent unloading passengers/cargo.
+     * @param secs the time in seconds
+     * @see ACARSFlightReport#getDeboardTime()
+     * @see ACARSFlightReport#setBoardTime(int)
+     */
+    public void setDeboardTime(int secs) {
+    	_deboardTime = Math.max(0, secs);
+    }
+    
+    /**
      * Updates the FDE used for this flight.
      * @param airFile the AIR file name, or null if unknown
      * @see ACARSFlightReport#getFDE()
@@ -280,12 +322,12 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	}
     
     /**
-     * Sets if the flight was restored by ACARS mid-flight.
-     * @param hasReload TRUE if a reload occured, otherwise FALSE
-     * @see ACARSFlightReport#getHasReload()
+     * Updates the number of ACARS in-flight restores during this flight.
+     * @param cnt the number of flight restores
+     * @see ACARSFlightReport#getRestoreCount()
      */
-    public void setHasReload(boolean hasReload) {
-    	_hasReload = hasReload;
+    public void setRestoreCount(int cnt) {
+    	_restoreCount = cnt;
     }
     
     /**
