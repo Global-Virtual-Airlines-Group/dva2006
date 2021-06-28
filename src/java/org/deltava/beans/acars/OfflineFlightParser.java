@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.4
  */
 
@@ -179,6 +179,7 @@ public final class OfflineFlightParser {
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
 					pos.setGroundOperations(StringUtils.parse(pe.getChildTextTrim("groundOps"), 0));
 					pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
+					pos.setRestoreCount(StringUtils.parse(pe.getChildTextTrim("restoreCount"), 0));
 					pos.setNAV1(pe.getChildTextTrim("nav1"));
 					pos.setNAV2(pe.getChildTextTrim("nav2"));
 					
@@ -203,7 +204,10 @@ public final class OfflineFlightParser {
 		afr.setSubmittedOn(Instant.now());
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
-		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
+		afr.setRestoreCount(StringUtils.parse(ie.getChildTextTrim("restoreCount"), 0));
+		boolean hasRestore = Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue();  // TODO: remove once 156 is minimum
+		if (hasRestore && (afr.getRestoreCount() == 0))
+			afr.setRestoreCount(1);
 		afr.setRemarks(inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
@@ -275,6 +279,8 @@ public final class OfflineFlightParser {
 		afr.setTime(1, StringUtils.parse(ie.getChildTextTrim("time1X"), 0));
 		afr.setTime(2, StringUtils.parse(ie.getChildTextTrim("time2X"), 0));
 		afr.setTime(4, StringUtils.parse(ie.getChildTextTrim("time4X"), 0));
+		afr.setBoardTime(StringUtils.parse(ie.getChildTextTrim("timeBoard"), 0));
+		afr.setDeboardTime(StringUtils.parse(ie.getChildTextTrim("timeDeboard"), 0));
 		result.setFlightReport(afr);
 		return result;
 	}
