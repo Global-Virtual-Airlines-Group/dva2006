@@ -19,15 +19,14 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.0
  */
 
 public class ExternalPIREPCommand extends AbstractCommand {
 	
 	// Check ride approval values
-	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" },
-			new String[] { "true", "false" });
+	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" }, new String[] { "true", "false" });
 
     /**
      * Executes the command.
@@ -95,9 +94,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 				GetSchedule scdao = new GetSchedule(con);
 				scdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				FlightTime ft = scdao.getFlightTime(fr, ud.getDB());
-				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
-				
-				// Display user's networks
+				ctx.setAttribute("avgTime", ft.getFlightTime(), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 			}
 			

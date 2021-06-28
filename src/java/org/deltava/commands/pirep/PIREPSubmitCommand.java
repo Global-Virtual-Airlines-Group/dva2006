@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -97,7 +97,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA), false);
 
 			// Check the schedule database and check the route pair
-			fsh.checkSchedule();
+			Duration avgTime = fsh.checkSchedule();
+			if (pirep.hasAttribute(FlightReport.ATTR_TIMEWARN))
+				ctx.setAttribute("avgTime", avgTime, REQUEST);
 			
 			// Start transaction
 			ctx.startTX();
