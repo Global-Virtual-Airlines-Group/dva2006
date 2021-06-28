@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -69,10 +69,17 @@ public class FlightDataExportService extends WebService {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
 		// Format the ACARS data
+		int restoreCount = 0;
 		for (RouteEntry entry : routeData) {
-			if (entry instanceof ACARSRouteEntry)
-				ctx.println(format((ACARSRouteEntry) entry, wt));
-			else if (entry instanceof XARouteEntry)
+			if (entry instanceof ACARSRouteEntry) {
+				ACARSRouteEntry ae = (ACARSRouteEntry) entry;
+				if (ae.getRestoreCount() > restoreCount) {
+					ctx.println(String.format("*** FLIGHT RESTORE %d ***", Integer.valueOf(ae.getRestoreCount())));
+					restoreCount = ae.getRestoreCount();
+				}
+				
+				ctx.println(format(ae, wt));
+			} else if (entry instanceof XARouteEntry)
 				ctx.println(format((XARouteEntry) entry, wt));
 		}
 
