@@ -54,8 +54,8 @@ the <content:airline /> flight schedule.</span> This may cause a delay in your F
 <c:if test="${fn:timeWarn(pirep)}">
 <br />
 <span class="warn bld">Your have logged <fmt:dec value="${pirep.length / 10.0}" /> flight hours for your flight between ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) and ${pirep.airportA.name } 
-(<fmt:airport airport="${pirep.airportA}" />). The <content:airline /> Flight Schedule lists the average duration of flights between these two airports (including delays and turnaround time) as <fmt:dec value="${avgTime / 10}" /> 
-hours.</span> This may cause a delay in your Flight Report being approved.<br />
+(<fmt:airport airport="${pirep.airportA}" />). The <content:airline /> Flight Schedule lists the average duration of flights between these two airports (including delays and turnaround time) as <fmt:duration duration="${avgTime }" />.</span> 
+ This may cause a delay in your Flight Report being approved.<br />
 </c:if>
 <c:if test="${fn:rangeWarn(pirep)}">
 <br />
