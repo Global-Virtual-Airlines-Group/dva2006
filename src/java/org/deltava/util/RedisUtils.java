@@ -27,6 +27,13 @@ public class RedisUtils {
 	private static JedisPool _client;
 	private static int _db;
 
+	private static class DefaultJedisConfig implements JedisClientConfig {
+		
+		private DefaultJedisConfig() {
+			super();
+		}
+	}
+	
 	// static class
 	private RedisUtils() {
 		super();
@@ -84,10 +91,11 @@ public class RedisUtils {
 	/**
 	 * Initializes the Redis connection.
 	 * @param addr the address of the Redis server
+	 * @param port the TCP/IP port number
 	 * @param db the Redis database
 	 * @param poolName the connection pool name
 	 */
-	public static synchronized void init(String addr, int db, String poolName) {
+	public static synchronized void init(String addr, int port, int db, String poolName) {
 		if (_client != null) return;
 		try {
 			JedisPoolConfig config = new JedisPoolConfig();
@@ -102,7 +110,16 @@ public class RedisUtils {
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
 			config.setTimeBetweenEvictionRunsMillis(30000);
-			_client = new JedisPool(config, addr, 6379);
+			
+			// Check for domain socket
+			String host = StringUtils.isEmpty(addr) ? "localhost" : addr;
+			if (host.startsWith("/")) {
+				log.info("Using Unix socket " + addr);
+				JedisSocketFactory sf = new JedisDomainSocketFactory(host);
+				_client = new JedisPool(config, sf, new DefaultJedisConfig());
+			} else
+				_client = new JedisPool(config, host, port);	
+			
 			_db = Math.max(0, db);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
 			log.info("Initialized using database " + _db);
