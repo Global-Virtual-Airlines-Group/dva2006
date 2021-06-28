@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -556,11 +556,11 @@ public class GetFlightReports extends DAO {
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
-			boolean hasACARS = (md.getColumnCount() > 68);
+			boolean hasACARS = (md.getColumnCount() > 70);
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 73);
+			boolean hasOnTime = (md.getColumnCount() > 75);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -673,20 +673,22 @@ public class GetFlightReports extends DAO {
 					ap.setTime(1, rs.getInt(63));
 					ap.setTime(2, rs.getInt(64));
 					ap.setTime(4, rs.getInt(65));
-					ap.setFDE(rs.getString(66));
-					ap.setAircraftCode(rs.getString(67));
-					ap.setSDK(rs.getString(68));
-					ap.setCapabilities(rs.getLong(69));
-					ap.setHasReload(rs.getBoolean(70));
-					ap.setAverageFrameRate(rs.getInt(71) / 10d);
-					ap.setClientBuild(rs.getInt(72));
-					ap.setBeta(rs.getInt(73));
+					ap.setBoardTime(rs.getInt(66));
+					ap.setDeboardTime(rs.getInt(67));
+					ap.setFDE(rs.getString(68));
+					ap.setAircraftCode(rs.getString(69));
+					ap.setSDK(rs.getString(70));
+					ap.setCapabilities(rs.getLong(71));
+					ap.setRestoreCount(rs.getInt(72));
+					ap.setAverageFrameRate(rs.getInt(73) / 10d);
+					ap.setClientBuild(rs.getInt(74));
+					ap.setBeta(rs.getInt(75));
 					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(74)]);
+						ap.setOnTime(OnTime.values()[rs.getInt(76)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(72));
-					ap.setMinorVersion(rs.getInt(73));
+					ap.setMajorVersion(rs.getInt(74));
+					ap.setMinorVersion(rs.getInt(75));
 				}
 
 				results.add(p);
