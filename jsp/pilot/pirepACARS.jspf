@@ -27,7 +27,7 @@
 <c:if test="${!empty flightInfo}"><c:if test="${flightInfo.isACARS64Bit}"> [64-bit]</c:if>
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
 <c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if></span></content:filter></c:if>
-<c:if test="${pirep.hasReload}">&nbsp;<span class="small ita bld">(Flight Restore)</span></c:if></td>
+<c:if test="${pirep.restoreCount > 0}">&nbsp;<span class="small ita bld">(Flight Restore<c:if test="${pirep.restoreCount > 1}">&nbsp;x<fmt:int value="${pirep.restoreCount}" /></c:if>)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${isXACARS}">
@@ -78,6 +78,12 @@
 <fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeD}" tz="${pirep.airportD.TZ}" className="bld" /></span></c:if></td>
 </tr>
+<c:if test="${pirep.boardTime > 0}" >
+<tr>
+ <td class="label">Loading Time</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.boardTime / 60}" /> minutes <fmt:int value="${pirep.boardTime % 60}" /> seconds</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Taxi from Gate</td>
  <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" /> total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
@@ -129,8 +135,7 @@
  <fmt:weight value="${pirep.takeoffWeight}" /> total, <fmt:weight value="${pirep.takeoffFuel}" />  fuel
 <c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}"> 
 <span class="small bld">(<fmt:weight value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> overweight)</span></c:if>
-<c:if test="${access.canDispose && (pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
- | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TAKEOFF POINT</el:cmd></c:if></td>
+<c:if test="${access.canDispose && (pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}"> | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TAKEOFF POINT</el:cmd></c:if></td>
 </tr>
 <c:if test="${!empty flightInfo.altitude}">
 <tr>
@@ -182,8 +187,7 @@
 &nbsp;<fmt:weight value="${pirep.landingWeight}" /> total, <fmt:weight value="${pirep.landingFuel}" /> fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
 &nbsp;<span class="small bld">(<fmt:weight value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> overweight)</span></c:if>
-<c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
- | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
+<c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}"> | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>
 <c:if test="${pirep.endTime.isAfter(pirep.landingTime)}">
 <tr>
@@ -206,6 +210,12 @@
 <fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel
 <c:if test="${acLoaded && (pirep.gateFuel < acInfo.baseFuel)}">&nbsp;<span class="error bld caps">LOW FUEL</span></c:if>
 <c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom <span class="nophone">to Gate</span></a></c:if></td>
+</tr>
+</c:if>
+<c:if test="${pirep.deboardTime > 0}">
+<tr>
+ <td class="label">Unloading Time</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.deboardTime / 60}" /> minutes <fmt:int value="${pirep.deboardTime % 60}" /> seconds</td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">
