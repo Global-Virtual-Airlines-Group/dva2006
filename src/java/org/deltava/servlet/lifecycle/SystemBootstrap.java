@@ -81,6 +81,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Attempt to load the driver and connect
 		try {
 			_jdbcPool.setDriver(SystemData.get("jdbc.driver"));
+			_jdbcPool.setSocket(SystemData.get("jdbc.socket"));
 			_jdbcPool.connect(SystemData.getInt("jdbc.pool_size"));
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Cannot load JDBC driver class - " + SystemData.get("jdbc.Driver"));
@@ -94,7 +95,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SharedData.addData(SharedData.JDBC_POOL + SystemData.get("airline.code"), _jdbcPool);
 		
 		// Init Redis
-		RedisUtils.init("localhost", 0, code);
+		RedisUtils.init(SystemData.get("redis.addr"), SystemData.getInt("redis.port", 6379), SystemData.getInt("redis.db", 0), code);
 
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
