@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -461,7 +461,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				org.deltava.dao.GetSchedule scdao = new org.deltava.dao.GetSchedule(con);
 				scdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				FlightTime ft = scdao.getFlightTime(fr, ctx.getDB());
-				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
+				ctx.setAttribute("avgTime", ft.getFlightTime(), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 			}
 			
