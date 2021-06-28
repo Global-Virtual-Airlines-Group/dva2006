@@ -12,10 +12,8 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
@@ -29,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 4.1
  */
 
@@ -112,6 +110,13 @@ public class XPIREPService extends XAService {
 			Duration timeS = Duration.between(inf.getStartTime(), inf.getEndTime());
 			xfr.setLength((int)(timeS.getSeconds() / 360));
 			
+			// Get the flight submission helper
+			FlightSubmissionHelper fsh = new FlightSubmissionHelper(con, xfr, usr);
+			fsh.setAirlineInfo(SystemData.get("airline.code"), ctx.getDB());
+			
+			// Check for draft flight reports
+			fsh.checkFlightReports();
+			
 			// Check for a check ride
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(usr.getID(), xfr.getEquipmentType(), TestStatus.NEW);
@@ -121,125 +126,35 @@ public class XPIREPService extends XAService {
 				xfr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			}
 			
-			// Check if this Flight Report counts for promotion
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection<String> promoEQ = eqdao.getPrimaryTypes(ctx.getDB(), xfr.getEquipmentType());
-
-			// Loop through the eq types, not all may have the same minimum promotion stage length!!
-			if (promoEQ.contains(usr.getEquipmentType())) {
-				FlightPromotionHelper helper = new FlightPromotionHelper(xfr);
-				for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
-					String pType = i.next();
-					EquipmentType pEQ = eqdao.get(pType, ctx.getDB());
-					boolean isOK = helper.canPromote(pEQ);
-					if (!isOK) {
-						i.remove();
-						xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Not eligible for promotion: " + helper.getLastComment());
-					}
-				}
-				
-				xfr.setCaptEQType(promoEQ);
-			}
+			// Check if the pilot is rated in the equipment type
+			fsh.checkRatings();
+			fsh.checkAircraft();
 			
-			// Check that the user has an online network ID
-			OnlineNetwork network = xfr.getNetwork();
-			if ((network != null) && (!usr.hasNetworkID(network))) {
-				xfr.addStatusUpdate(0, HistoryType.SYSTEM, "No " + network.toString() + " ID, resetting Online Network flag");
-				xfr.setNetwork(null);
-			} else if ((network == null) && (xfr.getDatabaseID(DatabaseID.EVENT) != 0)) {
-				xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Filed offline, resetting Online Event flag");
-				xfr.setDatabaseID(DatabaseID.EVENT, 0);
-			}
+			// Check Online status, and Online Event
+			fsh.checkOnlineNetwork();
+			fsh.checkOnlineEvent();
 			
-			// Check if it's an Online Event flight
-			GetEvent evdao = new GetEvent(con);
-			EventFlightHelper efr = new EventFlightHelper(xfr);
-			if ((xfr.getDatabaseID(DatabaseID.EVENT) == 0) && (xfr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				List<Event> events = evdao.getPossibleEvents(xfr, SystemData.get("airline.code"));
-				events.removeIf(e -> !efr.matches(e));
-				if (!events.isEmpty()) {
-					Event e = events.get(0);
-					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Detected participation in " + e.getName() + " Online Event");
-					xfr.setDatabaseID(DatabaseID.EVENT, e.getID());
-				}
-			}
-			
-			// Check that the event hasn't expired
-			if (xfr.getDatabaseID(DatabaseID.EVENT) != 0) {
-				Event e = evdao.get(xfr.getDatabaseID(DatabaseID.EVENT));
-				if ((e != null) && !efr.matches(e)) {
-					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Flight logged over 24 hours after Event completion");
-					xfr.setDatabaseID(DatabaseID.EVENT, 0);
-				} else {
-					xfr.addStatusUpdate(0, HistoryType.SYSTEM, "Unknown Online Event - " + xfr.getDatabaseID(DatabaseID.EVENT));
-					xfr.setDatabaseID(DatabaseID.EVENT, 0);
-				}
-			}
-			
-			// Check if the user is rated to fly the aircraft
-			EquipmentType eq = eqdao.get(usr.getEquipmentType());
-			if (!usr.getRatings().contains(xfr.getEquipmentType()) && !eq.getRatings().contains(xfr.getEquipmentType()))
-				xfr.setAttribute(FlightReport.ATTR_NOTRATED, !xfr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
-			
-			// Check for historic aircraft
-			GetAircraft acdao = new GetAircraft(con);
-			Aircraft a = acdao.get(xfr.getEquipmentType());
-			if (a == null) {
-				log.warn("Invalid equipment type from " + usr.getName() + " - " + xfr.getEquipmentType());
-				xfr.setRemarks(xfr.getRemarks() + " (Invalid equipment: " + xfr.getEquipmentType());
-				xfr.setEquipmentType(usr.getEquipmentType());
-			} else {
-				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
-				xfr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
-				
-				// Check for excessive distance
-				if (xfr.getDistance() > opts.getRange())
-					xfr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
-
-				// Check for excessive weight
-				if ((a.getMaxTakeoffWeight() != 0) && (xfr.getTakeoffWeight() > a.getMaxTakeoffWeight()))
-					xfr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-				else if ((a.getMaxLandingWeight() != 0) && (xfr.getLandingWeight() > a.getMaxLandingWeight()))
-					xfr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-			}
-			
-			// Check if it's a Flight Academy flight
-			GetRawSchedule rsdao = new GetRawSchedule(con);
-			GetSchedule sdao = new GetSchedule(con);
-			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
-			ScheduleEntry sEntry = sdao.get(xfr, ctx.getDB());
-			xfr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
+			// Check for a Flight Tour
+			fsh.checkTour();
 			
 			// Check the schedule database and check the route pair
-			FlightTime avgHours = sdao.getFlightTime(xfr, ctx.getDB());
-			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !xfr.hasAttribute(FlightReport.ATTR_CHARTER))
-				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
-			else {
-				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				if ((xfr.getLength() < minHours) || (xfr.getLength() > maxHours))
-					xfr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
-			}
-			
+			fsh.checkSchedule();
+
 			// Load the departure runway
 			GetNavRoute navdao = new GetNavRoute(con);
 			if (xfr.getTakeoffHeading() > -1) {
 				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), xfr.getSimulator(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
-				if (r != null) {
-					int dist = r.distanceFeet(xfr.getTakeoffLocation());
-					fi.setRunwayD(new RunwayDistance(r, dist));
-				}
+				if (r != null)
+					fi.setRunwayD(new RunwayDistance(r, r.distanceFeet(xfr.getTakeoffLocation())));
 			}
 
 			// Load the arrival runway
 			if (xfr.getLandingHeading() > -1) {
 				LandingRunways lr = navdao.getBestRunway(xfr.getAirportA(), xfr.getSimulator(), xfr.getLandingLocation(), xfr.getLandingHeading());
 				Runway r = lr.getBestRunway();
-				if (r != null) {
-					int dist = r.distanceFeet(xfr.getLandingLocation());
-					fi.setRunwayA(new RunwayDistance(r, dist));
-				}
+				if (r != null)
+					fi.setRunwayA(new RunwayDistance(r, r.distanceFeet(xfr.getLandingLocation())));
 			}
 			
 			// Parse the route
