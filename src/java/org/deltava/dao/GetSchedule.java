@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -208,9 +208,9 @@ public class GetSchedule extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					boolean hasHistoric = (rs.getInt(5) > 0); boolean hasCurrent = (rs.getInt(4) > rs.getInt(5));
-					result = new FlightTime(rs.getInt(3), (hasHistoric && hasCurrent) ? RoutePairType.HYBRID : (hasHistoric ? RoutePairType.HISTORIC : RoutePairType.PRESENT));
+					result = new FlightTime(Duration.ofMinutes(rs.getInt(3) * 6), (hasHistoric && hasCurrent) ? RoutePairType.HYBRID : (hasHistoric ? RoutePairType.HISTORIC : RoutePairType.PRESENT));
 				} else
-					result = new FlightTime(0, RoutePairType.UNKNOWN);
+					result = new FlightTime(Duration.ZERO, RoutePairType.UNKNOWN);
 			}
 
 			return result;
