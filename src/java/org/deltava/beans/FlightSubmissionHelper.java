@@ -302,7 +302,7 @@ public class FlightSubmissionHelper {
 		_fr.setAttribute(FlightReport.ATTR_HISTORIC, _ac.getHistoric());
 		_fr.setAttribute(FlightReport.ATTR_RANGEWARN, (_fr.getDistance() > opts.getRange()));
 
-		if (!_isACARS && _fr.hasAttribute(FlightReport.ATTR_XACARS)) return;
+		if (!FDRFlightReport.class.isInstance(_fr)) return;
 		FDRFlightReport ffr = (FDRFlightReport) _fr;
 		
 		// Check for excessive weight
