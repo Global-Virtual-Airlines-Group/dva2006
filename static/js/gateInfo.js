@@ -1,4 +1,5 @@
 golgotha.gate = golgotha.gate || {ids:[],gates:[],ourGates:[],isRoute:false,isEdit:false,isDirty:[],data:[]};
+golgotha.gate.ok = function() { return true; };
 golgotha.gate.icons = {ours:{pal:2,icon:56,tx:1},intl:{pal:2,icon:48,tx:1},pop:{pal:3,icon:52,tx:0.75},other:{pal:3,icon:60,tx:0.65},uspfi:{pal:2,icon:16,tx:0.75}};
 golgotha.gate.markDirty = function(id) { if (!golgotha.gate.isDirty.contains(id)) golgotha.gate.isDirty.push(id); };
 golgotha.gate.clearListeners = function(m) { google.maps.event.clearInstanceListeners(m); };
@@ -36,7 +37,8 @@ return true;
 };
 
 golgotha.gate.display = function(al, ff) {
-	ff = ff || function() { return true; };
+	ff = ff || golgotha.gate.ok;
+	
 	golgotha.gate.gates.forEach(golgotha.gate.clearListeners);
 	golgotha.gate.ourGates.forEach(golgotha.gate.clearListeners);
 	map.removeMarkers(golgotha.gate.gates);
@@ -57,7 +59,7 @@ golgotha.gate.display = function(al, ff) {
 		else if (g.useCount > 0)
 			opts = golgotha.gate.icons.pop;
 
-		llb.extend(g.ll);
+		if ((!al) || (g.isOurs && (al))) llb.extend(g.ll);
 		const mrk = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,opacity:opts.tx,info:g.info}, g.ll);
 		mrk.gateID = id; g.toggleAirline = golgotha.gate.toggleAirline;
 		const dst = g.isOurs ? golgotha.gate.ourGates : golgotha.gate.gates;
@@ -126,7 +128,7 @@ golgotha.gate.save = function() {
 };
 
 golgotha.gate.updateAirline = function(combo) {
-	if (golgotha.gate.isEdit) return false;
+	if (!golgotha.gate.isEdit) return false;
 	golgotha.util.display('helpText', (combo.selectedIndex > 0));
 	if (combo.selectedIndex < 1) {
 		delete golgotha.gate.airline;
