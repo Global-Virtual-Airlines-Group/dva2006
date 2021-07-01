@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 6.3
  */
 
@@ -46,7 +46,7 @@ public class GateUpdateService extends WebService {
 			return SC_NOT_FOUND;
 		
 		JSONArray ja = new JSONArray(new JSONTokener(ctx.getParameter("data")));
-		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.FSX);
+		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
 		try {
 			Connection con = ctx.getConnection();
 			GetGates gdao = new GetGates(con);
