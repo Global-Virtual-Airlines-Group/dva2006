@@ -3,7 +3,9 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.util.cache.CacheManager;
@@ -11,7 +13,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 6.3
  */
 
@@ -47,10 +49,11 @@ public class SetGates extends DAO {
 			}
 			
 			// Write gate data
+			Collection<String> cacheSimKeys = List.of(Simulator.FSX, Simulator.P3D, Simulator.P3Dv4).stream().map(Simulator::name).collect(Collectors.toSet());
 			int totalWrites = gates.stream().filter(g -> g.getAirlines().size() > 0).mapToInt(g -> g.getAirlines().size()).sum();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, ZONE) VALUES (?, ?, ?, ?)")) {
 				for (Gate g : gates) {
-					cacheKeys.add(String.format("AP-%s-%s", g.getCode(), g.getSimulator().name()));
+					cacheSimKeys.stream().map(csk -> String.format("AP-%s-%s", g.getCode(), csk)).forEach(cacheKeys::add);
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
 					ps.setInt(4, g.getZone().ordinal());
