@@ -74,7 +74,7 @@ golgotha.gate.display = function(al, ff) {
 
 	map.addMarkers(golgotha.gate.gates);
 	map.addMarkers(golgotha.gate.ourGates);
-	map.fitBounds(llb);
+	if (!llb.isEmpty()) map.fitBounds(llb);
 	return true;
 };
 
