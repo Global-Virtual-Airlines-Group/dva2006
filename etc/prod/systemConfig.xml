@@ -238,7 +238,7 @@
 	
 	<!-- Redis data configuration -->
 	<redis>
-		<addr>localhost</addr>
+		<addr>/var/run/redis/redis.sock</addr>
 		<port type="Integer">6379</port>
 		<db type="Integer">0</db>
 	</redis>
