@@ -43,15 +43,15 @@ if (parseInt(f.flightLeg.value) > 8)
 	throw new golgotha.event.ValidationError('The Flight Leg must be equal to or less than 8.', f.flightLeg);
 <content:browser html4="true">
 // Validate the date
-<content:filter roles="!PIREP">
+<c:if test="${dateCheck}">
 const pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 const pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
 const pDate = new Date(pY, f.dateM.selectedIndex, pD);
-if (pDate > fwdLimit)
+if (pDate > golgotha.local.fwdLimit)
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight in the future.', f.dateM);
-if (pDate < bwdLimit)
+if (pDate < golgotha.local.bwdLimit)
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.', f.dateD);
-</content:filter></content:browser>
+</c:if></content:browser>
 golgotha.form.submit(f);
 return true;
 };
@@ -141,10 +141,10 @@ for (x = 0; x < combo.options.length; x++) {
 
 return true;
 };
-<content:browser html4="true">
+
 // Set PIREP date limitations
-<fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
-<fmt:jsdate var="bwdLimit" date="${backwardDateLimit}" /></content:browser>
+<fmt:jsdate var="golgotha.local.fwdLimit" date="${forwardDateLimit}" />
+<fmt:jsdate var="golgotha.local.bwdLimit" date="${backwardDateLimit}" />
 </script>
 </head>
 <content:copyright visible="false" />
