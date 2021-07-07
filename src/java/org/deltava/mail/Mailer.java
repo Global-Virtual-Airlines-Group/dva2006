@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -28,7 +28,6 @@ public class Mailer {
 	private static final Logger log = Logger.getLogger(Mailer.class);
 
 	private final SMTPEnvelope _env;
-	private final boolean _multiChannel;
 	private final Collection<EMailAddress> _msgTo = new LinkedHashSet<EMailAddress>();
 	private final Collection<PushEndpoint> _pushTo = new LinkedHashSet<PushEndpoint>();
 	private MessageContext _ctx;
@@ -38,17 +37,7 @@ public class Mailer {
 	 * @param from the source address
 	 */
 	public Mailer(EMailAddress from) {
-		this(from, SystemData.getBoolean("smtp.multiChannel") || !SystemData.has("smtp.multiChannel")); // default to true, not false
-	}
-	
-	/**
-	 * Initializes the mailer with a source address.
-	 * @param from the source address
-	 * @param multiChannel TRUE to send both push and email to same recipient, otherwise FALSE
-	 */
-	public Mailer(EMailAddress from, boolean multiChannel) {
 		super();
-		_multiChannel = multiChannel || !SystemData.has("security.key.push.pub");
 		String domain = SystemData.get("airline.domain");
 		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(domain);
 		_env = new SMTPEnvelope(isOurs, !isOurs ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
@@ -77,22 +66,24 @@ public class Mailer {
 	 * @param addr the recipient name/address
 	 */
 	public void send(EMailAddress addr) {
-		if (addRecipient(addr)) send();
+		if (addRecipient(addr) > 0) send();
 	}
 	
-	/**
+	/*
 	 * Adds an individual address to the recipient list.
-	 * @param addr the recipient name/address
-	 * @return TRUE if there is a valid address to send to
 	 */
-	public boolean addRecipient(EMailAddress addr) {
-		boolean doSend = false;
-		if (addr instanceof PushAddress)
-			doSend |= _pushTo.addAll(((PushAddress)addr).getPushEndpoints());
-		if (EMailAddress.isValid(addr) && (_multiChannel || !doSend))
-			doSend |= _msgTo.add(addr);
+	private synchronized int addRecipient(EMailAddress addr) {
+		int cnt = 0;
+		if (EMailAddress.isValid(addr))
+			cnt += _msgTo.add(addr) ? 1 : 0;
+		if (addr instanceof PushAddress) {
+			int oldCnt = _pushTo.size();
+			if (_pushTo.addAll(((PushAddress)addr).getPushEndpoints()))
+				cnt += (_pushTo.size() - oldCnt);
+		}
 		
-		return doSend;
+		if (cnt == 0) log.warn("Not sending to " + MailUtils.format(addr));
+		return cnt;
 	}
 
 	/**
@@ -109,8 +100,11 @@ public class Mailer {
 	 * @param addrs a Collection of recipient names/addresses
 	 */
 	public void send(Collection<? extends EMailAddress> addrs) {
-		boolean anySent = addrs.stream().filter(this::addRecipient).findAny().isPresent();
-		if (anySent) send();
+		int sentCount = addrs.stream().mapToInt(addr -> addRecipient(addr)).sum();
+		if (sentCount == 0)
+			log.warn("Sent zero messages from " + addrs.size() + " addresses");
+		else
+			send();
 	}
 	
 	private void sendSMTP(EMailAddress addr) {
@@ -169,7 +163,7 @@ public class Mailer {
 	/*
 	 * Generates and sends the e-mail message. The recipient object is added to the messaging context under the name &quot;recipient&quot;.
 	 */
-	private void send() {
+	private synchronized void send() {
 		if (_msgTo.isEmpty() && _pushTo.isEmpty()) {
 			log.warn("Cannot send email - no recipients");
 			return;
