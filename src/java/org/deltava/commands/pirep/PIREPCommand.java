@@ -357,8 +357,10 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Save PIREP date limitations
 		int maxRange = SystemData.getInt("users.pirep.maxDays", 1);
 		int minRange = SystemData.getInt("users.pirep.minDays", 7);
+		boolean noDateCheck = Boolean.valueOf(ctx.getParameter("noDateCheck")).booleanValue();
 		ctx.setAttribute("forwardDateLimit", today.plusDays(maxRange), REQUEST);
 		ctx.setAttribute("backwardDateLimit", today.minusDays(minRange), REQUEST);
+		ctx.setAttribute("dateCheck", Boolean.valueOf(!ctx.isUserInRole("PIREP") || noDateCheck), REQUEST);
 		
 		// Set flight years
 		Collection<Integer> years = new TreeSet<Integer>();
