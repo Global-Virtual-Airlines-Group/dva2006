@@ -208,6 +208,7 @@
 		<url>jdbc:mysql://mysql.gva.aws/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
+		<socket>/var/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
