@@ -186,9 +186,9 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td style="width:12%">FLIGHT NUMBER</td>
  <td style="width:10%">EQUIPMENT</td>
  <td>AIRPORTS</td>
- <td class="nophone" style="width:8%">DEPARTS</td>
+ <td style="width:8%">DEPARTS</td>
  <td class="nophone" style="width:8%">ARRIVES</td>
- <td style="width:6%">LENGTH</td>
+ <td class="nophone" style="width:6%">LENGTH</td>
  <td class="nophone" style="width:5%">ROUTES</td>
  <td class="nophone">DISTANCE</td>
 </tr>
@@ -201,17 +201,17 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld" title="${srcInfo.source.description}, ${srcDate}">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
- ${flight.airportA.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
+ <td class="small"><span class="nophone">${flight.airportD.name}&nbsp;(</span><el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd><span class="nophone">)</span> -
+<span class="nophone">${flight.airportA.name}&nbsp;(</span><el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd><span class="nophone">)</span></td>
 <c:if test="${param.showUTCTimes}">
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
+ <td><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
 </c:if>
- <td class="small"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
+ <td class="small nophone"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
