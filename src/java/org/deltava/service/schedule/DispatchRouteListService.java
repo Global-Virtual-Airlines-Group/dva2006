@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.2
  */
 
@@ -46,6 +46,8 @@ public class DispatchRouteListService extends WebService {
 		// Get the airports
 		Airport aD = SystemData.getAirport(req.optString("airportD"));
 		Airport aA = SystemData.getAirport(req.optString("airportA"));
+		if ((aD == null) || (aA == null))
+			throw error(SC_BAD_REQUEST, "No Airport Pair");
 		
 		// Check if loading from FlightAware
 		boolean doFA = req.optBoolean("external") && SystemData.getBoolean("schedule.flightaware.enabled");
