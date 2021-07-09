@@ -232,7 +232,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty pirep.gateA || !empty pirep.timeA}">
 <tr>
  <td class="label">Scheduled Arrival</td>
- <td class="data"><c:if test="${!empty pirep.gateA}">From <span class="ter bld">${pirep.gateA}</span></c:if><c:if test="${!empty pirep.gateA && !empty pirep.timeA}"> at </c:if>
+ <td class="data"><c:if test="${!empty pirep.gateA}">At <span class="ter bld">${pirep.gateA}</span></c:if><c:if test="${!empty pirep.gateA && !empty pirep.timeA}"> at </c:if>
 <c:if test="${!empty pirep.timeA}"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${pirep.timeA}" /></c:if></td>
 </tr>
 </c:if>
