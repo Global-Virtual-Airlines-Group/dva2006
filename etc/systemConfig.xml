@@ -388,7 +388,7 @@
 		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
 		<hash>
 			<salt>hashcode salt</salt>
-			<algorithm>SHA-1</algorithm>
+			<algorithm>SHA-256</algorithm>
 			<acars>
 				<salt>ha$h-Salt-ACARS-Value</salt>
 				<algorithm>SHA-256</algorithm>
