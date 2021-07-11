@@ -121,7 +121,7 @@ public class SecurityCookieFilter extends HttpFilter {
 			long timeUntilExpiry = (cData.getExpiryDate().toEpochMilli() - System.currentTimeMillis());
 			
 			// Renew the cookie if it's about to expire
-			if (timeUntilExpiry < 900_000) {
+			if (timeUntilExpiry < 3_600_000) {
 				cData.setExpiryDate(cData.getExpiryDate().plusSeconds(3600 * 4));
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
 				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	

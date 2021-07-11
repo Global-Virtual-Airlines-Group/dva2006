@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class SecurityCookieData implements java.io.Serializable {
 	private String _remoteAddr;
 	private Instant _loginDate;
 	private Instant _expiryDate;
+	private String _sigAlgorithm = "SHA-256";
 	
 	/**
 	 * Creates security cookie data for a given user ID.
@@ -62,6 +63,14 @@ public class SecurityCookieData implements java.io.Serializable {
 	}
 	
 	/**
+	 * Returns the encrypted cookie signature algorithm name.
+	 * @return the algorithm name
+	 */
+	public String getSignatureAlgorithm() {
+		return _sigAlgorithm;
+	}
+	
+	/**
 	 * Checks if the security cookie has expired.
 	 * @return TRUE if the cookie has expired, otherwise FALSE
 	 */
@@ -91,6 +100,14 @@ public class SecurityCookieData implements java.io.Serializable {
  	 */
  	public void setRemoteAddr(String remoteAddr) {
  		_remoteAddr = remoteAddr;
+ 	}
+ 	
+ 	/**
+ 	 * Updates the signature algorithm for the encrypted cookie.
+ 	 * @param alg the algorithm name
+ 	 */
+ 	public void setSignatureAlgorithm(String alg) {
+ 		_sigAlgorithm = alg.toUpperCase();
  	}
  	
  	@Override

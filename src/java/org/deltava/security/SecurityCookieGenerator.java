@@ -1,4 +1,4 @@
-// Copyright 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.crypt.*;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 7.2
+ * @version 10.1
  * @since 1.0
  */
 
@@ -65,6 +65,7 @@ public final class SecurityCookieGenerator {
 		}
 		
 		// Rebuild the message token
+		String alg = cookieData.getOrDefault("alg", "SHA-256");
 		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(cookieData.get("uid"));
 		buf.append("@addr:");
@@ -73,19 +74,22 @@ public final class SecurityCookieGenerator {
 		buf.append(cookieData.get("login"));
 		buf.append("@expiry:");
 		buf.append(cookieData.get("expiry"));
+		buf.append("@alg:");
+		buf.append(alg);
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();
-		MessageDigester md = new MessageDigester("SHA-1");
+		MessageDigester md = new MessageDigester(alg);
 		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
 		// Validate the token signature against what we calculated
-		if (!digest.equals(cookieData.get("sha1")))
-			throw new SecurityException("Security Cookie decryption failure - " + buf.toString());
+		if (!digest.equals(cookieData.get("sig")))
+			throw new SecurityException("Security Cookie decryption failure - " + buf);
 		
 		// Initalize the cookie data
 		SecurityCookieData scData = new SecurityCookieData(cookieData.get("uid"));
 		scData.setRemoteAddr(cookieData.get("addr").replace('%', ':'));
+		scData.setSignatureAlgorithm(alg);
 		try {
 			scData.setLoginDate(Instant.ofEpochMilli(Long.parseLong(cookieData.get("login"), 16)));
 		    scData.setExpiryDate(Instant.ofEpochMilli(Long.parseLong(cookieData.get("expiry"), 16)));
@@ -112,17 +116,19 @@ public final class SecurityCookieGenerator {
 		buf.append(Long.toHexString(scData.getLoginDate().toEpochMilli()));
 		buf.append("@expiry:");
 		buf.append(Long.toHexString(scData.getExpiryDate().toEpochMilli()));
+		buf.append("@alg:");
+		buf.append(scData.getSignatureAlgorithm());
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();
-		MessageDigester md = new MessageDigester("SHA-1");
+		MessageDigester md = new MessageDigester(scData.getSignatureAlgorithm());
 		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
 		// Append the message digest
-		buf.append("@sha1:");
+		buf.append("@sig:");
 		buf.append(digest);
 		
-		// Encrypt the token
+		// Encrypt and encode the token
 		return b64e.encodeToString(_encryptor.encrypt(buf.toString().getBytes(StandardCharsets.UTF_8)));
 	}
 }
