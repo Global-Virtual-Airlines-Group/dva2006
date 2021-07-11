@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -206,6 +206,7 @@ public class LoginCommand extends AbstractCommand {
 			SecurityCookieData cData = new SecurityCookieData(p.getHexID());
 			cData.setLoginDate(Instant.now());
 			cData.setRemoteAddr(remoteAddr);
+			cData.setSignatureAlgorithm(SystemData.get("security.hash.algorithm"));
 			
 			// Encode the encrypted data via Base64
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));

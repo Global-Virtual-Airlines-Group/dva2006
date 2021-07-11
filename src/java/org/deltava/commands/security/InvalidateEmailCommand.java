@@ -14,7 +14,7 @@ import org.deltava.security.AddressValidationHelper;
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
             // Invalidate the e-mail address and create the validation entry
         	 p.setEmailInvalid(true);
    			addrValid = new AddressValidation(p.getID(), p.getEmail());
-   			addrValid.setHash(AddressValidationHelper.calculateHashCode(p.getEmail()));
+   			addrValid.setHash(AddressValidationHelper.calculateCRC32(p.getEmail()));
             addrValid.setInvalid(true);
             
             // Create the status entry
