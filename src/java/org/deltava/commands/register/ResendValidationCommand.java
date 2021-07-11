@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to resend an e-mail validation message to an Applicant.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class ResendValidationCommand extends AbstractCommand {
 			if (!StringUtils.isEmpty(email) && (!email.equals(av.getAddress()))) {
 				a.setEmail(email);
 				av.setAddress(email);
-				av.setHash(AddressValidationHelper.calculateHashCode(email));
+				av.setHash(AddressValidationHelper.calculateCRC32(email));
 					
 				// Start a transaction
 				ctx.startTX();
