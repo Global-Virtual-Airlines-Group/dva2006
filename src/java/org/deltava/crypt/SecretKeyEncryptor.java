@@ -1,14 +1,17 @@
-// Copyright 2004, 2008, 2011, 2016 Global Virtual Airlines Grouup. All Rights Reserved.
+// Copyright 2004, 2008, 2011, 2016, 2021 Global Virtual Airlines Grouup. All Rights Reserved.
 package org.deltava.crypt;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.spec.KeySpec;
 
 import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 
 /**
  * A class to support encrypting/decrypting data using a symetric secret key. 
  * @author Luke
- * @version 6.4
+ * @version 10.1
  * @since 1.0
  */
 
@@ -18,6 +21,7 @@ public abstract class SecretKeyEncryptor {
     
     private Cipher _cipher;
     private SecretKey _key;
+    private IvParameterSpec _iv;
     
     /**
      * Create a new encryptor using a given algorithm.
@@ -46,12 +50,15 @@ public abstract class SecretKeyEncryptor {
     /**
      * Initialize the encryptor using a given secret key.
      * @param key the secret Key
+     * @param iv an optional initialization vector
      * @throws CryptoException if the cipher cannot be initialized by the JVM
      */
-    protected void setKey(SecretKey key) {
+    protected void setKey(SecretKey key, byte[] iv) {
         try {
             _cipher = Cipher.getInstance(_algorithm);
             _key = key;
+            if (iv != null)
+            	_iv = new IvParameterSpec(iv);
         } catch (Exception e) {
             throw new CryptoException("Cannot create " + _algorithm + " Cipher", e);
         }
@@ -65,6 +72,13 @@ public abstract class SecretKeyEncryptor {
         return _algorithm;
     }
     
+    private void init(int mode) throws InvalidKeyException, InvalidAlgorithmParameterException {
+    	if (_iv != null)
+    		_cipher.init(mode, _key, _iv);
+    	else
+    		_cipher.init(mode, _key);
+    }
+    
     /**
      * Encrypt a given amount of data.
      * @param data the data to encrypt
@@ -73,7 +87,7 @@ public abstract class SecretKeyEncryptor {
      */
     public byte[] encrypt(byte[] data) throws CryptoException {
         try {
-            _cipher.init(Cipher.ENCRYPT_MODE, _key);
+            init(Cipher.ENCRYPT_MODE);
             return _cipher.doFinal(data);
         } catch (Exception e) {
             throw new CryptoException("Cannot encrypt data", e);
@@ -88,7 +102,7 @@ public abstract class SecretKeyEncryptor {
      */
     public byte[] decrypt(byte[] data) throws CryptoException {
         try {
-            _cipher.init(Cipher.DECRYPT_MODE, _key);
+            init(Cipher.DECRYPT_MODE);
             return _cipher.doFinal(data);
         } catch (Exception e) {
             throw new CryptoException("Cannot decrypt data", e, data);
