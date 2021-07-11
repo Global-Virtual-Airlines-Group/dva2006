@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -364,7 +364,7 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Create an entry that marks our email as invalid
 			AddressValidation addrValid = new AddressValidation(a.getID(), a.getEmail());
-			addrValid.setHash(AddressValidationHelper.calculateHashCode(a.getEmail()));
+			addrValid.setHash(AddressValidationHelper.calculateCRC32(a.getEmail()));
 			ctx.setAttribute("addrValid", addrValid, REQUEST);
 			mctxt.addData("addr", addrValid);
 
