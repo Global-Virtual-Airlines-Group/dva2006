@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 5.4
  */
 
@@ -31,6 +31,17 @@ public class ServInfoHelper {
 	// singleton
 	private ServInfoHelper() {
 		super();
+	}
+	
+	private static OnlineNetworkDAO getDAO(OnlineNetwork net, boolean isJSON, InputStream s) {
+		switch (net) {
+		case VATSIM:
+			return isJSON ? new GetVATSIMInfo(s) : new GetServInfo(s, net);
+		case IVAO:
+			return isJSON ? new GetIVAOInfo(s) : new GetServInfo(s, net);
+		default:
+			return new GetServInfo(s, net);
+		}
 	}
 
 	/**
@@ -59,7 +70,7 @@ public class ServInfoHelper {
 		}
 		
 		try (InputStream fi = new BufferedInputStream(new FileInputStream(SystemData.get("online." + net.toString().toLowerCase() + ".local.info")), 131072)) {
-			OnlineNetworkDAO dao = isJSON ? new GetVATSIMInfo(fi) : new GetServInfo(fi, net);
+			OnlineNetworkDAO dao = getDAO(net, isJSON, fi);
 			info = dao.getInfo();
 			if ((info != null) && (info.getValidDate() != null)) {
 				info.merge(positions);

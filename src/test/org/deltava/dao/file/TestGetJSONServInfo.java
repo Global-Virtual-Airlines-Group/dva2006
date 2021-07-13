@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.apache.log4j.*;
-
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.NetworkInfo;
 import org.deltava.beans.servinfo.RadioPosition;
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
-public class TestGetVATSIMInfo extends TestCase {
+public class TestGetJSONServInfo extends TestCase {
 	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
 	
@@ -46,7 +46,7 @@ public class TestGetVATSIMInfo extends TestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	public void testLoad() throws Exception {
+	public void testLoadVATSIM() throws Exception {
 		
 		File ft = new File("data", "transceivers-data.json");
 		assertTrue(ft.exists());
@@ -65,10 +65,28 @@ public class TestGetVATSIMInfo extends TestCase {
 			GetVATSIMInfo dao = new GetVATSIMInfo(is);
 			NetworkInfo inf = dao.getInfo();
 			assertNotNull(inf);
+			assertEquals(OnlineNetwork.VATSIM, inf.getNetwork());
 			assertFalse(inf.getServers().isEmpty());
 			assertFalse(inf.getPilots().isEmpty());
 			assertFalse(inf.getControllers().isEmpty());
 			inf.merge(positions);
+		}
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testLoadIVAO() throws Exception {
+		
+		File f = new File("data", "ivao-data.json");
+		assertTrue(f.exists());
+		
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 102400)) {
+			GetIVAOInfo dao = new GetIVAOInfo(is);
+			NetworkInfo inf = dao.getInfo();
+			assertNotNull(inf);
+			assertEquals(OnlineNetwork.IVAO, inf.getNetwork());
+			assertFalse(inf.getServers().isEmpty());
+			assertFalse(inf.getPilots().isEmpty());
+			assertFalse(inf.getControllers().isEmpty());
 		}
 	}
 }
