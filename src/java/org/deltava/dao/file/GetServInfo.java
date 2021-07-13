@@ -8,14 +8,10 @@ import java.time.Instant;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.OnlineNetwork;
-
 import org.deltava.beans.servinfo.*;
-import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Acces Object to fetch VATSIM/IVAO ServInfo data.
@@ -28,11 +24,11 @@ import org.deltava.util.system.SystemData;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
-public class GetServInfo extends DAO implements OnlineNetworkDAO {
+public class GetServInfo extends OnlineNetworkDAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 	
@@ -85,10 +81,6 @@ public class GetServInfo extends DAO implements OnlineNetworkDAO {
 		}
 	}
 
-	private static Airport getAirport(String airportCode) {
-		Airport a = SystemData.getAirport(airportCode);
-		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
-	}
 	
 	@Override
 	public NetworkInfo getInfo() throws DAOException {

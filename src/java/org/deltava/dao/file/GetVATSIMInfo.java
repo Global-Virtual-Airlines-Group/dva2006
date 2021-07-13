@@ -3,32 +3,27 @@ package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
-import java.time.Instant;
 
 import org.json.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 9.0
  */
 
-public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
+public class GetVATSIMInfo extends OnlineNetworkDAO {
 
 	private static final Logger log = Logger.getLogger(GetVATSIMInfo.class);
-	
-	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss";
 	
 	/**
 	 * Creates the Data Access Object.
@@ -36,17 +31,6 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 	 */
 	public GetVATSIMInfo(InputStream is) {
 		super(is);
-	}
-	
-	private static Instant parseDateTime(String dt) {
-		int pos = dt.indexOf('.');
-		String dt2 = (pos > -1) ? dt.substring(0, pos) : dt;
-		return StringUtils.parseInstant(dt2, DATE_FMT);
-	}
-
-	private static Airport getAirport(String airportCode) {
-		Airport a = SystemData.getAirport(airportCode);
-		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
 	
 	private static Controller parseController(JSONObject co) {
@@ -116,7 +100,7 @@ public class GetVATSIMInfo extends DAO implements OnlineNetworkDAO {
 		// Parse the servers
 		NetworkInfo info = new NetworkInfo(OnlineNetwork.VATSIM);
 		info.setVersion(v);
-		info.setValidDate(parseDateTime(go.getString("update_timestamp")));
+		info.setValidDate(OnlineNetworkDAO.parseDateTime(go.getString("update_timestamp")));
 		Map<String, Server> results = new TreeMap<String, Server>();
 		JSONArray sa = jo.getJSONArray("servers");
 		for (int x = 0; x < sa.length(); x++) {
