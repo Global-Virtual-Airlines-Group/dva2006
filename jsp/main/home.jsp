@@ -90,16 +90,17 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </tr>
 <c:forEach var="con" items="${acarsPool}">
 <c:if test="${!con.userHidden || isHR}">
+<c:set var="inf" value="${con.flightInfo}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
 <c:choose>
-<c:when test="${!empty con.flightInfo.flightCode}">
- <td class="sec bld">${con.flightInfo.flightCode}</td>
- <td class="nophone small bld">${con.flightInfo.equipmentType}</td>
- <td class="nophone small ter">${con.flightInfo.simulator}</td>
+<c:when test="${!empty inf.flightCode && empty inf.endTime}">
+ <td class="sec bld" title="${inf.ID}">${inf.flightCode}</td>
+ <td class="nophone small bld">${inf.equipmentType}</td>
+ <td class="nophone small ter">${inf.simulator}</td>
  <td class="nophone small sec">${con.flightPhase}</td>
- <td class="nophone bld"><fmt:duration duration="${con.flightInfo.duration}" t="HH:mm" /></td>
- <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
+ <td class="nophone bld"><fmt:duration duration="${inf.duration}" t="HH:mm" /></td>
+ <td class="small">${inf.airportD.name} (<fmt:airport airport="${inf.airportD}" />) - ${inf.airportA.name} (<fmt:airport airport="${inf.airportA}" />)</td>
 </c:when>
 <c:when test="${con.dispatch}">
  <td colspan="6" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
