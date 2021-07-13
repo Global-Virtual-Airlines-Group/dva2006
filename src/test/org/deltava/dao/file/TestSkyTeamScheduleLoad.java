@@ -32,7 +32,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		
 		// Load the airports/time zones
@@ -60,10 +60,10 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 	@SuppressWarnings("static-method")
 	public void testConvertPDF() throws Exception {
 		
-		File f = new File("C:\\Temp\\Skyteam_Timetable_Q2_2020.pdf");
+		File f = new File("C:\\Temp\\Skyteam_Timetable_Q3_2021.pdf");
 		assertTrue(f.exists());
 		
-		File txtF = new File("C:\\Temp\\skyteam2020.txt");
+		File txtF = new File("C:\\Temp\\skyteam2021.txt");
 		if (txtF.exists())
 			return;
 		
@@ -79,7 +79,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\skyteam2020.txt");
+		File f = new File("C:\\Temp\\skyteam2021.txt");
 		assertTrue(f.exists());
 		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
