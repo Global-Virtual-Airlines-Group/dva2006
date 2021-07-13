@@ -345,16 +345,16 @@
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
-			<url>http://www.vatsim.net/</url>
+			<url>https://www.vatsim.net/</url>
 			<local>
-				<info>/var/cache/servinfo/vatsim.info</info>
+				<info>/var/cache/servinfo/vatsim.json</info>
 				<transceiver>/var/cache/servinfo/vatsim.tcv</transceiver>
 			</local>
 		</vatsim>
 		
 		<pilotedge>
             <banner>pilotedge.png</banner>
-            <url>http://www.pilotedge.net/</url>
+            <url>https://www.pilotedge.net/</url>
             <status_url>http://map.pilotedge.net/vspro.dat</status_url>
             <local>
                 <info>/var/cache/servinfo/pilotedge.info</info>
@@ -362,12 +362,11 @@
         </pilotedge>
 
 		<ivao>
-			<status_url>https://www.ivao.aero/whazzup/status.txt</status_url>
+			<status_url>https://api.ivao.aero/v2/tracker/whazzup</status_url>
 			<banner>ivao.png</banner>
-			<url>http://www.ivao.aero/</url>
+			<url>https://www.ivao.aero/</url>
 			<local>
-				<status>/var/cache/servinfo/ivao.status</status>
-				<info>/var/cache/servinfo/ivao.info</info>
+				<info>/var/cache/servinfo/ivao.json</info>
 			</local>
 		</ivao>
 
