@@ -70,7 +70,7 @@ golgotha.flightBoard.formatDate = function(dt) {
 	fdt += dt.getHours();
 	fdt += ':';
 	if (dt.getMinutes() < 10)
-		fdt += ':';
+		fdt += '0';
 
 	fdt += dt.getMinutes();
 	return fdt;
