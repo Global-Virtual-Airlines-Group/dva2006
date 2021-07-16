@@ -20,13 +20,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.1
  */
 
 public class ProgramRosterCommand extends AbstractViewCommand {
 	
-	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS", "P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
+	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS", "P.LAST_LOGIN", "P.RANKING", "LEGS", "LASTFLIGHT"};
 	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date", "Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
 
 	/**
