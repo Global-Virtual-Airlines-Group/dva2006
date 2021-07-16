@@ -353,7 +353,7 @@
 			<banner>vatsim.gif</banner>
 			<url>https://www.vatsim.net/</url>
 			<local>
-				<info>/var/cache/servinfo/vatsim.info</info>
+				<info>/var/cache/servinfo/vatsim.json</info>
 				<transceiver>/var/cache/servinfo/vatsim.tcv</transceiver>
 			</local>
 		</vatsim>
@@ -368,12 +368,11 @@
         </pilotedge>
 
 		<ivao>
-			<status_url>https://www.ivao.aero/whazzup/status.txt</status_url>
+			<status_url>https://api.ivao.aero/v2/tracker/whazzup</status_url>
 			<banner>ivao.png</banner>
 			<url>https://www.ivao.aero/</url>
 			<local>
-				<status>/var/cache/servinfo/ivao.status</status>
-				<info>/var/cache/servinfo/ivao.info</info>
+				<info>/var/cache/servinfo/ivao.json</info>
 			</local>
 		</ivao>
 	</online>
