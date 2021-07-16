@@ -208,7 +208,7 @@
 		<url>jdbc:mysql://mysql.gva.aws/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
-		<socket>/var/run/mysql/mysql.sock</socket>
+		<socket>/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
@@ -239,7 +239,7 @@
 	
 	<!-- Redis data configuration -->
 	<redis>
-		<addr>/var/run/redis/redis.sock</addr>
+		<addr>/run/redis/redis.sock</addr>
 		<port type="Integer">6379</port>
 		<db type="Integer">0</db>
 	</redis>
