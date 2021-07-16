@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -159,7 +159,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			out.print("<script src=\"");
 			out.print(SystemData.get("path.js"));
 			out.print("/v");
-			out.print(VersionInfo.BUILD);
+			out.print(VersionInfo.getFullBuild());
 			out.print('/');
 			out.print(jsFileName);
 			out.println(".js\"></script>");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspWriter;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a JavaScript include file.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -28,9 +28,6 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 		_async = isAsync;
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -54,10 +51,10 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 		try {
 			JspWriter out = pageContext.getOut();
 			out.print("<script src=\"");
-			if (!_resourceName.startsWith("http://") && !_resourceName.startsWith("https:/")) {
+			if (!_resourceName.startsWith("https:/")) {
 				StringBuilder buf = new StringBuilder(SystemData.get("path.js"));
 				buf.append("/v");
-				buf.append(VersionInfo.BUILD);
+				buf.append(VersionInfo.getFullBuild());
 				buf.append('/');
 				buf.append(getFileName());
 				buf.append(".js");
@@ -67,9 +64,7 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 			else
 				out.print(_resourceName);
 
-			if (_async)
-				out.print(" async");
-			
+			if (_async) out.print(" async");
 			out.println("\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);

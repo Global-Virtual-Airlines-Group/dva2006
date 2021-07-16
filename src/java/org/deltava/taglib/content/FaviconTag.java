@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to display favicon link elements.
  * @author Luke
- * @version 7.3
+ * @version 10.1
  * @since 7.3
  */
 
@@ -27,7 +27,7 @@ public class FaviconTag extends BrowserInfoTag {
 		buf.append(" href=\"/");
 		buf.append(SystemData.get("path.img"));
 		buf.append("/favicon/v");
-		buf.append(VersionInfo.BUILD);
+		buf.append(VersionInfo.getFullBuild());
 		buf.append('/');
 		buf.append(path);
 		buf.append("\">");
@@ -60,7 +60,7 @@ public class FaviconTag extends BrowserInfoTag {
 			out.println(generateTag("link rel=\"manifest\"", "manifest.json"));
 			if ((bCtxt.getBrowserType() == BrowserType.IE) && (bCtxt.getMajor() > 9)) {
 				out.print("<meta name=\"msapplication-config\" content=\"/favicon/v");
-				out.print(VersionInfo.BUILD);
+				out.print(VersionInfo.getFullBuild());
 				out.println("/browserconfig.xml\">");
 				out.println("<meta name=\"theme-color\" content=\"#ffffff\">");
 			}
