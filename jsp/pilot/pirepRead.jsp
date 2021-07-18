@@ -251,7 +251,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${pirep.length > 0}">
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime.toSeconds() > 0}">&nbsp;<span class="ita">(average time: <fmt:duration duration="${avgTime}" /> hours)</span></c:if></td>
+ <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime.toSeconds() > 0}">&nbsp;<span class="ita">(average time: <fmt:duration duration="${avgTime}" t="HH:mm" /> hours)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty onlineTrack}">
