@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2012, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2012, 2014, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
  * @author Luke
- * @version 8.7
+ * @version 10.1
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			
 			// Get the first flight date
 			GetFlightReports frdao = new GetFlightReports(con);
-			FlightReport fr = frdao.getByPilot(userID, new ScheduleSearchCriteria("DATE, PR.SUBMITTED")).stream().filter(f -> (f.getStatus() != FlightStatus.DRAFT && f.getStatus() != FlightStatus.REJECTED)).findFirst().orElse(null);
+			FlightReport fr = frdao.getByPilot(userID, new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB())).stream().filter(f -> (f.getStatus() != FlightStatus.DRAFT && f.getStatus() != FlightStatus.REJECTED)).findFirst().orElse(null);
 			Instant firstFlight = (fr != null) ? fr.getDate() : Instant.now().minus(1, ChronoUnit.DAYS);
 			long days = Duration.between(firstFlight, Instant.now()).toDays();
 			

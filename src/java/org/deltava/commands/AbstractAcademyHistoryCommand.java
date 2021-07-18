@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2012, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.Test;
 
 import org.deltava.comparators.*;
@@ -16,7 +16,7 @@ import org.deltava.dao.*;
  * A class to support Web Site Commands use a {@link AcademyHistoryHelper} object to determine what
  * Flight Academy examinations/courses a Pilot is eligible for.
  * @author Luke
- * @version 7.2
+ * @version 10.1
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 			courses.addAll(cdao.getByPilot(id));
 			if (id != p.getID()) {
 				UserData ud2 = uddao.get(id);
-				flights.addAll(frdao.getByPilot(id, null, ud2.getDB()));
+				flights.addAll(frdao.getByPilot(id, new LogbookSearchCriteria(null, ud2.getDB())));
 				eqTypes.addAll(eqdao.getActive(ud2.getDB()));
 			} else
 				flights.addAll(frdao.getByPilot(id, null));

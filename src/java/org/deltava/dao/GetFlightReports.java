@@ -315,55 +315,45 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
-		String db = (criteria == null) ? null : criteria.getDBName();
-		return getByPilot(id, criteria, StringUtils.isEmpty(db) ? SystemData.get("airline.db") : db);
-	}
-
-	/**
-	 * Returns all Flight Reports for a particular Pilot, using a sort column.
-	 * @param id the Pilot database ID
-	 * @param criteria the search criteria
-	 * @param dbName the database name
-	 * @return a List of FlightReports
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria, String dbName) throws DAOException {
+	public List<FlightReport> getByPilot(int id, LogbookSearchCriteria criteria) throws DAOException {
+		LogbookSearchCriteria sc = (criteria == null) ? new LogbookSearchCriteria(null, SystemData.get("airline.db")) : criteria;
 
 		// Build the statement
-		String db = formatDBName(dbName);
-		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		String db = formatDBName(sc.getDBName());
+		StringBuilder buf = new StringBuilder("SELECT PR.*, ");
+		buf.append(sc.getLoadComments() ? "PC.COMMENTS, PC.REMARKS" : "NULL, NULL");
+		buf.append(", APR.* FROM ");
 		buf.append(db);
 		buf.append(".PIREPS PR LEFT JOIN ");
 		buf.append(db);
-		buf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
-		buf.append(db);
+		if (sc.getLoadComments()) {
+			buf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+			buf.append(db);
+		}
+		
 		buf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?)");
-		if (criteria != null) {
-			if (criteria.getEquipmentType() != null)
-				buf.append(" AND (PR.EQTYPE=?)");
-			if (criteria.getAirportD() != null)
-				buf.append(" AND (PR.AIRPORT_D=?)");
-			if (criteria.getAirportA() != null)
-				buf.append(" AND (PR.AIRPORT_A=?)");
-			if (criteria.getSortBy() != null) {
-				buf.append(" ORDER BY IF(PR.STATUS=?,0,1), PR.");
-				buf.append(criteria.getSortBy());
-			}
+		if (sc.getEquipmentType() != null)
+			buf.append(" AND (PR.EQTYPE=?)");
+		if (sc.getAirportD() != null)
+			buf.append(" AND (PR.AIRPORT_D=?)");
+		if (sc.getAirportA() != null)
+			buf.append(" AND (PR.AIRPORT_A=?)");
+		if (sc.getSortBy() != null) {
+			buf.append(" ORDER BY IF(PR.STATUS=?,0,1), PR.");
+			buf.append(sc.getSortBy());
 		}
 		
 		int idx = 1;
 		try (PreparedStatement ps = prepare(buf.toString())) {
 			ps.setInt(1, id);
-			if (criteria != null) {
-				if (criteria.getEquipmentType() != null)
-					ps.setString(++idx, criteria.getEquipmentType());
-				if (criteria.getAirportD() != null)
-					ps.setString(++idx, criteria.getAirportD().getIATA());
-				if (criteria.getAirportA() != null)
-					ps.setString(++idx, criteria.getAirportA().getIATA());
+			if (sc.getEquipmentType() != null)
+				ps.setString(++idx, sc.getEquipmentType());
+			if (sc.getAirportD() != null)
+				ps.setString(++idx, sc.getAirportD().getIATA());
+			if (sc.getAirportA() != null)
+				ps.setString(++idx, sc.getAirportA().getIATA());
+			if (sc.getSortBy() != null)
 				ps.setInt(++idx, FlightStatus.DRAFT.ordinal());
-			}
 			
 			return execute(ps);
 		} catch (SQLException se) {

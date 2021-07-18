@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 5.2
  */
 
@@ -47,7 +47,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			// Get the user's last flight
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.setQueryMax(10);
-			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
+			List<FlightReport> results = frdao.getByPilot(p.getID(), new LogbookSearchCriteria("SUBMITTED DESC", ctx.getDB()));
 			FlightReport lf = null;
 			for (FlightReport fr : results) {
 				if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)) {
