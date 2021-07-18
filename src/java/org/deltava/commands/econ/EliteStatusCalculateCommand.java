@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 9.2
+ * @version 10.1
  * @since 9.2
  */
 
@@ -69,9 +69,9 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			myStatus.put(st.getEffectiveOn(), st);
 			
 			// Get the Flight Reports
-			ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("DATE, PR.SUBMITTED");
+			LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
 			GetFlightReports frdao = new GetFlightReports(con);
-			List<FlightReport> pireps = frdao.getByPilot(p.getID(), ssc);
+			List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
 			pireps.removeIf(fr -> ((fr.getStatus() != FlightStatus.OK) || (EliteLevel.getYear(fr.getDate()) != year)));
 			
 			// Get the DAOs

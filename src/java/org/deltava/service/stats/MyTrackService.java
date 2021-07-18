@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 8.6
+ * @version 10.1
  * @since 5.4
  */
 
@@ -59,12 +59,12 @@ public class MyTrackService extends WebService {
 			List<FlightReport> flights = new ArrayList<FlightReport>();
 			
 			// Get the Flight Reports originating at the airport
-			ScheduleSearchCriteria ssd = new ScheduleSearchCriteria("DATE DESC");
+			LogbookSearchCriteria ssd = new LogbookSearchCriteria("DATE DESC", ctx.getDB());
 			ssd.setAirportD(a);
 			flights.addAll(frdao.getByPilot(userID, ssd));
 			
 			// Get the Flight Reports arriving at the airport
-			ScheduleSearchCriteria ssa = new ScheduleSearchCriteria("DATE DESC");
+			LogbookSearchCriteria ssa = new LogbookSearchCriteria("DATE DESC", ctx.getDB());
 			ssa.setAirportA(a);
 			flights.addAll(frdao.getByPilot(userID, ssa));
 			
@@ -119,19 +119,11 @@ public class MyTrackService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

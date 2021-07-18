@@ -5,21 +5,20 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.Cache;
-import org.deltava.util.cache.CacheManager;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -44,7 +43,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		// Load the PIREP beans
 		String db = SystemData.get("airline.db");
 		GetFlightReports frdao = new GetFlightReports(c);
-		Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
+		Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), new LogbookSearchCriteria(null, db));
 		frdao.loadCaptEQTypes(p.getID(), pireps, db);
 
 		// Get the Pilot's equipment program and all equipment types

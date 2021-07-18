@@ -1,12 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 8.3
+ * @version 10.1
  * @since 1.0
  */
 
@@ -63,16 +64,13 @@ public class LogBookCommand extends AbstractViewCommand {
         	return;
         }
         
-        // Determine if we display comments or not
-        boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));
-        ctx.setAttribute("comments", Boolean.valueOf(showComments), REQUEST);
-        
         // Initialize the search criteria
-        ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
-        criteria.addEquipmentType(ctx.getParameter("eqType"));
-        criteria.setSortBy(vc.getSortType());
+        LogbookSearchCriteria criteria = new LogbookSearchCriteria(vc.getSortType(), ctx.getDB());
+        criteria.setEquipmentType(ctx.getParameter("eqType"));
         criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
         criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+        criteria.setLoadComments("log".equals(ctx.getCmdParameter(Command.OPERATION, "log")));
+        ctx.setAttribute("comments", Boolean.valueOf(criteria.getLoadComments()), REQUEST);
         
         try {
             Connection con = ctx.getConnection();
