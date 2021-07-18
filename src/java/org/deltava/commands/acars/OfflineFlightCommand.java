@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.4
  */
 
@@ -308,6 +308,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			SetACARSRunway awdao = new SetACARSRunway(con);
 			awdao.createFlight(inf);
 			afr.setDatabaseID(DatabaseID.ACARS, inf.getID());
+			awdao.writeLoad(inf);
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			awdao.writeRunways(inf.getID(), inf.getRunwayD(), inf.getRunwayA());

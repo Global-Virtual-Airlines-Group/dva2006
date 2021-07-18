@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -139,8 +139,9 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID)");
+		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID, FL.PAX, FL.SEATS, FL.LOADTYPE, FL.LOADFACTOR FROM "
+			+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL "
+			+ "ON (F.ID=FDL.ID) LEFT JOIN acars.FLIGHT_LOAD FL ON (F.ID=FL.ID)");
 		if (!terms.isEmpty()) {
 			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
