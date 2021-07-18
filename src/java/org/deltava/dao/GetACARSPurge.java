@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object used to get information for purging the ACARS data tables. 
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 3.2
  */
 
@@ -31,8 +31,9 @@ public class GetACARSPurge extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR "
-			+ "ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED")) {
+		try (PreparedStatement ps = prepare("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID, FL.PAX, FL.SEATS, FL.LOADTYPE, FL.LOADFACTOR FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) LEFT JOIN acars.FLIGHT_LOAD FL ON (F.ID=FL.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND "
+			+ "(F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED")) {
 			ps.setBoolean(1, false);
 			ps.setBoolean(2, false);
 			ps.setInt(3, cutoff);

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 2.2
  */
 
@@ -48,8 +48,9 @@ public class GetDispatchCalendar extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID, FL.PAX, FL.SEATS, FL.LOADTYPE, FL.LOADFACTOR FROM acars.FLIGHTS F "
+			+ "LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) LEFT JOIN acars.FLIGHT_LOAD FL "
+			+ "ON (F.ID=FL.ID) WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))")) {
 			ps.setInt(1, ce.getPilotID());
 			ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
 			ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
@@ -60,25 +61,6 @@ public class GetDispatchCalendar extends GetACARSData {
 		}
 	}
 
-	/**
-	 * Retrieves all Flights dispatched by a Dispatcher within a time span.
-	 * @param id the Dispatcher's database ID
-	 * @param dr the DateRange
-	 * @return a List of FlightInfo beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHT_DISPATCHER FDR, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD "
-			+ "ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)")) {
-			ps.setInt(1, id);
-			ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
-			ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
-			return executeFlightInfo(ps);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
 	/**
 	 * Retrieves a specifc Dispatcher service entry.
 	 * @param id the entry database ID
