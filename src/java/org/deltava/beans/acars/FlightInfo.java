@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -69,6 +69,7 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	private int _txCode;
 	private double _loadFactor;
 	private int _pax;
+	private int _seats;
 	private LoadType _loadType = LoadType.RANDOM;
 
 	private RouteEntry _lastPosition;
@@ -406,6 +407,15 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	}
 	
 	/**
+	 * Returns the number of available seats on this flight.
+	 * @return the number of seats
+	 * @see FlightInfo#setSeats(int)
+	 */
+	public int getSeats() {
+		return _seats;
+	}
+	
+	/**
 	 * Returns the mechanism used to generate the load factor.
 	 * @return a LoadType
 	 * @see FlightInfo#setLoadType(LoadType)
@@ -736,6 +746,15 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 */
 	public void setPassengers(int pax) {
 		_pax = Math.max(0, pax);
+	}
+	
+	/**
+	 * Updates the number of seats on this flight.
+	 * @param seats the number of seats
+	 * @see FlightInfo#getSeats()
+	 */
+	public void setSeats(int seats) {
+		_seats = Math.max(0, seats);
 	}
 	
 	/**
