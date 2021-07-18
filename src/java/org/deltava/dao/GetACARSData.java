@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -150,8 +150,9 @@ public class GetACARSData extends DAO {
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
 			FlightInfo info = null;
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID FROM acars.FLIGHTS F LEFT JOIN "
-				+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) WHERE (F.ID=?) LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID, FDL.LOG_ID, FL.PAX, FL.SEATS, FL.LOADTYPE, FL.LOADFACTOR FROM "
+				+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.FLIGHT_DISPATCH_LOG FDL ON (F.ID=FDL.ID) "
+				+ "LEFT JOIN acars.FLIGHT_LOAD FL ON (F.ID=FL.ID) WHERE (F.ID=?) LIMIT 1")) {
 				ps.setInt(1, flightID);
 
 				// Get the first entry, or null
@@ -321,16 +322,18 @@ public class GetACARSData extends DAO {
 				info.setFDR(Recorder.values()[rs.getInt(24)]);
 				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
 				info.setTXCode(rs.getInt(27));
-				info.setLoadFactor(rs.getDouble(28));
-				info.setAutopilotType(AutopilotType.values()[rs.getInt(29)]);
-				info.setPlatform(OperatingSystem.values()[rs.getInt(30)]);
-				info.setIsSim64Bit(rs.getBoolean(31));
-				info.setIsACARS64Bit(rs.getBoolean(32));
-				info.setLoadType(LoadType.values()[rs.getInt(33)]);
-				info.setRemoteAddr(rs.getString(34));
-				info.setRouteID(rs.getInt(35));
-				info.setDispatcherID(rs.getInt(36));
-				info.setDispatchLogID(rs.getInt(37));
+				info.setAutopilotType(AutopilotType.values()[rs.getInt(28)]);
+				info.setPlatform(OperatingSystem.values()[rs.getInt(29)]);
+				info.setIsSim64Bit(rs.getBoolean(30));
+				info.setIsACARS64Bit(rs.getBoolean(31));
+				info.setRemoteAddr(rs.getString(32));
+				info.setRouteID(rs.getInt(33));
+				info.setDispatcherID(rs.getInt(34));
+				info.setDispatchLogID(rs.getInt(35));
+				info.setPassengers(rs.getInt(36));
+				info.setSeats(rs.getInt(37));
+				info.setLoadType(LoadType.values()[rs.getInt(38)]);
+				info.setLoadFactor(rs.getDouble(39));
 				results.add(info);
 			}
 		}
