@@ -114,6 +114,7 @@ public final class OfflineFlightParser {
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
 		inf.setRouteID(StringUtils.parse(ie.getChildTextTrim("dispatchRouteID"), 0));
 		inf.setPassengers(StringUtils.parse(ie.getChildTextTrim("pax"), 0));
+		inf.setSeats(StringUtils.parse(ie.getChildTextTrim("seats"), 0));
 		inf.setLoadFactor(StringUtils.parse(ie.getChildTextTrim("loadFactor"), 0.0d));
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
