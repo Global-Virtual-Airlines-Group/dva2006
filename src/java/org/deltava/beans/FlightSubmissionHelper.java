@@ -301,6 +301,8 @@ public class FlightSubmissionHelper {
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
 		_fr.setAttribute(FlightReport.ATTR_HISTORIC, _ac.getHistoric());
 		_fr.setAttribute(FlightReport.ATTR_RANGEWARN, (_fr.getDistance() > opts.getRange()));
+		if ((_info != null) && (_fr.getPassengers() > 0) && (_info.getSeats() == 0))
+			_info.setSeats(opts.getSeats());
 
 		if (!FDRFlightReport.class.isInstance(_fr)) return;
 		FDRFlightReport ffr = (FDRFlightReport) _fr;
