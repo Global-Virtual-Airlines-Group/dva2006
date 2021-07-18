@@ -32,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
-		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size", 2), SystemData.get("airline.code"));
+		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size", 2), code);
 		_jdbcPool.setProperties((Map<?, ?>) SystemData.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setURL(SystemData.get("jdbc.url"));
@@ -92,7 +92,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
-		SharedData.addData(SharedData.JDBC_POOL + SystemData.get("airline.code"), _jdbcPool);
+		SharedData.addData(SharedData.JDBC_POOL + code, _jdbcPool);
 		
 		// Init Redis
 		RedisUtils.init(SystemData.get("redis.addr"), SystemData.getInt("redis.port", 6379), SystemData.getInt("redis.db", 0), code);
@@ -174,7 +174,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 			
 			// Load User Pool max values
-			String prefix = SystemData.get("airline.code").toLowerCase();
+			String prefix = code.toLowerCase();
 			GetMetadata mddao = new GetMetadata(c);
 			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
 		} catch (Exception ex) {
@@ -215,8 +215,14 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		_daemonGroup.interrupt();
 		
 		// Shut down Redis and JDBC connection pools
-		RedisUtils.shutdown();
-		_jdbcPool.close();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException ie) {
+			log.warn("Interrupted waiting for servlets to clean up");
+		} finally {
+			RedisUtils.shutdown();
+			_jdbcPool.close();
+		}
 		
 		// Clear shared data
 		SharedData.purge(code);
