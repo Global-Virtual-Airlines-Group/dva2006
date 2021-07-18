@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 9.2
  */
 
@@ -61,7 +61,7 @@ public class EliteScoringTask extends Task {
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
 			frsdao.setDayFilter(31);
-			ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("DATE, PR.SUBMITTED");
+			LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
 			Collection<Integer> IDs = frsdao.getUnscoredFlights();
 			for (Integer id : IDs) {
 				ctx.startTX();
@@ -81,7 +81,7 @@ public class EliteScoringTask extends Task {
 				
 				// Load all previous Flight Reports for this Pilot
 				PointScorer es = PointScorer.init(SystemData.get("econ.elite.scorer"));
-				List<FlightReport> pireps = frdao.getByPilot(p.getID(), ssc);
+				List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
 				pireps.stream().filter(pirep -> !IDs.contains(Integer.valueOf(pirep.getID()))).forEach(es::add);
 				
 				// Get our total and next level

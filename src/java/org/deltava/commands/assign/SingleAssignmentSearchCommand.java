@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.2
  */
 
@@ -63,7 +63,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Get the last airport we flew into
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.setQueryMax(10);
-			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
+			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("SUBMITTED DESC", ctx.getDB()));
 			Optional<FlightReport> ofr = pireps.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).findFirst();
 
 			// If no last airport, abort

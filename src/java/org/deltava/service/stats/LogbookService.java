@@ -7,7 +7,7 @@ import java.util.*;
 import java.io.IOException;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export a Pilot's log book in CSV format. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 3.6
  */
 
@@ -44,7 +44,7 @@ public class LogbookService extends WebService {
 		Collection<FlightReport> pireps = null;
 		try {
 			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
-			pireps = frdao.getByPilot(userID, new ScheduleSearchCriteria("DATE, PR.SUBMITTED"));
+			pireps = frdao.getByPilot(userID, new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB()));
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);

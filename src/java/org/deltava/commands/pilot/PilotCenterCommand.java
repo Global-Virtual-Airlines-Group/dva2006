@@ -13,7 +13,6 @@ import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.hr.TransferRequest;
-import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -27,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -132,7 +131,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			frdao.setQueryMax(10);
-			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
+			List<FlightReport> results = frdao.getByPilot(p.getID(), new LogbookSearchCriteria("SUBMITTED DESC", ctx.getDB()));
 			FlightReport lastFlight = results.stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)).findFirst().orElse(null);
 			ctx.setAttribute("lastFlight", lastFlight, REQUEST);
 			

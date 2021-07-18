@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class RoutePlotCommand extends AbstractCommand {
 			// Determin the simulator from the previous approved/submitted flight report
 			if (sim == Simulator.UNKNOWN) {
 				frdao.setQueryMax(15);
-				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
+				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("SUBMITTED DESC", ctx.getDB()));
 				Optional<FlightReport> fr = results.stream().filter(fl -> (fl.getStatus() != FlightStatus.DRAFT) && (fl.getStatus() != FlightStatus.REJECTED)).findFirst();
 				if (fr.isPresent())
 					ctx.setAttribute("sim", fr.get().getSimulator(), REQUEST);
