@@ -86,7 +86,8 @@ public class LogbookSearchCriteria implements RoutePair {
 	 * @param eqType the equipment type
 	 */
 	public void setEquipmentType(String eqType) {
-		_eqType = eqType;
+		if (!"-".equals(eqType))
+			_eqType = eqType;
 	}
 	
     /**
