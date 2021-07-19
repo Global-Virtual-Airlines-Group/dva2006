@@ -13,8 +13,8 @@ public class VersionInfo {
     public static final int MAJOR = 10;
     public static final int MINOR = 1;
     
-    private static final int BUILD = 789;
-    private static final int HOTFIX = 2;
+    private static final int BUILD = 790;
+    private static final int HOTFIX = 0;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2021 Global Virtual Airlines Group. All Rights Reserved.";
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2021 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
@@ -43,7 +43,10 @@ public class VersionInfo {
      * @return the app name/version
      */
     public static String getAppName() {
-    	return String.format("(Golgotha v%d.%d)", Integer.valueOf(MAJOR), Integer.valueOf(MINOR));
+    	StringBuilder buf = new StringBuilder("(Golgotha v");
+    	buf.append(MAJOR).append('.').append(MINOR);
+    	buf.append(')');
+    	return buf.toString();
     }
     
     /**
