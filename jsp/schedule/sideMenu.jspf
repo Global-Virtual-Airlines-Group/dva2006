@@ -90,7 +90,9 @@
 <c:if test="${acarsEnabled}">
 <content:submenu title="ACARS" width="170">
  <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+<content:filter roles="Pilot">
  <content:subitem><el:link url="/acars">Download Client</el:link></content:subitem>
+</content:filter>
  <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
  <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
  <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
