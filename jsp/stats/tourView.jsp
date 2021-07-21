@@ -25,21 +25,21 @@
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="4"><content:airline /> FLIGHT TOUR - ${tour.name}</td>
+ <td colspan="5"><content:airline /> FLIGHT TOUR - ${tour.name}</td>
 </tr>
 <c:if test="${!empty tour.networks}">
 <tr>
  <td class="label">Network(s)</td>
- <td class="data sec bld" colspan="3"><fmt:list value="${tour.networks}" delim=", " /></td>
+ <td class="data sec bld" colspan="4"><fmt:list value="${tour.networks}" delim=", " /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Active between</td>
- <td class="data" colspan="3"><fmt:date date="${tour.startDate}" fmt="d" /> - <fmt:date date="${tour.endDate}" fmt="d" /><c:if test="${tour.active}"><span class="ter bld"> ACTIVE</span></c:if><c:if test="${isActiveNow}"><span class="pri bld"> CURRENTLY AVAILABLE</span></c:if></td>
+ <td class="data" colspan="4"><fmt:date date="${tour.startDate}" fmt="d" /> - <fmt:date date="${tour.endDate}" fmt="d" /><c:if test="${tour.active}"><span class="ter bld"> ACTIVE</span></c:if><c:if test="${isActiveNow}"><span class="sec bld"> CURRENTLY AVAILABLE</span></c:if></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small caps" colspan="3"><c:if test="${tour.ACARSOnly}">
+ <td class="data small caps" colspan="4"><c:if test="${tour.ACARSOnly}">
 <div class="pri bld">Tour requires flights logged with ACARS</div></c:if>
 <c:if test="${tour.allowOffline}">
 <div class="bld">Tour permits Offline Flights</div></c:if>
@@ -50,19 +50,19 @@
 </tr>
 <c:if test="${tour.size > 0}">
 <tr class="title caps">
- <td colspan="4">BRIEFING DOCUMENTATION</td>
+ <td colspan="5">BRIEFING DOCUMENTATION</td>
 </tr>
 <c:choose>
 <c:when test="${tour.isPDF}">
 <tr>
  <td class="label top">Tour Briefing</td>
- <td class="data" colspan="3"><el:link url="/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:int value="${tour.size}" /> bytes, Adobe PDF document</span>
+ <td class="data" colspan="4"><el:link url="/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:int value="${tour.size}" /> bytes, Adobe PDF document</span>
 </tr>
 </c:when>
 <c:otherwise>
 <tr>
  <td class="label top">Tour Briefing</td>
- <td class="data" colspan="3"><fmt:text value="${tour.text}" /></td>
+ <td class="data" colspan="4"><fmt:text value="${tour.text}" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
@@ -72,14 +72,14 @@
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="3"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
+ <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="3"><span class="bld"><fmt:int value="${tour.progressIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
+ <td class="data"  colspan="4"><span class="bld"><fmt:int value="${tour.progressIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
