@@ -211,22 +211,21 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getTourAirports() throws DAOException {
-		Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT TL.AIRPORT_D, TL.AIRPORT_A FROM TOUR_LEGS TL, TOURS T WHERE (TL.ID=T.ID) AND (T.ACTIVE=?) AND (T.START_DATE<=NOW()) AND (T.END_DATE>=NOW())")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TL.AIRLINE, TL.AIRPORT_D, TL.AIRPORT_A FROM TOUR_LEGS TL, TOURS T WHERE (TL.ID=T.ID) AND (T.ACTIVE=?) AND (T.START_DATE<=NOW()) AND (T.END_DATE>=NOW())")) {
 			ps.setBoolean(1, true);
-			Collection<Airport> results = new LinkedHashSet<Airport>();
+			Map<String, Airport> results = new HashMap<String, Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Airport aD = cloneAirport(rs.getString(1));
-					airlines.forEach(al -> aD.addAirlineCode(al.getCode()));
-					results.add(aD);
-					Airport aA = cloneAirport(rs.getString(2));
-					airlines.forEach(al -> aA.addAirlineCode(al.getCode()));
-					results.add(aA);
+					Airport a = results.getOrDefault(rs.getString(2), cloneAirport(rs.getString(2)));
+					a.addAirlineCode(rs.getString(1));
+					results.put(a.getIATA(), a);
+					a = results.getOrDefault(rs.getString(3), cloneAirport(rs.getString(3)));
+					a.addAirlineCode(rs.getString(1));
+					results.put(a.getIATA(), a);
 				}
 			}
 			
-			return results;
+			return results.values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

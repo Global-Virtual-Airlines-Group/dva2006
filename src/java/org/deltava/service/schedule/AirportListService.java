@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -68,8 +68,11 @@ public class AirportListService extends WebService {
 				// Either search the schedule or return the SystemData list
 				if (useSched) {
 					boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
+					GetAirport adao = new GetAirport(con);
 					GetScheduleAirport dao = new GetScheduleAirport(con);
-					filter.add(new IATAFilter(isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a)));
+					Collection<Airport> alAirports = isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a);
+					alAirports.addAll(adao.getTourAirports());
+					filter.add(new IATAFilter(alAirports));
 				} else {
 					if ("charts".equalsIgnoreCase(al)) {
 						GetChart dao = new GetChart(con);
