@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 9.1
+ * @version 10.1
  * @since 1.0
  */
 
@@ -116,7 +116,7 @@ public class GetOceanicRoute extends GetNavAirway {
     	List<OceanicTrack> results = new ArrayList<OceanicTrack>(); int idx = 0;
     	for(String natID : List.of("SM", "SN", "SO", "SP")) {
     		CacheableList<Airway> aws = _aCache.get(natID);
-    		if (aws == null) {
+    		if ((aws == null) || aws.isEmpty()) {
     			List<String> wps = CONC_NAT_WPS.get(idx);
         		ConcordeNAT rt = new ConcordeNAT(natID, CONC_NAT_DIRS[idx]);
         		rt.setDate(today);
