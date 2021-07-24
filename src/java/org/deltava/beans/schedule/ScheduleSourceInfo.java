@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store raw schedule statistics data.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 9.0
  */
 
@@ -24,6 +24,7 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	private LocalDate _effDate;
 	private Instant _importDate;
 	private boolean _autoImport;
+	private boolean _isActive;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
 	
 	// Import statistics
@@ -69,6 +70,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public boolean getAutoImport() {
 		return _autoImport;
+	}
+	
+	/**
+	 * Returns if the schedule import is currently active.
+	 * @return TRUE if active, otherwise FALSE
+	 */
+	public boolean getActive() {
+		return _isActive;
 	}
 	
 	/**
@@ -199,6 +208,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	}
 	
 	/**
+	 * Sets if the schedule import is currently active.
+	 * @param isActive TRUE if active, otherwise FALSE
+	 */
+	public void setActive(boolean isActive) {
+		_isActive = isActive;
+	}
+	
+	/**
 	 * Updates the maximum imported line number for this source.
 	 * @param ln the line number
 	 */
@@ -206,6 +223,9 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 		_maxLine = ln;
 	}
 	
+	/**
+	 * Updates the number of skipped entries fgor this source.
+	 */
 	public void skip() {
 		_skipped++;
 	}
