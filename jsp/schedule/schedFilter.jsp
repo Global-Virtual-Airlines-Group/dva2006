@@ -18,6 +18,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.src,min:1,t:'Schedule Source'});
 	golgotha.form.validate({f:f.doPurge, t:'Schedule Purge Options'});
+	golgotha.form.validate({f:f.filterPolicy, t:'Flight Time Calculation Policy'});
 	f.src.forEach(function(cb) { if (cb.checked) golgotha.form.validate({f:f[cb.value + '-effDate'], l:10,t:'Effective Date'}); });
 	golgotha.form.submit(f);
 	return true;
@@ -50,6 +51,7 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:enum var="purgeOpts" className="org.deltava.beans.schedule.PurgeOptions" />
+<content:enum var="filterPolicy" className="org.deltava.beans.schedule.FilterPolicy" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
