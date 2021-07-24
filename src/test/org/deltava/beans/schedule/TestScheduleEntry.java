@@ -36,10 +36,10 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		LocalDateTime now = LocalDateTime.now();
+		LocalDate ld = LocalDate.of(2021, 7, 25);
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
-		dfb.parseDefaulting(ChronoField.YEAR, now.get(ChronoField.YEAR));
-		dfb.parseDefaulting(ChronoField.DAY_OF_YEAR, now.get(ChronoField.DAY_OF_YEAR));
+		dfb.parseDefaulting(ChronoField.YEAR, ld.get(ChronoField.YEAR));
+		dfb.parseDefaulting(ChronoField.DAY_OF_YEAR, ld.get(ChronoField.DAY_OF_YEAR));
 		df = dfb.parseLenient().toFormatter();
 
 		TZInfo.init("US/Eastern", null, null);
@@ -102,7 +102,6 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		checkProperty("airportD", new Airport("CLT", "KCLT", "Charlotte NC"));
 		checkProperty("length", Integer.valueOf(35));
 		checkProperty("historic", Boolean.valueOf(true));
-		checkProperty("canPurge", Boolean.valueOf(true));
 		assertTrue(_e.equals(new ScheduleEntry(_dva, 129, 1)));
 		assertFalse(_e.equals(new ScheduleEntry(_dva, 130, 1)));
 		assertFalse(_e.equals(new ScheduleEntry(_dva, 129, 2)));
@@ -128,22 +127,9 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	}
 
 	public void testDistance() {
-		try {
-			assertEquals(0, _e.getDistance());
-			fail("IllegalStateException expected");
-		} catch (IllegalStateException ise) {
-			// empty
-		}
-
+		assertEquals(-1, _e.getDistance());
 		_e.setAirportA(_jfk);
-
-		try {
-			assertEquals(0, _e.getDistance());
-			fail("IllegalStateException expected");
-		} catch (IllegalStateException ise) {
-			// empty
-		}
-
+		assertEquals(-1, _e.getDistance());
 		_e.setAirportD(_atl);
 		assertEquals(715, _e.getDistance());
 	}
@@ -175,11 +161,11 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	public void testLongFlightLength() {
 		_e.setAirportD(_atl);
 		_e.setAirportA(_nrt);
-		assertFalse(_atl.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
-		assertFalse(_nrt.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
 		_e.setTimeD(LocalDateTime.parse("10:25", df));
 		_e.setTimeA(LocalDateTime.parse("13:25", df));
-		assertEquals(130, _e.getLength());
+		assertTrue(_atl.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertFalse(_nrt.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(140, _e.getLength());
 	}
 
 	public void testSSTLength() {
@@ -212,13 +198,17 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_eze);
 		_e.setTimeD(LocalDateTime.parse("23:15", df));
 		_e.setTimeA(LocalDateTime.parse("07:50", df));
-		assertEquals(115, _e.getLength());
+		assertTrue(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertFalse(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(135, _e.getLength());
 
 		_e.setAirportD(_eze);
 		_e.setAirportA(_cdg);
 		_e.setTimeD(LocalDateTime.parse("17:20", df));
 		_e.setTimeA(LocalDateTime.parse("11:15", df));
-		assertEquals(149, _e.getLength());
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertTrue(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(129, _e.getLength());
 	}
 
 	public void testCrossIDL() {
@@ -226,13 +216,15 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_atl);
 		_e.setTimeD(LocalDateTime.parse("15:30", df));
 		_e.setTimeA(LocalDateTime.parse("15:05", df));
-		assertEquals(135, _e.getLength());
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertTrue(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(125, _e.getLength());
 
 		_e.setAirportD(_atl);
 		_e.setAirportA(_nrt);
 		_e.setTimeD(LocalDateTime.parse("10:25", df));
 		_e.setTimeA(LocalDateTime.parse("13:25", df));
-		assertEquals(130, _e.getLength());
+		assertEquals(140, _e.getLength());
 	}
 	
 	public void testNoDST() {
@@ -240,9 +232,9 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_dfw);
 		_e.setTimeD(LocalDateTime.parse("12:30", df));
 		_e.setTimeA(LocalDateTime.parse("15:26", df));
-		assertFalse(_phx.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
-		boolean dfwDST = _dfw.getTZ().getZone().getRules().isDaylightSavings(Instant.now());
-		int time = dfwDST ? 29 : 19;
+		assertFalse(_phx.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		boolean dfwDST = _dfw.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant());
+		int time = dfwDST ? 9 : 19;
 		assertEquals(time, _e.getLength());
 	}
 	
@@ -251,7 +243,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_kin);
 		_e.setTimeD(LocalDateTime.parse("14:00", df));
 		_e.setTimeA(LocalDateTime.parse("16:50", df));
-		boolean jfkDST = _jfk.getTZ().getZone().getRules().isDaylightSavings(Instant.now());
+		boolean jfkDST = _jfk.getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant());
 		int time = jfkDST ? 38 : 28;
 		assertEquals(time, _e.getLength());
 	}
@@ -279,6 +271,80 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		} catch (UnsupportedOperationException uoe) {
 			// empty
 		}
+	}
+	
+	public void testIntoDSTAdjustment() {
+
+		LocalDate ld = LocalDate.of(2020, 1, 25);
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
+		dfb = dfb.parseDefaulting(ChronoField.YEAR, ld.get(ChronoField.YEAR)).parseDefaulting(ChronoField.DAY_OF_YEAR, ld.get(ChronoField.DAY_OF_YEAR));
+		df = dfb.parseLenient().toFormatter();
+		
+		_e.setAirportD(_phx);
+		_e.setAirportA(_dfw);
+		_e.setTimeD(LocalDateTime.parse("12:30", df));
+		_e.setTimeA(LocalDateTime.parse("15:26", df));
+		
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertFalse(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(19, _e.getLength());
+
+		LocalDate ld2 = LocalDate.of(2021, 7, 25);
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeD().toLocalTime(), _e.getAirportD().getTZ().getZone()).toInstant()));
+		assertTrue(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeA().toLocalTime(), _e.getAirportA().getTZ().getZone()).toInstant()));
+		
+		assertTrue(_e.adjustForDST(ld2));
+		assertEquals(19, _e.getLength());
+	}
+	
+	public void testOutOfDSTAdjustment() {
+		
+		LocalDate ld = LocalDate.of(2020, 7, 25);
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
+		dfb = dfb.parseDefaulting(ChronoField.YEAR, ld.get(ChronoField.YEAR)).parseDefaulting(ChronoField.DAY_OF_YEAR, ld.get(ChronoField.DAY_OF_YEAR));
+		df = dfb.parseLenient().toFormatter();
+		
+		_e.setAirportD(_dfw);
+		_e.setAirportA(_phx);
+		
+		_e.setTimeD(LocalDateTime.parse("12:30", df));
+		_e.setTimeA(LocalDateTime.parse("12:26", df));
+		
+		assertTrue(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertFalse(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(19, _e.getLength());
+		
+		LocalDate ld2 = LocalDate.of(2021, 1, 25);
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeD().toLocalTime(), _e.getAirportD().getTZ().getZone()).toInstant()));
+		assertFalse(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeA().toLocalTime(), _e.getAirportA().getTZ().getZone()).toInstant()));
+		
+		assertTrue(_e.adjustForDST(ld2));
+		assertEquals(19, _e.getLength());
+	}
+	
+	public void testNoDSTAdjustment() {
+		
+		LocalDate ld = LocalDate.of(2020, 7, 25);
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
+		dfb = dfb.parseDefaulting(ChronoField.YEAR, ld.get(ChronoField.YEAR)).parseDefaulting(ChronoField.DAY_OF_YEAR, ld.get(ChronoField.DAY_OF_YEAR));
+		df = dfb.parseLenient().toFormatter();
+		
+		_e.setAirportD(_atl);
+		_e.setAirportA(_jfk);
+		
+		_e.setTimeD(LocalDateTime.parse("12:30", df));
+		_e.setTimeA(LocalDateTime.parse("14:46", df));
+		
+		assertTrue(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeD().toInstant()));
+		assertTrue(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(_e.getTimeA().toInstant()));
+		assertEquals(22, _e.getLength());
+		
+		LocalDate ld2 = LocalDate.of(2021, 1, 25);
+		assertFalse(_e.getAirportD().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeD().toLocalTime(), _e.getAirportD().getTZ().getZone()).toInstant()));
+		assertFalse(_e.getAirportA().getTZ().getZone().getRules().isDaylightSavings(ZonedDateTime.of(ld2, _e.getTimeA().toLocalTime(), _e.getAirportA().getTZ().getZone()).toInstant()));
+		
+		assertFalse(_e.adjustForDST(ld2));
+		assertEquals(22, _e.getLength());
 	}
 	
 	public void testParseDate() {

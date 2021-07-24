@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -51,14 +51,16 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		}
 
 		// If we're doing a get, then redirect to the JSP
+		final LocalDate today = LocalDate.now();
 		if (ctx.getParameters("src") == null) {
-			ctx.setAttribute("today", LocalDate.now(), REQUEST);
-			result.setURL("/jsp/schedule/flightFilter.jsp");
+			ctx.setAttribute("today", today, REQUEST);
+			result.setURL("/jsp/schedule/schedFilter.jsp");
 			result.setSuccess(true);
 			return;
 		}
 
 		// Load import options
+		PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
 		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
 		Collection<ScheduleSourceInfo> sources = new LinkedHashSet<ScheduleSourceInfo>();
 		for (ScheduleSource src : srcs) {
@@ -90,6 +92,12 @@ public class ScheduleFilterCommand extends AbstractCommand {
 						continue;
 					}
 					
+					// Adjust to the effective date
+					rse.setTimeD(LocalDateTime.of(src.getEffectiveDate(), rse.getTimeD().toLocalTime()));
+					rse.setTimeA(LocalDateTime.of(src.getEffectiveDate(), rse.getTimeA().toLocalTime()));
+					if (rse.adjustForDST(today))
+						src.adjust();
+					
 					boolean isAdded = entries.add(rse);
 					if (isAdded) {
 						src.addLegs(rse.getAirline(), 1);
@@ -109,7 +117,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			
 			// Purge if needed
 			SetSchedule dao = new SetSchedule(con);
-			PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
 			switch (doPurge) {
 			case EXISTING:
 				for (ScheduleSourceInfo src : sources) {

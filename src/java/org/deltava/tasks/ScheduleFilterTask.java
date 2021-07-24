@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 8.0
  */
 
@@ -54,6 +54,7 @@ public class ScheduleFilterTask extends Task {
 			GetRawSchedule rawdao = new GetRawSchedule(con);
 			
 			// For each source, normalize the replay date back to the day of week
+			final LocalDate today = LocalDate.now();
 			Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
 			for (ScheduleSourceInfo srcInfo : srcs) {
@@ -79,6 +80,12 @@ public class ScheduleFilterTask extends Task {
 						continue;
 					}
 					
+					// Adjust to the effective date
+					rse.setTimeD(LocalDateTime.of(srcInfo.getEffectiveDate(), rse.getTimeD().toLocalTime()));
+					rse.setTimeA(LocalDateTime.of(srcInfo.getEffectiveDate(), rse.getTimeA().toLocalTime()));
+					if (rse.adjustForDST(today))
+						srcInfo.adjust();
+					
 					boolean isAdded = entries.add(rse); ir.setPriority(ir.getSource().ordinal());
 					if (isAdded) {
 						srcInfo.addLegs(rse.getAirline(), 1);
@@ -88,10 +95,10 @@ public class ScheduleFilterTask extends Task {
 						srcInfo.skip();
 						log.info(rse.getShortCode() + " already exists [ " + rse.getAirportD().getIATA() + " - " + rse.getAirportA().getIATA() + " ]");
 					}
-					
-					swdao.writeSourceAirlines(srcInfo);
 				}
-				
+
+				srcInfo.setActive(srcInfo.getLegs() > 1);
+				swdao.writeSourceAirlines(srcInfo);
 				log.info("Loaded " + srcInfo.getLegs() + " (" + srcInfo.getSkipped() + " skipped) "+ srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate());
 			}
 			

@@ -29,6 +29,7 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	
 	// Import statistics
 	private int _skipped;
+	private int _adjusted;
 	private boolean _purged;
 	
 	/**
@@ -110,6 +111,14 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public int getSkipped() {
 		return _skipped;
+	}
+	
+	/**
+	 * Returns the number of flight legs with adjusted arrival times (for DST) in the last import.
+	 * @return the number of legs
+	 */
+	public int getAdjusted() {
+		return _adjusted;
 	}
 	
 	/**
@@ -224,10 +233,17 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	}
 	
 	/**
-	 * Updates the number of skipped entries fgor this source.
+	 * Increments the number of skipped flight legs for this source.
 	 */
 	public void skip() {
 		_skipped++;
+	}
+	
+	/**
+	 * Increments the number flight legs with adjusted arrival times for this source.
+	 */
+	public void adjust() {
+		_adjusted++;
 	}
 	
 	/**

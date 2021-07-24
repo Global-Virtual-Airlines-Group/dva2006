@@ -78,7 +78,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 
 	@Override
 	public final Duration getDuration() {
-		if ((_timeA == null) || (_timeD == null))
+		if (!hasTimes())
 			throw new IllegalStateException("Arrival and Departure Times are not set");
 		
 		Duration d = Duration.between(_timeD.toInstant(), _timeA.toInstant());
@@ -159,6 +159,31 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	@Override
 	public final void setID(int id) {
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Adjusts the arrival time if the DST offsets for either Airport have changed from the effective date of this schedule etnry.
+	 * @param dt the current date
+	 * @return TRUE if the arrival time has been adjusted, otherwise FALSE
+	 */
+	public boolean adjustForDST(LocalDate dt) {
+		if (!isPopulated() || !hasTimes()) return false;
+		
+		// Determine the proper departure/arrival date/times
+		LocalDateTime ltD = LocalDateTime.of(dt, getTimeD().toLocalTime());
+		LocalDateTime ltA = LocalDateTime.of(dt, getTimeA().toLocalTime());
+		ZonedDateTime ztD = ltD.atZone(getAirportD().getTZ().getZone());
+		ZonedDateTime ztA = ltA.atZone(getAirportA().getTZ().getZone());
+		if (ztA.isBefore(ztD))
+			ztA = ztA.plusDays(1);
+		
+		long od = getDuration().toSeconds(); long nd = Duration.between(ztD, ztA).toSeconds();
+		if (od == nd) return false;
+		
+		_length = 0;
+		_timeD = ztD;
+		_timeA = ztA.plusSeconds(od - nd) ;
+		return true;
 	}
 	
 	/**
