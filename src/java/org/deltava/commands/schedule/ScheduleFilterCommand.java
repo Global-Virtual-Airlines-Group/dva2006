@@ -130,8 +130,10 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			}
 			
 			// Save source/airline mappings
-			for (ScheduleSourceInfo src : sources)
+			for (ScheduleSourceInfo src : sources) {
+				src.setActive(src.getLegs() > 0);
 				dao.writeSourceAirlines(src);
+			}
 			
 			// Save the schedule entries
 			AirportServiceMap svcMap = new AirportServiceMap();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -111,6 +111,13 @@ public class SetSchedule extends DAO {
 		}
 	}
 	
+	private static void purgeSourceCache(ScheduleSource src) {
+		if (src != null) 
+			_srcCache.remove(src.name());
+		else
+			CacheManager.invalidate("ScheduleSource", true);
+	}
+	
 	/**
 	 * Purges entries from the Flight Schedule.
 	 * @param src a ScheduleSource, or null for all
@@ -118,19 +125,36 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purge(ScheduleSource src) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("DELETE FROM SCHEDULE");
-		if (src != null)
-			buf.append(" WHERE (SRC=?)");
-		
-		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
-			if (src != null)
-				ps.setInt(1, src.ordinal());
+	
+		// Build the SQL statements
+		StringBuilder sbuf = new StringBuilder("DELETE FROM SCHEDULE");
+		StringBuilder rsbuf = new StringBuilder("UPDATE RAW_SCHEDULE_DATES SET ISACTIVE=?");
+		if (src != null) {
+			sbuf.append(" WHERE (SRC=?)");
+			rsbuf.append(" WHERE (SRC=?)");
+		}
+
+		try {
+			int cnt = 0;
+			startTransaction();
+			try (PreparedStatement ps = prepareWithoutLimits(sbuf.toString())) {
+				if (src != null) ps.setInt(1, src.ordinal());
+				cnt = executeUpdate(ps, 0);
+			}
 			
-			return executeUpdate(ps, 0);
+			try (PreparedStatement ps = prepareWithoutLimits(rsbuf.toString())) {
+				ps.setBoolean(1, false);
+				if (src != null) ps.setInt(2, src.ordinal());
+				executeUpdate(ps, 0);
+			}
+			
+			commitTransaction();
+			return cnt;
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			purgeSourceCache(src);
 		}
 	}
 	
@@ -147,11 +171,12 @@ public class SetSchedule extends DAO {
 				executeUpdate(ps, 0);
 			}
 			
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE, ISAUTO) VALUES (?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE, ISAUTO, ISACTIVE) VALUES (?, ?, ?, ?, ?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
 				ps.setTimestamp(3, createTimestamp(src.getImportDate()));
 				ps.setBoolean(4, src.getAutoImport());
+				ps.setBoolean(5, src.getActive());
 				executeUpdate(ps, 1);
 			}
 		
@@ -192,10 +217,7 @@ public class SetSchedule extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			if (src != null) 
-				_srcCache.remove(src.name());
-			else
-				CacheManager.invalidate("ScheduleSource", true);
+			purgeSourceCache(src);
 		}
 	}
 	

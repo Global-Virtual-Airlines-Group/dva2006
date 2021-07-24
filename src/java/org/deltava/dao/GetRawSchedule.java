@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 8.0
  */
 
@@ -46,7 +46,7 @@ public class GetRawSchedule extends DAO {
 			return results.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, MAX(RS.SRCLINE) AS ML, RSD.EFFDATE, RSD.IMPORTDATE, RSD.ISAUTO FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT RS.SRC, RS.AIRLINE, COUNT(RS.SRCLINE) AS TOTAL, MAX(RS.SRCLINE) AS ML, RSD.EFFDATE, RSD.IMPORTDATE, RSD.ISAUTO, RSD.ISACTIVE FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".RAW_SCHEDULE RS LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -68,6 +68,7 @@ public class GetRawSchedule extends DAO {
 					inf.setEffectiveDate(toInstant(rs.getTimestamp(5)));
 					inf.setImportDate(toInstant(rs.getTimestamp(6)));
 					inf.setAutoImport(rs.getBoolean(7));
+					inf.setActive(rs.getBoolean(8));
 				}
 			}
 			
