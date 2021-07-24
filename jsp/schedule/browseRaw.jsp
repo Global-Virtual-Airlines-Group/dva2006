@@ -63,7 +63,7 @@
 <view:row entry="${entry}">
  <td class="small nophone">${entry.lineNumber}</td>
  <td class="pri bld"><el:cmd url="sched" linkID="${entry.source}-${entry.lineNumber}">${entry.flightCode}</el:cmd></td>
- <td class="small"><fmt:date fmt="d" d="MM/dd/yy" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd/yy" date="${entry.endDate}" /></td>
+ <td class="small"><fmt:date fmt="d" d="MM/dd/yy" date="${entry.startDate}" tzName="UTC" /> - <fmt:date fmt="d" d="MM/dd/yy" date="${entry.endDate}" tzName="UTC" /></td>
  <td class="small sec">${entry.dayCodes}</td>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) to ${entry.airportA.name} (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
