@@ -54,7 +54,7 @@ The airline ${airline.name} has been updated in the <content:airline /> Flight S
 The <content:airline /> Flight Schedule has been reloaded from the raw schedule database. The following operations were performed on these raw schedule sources:<br />
 <br />
 <c:forEach var="srcInfo" items="${srcs}">
-<span class="pri bld">${srcInfo.source}</span> (${srcInfo.source.description}) - <fmt:int value="${srcInfo.legs}" /> flights loaded, <fmt:int value="${srcInfo.skipped}" /> flights skipped.
+<span class="pri bld">${srcInfo.source}</span> (${srcInfo.source.description}) - <fmt:int value="${srcInfo.legs}" /> flights loaded, <fmt:int value="${srcInfo.skipped}" /> flights skipped, <fmt:int value="${srcInfo.adjusted}" /> arrival times adjusted.
 <c:if test="${srcInfo.purged}"> <span class="ter bld">[ PURGED ]</span></c:if><br />
 </c:forEach>
 <br />
