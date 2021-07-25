@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Flight;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 8.0
  */
 
@@ -18,6 +18,7 @@ public class RawScheduleEntry extends ScheduleEntry {
 	private int _line;
 	private LocalDate _startDate;
 	private LocalDate _endDate;
+	private boolean _isUpdated;
 	
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	private boolean _forceInclude;
@@ -102,6 +103,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 		return _forceInclude;
 	}
 	
+	/**
+	 * Returns whether this entry has been manually updated since import.
+	 * @return TRUE if manually updated, otherwise FALSE
+	 */
+	public boolean getUpdated() {
+		return _isUpdated;
+	}
+	
 	@Override
 	public boolean getHistoric() {
 		return super.getHistoric() || getAirline().getHistoric();
@@ -165,6 +174,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public void setForceInclude(boolean doForce) {
 		_forceInclude = doForce;
+	}
+	
+	/**
+	 * Updates whether this entry has been manually updated.
+	 * @param isUpdated TRUE if manually updated, otherwise FALSE
+	 */
+	public void setUpdated(boolean isUpdated) {
+		_isUpdated = isUpdated;
 	}
 	
 	/**
