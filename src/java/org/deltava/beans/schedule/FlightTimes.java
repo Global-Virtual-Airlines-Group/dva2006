@@ -13,14 +13,16 @@ import java.time.ZonedDateTime;
 public interface FlightTimes {
 	
 	/**
-	 * Returns the departure time of the flight, with full timezone information. The date component of this value can be ignored.
+	 * Returns the departure time of the flight, with full timezone information. The date component of this value can be ignored, but may
+	 * contain significant information like the flight date or the effective date for a schedule entry.
 	 * @return the full departure time of the flight
 	 * @see FlightTimes#getTimeA()
 	 */
 	public ZonedDateTime getTimeD();
 
 	/**
-	 * Returns the arrival time of the flight, with full timezone information. The date component of this value can be ignored.
+	 * Returns the arrival time of the flight, with full timezone information. The date component of this value can be ignored, but may
+	 * contain significant information.
 	 * @return the full arrival time of the flight
 	 * @see FlightTimes#getTimeD()
 	 */
