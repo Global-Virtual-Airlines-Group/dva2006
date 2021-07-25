@@ -157,6 +157,12 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <el:box name="forceInclude" className="small" idx="*" value="true" label="Force Inclusion even if route exists" checked="${entry.forceInclude}" />
 <c:if test="${academyEnabled}"><br /><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
+<c:if test="${entry.updated}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data sec bld small caps">This Schdule Entry has been manually updated since Import</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->

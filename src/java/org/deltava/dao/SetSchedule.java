@@ -70,7 +70,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, FORCE_INCLUDE, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
@@ -87,8 +87,9 @@ public class SetSchedule extends DAO {
 			ps.setTimestamp(12, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(13, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
 			ps.setBoolean(14, rse.getForceInclude());
-			ps.setBoolean(15, rse.getAcademy());
-			ps.setString(16, rse.getCodeShare());
+			ps.setBoolean(15, rse.getUpdated());
+			ps.setBoolean(16, rse.getAcademy());
+			ps.setString(17, rse.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
