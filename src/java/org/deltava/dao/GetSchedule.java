@@ -382,16 +382,16 @@ public class GetSchedule extends DAO {
 	protected List<ScheduleEntry> execute(PreparedStatement ps) throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 15);
-			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 17);
+			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 16);
+			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 18);
 			while (rs.next()) {
 				ScheduleEntry entry = null;
 				if (hasDispatch) {
 					ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-					sse.setDispatchRoutes(rs.getInt(16));
+					sse.setDispatchRoutes(rs.getInt(17));
 					if (hasRouteCounts) {
-						sse.setFlightCount(rs.getInt(17));
-						sse.setLastFlownOn(toInstant(rs.getTimestamp(18)));
+						sse.setFlightCount(rs.getInt(18));
+						sse.setLastFlownOn(toInstant(rs.getTimestamp(19)));
 					}
 					
 					entry = sse;
@@ -404,8 +404,9 @@ public class GetSchedule extends DAO {
 				entry.setLength(rs.getInt(8));
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setAcademy(rs.getBoolean(12));
-				entry.setSource(ScheduleSource.values()[rs.getInt(13)]);
-				entry.setCodeShare(rs.getString(14));
+				// DST adjust is 13
+				entry.setSource(ScheduleSource.values()[rs.getInt(14)]);
+				entry.setCodeShare(rs.getString(15));
 				
 				ScheduleSourceInfo info = getSource(entry.getSource());
 				long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
