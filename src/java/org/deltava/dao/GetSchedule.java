@@ -374,7 +374,7 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
-	 * Helper method to query the database.
+	 * Helper method to parse schedule entry result sets.
 	 * @param ps a PreparedStatement
 	 * @return a List of ScheduleEntry beans
 	 * @throws SQLException if an error occurs
@@ -391,7 +391,7 @@ public class GetSchedule extends DAO {
 					sse.setDispatchRoutes(rs.getInt(16));
 					if (hasRouteCounts) {
 						sse.setFlightCount(rs.getInt(17));
-						sse.setLastFlownOn(rs.getTimestamp(18));
+						sse.setLastFlownOn(toInstant(rs.getTimestamp(18)));
 					}
 					
 					entry = sse;
@@ -411,7 +411,6 @@ public class GetSchedule extends DAO {
 				long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
 				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(effectiveDate));
 				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(effectiveDate));
-				
 				results.add(entry);
 			}
 		}
