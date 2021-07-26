@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -9,11 +9,13 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 9.1
+ * @version 10.1
  * @since 1.0
  */
 
 public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
+	
+	private static final long serialVersionUID = -4360178861586466272L;
 	
 	/**
 	 * Variable equipment code.
@@ -29,6 +31,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private boolean _historic;
 	private boolean _academy;
+	private boolean _hasDSTAdjustment;
 
 	/**
 	 * Creates a new Schedule Entry object with a given flight.
@@ -85,25 +88,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		return d.isNegative() ? d.negated() : d;
 	}
 
-	/**
-	 * Returns the departure time for this flght. <i>This time is in local time.</i> The date and timezone portions of
-	 * this Date should be ignored.
-	 * @return the departure time for this flight.
-	 * @see ScheduleEntry#setTimeD(LocalDateTime)
-	 * @see ScheduleEntry#getTimeA()
-	 */
 	@Override
 	public ZonedDateTime getTimeD() {
 		return _timeD;
 	}
 
-	/**
-	 * Returns the arrival time for this flght. <i>This time is in local time.</i> The date and timezone portions of
-	 * this Date should be ignored.
-	 * @return the arrival time for this flight.
-	 * @see ScheduleEntry#setTimeA(LocalDateTime)
-	 * @see ScheduleEntry#getTimeD()
-	 */
 	@Override
 	public ZonedDateTime getTimeA() {
 		return _timeA;
@@ -134,6 +123,16 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public boolean getAcademy() {
 		return _academy;
+	}
+	
+	/**
+	 * Returns whether the arrival time has been adjusted for DST changes between the effective date of this Schedule
+	 * Entry and the current date.
+	 * @return TRUE if the arrival time has been adjusted, otherwise FALSE
+	 * @see ScheduleEntry#adjustForDST(LocalDate)
+	 */
+	public boolean getHasDSTAdjustment() {
+		return _hasDSTAdjustment;
 	}
 	
 	/**
@@ -178,11 +177,15 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 			ztA = ztA.plusDays(1);
 		
 		long od = getDuration().toSeconds(); long nd = Duration.between(ztD, ztA).toSeconds();
-		if (od == nd) return false;
+		if (od == nd) {
+			_hasDSTAdjustment = false;
+			return false;
+		}
 		
 		_length = 0;
 		_timeD = ztD;
 		_timeA = ztA.plusSeconds(od - nd) ;
+		_hasDSTAdjustment = true;
 		return true;
 	}
 	
@@ -256,10 +259,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		_src = src;
 	}
 	
-	/**
-	 * Returns the row CSS class name if displayed in a view table.
-	 * @return the CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
 		if (_academy)
