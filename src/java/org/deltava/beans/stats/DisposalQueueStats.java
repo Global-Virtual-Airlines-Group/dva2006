@@ -1,18 +1,19 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.time.Instant;
 
 /**
  * A bean to store Flight Report disposal queue statistics.
  * @author Luke
- * @version 6.1
+ * @version 10.1
  * @since 5.0
  */
 
 public class DisposalQueueStats implements java.io.Serializable {
 
-	private final Date _dt;
+	private final Instant _dt;
 	private final int _size;
 	private final double _avgAge;
 	private double _minAge;
@@ -26,7 +27,7 @@ public class DisposalQueueStats implements java.io.Serializable {
 	 * @param total the total number of pending Flight Reports
 	 * @param avgAge the average pending time of non-held flight reports in hours
 	 */
-	public DisposalQueueStats(Date dt, int total, double avgAge) {
+	public DisposalQueueStats(Instant dt, int total, double avgAge) {
 		super();
 		_dt = dt;
 		_size = Math.max(0, total);
@@ -37,7 +38,7 @@ public class DisposalQueueStats implements java.io.Serializable {
 	 * Returns the effective date.
 	 * @return the effective date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _dt;
 	}
 	

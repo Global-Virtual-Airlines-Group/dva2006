@@ -1,14 +1,14 @@
-// Copyright 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.Flight;
 
 /**
  * A class to store Schedule Entry information with Dispatch route counts.
  * @author Luke
- * @version 6.3
+ * @version 10.1
  * @since 2.3
  */
 
@@ -16,7 +16,7 @@ public class ScheduleSearchEntry extends ScheduleEntry {
 	
 	private int _dspRoutes;
 	private int _flownCount;
-	private Date _lastFlown;
+	private Instant _lastFlown;
 
 	/**
 	 * Creates a new Schedule Entry object with a given flight.
@@ -52,9 +52,9 @@ public class ScheduleSearchEntry extends ScheduleEntry {
 	
 	/**
 	 * Returns the last date the route was flown on.
-	 * @return the date of the last flight 
+	 * @return the date/time of the last flight 
 	 */
-	public Date getLastFlownOn() {
+	public Instant getLastFlownOn() {
 		return _lastFlown;
 	}
 	
@@ -76,9 +76,9 @@ public class ScheduleSearchEntry extends ScheduleEntry {
 	
 	/**
 	 * Updates the last date the route was flown on.
-	 * @param dt the date of the last flight 
+	 * @param dt the date/time of the last flight 
 	 */
-	public void setLastFlownOn(Date dt) {
+	public void setLastFlownOn(Instant dt) {
 		_lastFlown = dt;
 	}
 	

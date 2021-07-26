@@ -1,7 +1,8 @@
-// Copyright 2012, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.beans.flight.*;
 import org.deltava.beans.EquipmentType;
@@ -10,7 +11,7 @@ import org.deltava.beans.stats.DisposalQueueStats;
 /**
  * A Data Access Object to return Flight Report disposal queue information.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 5.0
  */
 
@@ -42,7 +43,7 @@ public class GetFlightReportQueue extends DAO {
 		
 		sqlBuf.append(" (PR.STATUS=?) AND ((PR.ATTR & ?)=0)");
 		try {
-			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
+			DisposalQueueStats dq = new DisposalQueueStats(Instant.now(), 0, 0);
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				if (eqType != null) {
 					ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
@@ -56,7 +57,7 @@ public class GetFlightReportQueue extends DAO {
 				
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						dq = new DisposalQueueStats(new java.util.Date(), rs.getInt(1), rs.getDouble(2));
+						dq = new DisposalQueueStats(Instant.now(), rs.getInt(1), rs.getDouble(2));
 						dq.setMinMax(rs.getDouble(4), rs.getDouble(3));
 					}
 				}
