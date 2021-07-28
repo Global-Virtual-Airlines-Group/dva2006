@@ -34,7 +34,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.15.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20210307.jar"/>
@@ -44,7 +43,8 @@
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.12.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.3.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.32.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-3.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.26.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-3.6.3.jar" sourcepath="lib/src/jedis-3.6.3.zip"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.10.0.jar" sourcepath="lib/src/commons-pool2-2.10.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
