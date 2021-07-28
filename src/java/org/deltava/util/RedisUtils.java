@@ -3,6 +3,7 @@ package org.deltava.util;
 
 import java.io.*;
 import java.util.*;
+import java.time.Duration;
 
 import org.apache.log4j.Logger;
 
@@ -11,7 +12,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 6.1
  */
 
@@ -101,15 +102,14 @@ public class RedisUtils {
 			JedisPoolConfig config = new JedisPoolConfig();
 			config.setMaxIdle(1); config.setMinIdle(1);
 			config.setJmxEnabled(true);
-			config.setJmxNamePrefix("Redis");
-			config.setJmxNameBase(poolName);
+			config.setJmxNamePrefix("redis-" + poolName.toLowerCase());
 			config.setMaxWaitMillis(50);
 			config.setMaxTotal(12);
-			config.setMinEvictableIdleTimeMillis(5000);
+			config.setSoftMinEvictableIdleTime(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
-			config.setTimeBetweenEvictionRunsMillis(30000);
+			config.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
 			
 			// Check for domain socket
 			String host = StringUtils.isEmpty(addr) ? "localhost" : addr;
