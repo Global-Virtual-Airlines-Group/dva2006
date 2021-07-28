@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -356,6 +356,13 @@ public class RoutePlotMapService extends MapPlotService {
 			wo.put("info", wx.getData());
 			wo.put("date", wx.getDate().toEpochMilli());
 			wo.put("dst", (dr.getAirportD() == null) || !wx.getCode().equals(dr.getAirportD().getICAO()));
+			if (wx.getType() == WeatherDataBean.Type.METAR) {
+				METAR m = (METAR) wx;
+				wo.put("windSpeed", m.getWindSpeed());
+				wo.put("windGust", m.getWindGust());
+				wo.put("windDirection", m.getWindDirection());
+			}
+			
 			jo.append("wx", wo);
 		}
 		
