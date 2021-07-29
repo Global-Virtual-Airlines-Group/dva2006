@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 2.2
  */
 
@@ -149,14 +149,14 @@ public class RoutePlanService extends WebService {
 						dfr.setDate(Instant.now());
 						dfr.setEquipmentType(ac.getName());
 						dfr.setAuthorID(ctx.getUser().getID());
-						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Created via Route Plotter");
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Created via Route Plotter");
 					} else {
 						dfr = new DraftFlightReport(schedInfo);
 						dfr.setDate(Instant.now());
 						dfr.setEquipmentType(ac.getName());
 						dfr.setTimeD(schedInfo.getTimeD().toLocalDateTime());
 						dfr.setTimeA(schedInfo.getTimeA().toLocalDateTime());
-						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Created via Route Plotter from %s", schedInfo.getShortCode()));
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Created via Route Plotter from %s", schedInfo.getShortCode()));
 						
 						// Create a flight assignment
 						ai = new AssignmentInfo(ac.getName());
