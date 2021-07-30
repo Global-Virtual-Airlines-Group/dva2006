@@ -273,7 +273,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			fsh.calculateRunways();
 			
 			// Calculate the load factor
-			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA), false);
+			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA));
 			
 			// Check for inflight refueling and calculate fuel use
 			fsh.checkRefuel();
