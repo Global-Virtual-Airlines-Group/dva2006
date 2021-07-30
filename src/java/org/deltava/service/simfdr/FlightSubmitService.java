@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 7.0
  */
 
@@ -114,7 +114,7 @@ public class FlightSubmitService extends SimFDRService {
 			fsh.checkAirspace();
 			
 			// Calculate the load factor
-			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA), false);
+			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA));
 			
 			// Check for inflight refueling
 			fsh.checkRefuel();

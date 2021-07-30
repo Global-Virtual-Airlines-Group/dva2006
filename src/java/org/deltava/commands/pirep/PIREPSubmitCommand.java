@@ -94,7 +94,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			fsh.checkTour();
 			
 			// Calculate the load factor
-			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA), false);
+			fsh.calculateLoadFactor((EconomyInfo) SystemData.getObject(SystemData.ECON_DATA));
 
 			// Check the schedule database and check the route pair
 			Duration avgTime = fsh.checkSchedule();
