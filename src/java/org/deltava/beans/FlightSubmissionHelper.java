@@ -351,26 +351,33 @@ public class FlightSubmissionHelper {
 	/**
 	 * Calculates the payload load factor for this Flight.
 	 * @param econ an EconomyInfo bean for the virtual airline
-	 * @param hasCustomCabin TRUE if the aircraft has a non-standard cabin size, otherwise FALSE
 	 */
-	public void calculateLoadFactor(EconomyInfo econ, boolean hasCustomCabin) {
+	public void calculateLoadFactor(EconomyInfo econ) {
 		if (econ == null) return;
-		if ((_info != null) && (_fr.getLoadFactor() <= 0) && (_info.getLoadFactor() <= 0)) {
+		if ((_info == null) && (_fr.getPassengers() == 0)) {
+			LoadFactor lf = new LoadFactor(econ);
+			double loadFactor = lf.generate(_fr.getDate());
+			_fr.setLoadFactor(loadFactor);
+			_fr.addStatusUpdate(0, HistoryType.UPDATE, String.format("Added simulated load factor of %4.3f", Double.valueOf(loadFactor)));
+		} else if ((_info != null) && (_fr.getLoadFactor() <= 0) && (_info.getLoadFactor() <= 0)) {
 			LoadFactor lf = new LoadFactor(econ);
 			double loadFactor = lf.generate(_fr.getDate());
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Calculated load factor of %4.3f, was %4.3f for Flight %d", Double.valueOf(loadFactor), Double.valueOf(_fr.getLoadFactor()), Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS))));
 			_fr.setLoadFactor(loadFactor);
-		} else if ((_info != null) && (_info.getLoadFactor() > 0) && !hasCustomCabin) {
+		} else if ((_info != null) && (_info.getPassengers() >= 0) && (_info.getSeats() > 0))
+			_fr.setLoadFactor(_info.getPassengers() * 1.0d / _info.getSeats());
+		else if ((_info != null) && (_info.getLoadFactor() > 0)) {
 			_fr.setLoadFactor(_info.getLoadFactor());
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Using Flight %d data load factor of %4.3f", Integer.valueOf(_fr.getDatabaseID(DatabaseID.ACARS)), Double.valueOf(_info.getLoadFactor())));
 		}
 		
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
-		if ((opts.getSeats() > 0) && (_fr.getPassengers() == 0)) {
-			int paxCount = (int) Math.round(opts.getSeats() * _fr.getLoadFactor());
-			_fr.setPassengers(Math.min(opts.getSeats(), paxCount));
-			if (paxCount > opts.getSeats())
-				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Invalid passenger count - pax=%d, seats=%d", Integer.valueOf(paxCount), Integer.valueOf(opts.getSeats())));
+		int seats = ((_info != null) && (_info.getSeats() > 0)) ? _info.getSeats() : opts.getSeats();
+		if ((seats > 0) && (_fr.getPassengers() == 0)) {
+			int paxCount = (int) Math.round(seats * _fr.getLoadFactor());
+			_fr.setPassengers(Math.min(seats, paxCount));
+			if (paxCount > seats)
+				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Invalid passenger count - pax=%d, seats=%d", Integer.valueOf(paxCount), Integer.valueOf(seats)));
 		}
 	}
 	
