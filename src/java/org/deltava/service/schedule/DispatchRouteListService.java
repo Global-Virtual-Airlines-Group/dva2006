@@ -47,7 +47,7 @@ public class DispatchRouteListService extends WebService {
 		Airport aD = SystemData.getAirport(req.optString("airportD"));
 		Airport aA = SystemData.getAirport(req.optString("airportA"));
 		if ((aD == null) || (aA == null))
-			throw error(SC_BAD_REQUEST, "No Airport Pair");
+			throw error(SC_BAD_REQUEST, "No Airport Pair", false);
 		
 		// Check if loading from FlightAware
 		boolean doFA = req.optBoolean("external") && SystemData.getBoolean("schedule.flightaware.enabled");
