@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A Jedis socket factory to create domain socket connections.  
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 10.0
  */
 
@@ -36,7 +36,7 @@ class JedisDomainSocketFactory implements JedisSocketFactory {
 			throw new FileNotFoundException(f.getAbsolutePath());
 		
 		AFUNIXSocket sock = AFUNIXSocket.newInstance();
-		sock.connect(new AFUNIXSocketAddress(f));
+		sock.connect(AFUNIXSocketAddress.of(f));
 		return sock;
 	}
 
@@ -52,27 +52,18 @@ class JedisDomainSocketFactory implements JedisSocketFactory {
 		return String.format("Socket Factory - %s", _socketFile);
 	}
 
-	/* (non-Javadoc)
-	 * @see redis.clients.jedis.JedisSocketFactory#getHost()
-	 */
 	@Deprecated
 	@Override
 	public String getHost() {
 		return _socketFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see redis.clients.jedis.JedisSocketFactory#getPort()
-	 */
 	@Override
 	@Deprecated
 	public int getPort() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see redis.clients.jedis.JedisSocketFactory#getSoTimeout()
-	 */
 	@Deprecated
 	@Override
 	public int getSoTimeout() {
