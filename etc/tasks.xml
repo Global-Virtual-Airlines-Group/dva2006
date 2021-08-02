@@ -322,7 +322,7 @@
         </time> 
     </task>
 
-    <task id="pilotratings" enabled="true">
+    <task id="pilotratings" enabled="false">
         <class>org.deltava.tasks.RatingDownloadTask</class>
         <time>
             <min>30</min>
