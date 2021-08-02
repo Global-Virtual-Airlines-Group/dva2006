@@ -416,7 +416,7 @@ public class FlightSubmissionHelper {
 		FlightTime avgHours = sdao.getFlightTime(_fr, _db);
 		if ((avgHours.getType() == RoutePairType.UNKNOWN) && !isAcademy && !isAssignment && !isEvent && !isTour) {
 			log.warn(String.format("No flights found between %s and %s", _fr.getAirportD(), _fr.getAirportA()));
-			boolean wasValid = _info.isScheduleValidated() && _info.matches(_fr);
+			boolean wasValid = (_info != null) && _info.isScheduleValidated() && _info.matches(_fr);
 			if (!wasValid)
 				_fr.setAttribute(FlightReport.ATTR_ROUTEWARN, !_fr.hasAttribute(FlightReport.ATTR_CHARTER));
 			
