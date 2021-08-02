@@ -211,19 +211,11 @@ public class RegisterCommand extends AbstractCommand {
 					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
 					APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 					if (c != null) {
-						StringBuilder buf = new StringBuilder("VATSIM ID belongs to ");
-						buf.append(c.getName());
-						buf.append("\r\n");
+						StringBuilder buf = new StringBuilder("VATSIM ID exists\r\n");
 						if (!c.isActive())
 							buf.append("VATSIM ID is inactive!\r\n");
 						if (!a.getNetworkID(OnlineNetwork.VATSIM).equals(String.valueOf(c.getID())))
 							buf.append("VATSIM ID does not match!\r\n");
-						if (!a.getFirstName().equals(c.getFirstName()))
-							buf.append("First Name does not match!\r\n");
-						if (!a.getLastName().equals(c.getLastName()))
-							buf.append("Last Name does not match!\r\n");
-						if (!a.getEmailDomain().equals(c.getEmailDomain()))
-							buf.append("e-Mail Domain does not match!\r\n");
 						if (StringUtils.isEmpty(buf))
 							a.setHRComments("VATSIM Information validated\r\n");
 						else
