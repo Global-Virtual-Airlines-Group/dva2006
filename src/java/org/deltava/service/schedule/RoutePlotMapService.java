@@ -142,7 +142,7 @@ public class RoutePlotMapService extends MapPlotService {
 					
 					// Sort runways based on wind heading
 					if ((wxD != null) && (wxD.getWindSpeed() > 0))
-						runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed()));
+						runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed(), true));
 				}
 			}
 

@@ -1,15 +1,17 @@
-// Copyright 2009, 2010, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
 
+import org.deltava.beans.UseCount;
 import org.deltava.beans.navdata.Runway;
+
 import org.deltava.util.GeoUtils;
 
 /**
  * A comparator to sort Runways based on appropriateness based on a wind heading. 
  * @author Luke
- * @version 8.6
+ * @version 10.1
  * @since 2.6
  */
 
@@ -17,21 +19,30 @@ public class RunwayComparator implements Comparator<Runway>, java.io.Serializabl
 	
 	private final int _hdg;
 	private final int _spd;
-
+	private final boolean _compareUse;
+	
 	/**
 	 * Initializes the Comparator.
 	 * @param windHdg the wind heading in degrees  
 	 * @param windSpeed the wind speed in knots
 	 */
 	public RunwayComparator(int windHdg, int windSpeed) {
-		super();
-		_hdg = windHdg;
-		_spd = windSpeed;
+		this(windHdg, windSpeed, false);
 	}
 
 	/**
-	 * Compares two runways by comparing their delta from the wind heading, followed by their natural order.
+	 * Initializes the Comparator.
+	 * @param windHdg the wind heading in degrees  
+	 * @param windSpeed the wind speed in knots
+	 * @param compareUse TRUE if usage stats should be used if available, otherwise FALSE
 	 */
+	public RunwayComparator(int windHdg, int windSpeed, boolean compareUse) {
+		super();
+		_hdg = windHdg;
+		_spd = windSpeed;
+		_compareUse = compareUse;
+	}
+
 	@Override
 	public int compare(Runway r1, Runway r2) {
 		
@@ -41,9 +52,14 @@ public class RunwayComparator implements Comparator<Runway>, java.io.Serializabl
 		int hw1 = (int) (StrictMath.cos(Math.toRadians(wD1)) * _spd);
 		int hw2 = (int) (StrictMath.cos(Math.toRadians(wD2)) * _spd);
 		
+		// Get use count if needed
+		int u1 = _compareUse && (r1 instanceof UseCount) ? ((UseCount) r1).getUseCount() : 0;
+		int u2 = _compareUse && (r2 instanceof UseCount) ? ((UseCount) r2).getUseCount() : 0;
+		
 		// Order the two - we the one with the greater wind differential to be smaller than the other, just like
 		// the one with the more uses will be smaller - THIS IS A REVERSE SORTER
-		int tmpResult = Integer.compare(hw2 / 5, hw1 / 5);
+		int tmpResult = Integer.compare(hw2 / 3, hw1 / 3);
+		if (tmpResult == 0) tmpResult = Integer.compare(u2, u1);
 		return (tmpResult == 0) ? -r2.compareTo(r1) : tmpResult;
 	}
 	
