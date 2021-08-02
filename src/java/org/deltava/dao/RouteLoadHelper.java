@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 3.4
  */
 
@@ -162,7 +162,7 @@ public final class RouteLoadHelper {
 		List<Runway> rwys = ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff);
 		METAR m = isTakeoff ? _mD : _mA;
 		if ((m != null) && (m.getWindSpeed() > 0))
-			rwys.sort(new RunwayComparator(m.getWindDirection(), m.getWindSpeed()));
+			rwys.sort(new RunwayComparator(m.getWindDirection(), m.getWindSpeed(), true));
 		
 		return rwys;
 	}
