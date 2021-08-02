@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read VATSIM Authorized Training Organization data.
  * @author Luke
- * @version 8.4
+ * @version 10.1
  * @since 7.2
  */
 
@@ -69,6 +69,7 @@ public class GetATOData extends DAO {
 	 * @return a Collection of Certificate beans
 	 * @throws DAOException if an error occurs
 	 */
+	@Deprecated
 	public Collection<Certificate> getInstructors() throws DAOException {
 		
 		// Check the cache
@@ -88,7 +89,6 @@ public class GetATOData extends DAO {
 				JSONObject co = ja.getJSONObject(x);
 				JSONArray cro = co.getJSONArray("roles");
 				Certificate c = new Certificate(co.getInt("cid"));
-				c.setName(co.getString("name").replace(" (" + c.getID() + ")", ""));
 				
 				// Parse roles
 				boolean isActive = true;
