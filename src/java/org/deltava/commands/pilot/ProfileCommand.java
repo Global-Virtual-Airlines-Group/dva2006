@@ -32,7 +32,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -89,10 +89,6 @@ public class ProfileCommand extends AbstractFormCommand {
 								msgs.add("VATSIM ID inactive");
 							if (!vid.equals(String.valueOf(c.getID())))
 								msgs.add("VATSIM ID does not match");
-							if (!p.getFirstName().equalsIgnoreCase(c.getFirstName()))
-								msgs.add("First Name does not match");
-							if (!p.getLastName().equalsIgnoreCase(c.getLastName()))
-								msgs.add("Last Name does not match");
 							
 							// Save messages
 							if (msgs.isEmpty() || ctx.isUserInRole("HR"))
