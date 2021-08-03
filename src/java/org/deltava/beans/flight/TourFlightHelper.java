@@ -2,18 +2,19 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.stats.Tour;
 
 import org.deltava.comparators.FlightReportComparator;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A helper class to calculate Flight Tour eligibility.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 10.0
  */
 
@@ -96,7 +97,7 @@ public class TourFlightHelper {
 		
 		// Check if Tour is active
 		if (!t.isActiveOn(_fr.getDate())) {
-			_msgs.add(String.format("Tour %s not active on %D", t.getName(), _fr.getDate()));
+			_msgs.add(String.format("Tour %s not active on %s", t.getName(), StringUtils.format(_fr.getDate(), "MMM-dd-YYYY")));
 			return 0;
 		}
 		
