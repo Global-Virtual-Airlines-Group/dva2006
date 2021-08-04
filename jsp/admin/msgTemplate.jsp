@@ -95,7 +95,7 @@ golgotha.onDOMReady(golgotha.local.updateObjects);
 </tr>
 <tr>
  <td class="label top">Push Notification Actions</td>
- <td class="data"><el:check name="actions" options="${actionTypes}" checked="${template.actionTypes}" cols="5" width="135" newLine="true" /></td>
+ <td class="data"><el:check name="actions" options="${actionTypes}" checked="${template.actionTypes}" cols="5" width="150" newLine="true" /></td>
 </tr>
 <tr>
  <td class="label">Push Notification TTL</td>
