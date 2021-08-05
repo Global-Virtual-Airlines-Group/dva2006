@@ -6,6 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 4.1
  */
 
@@ -104,7 +105,7 @@ public class XInfoService extends XAService {
 				if (eInfo != null) {
 					AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 					LoadFactor lf = new LoadFactor(eInfo);
-					double loadFactor = lf.generate();
+					double loadFactor = lf.generate(Instant.now());
 					fr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 					fr.setLoadFactor(loadFactor);
 				}
