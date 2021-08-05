@@ -15,7 +15,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" libraries="visualization" />
-<content:json />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />

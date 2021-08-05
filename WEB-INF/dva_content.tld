@@ -72,13 +72,6 @@
 	</tag>
 
 	<tag>
-		<description>Insert JSON tag, for inserting JSON compatibility library</description>
-		<name>json</name>
-		<tag-class>org.deltava.taglib.content.InsertJSONTag</tag-class>
-		<body-content>empty</body-content>
-	</tag>
-
-	<tag>
 		<description>Insert PICS tag, for inserting PICS 1.1 rating links</description>
 		<name>pics</name>
 		<tag-class>org.deltava.taglib.content.InsertPICSTag</tag-class>

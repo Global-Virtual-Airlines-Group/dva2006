@@ -12,7 +12,6 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<content:json />
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:captcha action="threadCreate" />

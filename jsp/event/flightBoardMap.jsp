@@ -16,7 +16,6 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<content:json />
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="flightBoardMap" />

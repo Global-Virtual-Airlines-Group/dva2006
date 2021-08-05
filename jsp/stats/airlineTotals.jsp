@@ -11,7 +11,6 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<content:json />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />

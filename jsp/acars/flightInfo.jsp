@@ -15,7 +15,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <map:api version="3" />
 <content:js name="acarsFlightMap" />
 <content:googleAnalytics eventSupport="true" />

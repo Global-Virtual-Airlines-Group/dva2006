@@ -17,8 +17,7 @@
 <content:js name="common" />
 <content:js name="examTake" />
 <c:if test="${exam.routePlot}">
-<map:api version="3" />
-<content:json /></c:if>
+<map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
 <script>

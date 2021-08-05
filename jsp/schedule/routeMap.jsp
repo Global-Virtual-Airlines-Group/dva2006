@@ -13,7 +13,6 @@
 <content:favicon />
 <content:js name="common" />
 <map:api version="3" />
-<content:json />
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics eventSupport="true" />
