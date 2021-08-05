@@ -13,7 +13,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script>

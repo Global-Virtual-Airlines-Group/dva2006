@@ -13,7 +13,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">

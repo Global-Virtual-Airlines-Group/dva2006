@@ -17,7 +17,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" />
-<content:json />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />

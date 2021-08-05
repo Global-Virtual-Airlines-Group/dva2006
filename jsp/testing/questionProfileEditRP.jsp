@@ -14,7 +14,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="routePlot" />

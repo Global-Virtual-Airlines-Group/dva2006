@@ -12,7 +12,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <script>
 golgotha.local.validate = function(f)
 {
