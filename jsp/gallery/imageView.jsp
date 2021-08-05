@@ -13,7 +13,6 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:json />
 <content:js name="common" />
 <content:js name="imgLike" />
 </head>

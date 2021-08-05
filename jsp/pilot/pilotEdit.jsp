@@ -14,7 +14,6 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<content:json />
 <content:js name="airportRefresh" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />

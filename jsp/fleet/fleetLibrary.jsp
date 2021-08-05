@@ -11,7 +11,6 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<content:json />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="imgPath" name="path.img" />

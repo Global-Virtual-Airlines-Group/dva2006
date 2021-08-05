@@ -13,7 +13,6 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<content:json />
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="markermanager" />
@@ -44,7 +43,7 @@ golgotha.local.loadWaypoints = function()
 // Get the lat/long
 const lat = golgotha.local.mapC.lat();
 const lng = golgotha.local.mapC.lng();
-var range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
+const range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
 golgotha.local.sMarkers.clearMarkers();
 
 // Check if we don't select

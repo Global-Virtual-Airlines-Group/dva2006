@@ -12,7 +12,6 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

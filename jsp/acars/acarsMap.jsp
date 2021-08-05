@@ -18,7 +18,6 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="3" />
-<content:json />
 <content:captcha action="acarsMap" />
 <content:js name="acarsMap" />
 <content:js name="progressBar" />
