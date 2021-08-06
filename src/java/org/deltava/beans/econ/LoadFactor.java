@@ -1,4 +1,4 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.Random;
@@ -13,7 +13,7 @@ import java.time.Instant;
  * factor which moves in 360-minute cycles.
  *  
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 3.7
  */
 
@@ -21,7 +21,7 @@ public class LoadFactor {
 	
 	private static final long MS_PER_HOUR = 60*60*1000;
 	
-	private EconomyInfo _info;
+	private final EconomyInfo _info;
 	
 	private static final Random _r = new Random();
 	private static final double MAX_RAW = 3.75;
@@ -58,14 +58,6 @@ public class LoadFactor {
 		
 		// Combine the factors and return
 		return (hFactor * _info.getHourlyFactor()) + (dFactor * (1 - _info.getHourlyFactor()));
-	}
-	
-	/**
-	 * Calculates a load factor for a flight, using the current date.
-	 * @return a load factor between 0 and 1
-	 */
-	public double generate() {
-		return generate(Instant.now());
 	}
 	
 	/**
