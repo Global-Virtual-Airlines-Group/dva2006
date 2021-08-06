@@ -597,6 +597,18 @@
 	</tag>
 
 	<tag>
+		<description>Target Load Factor Tag, to display today's target load factor</description>
+		<name>targetLoad</name>
+		<tag-class>org.deltava.taglib.content.TargetLoadFactorTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>System Message Filter Tag, to display content if the system message is set</description>
 		<name>hasmsg</name>
 		<tag-class>org.deltava.taglib.content.SystemMessageFilterTag</tag-class>
