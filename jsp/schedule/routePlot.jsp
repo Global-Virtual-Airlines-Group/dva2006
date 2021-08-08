@@ -67,7 +67,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]" value="${flight.airline}" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]" value="${flight.airline}" onChange="void this.updateAirlineCode()" />
+ <el:text name="airlineCode" size="2" max="3" idx="*" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -184,6 +185,8 @@ golgotha.util.disable('SearchButton');
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airline = 'all';
 golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
+f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
+golgotha.airportLoad.setText(f.airline);
 golgotha.routePlot.validateBlob(f);
 golgotha.routePlot.togglePax();
 golgotha.local.mapInit = function() {
