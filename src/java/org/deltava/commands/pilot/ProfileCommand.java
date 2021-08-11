@@ -829,6 +829,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get email delivery data
 			if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) {
 				GetEMailDelivery eddao = new GetEMailDelivery(con);
+				eddao.setQueryMax(50);
 				ctx.setAttribute("emailDelivery", eddao.getByPilot(p.getID()), REQUEST);
 			}
 			
