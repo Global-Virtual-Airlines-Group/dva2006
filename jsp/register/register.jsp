@@ -227,7 +227,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
  <td class="data" colspan="${cspan}"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="MI" /></td>
 </tr>
 <tr>
- <td class="label">Wegith Units</td>
+ <td class="label">Weight Units</td>
  <td class="data" colspan="${cspan}"><el:check name="weightUnits" idx="*" type="radio" cols="3" options="${weightUnits}" value="LB" /></td>
 </tr>
 <tr>
