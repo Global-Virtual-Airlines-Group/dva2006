@@ -138,7 +138,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 				Collection<Aircraft> aircraft = new LinkedHashSet<Aircraft>();
 				airlineEQ.put(a, aircraft);
 				Collection<String> eqCodes = sedao.getEquipmentTypes(a);
-				eqCodes.forEach(eq -> aircraft.add(allAC.get(eq)));
+				eqCodes.stream().map(code -> allAC.get(code)).filter(Objects::nonNull).forEach(aircraft::add);
 			}
 			
 			// Get unvaried
@@ -221,7 +221,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 		}
 
 		// Forward to the JSP
-		result.setURL("/jsp/schedule/flightFilter.jsp");
+		result.setURL("/jsp/schedule/schedFilter.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
