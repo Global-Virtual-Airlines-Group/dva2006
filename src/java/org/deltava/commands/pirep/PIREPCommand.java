@@ -556,7 +556,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 					
 					// Get system info
-					if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations")) {
+					if (ac.getCanViewDiagnosticData()) {
 						GetSystemInfo sysdao = new GetSystemInfo(con);
 						GetACARSPerformance apdao = new GetACARSPerformance(con);
 						ctx.setAttribute("acarsClientInfo", sysdao.get(afr.getAuthorID(), afr.getSimulator(), afr.getSubmittedOn()), REQUEST);

@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 9.2
+ * @version 10.1
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canApprove;
 	private boolean _canReject;
 	private boolean _canDelete;
+	private boolean _canViewDiagData;
 	private boolean _canViewComments;
 	private boolean _canUpdateComments;
 	private boolean _canPreApprove;
@@ -83,6 +84,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightStatus.OK)));
 		_canRelease = (isHeld && _ctx.isAuthenticated() && canReleaseHold);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
+		_canViewDiagData = _ourPIREP || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("Developer");
 		_canViewComments = isHR || isPirep || _ourPIREP;
 		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
 		
@@ -191,6 +193,14 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdateComments() {
 		return _canUpdateComments;
+	}
+	
+	/**
+	 * Returns whether the ACARS diagnostic data can be viewed.
+	 * @return TRUE if the diagnostic data can eb viewed, otherwise FALSE
+	 */
+	public boolean getCanViewDiagnosticData() {
+		return _canViewDiagData;
 	}
 
 	/**
