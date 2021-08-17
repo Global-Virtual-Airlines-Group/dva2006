@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -76,7 +76,7 @@ public class PilotAccessControl extends AccessControl {
 		_canChangeRoles = _ctx.isUserInRole("Admin");
 		_canTransfer = _canChangeStatus && (status != PilotStatus.TRANSFERRED) && !_p.getIsForgotten();
 		_canInactivate = _canChangeStatus && !_isOurs && ((status == PilotStatus.ACTIVE) || (status == PilotStatus.ONLEAVE));
-		_canActivate = _canChangeStatus && ((status == PilotStatus.INACTIVE) || (status == PilotStatus.RETIRED) || (status == PilotStatus.SUSPENDED)) && !_p.getIsForgotten();
+		_canActivate = _canChangeStatus && ((status == PilotStatus.INACTIVE) || (status == PilotStatus.RETIRED) || (status == PilotStatus.SUSPENDED) || (status == PilotStatus.TRANSFERRED)) && !_p.getIsForgotten();
 
 		// Check Promotion access
 		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());
