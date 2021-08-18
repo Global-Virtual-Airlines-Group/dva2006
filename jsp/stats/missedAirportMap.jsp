@@ -15,14 +15,12 @@
 <map:api version="3" />
 <script>
 golgotha.local.filter = function(combo) {
-	if (combo.selectedIndex == 0)
-		return golgotha.local.showAll();
-		
-	var myAL = golgotha.form.getCombo(combo);
+	if (combo.selectedIndex == 0) return golgotha.local.showAll();
+	const myAL = golgotha.form.getCombo(combo);
 	for (var x = 0; x < golgotha.local.airports.airlines.length; x++) {
-		var al = golgotha.local.airports.airlines[x];	
-		var aps = golgotha.local.airports[al];	
-		var isVisible = (al == myAL);
+		const al = golgotha.local.airports.airlines[x];	
+		const aps = golgotha.local.airports[al];	
+		const isVisible = (al == myAL);
 		for (var y = 0; y < aps.length; y++)
 			aps[y].setVisible(isVisible);
 	}
@@ -30,15 +28,13 @@ golgotha.local.filter = function(combo) {
 	return true;
 };
 
-golgotha.local.showAll = function()
-{
-for (var x = 0; x < golgotha.local.airports.airlines.length; x++) {
-	var al = golgotha.local.airports.airlines[x];
-	var aps = golgotha.local.airports[al];
-	for (var y = 0; y < aps.length; y++)
-		aps[y].setVisible(true);	
-}
-	
+golgotha.local.showAll = function() {
+	for (var x = 0; x < golgotha.local.airports.airlines.length; x++) {
+		const al = golgotha.local.airports.airlines[x];
+ 		const aps = golgotha.local.airports[al];
+ 		aps.forEach(function(ap) { ap.setVisible(true); });
+	}
+
 return true;
 };
 </script>
@@ -49,7 +45,6 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="allAirlines" name="airlines" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -71,9 +66,9 @@ return true;
 </content:page>
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 golgotha.local.airports = {all:[], airlines:[]};

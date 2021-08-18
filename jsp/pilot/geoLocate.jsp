@@ -163,13 +163,10 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
-// Create map options
-const mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
 // Build the map
+const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'dblclick', golgotha.maps.geoLocate.setLatLon);

@@ -58,34 +58,6 @@ if (doRefresh && isAuto)
 return true;
 };
 
-golgotha.maps.acars.saveSettings = function()
-{
-let myType = 'terrain';
-if (map.getMapTypeId() == google.maps.MapTypeId.SATELLITE)
-	myType = 'sat';
-else if (map.getMapTypeId() == google.maps.MapTypeId.ROADMAP)
-	myType = 'map';
-
-// Save the cookies
-const expiryDate = new Date(${cookieExpiry});
-document.cookie = 'acarsMapLat=' + map.getCenter().lat() + '; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapLng=' + map.getCenter().lng() + '; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapZoomLevel=' + map.getZoom() + '; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapType=' + myType + '; expires=' + expiryDate.toGMTString();
-alert('Your <content:airline /> ACARS Map preferences have been saved.');
-return true;
-};
-
-golgotha.maps.acars.clearSettings = function() {
-	const expiryDate = new Date().toGMTString();
-	document.cookie = 'acarsMapLat=; expires=' + expiryDate;
-	document.cookie = 'acarsMapLng=; expires=' + expiryDate;
-	document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate;
-	document.cookie = 'acarsMapType=; expires=' + expiryDate;
-	alert('Your <content:airline /> ACARS Map preferences have been cleared.');
-	return true;
-};
-
 golgotha.maps.acars.showLegend = function(box) {
 	const rows = golgotha.util.getElementsByClass('mapLegend', 'tr');
 	rows.forEach(function(r) { golgotha.util.display(r, box.checked); });
@@ -104,8 +76,6 @@ golgotha.maps.acars.showEarth = function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
-<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -146,8 +116,8 @@ golgotha.maps.acars.showEarth = function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button onClick="void golgotha.maps.acars.saveSettings()" label="SAVE SETTINGS" />
-&nbsp;<el:button onClick="void golgotha.maps.acars.clearSettings()" label="CLEAR SETTINGS" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
+ <td><el:button onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button onClick="void golgotha.maps.save(map)" label="SAVE SETTINGS" />
+&nbsp;<el:button onClick="void golgotha.maps.clear()" label="CLEAR SETTINGS" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -157,11 +127,12 @@ golgotha.maps.acars.showEarth = function() {
 </content:page>
 <script>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-const mapOpts = {center:golgotha.local.mapC, minZoom:3, maxZoom:17, zoom:${zoomLevel}, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
+const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
