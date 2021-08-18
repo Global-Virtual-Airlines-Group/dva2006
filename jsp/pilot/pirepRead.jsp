@@ -59,7 +59,6 @@ golgotha.local.showRunwayChoices = function() {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -327,10 +326,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:when>
 </c:choose>
 <c:if test="${isACARS}">
-<tr class="title caps">
+<tr id="flightDataLabel" class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
-<tr class="flightDataChart">
+<tr id="flightDataChart">
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
 <c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo}">
@@ -445,7 +444,7 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 const mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
 const mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'click', map.closeWindow);
@@ -494,6 +493,7 @@ xreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 	if (xreq.status != 200) {
+		golgotha.util.display('flightDataLabel', false);
 		golgotha.util.display('flightDataChart', false);
 		return false;
 	}

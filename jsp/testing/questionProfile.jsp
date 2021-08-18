@@ -115,10 +115,9 @@
 <map:point var="mapC" point="${question.midPoint}" />
 
 // Create map
-const mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:marker var="aD" point="${question.airportD}" />

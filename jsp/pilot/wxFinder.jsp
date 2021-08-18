@@ -19,7 +19,7 @@
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
 <script>
-var loaders = {};
+const loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
@@ -47,7 +47,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -78,12 +77,11 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-const mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-const mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:3, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+const mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:3, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
