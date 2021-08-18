@@ -19,7 +19,6 @@
 <content:js name="markerWithLabel" />
 <content:js name="oceanicPlot" />
 <content:googleAnalytics eventSupport="true" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -60,13 +59,10 @@
 </content:region>
 </content:page>
 <script>
-// Create map options
-const mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-const mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
 // Create the map
+const mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);

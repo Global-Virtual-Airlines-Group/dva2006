@@ -51,7 +51,6 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -98,7 +97,7 @@ return true;
 <map:marker var="hq" point="${hq}" />
 const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 golgotha.pilotMap.hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});

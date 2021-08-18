@@ -90,7 +90,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -143,13 +142,13 @@ return true;
 </content:page>
 <div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
-<script id="mapInit">
+<script>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
 const mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:true, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);

@@ -23,13 +23,11 @@
 <script>
 var loaders = {};
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
-loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windSpeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
 
 golgotha.maps.acars.reloadData = function(isAuto)
@@ -55,8 +53,6 @@ return true;
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
 <content:empty var="emptyList" />
-<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <el:form action="acarsMap.do" method="get" validate="return false">
@@ -81,14 +77,14 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-<content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, minZoom:3, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
+var mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, zoom:golgotha.maps.info.zoom, maxZoom:17, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
@@ -106,7 +102,6 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, hjsl));
 ctls.push(new golgotha.maps.LayerAnimateControl({map:map, title:'Radar Loop', refresh:325, disabled:true, c:'selImg'}, loop));
 
@@ -123,7 +118,6 @@ map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementBy
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	loaders.series.loadGinsu();
 	golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
-	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	google.maps.event.trigger(map, 'zoom_changed');
 	golgotha.maps.acars.reloadData(true);
