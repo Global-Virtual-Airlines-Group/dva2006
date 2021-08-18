@@ -236,10 +236,7 @@ xreq.send(null);
 return true;
 };
 
-golgotha.maps.acars.sort = function(e1, e2) {
-	return e1.pilot.name.localeCompare(e2.pilot.name);
-};
-
+golgotha.maps.acars.sort = function(e1, e2) { return e1.pilot.name.localeCompare(e2.pilot.name); };
 golgotha.maps.acars.getServiceRange = function(marker, range) {
 	const bC = marker.isBusy ? '#c02020' : '#20c060';
 	const fC = marker.isBusy ? '#802020' : '#208040';
@@ -247,17 +244,21 @@ golgotha.maps.acars.getServiceRange = function(marker, range) {
 	return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 };
 
-golgotha.maps.acars.zoomTo = function(combo)
-{
-const opt = combo.options[combo.selectedIndex];
-if ((!opt) || (opt.mrk == null)) return false;
+golgotha.maps.acars.zoomTo = function(combo) {
+	const opt = combo.options[combo.selectedIndex];
+	if ((!opt) || (opt.mrk == null)) return false;
 
-// Check if we zoom or just pan
-const f = document.forms[0];
-if (f.zoomToPilot.checked) map.setZoom(9);
+	// Check if we zoom or just pan
+	const f = document.forms[0];
+	if (f.zoomToPilot.checked) map.setZoom(9);
+	map.panTo(opt.mrk.getPosition());
+	google.maps.event.trigger(opt.mrk, 'click');
+	return true;
+};
 
-// Pan to the marker
-map.panTo(opt.mrk.getPosition());
-google.maps.event.trigger(opt.mrk, 'click');
-return true;
+golgotha.maps.clear = function() { localStorage.removeItem('golgotha.mapInfo'); return true; };
+golgotha.maps.save = function(m) {
+	const inf = {type:m.getMapTypeId(), zoom:m.getZoom(), ctr:map.getCenter()};
+	localStorage.setItem('golgotha.mapInfo', JSON.stringify(inf));
+	return true;
 };
