@@ -99,28 +99,6 @@
 	</tag>
 
 	<tag>
-		<description>MapType Tag, to set the Map type</description>
-		<name>type</name>
-		<tag-class>org.deltava.taglib.googlemap.MapTypeTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>map</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>type</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>default</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
-
-	<tag>
 		<description>Marker Tag, to generate a GMarker</description>
 		<name>marker</name>
 		<tag-class>org.deltava.taglib.googlemap.MarkerTag</tag-class>
