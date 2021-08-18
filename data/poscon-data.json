@@ -1,0 +1,218 @@
+{
+    "totalPilots": 2,
+    "totalAtc": 0,
+    "lastUpdated": "2021-08-18T02:45:03Z",
+    "flights": [
+        {
+            "_id": "611c1dc0b8293c27ceb81432",
+            "userId": "1019712",
+            "squawk": "7070",
+            "callsign": "AFR722",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-17T21:31:10.452Z",
+                    "airport": "FCBB",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            15.251494799740613,
+                            -4.250446984078735
+                        ]
+                    }
+                },
+                {
+                    "wow": false,
+                    "time": "2021-08-17T23:35:26.078Z",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            15.07361673284322,
+                            11.771948758978397
+                        ]
+                    }
+                }
+            ],
+            "userName": "Robin R.",
+            "ac_type": "B77W",
+            "airline": "AFR",
+            "position": {
+                "lat": 36.178919,
+                "long": 6.637287,
+                "true_hdg": 344.16,
+                "gs_kt": 457.28,
+                "pressure_alt": 35999,
+                "alt_amsl": 36171,
+                "pitch": 2.99,
+                "roll": "",
+                "ghosted": false,
+                "vertFtPerSec": 0.63
+            },
+            "freq": {
+                "vhf1": 122800,
+                "vhf2": 121500
+            },
+            "login": "2021-08-17T20:36:16.876Z",
+            "flightplan": {
+                "created": "2021-08-17T20:10:17.362Z",
+                "updated": "2021-08-17T20:10:17.362Z",
+                "std": "2021-08-17T21:00:00.000Z",
+                "sta": "2021-08-18T04:12:00.000Z",
+                "atd": "2021-08-17T21:31:10.455Z",
+                "ac_type": "B77W",
+                "altnt": "LFPO",
+                "altnt2": "",
+                "callsign": "AFR722",
+                "cruise_spd": "N0491",
+                "dof": "2021-08-17T00:00:00.000Z",
+                "dep": "FCBB",
+                "dep_time": "2100",
+                "dest": "LFPG",
+                "eet": "0712",
+                "endurance": "0823",
+                "equip_code": "S,D,E1,E2,E3,F,G,H,I,J2,J3,J4,J5,M1,R,W,X,Y,Z",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F340",
+                "other": "PBN/A1L1B1C1D1O1S2 DAT/1FANSP2PDC SUR/260B DOF/210817 REG/FGZNS EET/FCCC0000 FTTT0136 DRRR0316 DAAA0328 LFFF0536 OPR/AFR PER/D RMK/ACAS TCAS",
+                "pbn": "A1,L1,B1,C1,D1,O1,S2",
+                "perf_cat": "D",
+                "persons": 353,
+                "remarks": "ACAS TCAS",
+                "route": "N0493F340 DCT BZ UA403 UMOSA/N0487F360 UA403 FL UA607 DIR UB730 IKTAV/N0490F360 UB730 DJA UA605 TARAT/N0490F360 UA605 CSO UR978 KAMER/N0488F360 UM998 EDINO DCT ROTIS DCT LOGNI UN854 TINIL",
+                "ssr": "L,B1,D1",
+                "wake_turb": "H",
+                "operator": "AFR",
+                "user_id": "1019712"
+            }
+        },
+        {
+            "_id": "611c0f67b8293c27ceb81430",
+            "userId": "1018696",
+            "squawk": "0147",
+            "callsign": "TWA542",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-17T20:00:42.072Z",
+                    "airport": "KSFO",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -122.3843774618581,
+                            37.6248455629684
+                        ]
+                    }
+                },
+                {
+                    "wow": false,
+                    "time": "2021-08-17T20:11:07.831Z",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -123.52361497934908,
+                            37.73335587931797
+                        ]
+                    }
+                },
+                {
+                    "wow": false,
+                    "time": "2021-08-17T20:49:32.261Z",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -129.58936017472297,
+                            38.74317534500733
+                        ]
+                    }
+                },
+                {
+                    "wow": false,
+                    "time": "2021-08-17T21:23:44.148Z",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -135.39765186142176,
+                            39.57729176385328
+                        ]
+                    }
+                },
+                {
+                    "wow": false,
+                    "time": "2021-08-17T23:55:20.699Z",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -161.73871070612222,
+                            38.05952724767849
+                        ]
+                    }
+                }
+            ],
+            "userName": "Nicolas",
+            "ac_type": "B763",
+            "airline": "AAL",
+            "position": {
+                "lat": 35.267305,
+                "long": 171.98917,
+                "true_hdg": 264.28,
+                "gs_kt": 426.06,
+                "pressure_alt": 36004,
+                "alt_amsl": 35983.04,
+                "pitch": 2.99,
+                "roll": "",
+                "ghosted": false,
+                "vertFtPerSec": -0.01
+            },
+            "freq": {
+                "vhf1": 120500,
+                "vhf2": 121500
+            },
+            "login": "2021-08-17T19:35:03.167Z",
+            "flightplan": {
+                "created": "2021-08-17T19:03:05.440Z",
+                "updated": "2021-08-17T19:03:05.440Z",
+                "std": "2021-08-17T20:05:00.000Z",
+                "sta": "2021-08-18T06:56:00.000Z",
+                "atd": "2021-08-17T20:00:42.081Z",
+                "ac_type": "B763",
+                "altnt": "",
+                "altnt2": "",
+                "callsign": "TWA542",
+                "cruise_spd": "N0472",
+                "dof": "2021-08-17T00:00:00.000Z",
+                "dep": "KSFO",
+                "dep_time": "2005",
+                "dest": "RJAA",
+                "eet": "1051",
+                "endurance": "1243",
+                "equip_code": "S,D,E3,F,G,H,I,M3,R,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F300",
+                "other": "PBN/A1L1B1C1D1O1 SUR/260B DOF/210817 REG/N213TA OPR/TWA PER/D RALT/PAKT PACD PMDY RJAA RMK/TCAS SIMBRIEF",
+                "pbn": "A1,L1,B1,C1,D1,O1",
+                "perf_cat": "D",
+                "persons": 236,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "GNNRR2 ALCOA DCT CEPAS DCT COBAD/N0473F320 DCT 40N140W 39N150W 38N160W/N0467F340 38N170W 36N180E 35N170E/N0461F360 35N160E 35N150E/N0457F380 DCT SEALS OTR13 LAPIL Y811 POROT Y809 SUPOK",
+                "ssr": "L,B1",
+                "wake_turb": "H",
+                "operator": "TWA",
+                "user_id": "1018696"
+            }
+        }
+    ],
+    "atc": [],
+    "upcomingAtc": [
+        {
+            "_id": "611c6b46e25f0f00060be24b",
+            "title": "RKRR.RKSS.RKSS.SSA1",
+            "start": "2021-08-19T02:00:00.000Z",
+            "end": "2021-08-19T03:00:00.000Z",
+            "telephony": "SEOUL APPROACH",
+            "forumEventUrl": "https://forums.poscon.net/calendar/event/1387-seoul-approach/"
+        }
+    ],
+    "upcomingFlights": []
+}

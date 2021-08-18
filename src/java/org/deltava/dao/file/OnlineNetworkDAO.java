@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 
 public abstract class OnlineNetworkDAO extends DAO {
 	
-	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss";
+	private static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss['Z']";
 	
 	/**
 	 * Creates the Data Access Object.
