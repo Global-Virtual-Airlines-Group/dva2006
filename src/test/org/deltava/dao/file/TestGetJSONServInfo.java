@@ -89,4 +89,21 @@ public class TestGetJSONServInfo extends TestCase {
 			assertFalse(inf.getControllers().isEmpty());
 		}
 	}
+	
+	@SuppressWarnings("static-method")
+	public void testLoadPOSCON() throws Exception {
+		
+		File f = new File("data", "poscon-data.json");
+		assertTrue(f.exists());
+		
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 102400)) {
+			GetPOSCONInfo dao = new GetPOSCONInfo(is);
+			NetworkInfo inf = dao.getInfo();
+			assertNotNull(inf);
+			assertEquals(OnlineNetwork.POSCON, inf.getNetwork());
+			assertTrue(inf.getServers().isEmpty());
+			assertFalse(inf.getPilots().isEmpty());
+			assertTrue(inf.getControllers().isEmpty());
+		}
+	}
 }
