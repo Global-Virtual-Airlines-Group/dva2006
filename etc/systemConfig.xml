@@ -370,6 +370,15 @@
 			</local>
 		</ivao>
 
+		<poscon>
+			<status_url>https://hqapi.poscon.net/online.json</status_url>
+			<banner>https://hq.poscon.net/tiles/images/POSCON-01.png</banner>
+			<url>https://www.poscon.net/</url>
+			<local>
+				<info>/var/cache/servinfo/poscon.json</info>
+			</local>
+		</poscon>
+
 		<default_network>VATSIM</default_network>
 	</online>
 	
