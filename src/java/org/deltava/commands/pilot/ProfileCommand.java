@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.acars.Restriction;
+import org.deltava.beans.acars.UpdateChannel;
 import org.deltava.beans.cooler.SignatureImage;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
@@ -124,6 +125,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			p.setNetworkID(OnlineNetwork.PILOTEDGE, ctx.getParameter("PilotEdge_ID"));
+			p.setNetworkID(OnlineNetwork.POSCON, ctx.getParameter("POSCON_ID"));
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
@@ -137,6 +139,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
 			p.setShowNavBar(Boolean.valueOf(ctx.getParameter("showNavBar")).booleanValue());
+			p.setACARSUpdateChannel(EnumUtils.parse(UpdateChannel.class, ctx.getParameter("acarsUpdateChannel"), UpdateChannel.RELEASE));
 
 			// Update IM handles
 			for (IMAddress im : IMAddress.values()) {
