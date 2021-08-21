@@ -78,10 +78,10 @@
 <fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeD}" tz="${pirep.airportD.TZ}" className="bld" /></span></c:if></td>
 </tr>
-<c:if test="${!isXACARS && (pirep.boardTime > 0)}" >
+<c:if test="${!isXACARS && (pirep.boardTime.toSeconds() > 0)}" >
 <tr>
  <td class="label">Loading Time</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.boardTime / 60}" /> minutes <fmt:int value="${pirep.boardTime % 60}" /> seconds</td>
+ <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.boardTime}" long="true" /></td>
 </tr>
 </c:if>
 <tr>
@@ -92,7 +92,7 @@
 <c:if test="${!empty avgTaxiOutTime && !empty pirep.taxiOutTime}">
 <tr>
  <td class="label">Outbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiOutTime}" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${pirep.taxiOutTime}" long="true" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></td>
 </tr>
 </c:if>
 <tr>
@@ -199,7 +199,7 @@
 <c:if test="${!empty avgTaxiInTime && !empty pirep.taxiInTime}">
 <tr>
  <td class="label">Inbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiInTime}" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${pirep.taxiInTime}" long="true" /><span class="ita nophone"> (average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
@@ -212,10 +212,10 @@
 <c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom <span class="nophone">to Gate</span></a></c:if></td>
 </tr>
 </c:if>
-<c:if test="${!isXACARS && (pirep.deboardTime > 0)}">
+<c:if test="${!isXACARS && (pirep.deboardTime.toSeconds() > 0)}">
 <tr>
  <td class="label">Unloading Time</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.deboardTime / 60}" /> minutes <fmt:int value="${pirep.deboardTime % 60}" /> seconds</td>
+ <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.deboardTime}" long="true" /></td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">

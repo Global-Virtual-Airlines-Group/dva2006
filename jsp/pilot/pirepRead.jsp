@@ -269,9 +269,8 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 </c:if>
 <c:if test="${pirep.passengers > 0}">
-<c:set var="paxLabel" value="${fn:isDraft(pirep) ? 'Booked' : 'Carried'}" scope="page" />
 <tr>
- <td class="label">Passengers ${paxLabel}</td>
+ <td class="label">Passengers ${fn:isDraft(pirep) ? 'Booked' : 'Carried'}</td>
  <td class="data"><fmt:int value="${pirep.passengers}" /> passengers (<fmt:dec value="${pirep.loadFactor * 100.0}" fmt="##0.00" />% full)</td>
 </tr>
 </c:if>
