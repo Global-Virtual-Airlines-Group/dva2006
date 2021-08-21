@@ -516,8 +516,8 @@ public class SetFlightReport extends DAO {
 					ps.setInt(45, afr.getPaxWeight());
 					ps.setInt(46, afr.getCargoWeight());
 					ps.setLong(47, afr.getCapabilities());
-					ps.setInt(48, afr.getBoardTime());
-					ps.setInt(49, afr.getDeboardTime());
+					ps.setLong(48, afr.getBoardTime().toSeconds());
+					ps.setLong(49, afr.getDeboardTime().toSeconds());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
 					ps.setInt(32, 0);
