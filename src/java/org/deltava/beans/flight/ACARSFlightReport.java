@@ -19,8 +19,8 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	public static final String GENERIC_SDK = "Generic";
 	
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
-    private int _boardTime;
-    private int _deboardTime;
+    private Duration _boardTime = Duration.ZERO;
+    private Duration _deboardTime = Duration.ZERO;
     
     private ILSCategory _ils;
     private double _landingG;
@@ -105,7 +105,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      * @see ACARSFlightReport#setBoardTime(int)
      * @see ACARSFlightReport#getDeboardTime()
      */
-    public int getBoardTime() {
+    public Duration getBoardTime() {
     	return _boardTime;
     }
     
@@ -115,7 +115,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      * @see ACARSFlightReport#setDeboardTime(int)
      * @see ACARSFlightReport#getBoardTime()
      */
-    public int getDeboardTime() {
+    public Duration getDeboardTime() {
     	return _deboardTime;
     }
     
@@ -281,7 +281,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      * @see ACARSFlightReport#setDeboardTime(int)
      */
     public void setBoardTime(int secs) {
-    	_boardTime = Math.max(0, secs);
+    	_boardTime = Duration.ofSeconds(Math.max(0, secs));
     }
     
     /**
@@ -291,7 +291,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      * @see ACARSFlightReport#setBoardTime(int)
      */
     public void setDeboardTime(int secs) {
-    	_deboardTime = Math.max(0, secs);
+    	_deboardTime = Duration.ofSeconds(Math.max(0, secs));
     }
     
     /**

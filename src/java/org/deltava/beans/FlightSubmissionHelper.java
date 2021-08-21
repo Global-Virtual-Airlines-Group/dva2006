@@ -431,7 +431,7 @@ public class FlightSubmissionHelper {
 		Duration bt = _fr.getDuration();
 		if (_isACARS) {
 			ACARSFlightReport afr = (ACARSFlightReport) _fr;
-			bt = bt.minusSeconds(afr.getBoardTime() + afr.getDeboardTime());
+			bt = bt.minusSeconds(afr.getBoardTime().toSeconds() + afr.getDeboardTime().toSeconds());
 			if (bt.isNegative()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, "Boarding/Deboarding Time exceeds Flight Time");
 				bt = Duration.ofMinutes(12);
