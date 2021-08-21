@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.time.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 7.0
  */
 
@@ -24,11 +24,8 @@ public class DurationFormatTag extends UserSettingsTag {
 
 	private String _className;
 	private String _nullData;
+	private boolean _isLong;
 
-	/**
-	 * Updates this tag's page context and loads the user object from the request.
-	 * @param ctxt the new JSP page context
-	 */
 	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
@@ -53,6 +50,14 @@ public class DurationFormatTag extends UserSettingsTag {
 	}
 
 	/**
+	 * Updates whether to use a text format description.
+	 * @param isLong TRUE if text description should be used, otherwise FALSE
+	 */
+	public void setLong(boolean isLong) {
+		_isLong = isLong;
+	}
+
+	/**
 	 * Updates the time format pattern.
 	 * @param pattern the pattern string
 	 * @throws IllegalArgumentException if {@link DateTimeFormatter} cannot interpret the pattern
@@ -71,14 +76,12 @@ public class DurationFormatTag extends UserSettingsTag {
 		_d = d;
 	}
 
-	/**
-	 * Releases this tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
 		_timeFormat = DEFAULT_T_FMT;
 		_className = null;
+		_isLong = false;
 	}
 
 	/**
@@ -97,12 +100,48 @@ public class DurationFormatTag extends UserSettingsTag {
 			}
 
 			// Write the formatted date
-			if (_d != null) {
+			if (_d == null)
+				out.print(_nullData);
+			else if (!_isLong) {
 				DateTimeFormatter df = DateTimeFormatter.ofPattern(_timeFormat);
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochSecond(_d.getSeconds()), ZoneId.of("Z"));
 				out.print(df.format(zdt));
-			} else
-				out.print(_nullData);
+			} else {
+				Duration d2 = Duration.from(_d);
+				long d = d2.toDays();
+				if (d > 0) {
+					d2 = d2.minusDays(d);
+					out.print(d);
+					out.print(" day");
+					if (d > 1) out.print('s');
+					if (!d2.isZero()) out.print(' ');
+				}
+				
+				long h = d2.toHours();
+				if (h > 0) {
+					d2 = d2.minusHours(h);
+					out.print(h);
+					out.print(" hour");
+					if (h > 1) out.print('s');
+					if (!d2.isZero()) out.print(' ');
+				}
+				
+				long m = d2.toMinutes();
+				if (m > 0) {
+					d2 = d2.minusMinutes(m);
+					out.print(m);
+					out.print(" minute");
+					if (m > 1) out.print('s');
+					if (!d2.isZero()) out.print(' ');
+				}
+				
+				long s = d2.toSeconds();
+				if (s > 0) {
+					out.print(s);
+					out.print(" second");
+					if (s > 1) out.print('s');
+				}
+			}
 			
 			if (_className != null)
 				out.print("</span>");
