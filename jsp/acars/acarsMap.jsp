@@ -68,6 +68,11 @@ golgotha.maps.acars.showEarth = function() {
 	self.location = '/acars_map_earth.ws';
 	return true;
 };
+
+golgotha.maps.acars.updateSettings = function() {
+	golgotha.maps.save(map);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -95,7 +100,7 @@ golgotha.maps.acars.showEarth = function() {
 <el:box name="showLegend" idx="*" value="true" label="Show Legend" checked="true" onChange="void golgotha.maps.acars.showLegend(this)" /></span></span></td>
 </tr>
 <tr class="nophone mapLegend">
- <td class="label">Aircraft Legend</td>
+ <td class="label" style="max-width:160px;">Aircraft Legend</td>
  <td class="data" style="width:45%;"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
  <td class="label">Dispatcher Legend</td>
@@ -116,8 +121,7 @@ golgotha.maps.acars.showEarth = function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button onClick="void golgotha.maps.save(map)" label="SAVE SETTINGS" />
-&nbsp;<el:button onClick="void golgotha.maps.clear()" label="CLEAR SETTINGS" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
+ <td><el:button onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -138,6 +142,8 @@ google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.
 google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.acars.updateSettings);
+google.maps.event.addListener(map, 'bounds_changed', golgotha.maps.acars.updateSettings);
 
 // Add preload progress bar
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
