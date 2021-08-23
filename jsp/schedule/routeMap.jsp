@@ -45,11 +45,11 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map
-const mapOpts = {center:golgotha.local.mapC, zoom:${zoomLevel}, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.info.zoom, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
