@@ -29,7 +29,6 @@ xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	golgotha.util.setHTML('isLoading', ' - REDRAWING...');
 	golgotha.routeMap.aps = [];
-	const f = document.forms[0];
 
 	// Parse the JSON
 	const js = JSON.parse(xmlreq.responseText);
@@ -78,7 +77,7 @@ xmlreq.onreadystatechange = function() {
 	const js = JSON.parse(xmlreq.responseText);
 	js.routes.forEach(function(rt) {
 		if (rt.airline != aCode) return false;
-		var routeLine = new google.maps.Polyline({map:map, path:rt.positions, strokeColor:rt.color, strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+		const routeLine = new google.maps.Polyline({map:map, path:rt.positions, strokeColor:rt.color, strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		golgotha.routeMap.routes.push(routeLine);
 	});
 
