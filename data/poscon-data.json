@@ -1,218 +1,919 @@
 {
-    "totalPilots": 2,
-    "totalAtc": 0,
-    "lastUpdated": "2021-08-18T02:45:03Z",
+    "totalPilots": 10,
+    "totalAtc": 2,
+    "lastUpdated": "2021-08-28T13:16:56Z",
     "flights": [
         {
-            "_id": "611c1dc0b8293c27ceb81432",
-            "userId": "1019712",
-            "squawk": "7070",
-            "callsign": "AFR722",
+            "_id": "612a3076264c886bdfde8092",
+            "userId": "1024510",
+            "squawk": "3366",
+            "callsign": "AZU586",
             "wows": [
                 {
-                    "wow": false,
-                    "time": "2021-08-17T21:31:10.452Z",
-                    "airport": "FCBB",
+                    "wow": true,
+                    "time": "2021-08-28T13:09:46.211Z",
+                    "airport": "SBGL",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            15.251494799740613,
-                            -4.250446984078735
-                        ]
-                    }
-                },
-                {
-                    "wow": false,
-                    "time": "2021-08-17T23:35:26.078Z",
-                    "location": {
-                        "type": "Point",
-                        "coordinates": [
-                            15.07361673284322,
-                            11.771948758978397
+                            -43.24808546807617,
+                            -22.800091055687517
                         ]
                     }
                 }
             ],
-            "userName": "Robin R.",
-            "ac_type": "B77W",
-            "airline": "AFR",
+            "userName": "Karun",
+            "ac_type": "A20N",
+            "airline": "AZU",
             "position": {
-                "lat": 36.178919,
-                "long": 6.637287,
-                "true_hdg": 344.16,
-                "gs_kt": 457.28,
-                "pressure_alt": 35999,
-                "alt_amsl": 36171,
-                "pitch": 2.99,
+                "lat": -22.812433,
+                "long": -43.251938,
+                "true_hdg": 26.74,
+                "gs_kt": "",
+                "pressure_alt": "",
+                "alt_amsl": 21.14,
+                "pitch": -0.18,
                 "roll": "",
                 "ghosted": false,
-                "vertFtPerSec": 0.63
+                "vertFtPerSec": ""
+            },
+            "freq": {
+                "vhf1": 123450,
+                "vhf2": 121500
+            },
+            "login": "2021-08-28T12:47:50.794Z"
+        },
+        {
+            "_id": "612a1722b8293c27ceb8166a",
+            "userId": "1011453",
+            "squawk": "4705",
+            "callsign": "QTR363T",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T11:42:59.660Z",
+                    "airport": "LFOK",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            4.17922065127641,
+                            48.776913753245026
+                        ]
+                    }
+                }
+            ],
+            "userName": "Chris O.",
+            "ac_type": "B77L",
+            "airline": "QTR",
+            "position": {
+                "lat": 45.602264,
+                "long": 21.957029,
+                "true_hdg": 123.7,
+                "gs_kt": 501.89,
+                "pressure_alt": 35000,
+                "alt_amsl": 35013.75,
+                "pitch": 2.99,
+                "roll": -180.18,
+                "ghosted": false,
+                "vertFtPerSec": -0.22
+            },
+            "freq": {
+                "vhf1": 122800,
+                "vhf2": 127800
+            },
+            "login": "2021-08-28T10:59:46.593Z",
+            "flightplan": {
+                "created": "2021-08-28T11:31:48.275Z",
+                "updated": "2021-08-28T11:31:48.275Z",
+                "std": "2021-08-28T11:40:00.000Z",
+                "sta": "2021-08-28T17:27:00.000Z",
+                "atd": "2021-08-28T11:42:59.666Z",
+                "ac_type": "B77L",
+                "altnt": "OTBD",
+                "altnt2": "OBBI",
+                "callsign": "QTR363T",
+                "cruise_spd": "N0488",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "LFOK",
+                "dep_time": "1140",
+                "dest": "OTHH",
+                "eet": "0547",
+                "endurance": "0708",
+                "equip_code": "S,D,E1,E3,F,G,H,I,J3,J4,J5,L,M1,O,P2,R,V,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F350",
+                "other": "PBN/A1L1B1C1D1O1S1T1 SUR/260B DOF/210828 REG/A7BFB EET/EDUU0023 LOVV0047 LHCC0104 LRBB0125 LBSR0158 LTBB0220 LTAA0228 ORBB0347 OKAC0449 OBBB0501 OPR/QTR PER/D RMK/TCAS CARGO FLIGHT RNP",
+                "pbn": "A1,L1,B1,C1,D1,O1,S1,T1",
+                "perf_cat": "D",
+                "persons": 4,
+                "remarks": "TCAS CARGO FLIGHT RNP",
+                "route": "ARSIL1W ARSIL DCT LUVAL UM164 UTABA DCT INPUL DCT VATET DCT GOTAR DCT INVED/K0900F350 DCT ARTAT/N0493F350 UP975 EZS UL614 OTKEP UM688 RATVO DCT SISIN/N0490F370 UM688 SIDAD P975 LONOS L703 RASDI N318 VELAM Z225 BAYAN BAYAN1R",
+                "ssr": "S,B1,D1",
+                "wake_turb": "H",
+                "operator": "QTR",
+                "user_id": "1011453"
+            }
+        },
+        {
+            "_id": "612a25f6b8293c27ceb81672",
+            "userId": "1011470",
+            "squawk": "1000",
+            "callsign": "DLH099",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T12:41:37.459Z",
+                    "airport": "EDDM",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            11.76491233985871,
+                            48.34175714990124
+                        ]
+                    }
+                }
+            ],
+            "userName": "Chris",
+            "ac_type": "A21N",
+            "airline": "DLH",
+            "position": {
+                "lat": 50.060029,
+                "long": 8.649094,
+                "true_hdg": 250.21,
+                "gs_kt": 155.44,
+                "pressure_alt": 1139,
+                "alt_amsl": 1235.56,
+                "pitch": -3.17,
+                "roll": "",
+                "ghosted": false,
+                "vertFtPerSec": -13.59
+            },
+            "freq": {
+                "vhf1": 123450,
+                "vhf2": 121500
+            },
+            "login": "2021-08-28T12:03:02.742Z",
+            "flightplan": {
+                "created": "2021-08-28T11:53:45.216Z",
+                "updated": "2021-08-28T11:53:45.216Z",
+                "std": "2021-08-28T12:20:00.000Z",
+                "sta": "2021-08-28T12:55:00.000Z",
+                "atd": "2021-08-28T12:41:37.464Z",
+                "ac_type": "A21N",
+                "altnt": "EDFH",
+                "altnt2": "",
+                "callsign": "DLH099",
+                "cruise_spd": "N0362",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "EDDM",
+                "dep_time": "1220",
+                "dest": "EDDF",
+                "eet": "0035",
+                "endurance": "0156",
+                "equip_code": "S,D,E2,E3,F,G,I,J1,O,R,W,X,Y,Z",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F220",
+                "other": "PBN/A1B1C1D1O1S2 COM/ULD DAT/VM SUR/260B DOF/210828 REG/DAIEA EET/EDGG0014 OPR/DLH PER/C RMK/TCAS",
+                "pbn": "A1,B1,C1,D1,O1,S2",
+                "perf_cat": "C",
+                "persons": 37,
+                "remarks": "TCAS",
+                "route": "GIVMI1N GIVMI Y101 ERNAS T161 FAWUR FAWUR2A",
+                "ssr": "H,B1",
+                "wake_turb": "M",
+                "operator": "DLH",
+                "user_id": "1011470"
+            }
+        },
+        {
+            "_id": "612a1199b8293c27ceb81668",
+            "userId": "1020970",
+            "squawk": "2414",
+            "callsign": "UAL1892",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T11:25:36.758Z",
+                    "airport": "KIAH",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -95.34838734660298,
+                            29.97235438087955
+                        ]
+                    }
+                }
+            ],
+            "userName": "P. Strydom",
+            "ac_type": "B737",
+            "airline": "UAL",
+            "position": {
+                "lat": 39.776747,
+                "long": -105.300151,
+                "true_hdg": 284.34,
+                "gs_kt": 310.1,
+                "pressure_alt": 22357,
+                "alt_amsl": 22682.59,
+                "pitch": 1.76,
+                "roll": 1.41,
+                "ghosted": false,
+                "vertFtPerSec": -5.85
+            },
+            "freq": {
+                "vhf1": 127650,
+                "vhf2": 121500
+            },
+            "login": "2021-08-28T10:36:09.918Z",
+            "flightplan": {
+                "created": "2021-08-28T10:56:02.247Z",
+                "updated": "2021-08-28T10:56:02.247Z",
+                "std": "2021-08-28T11:10:00.000Z",
+                "sta": "2021-08-28T13:16:00.000Z",
+                "atd": "2021-08-28T11:25:36.762Z",
+                "ac_type": "B737",
+                "altnt": "KDEN",
+                "altnt2": "",
+                "callsign": "UAL1892",
+                "cruise_spd": "N0455",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "KIAH",
+                "dep_time": "1110",
+                "dest": "KEGE",
+                "eet": "0206",
+                "endurance": "0325",
+                "equip_code": "S,D,E2,E3,F,G,H,I,R,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F340",
+                "other": "PBN/A1B1C1D1S2 SUR/260B DOF/210828 REG/N27724 EET/KZFW0016 KZAB0055 KZDV0123 OPR/UAL PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,S2",
+                "perf_cat": "C",
+                "persons": 103,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "STYCK7 DOLEY DCT FUZ J58 BATIK DCT GIMLE DCT NOSEW Q154 KENTO J17 TBE J171 HGO J20 FQF DCT TAVRN DCT",
+                "ssr": "L,B1",
+                "wake_turb": "M",
+                "operator": "UAL",
+                "user_id": "1020970"
+            }
+        },
+        {
+            "_id": "612a042c264c886bdfde8084",
+            "userId": "1021061",
+            "squawk": "1610",
+            "callsign": "EDW229",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T10:00:25.418Z",
+                    "airport": "GCRR",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -13.602625080384314,
+                            28.949957282748073
+                        ]
+                    }
+                }
+            ],
+            "userName": "Sebastian Haenelt",
+            "ac_type": "A320",
+            "airline": "EDW",
+            "position": {
+                "lat": 46.819085,
+                "long": 7.356722,
+                "true_hdg": 43.11,
+                "gs_kt": 421.32,
+                "pressure_alt": 33368,
+                "alt_amsl": 33500.35,
+                "pitch": 0.35,
+                "roll": -180.18,
+                "ghosted": false,
+                "vertFtPerSec": -34.37
+            },
+            "freq": {
+                "vhf1": 123450,
+                "vhf2": 118000
+            },
+            "login": "2021-08-28T09:38:52.572Z",
+            "flightplan": {
+                "created": "2021-08-28T09:39:18.149Z",
+                "updated": "2021-08-28T09:39:18.149Z",
+                "std": "2021-08-28T10:05:00.000Z",
+                "sta": "2021-08-28T13:44:00.000Z",
+                "atd": "2021-08-28T10:00:25.421Z",
+                "ac_type": "A320",
+                "altnt": "EDDF",
+                "altnt2": "",
+                "callsign": "EDW229",
+                "cruise_spd": "N0447",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "GCRR",
+                "dep_time": "1005",
+                "dest": "LSZH",
+                "eet": "0339",
+                "endurance": "0533",
+                "equip_code": "S,D,E3,F,G,H,I,R,W,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F340",
+                "other": "PBN/A1B1C1D1O1S1 SUR/260B DOF/210828 REG/HBIHY EET/GMMM0010 LECM0115 LFFF0224 LSAS0313 OPR/EDW PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,O1,S1",
+                "perf_cat": "C",
+                "persons": 177,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "KORAL3V KORAL UG5 SONSO UN871 VJF UL27 MAR UN871 PALIO/N0449F360 UN871 BERSU BERSU1G",
+                "ssr": "L,B1",
+                "wake_turb": "M",
+                "operator": "EDW",
+                "user_id": "1021061"
+            }
+        },
+        {
+            "_id": "612a18feb8293c27ceb8166c",
+            "userId": "1021512",
+            "squawk": "1000",
+            "callsign": "DLH22A",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T11:33:46.785Z",
+                    "airport": "EDDM",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            11.779752331785858,
+                            48.34288933547214
+                        ]
+                    }
+                }
+            ],
+            "userName": "Nicklas",
+            "ac_type": "A20N",
+            "airline": "DLH",
+            "position": {
+                "lat": 43.929553,
+                "long": 5.378034,
+                "true_hdg": 208.86,
+                "gs_kt": 468.95,
+                "pressure_alt": 37009,
+                "alt_amsl": 37828.99,
+                "pitch": 2.29,
+                "roll": -180,
+                "ghosted": false,
+                "vertFtPerSec": -0.18
+            },
+            "freq": {
+                "vhf1": 123450,
+                "vhf2": 121500
+            },
+            "login": "2021-08-28T11:07:42.635Z",
+            "flightplan": {
+                "created": "2021-08-28T11:12:41.917Z",
+                "updated": "2021-08-28T11:12:41.917Z",
+                "std": "2021-08-28T11:40:00.000Z",
+                "sta": "2021-08-28T13:30:00.000Z",
+                "atd": "2021-08-28T11:33:46.790Z",
+                "ac_type": "A20N",
+                "altnt": "LFBO",
+                "altnt2": "",
+                "callsign": "DLH22A",
+                "cruise_spd": "N0448",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "EDDM",
+                "dep_time": "1140",
+                "dest": "LEBL",
+                "eet": "0150",
+                "endurance": "0316",
+                "equip_code": "S,D,E2,E3,F,G,H,I,J1,R,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F370",
+                "other": "PBN/A1B1C1D1O1S2 SUR/260B DOF/210828 REG/DAIJA EET/EDUU0010 LSAS0019 LFFF0042 LECB0117 OPR/DLH PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,O1,S2",
+                "perf_cat": "C",
+                "persons": 184,
+                "remarks": "TCAS SIMBRIEF /BEGINNER/",
+                "route": "MERSI5S MERSI Y100 TRA Z69 OLBEN UN869 NEMOS DCT GVA DCT BALSI UN852 DIVKO UN975 BISBA BISBA2Y",
+                "ssr": "L,B1",
+                "wake_turb": "M",
+                "operator": "DLH",
+                "user_id": "1021512"
+            }
+        },
+        {
+            "_id": "612a2c48264c886bdfde8090",
+            "userId": "1022942",
+            "squawk": "2021",
+            "callsign": "DAL1194",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T12:54:25.285Z",
+                    "airport": "KATL",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -84.42924134898931,
+                            33.634732633363456
+                        ]
+                    }
+                }
+            ],
+            "userName": "Jorge V.",
+            "ac_type": "A20N",
+            "airline": "DAL",
+            "position": {
+                "lat": 34.139273,
+                "long": -86.69376,
+                "true_hdg": 286.8,
+                "gs_kt": 448.78,
+                "pressure_alt": 33990,
+                "alt_amsl": 35788.6,
+                "pitch": 2.11,
+                "roll": "",
+                "ghosted": true,
+                "vertFtPerSec": 0.03
             },
             "freq": {
                 "vhf1": 122800,
                 "vhf2": 121500
             },
-            "login": "2021-08-17T20:36:16.876Z",
+            "login": "2021-08-28T12:30:00.219Z",
             "flightplan": {
-                "created": "2021-08-17T20:10:17.362Z",
-                "updated": "2021-08-17T20:10:17.362Z",
-                "std": "2021-08-17T21:00:00.000Z",
-                "sta": "2021-08-18T04:12:00.000Z",
-                "atd": "2021-08-17T21:31:10.455Z",
-                "ac_type": "B77W",
-                "altnt": "LFPO",
+                "created": "2021-08-28T12:32:51.345Z",
+                "updated": "2021-08-28T12:34:20.059Z",
+                "std": "2021-08-28T13:00:00.000Z",
+                "sta": "2021-08-28T16:29:00.000Z",
+                "atd": "2021-08-28T12:54:25.296Z",
+                "ac_type": "A320",
+                "altnt": "KEVW",
                 "altnt2": "",
-                "callsign": "AFR722",
-                "cruise_spd": "N0491",
-                "dof": "2021-08-17T00:00:00.000Z",
-                "dep": "FCBB",
-                "dep_time": "2100",
-                "dest": "LFPG",
-                "eet": "0712",
-                "endurance": "0823",
-                "equip_code": "S,D,E1,E2,E3,F,G,H,I,J2,J3,J4,J5,M1,R,W,X,Y,Z",
+                "callsign": "DAL1194",
+                "cruise_spd": "N0451",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "KATL",
+                "dep_time": "1300",
+                "dest": "KSLC",
+                "eet": "0329",
+                "endurance": "0428",
+                "equip_code": "S,D,E3,F,G,H,I,R,W,Y",
                 "rules": "I",
                 "type": "S",
                 "cruise": "F340",
-                "other": "PBN/A1L1B1C1D1O1S2 DAT/1FANSP2PDC SUR/260B DOF/210817 REG/FGZNS EET/FCCC0000 FTTT0136 DRRR0316 DAAA0328 LFFF0536 OPR/AFR PER/D RMK/ACAS TCAS",
-                "pbn": "A1,L1,B1,C1,D1,O1,S2",
-                "perf_cat": "D",
-                "persons": 353,
-                "remarks": "ACAS TCAS",
-                "route": "N0493F340 DCT BZ UA403 UMOSA/N0487F360 UA403 FL UA607 DIR UB730 IKTAV/N0490F360 UB730 DJA UA605 TARAT/N0490F360 UA605 CSO UR978 KAMER/N0488F360 UM998 EDINO DCT ROTIS DCT LOGNI UN854 TINIL",
-                "ssr": "L,B1,D1",
-                "wake_turb": "H",
-                "operator": "AFR",
-                "user_id": "1019712"
+                "other": "PBN/A1B1C1D1O1S1 SUR/260B DOF/210828 REG/N106PR EET/KZME0027 KZKC0123 KZDV0206 KZLC0301 OPR/DAL PER/C TALT/KBNA RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,O1,S1",
+                "perf_cat": "C",
+                "persons": 186,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "CUTTN2 HANKO DCT MEM DCT TUL DCT PER DCT GCK DCT HGO DCT EKR LEEHY5",
+                "ssr": "L,B1",
+                "wake_turb": "M",
+                "operator": "DAL",
+                "user_id": "1022942"
             }
         },
         {
-            "_id": "611c0f67b8293c27ceb81430",
-            "userId": "1018696",
-            "squawk": "0147",
-            "callsign": "TWA542",
+            "_id": "6129fa0a264c886bdfde8081",
+            "userId": "1023863",
+            "squawk": "0554",
+            "callsign": "EJM227",
             "wows": [
                 {
                     "wow": false,
-                    "time": "2021-08-17T20:00:42.072Z",
-                    "airport": "KSFO",
+                    "time": "2021-08-28T09:17:48.706Z",
+                    "airport": "EKCH",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            -122.3843774618581,
-                            37.6248455629684
+                            12.61969446670264,
+                            55.60263747582212
+                        ]
+                    }
+                },
+                {
+                    "wow": true,
+                    "time": "2021-08-28T10:07:06.073Z",
+                    "airport": "EDDB",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            13.513996847905219,
+                            52.3562443186529
                         ]
                     }
                 },
                 {
                     "wow": false,
-                    "time": "2021-08-17T20:11:07.831Z",
+                    "time": "2021-08-28T10:24:56.871Z",
+                    "airport": "EDDB",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            -123.52361497934908,
-                            37.73335587931797
+                            13.510838211514056,
+                            52.355496778618544
+                        ]
+                    }
+                },
+                {
+                    "wow": true,
+                    "time": "2021-08-28T11:19:29.426Z",
+                    "airport": "EDDF",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            8.547696671448648,
+                            50.03075954737142
                         ]
                     }
                 },
                 {
                     "wow": false,
-                    "time": "2021-08-17T20:49:32.261Z",
+                    "time": "2021-08-28T11:38:47.869Z",
+                    "airport": "EDDF",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            -129.58936017472297,
-                            38.74317534500733
+                            8.558348729275167,
+                            50.033312297891825
+                        ]
+                    }
+                },
+                {
+                    "wow": true,
+                    "time": "2021-08-28T12:20:32.360Z",
+                    "airport": "LFSB",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            7.52208658028394,
+                            47.600064205471426
                         ]
                     }
                 },
                 {
                     "wow": false,
-                    "time": "2021-08-17T21:23:44.148Z",
+                    "time": "2021-08-28T12:47:36.028Z",
+                    "airport": "LFSB",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            -135.39765186142176,
-                            39.57729176385328
+                            7.522734333761036,
+                            47.59930128464475
                         ]
                     }
                 },
                 {
-                    "wow": false,
-                    "time": "2021-08-17T23:55:20.699Z",
+                    "wow": true,
+                    "time": "2021-08-28T13:07:11.958Z",
+                    "airport": "LSZH",
                     "location": {
                         "type": "Point",
                         "coordinates": [
-                            -161.73871070612222,
-                            38.05952724767849
+                            8.562876298092306,
+                            47.45714525459334
                         ]
                     }
                 }
             ],
-            "userName": "Nicolas",
-            "ac_type": "B763",
-            "airline": "AAL",
+            "userName": "Nico N.",
+            "ac_type": "E35L",
+            "airline": "EJM",
             "position": {
-                "lat": 35.267305,
-                "long": 171.98917,
-                "true_hdg": 264.28,
-                "gs_kt": 426.06,
-                "pressure_alt": 36004,
-                "alt_amsl": 35983.04,
-                "pitch": 2.99,
+                "lat": 47.463431,
+                "long": 8.551475,
+                "true_hdg": 7.39,
+                "gs_kt": 0,
+                "pressure_alt": 1428,
+                "alt_amsl": 1423.42,
+                "pitch": -1.76,
                 "roll": "",
                 "ghosted": false,
-                "vertFtPerSec": -0.01
+                "vertFtPerSec": 0
             },
             "freq": {
-                "vhf1": 120500,
+                "vhf1": 122950,
                 "vhf2": 121500
             },
-            "login": "2021-08-17T19:35:03.167Z",
+            "login": "2021-08-28T08:55:38.625Z",
             "flightplan": {
-                "created": "2021-08-17T19:03:05.440Z",
-                "updated": "2021-08-17T19:03:05.440Z",
-                "std": "2021-08-17T20:05:00.000Z",
-                "sta": "2021-08-18T06:56:00.000Z",
-                "atd": "2021-08-17T20:00:42.081Z",
-                "ac_type": "B763",
-                "altnt": "",
+                "created": "2021-08-28T12:37:39.337Z",
+                "updated": "2021-08-28T12:37:39.337Z",
+                "std": "2021-08-28T13:05:00.000Z",
+                "sta": "2021-08-28T13:25:00.000Z",
+                "atd": "2021-08-28T12:47:36.033Z",
+                "ata": "2021-08-28T13:07:11.970Z",
+                "ac_type": "E35L",
+                "altnt": "EDDF",
                 "altnt2": "",
-                "callsign": "TWA542",
-                "cruise_spd": "N0472",
-                "dof": "2021-08-17T00:00:00.000Z",
-                "dep": "KSFO",
-                "dep_time": "2005",
-                "dest": "RJAA",
-                "eet": "1051",
-                "endurance": "1243",
-                "equip_code": "S,D,E3,F,G,H,I,M3,R,W,X,Y",
+                "callsign": "EJM227",
+                "cruise_spd": "N0287",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "LFSB",
+                "dep_time": "1305",
+                "dest": "LSZH",
+                "eet": "0020",
+                "endurance": "0144",
+                "equip_code": "S,D,F,G,I,R,W",
                 "rules": "I",
                 "type": "S",
-                "cruise": "F300",
-                "other": "PBN/A1L1B1C1D1O1 SUR/260B DOF/210817 REG/N213TA OPR/TWA PER/D RALT/PAKT PACD PMDY RJAA RMK/TCAS SIMBRIEF",
-                "pbn": "A1,L1,B1,C1,D1,O1",
-                "perf_cat": "D",
-                "persons": 236,
+                "cruise": "F090",
+                "other": "PBN/D1 DOF/210828 REG/N132SB EET/LFEE0000 EDGG0001 LSAS0005 OPR/EJM PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "D1",
+                "perf_cat": "C",
+                "persons": 15,
                 "remarks": "TCAS SIMBRIEF",
-                "route": "GNNRR2 ALCOA DCT CEPAS DCT COBAD/N0473F320 DCT 40N140W 39N150W 38N160W/N0467F340 38N170W 36N180E 35N170E/N0461F360 35N160E 35N150E/N0457F380 DCT SEALS OTR13 LAPIL Y811 POROT Y809 SUPOK",
+                "route": "ELBEG7N ELBEG Y3 GIPOL",
+                "ssr": "S",
+                "wake_turb": "M",
+                "operator": "EJM",
+                "user_id": "1023863"
+            }
+        },
+        {
+            "_id": "612a19bab8293c27ceb8166e",
+            "userId": "1024627",
+            "squawk": "1356",
+            "callsign": "SWA2292",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T11:37:42.165Z",
+                    "airport": "KMDW",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -87.75642096530646,
+                            41.78144182311371
+                        ]
+                    }
+                }
+            ],
+            "userName": "Jack B.",
+            "ac_type": "B737",
+            "airline": "SWA",
+            "position": {
+                "lat": 38.873049,
+                "long": -101.592732,
+                "true_hdg": 249.5,
+                "gs_kt": 402.51,
+                "pressure_alt": 35932,
+                "alt_amsl": 36035.52,
+                "pitch": 2.11,
+                "roll": 0.18,
+                "ghosted": false,
+                "vertFtPerSec": -3.62
+            },
+            "freq": {
+                "vhf1": 121500,
+                "vhf2": 121500
+            },
+            "login": "2021-08-28T11:10:50.214Z",
+            "flightplan": {
+                "created": "2021-08-28T11:10:30.052Z",
+                "updated": "2021-08-28T11:10:30.052Z",
+                "std": "2021-08-28T11:39:00.000Z",
+                "sta": "2021-08-28T15:30:00.000Z",
+                "atd": "2021-08-28T11:37:42.168Z",
+                "ac_type": "B737",
+                "altnt": "KONT",
+                "altnt2": "",
+                "callsign": "SWA2292",
+                "cruise_spd": "N0446",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "KMDW",
+                "dep_time": "1139",
+                "dest": "KSAN",
+                "eet": "0351",
+                "endurance": "0504",
+                "equip_code": "S,D,E2,E3,F,G,H,I,R,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F360",
+                "other": "PBN/A1B1C1D1S2 SUR/260B DOF/210828 REG/N727SW EET/KZMP0042 KZDV0118 KZAB0246 KZLA0314 OPR/SWA PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,S2",
+                "perf_cat": "C",
+                "persons": 149,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "DCT PEKUE DCT PIPPN DCT ROTTN DCT KP63E DCT HLC DCT RSK/N0442F380 DCT FLG DCT PKE LUCKI1",
                 "ssr": "L,B1",
-                "wake_turb": "H",
-                "operator": "TWA",
-                "user_id": "1018696"
+                "wake_turb": "M",
+                "operator": "SWA",
+                "user_id": "1024627"
+            }
+        },
+        {
+            "_id": "6129fc52b8293c27ceb81663",
+            "userId": "1026782",
+            "squawk": "7467",
+            "callsign": "TVF0093",
+            "wows": [
+                {
+                    "wow": false,
+                    "time": "2021-08-28T09:46:49.780Z",
+                    "airport": "LFPG",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            2.570574595592916,
+                            48.99664542870596
+                        ]
+                    }
+                },
+                {
+                    "wow": true,
+                    "time": "2021-08-28T11:54:03.755Z",
+                    "airport": "LEMG",
+                    "location": {
+                        "type": "Point",
+                        "coordinates": [
+                            -4.4908761559054255,
+                            36.66896997252479
+                        ]
+                    }
+                }
+            ],
+            "userName": "Favorinus C.",
+            "ac_type": "B738",
+            "airline": "TVF",
+            "position": {
+                "lat": 36.677752,
+                "long": -4.496016,
+                "true_hdg": 41.88,
+                "gs_kt": 0,
+                "pressure_alt": 50,
+                "alt_amsl": 40.38,
+                "pitch": -0.53,
+                "roll": 179.82,
+                "ghosted": false,
+                "vertFtPerSec": 0
+            },
+            "freq": {
+                "vhf1": 121500,
+                "vhf2": 122800
+            },
+            "login": "2021-08-28T09:05:22.259Z",
+            "flightplan": {
+                "created": "2021-08-28T09:05:35.662Z",
+                "updated": "2021-08-28T09:05:35.662Z",
+                "std": "2021-08-28T09:30:00.000Z",
+                "sta": "2021-08-28T11:38:00.000Z",
+                "atd": "2021-08-28T09:46:49.789Z",
+                "ata": "2021-08-28T11:54:03.762Z",
+                "ac_type": "B738",
+                "altnt": "LEMD",
+                "altnt2": "",
+                "callsign": "TVF0093",
+                "cruise_spd": "N0452",
+                "dof": "2021-08-28T00:00:00.000Z",
+                "dep": "LFPG",
+                "dep_time": "0930",
+                "dest": "LEMG",
+                "eet": "0208",
+                "endurance": "0357",
+                "equip_code": "S,D,E2,E3,F,G,H,I,R,W,X,Y",
+                "rules": "I",
+                "type": "S",
+                "cruise": "F350",
+                "other": "PBN/A1B1C1D1S2 SUR/260B DOF/210828 REG/N806SB EET/LECM0057 OPR/TVF PER/C RMK/TCAS SIMBRIEF",
+                "pbn": "A1,B1,C1,D1,S2",
+                "perf_cat": "C",
+                "persons": 177,
+                "remarks": "TCAS SIMBRIEF",
+                "route": "AGOPA5B AGOPA UL167 ARTAX UN857 OSMOB DCT ARVID UT424 PPN UN10 CJN UL27 BLN BLN1Z",
+                "ssr": "L,B1",
+                "wake_turb": "M",
+                "operator": "TVF",
+                "user_id": "1026782"
             }
         }
     ],
-    "atc": [],
-    "upcomingAtc": [
+    "atc": [
         {
-            "_id": "611c6b46e25f0f00060be24b",
-            "title": "RKRR.RKSS.RKSS.SSA1",
-            "start": "2021-08-19T02:00:00.000Z",
-            "end": "2021-08-19T03:00:00.000Z",
-            "telephony": "SEOUL APPROACH",
-            "forumEventUrl": "https://forums.poscon.net/calendar/event/1387-seoul-approach/"
+            "userId": "1024627",
+            "position": "KZDV.ZDV.2.17",
+            "userName": "Jack B.",
+            "login": "2021-08-28T12:02:04.915Z",
+            "telephony": "DENVER CENTER",
+            "fir": "KZDV",
+            "type": "CTR",
+            "vhfFreq": "127.650",
+            "centerPoint": []
+        },
+        {
+            "userId": "1000000",
+            "position": "KZNY.ZNY.B.56",
+            "userName": "Andrew Heath",
+            "login": "2021-08-28T13:07:53.334Z",
+            "telephony": "NEW YORK CENTER",
+            "fir": "KZNY",
+            "type": "CTR",
+            "vhfFreq": "125.325",
+            "centerPoint": [
+                40.53385,
+                -73.9508
+            ]
         }
     ],
-    "upcomingFlights": []
+    "upcomingAtc": [
+        {
+            "userId": "1015415",
+            "position": "LPPC.LPPC.ACC.SL",
+            "start": "2021-08-28T16:00:00.000Z",
+            "end": "2021-08-28T17:00:00.000Z",
+            "forumEventUrl": "https://forums.poscon.net/calendar/event/1401-lisboa-control/",
+            "userName": "Goncalo Santos",
+            "telephony": "LISBOA CONTROL",
+            "fir": "LPPC",
+            "type": "CTR",
+            "vhfFreq": "125.550",
+            "centerPoint": [
+                38.7670982402466,
+                -7.77942762519223
+            ]
+        },
+        {
+            "userId": "1015415",
+            "position": "LPPC.LPPC.ACC.SL",
+            "start": "2021-08-29T16:00:00.000Z",
+            "end": "2021-08-29T17:00:00.000Z",
+            "forumEventUrl": "https://forums.poscon.net/calendar/event/1403-lisboa-control/",
+            "userName": "Goncalo Santos",
+            "telephony": "LISBOA CONTROL",
+            "fir": "LPPC",
+            "type": "CTR",
+            "vhfFreq": "125.550",
+            "centerPoint": [
+                38.7670982402466,
+                -7.77942762519223
+            ]
+        },
+        {
+            "userId": "1024627",
+            "position": "EGTT.LACC.WOR.S22",
+            "start": "2021-08-31T19:00:00.000Z",
+            "end": "2021-08-31T23:59:00.000Z",
+            "forumEventUrl": "https://forums.poscon.net/calendar/event/1454-london-control/",
+            "userName": "Jack B.",
+            "telephony": "LONDON CONTROL",
+            "fir": "EGTT",
+            "type": "CTR",
+            "vhfFreq": "127.830",
+            "centerPoint": [
+                52.242269,
+                -1.156695
+            ]
+        },
+        {
+            "userId": "1024268",
+            "position": "EGPX.SACC.DCS.STH",
+            "start": "2021-08-31T20:00:00.000Z",
+            "end": "2021-08-31T23:00:00.000Z",
+            "forumEventUrl": "https://forums.poscon.net/calendar/event/1455-scottish-control/",
+            "userName": "Oliver P.",
+            "telephony": "SCOTTISH CONTROL",
+            "fir": "EGPX",
+            "type": "CTR",
+            "vhfFreq": "135.530",
+            "centerPoint": [
+                57.646161,
+                -2.317287
+            ]
+        }
+    ],
+    "upcomingFlights": [
+        {
+            "created": "2021-08-28T13:08:50.157Z",
+            "std": "2021-08-28T16:30:00.000Z",
+            "sta": "2021-08-28T18:40:00.000Z",
+            "ac_type": "A320",
+            "altnt": "GCLP",
+            "altnt2": "",
+            "callsign": "VLG46MY",
+            "cruise_spd": "N0460",
+            "dof": "2021-08-28T00:00:00.000Z",
+            "dep": "LEMG",
+            "dep_time": "1630",
+            "dest": "GCXO",
+            "eet": "0210",
+            "endurance": "0321",
+            "equip_code": "S,D,E3,F,G,H,I,R,W,Y",
+            "rules": "I",
+            "type": "S",
+            "cruise": "F350",
+            "other": "PBN/A1B1C1D1O1S1 SUR/260B DOF/210828 REG/ECMEA EET/GMMM0010 GCCC0134 OPR/VLG PER/C RMK/TCAS SIMBRIEF",
+            "pbn": "A1,B1,C1,D1,O1,S1",
+            "perf_cat": "C",
+            "persons": 164,
+            "remarks": "TCAS SIMBRIEF",
+            "route": "PIMOS2P PIMOS UN869 RUSIK RUSIK1M",
+            "ssr": "L,B1",
+            "wake_turb": "M",
+            "user_id": "1025674",
+            "squawk": "",
+            "userName": "ADAM B."
+        }
+    ]
 }

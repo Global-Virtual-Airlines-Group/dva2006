@@ -103,7 +103,7 @@ public class TestGetJSONServInfo extends TestCase {
 			assertEquals(OnlineNetwork.POSCON, inf.getNetwork());
 			assertTrue(inf.getServers().isEmpty());
 			assertFalse(inf.getPilots().isEmpty());
-			assertTrue(inf.getControllers().isEmpty());
+			assertFalse(inf.getControllers().isEmpty());
 		}
 	}
 }
