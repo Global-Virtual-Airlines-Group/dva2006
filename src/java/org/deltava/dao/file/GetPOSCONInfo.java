@@ -11,6 +11,7 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.EnumUtils;
 
 /**
  * A Data Access Object to parse a POSCON JSON servinfo feed. 
@@ -36,8 +37,16 @@ public class GetPOSCONInfo extends OnlineNetworkDAO {
 		try {
 			Controller c = new Controller(Integer.parseInt(co.getString("userId")), OnlineNetwork.POSCON);
 			id = c.getID();
-			c.setName(co.optString("name", "?"));
-			c.setCallsign(co.getString("callsign"));
+			c.setName(co.optString("userName", "?"));
+			c.setCallsign(co.getString("position"));
+			c.setLoginTime(parseDateTime(co.getString("login")));
+			c.setFacility(EnumUtils.parse(Facility.class, co.getString("type"), Facility.CTR));
+			JSONArray pa = co.optJSONArray("centerPoint");
+			if ((pa != null) && (pa.length() > 1)) {
+				RadioPosition rp = new RadioPosition(c.getCallsign(), 0, co.getString("vhfFreq"));
+				rp.setPosition(pa.getDouble(0), pa.getDouble(1), 0);
+				c.addPosition(rp);
+			}
 			
 			return c;
 		} catch (Exception e) {
