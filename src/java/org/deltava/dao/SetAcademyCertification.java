@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 3.4
  */
 
@@ -37,7 +37,7 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the certification entry
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, NETWORK, "
-				+ "NETWORK, RATINGCODE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				+ "RATINGCODE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setString(1, c.getName());
 				ps.setString(2, c.getCode());
 				ps.setInt(3, c.getStage());
