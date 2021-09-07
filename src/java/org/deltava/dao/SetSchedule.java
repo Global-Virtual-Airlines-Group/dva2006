@@ -3,9 +3,11 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.time.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 
 /**
@@ -165,7 +167,7 @@ public class SetSchedule extends DAO {
 	 * @param src a ScheduleSourceInfo bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeSourceAirlines(ScheduleSourceInfo src) throws DAOException {
+	public void writeSourceAirlines(ScheduleSourceHistory src) throws DAOException {
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE_AIRLINES WHERE (SRC=?)")) {
@@ -176,9 +178,23 @@ public class SetSchedule extends DAO {
 			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE, ISAUTO, ISACTIVE) VALUES (?, ?, ?, ?, ?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
-				ps.setTimestamp(3, createTimestamp(src.getImportDate()));
+				ps.setTimestamp(3, createTimestamp(src.getDate()));
 				ps.setBoolean(4, src.getAutoImport());
 				ps.setBoolean(5, src.getActive());
+				executeUpdate(ps, 1);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_HISTORY (SRC, EFFDATE, IMPORTDATE, EXEC_TIME, LEGS, SKIPPED, ADJUSTED, PURGED, AIRLINES, USER_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setInt(1, src.getSource().ordinal());
+				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
+				ps.setTimestamp(3, createTimestamp(src.getDate()));
+				ps.setInt(4, src.getTime());
+				ps.setInt(5, src.getLegs());
+				ps.setInt(6, src.getSkipped());
+				ps.setInt(7, src.getAdjusted());
+				ps.setBoolean(8, src.getPurged());
+				ps.setString(9, StringUtils.listConcat(src.getAirlines().stream().map(al -> al.getCode()).collect(Collectors.toList()), ","));
+				ps.setInt(10, src.getAuthorID());
 				executeUpdate(ps, 1);
 			}
 		

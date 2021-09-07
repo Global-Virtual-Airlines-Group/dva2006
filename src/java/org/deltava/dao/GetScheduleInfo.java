@@ -1,18 +1,18 @@
-// Copyright 2006, 2010, 2011, 2012, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.schedule.*;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 9.1
+ * @version 10.1
  * @since 1.0
  */
 
@@ -88,6 +88,36 @@ public class GetScheduleInfo extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(SystemData.getAirline(rs.getString(1)), Integer.valueOf(rs.getInt(2)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns schedule filter history.
+	 * @return a Collection of ScheduleSourceHistory beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleSourceHistory> getHistory() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM RAW_SCHEDULE_HISTORY ORDER BY IMPORTDATE DESC, SRC")) {
+			Collection<ScheduleSourceHistory> results = new ArrayList<ScheduleSourceHistory>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ScheduleSourceHistory ssh = new ScheduleSourceHistory(ScheduleSource.values()[rs.getInt(1)]);
+					ssh.setEffectiveDate(toInstant(rs.getTimestamp(2)));
+					ssh.setImportDate(toInstant(rs.getTimestamp(3)));
+					ssh.setTime(rs.getInt(4));
+					ssh.setLegs(rs.getInt(5));
+					ssh.setSkipped(rs.getInt(6));
+					ssh.setAdjusted(rs.getInt(7));
+					ssh.setPurged(rs.getBoolean(8));
+					ssh.setAuthorID(rs.getInt(9));
+					StringUtils.split(rs.getString(10), ",").stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(a -> ssh.addLegs(a, 1));
+					results.add(ssh);
+				}
 			}
 			
 			return results;

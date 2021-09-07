@@ -823,7 +823,8 @@ pilot Certification.</td>
  <td class="data">You can import raw schedule entries from multiple sources into the database, which can be aggregated and filtered based on effective dates and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="schedfilter">Raw Schedule Filter</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="schedfilter">Raw Schedule Filter</el:cmd><br />
+ <el:cmd className="bld" url="schedhistory">Raw Schedule Filter History</el:cmd></td>
  <td class="data">You can filter multiple Raw schedule sources based on effective date and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>

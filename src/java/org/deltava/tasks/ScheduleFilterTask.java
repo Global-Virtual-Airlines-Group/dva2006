@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -30,9 +30,6 @@ public class ScheduleFilterTask extends Task {
 		super("Schedule Filter", ScheduleFilterTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {
@@ -40,7 +37,8 @@ public class ScheduleFilterTask extends Task {
 			
 			// Load the airline/source mappings
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true, ctx.getDB());
+			Collection<ScheduleSourceInfo> srcInfos = rsdao.getSources(true, ctx.getDB());
+			Collection<ScheduleSourceHistory> srcs = srcInfos.stream().map(inf -> new ScheduleSourceHistory(inf)).collect(Collectors.toCollection(ArrayList::new));
 			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines();
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());
@@ -57,12 +55,14 @@ public class ScheduleFilterTask extends Task {
 			final LocalDate today = LocalDate.now();
 			Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
-			for (ScheduleSourceInfo srcInfo : srcs) {
+			for (ScheduleSourceHistory srcInfo : srcs) {
+				TaskTimer tt = new TaskTimer();
 				LocalDate effDate = srcInfo.getNextImportDate();
 				log.info("Filtering " + srcInfo.getSource() + ", effective " + effDate);
 				srcInfo.setEffectiveDate(effDate.atStartOfDay().toInstant(ZoneOffset.UTC));
 				srcInfo.setImportDate(Instant.now());
 				srcInfo.setAutoImport(true);
+				srcInfo.setPurged(true);
 				
 				// Purge this source
 				int entriesPurged = swdao.purge(srcInfo.getSource());
@@ -97,9 +97,10 @@ public class ScheduleFilterTask extends Task {
 					}
 				}
 
+				srcInfo.setTime((int) tt.stop());
 				srcInfo.setActive(srcInfo.getLegs() > 1);
 				swdao.writeSourceAirlines(srcInfo);
-				log.info("Loaded " + srcInfo.getLegs() + " (" + srcInfo.getSkipped() + " skipped) "+ srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate());
+				log.info("Loaded " + srcInfo.getLegs() + " (" + srcInfo.getSkipped() + " skipped) "+ srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate() + " in " + srcInfo.getTime() + "ms");
 			}
 			
 			// Save the schedule entries

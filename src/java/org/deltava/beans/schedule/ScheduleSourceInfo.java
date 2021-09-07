@@ -5,7 +5,7 @@ import java.util.*;
 import java.time.*;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 
 import org.deltava.util.ComboUtils;
 import org.deltava.util.cache.Cacheable;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 9.0
  */
 
-public class ScheduleSourceInfo implements ComboAlias, Cacheable {
+public class ScheduleSourceInfo implements ComboAlias, Cacheable, CalendarEntry {
 
 	private final ScheduleSource _src;
 	private int _maxLine;
@@ -26,10 +26,16 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	private boolean _autoImport;
 	private boolean _isActive;
 	private final Map<Airline, Integer> _airlineLegs = new TreeMap<Airline, Integer>();
+
+	/**
+	 * The number of skipped flight legs.
+	 */
+	protected int _skipped;
 	
-	// Import statistics
-	private int _skipped;
-	private int _adjusted;
+	/**
+	 * The number of flight legs adjusted for DST.
+	 */
+	protected int _adjusted;
 	private boolean _purged;
 	
 	/**
@@ -39,6 +45,23 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	public ScheduleSourceInfo(ScheduleSource src) {
 		super();
 		_src = src;
+	}
+	
+	/**
+	 * Creates the bean from an existing ScheduleSourceInfo bean.
+	 * @param inf the ScheduleSourceInfo
+	 */
+	protected ScheduleSourceInfo(ScheduleSourceInfo inf) {
+		this(inf._src);
+		_maxLine = inf._maxLine;
+		_effDate = (inf._effDate == null) ? null : inf._effDate.plusDays(0); // clone
+		_importDate = (inf._importDate == null) ? null : inf._importDate.plusMillis(0); // clone
+		_autoImport = inf._autoImport;
+		_isActive = inf._isActive;
+		_skipped = inf._skipped;
+		_adjusted = inf._adjusted;
+		_purged = inf._purged;
+		_airlineLegs.putAll(inf._airlineLegs);
 	}
 
 	/**
@@ -57,11 +80,8 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 		return _effDate;
 	}
 	
-	/**
-	 * Returns the date of the last schedule filter using this source.
-	 * @return the import date/time
-	 */
-	public Instant getImportDate() {
+	@Override
+	public Instant getDate() {
 		return _importDate;
 	}
 	
@@ -252,6 +272,16 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable {
 	 */
 	public void setPurged(boolean isPurged) {
 		_purged = isPurged;
+	}
+	
+	@Override
+	public int compareTo(Object o) {
+		ScheduleSourceInfo ssi = (ScheduleSourceInfo) o;
+		Instant d2 = ssi.getDate();
+		if (_importDate == null)
+			return (d2 == null) ? _src.compareTo(ssi.getSource()) : 0;
+
+		return (d2 == null) ? 1 : _importDate.compareTo(d2) ;
 	}
 	
 	@Override

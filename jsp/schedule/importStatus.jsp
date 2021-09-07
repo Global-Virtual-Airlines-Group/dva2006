@@ -10,6 +10,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -31,7 +32,7 @@
 </tr>
 <tr class="import-${st.source}">
  <td class="label">Status</td>
- <td class="data">Imported on <span class="sec bld"><fmt:date date="${st.importDate}"  t="HH:mm" /></span> (<span class="pri bld"><fmt:int value="${stats.legs}" /></span> entries)</td>
+ <td class="data">Imported on <span class="sec bld"><fmt:date date="${st.date}"  t="HH:mm" /></span> (<span class="pri bld"><fmt:int value="${stats.legs}" /></span> entries)</td>
 </tr>
 <c:if test="${!empty st.errorMessages}">
 <tr class="import-${st.source}">

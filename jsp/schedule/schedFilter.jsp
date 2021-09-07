@@ -11,6 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script>
@@ -85,7 +86,7 @@ golgotha.onDOMReady(function() {
 <c:set var="srcEffName" value="eff${src.source}"  scope="page" />
 <tr class="src-${src.source} title caps" style="display:none;">
  <td colspan="2">${src.source.description}<c:if test="${!empty src.effectiveDate}"> - <c:if test="${src.active}">(ACTIVE) </c:if> EFFECTIVE <fmt:date fmt="d" date="${src.effectiveDate}" tzName="UTC" /></c:if>
-<c:if test="${!empty src.importDate}"> (${src.autoImport ? 'AUTO' : 'MANUAL'} IMPORT ON <fmt:date t="HH:mm" date="${src.importDate}" />)</c:if></td>
+<c:if test="${!empty src.date}"> (${src.autoImport ? 'AUTO' : 'MANUAL'} IMPORT ON <fmt:date t="HH:mm" date="${src.date}" />)</c:if></td>
 </tr>
 <tr class="src-${src.source}" style="display:none;">
  <td class="label">Effective Date</td>
