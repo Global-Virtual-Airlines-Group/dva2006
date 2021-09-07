@@ -62,11 +62,12 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		// Load import options
 		PurgeOptions doPurge = EnumUtils.parse(PurgeOptions.class, ctx.getParameter("doPurge"), PurgeOptions.EXISTING);
 		Collection<ScheduleSource> srcs = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
-		Collection<ScheduleSourceInfo> sources = new LinkedHashSet<ScheduleSourceInfo>();
+		Collection<ScheduleSourceHistory> sources = new LinkedHashSet<ScheduleSourceHistory>();
 		for (ScheduleSource src : srcs) {
-			ScheduleSourceInfo srcInfo = new ScheduleSourceInfo(src);
+			ScheduleSourceHistory srcInfo = new ScheduleSourceHistory(src);
 			srcInfo.setEffectiveDate(StringUtils.parseInstant(ctx.getParameter("eff" + src.name()), "MM/dd/yyyy"));
 			srcInfo.setImportDate(Instant.now());
+			srcInfo.setAuthorID(ctx.getUser().getID());
 			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList());
 			srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).forEach(al -> srcInfo.addLegs(al, 0));
 			sources.add(srcInfo);
@@ -79,7 +80,9 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Load the entries, save source mappings
 			GetRawSchedule rawdao = new GetRawSchedule(con);
 			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
-			for (ScheduleSourceInfo src : sources) {
+			for (ScheduleSourceHistory src : sources) {
+				TaskTimer tt = new TaskTimer();
+				
 				// Load the entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(src.getSource(), src.getEffectiveDate()).stream().filter(se -> src.contains(se.getAirline())).collect(Collectors.toList());
 				Collection<RawScheduleEntry> legEntries = ScheduleLegHelper.calculateLegs(rawEntries); rawEntries.clear();
@@ -109,13 +112,12 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					}
 				}
 				
-				log.info("Loaded " + src.getLegs() + " (" + src.getSkipped() + " skipped) "+ src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate());
+				src.setTime((int) tt.stop());
+				log.info("Loaded " + src.getLegs() + " (" + src.getSkipped() + " skipped) "+ src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate() + " in " + src.getTime() + "ms");
 			}
 			
-			// Start the transaction
-			ctx.startTX();
-			
 			// Purge if needed
+			ctx.startTX();
 			SetSchedule dao = new SetSchedule(con);
 			switch (doPurge) {
 			case EXISTING:
@@ -137,7 +139,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			}
 			
 			// Save source/airline mappings
-			for (ScheduleSourceInfo src : sources) {
+			for (ScheduleSourceHistory src : sources) {
 				src.setActive(src.getLegs() > 0);
 				dao.writeSourceAirlines(src);
 			}

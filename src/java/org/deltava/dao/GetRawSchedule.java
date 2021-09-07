@@ -75,7 +75,7 @@ public class GetRawSchedule extends DAO {
 			// Filter and add to the cache
 			results = new CacheableSet<ScheduleSourceInfo>(cacheKey);
 			if (isLoaded)
-				srcs.stream().filter(ssi -> (ssi.getImportDate() != null)).forEach(results::add);
+				srcs.stream().filter(ssi -> (ssi.getDate() != null)).forEach(results::add);
 			else
 				results.addAll(srcs);
 			
