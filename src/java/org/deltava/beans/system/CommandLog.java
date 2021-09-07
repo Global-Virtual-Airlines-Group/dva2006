@@ -1,5 +1,5 @@
 // Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.servlet;
+package org.deltava.beans.system;
 
 import java.time.Instant;
 import java.io.Serializable;
