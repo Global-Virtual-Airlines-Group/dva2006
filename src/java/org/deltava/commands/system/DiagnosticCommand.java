@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -9,8 +9,8 @@ import java.time.*;
 import java.time.format.TextStyle;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.acars.CommandStats;
-import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
 
@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 9.1
+ * @version 10.1
  * @since 1.0
  */
 
@@ -65,10 +65,6 @@ public class DiagnosticCommand extends AbstractCommand {
 		if (tSched != null)
 			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
 		
-		// Get servlet scoreboard
-		ServletScoreboard.updateActiveThreads();
-		ctx.setAttribute("scoreBoard", ServletScoreboard.getScoreboard(), REQUEST);
-
 		// Get ACARS server data
 		if (SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS")) {
 			// Get the ACARS Connection pool data and save in the request
