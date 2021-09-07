@@ -1,6 +1,6 @@
 #!/bin/bash
 # Database backup script
-# (c) 2005 - 2020 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005 - 2021 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
 arc_util="pbzip2 -p2 -9 -b20 -c"
@@ -108,8 +108,8 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTA
 
 # Write raw schedule
 echo `date +%H:%M:%S`' Writing raw schedule'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES | $arc_util > dva_raw_sched.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES | $arc_util > afv_raw_sched.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > dva_raw_sched.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > afv_raw_sched.sql.bz2
 
 # Write online track
 echo `date +%H:%M:%S`' Writing online tracks'

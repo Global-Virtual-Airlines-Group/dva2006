@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to export the Flight Schedule in PFPX format. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 6.1
  */
 
@@ -46,7 +46,7 @@ public class PFPXScheduleService extends DownloadService {
 		try {
 			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
 			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(true, ctx.getDB());
-			isInvalid = srcs.stream().map(ScheduleSourceInfo::getImportDate).anyMatch(dt -> dt.toEpochMilli() > f.lastModified());
+			isInvalid = srcs.stream().map(ScheduleSourceInfo::getDate).anyMatch(dt -> dt.toEpochMilli() > f.lastModified());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de); 
 		} finally {
@@ -56,7 +56,7 @@ public class PFPXScheduleService extends DownloadService {
 		// Check the cache
 		if (!isInvalid) {
 			ctx.setHeader("Content-disposition", "attachment; filename=pfpxsched.xml");
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("text/xml", "utf-8");
 			ctx.setHeader("max-age", 3600);
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
@@ -119,12 +119,12 @@ public class PFPXScheduleService extends DownloadService {
 		
 		// Write to the file and send to the client
 		try {
-			try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
+			try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f), 65536))) {
 				pw.println(XMLUtils.format(doc, "UTF-8"));
 			}
 			
 			ctx.setHeader("Content-disposition", "attachment; filename=pfpxsched.xml");
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("text/xml", "utf-8");
 			ctx.setHeader("max-age", 3600);
 			sendFile(f, ctx.getResponse());
 		} catch (IOException ie) {

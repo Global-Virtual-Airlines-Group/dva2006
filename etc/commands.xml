@@ -727,6 +727,12 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="schedhistory">
+		<name>Schedule Filter History</name>
+		<class>org.deltava.commands.schedule.ScheduleFilterHistoryCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="schedexport">
 		<name>Schedule Export</name>
 		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>

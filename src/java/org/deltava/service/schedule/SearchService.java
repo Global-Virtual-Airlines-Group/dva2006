@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to search the Flight Schedule.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 9.0
  */
 
@@ -78,7 +78,7 @@ public class SearchService extends WebService {
 			JSONObject so = new JSONObject();
 			so.put("id", srcInfo.getSource().name());
 			so.put("name", srcInfo.getSource().getDescription());
-			so.put("importDate", srcInfo.getImportDate().toEpochMilli());
+			so.put("importDate", srcInfo.getDate().toEpochMilli());
 			so.put("effectiveDate", srcInfo.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC) * 1000);
 			so.put("isCurrent", srcInfo.getIsCurrent());
 			srco.put(srcInfo.getSource().name(), so);
