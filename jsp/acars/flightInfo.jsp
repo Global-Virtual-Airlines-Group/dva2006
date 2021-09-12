@@ -34,7 +34,7 @@
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data">${pilot.rank.name} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
+ <td class="data">${pilot.rank.name}&nbsp;<span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
  <td class="label">ACARS Client Build</td>
  <td class="data">Build <fmt:int value="${info.clientBuild}" /><c:if test="${info.beta > 0}"> (Beta ${info.beta})</c:if></td>
 </tr>
@@ -44,7 +44,7 @@
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name}<c:if test="${info.simMajor > 1}"> <content:simVersion sim="${info.simulator}" major ="${info.simMajor}" minor="${info.simMinor}" /></c:if>)</span></td>
+ <td class="data">${info.equipmentType}&nbsp;<span class="sec">(using ${info.simulator.name}<c:if test="${info.simMajor > 1}"> <content:simVersion sim="${info.simulator}" major ="${info.simMajor}" minor="${info.simMinor}" /></c:if>)</span></td>
  <td class="label">Flight Code</td>
  <td class="data pri bld">${info.flightCode}</td>
 </tr>
