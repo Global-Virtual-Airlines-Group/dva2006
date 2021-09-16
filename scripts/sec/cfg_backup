@@ -1,6 +1,6 @@
 #!/bin/bash
 # Configuration backup script
-# (c) 2005, 2006, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007, 2010, 2011, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
@@ -12,8 +12,6 @@ tar vcfz httpd.tar.gz /usr/local/apache24/conf
 tar vcfz postfix.tar.gz /etc/postfix
 tar vcfz imapd.tar.gz /etc/dovecot
 tar vcfz mysql.tar.gz /etc/my.cnf
-tar vcfz ts2.tar.gz /usr/local/ts2
-tar vcfz crontabs.tar.gz /var/spool/cron/tabs
 
 # Update permissions
 chmod 660 *.tar.gz
@@ -21,7 +19,7 @@ chown backup:gva *.tar.gz
 
 # Copy data directories
 cd /home/www/gvagroup.org
-tar -vcfz /home/backup/sites/www.gvagroup.org.tar.gz *
+tar vcfz /home/backup/sites/www.gvagroup.org.tar.gz *
 
 # Update permissions
 cd /home/backup/sites
