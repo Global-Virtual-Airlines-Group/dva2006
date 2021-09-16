@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 8.1
+ * @version 10.1
  * @since 1.0
  */
 
@@ -167,12 +167,7 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if the user has submitted this Examination, otherwise FALSE
 	 */
 	public boolean hasSubmitted(String examName) {
-		for (Test t : _tests) {
-			if ((t.getStatus() == TestStatus.SUBMITTED) && (t.getName().equals(examName)))
-				return true;
-		}
-
-		return false;
+		return _tests.stream().anyMatch(t -> (t.getStatus() == TestStatus.SUBMITTED) && (t.getName().equals(examName)));
 	}
 	
 	/**
@@ -180,12 +175,7 @@ public final class AcademyHistoryHelper {
 	 * @return a Course bean, or null
 	 */
 	public Course getCurrentCourse() {
-		for (Course c : _courses.values()) {
-			if ((c.getStatus() == Status.STARTED) || (c.getStatus() == Status.PENDING))
-				return c;
-		}
-		
-		return null;
+		return _courses.values().stream().filter(c -> ((c.getStatus() == Status.STARTED) || (c.getStatus() == Status.PENDING))).findFirst().orElse(null);
 	}
 	
 	/**
@@ -194,12 +184,7 @@ public final class AcademyHistoryHelper {
 	 * @return a Course, or null if not found
 	 */
 	public Course getCourse(int id) {
-		for (Course c : _courses.values()) {
-			if (c.getID() == id)
-				return c;
-		}
-		
-		return null;
+		return _courses.values().stream().filter(c -> (c.getID() == id)).findAny().orElse(null);
 	}
 	
 	/**
@@ -208,12 +193,7 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if any Certification was passed, otherwise FALSE
 	 */
 	public boolean hasAny(int stage) {
-		for (Course c : _courses.values()) {
-			if ((c.getStage() == stage) && (c.getStatus() == Status.COMPLETE))
-				return true;
-		}
-		
-		return false;
+		return _courses.values().stream().anyMatch(c -> ((c.getStage() == stage) && (c.getStatus() == Status.COMPLETE)));
 	}
 	
 	/**
@@ -222,12 +202,7 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if the examination has been passed, otherwise FALSE
 	 */
 	public boolean passedExam(String examName) {
-		for (Test t : _tests) {
-			if (t.getPassFail() && t.getName().equals(examName))
-				return true;
-		}
-		
-		return false;
+		return _tests.stream().anyMatch(t -> (t.getPassFail() && t.getName().equals(examName)));
 	}
 	
 	/**
@@ -273,12 +248,7 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if all Certification were passed, otherwise FALSE
 	 */
 	public boolean hasAll(int stage) {
-		for (Certification c : _certs.values()) {
-			if ((c.getStage() == stage) && !hasPassed(c.getName()))
-				return false;
-		}
-		
-		return true;
+		return _certs.values().stream().filter(c -> (c.getStage() == stage)).allMatch(c -> hasPassed(c.getName()));
 	}
 	
 	/**
@@ -452,8 +422,7 @@ public final class AcademyHistoryHelper {
 	 * Static function to adjust time-accelerated hours.
 	 */
 	private static int getAdjustedHours(FlightReport fr) {
-		if (!(fr instanceof ACARSFlightReport))
-			return fr.getLength();
+		if (!(fr instanceof ACARSFlightReport)) return fr.getLength();
 			
 		ACARSFlightReport afr = (ACARSFlightReport) fr;
 		return (afr.getTime(1) + (afr.getTime(2) / 2) + (afr.getTime(4) / 4)) / 360;
@@ -466,7 +435,7 @@ public final class AcademyHistoryHelper {
 	 * @return the number of flight legs or hours
 	 */
 	public int getFlightTotals(String eqProgram, boolean isHours) {
-		final Collection<String> primaryTypes = StringUtils.isEmpty(eqProgram) ? Collections.emptySet() : _primaryTypes.get(eqProgram);
+		final Collection<String> primaryTypes = StringUtils.isEmpty(eqProgram) ? Collections.emptySet() : _primaryTypes.getOrDefault(eqProgram, Collections.emptySet());
 		Predicate<FlightReport> filterFunc = CollectionUtils.isEmpty(primaryTypes) ? fr -> true : fr -> primaryTypes.contains(fr.getEquipmentType()); 
 		return _flights.stream().filter(filterFunc).mapToInt(fr -> (isHours ? getAdjustedHours(fr) : 1)).sum();
 	}
