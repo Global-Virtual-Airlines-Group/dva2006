@@ -9,25 +9,16 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
 public class Certification implements ComboAlias, ViewEntry, Auditable, Comparable<Certification> {
 	
-	public static final int REQ_ANY = 0;
-	public static final int REQ_ANYPRIOR = 1;
-	public static final int REQ_ALLPRIOR = 2;
-	public static final int REQ_SPECIFIC = 3;
-	public static final int REQ_FLIGHTS = 4;
-	public static final int REQ_HOURS = 5;
-	
-	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications", "Specific Certification", "Flight Legs", "Flight Hours"};
-
 	private String _name;
 	private String _code;
 	private int _stage;
-	private int _preReqs;
+	private Prerequisite _preReqs = Prerequisite.ANY;
 	private int _reqCount;
 	private int _rideCount;
 	
@@ -126,21 +117,10 @@ public class Certification implements ComboAlias, ViewEntry, Auditable, Comparab
 	/**
 	 * Returns the pre-requisite code.
 	 * @return the pre-requisite code
-	 * @see Certification#setReqs(int)
-	 * @see Certification#getReqName()
+	 * @see Certification#setReqs(Prerequisite)
 	 */
-	public int getReqs() {
+	public Prerequisite getReqs() {
 		return _preReqs;
-	}
-	
-	/**
-	 * Returns the pre-requisite description.
-	 * @return the description
-	 * @see Certification#getReqs()
-	 * @see Certification#setReqs(int)
-	 */
-	public String getReqName() {
-		return REQ_NAMES[_preReqs];
 	}
 	
 	/**
@@ -251,6 +231,16 @@ public class Certification implements ComboAlias, ViewEntry, Auditable, Comparab
 	 */
 	public String getNetworkRatingCode() {
 		return _ratingCode;
+	}
+	
+	/**
+	 * Returns whether this Flight Academy Certification is open to a particular virtual airline.
+	 * @param airlineCode the virtual airline code.
+	 * @return TRUE if the Certification is open to this airline, otherwise FALSE
+	 * @see Certification#getAirlines()
+	 */
+	public boolean hasAirline(String airlineCode) {
+		return _airlines.stream().anyMatch(al -> al.getCode().equalsIgnoreCase(airlineCode));
 	}
 	
 	/**
@@ -449,16 +439,12 @@ public class Certification implements ComboAlias, ViewEntry, Auditable, Comparab
 	}
 	
 	/**
-	 * Updates the pre-requisite code.
-	 * @param reqCode the code
-	 * @throws IllegalArgumentException if the code is invalid
+	 * Updates the Course prerequisite.
+	 * @param req the Prerequisite
 	 * @see Certification#getReqs()
 	 */
-	public void setReqs(int reqCode) {
-		if ((reqCode < 0) || (reqCode >= REQ_NAMES.length))
-			throw new IllegalArgumentException("Invalid Requirement code - " + reqCode);
-		
-		_preReqs = (_stage > 1) ? reqCode : REQ_ANY;
+	public void setReqs(Prerequisite req) {
+		_preReqs = (_stage > 1) ? req : Prerequisite.ANY;
 	}
 	
 	/**
@@ -467,7 +453,7 @@ public class Certification implements ComboAlias, ViewEntry, Auditable, Comparab
 	 * @throws IllegalStateException if getReqs() != REQ_SPECIFIC
 	 */
 	public void setReqCert(String certCode) {
-		if ((_preReqs != REQ_SPECIFIC) && (certCode != null))
+		if ((_preReqs != Prerequisite.SPECIFIC) && (certCode != null))
 			throw new IllegalStateException("Specific Certification pre-requisite not set");
 		
 		_certReq = (certCode == null) ? null : certCode.toUpperCase();

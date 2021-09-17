@@ -39,14 +39,9 @@
  <td><el:cmd url="cert" linkID="${cert.name}" className="pri bld">${cert.name}</el:cmd></td>
  <td class="sec bld caps">${cert.code}</td>
  <td class="bld"><fmt:int value="${cert.stage}" /></td>
- <td class="sec bld">${cert.reqName}</td>
+ <td class="sec bld">${cert.reqs.description}</td>
  <td><fmt:int value="${cert.reqCount}" /></td>
-<c:if test="${!empty cert.examNames}">
- <td class="left"><fmt:list value="${cert.examNames}" delim=", " /></td>
-</c:if>
-<c:if test="${empty cert.examNames}">
- <td class="left">NONE</td>
-</c:if>
+ <td class="left"><fmt:list value="${cert.examNames}" delim=", " empty="NONE" /></td>
 </view:row>
 </c:forEach>
 

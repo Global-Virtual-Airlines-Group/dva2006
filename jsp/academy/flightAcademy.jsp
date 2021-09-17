@@ -67,7 +67,7 @@ return true;
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="sec bld nophone">${(empty ins) ? 'Self-Directed' : ins.name}</td>
  <td class="bld nophone"><fmt:int value="${course.stage}" /></td>
- <td class="pri bld">${course.status.name}</td>
+ <td class="pri bld">${course.status.description}</td>
  <td><fmt:date fmt="d" date="${course.startDate}" /></td>
 <c:if test="${!empty course.endDate}">
  <td><fmt:date fmt="d" date="${course.endDate}" /></td>

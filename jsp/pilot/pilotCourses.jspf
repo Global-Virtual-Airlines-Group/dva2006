@@ -47,7 +47,7 @@
  <td>N/A</td>
 </c:otherwise>
 </c:choose>
- <td class="sec">${course.status.name}</td>
+ <td class="sec">${course.status.description}</td>
  <td><fmt:date date="${course.startDate}" fmt="d" /></td>
  <td class="bld"><fmt:date date="${course.endDate}" fmt="d" default="N/A" /></td>
  <td><fmt:date date="${course.lastComment}" fmt="d" default="N/A" /></td> 

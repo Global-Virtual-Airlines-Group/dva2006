@@ -61,7 +61,7 @@ golgotha.local.validateCancel = function() {
 </tr>
 <tr>
  <td class="label">Course Status</td>
- <td colspan="6" class="data"><span class="sec bld">${course.status.name}</span>, started on <fmt:date fmt="d" date="${course.startDate}" /></td>
+ <td colspan="6" class="data"><span class="sec bld">${course.status.description}</span>, started on <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
 <tr>
  <td class="label">Check Rides</td>

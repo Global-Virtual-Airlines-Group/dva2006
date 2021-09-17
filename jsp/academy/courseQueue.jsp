@@ -55,7 +55,7 @@
  <td class="nophone">${instructor.name}</td>
 </c:otherwise>
 </c:choose>
- <td class="pri bld nophone">${course.status.name}</td>
+ <td class="pri bld nophone">${course.status.description}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
  <td class="sec small nophone"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
 </view:row>
