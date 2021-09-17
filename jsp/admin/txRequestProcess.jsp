@@ -176,7 +176,7 @@ golgotha.local.toggleBody = function(id, type) {
  <td colspan="2">REJECT EQUIPMENT TRANSFER REQUEST</td>
 </tr>
 <tr>
- <td class="label top">Rejection Commnents</td>
+ <td class="label top">Rejection Comments</td>
  <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="3" resize="true"></el:textbox></td>
 </tr>
 </c:if>
