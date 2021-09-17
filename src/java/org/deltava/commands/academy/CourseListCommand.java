@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2011, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -7,7 +7,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
@@ -18,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -56,11 +55,9 @@ public class CourseListCommand extends AbstractViewCommand {
 			// Load the instructors
 			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			List<String> codes = new ArrayList<String>(Arrays.asList(VIEW_CODE));
+			List<String> codes = new ArrayList<String>(Arrays.asList(VIEW_CODE)); // Arrays.asList does not support add()
 			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			for (AirlineInformation ai : uddao.getAirlines(true).values())
-				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
-			instructors.forEach(in -> codes.add(in.getComboAlias()));
+			pdao.getByRole("Instructor", ctx.getDB()).forEach(in -> codes.add(in.getComboAlias()));
 
 			// Filter by status
 			int filterType = codes.indexOf(ctx.getParameter("filterType"));
@@ -95,7 +92,7 @@ public class CourseListCommand extends AbstractViewCommand {
 					break;
 
 				default:
-					vc.setResults(dao.getByInstructor(Integer.parseInt(ctx.getParameter("filterType")), vc.getSortType()));
+					vc.setResults(dao.getByInstructor(StringUtils.parse(ctx.getParameter("filterType"), 0), vc.getSortType()));
 			}
 
 			// Load the Pilot profiles
