@@ -69,6 +69,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 <content:sysdata var="networks" name="online.networks" />
+<content:enum var="preReqNames" className="org.deltava.beans.academy.Prerequisite" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -91,7 +92,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><el:combo name="preReqs" required="true" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void golgotha.local.showReqCert(this)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="preReqs" required="true" idx="*" size="1" value="${cert.reqs.description}" options="${preReqNames}" onChange="void golgotha.local.showReqCert(this)" firstEntry="-" /></td>
 </tr>
 <tr id="reqCertRow" style="display:none;">
  <td class="label">Certification</td>
