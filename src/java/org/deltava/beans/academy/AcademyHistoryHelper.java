@@ -306,7 +306,7 @@ public final class AcademyHistoryHelper {
 		
 		// Check the pre-reqs for the Certification
 		switch (c.getReqs()) {
-			case Certification.REQ_ANYPRIOR :
+			case ANY_PRIOR :
 				if (!hasAny(c.getStage())) {
 					log("Has no Stage " + c.getStage() + " certs for " + c.getName());
 					return false;
@@ -314,7 +314,7 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
-			case Certification.REQ_ALLPRIOR :
+			case ALL_PRIOR :
 				if (!hasAll(c.getStage() - 1)) {
 					log("Missing Stage " + c.getStage() + " cert for " + c.getName());
 					return false;
@@ -322,7 +322,7 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
-			case Certification.REQ_SPECIFIC:
+			case SPECIFIC:
 				Certification prCert = _certs.get(c.getReqCert());
 				if (prCert == null)
 					log.warn("No Certification called " + c.getReqCert() + " for " + c.getCode());
@@ -333,7 +333,7 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
-			case Certification.REQ_FLIGHTS:
+			case FLIGHTS:
 				int legs = getFlightTotals(c.getEquipmentProgram(), false); 
 				if (legs < c.getFlightCount()) {
 					log("Requires " + c.getFlightCount() + " legs in " + c.getEquipmentProgram() + ", pilot has " + legs);
@@ -342,7 +342,7 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
-			case Certification.REQ_HOURS:
+			case HOURS:
 				double hours = getFlightTotals(c.getEquipmentProgram(), true) / 10.0;
 				if (hours < c.getFlightCount()) {
 					log("Requires " + c.getFlightCount() + " hours in " + c.getEquipmentProgram() + ", pilot has " + StringUtils.format(hours, "#0.0"));
@@ -351,7 +351,6 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
-			case Certification.REQ_ANY:
 			default:
 				return true;
 		}
