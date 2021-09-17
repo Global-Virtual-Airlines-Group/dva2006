@@ -41,7 +41,7 @@ public class SetAcademyCertification extends DAO {
 				ps.setString(1, c.getName());
 				ps.setString(2, c.getCode());
 				ps.setInt(3, c.getStage());
-				ps.setInt(4, c.getReqs());
+				ps.setInt(4, c.getReqs().ordinal());
 				ps.setBoolean(5, c.getActive());
 				ps.setBoolean(6, c.getAutoEnroll());
 				ps.setBoolean(7, c.getVisible());
@@ -55,7 +55,7 @@ public class SetAcademyCertification extends DAO {
 			}
 			
 			// If we've got a pre-req, write it
-			if (c.getReqs() == Certification.REQ_SPECIFIC)
+			if (c.getReqs() == Prerequisite.SPECIFIC)
 				writePrereq(c.getName(), c.getReqCert());
 			
 			// Write the exams/roles
@@ -85,7 +85,7 @@ public class SetAcademyCertification extends DAO {
 				ps.setString(1, c.getName());
 				ps.setString(2, c.getCode());
 				ps.setInt(3, c.getStage());
-				ps.setInt(4, c.getReqs());
+				ps.setInt(4, c.getReqs().ordinal());
 				ps.setBoolean(5, c.getActive());
 				ps.setBoolean(6, c.getAutoEnroll());
 				ps.setBoolean(7, c.getVisible());
