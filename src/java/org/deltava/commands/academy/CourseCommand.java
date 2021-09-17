@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.system.AirlineInformation;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -18,7 +17,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -117,9 +116,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			if (access.getCanAssignInstructor()) {
 				GetPilotDirectory prdao = new GetPilotDirectory(con);
 				Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-				for (AirlineInformation ai : uddao.getAirlines(true).values())
-					instructors.addAll(prdao.getByRole("Instructor", ai.getDB()));
-				
+				instructors.addAll(prdao.getByRole("Instructor", ctx.getDB()));
 				ctx.setAttribute("instructors", instructors, REQUEST);
 			}
 			

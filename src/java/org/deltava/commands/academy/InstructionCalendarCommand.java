@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
@@ -17,7 +16,7 @@ import org.deltava.security.command.BusyTimeAccessControl;
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -64,9 +63,7 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory prdao = new GetPilotDirectory(con);
 			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			for (AirlineInformation ai : uddao.getAirlines(true).values())
-				instructors.addAll(prdao.getByRole("Instructor", ai.getDB()));
-			
+			instructors.addAll(prdao.getByRole("Instructor", ctx.getDB()));
 			ctx.setAttribute("instructors", instructors, REQUEST);
 			
 			// Get the Pilot IDs from the sessions
