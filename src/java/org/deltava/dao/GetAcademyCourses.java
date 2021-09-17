@@ -1,19 +1,19 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.UserData;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -75,13 +75,7 @@ public class GetAcademyCourses extends DAO {
 		
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR, exams.COURSERIDES CRR WHERE (C.CERTNAME=CR.NAME) AND (CRR.COURSE=C.ID) AND (CRR.CHECKRIDE IN (");
-		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-		
+		sqlBuf.append(StringUtils.listConcat(ids, ","));
 		sqlBuf.append("))");
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			return execute(ps);
@@ -136,9 +130,11 @@ public class GetAcademyCourses extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
-			+ "(C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) AND (C.CERTNAME=CR.NAME)");
+			+ "(C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (C.CERTNAME=CA.CERTNAME) WHERE (C.STATUS=?) AND (C.CERTNAME=CR.NAME)");
 		if (pilotID != 0)
 			sqlBuf.append(" AND (C.PILOT_ID=?)");
+		else
+			sqlBuf.append(" AND (CA.AIRLINE=?)");
 		
 		sqlBuf.append(" GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
@@ -147,6 +143,8 @@ public class GetAcademyCourses extends DAO {
 			ps.setInt(1, Status.COMPLETE.ordinal());
 			if (pilotID != 0)
 				ps.setInt(2, pilotID);
+			else
+				ps.setString(2, SystemData.get("airline.code"));
 			
 			return execute(ps);
 		} catch (SQLException se) {
@@ -166,9 +164,12 @@ public class GetAcademyCourses extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
-			+ "(C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) AND (C.STATUS=?) ");
+			+ "(C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (C.CERTNAME=CA.CERTNAME) WHERE (C.CERTNAME=CR.NAME) AND (C.STATUS=?) ");
 		if (c != null)
 			sqlBuf.append("AND (C.CERTNAME=?) ");
+		else
+			sqlBuf.append(" AND (CA.AIRLINE=?)");
+		
 		sqlBuf.append("GROUP BY C.ID ");
 		if (!StringUtils.isEmpty(sortBy)) {
 			sqlBuf.append("ORDER BY ");
@@ -177,9 +178,7 @@ public class GetAcademyCourses extends DAO {
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, s.ordinal());
-			if (c != null)
-				ps.setString(2, c.getName());
-			
+			ps.setString(2, (c != null) ? c.getName() : SystemData.get("airline.code"));
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -194,9 +193,10 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getCompletionQueue() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT C.*, CRT.STAGE, CRT.ABBR, MAX(CC.CREATED) AS LC, COUNT(CP.SEQ) AS REQCNT, SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, SUM(CR.PASS) AS CRCNT "
 			+ "FROM (exams.CERTS CRT, exams.COURSES C) LEFT JOIN exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) LEFT JOIN exams.CHECKRIDES CR "
-			+ "ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) GROUP BY C.ID HAVING (REQCNT=CREQCNT) AND "
-			+ "(C.CHECKRIDES=CRCNT) ORDER BY LC DESC")) {
+			+ "ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (CRT.NAME=CA.CERTNAME) WHERE (CRT.NAME=C.CERTNAME) AND "
+			+ "(C.STATUS=?) AND (CA.AIRLINE=?) GROUP BY C.ID HAVING (REQCNT=CREQCNT) AND (C.CHECKRIDES=CRCNT) ORDER BY LC DESC")) {
 			ps.setInt(1, Status.STARTED.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -272,10 +272,11 @@ public class GetAcademyCourses extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
-			+ "(C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) GROUP BY C.ID ORDER BY ");
+			+ "(C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (C.CERTNAME=CA.CERTNAME) WHERE (C.CERTNAME=CR.NAME) AND (CA.AIRLINE=?) GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, SystemData.get("airline.code"));
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
