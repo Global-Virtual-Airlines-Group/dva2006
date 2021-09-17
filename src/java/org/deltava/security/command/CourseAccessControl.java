@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.*;
@@ -6,10 +6,12 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.security.SecurityContext;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * An Access Controller for Flight Academy Course profiles.
  * @author Luke
- * @version 7.2
+ * @version 10.1
  * @since 1.0
  */
 
@@ -56,6 +58,11 @@ public class CourseAccessControl extends AccessControl {
 		validateContext();
 		if (!_ctx.isAuthenticated())
 			throw new AccessControlException("Not Logged in");
+		
+		// Check if the course is ours
+		boolean isOurAirline = (_crt == null) || _crt.hasAirline(SystemData.get("airline.code"));
+		if (!isOurAirline)
+			throw new AccessControlException("Not Authorized");
 
 		// Define conditions
 		boolean isHR = _ctx.isUserInRole("HR");
