@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.InstructionFlight;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
@@ -15,9 +14,9 @@ import org.deltava.dao.*;
 import org.deltava.util.ComboUtils;
 
 /**
- * A Web Site Command to display Instruction logbooks.
+ * A Web Site Command to display Flight Academy Instruction logbooks.
  * @author Luke
- * @version 7.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -66,8 +65,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			
 			// Load the instructor list
 			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			for (AirlineInformation ai : uddao.getAirlines(true).values())
-				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
+			instructors.addAll(pdao.getByRole("Instructor", ctx.getDB()));
 			
 			// Sort and add
 			List<ComboAlias> insList = new ArrayList<ComboAlias>(instructors);

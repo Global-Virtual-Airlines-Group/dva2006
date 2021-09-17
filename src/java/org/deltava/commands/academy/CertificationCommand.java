@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -67,19 +67,19 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			// Update from the request
 			cert.setCode(ctx.getParameter("code"));
 			cert.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
-			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
+			cert.setReqs(EnumUtils.parse(Prerequisite.class, ctx.getParameter("preReqs"), Prerequisite.ANY));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
 			cert.setVisible(Boolean.valueOf(ctx.getParameter("visible")).booleanValue());
 			cert.setRideCount(StringUtils.parse(ctx.getParameter("rideCount"), 0));
-			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
+			cert.setReqCert((cert.getReqs() != Prerequisite.SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));
 			cert.setRoles(ctx.getParameters("enrollRoles"));
 			cert.setExams(ctx.getParameters("reqExams"));
 			cert.setRideEQ(ctx.getParameters("rideEQ"));
 			cert.setNetwork(EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null));
 			cert.setNetworkRatingCode((cert.getNetwork() == null) ? null : ctx.getParameter("ratingCode"));
-			if ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS)) {
+			if ((cert.getReqs() == Prerequisite.FLIGHTS) || (cert.getReqs() == Prerequisite.HOURS)) {
 				cert.setFlightCount(StringUtils.parse(ctx.getParameter("flightCount"), 1));
 				String eqProgram = ctx.getParameter("eqProgram");
 				cert.setEquipmentProgram(eqProgram.startsWith("[") ? null : eqProgram);
@@ -90,7 +90,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			
 			// Load apps
 			cert.getAirlines().clear();
-			for (String appName : ctx.getParameters("airlines"))
+			for (String appName : ctx.getParameters("airlines", Collections.emptySet()))
 				cert.addAirline(SystemData.getApp(appName));
 			
 			// Make sure that each requirement with an exam remains valid
@@ -197,9 +197,6 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			ctx.release();
 		}
 		
-		// Save prerequisite choices
-		ctx.setAttribute("preReqNames", ComboUtils.fromArray(Certification.REQ_NAMES), REQUEST);
-		
 		// Foward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/academy/certEdit.jsp");
@@ -239,11 +236,11 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			}
 				
 			// If we have a specific pre-req, load it as well
-			if (cert.getReqs() == Certification.REQ_SPECIFIC)
+			if (cert.getReqs() == Prerequisite.SPECIFIC)
 				ctx.setAttribute("preReqCert", dao.get(cert.getReqCert()), REQUEST);
 			
 			// If we have a specific program for minimum flight hours, load it as well
-			if (!StringUtils.isEmpty(cert.getEquipmentProgram()) && ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS))) {
+			if (!StringUtils.isEmpty(cert.getEquipmentProgram()) && ((cert.getReqs() == Prerequisite.FLIGHTS) || (cert.getReqs() == Prerequisite.HOURS))) {
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				ctx.setAttribute("eqProgram", eqdao.get(cert.getEquipmentProgram()), REQUEST);
 			}

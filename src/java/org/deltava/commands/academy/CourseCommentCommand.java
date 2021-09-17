@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +18,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
  * @author Luke
- * @version 9.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -67,16 +66,14 @@ public class CourseCommentCommand extends AbstractCommand {
 			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pddao = new GetPilotDirectory(con);
 			Map<Integer, Pilot> ins = new HashMap<Integer, Pilot>();
-			for (AirlineInformation ai : uddao.getAirlines(true).values()) {
-				ins.putAll(CollectionUtils.createMap(pddao.getByRole("Instructor", ai.getDB()), Pilot::getID));
-				ins.putAll(CollectionUtils.createMap(pddao.getByRole("AcademyAdmin", ai.getDB()), Pilot::getID));
-			}
+			ins.putAll(CollectionUtils.createMap(pddao.getByRole("Instructor", ctx.getDB()), Pilot::getID));
+			ins.putAll(CollectionUtils.createMap(pddao.getByRole("AcademyAdmin", ctx.getDB()), Pilot::getID));
 			
 			// Get Pilot IDs from comments - only add instructors
 			boolean hasINS = (c.getInstructorID() != 0);
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(Integer.valueOf(c.getPilotID()));
-			c.getComments().stream().map(CourseComment::getAuthorID).filter(id -> ins.containsKey(id)).forEach(id -> IDs.add(id));
+			c.getComments().stream().map(CourseComment::getAuthorID).filter(id -> ins.containsKey(id)).forEach(IDs::add);
 			if (hasINS)
 				IDs.add(Integer.valueOf(c.getInstructorID()));
 			

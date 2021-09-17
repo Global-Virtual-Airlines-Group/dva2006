@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -7,11 +7,9 @@ import java.time.ZonedDateTime;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
-import org.deltava.comparators.PersonComparator;
-import org.deltava.comparators.PilotComparator;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
@@ -23,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 8.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -194,8 +192,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			for (AirlineInformation ai : uddao.getAirlines(true).values())
-				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
+			instructors.addAll(pdao.getByRole("Instructor", ctx.getDB()));
 			
 			// Save in the request
 			ctx.setAttribute("course", c, REQUEST);
