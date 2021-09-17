@@ -32,7 +32,7 @@
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
+ <td class="data"><span class="sec bld">${cert.reqs.description}</span><c:if test="${!empty preReqCert}"> - <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
 </tr>
 <c:if test="${cert.flightCount > 0}">
 <tr>

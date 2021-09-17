@@ -63,8 +63,8 @@ golgotha.local.validate = function(f) {
 <view:row entry="${isPending ? pilot : course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="sec bld nophone"><fmt:int value="${course.stage}" /></td>
- <td><el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> <span class="small">(${pilot.pilotCode})</span></td>
- <td class="pri bld nophone">${course.status.name}</td>
+ <td><el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile>&nbsp;<span class="small">(${pilot.pilotCode})</span></td>
+ <td class="pri bld nophone">${course.status.description}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
  <td class="sec small nophone"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
  <td class="small"><fmt:date fmt="d" date="${course.endDate}" default="N/A" /></td>
