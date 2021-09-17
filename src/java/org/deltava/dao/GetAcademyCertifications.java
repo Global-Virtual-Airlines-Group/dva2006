@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 10.0
+ * @version 10.1
  * @since 1.0
  */
 
@@ -182,7 +182,7 @@ public class GetAcademyCertifications extends DAO {
 				Certification cert = new Certification(rs.getString(1));
 				cert.setCode(rs.getString(2));
 				cert.setStage(rs.getInt(3));
-				cert.setReqs(rs.getInt(4));
+				cert.setReqs(Prerequisite.values()[rs.getInt(4)]);
 				cert.setActive(rs.getBoolean(5));
 				cert.setAutoEnroll(rs.getBoolean(6));
 				cert.setVisible(rs.getBoolean(7));
@@ -192,7 +192,7 @@ public class GetAcademyCertifications extends DAO {
 				cert.setNetwork(EnumUtils.parse(OnlineNetwork.class, rs.getString(11), null));
 				cert.setNetworkRatingCode(rs.getString(12));
 				cert.setDescription(rs.getString(13));
-				if (cert.getReqs() == Certification.REQ_SPECIFIC)
+				if (cert.getReqs() == Prerequisite.SPECIFIC)
 					cert.setReqCert(rs.getString(14));
 				if (hasReqCount)
 					cert.setReqCount(rs.getInt(15));
