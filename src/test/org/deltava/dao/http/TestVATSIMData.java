@@ -48,8 +48,6 @@ public class TestVATSIMData extends TestCase {
 
 		GetATOData atodao = new GetATOData();
 		atodao.setReadTimeout(30000);
-		assertFalse(atodao.getInstructors().isEmpty());
-		atodao.reset();
 		assertFalse(atodao.getCertificates().isEmpty());
 	}
 }
