@@ -1,4 +1,4 @@
-// Copyright 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.navdata.Runway;
@@ -6,7 +6,7 @@ import org.deltava.beans.navdata.Runway;
 /**
  * A bean to store ACARS takeoff/landing runway data.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 2.6
  */
 
@@ -29,7 +29,7 @@ public class RunwayDistance extends Runway {
 		setFrequency(r.getFrequency());
 		setMagVar(r.getMagVar());
 		setSurface(r.getSurface());
-		setNewCode(r.getNewCode());
+		setOldCode(r.getOldCode());
 		setSimulator(r.getSimulator());
 		_distance = distance;
 	}
