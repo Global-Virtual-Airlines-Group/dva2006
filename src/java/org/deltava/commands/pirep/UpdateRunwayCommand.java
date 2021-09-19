@@ -5,7 +5,7 @@ import java.util.List;
 import java.sql.Connection;
 
 import org.deltava.beans.acars.*;
-import org.deltava.beans.flight.FDRFlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.Runway;
 
 import org.deltava.commands.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.0
  */
 
@@ -68,23 +68,32 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			if ((rD != null) && (!rD.equals(info.getRunwayD()))) {
 				int dist = rD.distanceFeet(afr.getTakeoffLocation());
 				info.setRunwayD(new RunwayDistance(rD, dist));
+				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated departure Runway to %s", info.getRunwayD().getName()));
 				isUpdated = true;
 			}
 			if ((rA != null) && (!rA.equals(info.getRunwayA()))) {
 				int dist = rA.distanceFeet(afr.getLandingLocation());
 				info.setRunwayA(new RunwayDistance(rA, dist));
+				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
 				isUpdated = true;
 			}
 					
-			// Save the runways
+			// Save the runways and status history
 			if (isUpdated) {
+				ctx.startTX();
+				
 				SetACARSRunway awdao = new SetACARSRunway(con);
 				awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
+				
+				SetFlightReport frwdao = new SetFlightReport(con);
+				frwdao.writeHistory(afr.getStatusUpdates(), ctx.getDB());
+				ctx.commitTX();
 			}
 			
 			// Save the PIREP ID
 			pirepID = afr.getID();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
