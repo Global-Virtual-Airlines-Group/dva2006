@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 2.2
  */
 
@@ -173,7 +173,7 @@ public class RoutePlanService extends WebService {
 				if (gD != null) dfr.setGateD(gD.getName());
 				if (gA != null) dfr.setGateA(gA.getName());
 				if (!newRoute.equals(dfr.getRoute()))
-					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Updated Route via Route Plotter");
+					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Updated Route via Route Plotter");
 				
 				// Calculate load factor if requested
 				boolean doPax = Boolean.valueOf(ctx.getParameter("precalcPax")).booleanValue();
