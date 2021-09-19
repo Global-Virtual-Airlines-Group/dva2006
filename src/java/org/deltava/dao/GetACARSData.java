@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -94,8 +94,9 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public RunwayDistance getLandingRunway(int flightID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
-			+ "(R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?) AND (R.ISTAKEOFF=?) WHERE (ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RR.OLDCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
+			+ "((R.RUNWAY=RR.OLDCODE) OR (R.RUNWAY=RR.NEWCODE))) LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (IFNULL(RR.OLDCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?) AND "
+			+ "(R.ISTAKEOFF=?) WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
 			ps.setBoolean(2, false);
 			ps.setInt(3, flightID);
@@ -109,7 +110,7 @@ public class GetACARSData extends DAO {
 					r.setLength(rs.getInt(6));
 					r.setHeading(rs.getInt(9));
 					r.setFrequency(rs.getString(10));
-					r.setNewCode(rs.getString(11));
+					r.setOldCode(rs.getString(11));
 					return new RunwayDistance(r, rs.getInt(7));
 				}
 			}
@@ -129,13 +130,9 @@ public class GetACARSData extends DAO {
 	public String getRoute(int flightID) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, flightID);
-			String result = null;
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getString(1);
+				return rs.next() ? rs.getString(1) : null;
 			}
-
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -168,19 +165,18 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.WIDTH, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
-					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND (RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) AND "
-					+ "(RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.WIDTH, IFNULL(RW.SURFACE, ?), RR.OLDCODE FROM acars.RWYDATA R LEFT JOIN "
+					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND ((RW.NAME=R.RUNWAY) OR (RW.NAME=RR.OLDCODE)) "
+					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
 					ps.setInt(1, Surface.UNKNOWN.ordinal());
 					ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
 					ps.setInt(3, Navaid.RUNWAY.ordinal());
 					ps.setInt(4, flightID);
 					try (ResultSet rs = ps.executeQuery()) {
 						while (rs.next()) {
-							String simCode = rs.getString(14); String currentCode = rs.getString(3);
 							Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
 							r.setCode(rs.getString(2));
-							r.setName(simCode);
+							r.setName(rs.getString(3));
 							r.setLength(rs.getInt(6));
 							r.setHeading(rs.getInt(9));
 							r.setFrequency(rs.getString(10));
@@ -188,8 +184,7 @@ public class GetACARSData extends DAO {
 							r.setWidth(rs.getInt(12));
 							r.setSurface(Surface.values()[rs.getInt(13)]);
 							r.setSimulator(info.getSimulator());
-							if (!currentCode.equals(simCode))
-								r.setNewCode(currentCode);
+							r.setOldCode(rs.getString(14));
 							if (rs.getBoolean(8))
 								info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 							else
@@ -208,7 +203,7 @@ public class GetACARSData extends DAO {
 			else
 				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
 			
-			try (PreparedStatement ps = prepare(sql)) {
+			try (PreparedStatement ps = prepareWithoutLimits(sql)) {
 				ps.setInt(1, flightID);
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next())
