@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 2.6
  */
 
@@ -49,6 +49,7 @@ public class GetACARSRunways extends DAO {
 	
 	public static class SelectableRunway extends Runway implements UseCount {
 		private int _useCount;
+		private int _pct;
 		
 		SelectableRunway(double lat, double lng) {
 			super(lat, lng);
@@ -59,8 +60,16 @@ public class GetACARSRunways extends DAO {
 			return _useCount;
 		}
 		
+		public int getPercentage() {
+			return _pct;
+		}
+		
 		public void setUseCount(int uses) {
 			_useCount = uses;
+		}
+		
+		public void setPercentage(int pct) {
+			_pct = pct;
 		}
 		
 		@Override
@@ -71,6 +80,17 @@ public class GetACARSRunways extends DAO {
 		@Override
 		public boolean equals(Object o) {
 			return (o instanceof SelectableRunway) && (hashCode() == o.hashCode());
+		}
+		
+		@Override
+		public String getComboName() {
+			StringBuilder buf = new StringBuilder(super.getComboName());
+			buf.append(" [");
+			buf.append(_useCount);
+			buf.append(' ');
+			buf.append(_pct);
+			buf.append("%]");
+			return buf.toString();
 		}
 		
 		@Override
@@ -112,10 +132,10 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(RW.WIDTH, 150), IFNULL(ND.FREQ,'-'), RR.OLDCODE, "
-			+ "RW.THRESHOLD, COUNT(R.ID) AS CNT FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN "
-			+ "common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW ON ((ND.CODE=RW.ICAO) "
-			+ "AND (ND.NAME=RW.NAME) AND (RW.SIMVERSION=?)) WHERE (R.ICAO=?) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) GROUP BY ND.NAME ORDER BY CNT DESC");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(RW.WIDTH, 150), IFNULL(ND.FREQ,'-'), RR.OLDCODE, RW.THRESHOLD, "
+			+ "COUNT(R.ID) AS CNT FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND ((R.RUNWAY=RR.NEWCODE) OR (R.RUNWAY=RR.NEWCODE))) LEFT JOIN "
+			+ "common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE,R.RUNWAY)) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW ON ((ND.CODE=RW.ICAO) AND "
+			+ "(ND.NAME=RW.NAME) AND (RW.SIMVERSION=?)) WHERE (R.ICAO=?) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) GROUP BY ND.NAME ORDER BY CNT DESC");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
@@ -151,10 +171,10 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(RW.WIDTH, 150), IFNULL(ND.FREQ,'-'), RR.OLDCODE, "
-			+ "RW.THRESHOLD, COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) "
-			+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW ON "
-			+ "((ND.CODE=RW.ICAO) AND (ND.NAME=RW.NAME) AND (RW.SIMVERSION=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(RW.WIDTH, 150), IFNULL(ND.FREQ,'-'), RR.OLDCODE, RW.THRESHOLD, "
+			+ "COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND ((R.RUNWAY=RR.OLDCODE) OR (R.RUNWAY=RR.NEWCODE))) "
+			+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW ON ((ND.CODE=RW.ICAO) AND "
+			+ "(ND.NAME=RW.NAME) AND (RW.SIMVERSION=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
 		if (aD != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
@@ -186,8 +206,8 @@ public class GetACARSRunways extends DAO {
 	 */
 	private static Collection<? extends Runway> execute(PreparedStatement ps) throws SQLException {
 		
-		int max = 0;
-		Collection<Runway> results = new LinkedHashSet<Runway>();
+		int max = 0; int totalUse = 0;
+		Collection<SelectableRunway> results = new LinkedHashSet<SelectableRunway>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
@@ -197,20 +217,19 @@ public class GetACARSRunways extends DAO {
 				r.setHeading(rs.getInt(6));
 				r.setWidth(rs.getInt(7));
 				r.setFrequency(rs.getString(8));
-				r.setNewCode(rs.getString(9));
+				r.setOldCode(rs.getString(9));
 				r.setThresholdLength(rs.getInt(10));
 				r.setUseCount(rs.getInt(11));
 				max = Math.max(max, r.getUseCount());
-				
-				// Determine percentage - default to 10%, if we have more than 7,500 flights use 20%
-				int maxRatio = (max > 7500) ? 5 : 10;
-				if ((r.getUseCount() > (max / maxRatio)) || (max < 20))
-					results.add(r);
-				else
-					return results;
+				totalUse += r.getUseCount();
+				results.add(r);
 			}
 		}
 		
+		// Filter based on usage percentage
+		final int totalUsage = Math.max(1, totalUse); final int minPct = (totalUsage > 5000) ? 5 : 10;
+		results.forEach(r -> r.setPercentage(r.getUseCount() * 100 / totalUsage));
+		results.removeIf(r -> ((r.getPercentage() < minPct) && (totalUsage > 100)));
 		return results;
 	}
 }
