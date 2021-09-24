@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 6.3
  */
 
@@ -48,35 +48,46 @@ public class AirportInformationCommand extends AbstractCommand {
 			GetWeather wxdao = new GetWeather(con);
 			METAR m = wxdao.getMETAR(a, 25);
 			ctx.setAttribute("wx", m, REQUEST);
-			if (m == null)
-				m = new METAR();
 			
 			// Get runway data
-			Comparator<Runway> rC = new RunwayComparator(m.getWindDirection(), m.getWindSpeed());
 			GetNavData nddao = new GetNavData(con);
-			Map<String, Runway> allRwys = CollectionUtils.createMap(nddao.getRunways(a, Simulator.FSX), Runway::getName);
-			
-			// Build airport bounding box
-			ctx.setAttribute("rwys", new ArrayList<Runway>(allRwys.values()), REQUEST);
+			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
-			List<Runway> toRwys = rwdao.getPopularRunways(a, true); toRwys.sort(rC);
-			List<Runway> ldgRwys = rwdao.getPopularRunways(a, false); ldgRwys.sort(rC);
+			List<RunwayUsage> allDRwys = rwdao.getPopularRunways(a, true); 
+			List<RunwayUsage> allARwys = rwdao.getPopularRunways(a, false);
+
+			// Filter arrival/departure runways - first select those available due to winds, then other popular runways
+			UsagePercentFilter rf = new UsagePercentFilter(10);
+			UsageWindFilter wf = new UsageWindFilter(10, -7);
+			Collection<Runway> dRwys = new LinkedHashSet<Runway>(wf.filter(allDRwys));
+			Collection<Runway> aRwys = new LinkedHashSet<Runway>(wf.filter(allARwys));
+			Collection<? extends Runway> validRunways = CollectionUtils.join(dRwys, aRwys);
+			dRwys.addAll(rf.filter(allDRwys)); aRwys.addAll(rf.filter(allARwys));
+			allDRwys.removeAll(dRwys); allARwys.removeAll(aRwys);
+			
+			// Determine valid runways for winds
+			RunwayComparator rc = new RunwayComparator(0, 0, true); // only sort by useCount
+			ctx.setAttribute("departureRwys", CollectionUtils.sort(dRwys, rc), REQUEST);
+			ctx.setAttribute("arrivalRwys", CollectionUtils.sort(aRwys, rc), REQUEST);
+			ctx.setAttribute("validRunways", validRunways.stream().map(Runway::getName).collect(Collectors.toSet()), REQUEST);
+			
+			// Get remaining runways
+			ctx.setAttribute("odRwyStats", CollectionUtils.createMap(allDRwys, Runway::getName), REQUEST);
+			ctx.setAttribute("oaRwyStats", CollectionUtils.createMap(allARwys, Runway::getName), REQUEST);
+			ctx.setAttribute("otherRunways", CollectionUtils.join(allDRwys, allARwys), REQUEST);
+			
+			// Build airport bounding box
+			ctx.setAttribute("rwys", allRwys, REQUEST);
 			
 			// Get taxi times
 			GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
 			TaxiTime ttAvg = ttdao.getTaxiTime(a);
 			TaxiTime ttYr = ttdao.getTaxiTime(a, LocalDate.now().getYear());
 			
-			// Check for invalid runways
-			Collection<Runway> invalidRwys = new LinkedHashSet<Runway>();
-			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
-			ldgRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(invalidRwys::add);
-			toRwys.removeAll(invalidRwys); ldgRwys.removeAll(invalidRwys);
-			int maxLength = allRwys.values().stream().mapToInt(Runway::getLength).max().orElse(0);
-			
 			// Get Aircraft for runway length
+			int maxLength = allRwys.stream().mapToInt(Runway::getLength).max().orElse(0);
 			String aCode = SystemData.get("airline.code");
 			GetAircraft acdao = new GetAircraft(con);
 			Collection<Aircraft> allAC = acdao.getAircraftTypes(aCode);
@@ -91,9 +102,8 @@ public class AirportInformationCommand extends AbstractCommand {
 				ctx.setAttribute("validAC", validAC, REQUEST);
 			
 			// Save runways
-			ctx.setAttribute("toRwys", toRwys, REQUEST);
-			ctx.setAttribute("ldgRwys", ldgRwys, REQUEST);
-			ctx.setAttribute("invalidRwys", invalidRwys, REQUEST);
+			ctx.setAttribute("toRwys", allDRwys, REQUEST);
+			ctx.setAttribute("ldgRwys", allARwys, REQUEST);
 			
 			// Save taxi times
 			ctx.setAttribute("taxiTime", ttAvg, REQUEST);
@@ -108,26 +118,9 @@ public class AirportInformationCommand extends AbstractCommand {
 			ctx.setAttribute("dDays", rsdao.getDays(null, a, false), REQUEST);
 			ctx.setAttribute("aDays", rsdao.getDays(null, a, true), REQUEST);
 			ctx.setAttribute("schedAirlines", rsdao.getAirlines(null, a), REQUEST);
-
-			// Determine valid runways for winds
-			Collection<String> validRunwayIDs = new HashSet<String>();
-			Collection<String> rwyIDs = toRwys.stream().map(Runway::getName).collect(Collectors.toSet());
-			rwyIDs.addAll(ldgRwys.stream().map(Runway::getName).collect(Collectors.toSet()));
-			for (Iterator<Map.Entry<String, Runway>> i = allRwys.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, Runway> me = i.next();
-				if (rwyIDs.contains(me.getKey()))
-					i.remove();
-				
-				double wDelta = GeoUtils.delta(me.getValue().getHeading(), m.getWindDirection());
-				double hW = StrictMath.cos(Math.toRadians(wDelta)) * m.getWindSpeed();
-				if (hW >= 0)
-					validRunwayIDs.add(me.getKey());
-			}
 			
 			// Save in request
 			ctx.setAttribute("airport", a, REQUEST);
-			ctx.setAttribute("runways", allRwys.values(), REQUEST);
-			ctx.setAttribute("validRunways", validRunwayIDs, REQUEST);
 			ctx.setAttribute("airlines", a.getAirlineCodes().stream().map(c -> SystemData.getAirline(c)).filter(al -> !al.getHistoric()).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -153,10 +146,7 @@ public class AirportInformationCommand extends AbstractCommand {
 	}
 		
 	private static boolean aircraftRunwayFilter(AircraftPolicyOptions opts, int maxLength) {
-		
-		if ((opts.getTakeoffRunwayLength() > 0) && (opts.getTakeoffRunwayLength() > maxLength))
-			return false;
-		
+		if ((opts.getTakeoffRunwayLength() > 0) && (opts.getTakeoffRunwayLength() > maxLength)) return false;
 		return ((opts.getLandingRunwayLength() == 0) || (opts.getLandingRunwayLength() <= maxLength));
 	}
 }

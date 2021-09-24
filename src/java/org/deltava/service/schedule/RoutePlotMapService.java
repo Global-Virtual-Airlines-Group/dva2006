@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -52,7 +52,8 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Check if we download runways
 		boolean doRunways = req.optBoolean("runways");
-		Simulator sim = Simulator.fromName(req.optString("simVersion"), Simulator.FSX);
+		boolean allDepartureRunways = req.optBoolean("allSID");
+		Simulator sim = Simulator.fromName(req.optString("simVersion"), Simulator.P3Dv4);
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
@@ -132,10 +133,17 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				// Add popular departure runways
 				if (doRunways) {
+					UsageFilter<RunwayUsage> rf = UsagePercentFilter.ALL;
+					if (!allDepartureRunways) {
+						UsageWindFilter uwf = new UsageWindFilter(10, -7);
+						uwf.setWinds(wxD);
+						rf = uwf;
+					}
+					
 					GetACARSRunways rwdao = new GetACARSRunways(con);
-					Collection<Runway> popRunways = rwdao.getPopularRunways(dr.getAirportD(), dr.getAirportA(), true);
+					Collection<RunwayUsage> popRunways = rf.filter(rwdao.getPopularRunways(dr.getAirportD(), dr.getAirportA(), true));
 					if (popRunways.isEmpty())
-						popRunways.addAll(rwdao.getPopularRunways(dr.getAirportD(), null, true));
+						popRunways.addAll(rf.filter(rwdao.getPopularRunways(dr.getAirportD(), null, true)));
 					
 					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
 					popRunways.stream().filter(r -> sidRunways.contains("RW" + r.getName())).forEach(runways::add);
@@ -344,7 +352,7 @@ public class RoutePlotMapService extends MapPlotService {
 			buf.append(" feet - ");
 			buf.append(r.getHeading());
 			buf.append(" degrees)");
-			ro.put("label", buf.toString());
+			ro.put("label", ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations") ? r.getComboName() : buf.toString());
 			jo.append("runways", ro);
 		}
 		
