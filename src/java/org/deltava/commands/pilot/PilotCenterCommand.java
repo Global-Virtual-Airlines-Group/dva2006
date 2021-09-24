@@ -17,7 +17,6 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetATOData;
 import org.deltava.security.command.*;
 
 import org.deltava.util.*;
@@ -26,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -306,13 +305,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				facdao.setQueryMax(1);
 				boolean hasFlights = !facdao.getFlightCalendar(p.getID(), null).isEmpty();
 				ctx.setAttribute("academyInsFlights", Boolean.valueOf(hasFlights || ctx.isUserInRole("HR")), REQUEST);
-				
-				// Check if we have VATSIM ratings
-				if (p.hasNetworkID(OnlineNetwork.VATSIM)) {
-					GetATOData atodao = new GetATOData();
-					atodao.setReadTimeout(7500);
-					ctx.setAttribute("vatsim_ratings", atodao.get(p.getNetworkID(OnlineNetwork.VATSIM)), REQUEST);
-				}
 			}
 
 			// Save the examinations
