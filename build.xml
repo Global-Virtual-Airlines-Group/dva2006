@@ -354,6 +354,7 @@
 		<delete dir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${java.io.tmpdir}/build/web.xml" />
 		<delete file="../.local_data/min.cache.txt" />
+		<delete file="../.local_data/afv.min.cache.txt" />
 	</target>
 	
 	<!-- Upload scripts to the app server -->
