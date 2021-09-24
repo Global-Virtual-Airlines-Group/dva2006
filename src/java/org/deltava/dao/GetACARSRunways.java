@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 
 public class GetACARSRunways extends DAO {
 	
-	private static final Cache<CacheableList<Runway>> _cache = CacheManager.getCollection(Runway.class, "ACARSRunways");
+	private static final Cache<CacheableList<RunwayUsage>> _cache = CacheManager.getCollection(RunwayUsage.class, "ACARSRunways");
 
 	private static class RunwayCacheKey implements java.io.Serializable {
 		private final String _key;
@@ -47,66 +47,6 @@ public class GetACARSRunways extends DAO {
 		}
 	}
 	
-	public static class SelectableRunway extends Runway implements UseCount {
-		private int _useCount;
-		private int _pct;
-		
-		SelectableRunway(double lat, double lng) {
-			super(lat, lng);
-		}
-		
-		@Override
-		public int getUseCount() {
-			return _useCount;
-		}
-		
-		public int getPercentage() {
-			return _pct;
-		}
-		
-		public void setUseCount(int uses) {
-			_useCount = uses;
-		}
-		
-		public void setPercentage(int pct) {
-			_pct = pct;
-		}
-		
-		@Override
-		public int hashCode() {
-			return getComboAlias().hashCode();
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			return (o instanceof SelectableRunway) && (hashCode() == o.hashCode());
-		}
-		
-		@Override
-		public String getComboName() {
-			StringBuilder buf = new StringBuilder(super.getComboName());
-			buf.append(" [");
-			buf.append(_useCount);
-			buf.append(' ');
-			buf.append(_pct);
-			buf.append("%]");
-			return buf.toString();
-		}
-		
-		@Override
-		public int compareTo(NavigationDataBean nd2) {
-			if (!(nd2 instanceof SelectableRunway))
-				return super.compareTo(nd2);
-			
-			SelectableRunway sr2 = (SelectableRunway) nd2;
-			int tmpResult = Integer.compare(_useCount, sr2._useCount);
-			if (tmpResult == 0)
-				tmpResult = getName().compareTo(sr2.getName());
-			
-			return (tmpResult == 0) ? getCode().compareTo(sr2.getCode()) : tmpResult;
-		}
-	}
-	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -116,18 +56,17 @@ public class GetACARSRunways extends DAO {
 	}
 	
 	/**
-	 * Retrieves the most popular runways used at a particular airport. Runways used less than 1/10th as much as the most
-	 * popular runway are assumed to be erroneous and removed.
+	 * Retrieves the most popular runways used at a particular Airport.
 	 * @param a the Airport
 	 * @param isTakeoff TRUE if takeoff, otherwise landing
 	 * @return a List of Runway beans, ordered by popularity
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Runway> getPopularRunways(Airport a, boolean isTakeoff) throws DAOException {
+	public List<RunwayUsage> getPopularRunways(Airport a, boolean isTakeoff) throws DAOException {
 		
 		// Build the cache key
 		RunwayCacheKey key = new RunwayCacheKey(isTakeoff ? a : null, isTakeoff ? null : a, isTakeoff);
-		CacheableList<Runway> rwys = _cache.get(key);
+		CacheableList<RunwayUsage> rwys = _cache.get(key);
 		if (rwys != null)
 			return rwys.clone();
 
@@ -144,7 +83,7 @@ public class GetACARSRunways extends DAO {
 			ps.setBoolean(4, isTakeoff);
 			
 			// Execute the Query
-			rwys = new CacheableList<Runway>(key);
+			rwys = new CacheableList<RunwayUsage>(key);
 			rwys.addAll(execute(ps));
 			_cache.add(rwys);
 			return rwys.clone();
@@ -154,19 +93,18 @@ public class GetACARSRunways extends DAO {
 	}
 
 	/**
-	 * Retrieves the most popular runways used at a particular airport. Runways used less than 1/10th as much as the most
-	 * popular runway are assumed to be erroneous and removed.
+	 * Retrieves the most popular runways used at a particular Aairport.
 	 * @param aD the departure Airport bean
 	 * @param aA the arrival Airport bean, or null if none
 	 * @param isTakeoff TRUE if takeoff, otherwise landing
 	 * @return a List of Runway beans, ordered by popularity
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Runway> getPopularRunways(Airport aD, Airport aA, boolean isTakeoff) throws DAOException {
+	public List<RunwayUsage> getPopularRunways(Airport aD, Airport aA, boolean isTakeoff) throws DAOException {
 		
 		// Build the cache key
 		RunwayCacheKey key = new RunwayCacheKey(aD, aA, isTakeoff);
-		CacheableList<Runway> rwys = _cache.get(key);
+		CacheableList<RunwayUsage> rwys = _cache.get(key);
 		if (rwys != null)
 			return rwys.clone();
 
@@ -192,7 +130,7 @@ public class GetACARSRunways extends DAO {
 				ps.setString(++pos, aA.getIATA());
 			
 			// Execute the Query
-			rwys = new CacheableList<Runway>(key);
+			rwys = new CacheableList<RunwayUsage>(key);
 			rwys.addAll(execute(ps));
 			_cache.add(rwys);
 			return rwys.clone();
@@ -204,13 +142,11 @@ public class GetACARSRunways extends DAO {
 	/*
 	 * Helper method to parse popular runway result sets.
 	 */
-	private static Collection<? extends Runway> execute(PreparedStatement ps) throws SQLException {
-		
-		int max = 0; int totalUse = 0;
-		Collection<SelectableRunway> results = new LinkedHashSet<SelectableRunway>();
+	private static Collection<RunwayUsage> execute(PreparedStatement ps) throws SQLException {
+		Collection<RunwayUsage> results = new LinkedHashSet<RunwayUsage>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
+				RunwayUsage r = new RunwayUsage(rs.getDouble(3), rs.getDouble(4));
 				r.setName(rs.getString(1));
 				r.setCode(rs.getString(2));
 				r.setLength(rs.getInt(5));
@@ -220,16 +156,10 @@ public class GetACARSRunways extends DAO {
 				r.setOldCode(rs.getString(9));
 				r.setThresholdLength(rs.getInt(10));
 				r.setUseCount(rs.getInt(11));
-				max = Math.max(max, r.getUseCount());
-				totalUse += r.getUseCount();
 				results.add(r);
 			}
 		}
 		
-		// Filter based on usage percentage
-		final int totalUsage = Math.max(1, totalUse); final int minPct = (totalUsage > 5000) ? 5 : 10;
-		results.forEach(r -> r.setPercentage(r.getUseCount() * 100 / totalUsage));
-		results.removeIf(r -> ((r.getPercentage() < minPct) && (totalUsage > 100)));
 		return results;
 	}
 }

@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 3.4
  */
 
@@ -157,10 +157,13 @@ public final class RouteLoadHelper {
 	/*
 	 * Gets runway popularity for an aiport based on usage and weather.
 	 */
-	private List<Runway> getPopularRunways(boolean isTakeoff) throws DAOException {
-		GetACARSRunways ardao = new GetACARSRunways(_c);
-		List<Runway> rwys = ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff);
+	private List<? extends Runway> getPopularRunways(boolean isTakeoff) throws DAOException {
 		METAR m = isTakeoff ? _mD : _mA;
+		UsageWindFilter rf = new UsageWindFilter(10, -7);
+		rf.setWinds(m);
+		
+		GetACARSRunways ardao = new GetACARSRunways(_c);
+		List<? extends Runway> rwys = rf.filter(ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff));
 		if ((m != null) && (m.getWindSpeed() > 0))
 			rwys.sort(new RunwayComparator(m.getWindDirection(), m.getWindSpeed(), true));
 		
@@ -172,8 +175,8 @@ public final class RouteLoadHelper {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void calculateBestTerminalRoute() throws DAOException {
-		List<Runway> dRwys = getPopularRunways(true);
-		List<Runway> aRwys = getPopularRunways(false);
+		List<? extends Runway> dRwys = getPopularRunways(true);
+		List<? extends Runway> aRwys = getPopularRunways(false);
 		String dRwy = dRwys.isEmpty() ? null : "RW" + dRwys.get(0).getName();
 		String aRwy = aRwys.isEmpty() ? null : "RW" + aRwys.get(0).getName();
 		if (_preferredRunway == null)
