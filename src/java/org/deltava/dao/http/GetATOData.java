@@ -20,10 +20,11 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read VATSIM Authorized Training Organization data.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 7.2
  */
 
+@Deprecated
 public class GetATOData extends DAO {
 	
 	private static final Logger log = Logger.getLogger(GetATOData.class);

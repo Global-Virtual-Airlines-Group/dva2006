@@ -43,11 +43,4 @@ public class TestVATSIMData extends TestCase {
 			// empty
 		}
 	}
-	
-	public void testGetATOData() throws DAOException {
-
-		GetATOData atodao = new GetATOData();
-		atodao.setReadTimeout(30000);
-		assertFalse(atodao.getCertificates().isEmpty());
-	}
 }

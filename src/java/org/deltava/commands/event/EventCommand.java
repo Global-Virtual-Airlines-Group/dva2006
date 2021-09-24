@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -8,12 +8,10 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.servinfo.PilotRating;
 import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetATOData;
 
 import org.deltava.security.command.*;
 
@@ -22,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 7.2
+ * @version 10.2
  * @since 1.0
  */
 
@@ -151,15 +149,7 @@ public class EventCommand extends AbstractCommand {
 			}
 			
 			// Load VATSIM Ratings
-			Collection<Integer> networkIDs = pilots.values().stream().map(p -> p.getNetworkID(e.getNetwork())).filter(Objects::nonNull).map(id -> Integer.valueOf(id)).collect(Collectors.toSet());
-			if (e.getNetwork() == OnlineNetwork.VATSIM) {
-				GetATOData atodao = new GetATOData();
-				atodao.setReadTimeout(7500);
-				Map<String, Collection<PilotRating>> ratings = new HashMap<String, Collection<PilotRating>>();
-				atodao.getCertificates().stream().filter(pr -> networkIDs.contains(Integer.valueOf(pr.getID()))).forEach(pr -> CollectionUtils.addMapCollection(ratings, String.valueOf(pr.getID()), pr));
-				ctx.setAttribute("allRatings", ratings, REQUEST);
-			} else
-				ctx.setAttribute("allRatings", Collections.emptyMap(), REQUEST);
+			ctx.setAttribute("allRatings", Collections.emptyMap(), REQUEST);
 			
 			// Calculate attendance probability
 			if (e.getStatus() != Status.CANCELED) {
