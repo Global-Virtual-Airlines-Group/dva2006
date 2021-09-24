@@ -7,7 +7,7 @@ import java.util.function.*;
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -53,6 +53,20 @@ public class CollectionUtils {
 	 */
 	public static <T> boolean hasDelta(Collection<T> c1, Collection<T> c2) {
 		return ((c1.size() != c2.size()) || (!c1.containsAll(c2)));
+	}
+	
+	/**
+	 * Joins multiple Collections into a single Collection without duplicates.
+	 * @param data the Collections to join
+	 * @return a Collection of unique results
+	 */
+	@SafeVarargs
+	public static <T> Collection<T> join(Collection<T>... data) {
+		Collection<T> results = new LinkedHashSet<T>();
+		for (Collection<T> c : data)
+			results.addAll(c);
+		
+		return results;
 	}
 
 	/**
