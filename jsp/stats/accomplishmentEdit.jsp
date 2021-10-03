@@ -160,6 +160,7 @@ return true;
  <td class="data"><el:box name="alwaysDisplay" idx="*" value="true" checked="${ap.alwaysDisplay}"  label="Always display Accomplishment completion" /><br />
 <el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
