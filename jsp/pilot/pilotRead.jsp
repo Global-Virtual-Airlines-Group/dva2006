@@ -254,7 +254,8 @@ return true;
 <tr id="loginAddrs" style="display:none;">
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data"><c:forEach var="loginAddr" items="${loginAddrs}">
-${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach></td>
+<content:defaultMethod var="isResolved" object="${loginAddr}" method="isResolved" />
+${loginAddr.remoteAddr}<c:if test="${isResolved}"> (${loginAddr.remoteHost})</c:if> - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach></td>
 </tr>
 </c:if>
 </content:filter>

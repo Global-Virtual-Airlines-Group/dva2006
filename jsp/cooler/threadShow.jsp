@@ -190,8 +190,7 @@ APPLICANT<br />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}"><span class="phone">Posted on</span><span class="nophone">Post created on</span>
  <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" /><span class="phone"> by <span class="pri bld">${pilot.name}</span></span>
 <content:filter roles="Moderator,HR"><span class="nophone">
- from ${msg.remoteHost} (${msg.remoteAddr}
-<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if>)
+ from <fmt:ipaddr addr="${msg}" info="${ipInfo}" showFlag="true" />
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </span></content:filter></td>
 <c:if test="${showPostTools}">

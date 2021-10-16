@@ -74,7 +74,7 @@
 <c:if test="${entry.pilotID == 0}">
  <td class="sec bld">ANONYMOUS</td>
 </c:if>
- <td class="small">${entry.remoteHost} (${entry.remoteAddr})</td>
+ <td class="small"><fmt:ipaddr addr="${entry}" /></td>
  <td class="pri bld">${entry.name}</td>
  <td><fmt:int value="${entry.time}" /> ms</td>
  <td><fmt:int value="${entry.backEndTime}" /> ms</td>
