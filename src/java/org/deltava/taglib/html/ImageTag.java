@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An JSP Tag to generate an IMG element.
  * @author Luke
- * @version 7.2
+ * @version 10.2
  * @since 1.0
  */
 
@@ -24,6 +24,19 @@ public class ImageTag extends ElementTag {
 	public ImageTag() {
 		super("img");
 	}
+	
+	/**
+	 * Renders the image tag tot he JSP output stream.
+	 * @throws Exception if an error occurs
+	 */
+	protected void renderHTML() throws Exception {
+		String src = _data.get("src");
+		if (src != null) {
+			_out.print(_data.open(true, true));
+			StringBuilder buf = new StringBuilder(src);
+			ContentHelper.pushContent(pageContext, buf.insert(0, '/').toString(), "image");
+		}
+	}
 
 	/**
 	 * Generates this image's HTML.
@@ -32,12 +45,7 @@ public class ImageTag extends ElementTag {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			String src = _data.get("src");
-			if (src != null) {
-				_out.print(_data.open(true, true));
-				StringBuilder buf = new StringBuilder(src);
-				ContentHelper.pushContent(pageContext, buf.insert(0, '/').toString(), "image");
-			}
+			renderHTML();
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
@@ -81,9 +89,6 @@ public class ImageTag extends ElementTag {
 		_data.setAttribute("title", caption);
 	}
 
-	/**
-	 * Resets the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
