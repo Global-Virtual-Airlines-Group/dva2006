@@ -37,10 +37,11 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 <div class="updateHdr">Flight Assignment Deleted</div>
 <br />
 This <content:airline /> Flight Assigment has been successfully removed from the database.<br />
-<c:if test="${!empty flightsDeleted}">
+<br />
+<c:if test="${flightsDeleted > 0}">
 <fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br />
 </c:if>
-<c:if test="${!empty flightsUpdated}">
+<c:if test="${flightsUpdated > 0}">
 <fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
 </c:if>
 </c:when>
@@ -48,10 +49,11 @@ This <content:airline /> Flight Assigment has been successfully removed from the
 <div class="updateHdr">Flight Assignment Released</div>
 <br />
 This <content:airline /> Flight Assigment has been successfully released.<br />
-<c:if test="${!empty flightsDeleted}">
+<br />
+<c:if test="${flightsDeleted > 0}">
 <fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br />
 </c:if>
-<c:if test="${!empty flightsUpdated}">
+<c:if test="${flightsUpdated > 0}">
 <fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
 </c:if>
 </c:when>
