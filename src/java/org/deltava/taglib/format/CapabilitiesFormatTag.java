@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.acars.Capabilities;
 /**
  * A JSP tag to display aircraft/simulator Capabilities bitmaps.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 8.6
  */
 
@@ -54,11 +54,9 @@ public class CapabilitiesFormatTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
+		super.release();
 		_caps.clear();
 	}
 }
