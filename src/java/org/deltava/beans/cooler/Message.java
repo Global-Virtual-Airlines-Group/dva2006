@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.time.Instant;
@@ -10,11 +10,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Water Cooler posts.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
-public class Message extends DatabaseBean implements AuthoredBean {
+public class Message extends DatabaseBean implements AuthoredBean, RemoteAddressBean {
     
     private int _threadID;
     private int _authorID;
@@ -73,22 +73,12 @@ public class Message extends DatabaseBean implements AuthoredBean {
         return _msgBody;
     }
     
-    /**
-     * Returns the IP address from where this message was posted.
-     * @return the IP address
-     * @see Message#setRemoteAddr(String)
-     * @see Message#getRemoteHost()
-     */
+    @Override
     public String getRemoteAddr() {
         return _remoteAddr;
     }
     
-    /**
-     * Returns the host name from where this message was posted.
-     * @return the host name
-     * @see Message#setRemoteHost(String)
-     * @see Message#getRemoteAddr()
-     */
+    @Override
     public String getRemoteHost() {
         return _remoteHost;
     }

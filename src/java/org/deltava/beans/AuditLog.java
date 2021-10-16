@@ -10,11 +10,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A bean to store an audit log record. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 7.4
  */
 
-public class AuditLog implements AuditEntry, Comparable<AuditLog> {
+public class AuditLog implements AuditEntry, RemoteAddressBean, Comparable<AuditLog> {
 	
 	public static final String COMMON = "COMMON";
 	
@@ -110,18 +110,12 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 		return _desc;
 	}
 	
-	/**
-	 * Returns the IP address for this audit entry.
-	 * @return the address
-	 */
+	@Override
 	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
-	
-	/**
-	 * Returns the host name for this audit entry.
-	 * @return the host name
-	 */
+
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to track e-mail delivery.
  * @author Luke
- * @version 8.5
+ * @version 10.2
  * @since 8.5
  */
 
-public class EMailDelivery extends DatabaseBean implements ViewEntry {
+public class EMailDelivery extends DatabaseBean implements RemoteAddressBean, ViewEntry {
 	
 	private final DeliveryType _type;
 	private Instant _sendTime;
@@ -91,7 +91,8 @@ public class EMailDelivery extends DatabaseBean implements ViewEntry {
 	 * Returns the remote SMTP server address.
 	 * @return the address
 	 */
-	public String getRemoteAddress() {
+	@Override
+	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
 	
@@ -99,6 +100,7 @@ public class EMailDelivery extends DatabaseBean implements ViewEntry {
 	 * Returns the remote SMTP server host name.
 	 * @return the host name
 	 */
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}
