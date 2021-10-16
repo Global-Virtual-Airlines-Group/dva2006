@@ -1,4 +1,4 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.system.EMailDelivery;
 /**
  * A Data Access Object to handle message delivery reports.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 8.5
  */
 
@@ -36,7 +36,7 @@ public class SetEMailDelivery extends DAO {
 			ps.setString(5, dv.getEmail());
 			ps.setInt(6, dv.getProcessTime());
 			ps.setInt(7, dv.getType().ordinal());
-			ps.setString(8, dv.getRemoteAddress());
+			ps.setString(8, dv.getRemoteAddr());
 			ps.setString(9, dv.getRemoteHost());
 			ps.setString(10, dv.getResponse());
 			executeUpdate(ps, 1);

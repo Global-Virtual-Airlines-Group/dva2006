@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2012, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store ACARS client error logs.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 1.0
  */
 
-public class ACARSError extends DatabaseBlobBean implements ClientVersion, AuthoredBean, ViewEntry {
+public class ACARSError extends DatabaseBlobBean implements ClientVersion, RemoteAddressBean, AuthoredBean, ViewEntry {
 	
 	private int _userID;
 	private Instant _createdOn;
@@ -67,20 +67,12 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 		return _userID;
 	}
 	
-	/**
-	 * Returns the IP address of the ACARS client.
-	 * @return the IP address
-	 * @see ACARSError#setRemoteAddr(String)
-	 */
+	@Override
 	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
 
-	/**
-	 * Returns the host name of the ACARS client.
-	 * @return the host name
-	 * @see ACARSError#setRemoteHost(String)
-	 */
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}

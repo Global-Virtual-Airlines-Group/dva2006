@@ -1,16 +1,16 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Login address information for a user.
  * @author Luke
- * @version 1.0
+ * @version 10.2
  * @since 1.0
  */
 
-public class LoginAddress extends DatabaseBean {
+public class LoginAddress extends DatabaseBean implements RemoteAddressBean {
 	
 	private String _remoteAddr;
 	private String _remoteHost;
@@ -18,27 +18,19 @@ public class LoginAddress extends DatabaseBean {
 
 	/**
 	 * Initializes the bean.
-	 * @param id the database ID of the user. 
+	 * @param id the database ID of the user 
 	 */
 	public LoginAddress(int id) {
 		super();
 		setID(id);
 	}
 
-	/**
-	 * Returns the IP address used to log in.
-	 * @return the IP address
-	 * @see LoginAddress#setRemoteAddr(String)
-	 */
+	@Override
 	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
 
-	/**
-	 * Returns the host name used to log in.
-	 * @return the host name
-	 * @see LoginAddress#setRemoteHost(String)
-	 */
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}
