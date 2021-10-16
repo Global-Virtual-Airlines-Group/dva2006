@@ -604,6 +604,31 @@
 	</tag>
 
 	<tag>
+		<description>RemoteAddress tag, used to format IP address information</description>
+		<name>ipaddr</name>
+		<tag-class>org.deltava.taglib.format.RemoteAddressTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>addr</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.RemoteAddressBean</type>
+		</attribute>
+		<attribute>
+			<name>info</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.system.IPBlock</type>		
+		</attribute>
+		<attribute>
+			<name>showFlag</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>StackDump tag, used to format exception stack traces</description>
 		<name>stack</name>
 		<tag-class>org.deltava.taglib.format.StackDumpFormatTag</tag-class>
