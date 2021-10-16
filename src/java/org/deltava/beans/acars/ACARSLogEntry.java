@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -9,11 +9,11 @@ import org.deltava.beans.system.IPBlock;
 /**
  * An abstract class for common ACRS log entry functions.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
-public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersion, AuthoredBean {
+public abstract class ACARSLogEntry extends DatabaseBean implements RemoteAddressBean, ClientVersion, AuthoredBean {
 
 	private IPBlock _addrInfo;
 
@@ -30,22 +30,12 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	 */
 	public abstract Instant getStartTime();
 
-	/**
-	 * Returns the IP address for this connection.
-	 * @return the IP Address
-	 * @see ConnectionEntry#setRemoteAddr(String)
-	 * @see ConnectionEntry#getRemoteHost()
-	 */
+	@Override
 	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
 
-	/**
-	 * Returns the host name for this connection.
-	 * @return the host name
-	 * @see ConnectionEntry#getRemoteAddr()
-	 * @see ConnectionEntry#setRemoteHost(String)
-	 */
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}
@@ -82,8 +72,7 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	/**
 	 * Updates the IP address for this connection.
 	 * @param addr the IP address
-	 * @see ConnectionEntry#getRemoteAddr()
-	 * @see ConnectionEntry#setRemoteHost(String)
+	 * @see ACARSLogEntry#setRemoteHost(String)
 	 */
 	public void setRemoteAddr(String addr) {
 		_remoteAddr = addr;
@@ -92,8 +81,7 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	/**
 	 * Updates the host name for this connection.
 	 * @param host the host name
-	 * @see ConnectionEntry#getRemoteHost()
-	 * @see ConnectionEntry#setRemoteAddr(String)
+	 * @see ACARSLogEntry#setRemoteAddr(String)
 	 */
 	public void setRemoteHost(String host) {
 		_remoteHost = host;

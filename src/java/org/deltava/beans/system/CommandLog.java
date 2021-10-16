@@ -1,20 +1,19 @@
-// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.time.Instant;
-import java.io.Serializable;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 import org.deltava.commands.CommandResult;
 
 /**
  * A bean to log Web Site Command invocations.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
-public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEntry {
+public class CommandLog implements java.io.Serializable, Comparable<CommandLog>, RemoteAddressBean, ViewEntry {
 
 	private final Instant _d;
 	private String _cmdName;
@@ -69,22 +68,12 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 		return _cmdName;
 	}
 
-	/**
-	 * Returns the IP address of the web user executing the Command.
-	 * @return the IP address
-	 * @see CommandLog#setRemoteAddr(String)
-	 * @see CommandLog#getRemoteHost()
-	 */
+	@Override
 	public String getRemoteAddr() {
 		return _remoteAddr;
 	}
 
-	/**
-	 * Returns the host name of the web user executing the Command.
-	 * @return the host name
-	 * @see CommandLog#setRemoteHost(String)
-	 * @see CommandLog#getRemoteAddr()
-	 */
+	@Override
 	public String getRemoteHost() {
 		return _remoteHost;
 	}
