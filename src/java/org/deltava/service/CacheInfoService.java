@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Service to display application cache information.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 6.2
  */
 
@@ -39,7 +39,7 @@ public class CacheInfoService extends WebService {
 		
 		// Tell ACARS to update its cache
 		if (SystemData.getBoolean("acars.enabled")) {
-			EventDispatcher.send(new SystemEvent(SystemEvent.Type.CACHE_STATS));
+			EventDispatcher.send(new SystemEvent(EventType.CACHE_STATS));
 			ThreadUtils.sleep(50);
 			
 			@SuppressWarnings("unchecked")
