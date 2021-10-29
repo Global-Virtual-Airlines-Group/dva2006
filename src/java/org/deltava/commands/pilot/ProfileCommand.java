@@ -580,7 +580,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.commitTX();
 			
 			// Invalidate the Pilot cache across applications
-			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
+			EventDispatcher.send(new UserEvent(EventType.USER_INVALIDATE, p.getID()));
 			
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
