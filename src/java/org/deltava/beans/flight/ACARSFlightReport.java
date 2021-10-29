@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     private Duration _boardTime = Duration.ZERO;
     private Duration _deboardTime = Duration.ZERO;
+    private Duration _onlineTime = Duration.ZERO;
     
     private ILSCategory _ils;
     private double _landingG;
@@ -117,6 +118,15 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      */
     public Duration getDeboardTime() {
     	return _deboardTime;
+    }
+    
+    /**
+     * Returns the amount of time spent connected to an Online Network.
+     * @return the amount of time in seconds
+     * @see ACARSFlightReport#setOnlineTime(int)
+     */
+    public Duration getOnlineTime() {
+    	return _onlineTime;
     }
     
     /**
@@ -292,6 +302,15 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      */
     public void setDeboardTime(int secs) {
     	_deboardTime = Duration.ofSeconds(Math.max(0, secs));
+    }
+    
+    /**
+     * Updates the amount of time spent connected to an Online Network.
+     * @param secs the time in seconds
+     * @see ACARSFlightReport#getOnlineTime()
+     */
+    public void setOnlineTime(int secs) {
+    	_onlineTime = Duration.ofSeconds(Math.max(0, secs));
     }
     
     /**
