@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update MVS Channel data.
  * @author Luke
- * @version 4.0
+ * @version 10.2
  * @since 4.0
  */
 
@@ -84,7 +84,7 @@ public class ChannelCommand extends AbstractFormCommand {
 
 		// Set status attribute
 		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
-		EventDispatcher.send(new SystemEvent(SystemEvent.Type.MVS_RELOAD));
+		EventDispatcher.send(new SystemEvent(EventType.MVS_RELOAD));
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

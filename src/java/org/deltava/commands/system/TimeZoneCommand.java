@@ -1,4 +1,4 @@
-// Copyright 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.time.ZoneId;
@@ -15,7 +15,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to edit time zone profiles.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -81,7 +81,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 		}
 		
 		// Notify other webapps
-		EventDispatcher.send(new SystemEvent(SystemEvent.Type.TZ_RELOAD));
+		EventDispatcher.send(new SystemEvent(EventType.TZ_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -6,7 +6,10 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.stats.*;
+
 import org.deltava.dao.*;
+
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
@@ -16,7 +19,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -33,9 +36,6 @@ public class IPCDaemon implements Runnable {
 		return SystemData.get("airline.code") + " IPC Daemon";
 	}
 
-	/**
-	 * Executes the thread.
-	 */
 	@Override
 	public void run() {
 		log.info("Starting");
@@ -72,6 +72,63 @@ public class IPCDaemon implements Runnable {
 								IDEvent ie = (IDEvent) event;
 								CacheManager.invalidate(ie.getID(), false);
 								log.warn(SystemData.get("airline.code") + " Flushing cache " + ie.getID());
+								break;
+								
+							case AIRPORT_RENAME:
+								ie = (IDEvent) event;
+								if (ie.getData() == null) break;
+								log.warn(SystemData.get("airline.code") + " renaming Airport " + ie.getData() + " to " + ie.getID());
+								
+								// Update accomplishments
+								try {
+									con.setAutoCommit(false);
+									Collection<Accomplishment> accs = new LinkedHashSet<Accomplishment>();
+									GetAccomplishment acdao = new GetAccomplishment(con);
+									accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTS));
+									accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTD));
+									accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTA));
+									accs.removeIf(acc -> !acc.renameChoice(ie.getID(), ie.getData()));
+								
+									if (!accs.isEmpty()) {
+										SetAccomplishment acwdao = new SetAccomplishment(con);
+										for (Accomplishment acc : accs) {
+											log.warn(SystemData.get("airline.code") + " updating Accomplishment " + acc.getName());
+											acwdao.write(acc);
+										}
+										
+										con.commit();
+									}
+								} catch (Exception e) {
+									throw new DAOException(e);
+								}
+								
+								break;
+								
+							case AIRCRAFT_RENAME:
+								ie = (IDEvent) event;
+								if (ie.getData() == null) break;
+								log.warn(SystemData.get("airline.code") + " renaming Aircraft " + ie.getData() + " to " + ie.getID());
+								
+								// Update accomplishments
+								try {
+									con.setAutoCommit(false);
+									GetAccomplishment acdao = new GetAccomplishment(con);
+									Collection<Accomplishment> accs = acdao.getByUnit(AccomplishUnit.AIRCRAFT);
+									accs.removeIf(acc -> !acc.renameChoice(ie.getID(), ie.getData()));
+									
+									if (!accs.isEmpty()) {
+										SetAccomplishment acwdao = new SetAccomplishment(con);
+										for (Accomplishment acc : accs) {
+											log.warn(SystemData.get("airline.code") + " updating Accomplishment " + acc.getName());
+											acwdao.write(acc);
+										}
+										
+										con.commit();		
+									}
+								} catch (Exception e) {
+									throw new DAOException(e);
+								}
+								
 								break;
 								
 							default:

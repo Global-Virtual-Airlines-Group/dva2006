@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to delete an MVS persistent channel.
  * @author Luke
- * @version 4.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
 		
 		// Set status attributes
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
-		EventDispatcher.send(new SystemEvent(SystemEvent.Type.MVS_RELOAD));
+		EventDispatcher.send(new SystemEvent(EventType.MVS_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

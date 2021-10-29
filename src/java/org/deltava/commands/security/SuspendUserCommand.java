@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class SuspendUserCommand extends AbstractCommand {
 		log.warn(ctx.getUser().getName() + " suspended user " + usr.getName());
 		
 		// Notify other web applications
-		EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_SUSPEND, usr.getID()));
+		EventDispatcher.send(new UserEvent(EventType.USER_SUSPEND, usr.getID()));
 		ctx.setAttribute("isBlocked", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP

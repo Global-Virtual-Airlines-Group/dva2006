@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -148,7 +148,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			}
 
 			// Invalidate the Pilot cache across applications
-			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
+			EventDispatcher.send(new UserEvent(EventType.USER_INVALIDATE, p.getID()));
 		} catch (SecurityException se) {
 			ctx.rollbackTX();
 			throw new CommandException(se);
