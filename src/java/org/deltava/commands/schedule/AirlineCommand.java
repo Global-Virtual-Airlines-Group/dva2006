@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 		}
 		
 		// Force an airline reload
-		EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRLINE_RELOAD));
+		EventDispatcher.send(new SystemEvent(EventType.AIRLINE_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
