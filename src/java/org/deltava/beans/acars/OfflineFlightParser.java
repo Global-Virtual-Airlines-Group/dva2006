@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 2.4
  */
 
@@ -282,6 +282,7 @@ public final class OfflineFlightParser {
 		afr.setTime(4, StringUtils.parse(ie.getChildTextTrim("time4X"), 0));
 		afr.setBoardTime(StringUtils.parse(ie.getChildTextTrim("timeBoard"), 0));
 		afr.setDeboardTime(StringUtils.parse(ie.getChildTextTrim("timeDeboard"), 0));
+		afr.setOnlineTime(StringUtils.parse(ie.getChildText("timeOnline"), 0));
 		result.setFlightReport(afr);
 		return result;
 	}

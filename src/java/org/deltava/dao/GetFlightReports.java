@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -550,7 +550,7 @@ public class GetFlightReports extends DAO {
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 75);
+			boolean hasOnTime = (md.getColumnCount() > 76);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -665,20 +665,21 @@ public class GetFlightReports extends DAO {
 					ap.setTime(4, rs.getInt(65));
 					ap.setBoardTime(rs.getInt(66));
 					ap.setDeboardTime(rs.getInt(67));
-					ap.setFDE(rs.getString(68));
-					ap.setAircraftCode(rs.getString(69));
-					ap.setSDK(rs.getString(70));
-					ap.setCapabilities(rs.getLong(71));
-					ap.setRestoreCount(rs.getInt(72));
-					ap.setAverageFrameRate(rs.getInt(73) / 10d);
-					ap.setClientBuild(rs.getInt(74));
-					ap.setBeta(rs.getInt(75));
+					ap.setOnlineTime(rs.getInt(68));
+					ap.setFDE(rs.getString(69));
+					ap.setAircraftCode(rs.getString(70));
+					ap.setSDK(rs.getString(71));
+					ap.setCapabilities(rs.getLong(72));
+					ap.setRestoreCount(rs.getInt(73));
+					ap.setAverageFrameRate(rs.getInt(74) / 10d);
+					ap.setClientBuild(rs.getInt(75));
+					ap.setBeta(rs.getInt(76));
 					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(76)]);
+						ap.setOnTime(OnTime.values()[rs.getInt(77)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(74));
-					ap.setMinorVersion(rs.getInt(75));
+					ap.setMajorVersion(rs.getInt(75));
+					ap.setMinorVersion(rs.getInt(76));
 				}
 
 				results.add(p);
