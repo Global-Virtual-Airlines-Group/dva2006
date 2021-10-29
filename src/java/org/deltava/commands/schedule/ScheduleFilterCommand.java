@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -172,7 +172,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			// Update airport map and schedule source cache
 			CacheManager.invalidate("ScheduleSource", true);
 			if (updateAirports)
-				EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
+				EventDispatcher.send(new SystemEvent(EventType.AIRPORT_RELOAD));
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
