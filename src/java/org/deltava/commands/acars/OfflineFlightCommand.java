@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 2.4
  */
 
@@ -99,7 +99,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 		
 		// Convert the files to strings
 		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> flight = null;
-		boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
+		boolean isOps = ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") || ctx.isUserInRole("Developer");
+		boolean noValidate = (isOps || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 		try {
 			if (sha == null) sha = new String(shaF.getBuffer(), US_ASCII);
 			if (xml == null) xml = xmlF.getBuffer();
@@ -181,6 +182,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(inf.getEndTime());
 		afr.addStatusUpdate(afr.getAuthorID(), HistoryType.LIFECYCLE, "Submitted via web site");
+		if (noValidate)
+			afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Signature Validation skipped");
 		
 		// Get the client version
 		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
