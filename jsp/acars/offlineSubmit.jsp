@@ -33,7 +33,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:attr attr="isHR" value="true" roles="HR,Developer" />
+<content:attr attr="isHR" value="true" roles="HR,Developer,Operations" />
 <content:superUser><c:set var="isHR" value="true" scope="page" /></content:superUser>
 
 <!-- Main Body Frame -->
