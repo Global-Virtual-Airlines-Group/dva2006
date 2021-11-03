@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.AuditLog;
 import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,10 +18,12 @@ import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -41,7 +44,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// If we're editing an existing aircraft, load it
-			Aircraft a = null; Aircraft oa = null; String oldName = null;
+			Aircraft a = null; Aircraft oa = null; String oldName = null; boolean isNameChanged = false;
 			if (!isNew) {
 				GetAircraft dao = new GetAircraft(con);
 				a = dao.get(aCode);
@@ -50,6 +53,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 
 				oa = BeanUtils.clone(a); oldName = a.getName();
 				a.setName(ctx.getParameter("name"));
+				isNameChanged = !oldName.equals(a.getName());
 			} else
 				a = new Aircraft(ctx.getParameter("name"));
 			
@@ -112,11 +116,30 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			} else {
 				wdao.update(a, oldName);
 				ctx.setAttribute("aircraftUpdate", Boolean.TRUE, REQUEST);
+				
+				// Update accomplishments
+				if (isNameChanged) {
+					GetAccomplishment acdao = new GetAccomplishment(con);
+					Collection<Accomplishment> accs = acdao.getByUnit(AccomplishUnit.AIRCRAFT);
+					
+					final String oc = oldName; final String nc = a.getName(); 
+					accs.removeIf(acc -> !acc.renameChoice(oc, nc));
+					ctx.setAttribute("accsUpdated", accs, REQUEST);
+					
+					// Save updated accomplishments
+					SetAccomplishment acwdao = new SetAccomplishment(con);
+					for (Accomplishment acc : accs)
+						acwdao.write(acc);
+				}
 			}
 			
 			// Write audit log
 			writeAuditLog(ctx, ae);
 			ctx.commitTX();
+			
+			// Send even if aircraft renamed
+			if (isNameChanged)
+				EventDispatcher.send(new IDEvent(EventType.AIRCRAFT_RENAME, a.getName(), oldName));
 			
 			// Save the aircraft in the request
 			ctx.setAttribute("aircraft", a, REQUEST);
