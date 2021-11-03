@@ -12,7 +12,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 6.1
  */
 
@@ -29,7 +29,6 @@ public class RedisUtils {
 	private static int _db;
 
 	private static class DefaultJedisConfig implements JedisClientConfig {
-		
 		private DefaultJedisConfig() {
 			super();
 		}
@@ -103,7 +102,7 @@ public class RedisUtils {
 			config.setMaxIdle(1); config.setMinIdle(1);
 			config.setJmxEnabled(true);
 			config.setJmxNamePrefix("redis-" + poolName.toLowerCase());
-			config.setMaxWaitMillis(50);
+			config.setMaxWait(Duration.ofMillis(50));
 			config.setMaxTotal(12);
 			config.setSoftMinEvictableIdleTime(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
