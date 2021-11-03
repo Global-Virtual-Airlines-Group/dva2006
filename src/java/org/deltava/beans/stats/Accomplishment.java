@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.2
  */
 
@@ -239,6 +239,20 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, Auditabl
 			_choices.addAll(choices);
 	}
 
+	/**
+	 * Renames one of the Accomplishment choices.
+	 * @param oc the old name
+	 * @param nc the new name
+	 * @return TRUE if the choice was present and renamed, otherwise FALSE
+	 */
+	public boolean renameChoice(String oc, String nc) {
+		boolean hasChoice = _choices.remove(oc);
+		if (hasChoice)
+			_choices.add(nc);
+		
+		return hasChoice;
+	}
+	
 	@Override
 	public int hashCode() {
 		return _name.hashCode();

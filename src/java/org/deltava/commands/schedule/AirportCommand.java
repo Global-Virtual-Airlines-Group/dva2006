@@ -7,9 +7,11 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -18,7 +20,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -55,7 +57,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 		}
 
 		try {
-			Airport a = null; Airport oa = null; String oldIATA = null;
+			Airport a = null; Airport oa = null; String oldIATA = null; boolean isCodeChanged = false; 
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Airport
@@ -71,6 +73,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
 				a.setIATA(ctx.getParameter("iata"));
+				isCodeChanged = !oldIATA.equalsIgnoreCase(a.getIATA());
 			} else
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
 
@@ -114,7 +117,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			
 			// Load maximum runway length
 			GetNavData navdao = new GetNavData(con);
-			for (Runway r : navdao.getRunways(a, Simulator.FSX))
+			for (Runway r : navdao.getRunways(a, Simulator.P3Dv4))
 				a.setMaximumRunwayLength(r.getLength());
 			
 			// Check audit log
@@ -132,25 +135,47 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			} else {
 				wdao.update(a, oldIATA);
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
+				
+				// Update accomplishments
+				if (isCodeChanged) {
+					Collection<Accomplishment> accs = new LinkedHashSet<Accomplishment>();
+					GetAccomplishment acdao = new GetAccomplishment(con);
+					accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTS));
+					accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTD));
+					accs.addAll(acdao.getByUnit(AccomplishUnit.AIRPORTA));
+					
+					// Filter out airports
+					@SuppressWarnings("null")
+					final String oc = oldIATA.toUpperCase(); final String nc = a.getIATA(); 
+					accs.removeIf(acc -> !acc.renameChoice(oc, nc));
+					ctx.setAttribute("accsUpdated", accs, REQUEST);
+					
+					// Save updated accomplishments
+					SetAccomplishment acwdao = new SetAccomplishment(con);
+					for (Accomplishment acc : accs)
+						acwdao.write(acc);
+				}
 			}
 			
 			// Write audit log
 			writeAuditLog(ctx, ae);
 			ctx.commitTX();
+			
+			// Update the Airports and set status update flag
+			EventDispatcher.send(new SystemEvent(EventType.AIRPORT_RELOAD));
+			if (isCodeChanged)
+				EventDispatcher.send(new IDEvent(EventType.AIRPORT_RENAME, a.getIATA(), oldIATA));
 
 			// Save the airport in the request
 			ctx.setAttribute("airport", a, REQUEST);
+			ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
-		// Update the Airports and set status update flag
-		EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
-		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
-
+		
 		// Forward to the JSP
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");

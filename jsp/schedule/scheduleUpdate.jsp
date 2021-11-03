@@ -32,6 +32,14 @@ The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been adde
 <div class="updateHdr">Airport Updated</div>
 <br />
 The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been updated in the <content:airline /> Flight Schedule.<br />
+<c:if test="${!empty accsUpdated}">
+<br />
+The following Pilot Accomplishments have been updated:<br />
+<br />
+<c:forEach var="acc" items="${accsUpdated}">
+<fmt:accomplish className="bld" accomplish="${ac}" /><br />
+</c:forEach>
+</c:if>
 </c:when>
 <c:when test="${isAirport && isDelete}">
 <div class="updateHdr">Airport Deleted</div>
