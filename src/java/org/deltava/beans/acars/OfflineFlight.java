@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.comparators.CalendarEntryComparator;
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 7.2
+ * @version 10.2
  * @since 2.4
  * @param <T> the FlightReport type 
  * @param <P> the RotueEntry type
@@ -112,5 +112,14 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	 */
 	public void setSTAR(String id) {
 		_star = id;
+	}
+	
+	/**
+	 * Updates the equipment type used on the Flight information report and Flight Report.
+	 * @param eqType the equipment type
+	 */
+	public void setEquipment(String eqType) {
+		_flight.setEquipmentType(eqType);
+		_pirep.setEquipmentType(eqType);
 	}
 }
