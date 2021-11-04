@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 7.0
  */
 
@@ -71,7 +71,7 @@ public class FlightSubmitService extends SimFDRService {
 			fr.setAuthorID(p.getID()); fr.setRank(p.getRank());
 			
 			// Create comments field
-			fr.addStatusUpdate(0, HistoryType.LIFECYCLE, "Submitted for " + p.getName() + " by simFDR from " + ctx.getRequest().getRemoteHost());
+			fr.addStatusUpdate(0, HistoryType.LIFECYCLE, String.format("Submitted for %s by simFDR from %s", p.getName(), ctx.getRequest().getRemoteHost()));
 
 			// Init the helper
 			FlightSubmissionHelper fsh = new FlightSubmissionHelper(con, fr, p);
@@ -123,7 +123,7 @@ public class FlightSubmitService extends SimFDRService {
 			fsh.checkSchedule();
 			
 			// Calculate average frame rate
-			fr.setAverageFrameRate(ofr.getPositions().stream().mapToInt(ACARSRouteEntry::getFrameRate).average().getAsDouble());
+			fr.setAverageFrameRate(ofr.getPositions().stream().mapToInt(ACARSRouteEntry::getFrameRate).average().orElse(0));
 			
 			// Calculate gates / runways
 			fsh.calculateGates();
@@ -175,14 +175,14 @@ public class FlightSubmitService extends SimFDRService {
 		
 		// Build response
 		Document doc = new Document();
-		Element re = XMLUtils.createElement("flight", "https://" + SystemData.get("airline.url") + "/pirep.do?id=" + fr.getHexID());
+		Element re = XMLUtils.createElement("flight", String.format("https://%s/pirep.do?id=%s", SystemData.get("airline.url"), fr.getHexID()));
 		doc.setRootElement(re);
 		re.setAttribute("id", fr.getHexID());
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("text/xml", "utf-8");
+			ctx.println(XMLUtils.format(doc, "utf-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
