@@ -49,7 +49,7 @@
  <td class="sec">${log.auditType}</td>
  <td class="pri bld">${log.auditID}</td>
  <td>${author.name}</td>
- <td class="small nophone"><fmt:ipaddr addr="${log}" info="ipInfo" showFlag="true" /></td>
+ <td class="small nophone"><fmt:ipaddr addr="${log}" info="${ipInfo}" showFlag="true" /></td>
  <td class="small right"><fmt:text value="${log.description}"></fmt:text></td>
 </tr>
 </c:forEach>
