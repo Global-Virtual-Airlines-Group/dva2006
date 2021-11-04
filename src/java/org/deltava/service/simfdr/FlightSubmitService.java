@@ -96,7 +96,7 @@ public class FlightSubmitService extends SimFDRService {
 			} 
 			
 			// Check ratings / promotion
-			fr.setEquipmentType(a.getName());
+			ofr.setEquipment(a.getName());
 			fsh.checkRatings();
 			
 			// Check Online network / Event
