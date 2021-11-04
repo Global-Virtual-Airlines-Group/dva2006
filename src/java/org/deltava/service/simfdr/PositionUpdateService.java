@@ -22,7 +22,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to receive simFDR position updates.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 8.3
  */
 
@@ -47,8 +47,11 @@ public class PositionUpdateService extends SimFDRService {
 		try {
 			info = OfflineFlightParser.create(ctx.getBody());
 		} catch (Exception e) {
-			throw error(SC_BAD_REQUEST, e.getMessage());
+			throw error(SC_BAD_REQUEST, e.getMessage(), e);
 		}
+		
+		if (info.getPositions().isEmpty())
+			throw error(SC_BAD_REQUEST, "No Position Data", false);
 		
 		Pilot p  = null; ACARSRouteEntry re = info.getPositions().first(); Country c = null;
 		try {
