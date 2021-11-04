@@ -123,7 +123,8 @@ final class OfflineFlightParser {
 		if (!CollectionUtils.isEmpty(pL) && (pL != null)) {
 			for (Element pe : pL) {
 				try {
-					of.addPosition(parsePosition(pe));
+					ACARSRouteEntry rte = parsePosition(pe);
+					of.addPosition(rte);
 				} catch (Exception e) {
 					log.error("Error loading Position Report - " + e.getMessage(), e);
 				}
@@ -212,8 +213,8 @@ final class OfflineFlightParser {
 		pos.setN1(Double.parseDouble(pe.getChildTextTrim("avgN1")));
 		pos.setN2(Double.parseDouble(pe.getChildTextTrim("avgN2")));
 		pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
-		pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
-		pos.setCG(Double.parseDouble(pe.getChildTextTrim("cg")));
+		pos.setG(StringUtils.parse(pe.getChildTextTrim("g"), 0d));
+		pos.setCG(StringUtils.parse(pe.getChildTextTrim("cg"), 0d));
 		pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
 		pos.setPhase(FlightPhase.fromString(pe.getChildTextTrim("phase")));
 		pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
