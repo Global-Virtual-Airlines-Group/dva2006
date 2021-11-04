@@ -332,6 +332,7 @@ public class FlightSubmissionHelper {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void calculateGates() throws DAOException {
+		if (_rte.size() < 2) return;
 		
 		GeoComparator dgc = new GeoComparator(_rte.get(0), true);
 		GeoComparator agc = new GeoComparator(_rte.get(_rte.size() - 1), true);
