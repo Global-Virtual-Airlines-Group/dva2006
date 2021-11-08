@@ -61,18 +61,17 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <c:when test="${empty myIssues}">
 <tr>
  <td colspan="6"><span class="pri bld left">You do not currently have any Help Desk Issues.</span>
-<c:if test="${access.canCreate}"> <el:cmd url="hdissue" op="edit" className="sec bld">Click Here</el:cmd>
- to create a new Issue.</c:if></td>
+<c:if test="${access.canCreate}"> <el:cmd url="hdissue" op="edit" className="sec bld">Click Here</el:cmd> to create a new Issue.</c:if></td>
 </tr>
 </c:when>
 <c:otherwise>
 <tr class="title">
  <td style="width:5%">#</td>
  <td>TITLE</td>
- <td style="width:10%">STATUS</td>
- <td class="nophone" style="width:30%">CREATED BY</td>
+ <td class="nophone" style="width:20%">CREATED BY</td>
  <td style="width:15%">ASSIGNED TO</td>
  <td style="width:5%">COMMENTS</td>
+ <td class="nophone" style="width:10%">LAST COMMENT</td>
 </tr>
 <c:forEach var="issue" items="${myIssues}">
 <c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
@@ -80,10 +79,10 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
- <td class="sec bld small"><fmt:defaultMethod object="${issue.status}" method="description" /></td>
  <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd><span class="nophone"> on <fmt:date date="${issue.createdOn}" t="HH:mm"/></span></td>
  <td><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
+ <td class="nophone"><fmt:date date="${issue.lastComment}" default="-" t="HH:mm" d="MM/dd" /></td>
 </view:row>
 </c:forEach>
 </c:otherwise>
@@ -100,10 +99,10 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
- <td class="sec bld small"><fmt:defaultMethod object="${issue.status}" method="description" /></td>
  <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd><span class="nophone"> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></span></td>
  <td class="sec bld"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
+ <td class="nophone"><fmt:date date="${issue.lastComment}" default="-" t="HH:mm" d="MM/dd" /></td> 
 </view:row>
 </c:forEach>
 </c:if>
