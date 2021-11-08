@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 10.0
  */
 
@@ -175,6 +175,8 @@ public class FlightSubmissionHelper {
 				fr.getStatusUpdates().forEach(_fr::addStatusUpdate);
 				_fr.addStatusUpdate(0, HistoryType.UPDATE, String.format("Loaded %d updates from draft Flight Report %d", Integer.valueOf(fr.getStatusUpdates().size()), Integer.valueOf(fr.getID())));
 			}
+			if (!fr.getEquipmentType().equals(_fr.getEquipmentType()))
+				_fr.addStatusUpdate(_p.getID(), HistoryType.UPDATE, String.format("Equipment substitution from %s to %s", fr.getEquipmentType(), _fr.getEquipmentType()));
 		}
 		
 		// Check for held flight reports
