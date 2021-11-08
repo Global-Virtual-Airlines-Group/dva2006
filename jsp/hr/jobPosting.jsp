@@ -147,11 +147,9 @@ return true;
 <tr>
  <td class="label top">${pilot.name} (${pilot.pilotCode})<br />
 <fmt:date date="${app.createdOn}" t="HH:mm" /></td>
- <td class="data top"><span class="bld">${pilot.rank.name}, ${pilot.equipmentType}</span>
- <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br />
-Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
-<a href="javascript:void golgotha.local.toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a>
-<el:cmd url="profile" link="${pilot}">Click to view pilot profile.</el:cmd>
+ <td class="data top"><span class="bld">${pilot.rank.name}, ${pilot.equipmentType}</span> - <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br />
+Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" /><br />
+<a href="javascript:void golgotha.local.toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a> - <el:cmd url="profile" link="${pilot}">Click to view pilot profile.</el:cmd>
 <c:choose>
 <c:when test="${access.canShortlist}">
 <hr />
@@ -228,12 +226,11 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 </el:form>
 <c:if test="${access.canComment}">
 <script>
-golgotha.local.commentValidate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.body, l:12, t:'Comment Text'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.commentValidate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.body, l:12, t:'Comment Text'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 <br />
