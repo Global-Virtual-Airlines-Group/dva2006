@@ -18,10 +18,12 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
 
+import org.deltava.crypt.MessageDigester;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.crypt.MessageDigester;
+import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
@@ -160,13 +162,13 @@ public class OfflineFlightCommand extends AbstractCommand {
 			ctx.setMessage(e.getMessage());
 			return;
 		}
-
+		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
-		inf.setAuthorID(ctx.getUser().getID());
+		
 		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
 		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-		
+
 		// If the date/time is too far in the future, reject
 		Instant maxDate = Instant.now().plusSeconds(86400);
 		if (maxDate.isBefore(inf.getEndTime()) && !noValidate) {
@@ -178,12 +180,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Add PIREP fields from the request
 		ACARSFlightReport afr = flight.getFlightReport();
-		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(inf.getEndTime());
 		afr.addStatusUpdate(afr.getAuthorID(), HistoryType.LIFECYCLE, "Submitted via web site");
 		if (noValidate)
 			afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Signature Validation skipped");
+		if (inf.getAuthorID() == 0)
+			inf.setAuthorID(ctx.getUser().getID());
+		
+		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
 		
 		// Get the client version
 		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
@@ -224,10 +229,27 @@ public class OfflineFlightCommand extends AbstractCommand {
 				}
 			}
 			
-			// Get the user information
-			GetPilot pdao = new GetPilot(con);
-			CacheManager.invalidate("Pilots", ctx.getUser().cacheKey());
-			Pilot p = pdao.get(ctx.getUser().getID());
+			// Check that we can submit for another user
+			GetPilot pdao = new GetPilot(con); Pilot p = null;
+			if (inf.getAuthorID() != ctx.getUser().getID()) {
+				PIREPAccessControl ac = new PIREPAccessControl(ctx, afr);
+				ac.validate();
+				if (!ac.getCanProxySubmit()) {
+					ctx.setMessage("Cannot proxy submit Flight Report");
+					return;
+				}
+				
+				// Load the Proxy user
+				CacheManager.invalidate("Pilots", Integer.valueOf(inf.getAuthorID()));
+				p = pdao.get(inf.getAuthorID());
+				if (p == null)
+					throw notFoundException("Invalid Proxy user ID - " + inf.getAuthorID());
+				
+				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Submitted by %s on behalf of %s", ctx.getUser().getName(), p.getName()));
+			} else {
+				CacheManager.invalidate("Pilots", ctx.getUser().cacheKey());
+				p = pdao.get(ctx.getUser().getID());
+			}
 			
 			// Init the helper
 			FlightSubmissionHelper fsh = new FlightSubmissionHelper(con, afr, p);
@@ -289,7 +311,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				GetACARSRoute ardao = new GetACARSRoute(con);
 				DispatchRoute dr = ardao.getRoute(inf.getRouteID());
 				if (dr == null) {
-					log.warn("Invalid Dispatch Route - " + inf.getRouteID());
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Invalid Dispatch Route - %d", Integer.valueOf(inf.getRouteID())));
 					inf.setRouteID(0);
 				}
 			}
@@ -299,7 +321,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				GetUserData uddao = new GetUserData(con);
 				UserData ud = uddao.get(inf.getDispatcherID());
 				if (ud == null) {
-					log.warn("Invalid Disaptcher - " + inf.getDispatcherID());
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Invalid Dispatcher ID - %d", Integer.valueOf(inf.getDispatcherID())));
 					inf.setDispatcherID(0);
 				}
 			}

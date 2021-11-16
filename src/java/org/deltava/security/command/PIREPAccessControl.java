@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canViewComments;
 	private boolean _canUpdateComments;
 	private boolean _canPreApprove;
+	private boolean _canProxySubmit;
 
 	/**
 	 * Initializes the controller.
@@ -87,6 +88,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canViewDiagData = _ourPIREP || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("Developer");
 		_canViewComments = isHR || isPirep || _ourPIREP;
 		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
+		_canProxySubmit = isHR;
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -228,5 +230,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanPreApprove() {
 		return _canPreApprove;
+	}
+	
+	/**
+	 * Returns if the user can submit a Flight Report on behalf of another user.
+	 * @return TRUE if the flight can be submitted on their behalf, otherwise FALSE
+	 */
+	public boolean getCanProxySubmit() {
+		return _canProxySubmit;
 	}
 }
