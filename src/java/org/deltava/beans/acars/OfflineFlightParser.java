@@ -96,6 +96,7 @@ public final class OfflineFlightParser {
 		// Build a flight data entry
 		int flightID = StringUtils.parse(ie.getChildTextTrim("id"), 0);
 		FlightInfo inf = new FlightInfo(flightID);
+		inf.setAuthorID(StringUtils.parse(ie.getChildTextTrim("userID"), 0));
 		inf.setVersion(clientVersion);
 		inf.setClientBuild(clientBuild);
 		inf.setOffline(true);
