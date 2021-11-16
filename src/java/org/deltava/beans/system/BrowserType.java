@@ -6,14 +6,13 @@ import java.util.*;
 /**
  * An enumeration to store browser family data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.7
  */
 
 public enum BrowserType {
-	
 	IE("MSIE", "Trident"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), CHROME("Chrome"), OPERA("Opera"), SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider",  
-			"Yahoo! Slurp",  "SemrushBot", "AhrefsBot", "Bytespider", "TurnitinBot", "PetalBot", "Barkrowler", "Adsbot", "internetnl", "DotBot", "Applebot", "MauiBot", "amazonbot", "lanaibot"), UNKNOWN;
+			"Yahoo! Slurp",  "SemrushBot", "AhrefsBot", "Bytespider", "Turnitin", "PetalBot", "Barkrowler", "Adsbot", "internetnl", "DotBot", "Applebot", "MauiBot", "amazonbot", "lanaibot"), UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new ArrayList<String>(4);
 	
