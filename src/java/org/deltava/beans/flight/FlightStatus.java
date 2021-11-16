@@ -1,16 +1,16 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * An enumeration to store Flight Report states. 
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 8.1
  */
 
-public enum FlightStatus implements ViewEntry {
+public enum FlightStatus implements ViewEntry, EnumDescription {
 	DRAFT("opt2", "", false), SUBMITTED("opt1", "", false), HOLD("warn", "hold", false), OK(null, "approve", true), REJECTED("err", "reject", true);
 
 	private final String _viewClass;
@@ -27,14 +27,6 @@ public enum FlightStatus implements ViewEntry {
 		_viewClass = viewClass;
 		_verb = verb;
 		_isComplete = isComplete;
-	}
-	
-	/**
-	 * Returns the status description. 
-	 * @return the description
-	 */
-	public String getDescription() {
-		return name().substring(0, 1) + name().substring(1).toLowerCase();
 	}
 	
 	/**
