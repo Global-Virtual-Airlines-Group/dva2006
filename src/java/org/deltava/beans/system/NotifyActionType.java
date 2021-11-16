@@ -1,20 +1,18 @@
 // Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import org.deltava.beans.EnumDescription;
-
 /**
  * An enumeration of Actions that can be placed into a push notification.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
-public enum NotifyActionType implements EnumDescription {
+public enum NotifyActionType implements org.deltava.beans.EnumDescription {
 	HOME("Home Page", "home"), PILOTCENTER("Pilot Center", "pilotcenter"), PIREPQUEUE("Flight Queue", "pirepqueue"), PROMOQUEUE("Promotion Queue", "promoqueue"), LOGBOOK("Log Book", "logbook", true), 
 	TESTCENTER("Testing Center", "testcenter", true), TXQUEUE("Transfer Queue", "txrequests"), PIREP("Flight Report", "pirep", true), CHECKRIDE("Check Ride", "checkride", true), EXAM("Examination", "exam", true),
 	TRANSFER("Program Transfer", "txreqview", true), EVENTCALENDAR("Event Calendar", "eventcalendar"), EVENT("Online Event", "event", true), THREAD("Message Thread", "thread", true), 
-	ISSUE("Development Issue", "issue", true), HELP("Help Desk Issue", "hdissue", true), CHREQ("Charter Flight Request", "chreq", true);
+	ISSUE("Development Issue", "issue", true), HELP("Help Desk Issue", "hdissue", true), CHREQ("Charter Flight Request", "chreq", true), JOB("Career Opportunity", "job", true);
 	
 	private final String _url;
 	private final String _desc;
