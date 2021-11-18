@@ -84,6 +84,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			a.setASDE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
 			a.setHasPFI(Boolean.valueOf(ctx.getParameter("hasUSPFI")).booleanValue());
 			a.setIsSchengen(Boolean.valueOf(ctx.getParameter("isSchengen")).booleanValue());
+			a.setHasFictionalCode(Boolean.valueOf(ctx.getParameter("isFictional")).booleanValue());
 			Airport oldA = SystemData.getAirport(ctx.getParameter("oldAirport"));
 			a.setSupercededAirport(((oldA == null) || oldA.getIATA().equals(a.getIATA())) ? null : oldA.getIATA());
 

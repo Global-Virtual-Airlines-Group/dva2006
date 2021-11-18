@@ -72,7 +72,7 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:text name="name" idx="*" className="pri bld" required="true" size="36" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
- <td class="data small">The airport name should be in the following formats:<br />
+ <td class="data small"><span class="ita">The airport name should be in the following formats:</span><br />
 Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br /> 
 Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(New York-Kennedy NY)</span><br />
 Airports outside the United States or Canada, use &lt;City Name&gt; &lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
@@ -84,7 +84,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label">IATA Code</td>
- <td class="data"><el:text name="iata" idx="*" className="bld" required="true" size="2" max="3" value="${airport.IATA}" /></td>
+ <td class="data"><el:text name="iata" idx="*" className="bld" required="true" size="2" max="3" value="${airport.IATA}" />&nbsp;<el:box name="isFictional" value="true" checked="${airport.hasFictionalCode}" label="This is a fictional IATA code for decomissioned Airports" /></td>
 </tr>
 <tr>
  <td class="label">ICAO Code</td>

@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Airport and Airline information.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 8.0
  */
 
@@ -153,7 +153,7 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 
 			// Write the airport data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, HAS_USPFI, IS_SCHENGEN, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, HAS_USPFI, IS_SCHENGEN, HAS_FICTIONAL_CODE, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setString(1, a.getIATA());
 				ps.setString(2, a.getICAO());
 				ps.setString(3, a.getTZ().getID());
@@ -164,7 +164,8 @@ public class SetAirportAirline extends DAO {
 				ps.setBoolean(8, a.getASDE());
 				ps.setBoolean(9, a.getHasPFI());
 				ps.setBoolean(10, a.getIsSchengen());
-				ps.setString(11, a.getSupercededAirport());
+				ps.setBoolean(11, a.getHasFictionalCode());
+				ps.setString(12, a.getSupercededAirport());
 				executeUpdate(ps, 1);
 			}
 			
@@ -215,7 +216,7 @@ public class SetAirportAirline extends DAO {
 			}
 
 			// Update the airport data
-			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, HAS_USPFI=?, IS_SCHENGEN=?, OLDCODE=? WHERE (IATA=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, HAS_USPFI=?, IS_SCHENGEN=?, HAS_FICTIONAL_CODE=?, OLDCODE=? WHERE (IATA=?)")) {
 				ps.setString(1, a.getICAO());
 				ps.setString(2, a.getTZ().getID());
 				ps.setString(3, a.getName());
@@ -226,8 +227,9 @@ public class SetAirportAirline extends DAO {
 				ps.setString(8, a.getCountry().getCode());
 				ps.setBoolean(9,  a.getHasPFI());
 				ps.setBoolean(10, a.getIsSchengen());
-				ps.setString(11, a.getSupercededAirport());
-				ps.setString(12, oc);
+				ps.setBoolean(11, a.getHasFictionalCode());
+				ps.setString(12, a.getSupercededAirport());
+				ps.setString(13, oc);
 				executeUpdate(ps, 1);
 			}
 			

@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	private int _maxRunwayLength;
 	private String _region;
 	private String _supercededAirport;
+	private boolean _isFictionalCode;
 	private boolean _asdeX;
 	private boolean _hasGateData;
 	private boolean _isSchengen;
@@ -142,6 +143,14 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	 */
 	public void setHasPFI(boolean hasPFI) {
 		_hasUSPFI = hasPFI;
+	}
+	
+	/**
+	 * Sets whether this Airport is using a fictional IATA code, for non-extant Airports.
+	 * @param isFictional TRUE if a fictional code, otherwise FALSE
+	 */
+	public void setHasFictionalCode(boolean isFictional) {
+		_isFictionalCode = isFictional;
 	}
 
 	/**
@@ -311,6 +320,14 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	 */
 	public boolean getHasPFI() {
 		return _hasUSPFI;
+	}
+	
+	/**
+	 * Returns whether the Airport has a fictional IATA code, for non-existent airports.
+	 * @return TRUE if the code is fictional, otherwise FALSE
+	 */
+	public boolean getHasFictionalCode() {
+		return _isFictionalCode;
 	}
 
 	@Override

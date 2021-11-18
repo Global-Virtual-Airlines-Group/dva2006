@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -69,11 +69,12 @@ public class GetAirport extends DAO {
 						a.setASDE(rs.getBoolean(8));
 						a.setHasPFI(rs.getBoolean(9));
 						a.setIsSchengen(rs.getBoolean(10));
-						a.setSupercededAirport(rs.getString(11));
-						a.setAltitude(rs.getInt(12));
-						a.setRegion(rs.getString(13));
-						a.setGateData(rs.getInt(15) > 0);
-						int maxRunway = rs.getInt(14);
+						a.setHasFictionalCode(rs.getBoolean(11));
+						a.setSupercededAirport(rs.getString(12));
+						a.setAltitude(rs.getInt(13));
+						a.setRegion(rs.getString(14));
+						a.setGateData(rs.getInt(16) > 0);
+						int maxRunway = rs.getInt(15);
 						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					}
 				}
@@ -136,11 +137,12 @@ public class GetAirport extends DAO {
 					a.setASDE(rs.getBoolean(8));
 					a.setHasPFI(rs.getBoolean(9));
 					a.setIsSchengen(rs.getBoolean(10));
-					a.setSupercededAirport(rs.getString(11));
-					a.setAltitude(rs.getInt(12));
-					a.setRegion(rs.getString(13));
-					a.setGateData(rs.getInt(15) > 0);
-					int maxRunway = rs.getInt(14);
+					a.setHasFictionalCode(rs.getBoolean(11));
+					a.setSupercededAirport(rs.getString(12));
+					a.setAltitude(rs.getInt(13));
+					a.setRegion(rs.getString(14));
+					a.setGateData(rs.getInt(16) > 0);
+					int maxRunway = rs.getInt(15);
 					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					if (al != null)
 						a.addAirlineCode(al.getCode());
@@ -276,11 +278,12 @@ public class GetAirport extends DAO {
 						a.setASDE(rs.getBoolean(8));
 						a.setHasPFI(rs.getBoolean(9));
 						a.setIsSchengen(rs.getBoolean(10));
-						a.setSupercededAirport(rs.getString(11));
-						a.setAltitude(rs.getInt(12));
-						a.setRegion(rs.getString(13));
+						a.setHasFictionalCode(rs.getBoolean(11));
+						a.setSupercededAirport(rs.getString(12));
+						a.setAltitude(rs.getInt(13));
+						a.setRegion(rs.getString(14));
 						a.setGateData(rs.getInt(15) > 0);
-						int maxRunway = rs.getInt(14);
+						int maxRunway = rs.getInt(15);
 						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					
 						// Save in the map
