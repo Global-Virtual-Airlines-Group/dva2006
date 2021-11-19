@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -84,8 +84,10 @@ public class BuildCommand extends AbstractCommand {
 				info.addAssignment(new AssignmentLeg(f));
 				DraftFlightReport fr = new DraftFlightReport(f);
 				fr.setDate(info.getAssignDate());
-				if (eqOv != null)
+				if (eqOv != null) {
+					fr.addStatusUpdate(info.getPilotID(), HistoryType.UPDATE, String.format("Equipment type substituted from %s to %s", f.getEquipmentType(), eqOv));
 					fr.setEquipmentType(eqOv);
+				}
 				
 				// Copy arrival/departure times
 				if (f instanceof ScheduleEntry) {
