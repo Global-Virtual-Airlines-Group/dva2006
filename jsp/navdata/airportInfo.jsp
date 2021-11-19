@@ -125,6 +125,7 @@ golgotha.onDOMReady(function() {
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) -
  Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
 </c:forEach></td>
+<c:if test="${maxRwyLength > 0}">
 <c:if test="${!empty validAC}">
 <tr>
  <td class="label top">Authorized Aircraft</td>
@@ -139,6 +140,7 @@ golgotha.onDOMReady(function() {
 <fmt:list value="${invalidAC}" delim=", " /></td>
 </tr>
 </c:if>
+</c:if>
 <c:if test="${!empty otherRunways}">
 <tr>
  <td class="label top">Other Runways</td>
@@ -150,8 +152,8 @@ Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[wa
 </c:if>
 <tr>
  <td class="label top">Taxi Times</td>
- <td class="data" colspan="2">Inbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - <fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
-Outbound: <span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - <fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
+ <td class="data" colspan="2">Inbound: <c:if test="${!empty taxiTimeCY.inboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
+Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
 </tr>
 <tr id="flightTimeChart" style="display:none;">
  <td class="label top">Flight Time Distribution</td>

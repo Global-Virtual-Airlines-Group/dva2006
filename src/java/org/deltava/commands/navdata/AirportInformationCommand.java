@@ -49,9 +49,10 @@ public class AirportInformationCommand extends AbstractCommand {
 			METAR m = wxdao.getMETAR(a, 25);
 			ctx.setAttribute("wx", m, REQUEST);
 			
-			// Get runway data
+			// Get runway data and build bounding box
 			GetNavData nddao = new GetNavData(con);
 			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
+			ctx.setAttribute("rwys", allRwys.isEmpty() ? Collections.singleton(a) : allRwys.stream().map(r -> new GeoPosition(r)).collect(Collectors.toSet()), REQUEST);
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
@@ -78,9 +79,6 @@ public class AirportInformationCommand extends AbstractCommand {
 			ctx.setAttribute("oaRwyStats", CollectionUtils.createMap(allARwys, Runway::getName), REQUEST);
 			ctx.setAttribute("otherRunways", CollectionUtils.join(allDRwys, allARwys), REQUEST);
 			
-			// Build airport bounding box
-			ctx.setAttribute("rwys", allRwys, REQUEST);
-			
 			// Get taxi times
 			GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
 			TaxiTime ttAvg = ttdao.getTaxiTime(a);
@@ -91,7 +89,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			String aCode = SystemData.get("airline.code");
 			GetAircraft acdao = new GetAircraft(con);
 			Collection<Aircraft> allAC = acdao.getAircraftTypes(aCode);
-			Collection<Aircraft> validAC = allAC.stream().filter(ac -> ac.isUsed(aCode)).filter(ac -> aircraftRunwayFilter(ac.getOptions(aCode), maxLength)).collect(Collectors.toList());
+			Collection<Aircraft> validAC = allAC.stream().filter(ac -> ac.isUsed(aCode) && aircraftRunwayFilter(ac.getOptions(aCode), maxLength)).collect(Collectors.toList());
 			
 			// Calculate whether we show valid equipment, or invalid (to reduce size of list)
 			double validRatio = validAC.size() * 1.0d / allAC.size();
@@ -104,6 +102,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Save runways
 			ctx.setAttribute("toRwys", allDRwys, REQUEST);
 			ctx.setAttribute("ldgRwys", allARwys, REQUEST);
+			ctx.setAttribute("maxRwyLength", Integer.valueOf(maxLength), REQUEST);
 			
 			// Save taxi times
 			ctx.setAttribute("taxiTime", ttAvg, REQUEST);
@@ -146,7 +145,8 @@ public class AirportInformationCommand extends AbstractCommand {
 	}
 		
 	private static boolean aircraftRunwayFilter(AircraftPolicyOptions opts, int maxLength) {
-		if ((opts.getTakeoffRunwayLength() > 0) && (opts.getTakeoffRunwayLength() > maxLength)) return false;
+		if (maxLength == 0) return true;
+		if ((maxLength > 0) && (opts.getTakeoffRunwayLength() > 0) && (opts.getTakeoffRunwayLength() > maxLength)) return false;
 		return ((opts.getLandingRunwayLength() == 0) || (opts.getLandingRunwayLength() <= maxLength));
 	}
 }
