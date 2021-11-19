@@ -109,6 +109,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>pointVar</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -160,6 +166,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>items</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -201,6 +213,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>point</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -219,6 +237,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>items</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -235,6 +259,12 @@
 			<name>var</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
 			<name>src</name>
@@ -298,6 +328,12 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
 	    </attribute>
+	    <attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
 	    <attribute>
             <name>items</name>
             <required>true</required>
