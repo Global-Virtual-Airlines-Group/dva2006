@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 6.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -52,9 +52,6 @@ public class InputTag extends FormElementTag {
         return EVAL_PAGE;
     }
     
-    /**
-     * Resets state variables for this tag.
-     */
     @Override
     public void release() {
         super.release();
@@ -159,4 +156,12 @@ public class InputTag extends FormElementTag {
     public void setOnKeypress(String jsCode) {
     	_data.setAttribute("onkeypress", jsCode);
     }
+    
+	/**
+	 * Sets the Javascript to execute when the element is right-clicked.
+	 * @param js the JavaScript code to execute
+	 */
+	public void setOnRightClick(String js) {
+		_data.setAttribute("oncontextmenu", js);
+	}
 }
