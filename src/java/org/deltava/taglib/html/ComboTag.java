@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2013, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.security.Principal;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to support generating HTML combo/list boxes.
  * @author Luke
- * @version 5.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -164,11 +164,19 @@ public class ComboTag extends FormElementTag {
 	}
 
 	/**
-	 * Sets the JavaScript to execute when this element's value is changed.
+	 * Sets the Javascript to execute when this element's value is changed.
 	 * @param js the JavaScript code to execute
 	 */
 	public void setOnChange(String js) {
 		_data.setAttribute("onchange", js);
+	}
+	
+	/**
+	 * Sets the Javascript to execute when the element is right-clicked.
+	 * @param js the JavaScript code to execute
+	 */
+	public void setOnRightClick(String js) {
+		_data.setAttribute("oncontextmenu", js);
 	}
 
 	/**
@@ -196,9 +204,6 @@ public class ComboTag extends FormElementTag {
 		_options = (choices == null) ? Collections.emptySet() : choices;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();

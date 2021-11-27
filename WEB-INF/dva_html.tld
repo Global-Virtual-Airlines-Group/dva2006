@@ -572,6 +572,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>onRightClick</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>autoComplete</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -609,6 +614,11 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>org.deltava.beans.schedule.Airport</type>
+		</attribute>
+		<attribute>
+			<name>onRightClick</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
@@ -1190,6 +1200,11 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>onRightClick</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 	
 	<!-- FileUpload tag, for defining RFC1867 file upload fields -->
@@ -1286,6 +1301,11 @@
 		</attribute>
 		<attribute>
 			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onRightClick</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

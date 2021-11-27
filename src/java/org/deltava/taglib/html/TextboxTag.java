@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2012, 2015 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012, 2015, 2021 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 6.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -38,10 +38,8 @@ public class TextboxTag extends FormElementTag {
     	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common")) {
     		_data.setAttribute("onkeyup", "void golgotha.form.resize(this)");
     		StringBuilder buf = new StringBuilder();
-    		if (_data.has("class")) {
-    			buf.append(_data.get("class"));
-    			buf.append(' ');
-    		}
+    		if (_data.has("class"))
+    			buf.append(_data.get("class")).append(' ');
     		
     		buf.append("resizable");
     		_data.setAttribute("class", buf.toString());
@@ -87,9 +85,6 @@ public class TextboxTag extends FormElementTag {
         return EVAL_PAGE;
     }
     
-    /**
-     * Releases the tag's state variables.
-     */
     @Override
     public void release() {
     	super.release();
@@ -160,6 +155,14 @@ public class TextboxTag extends FormElementTag {
     public void setOnChange(String jsCode) {
     	_data.setAttribute("onchange", jsCode);
     }
+    
+	/**
+	 * Sets the Javascript to execute when the element is right-clicked.
+	 * @param js the JavaScript code to execute
+	 */
+	public void setOnRightClick(String js) {
+		_data.setAttribute("oncontextmenu", js);
+	}
     
     /**
      * Sets whether the textbox should have auto-resize code enabled.
