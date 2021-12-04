@@ -26,6 +26,9 @@ ${pilot.name} has been restored to the <content:airline /> Pilot Roster as an Ac
 <br />
 An e-mail message has been sent to ${pilot.name} containing the new password, informing ${pilot.firstName} of this change in status, and welcoming him or her back to <content:airline />.<br />
 <br />
+To view the Pilot profile for ${pilot.name}, <el:cmd className="sec bld" url="profile" link="${pilot}">Click Here</el:cmd>.<br />
+To return to the <content:airline /> Pilot Center, <el:cmd className="sec bld" url="pilotcenter">Click Here</el:cmd>.<br />
+<br />
 <content:copyright />
 </content:region>
 </content:page>
