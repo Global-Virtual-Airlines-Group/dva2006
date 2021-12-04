@@ -28,6 +28,7 @@
 </c:if>
  <content:subitem><el:cmd url="flightboardmap">Online Flights Map</el:cmd></content:subitem>
  <content:subitem><el:cmd url="flightboard">Online Flights</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="eventstats" op="monthly">Event Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="netservers">Network Servers</el:cmd></content:subitem>
  <content:subitem><el:cmd url="networkoutages">Network Data Outages</el:cmd></content:subitem>
 </content:submenu>

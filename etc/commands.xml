@@ -515,6 +515,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="eventstats">
+		<name>Online Event Statistics</name>
+		<class>org.deltava.commands.stats.EventStatsCommand</class>
+		<roles>*</roles>	
+	</command>
+
 	<command id="charterstats">
 		<name>Charter Flight Statistics</name>
 		<class>org.deltava.commands.stats.CharterStatsCommand</class>

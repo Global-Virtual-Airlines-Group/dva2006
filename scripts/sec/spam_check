@@ -1,11 +1,11 @@
 #!/bin/bash
 # Spam auto-learn script
-# (c) 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2009, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
 #
 
 mail_root='/home/mail'
 spam_folder='.!SPAM'
-spamd_db='/home/vscan/'
+spamd_db='/var/spool/spampd'
 
 for maildir in `ls -AD1 $mail_root`
 do
@@ -31,12 +31,28 @@ do
 			rm $mail_root/$maildir/$spam_folder/new/*
 		fi
 	fi
+
+	# Search for ham
+	OIFS="$IFS"
+	IFS=$'\n'
+	folders=`ls -Ap $mail_root/$maildir | egrep "^\.[A-Z,a-z].*/$" | grep -i delta`
+	for fld in $folders
+	do
+		ffld=`realpath -s $mail_root/$maildir/$fld`
+		if [ `ls -l $ffld/new/ | wc -l` -gt "1" ]
+		then
+			echo 'Processing' $ffld'/new'
+			sa-learn --no-sync --ham --dbpath $spamdb $ffld/new
+		fi
+	done
+
+	IFS=$OIFS
 done
 
 # Resync the spamd database
 sa-learn --sync --force-expire --dbpath $spamd_db
 
 # Ensure permissions are correct
-chown vscan:postfix $spamd_db/*
+chown postfix:postfix $spamd_db/*
 chmod 660 $spamd_db/*
 exit 0
