@@ -117,23 +117,7 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Start the transaction
 			ctx.startTX();
-
-			// Get the write DAO and save the pilot
-			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(p, ctx.getDB());
 			
-			// Clear address validation
-			SetAddressValidation avwdao = new SetAddressValidation(con);
-			avwdao.delete(p.getID());
-
-			// Write the inactivity entry
-			SetInactivity iwdao = new SetInactivity(con);
-			iwdao.setInactivity(p.getID(), 5, true);
-
-			// Write the status update entry
-			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			sudao.write(upd, ctx.getDB());
-
 			// Get the authenticator and update the password
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
 				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
@@ -141,7 +125,23 @@ public class PilotActivationCommand extends AbstractCommand {
 					auth.updatePassword(p, p.getPassword());
 				else
 					auth.add(p, p.getPassword());
+
+				// Get the write DAO and save the pilot
+				SetPilot pwdao = new SetPilot(con);
+				pwdao.write(p, ctx.getDB());
 				
+				// Clear address validation
+				SetAddressValidation avwdao = new SetAddressValidation(con);
+				avwdao.delete(p.getID());
+
+				// 	Write the inactivity entry
+				SetInactivity iwdao = new SetInactivity(con);
+				iwdao.setInactivity(p.getID(), 5, true);
+
+				// Write the status update entry
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
+				sudao.write(upd, ctx.getDB());
+
 				// Commit the writes and auth to check
 				ctx.commitTX();
 				auth.authenticate(p, p.getPassword());
