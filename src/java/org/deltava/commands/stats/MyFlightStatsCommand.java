@@ -15,7 +15,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 2.1
  */
 
@@ -64,6 +64,10 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			vc.setResults(stdao.getPIREPStatistics(userID, srt, grp));
 			Collection<LandingStatistics> landingStats = stdao.getLandings(userID);
 			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
+			
+			// Get popular route pairs
+			stdao.setQueryMax(30);
+			ctx.setAttribute("popularRoutes", stdao.getPopularRoutes(userID), REQUEST);
 
 			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);
