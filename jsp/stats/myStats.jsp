@@ -17,7 +17,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'}};
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
@@ -110,6 +110,37 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
 </c:otherwise>
 </c:choose>
+</tr>
+</c:forEach>
+</el:table>
+
+
+<!-- Popular Routes -->
+<el:table className="form">
+<tr class="title">
+ <td colspan="8" class="left caps">FREQUENT FLIGHT ROUTES</td>
+</tr>
+
+<!-- Table Header Bar-->
+<tr class="title mid caps">
+ <td>#</td>
+ <td>FLIGHT ROUTE</td>
+ <td style="width:12%">DISTANCE</td>
+ <td style="width:15%">FLIGHTS</td>
+ <td style="width:15%">ACARS</td>
+</tr>
+
+<c:set var="entryNumber" value="0" scope="page" />
+<c:forEach var="entry" items="${popularRoutes}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
+<content:defaultMethod var="dst" object="${entry}" method="distance" />
+<tr class="mid">
+ <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
+ <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) - ${entry.airportA.name}
+ (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
+ <td><fmt:distance value="${dst}" /></td>
+ <td class="pri bld"><fmt:int value="${entry.flights}" /> (<fmt:dec value="${entry.flights * 100.0 / totalLegs}" />%)</td>
+ <td class="bld"><fmt:int value="${entry.routes}" /> (<fmt:dec value="${entry.routes * 100.0 / entry.flights}" /> %)</td>
 </tr>
 </c:forEach>
 </el:table>
