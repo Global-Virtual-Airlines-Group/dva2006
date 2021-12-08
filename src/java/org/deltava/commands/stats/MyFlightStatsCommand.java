@@ -67,7 +67,9 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			
 			// Get popular route pairs
 			stdao.setQueryMax(30);
-			ctx.setAttribute("popularRoutes", stdao.getPopularRoutes(userID), REQUEST);
+			Collection<RouteStats> popRoutes = stdao.getPopularRoutes(userID);
+			ctx.setAttribute("popularRoutes", popRoutes, REQUEST);
+			ctx.setAttribute("popularTotal", Integer.valueOf(popRoutes.stream().mapToInt(RouteStats::getFlights).sum()), REQUEST);
 
 			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);
