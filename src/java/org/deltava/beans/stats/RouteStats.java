@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.schedule.*;
@@ -6,12 +6,20 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 4.1
  */
 
 public class RouteStats extends AbstractRoute implements Comparable<RouteStats> {
 	
+	private int _acarsFlights;
+
+	/**
+	 * Creates the bean.
+	 * @param aD the departure Airport
+	 * @param aA the arrival Airport
+	 * @param freq the number of flights
+	 */
 	public RouteStats(Airport aD, Airport aA, int freq) {
 		super(aD, aA);
 		_frequency = Math.max(0, freq);
@@ -19,10 +27,20 @@ public class RouteStats extends AbstractRoute implements Comparable<RouteStats> 
 
 	/**
 	 * Adds flights.
-	 * @param cnt the number of flights
+	 * @param flights the total number of flights
+	 * @param acarsFlights the number of ACARS flights
 	 */
-	public void add(int cnt) {
-		_frequency += Math.max(0, cnt);
+	public void add(int flights, int acarsFlights) {
+		_acarsFlights += Math.max(0, acarsFlights);
+		_frequency += Math.max(acarsFlights, flights);
+	}
+	
+	/**
+	 * Returns the number of ACARS flight legs. 
+	 * @return the number of ACARS legs
+	 */
+	public int getACARSFlights() {
+		return _acarsFlights;
 	}
 	
 	@Override
