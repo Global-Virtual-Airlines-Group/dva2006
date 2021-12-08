@@ -69,6 +69,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
+<c:set var="noFooter" value="false" scope="request" />
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
 
@@ -169,7 +170,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td colspan="2"><div id="simStats" style="width:100%; height:340px;"></div></td>
 </tr>
 
-<!-- Button Bar -->
+<!-- Bottom Bar -->
 <tr class="title">
  <td colspan="2">&nbsp;</td>
 </tr>
@@ -230,12 +231,11 @@ xmlreq.onreadystatechange = function() {
 	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});
 
 	// Massage data and init charts
-	const dateTX = function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
+	const dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
 	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX);
 	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX);
 	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
 	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
-
 	golgotha.local.drawGraphs(golgotha.local.data.calendar, golgotha.local.data.simCalendar, 'Flights');
 	return true;
 };
