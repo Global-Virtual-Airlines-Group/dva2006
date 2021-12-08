@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import org.deltava.beans.stats.*;
@@ -6,10 +6,12 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -25,8 +27,8 @@ public class FlightStatsCommand extends AbstractViewCommand {
 
 		// Get grouping / sorting
 		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class); 
-		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.DATE);
-		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
+		FlightStatsSort srt = EnumUtils.parse(FlightStatsSort.class, vc.getSortType(), FlightStatsSort.DATE);
+		FlightStatsGroup grp = EnumUtils.parse(FlightStatsGroup.class, ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
 		if (!grp.isDateGroup() && (srt == FlightStatsSort.DATE)) srt = FlightStatsSort.LEGS;
 		ctx.setAttribute("hasPilotID", Boolean.valueOf(!grp.isPilotGroup() && (!grp.isDateGroup() || (grp == FlightStatsGroup.DATE))), REQUEST);
 		ctx.setAttribute("groupType", grp, REQUEST);
