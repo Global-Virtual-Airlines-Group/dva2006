@@ -9,8 +9,7 @@ import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
@@ -33,8 +32,8 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 		
 		// Get grouping / sorting
 		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class);
-		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.LEGS);
-		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.EQ);
+		FlightStatsSort srt = EnumUtils.parse(FlightStatsSort.class, vc.getSortType(), FlightStatsSort.LEGS);
+		FlightStatsGroup grp = EnumUtils.parse(FlightStatsGroup.class, ctx.getParameter("groupType"), FlightStatsGroup.EQ);
 		vc.setSortType(srt.name()); ctx.setAttribute("groupType", grp, REQUEST);
 		ctx.setAttribute("graphOpts", GRAPH_OPTS, REQUEST);
 
