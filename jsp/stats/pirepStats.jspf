@@ -41,8 +41,9 @@
  <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, <fmt:distance value="${stat.avgDistance}" /></td>
 </view:row>
 </c:forEach>
-
+<c:if test="${!noFooter}">
 <!-- Table Footer Bar -->
 <tr class="title">
  <td colspan="12"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
+</c:if>
