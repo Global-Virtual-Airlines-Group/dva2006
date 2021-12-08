@@ -435,6 +435,10 @@ div.mapMarkerLabel {
 	text-decoration: underline;	
 }
 
+.strike {
+	text-decoration: line-through;
+}
+
 .pri {
 	color: #1a4876;
 }

@@ -62,6 +62,16 @@
 		</replace>
 	</match>
 	
+	<!-- Strikethrough -->
+	<match name="strike">
+		<regex>(?s)(?i)\[strike\](.*?)\[/strike\]</regex>
+		<replace>
+		<![CDATA[
+		<span class="strike">$1</span>
+		]]>
+		</replace>
+	</match>
+	
 	<!-- LIST -->
 	<match name="list">
 		<regex>(?s)(?i)\[list\](.*?)\[/list\]</regex>
