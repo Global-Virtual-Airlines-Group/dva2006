@@ -10,10 +10,12 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A Web Site Command to display flight simulator version statistics.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 2.2
  */
 
@@ -29,8 +31,8 @@ public class SimulatorStatsCommand extends AbstractViewCommand {
 
 		// Get grouping / sorting
 		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class);
-		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.DATE);
-		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
+		FlightStatsSort srt = EnumUtils.parse(FlightStatsSort.class, vc.getSortType(), FlightStatsSort.DATE);
+		FlightStatsGroup grp = EnumUtils.parse(FlightStatsGroup.class, ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
 		if (!grp.isDateGroup() && (srt == FlightStatsSort.DATE)) srt = FlightStatsSort.LEGS;
 		vc.setSortType(srt.name()); ctx.setAttribute("groupType", grp, REQUEST);
 		

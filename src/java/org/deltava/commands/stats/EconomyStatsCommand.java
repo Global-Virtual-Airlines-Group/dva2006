@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import org.deltava.beans.stats.*;
@@ -6,10 +6,12 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A Web Site Command to display flight load/passenger statistics. 
  * @author Luke
- * @version 7.5
+ * @version 10.2
  * @since 7.5
  */
 
@@ -24,9 +26,9 @@ public class EconomyStatsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get grouping / sorting
-		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class); 
-		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.DATE);
-		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
+		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class);
+		FlightStatsSort srt = EnumUtils.parse(FlightStatsSort.class, vc.getSortType(), FlightStatsSort.DATE);
+		FlightStatsGroup grp = EnumUtils.parse(FlightStatsGroup.class, ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
 		if (!grp.isDateGroup() && (srt == FlightStatsSort.DATE)) srt = FlightStatsSort.LEGS;
 		vc.setSortType(srt.name()); ctx.setAttribute("groupType", grp, REQUEST);
 
