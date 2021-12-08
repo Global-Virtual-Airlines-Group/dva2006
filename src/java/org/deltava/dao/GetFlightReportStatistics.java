@@ -134,20 +134,19 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Retrieves the most popular route pairs filed by a particular Pilot.
 	 * @param pilotID the Pilot database ID
-	 * @return a Collection of ScheduleRoute beans
+	 * @return a Collection of RouteStats beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ScheduleRoute> getPopularRoutes(int pilotID) throws DAOException {
+	public Collection<RouteStats> getPopularRoutes(int pilotID) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(P.ID) AS CNT, SUM(IF((P.ATTR & ?)>0, 1,0)) AS ACARS FROM PIREPS P WHERE (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY P.AIRPORT_D, P.AIRPORT_A ORDER BY CNT DESC")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, pilotID);
 			ps.setInt(3, FlightStatus.OK.ordinal());
-			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
+			Collection<RouteStats> results = new ArrayList<RouteStats>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					ScheduleRoute rt = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
-					rt.setFlights(rs.getInt(3));
-					rt.setRoutes(rs.getInt(4));
+					RouteStats rt = new RouteStats(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)), 0);
+					rt.add(rs.getInt(3), rs.getInt(4));
 					results.add(rt);
 				}
 			}

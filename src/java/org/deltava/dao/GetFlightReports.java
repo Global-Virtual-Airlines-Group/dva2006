@@ -520,11 +520,10 @@ public class GetFlightReports extends DAO {
 			Map<String, RouteStats> results = new HashMap<String, RouteStats>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					RouteStats rp = new RouteStats(SystemData.getAirport(rs.getString(1)),
-						SystemData.getAirport(rs.getString(2)), rs.getInt(3));
+					RouteStats rp = new RouteStats(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)), rs.getInt(3));
 					RouteStats rp2 = results.get(rp.toString());
 					if (rp2 != null)
-						rp.add(rp.getFlights());
+						rp.add(rp.getFlights(), 0);
 					else
 						results.put(rp.toString(), rp);
 				}

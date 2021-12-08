@@ -69,7 +69,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
-<c:set var="noFooter" value="false" scope="request" />
+<c:set var="noFooter" value="true" scope="request" />
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
 
@@ -119,7 +119,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <!-- Popular Routes -->
 <el:table className="form">
 <tr class="title">
- <td colspan="8" class="left caps">FREQUENT FLIGHT ROUTES</td>
+ <td colspan="8" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)</span></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -141,7 +141,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
  <td><fmt:distance value="${dst}" /></td>
  <td class="pri bld"><fmt:int value="${entry.flights}" /> (<fmt:dec value="${entry.flights * 100.0 / totalLegs}" />%)</td>
- <td class="bld"><fmt:int value="${entry.routes}" /> (<fmt:dec value="${entry.routes * 100.0 / entry.flights}" /> %)</td>
+ <td class="bld"><fmt:int value="${entry.ACARSFlights}" /> (<fmt:dec value="${entry.ACARSFlights * 100.0 / entry.flights}" /> %)</td>
 </tr>
 </c:forEach>
 </el:table>
