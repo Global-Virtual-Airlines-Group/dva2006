@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 5.2
  */
 
@@ -134,6 +134,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			
 			// Build the Charter Request
 			CharterRequest creq = new CharterRequest();
+			creq.setAirline(a);
 			creq.setAirportD(leg.getAirportD());
 			creq.setAirportA(leg.getAirportA());
 			creq.setAuthorID(p.getID());
