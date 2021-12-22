@@ -3,7 +3,6 @@
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, tahoma, sans-serif;
-	font-size: 17pt;
 	color: #0000a1;
 	text-align: center;
 }
@@ -21,6 +20,10 @@ h1.header {
 	
 	div#mobileMenu {
 	   display:none;
+	}
+
+	h1.header {
+		font-size: 17pt;
 	}
 }
 
@@ -40,6 +43,10 @@ h1.header {
         top: -6px;
         right: 42px;
     }
+    
+   	h1.header {
+		font-size: 14pt;
+	}
 
     div#mobileMenu {
         margin-top: 2px;
