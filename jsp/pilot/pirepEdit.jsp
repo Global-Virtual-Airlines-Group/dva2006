@@ -28,6 +28,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
+golgotha.util.display('dateLimits', false);
 golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
 golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
 golgotha.form.validate({f:f.eq, t:'Equipment Type'});
@@ -42,15 +43,19 @@ if (parseInt(f.flightLeg.value) > 8)
 	throw new golgotha.event.ValidationError('The Flight Leg must be equal to or less than 8.', f.flightLeg);
 <content:browser html4="true">
 // Validate the date
-<c:if test="${dateCheck}">
+<c:if test="${!access.canOverrideDateRange}">
 const pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 const pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
 const pDate = new Date(pY, f.dateM.selectedIndex, pD);
-if (pDate > golgotha.local.fwdLimit)
+if (pDate > golgotha.local.fwdLimit) {
+	golgotha.util.display('dateLimits', true);
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight in the future.', f.dateM);
-if (pDate < golgotha.local.bwdLimit)
+}
+	
+if (pDate < golgotha.local.bwdLimit) {
+	golgotha.util.display('dateLimits', true);
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.', f.dateD);
-</c:if></content:browser>
+}</c:if></content:browser>
 golgotha.form.submit(f);
 return true;
 };
@@ -231,7 +236,8 @@ return true;
 </content:browser>
 <content:browser html4="true">
  <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" required="true" onChange="void golgotha.local.setDaysInMonth(this)" />
- <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" /> <el:combo name="dateY" idx="*" size="1" value="${pirepYear}" required="true" options="${years}" /></td>
+ <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" /> <el:combo name="dateY" idx="*" size="1" value="${pirepYear}" required="true" options="${years}" />
+ <span id="dateLimits" style="display:none;" class="small warn bld caps"><span class="nophone">MUST BE </span>BETWEEN <fmt:date date="${backwardDateLimit}" fmt="d" /> AND <fmt:date date="${forwardDateLimit}" fmt="d" /></span></td>
 </content:browser>
 </tr>
 <tr>

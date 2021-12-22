@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -204,7 +204,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
 			// Validate the date
-			if (!ctx.isUserInRole("PIREP")) {
+			if (!ac.getCanOverrideDateRange()) {
 				Instant forwardLimit = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
 				Instant backwardLimit = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
 				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit)))
@@ -271,7 +271,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Get the current date/time in the user's local zone
 		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
 		ZonedDateTime today = ZonedDateTime.now(tz.getZone());
-
+		
 		// Get all airlines
 		Map<String, Airline> allAirlines = SystemData.getAirlines();
 		Collection<Airline> airlines = new TreeSet<Airline>();
@@ -299,9 +299,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			//	Get aircraft types
 			GetAircraft acdao = new GetAircraft(con);
 			Collection<Aircraft> eqTypes = acdao.getAircraftTypes();
-			if (!hasCourse)
-				eqTypes.removeIf(Aircraft::getAcademyOnly);
-			
+			eqTypes.removeIf(eq -> !hasCourse && eq.getAcademyOnly());
 			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 
 			// Get the DAO and load the flight report
@@ -317,7 +315,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
 
 				// Get the active airlines
-				allAirlines.values().stream().filter(Airline::getActive).forEach(a-> airlines.add(a));
+				allAirlines.values().stream().filter(Airline::getActive).forEach(airlines::add);
 			} else {
 				FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 				if (fr == null)
@@ -335,9 +333,6 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilot", p, REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
-
-				// Set PIREP date and length
-				today = ZonedDateTime.ofInstant(fr.getDate(), ctx.getUser().getTZ().getZone());
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
@@ -354,25 +349,16 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 
-		// Save PIREP date limitations
-		int maxRange = SystemData.getInt("users.pirep.maxDays", 1);
-		int minRange = SystemData.getInt("users.pirep.minDays", 7);
-		boolean noDateCheck = Boolean.valueOf(ctx.getParameter("noDateCheck")).booleanValue();
-		ctx.setAttribute("forwardDateLimit", today.plusDays(maxRange), REQUEST);
-		ctx.setAttribute("backwardDateLimit", today.minusDays(minRange), REQUEST);
-		ctx.setAttribute("dateCheck", Boolean.valueOf(!ctx.isUserInRole("PIREP") || noDateCheck), REQUEST);
+		// Calculate PIREP date limitations
+		int maxRange = SystemData.getInt("users.pirep.maxDays", 1); ZonedDateTime fdl = today.plusDays(maxRange);
+		int minRange = SystemData.getInt("users.pirep.minDays", 7); ZonedDateTime bdl = today.minusDays(minRange);
+		ctx.setAttribute("forwardDateLimit", fdl, REQUEST);
+		ctx.setAttribute("backwardDateLimit", bdl, REQUEST);
 		
 		// Set flight years
 		Collection<Integer> years = new TreeSet<Integer>();
 		years.add(Integer.valueOf(today.get(ChronoField.YEAR)));
-
-		// If we're in the range, add the previous year
-		if (today.get(ChronoField.DAY_OF_YEAR) <= maxRange)
-			years.add(Integer.valueOf(today.get(ChronoField.YEAR) - 1));
-		
-		// If we're new years eve, add next year
-		if ((today.get(ChronoField.MONTH_OF_YEAR) == 12) && (today.get(ChronoField.DAY_OF_MONTH) > 30))
-			years.add(Integer.valueOf(today.get(ChronoField.YEAR) + 1));
+		years.add(Integer.valueOf(fdl.getYear())); years.add(Integer.valueOf(bdl.getYear()));
 
 		// Save pirep date combobox values
 		ctx.setAttribute("pirepYear", StringUtils.format(today.get(ChronoField.YEAR), "0000"), REQUEST);
