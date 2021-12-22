@@ -205,10 +205,10 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Validate the date
 			if (!ac.getCanOverrideDateRange()) {
-				Instant forwardLimit = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
-				Instant backwardLimit = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
-				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit)))
-					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit + ")", false);
+				Instant fdl = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays", 1) + 1).minusSeconds(60).truncatedTo(ChronoUnit.DAYS).toInstant();
+				Instant bdl = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays", 7)).truncatedTo(ChronoUnit.DAYS).toInstant();
+				if ((fr.getDate().isBefore(bdl)) || (fr.getDate().isAfter(fdl)))
+					throw new CommandException(String.format("Invalid Flight Report Date - %s (%s - %s)", StringUtils.format(fr.getDate(), "MM/dd/yyyy"), StringUtils.format(bdl, "MM/dd/yyyy"), StringUtils.format(fdl, "MM/dd/yyyy")), false);
 			}
 			
 			// Start transaction
