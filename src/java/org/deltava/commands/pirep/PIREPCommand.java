@@ -205,10 +205,11 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Validate the date
 			if (!ac.getCanOverrideDateRange()) {
+				final String FMT = "MM/dd/yyyy HH:mm";
 				Instant fdl = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays", 1) + 1).minusSeconds(60).truncatedTo(ChronoUnit.DAYS).toInstant();
 				Instant bdl = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays", 7)).truncatedTo(ChronoUnit.DAYS).toInstant();
-				if ((fr.getDate().isBefore(bdl)) || (fr.getDate().isAfter(fdl)))
-					throw new CommandException(String.format("Invalid Flight Report Date - %s (%s - %s)", StringUtils.format(fr.getDate(), "MM/dd/yyyy"), StringUtils.format(bdl, "MM/dd/yyyy"), StringUtils.format(fdl, "MM/dd/yyyy")), false);
+				if (fr.getDate().isBefore(bdl) || fr.getDate().isAfter(fdl))
+					throw new CommandException(String.format("Invalid Flight Report Date - %s (%s - %s)", StringUtils.format(fr.getDate(), FMT), StringUtils.format(bdl, FMT), StringUtils.format(fdl, FMT)), false);
 			}
 			
 			// Start transaction
@@ -350,8 +351,8 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Calculate PIREP date limitations
-		int maxRange = SystemData.getInt("users.pirep.maxDays", 1); ZonedDateTime fdl = today.plusDays(maxRange);
-		int minRange = SystemData.getInt("users.pirep.minDays", 7); ZonedDateTime bdl = today.minusDays(minRange);
+		int maxRange = SystemData.getInt("users.pirep.maxDays", 1); ZonedDateTime fdl = today.plusDays(maxRange + 1).truncatedTo(ChronoUnit.DAYS).minusSeconds(60);
+		int minRange = SystemData.getInt("users.pirep.minDays", 7); ZonedDateTime bdl = today.minusDays(minRange).truncatedTo(ChronoUnit.DAYS);
 		ctx.setAttribute("forwardDateLimit", fdl, REQUEST);
 		ctx.setAttribute("backwardDateLimit", bdl, REQUEST);
 		

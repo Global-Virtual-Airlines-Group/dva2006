@@ -115,6 +115,7 @@ golgotha.onDOMReady(function() {
 	const d = new Date(${pirepYear},${pirepMonth - 1},${pirepDay});
 	golgotha.local.initDateCombos(f.dateM, f.dateD, d);
 	f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
+	console.log('Limits: b = <fmt:date date="${backwardDateLimit}" t="HH:mm" />, f = <fmt:date date="${forwardDateLimit}" t="HH:mm" />');
 });
 
 golgotha.local.hoursCalc = function(f)
@@ -125,7 +126,7 @@ if ((h == Number.NaN) || (m == Number.NaN)) {
 	const fe = (h == Number.NaN) ? f.tmpHours : f.tmpMinutes;
     throw new golgotha.event.ValidationError('Please fill in both Hours and Minutes.', fe);
 }
-    
+
 if ((h < 0) || (m < 0)) {
 	const fe = (h < 0) ? f.tmpHours : f.tmpMinutes;
     throw new golgotha.event.ValidationError('Hours and minutes cannnot be negative.', fe);
@@ -134,9 +135,8 @@ if ((h < 0) || (m < 0)) {
 // Turn into a single number
 const tmpHours = (h + (m / 60));
 const hrs = Math.round(tmpHours * 10) / 10;
-const combo = f.flightTime;
-for (x = 0; x < combo.options.length; x++) {
-    const opt = combo.options[x];
+for (x = 0; x < f.flightTime.options.length; x++) {
+    const opt = f.flightTime.options[x];
     if (opt.text == hrs) {
         opt.selected = true;
         break;
@@ -168,7 +168,7 @@ return true;
 <!-- PIREP Title Bar -->
 <tr class="title caps">
 <c:if test="${!empty pirep}">
- <td colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</td>
+ <td colspan="2">FLIGHT ${pirep.flightCode}<span class="nophone"> FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</span></td>
 </c:if>
 <c:if test="${empty pirep}">
  <td colspan="2">NEW FLIGHT REPORT</td>
