@@ -27,6 +27,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canApprove;
 	private boolean _canReject;
 	private boolean _canDelete;
+	private boolean _canOverrideDateRange;
 	private boolean _canViewDiagData;
 	private boolean _canViewComments;
 	private boolean _canUpdateComments;
@@ -64,6 +65,7 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		final boolean isPirep = _pirep.hasAttribute(FlightReport.ATTR_ACADEMY) ? isAcademy : _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(DatabaseID.PILOT) == _ctx.getUser().getID());
+		_canOverrideDateRange = _ctx.isUserInRole("PIREP") && !_ourPIREP;
 		
 		// Set status variables
 		final boolean isDraft = (status == FlightStatus.DRAFT);
@@ -238,5 +240,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanProxySubmit() {
 		return _canProxySubmit;
+	}
+	
+	/**
+	 * Returns if the user can override date range limitations for PIREP submission.
+	 * @return TRUE if the flight can be submitted outside the allowed date range, otherwise FALSE
+	 */
+	public boolean getCanOverrideDateRange() {
+		return _canOverrideDateRange;
 	}
 }
