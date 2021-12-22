@@ -3,7 +3,6 @@
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, verdana, tahoma, sans-serif;
-	font-size: 20pt;
 	color: #1a4876;
 	text-align: center;
 }
@@ -22,6 +21,10 @@ h1.header {
     div#mobileMenu {
         display:none;
     }
+
+    h1.header {
+    	font-size: 20pt;
+    }
 }
 
 @media (max-width: 940px) {
@@ -36,9 +39,13 @@ h1.header {
 
     #hdrLink {
         z-index: 20;
-        position:absolute;
+        position: absolute;
         top: -6px;
         right: 42px;
+    }
+
+    h1.header {
+    	font-size: 16pt;
     }
 
     div#mobileMenu {
