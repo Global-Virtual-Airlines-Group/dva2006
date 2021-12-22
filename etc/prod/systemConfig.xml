@@ -632,9 +632,9 @@
 		</img_max>
 
 		<sig_max>
-			<x type="Integer">640</x>
-			<y type="Integer">185</y>
-			<size type="Integer">102400</size>
+			<x type="Integer">820</x>
+			<y type="Integer">340</y>
+			<size type="Integer">131072</size>
 		</sig_max>
 
 		<imgurls>
