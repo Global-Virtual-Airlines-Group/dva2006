@@ -38,7 +38,6 @@ if (zoom > nZ) {
 
 img.src = imgURL;
 img.setAttribute('class', c);
-if (golgotha.maps.util.oldIE) img.IE8 = c;
 var tx = (this.tempZeroOpacity == true) ? 0 : this.opacity;
 golgotha.maps.setOpacity(img, tx);
 div.appendChild(img);
@@ -56,11 +55,11 @@ golgotha.maps.util.blankImg = function(e) {
 golgotha.maps.util.getTileImgs = function(cName, eName, parent)
 {
 if (parent == null) parent = document;	
-var elements = [];
-var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
+let elements = [];
+const all = parent.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
-	var e = all[x];
-	var cl = (e.IE8) ? e.IE8 : e.className;
+	const e = all[x];
+	const cl = e.className;
 	if (cl.split && (cl.split(' ').indexOf(cName) > -1))
 		elements.push(e);
 }
@@ -79,7 +78,7 @@ golgotha.maps.util.TWCOverlayLayer = function(name, ts, size, noStencil) {
 // Create a weather overlay type
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	if (opts.range == null) opts.range = [];
-	var tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.GinsuOverlayLayer;
+	const tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.GinsuOverlayLayer;
 	this.maxZoom = opts.maxZoom;
 	this.baseURL = tileURLFunc(opts.name, timestamp, opts.tileSize, !opts.stencil);
 	this.date = timestamp;

@@ -15,7 +15,7 @@ golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
 golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
-golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE, isIOS:golgotha.util.isIOS};
+golgotha.maps.util = {isIE:golgotha.util.isIE, isIOS:golgotha.util.isIOS};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
 golgotha.maps.util.unload = function() { 
@@ -60,10 +60,7 @@ golgotha.maps.util.resize = function() {
 };
 
 golgotha.onDOMReady(golgotha.maps.util.resize);
-if (golgotha.util.oldIE)
-	document.attachEvent('onresize', golgotha.maps.util.resize); 
-else
-	window.addEventListener('resize', golgotha.maps.util.resize);
+window.addEventListener('resize', golgotha.maps.util.resize);
 
 // Calculate default zoom for flight distance
 golgotha.maps.util.getDefaultZoom = function(distance) {
