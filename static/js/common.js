@@ -135,7 +135,7 @@ else if (url.indexOf('http') != 0)
 	url = self.location.protocol + "//" + golgotha.maps.wxHost + url;
 	
 if (url.indexOf(golgotha.maps.wxHost) > -1) {
-	var api = 'api=' + golgotha.maps.keys.api;
+	const api = 'api=' + golgotha.maps.keys.api;
 	url += (url.indexOf('?') > 0) ? '&' : '?';
 	url += api;
 }
@@ -144,7 +144,7 @@ let sc = document.createElement('script');
 sc.setAttribute('id', opts.id);
 sc.src = url;
 if (opts.async) sc.setAttribute('async', 'true');
-var oldSC = document.getElementById(opts.id);
+const oldSC = document.getElementById(opts.id);
 if (oldSC != null)
 	oldSC.parentNode.replaceChild(sc, oldSC);
 else
@@ -192,18 +192,6 @@ return child;
 
 if (window.Element != undefined)
 	Element.prototype.getCDATA = function() { return golgotha.getCDATA(this); };
-
-// IE9 hack for setTimeout
-if (document.all && !window.setTimeout.isPolyfill)
-{
-	const __nativeST__ = window.setTimeout;
-	window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
-		var aArgs = Array.prototype.slice.call(arguments, 2);
-	    return __nativeST__(vCallback instanceof Function ? function () { vCallback.apply(null, aArgs); } : vCallback, nDelay);
-	};
-
-	window.setTimeout.isPolyfill = true;
-}
 
 Array.prototype.remove = function(obj) {
 for (var x = 0; x < this.length; x++) {
@@ -314,7 +302,7 @@ golgotha.form.wrap = function(func, f) {
 golgotha.form.validate = function(opts)
 {
 if (!('f' in opts) || !('t' in opts)) throw new golgotha.event.ValidationError('Incomplete Validation Data');
-if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t, opts.empty);
+if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t, opts.empty, opts.maxSize);
 if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
 if (!opts.f) return true;
@@ -367,8 +355,15 @@ golgotha.form.validateCombo = function(c, title) {
 	throw new golgotha.event.ValidationError('Please provide the ' + title + '.', c);
 };
 
-golgotha.form.validateFile = function(f, extTypes, title, allowBlank) {
+golgotha.form.validateFile = function(f, extTypes, title, allowBlank, maxSizeKB) {
 	if ((!f) || (f.disabled)) return true;
+	if ((maxSizeKB > 0) && (f.files)) {
+		const size = f.files[0].size / 1024;
+		console.log('File size = ' + size + 'K, max = ' + maxSizeKB + 'K');
+		if (size > maxSizeKB)
+			throw new golgotha.event.ValidationError('The ' + title + ' cannot be larger than ' + maxSizeKB + 'KB.', f);
+	}
+
 	if (allowBlank && (f.value.length == 0)) return true;
 	const ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
 	for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
