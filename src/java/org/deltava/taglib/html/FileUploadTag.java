@@ -1,4 +1,4 @@
-// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -6,11 +6,13 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to generate a FILE tag.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
 public class FileUploadTag extends FormElementTag {
+	
+	private int _maxSizeKB;
 
 	/**
 	 * Creates a new file upload element tag.
@@ -45,14 +47,21 @@ public class FileUploadTag extends FormElementTag {
 	public void setMax(int maxLen) {
 		setNumericAttr("maxlength", maxLen, 1);
 	}
-
+	
 	/**
-	 * Resets state variables for this tag.
+	 * Sets the maximum size for the file. This will <b>NOT</b> provide validation code, instead places a small label
+	 * to the right of the input box with the size limit displayed.
+	 * @param kb the size limit in kilobytes
 	 */
+	public void setMaxSize(int kb) {
+		_maxSizeKB = kb;
+	}
+
 	@Override
 	public void release() {
 		super.release();
 		_data.setAttribute("type", "file");
+		_maxSizeKB = 0;
 	}
 
 	/**
@@ -64,6 +73,11 @@ public class FileUploadTag extends FormElementTag {
 		try {
 			validateState();
 			_out.print(_data.open(true, true));
+			if (_maxSizeKB > 0) {
+				_out.print("&nbsp;<span class=\"small ita\">(Maximum Size: ");
+				_out.print(_maxSizeKB);
+				_out.print("KB)</span>");
+			}
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
