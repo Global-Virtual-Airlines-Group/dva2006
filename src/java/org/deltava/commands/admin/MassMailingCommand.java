@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -122,7 +122,7 @@ public class MassMailingCommand extends AbstractCommand {
 		mailer.setContext(mctxt);
 
 		// Add an attachment if we have one
-		FileUpload file = ctx.getFile("fAttach");
+		FileUpload file = ctx.getFile("fAttach", 1024 * 1024);
 		if (file != null) {
 			FileTypeMap typeMap = FileTypeMap.getDefaultFileTypeMap();
 			ByteArrayDataSource src = new ByteArrayDataSource(file.getBuffer(), typeMap.getContentType(file.getName()));

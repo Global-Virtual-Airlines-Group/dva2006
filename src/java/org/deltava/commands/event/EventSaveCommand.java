@@ -82,7 +82,7 @@ public class EventSaveCommand extends AbstractCommand {
 			ctx.setAttribute("access", access, REQUEST);
 			
 			// Get the briefing file
-			FileUpload bf = ctx.getFile("briefPDF");
+			FileUpload bf = ctx.getFile("briefPDF", 4096 * 1024);
 			boolean deletePDF = Boolean.valueOf(ctx.getParameter("deleteBrief")).booleanValue();
 			if ((bf != null) && PDFUtils.isPDF(bf.getBuffer())) {
 				Briefing b = new Briefing(bf.getBuffer());
@@ -173,7 +173,7 @@ public class EventSaveCommand extends AbstractCommand {
 			
 			// Check for a banner image
 			boolean removeImg = Boolean.valueOf(ctx.getParameter("removeBannerImg")).booleanValue();
-			FileUpload imgData = ctx.getFile("bannerImg");
+			FileUpload imgData = ctx.getFile("bannerImg", 524288);
 			if (imgData != null) {
 				// Check the image
 				ImageInfo info = new ImageInfo(imgData.getBuffer());

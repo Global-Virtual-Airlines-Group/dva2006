@@ -13,13 +13,13 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 if (f.zip.value.length == 0) {
 	golgotha.form.validate({f:f.xml, ext:['xml'], t:'Offline Flight XML data'});
-	golgotha.form.validate({f:f.hashCode, ext:['sha'], t:'Offline Flight SHA-256 signature data'});
+	golgotha.form.validate({f:f.hashCode, ext:['sha'], t:'Offline Flight signature data', maxSize:8});
 } else
 	golgotha.form.validate({f:f.zip, ext:['zip'], t:'Offline Flight ZIP data'});
 

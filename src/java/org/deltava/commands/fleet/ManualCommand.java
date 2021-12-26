@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class ManualCommand extends LibraryEditCommand {
 		boolean isNew = (fName == null);
 
 		// Get the uploaded file
-		FileUpload mFile = ctx.getFile("file");
+		FileUpload mFile = ctx.getFile("file", 0);
 		if (isNew && (mFile == null))
 			throw notFoundException("No Manual Uploaded");
 		else if (isNew && (mFile != null))

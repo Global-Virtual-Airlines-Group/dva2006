@@ -14,7 +14,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to display a Image Gallery Image.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 					img.setFleet(Boolean.valueOf(ctx.getParameter("isFleet")).booleanValue());
 
 				// Get the image itself
-				FileUpload imgData = ctx.getFile("img");
+				FileUpload imgData = ctx.getFile("img", 0);
 				if (imgData == null)
 					throw new CommandException("No Attached Image", false);
 
