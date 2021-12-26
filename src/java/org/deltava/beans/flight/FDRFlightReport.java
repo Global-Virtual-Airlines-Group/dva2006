@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,13 +10,16 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
 public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
 	
-	private final Map<StateChange, Instant> _stateChangeTimes = new HashMap<StateChange, Instant>();
+	/**
+	 * Phase change times.
+	 */
+	protected final Map<StateChange, Instant> _stateChangeTimes = new HashMap<StateChange, Instant>();
 	
     private int _taxiWeight;
     private int _taxiFuel;

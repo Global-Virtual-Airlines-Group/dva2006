@@ -130,6 +130,24 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     }
     
     /**
+     * Returns the date/time that the aircraft reached Top of Climb.
+     * @return the date/time of top of climb
+     * @see ACARSFlightReport#setTOCTime(Instant)
+     */
+    public Instant getTOCTime() {
+    	return _stateChangeTimes.get(StateChange.TOC);
+    }
+    
+    /**
+     * Returns the date/time that the aircraft reached Top of Descent.
+     * @return the date/time of top of descent
+     * @see ACARSFlightReport#setTODTime(Instant)
+     */
+    public Instant getTODTime() {
+    	return _stateChangeTimes.get(StateChange.TOD);
+    }
+    
+    /**
      * Returns the length of the fllight <i>in hours multiplied by ten</i>. This is done to avoid rounding errors when
      * using a floating point number. ACARS Flight Reports will use the time at 1x, 2x, and 4x acceleration to calculate
      * the flight length if the length field is not already populated. This assumes that the ACARS client has performed
@@ -311,6 +329,24 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      */
     public void setOnlineTime(int secs) {
     	_onlineTime = Duration.ofSeconds(Math.max(0, secs));
+    }
+    
+    /**
+     * Updates the Top of Climb date/time.
+     * @param dt the date/time at top of climb
+     * @see ACARSFlightReport#getTOCTime()
+     */
+    public void setTOCTime(Instant dt) {
+    	_stateChangeTimes.put(StateChange.TOC, dt);
+    }
+    
+    /**
+     * Updates the Top of Descent date/time.
+     * @param dt the date/time at top of descent
+     * @see ACARSFlightReport#getTODTime()
+     */
+    public void setTODTime(Instant dt) {
+    	_stateChangeTimes.put(StateChange.TOD, dt);
     }
     
     /**

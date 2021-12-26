@@ -7,7 +7,7 @@ import org.jdom2.output.*;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -70,6 +70,17 @@ public class XMLUtils {
 		e2.setText(value);
 		e.addContent(e2);
 		return e;
+	}
+	
+	/**
+	 * Returns if an XML element contains a child element with a particular name.
+	 * @param e the XML Element
+	 * @param name the child name
+	 * @return TRUE if a child element with the specified name exists, otherwise FALSE
+	 */
+	public static boolean hasElement(Element e, String name) {
+		Element ce = e.getChild(name);
+		return (ce != null);
 	}
 	
 	/**
