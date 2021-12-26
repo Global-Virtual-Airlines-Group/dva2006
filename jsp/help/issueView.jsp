@@ -22,11 +22,12 @@ if (!golgotha.form.check()) return false;
 
 // Get form action
 const act = f.action;
-if (act.indexOf('hdcomment.do') != -1)
+if (act.indexOf('hdcomment.do') != -1) {
 	golgotha.form.validate({f:f.body, l:10, t:'Issue Comments'});
-else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
+	golgotha.form.validate({f:f.attach, ext:[], empty:true, t:'Attached File', maxSize:2048});
+} else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
 	let isChecked = 0;
-	for (x = 0; x < f.faqIDs.length; x++)
+	for (var x = 0; x < f.faqIDs.length; x++)
 		isChecked += ((f.faqIDs[x].checked) ? 1 : 0);
 
 	if (isChecked == 0) {
@@ -144,7 +145,7 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 </tr>
 <tr>
  <td class="label">Attach File</td>
- <td><el:file name="attach" className="small" size="96" max="160" /></td>
+ <td><el:file name="attach" className="small" size="96" max="160" maxSize="2048" /></td>
 </tr>
 </c:if>
 <%@ include file="/jsp/auditLog.jspf" %>

@@ -23,6 +23,7 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:5, t:'Tour Name'});
+	golgotha.form.validate({f:f.briefPDF, ext:['pdf'], empty:true, t:'Attached File', maxSize:8192});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -83,7 +84,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Attach File</td>
- <td class="data" colspan="4"><el:file name="briefPDF" idx="*" className="small" size="96" max="144" /><c:if test="${tour.isPDF}"><el:box name="deleteBrief" value="true" label="Delete existing Briefing" /></c:if>
+ <td class="data" colspan="4"><el:file name="briefPDF" idx="*" className="small" size="96" max="144" maxSize="8192" /><c:if test="${tour.isPDF}"><el:box name="deleteBrief" value="true" label="Delete existing Briefing" /></c:if>
 <c:if test="${hasTextBriefing}"><span class="small ita nophone"> Uploading a Briefing file will overwrite the existing Briefing!</span></c:if></td>
 </tr>
 <c:if test="${tour.isPDF}">

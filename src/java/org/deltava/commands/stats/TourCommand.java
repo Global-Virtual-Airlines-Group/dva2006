@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -101,7 +101,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 			t.setMatchEquipment(Boolean.valueOf(ctx.getParameter("matchEQ")).booleanValue());
 			t.setMatchLeg(Boolean.valueOf(ctx.getParameter("matchLeg")).booleanValue());
 			t.setACARSOnly(Boolean.valueOf(ctx.getParameter("acarsOnly")).booleanValue());
-			FileUpload bf = ctx.getFile("briefPDF");
+			FileUpload bf = ctx.getFile("briefPDF", 8192 * 1024);
 			boolean deletePDF = Boolean.valueOf(ctx.getParameter("deleteBrief")).booleanValue();
 			if ((bf != null) && PDFUtils.isPDF(bf.getBuffer()))
 				t.load(bf.getBuffer());

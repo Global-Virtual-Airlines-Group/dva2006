@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -106,12 +106,12 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			writeAuditLog(ctx, ae);
 			
 			// Get attachment
-			FileUpload fu = ctx.getFile("attach");
+			FileUpload fu = ctx.getFile("attach", 1024 * 1024);
 			if (fu != null) {
 				IssueComment ic = new IssueComment(i.getAuthorID());
 				ic.setName(fu.getName());
 				ic.load(fu.getBuffer());
-				ic.setBody("Added attachment " + ic.getName());
+				ic.setBody(String.format("Added attachment %s", ic.getName()));
 				i.addComment(ic);
 				iwdao.write(ic);
 			}

@@ -22,7 +22,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.question, l:20, t:'Question Text'});
 golgotha.form.validate({f:f.correct, l:3, t:'Correct Answer to this Question'});
-golgotha.form.validate({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource', empty:true});
+golgotha.form.validate({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource', empty:true, maxSize:512});
 golgotha.form.validate({f:f.owner, t:'Owner'});
 golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
 
@@ -139,7 +139,7 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Upload Image</td>
- <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
+ <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" maxSize="512" /><c:if test="${!empty question}"><br />
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
 <tr>

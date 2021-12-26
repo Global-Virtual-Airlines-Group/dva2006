@@ -372,7 +372,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Save or remove the signature image if found
 			SetSignatureImage sigdao = new SetSignatureImage(con);
-			FileUpload imgData = ctx.getFile("coolerImg");
+			FileUpload imgData = ctx.getFile("coolerImg", 524288);
 			if (imgData != null) {
 				// Check the image
 				ImageInfo info = new ImageInfo(imgData.getBuffer());

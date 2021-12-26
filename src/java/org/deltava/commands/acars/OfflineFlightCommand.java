@@ -55,7 +55,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		
 		// Check for a ZIP archive
 		String sha = null; byte[] xml = null;
-		FileUpload zipF = ctx.getFile("zip");
+		FileUpload zipF = ctx.getFile("zip", 0);
 		if (zipF != null) {
 			try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipF.getBuffer()))) {
 				byte[] buffer = new byte[32768];
@@ -85,8 +85,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 		}
 		
 		// Get the XML and SHA
-		FileUpload xmlF = ctx.getFile("xml");
-		FileUpload shaF = ctx.getFile("hashCode");
+		FileUpload xmlF = ctx.getFile("xml", 0);
+		FileUpload shaF = ctx.getFile("hashCode", 8192);
 		if ((xmlF == null) && (xml == null)) {
 			result.setSuccess(true);
 			return;

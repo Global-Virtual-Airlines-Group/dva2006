@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			
 			// If not image uploaded, then redirect
-			FileUpload imgData = ctx.getFile("coolerImg");
+			FileUpload imgData = ctx.getFile("coolerImg", 524288);
 			if (imgData == null) {
 				ctx.release();
 				result.setURL("/jsp/pilot/sigUpdate.jsp");
@@ -80,8 +80,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			int maxY = SystemData.getInt("cooler.sig_max.y", 200);
 			if (!isHR && ((si.getWidth() > maxX) || (si.getHeight() > maxY))) {
 				ctx.release();
-				ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
-						+ info.getWidth() + "x" + info.getHeight());
+				ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = " + info.getWidth() + "x" + info.getHeight());
 				return;
 			}
 
@@ -89,8 +88,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			int maxSize = SystemData.getInt("cooler.sig_max.size");
 			if (!isHR && (imgData.getSize() > maxSize)) {
 				ctx.release();
-				ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours ="
-						+ imgData.getSize() + " bytes");
+				ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours =" + imgData.getSize() + " bytes");
 				return;
 			}
 

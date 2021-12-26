@@ -11,16 +11,15 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.subject, l:7, t:'Message Subject'});
-golgotha.form.validate({f:f.body, l:25, t:'Message Body'});
-golgotha.form.validate({f:f.eqType, t:'Recipients Equipment Type'});
-golgotha.form.validate({f:f.fAttach, ext:['pdf','txt'], t:'Attached File', empty:true});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.subject, l:7, t:'Message Subject'});
+	golgotha.form.validate({f:f.body, l:25, t:'Message Body'});
+	golgotha.form.validate({f:f.eqType, t:'Recipients Equipment Type'});
+	golgotha.form.validate({f:f.fAttach, ext:['pdf','txt'], t:'Attached File', empty:true, maxSize:1024});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -43,7 +42,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Attached File</td>
- <td class="data"><el:file name="fAttach" idx="*" size="96" max="144" /></td>
+ <td class="data"><el:file name="fAttach" idx="*" size="96" max="144" maxSize="1024" /></td>
 </tr>
 <tr>
  <td class="label">Recipient Program / Security Role</td>

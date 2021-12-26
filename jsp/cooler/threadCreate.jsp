@@ -28,7 +28,7 @@ golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.subject, l:8, t:'Title of your Thread'});
     golgotha.form.validate({f:f.msgText, l:5, t:'Text of your Message'});
-    golgotha.form.validate({f:f.img, ext:['gif','jpg','jpeg','png'], t:'Attached Image', empty:true});
+    golgotha.form.validate({f:f.img, ext:['gif','jpg','jpeg','png'], t:'Attached Image', empty:true, maxSize:4096});
     golgotha.form.submit(f);
     return true;
 };

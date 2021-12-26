@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to import Airspace boundary data. 
  * @author Luke
- * @version 7.3
+ * @version 10.2
  * @since 7.3
  */
 
@@ -49,7 +49,7 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 		ctx.setAttribute("countries", Country.getAll(), REQUEST);
 		
 		// If we're doing a GET, then redirect to the JSP
-		FileUpload navData = ctx.getFile("navData");
+		FileUpload navData = ctx.getFile("navData", 0);
 		if (navData == null) {
 			result.setURL("/jsp/navdata/airspaceImport.jsp");
 			result.setSuccess(true);
@@ -59,7 +59,7 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 		// Load airspaceTypes
 		Collection<AirspaceType> types = new HashSet<AirspaceType>();
 		if (!CollectionUtils.isEmpty(ctx.getParameters("types")))
-			ctx.getParameters("types").stream().map(t -> AirspaceType.fromName(t)).filter(Objects::nonNull).forEach(at -> types.add(at));
+			ctx.getParameters("types").stream().map(t -> AirspaceType.fromName(t)).filter(Objects::nonNull).forEach(types::add);
 		
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		Country c = Country.get(ctx.getParameter("country"));

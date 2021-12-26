@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,9 +16,9 @@ import org.deltava.mail.*;
 import org.deltava.security.command.HelpDeskAccessControl;
 
 /**
- * A Web Site Command to save Flight Academy Issue comments.
+ * A Web Site Command to save Help Desk Issue comments.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -59,7 +59,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			i.addComment(ic);
 			
 			// Create an Issue file bean if attached file
-			FileUpload fu = ctx.getFile("attach");
+			FileUpload fu = ctx.getFile("attach", 2048 * 1024);
 			if (fu != null) {
 				ic.load(fu.getBuffer());
 				ic.setName(fu.getName());

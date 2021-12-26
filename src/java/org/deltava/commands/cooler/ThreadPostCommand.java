@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -101,7 +101,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			}
 
 			// Check if we are loading an image. If so, check the image size
-			FileUpload img = ctx.getFile("img");
+			FileUpload img = ctx.getFile("img", 4096*1024);
 			if (img != null) {
 				ImageInfo imgInfo = new ImageInfo(img.getBuffer());
 				boolean imgOK = imgInfo.check();
@@ -113,8 +113,7 @@ public class ThreadPostCommand extends AbstractCommand {
 
 				// Validate the image
 				boolean badSize = img.getSize() > SystemData.getInt("cooler.img_max.size");
-				boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.y"))
-						|| (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
+				boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.y")) || (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
 
 				// If the image is too big, figure out what to do
 				if (!imgOK || badSize || badDim) {
@@ -165,8 +164,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			boolean hasPoll = Boolean.valueOf(ctx.getParameter("hasPoll")).booleanValue();
 			if (hasPoll) {
 				Collection<String> opts = StringUtils.split(ctx.getParameter("pollOptions"), "\n");
-				for (Iterator<String> i = opts.iterator(); i.hasNext();)
-					mt.addOption(new PollOption(1, i.next()));
+				opts.forEach(opt -> mt.addOption(new PollOption(1, opt)));
 			}
 
 			// Create the first post in the thread
