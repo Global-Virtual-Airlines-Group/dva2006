@@ -207,9 +207,6 @@ public final class OfflineFlightParser {
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
 		afr.setRestoreCount(StringUtils.parse(ie.getChildTextTrim("restoreCount"), 0));
-		boolean hasRestore = Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue();  // TODO: remove once 156 is minimum
-		if (hasRestore && (afr.getRestoreCount() == 0))
-			afr.setRestoreCount(1);
 		afr.setRemarks(inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
@@ -228,6 +225,8 @@ public final class OfflineFlightParser {
 		afr.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setTaxiTime(StringUtils.parseInstant(ie.getChildTextTrim("taxiOutTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setTakeoffTime(StringUtils.parseInstant(ie.getChildTextTrim("takeoffTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setTOCTime(safeParseInstant(ie.getChildTextTrim("tocTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setTODTime(safeParseInstant(ie.getChildTextTrim("todTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setLandingTime(StringUtils.parseInstant(ie.getChildTextTrim("landingTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setEndTime(StringUtils.parseInstant(ie.getChildTextTrim("gateTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setDepartureTime(safeParseInstant(ie.getChildTextTrim("startSimTime"), "MM/dd/yyyy HH:mm:ss"));
