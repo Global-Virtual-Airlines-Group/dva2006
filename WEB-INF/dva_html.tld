@@ -1245,6 +1245,12 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
+			<name>maxSize</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang>integer</type>		
+		</attribute>
+		<attribute>
 			<name>onChange</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
