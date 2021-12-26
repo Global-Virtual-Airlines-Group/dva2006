@@ -357,7 +357,7 @@ golgotha.form.validateCombo = function(c, title) {
 
 golgotha.form.validateFile = function(f, extTypes, title, allowBlank, maxSizeKB) {
 	if ((!f) || (f.disabled)) return true;
-	if ((maxSizeKB > 0) && (f.files)) {
+	if ((maxSizeKB > 0) && (f.files) && (f.files.length > 0)) {
 		const size = f.files[0].size / 1024;
 		console.log('File size = ' + size + 'K, max = ' + maxSizeKB + 'K');
 		if (size > maxSizeKB)
