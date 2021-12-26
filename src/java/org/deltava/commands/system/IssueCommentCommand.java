@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -49,7 +49,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			ic.setAuthorID(ctx.getUser().getID());
 			
 			// Create an Issue file bean if attached file
-			FileUpload fu = ctx.getFile("attach");
+			FileUpload fu = ctx.getFile("attach", 2048 * 1024);
 			if (fu != null) {
 				ic.load(fu.getBuffer());
 				ic.setName(fu.getName());

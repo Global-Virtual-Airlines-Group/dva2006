@@ -44,7 +44,7 @@ golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
 	golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
 	golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
-	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true});
+	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
 	golgotha.form.submit(f);
 	return true;
 };

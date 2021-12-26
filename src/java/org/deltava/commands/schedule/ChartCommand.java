@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class ChartCommand extends AbstractFormCommand {
 			}
 			
 			// Load the image data
-			FileUpload imgData = ctx.getFile("img");
+			FileUpload imgData = ctx.getFile("img", 0);
 			boolean hasData = ((imgData != null) && (imgData.getSize() > 10));
 			
 			// Check for PDF

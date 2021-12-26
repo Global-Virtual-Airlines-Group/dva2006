@@ -19,6 +19,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.comment, l:10, t:'Issue Comments'});
+	golgotha.form.validate({f:f.attach, ext:[], empty:true, t:'Attached File', maxSize:2048});
 	golgotha.form.submit(f);</c:if>
 	return ${access.canComment};
 };
@@ -126,7 +127,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 </tr>
 <tr>
  <td class="label">Attach File</td>
- <td><el:file name="attach" className="small" size="96" max="160" /></td>
+ <td><el:file name="attach" className="small" size="96" max="160" maxSize="2048" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

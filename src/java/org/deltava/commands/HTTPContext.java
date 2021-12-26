@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 2.4
  */
 
@@ -181,10 +181,16 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	/**
 	 * Returns the value of an uploaded file object.
 	 * @param name the file name
+	 * @param maxSize the maximum size in bytes, or zero to ignore size
 	 * @return the file data, or null if not found
+	 * @throws CommandException if the file size exceeds the maximum size
 	 */
-	public FileUpload getFile(String name) {
-		return (FileUpload) _req.getAttribute("FILE$" + name);
+	public FileUpload getFile(String name, int maxSize) throws CommandException {
+		FileUpload fu = (FileUpload) _req.getAttribute("FILE$" + name);
+		if ((fu != null) && (maxSize > 0) && (fu.getSize() > maxSize))
+			throw new CommandException(String.format("File %s size %dKB > %dKB", fu.getName(), Integer.valueOf(fu.getSize() / 1024), Integer.valueOf(maxSize / 1024)), false) {{ setStatusCode(400); }};
+		
+		return fu;
 	}
 
 	/**

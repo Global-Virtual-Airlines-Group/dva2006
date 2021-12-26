@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 2.0
  */
 
@@ -55,7 +55,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		ctx.setAttribute("currentNavCycle", inf, REQUEST);
 
 		// If we're doing a GET, then redirect to the JSP
-		FileUpload navData = ctx.getFile("navData");
+		FileUpload navData = ctx.getFile("navData", 0);
 		if (navData == null) {
 			result.setURL("/jsp/navdata/tRouteImport.jsp");
 			result.setSuccess(true);
@@ -77,7 +77,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType];
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0; LineNumberReader br = null;
-		try (InputStream is = navData.getInputStream(); LineNumberReader br2 = new LineNumberReader(new InputStreamReader(is))) {
+		try (InputStream is = navData.getInputStream(); LineNumberReader br2 = new LineNumberReader(new InputStreamReader(is), 131072)) {
 			br = br2;
 			
 			// Iterate through the file
