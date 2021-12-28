@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.*;
+
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.navdata.*;
@@ -19,11 +21,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 5.1
  */
 
 public class GetGates extends DAO {
+	
+	private static final Logger log = Logger.getLogger(GetGates.class);
 	
 	private static final Cache<CacheableCollection<Gate>> _cache = CacheManager.getCollection(Gate.class, "Gates");
 	private static final Cache<GateUsage> _useCache = CacheManager.get(GateUsage.class, "GateUsage");
@@ -125,6 +129,7 @@ public class GetGates extends DAO {
 		GateUsage gu = new GateUsage(rp, isDeparture);
 		GateUsage gateUse = _useCache.get(gu.cacheKey());
 		if (gateUse != null) {
+			log.log((gateUse.getTotal() == 0) ? Level.WARN : org.apache.log4j.Level.INFO, gateUse.toString() + " total = " + gateUse.getTotal());
 			List<Gate> gates = getGates(a, sim);
 			gates.forEach(g -> g.setUseCount(gateUse.getUsage(g.getName())));
 			return CollectionUtils.sort(gates, CMP);
@@ -153,6 +158,7 @@ public class GetGates extends DAO {
 			// Load the gates and save usage in the cache
 			List<Gate> results = execute(ps);
 			results.forEach(g -> { g.setRegion(a.getRegion()); gu.addGate(g.getName(), g.getUseCount()); });
+			log.log((gu.getTotal() == 0) ? Level.WARN : org.apache.log4j.Level.INFO, "Put " + gu.toString() + " total = " + gu.getTotal());
 			_useCache.add(gu);
 			return CollectionUtils.sort(results, CMP);
 		} catch (SQLException se) {

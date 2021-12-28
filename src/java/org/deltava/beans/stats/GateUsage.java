@@ -8,9 +8,9 @@ import org.deltava.beans.schedule.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store gate usage statistics
+ * A bean to store gate usage statistics.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -68,6 +68,14 @@ public class GateUsage implements Cacheable, RoutePair {
 	 */
 	public int getUsage(String gateName) {
 		return _usage.getOrDefault(gateName, Integer.valueOf(0)).intValue();
+	}
+	
+	/**
+	 * Returns the total usage across all gates.
+	 * @return the total usage count
+	 */
+	public int getTotal() {
+		return _usage.values().stream().mapToInt(Integer::intValue).sum();
 	}
 
 	@Override
