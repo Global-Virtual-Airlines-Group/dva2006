@@ -808,8 +808,9 @@ pilot Certification.</td>
  <td class="data">You can import entries into the <content:airline /> Raw Flight Schedule database from a CSV data file. You may also export entries from the Raw Flight Schedule into a CSV data file.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="rawbrowse">Browse Raw Flight Schedule</el:cmd></td>
- <td class="data">You can browse, edit and add entries to the <content:airline /> Raw Flight Schedule, which is filtered each day into the Flight Schedule.</td>
+ <td class="mid"><el:cmd className="bld" url="rawbrowse">Browse Raw Flight Schedule</el:cmd><br />
+ <el:cmd className="bld" url="rawvalidate">Raw Schedule Validation</el:cmd></td>
+ <td class="data">You can browse, edit and add entries to the <content:airline /> Raw Flight Schedule, which is filtered each day into the Flight Schedule. Schedule entries can be validated to check for unreasonable flight times or duplicates.</td>
 </tr>
 <c:if test="${!empty faaChartURL}">
 <tr>

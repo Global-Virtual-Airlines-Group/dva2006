@@ -29,11 +29,10 @@
 <content:filter roles="HR">
  <content:subitem><el:cmd url="aInfoList">Virtual Airlines</el:cmd></content:subitem></content:filter>
  <content:subitem><el:cmd url="charts">Approach Charts</el:cmd></content:subitem>
-<c:if test="${!empty faaChartURL}"><content:filter roles="Operations,Schedule">
- <content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem>
-</content:filter></c:if>
  <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
  <content:subitem><el:cmd url="rawbrowse">Raw Schedule Data</el:cmd></content:subitem>
+<content:filter roles="Operations,Schedule">
+ <content:subitem><el:cmd url="rawvalidate">Raw Schedule Validation</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedfilter">Schedule Filter</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedhistory">Filter History</el:cmd></content:subitem>
@@ -41,6 +40,8 @@
  <content:subitem><el:cmd url="importstatus">Import Status</el:cmd></content:subitem>
  <content:subitem><el:cmd url="usvcairports">Unserviced Airports</el:cmd></content:subitem>
  <content:subitem><el:cmd url="navimport">Navigation Data</el:cmd></content:subitem>
+ <c:if test="${!empty faaChartURL}"><content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem></c:if>
+</content:filter>
 </content:submenu>
 
 <content:submenu title="Our Airline" width="170">

@@ -727,6 +727,12 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="rawvalidate">
+		<name>Raw Schedule Validate</name>
+		<class>org.deltava.commands.schedule.RawValidationCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="schedfilter">
 		<name>Schedule Filter</name>
 		<class>org.deltava.commands.schedule.ScheduleFilterCommand</class>
