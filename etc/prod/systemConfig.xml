@@ -39,6 +39,7 @@
 			<name>Delta FLY!</name>
 			<list name="categories" attr="category" unique="true">
 				<category>Delta FLY!</category>
+				<category>Operations</category>
 				<category>Mad Dog Program</category>
 				<category>Flight Academy</category>
 				<category>Triple 7 Program</category>
