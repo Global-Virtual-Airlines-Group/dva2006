@@ -58,7 +58,7 @@ public class GetACARSTaxiTimes extends DAO {
 	 */
 	public TaxiTime getTaxiTime(Airport a, int year) throws DAOException {
 		TaxiTime tt = new TaxiTime(a.getICAO(), year);
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR>=) GROUP BY ICAO, YEAR ORDER BY YEAR DESC")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR>=?) GROUP BY ICAO, YEAR ORDER BY YEAR DESC")) {
 			ps.setString(1, a.getICAO());
 			ps.setInt(2, year - 1);
 			try (ResultSet rs = ps.executeQuery()) {
