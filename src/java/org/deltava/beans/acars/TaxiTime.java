@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Duration;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
 public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	
 	private final String _icao;
-	private final int _year;
+	private int _year;
 	
 	private Duration _taxiIn;
 	private Duration _taxiOut;
@@ -84,6 +84,14 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 			throw new IllegalArgumentException("Taxi time cannot be negative");
 		
 		_taxiOut = d;
+	}
+	
+	/**
+	 * Updates the year.
+	 * @param yr the year, or zero for all
+	 */
+	public void setYear(int yr) {
+		_year = yr;
 	}
 	
 	@Override

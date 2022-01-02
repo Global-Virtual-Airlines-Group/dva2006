@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 8.6
  */
 
@@ -58,14 +58,15 @@ public class GetACARSTaxiTimes extends DAO {
 	 */
 	public TaxiTime getTaxiTime(Airport a, int year) throws DAOException {
 		TaxiTime tt = new TaxiTime(a.getICAO(), year);
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR=?) GROUP BY ICAO")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR>=) GROUP BY ICAO, YEAR ORDER BY YEAR DESC")) {
 			ps.setString(1, a.getICAO());
-			ps.setInt(2, year);
+			ps.setInt(2, year - 1);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					int inCount = rs.getInt(3); int outCount = rs.getInt(4);
-					tt.setInboundTime((inCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(1) / inCount));
-					tt.setOutboundTime((outCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(2) / outCount));
+					tt.setYear(rs.getInt(1));
+					int inCount = rs.getInt(4); int outCount = rs.getInt(5);
+					tt.setInboundTime((inCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(2) / inCount));
+					tt.setOutboundTime((outCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(3) / outCount));
 				}
 			}
 			
