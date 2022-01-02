@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A comparator for Schedule entries.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 4.1
  */
 
@@ -23,8 +23,9 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 	public static final int FLCOUNT = 9;
 	public static final int LASTFLT = 10;
 	public static final int FLIGHT_DTIME = 11;
+	public static final int ROUTE_FLIGHT = 12;
 	
-	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown", "Flight+Departure"};
+	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown", "Flight+Departure", "Route+Flight"};
 	
     /**
      * Creates a new comparator with a given comparison type.
@@ -37,9 +38,6 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 		setComparisonType(comparisonType);
 	}
 	
-    /**
-     * Compares two schedule entries by the designated criteria.
-     */
 	@Override
 	protected int compareImpl(ScheduleEntry se1, ScheduleEntry se2) {
 		switch (_comparisonType) {
@@ -95,6 +93,13 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				}
 				
 				return se1.compareTo(se2);
+				
+			case ROUTE_FLIGHT:
+				tmpResult = se1.getAirportD().compareTo(se2.getAirportD());
+				if (tmpResult == 0)
+					tmpResult = se1.getAirportA().compareTo(se2.getAirportA());
+				
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 
 			case FLIGHT:
 			default:
