@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to short-list applicants for a Job Posting.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -59,10 +59,9 @@ public class ShortListCommand extends AbstractCommand {
 			StringBuilder buf = new StringBuilder();
 			
 			// Go through the applications and shortlist as necessary
-			Collection<String> slIDs = ctx.getParameters("sl");
+			Collection<String> slIDs = ctx.getParameters("sl", Collections.emptySet());
 			Collection<Application> SL = new ArrayList<Application>();
-			for (Iterator<Application> i = jp.getApplications().iterator(); i.hasNext(); ) {
-				Application a = i.next();
+			for (Application a : jp.getApplications()) {
 				boolean isSL = slIDs.contains(StringUtils.formatHex(a.getAuthorID()));
 				if (isSL && (a.getStatus() == Application.NEW)) {
 					a.setStatus(Application.SHORTLIST);
