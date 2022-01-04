@@ -58,32 +58,51 @@ public class RawValidationCommand extends AbstractViewCommand {
 			ScheduleSourceInfo srcInfo = srcs.stream().filter(ssi -> ssi.getSource().equals(src)).findAny().orElse(null);
 			
 			// Load and sort
+			Map<ScheduleEntry, ValidationResult> vrs = new HashMap<ScheduleEntry, ValidationResult>();
 			List<RawScheduleEntry> entries = rsdao.load(src, srcInfo.getEffectiveDate()); Collection<ScheduleEntry> results = new LinkedHashSet<ScheduleEntry>();
 			Collections.sort(entries, new ScheduleEntryComparator(ScheduleEntryComparator.ROUTE_FLIGHT));
-			ScheduleEntry lse = null;
+			ScheduleEntry lse = null; final String aCode = ctx.getDB().toUpperCase();
 			for (ScheduleEntry se : entries) {
-				Aircraft a = allAC.get(se.getEquipmentType());
+				ValidationResult vr = new ValidationResult();
+				Aircraft a = allAC.get(se.getEquipmentType()); AircraftPolicyOptions ao = a.getOptions(aCode);
+				if (ao == null)
+					vr.setPolicy(true);
+				else if (se.getDistance() > ao.getRange()) {
+					vr.setAircraft(true);
+					vr.setRange(0, ao.getRange());
+				} else if (se.getAirportD().getMaximumRunwayLength() < ao.getTakeoffRunwayLength()) {
+					vr.setAircraft(true);
+					vr.setRange(0, ao.getTakeoffRunwayLength());
+				} else if (se.getAirportA().getMaximumRunwayLength() < ao.getLandingRunwayLength()) {
+					vr.setAircraft(true);
+					vr.setRange(0, ao.getLandingRunwayLength());
+				}
 				
 				// Calculate flight time
 				int ft = (int) (se.getDistance() * 10 / (a.getCruiseSpeed() / DistanceUnit.NM.getFactor())); 
 				int ln = se.getLength(); int ff = Math.max(16, Math.round(ln * 0.325f) + 7);
 				if ((ln < Math.max(4, ft - ff)) || (ln > (ft + ff))) {
-					lse = se;
-					results.add(se);
-					continue;
+					vr.setTime(true);
+					vr.setRange(Math.max(4, ft - ff), ft + ff);
 				}
 				
 				// Check for duplicate flight number
 				if ((lse != null) && (FlightNumber.compare(se, lse, true) == 0)) {
+					vr.setDuplicate(true);
 					results.add(lse);
 					results.add(se);
 				}
 				
 				lse = se;
+				if (!vr.getIsOK()) {
+					results.add(se);
+					vrs.put(se, vr);
+				}
 			}
 			
 			// Slice and save results
 			ctx.setAttribute("srcInfo", srcInfo, REQUEST);
+			ctx.setAttribute("results", vrs, REQUEST);
 			if (vctxt.getStart() < results.size()) {
 				List<ScheduleEntry> lr = new ArrayList<ScheduleEntry>(results);
 				vctxt.setResults(lr.subList(vctxt.getStart(), Math.min(vctxt.getEnd(), lr.size())));
