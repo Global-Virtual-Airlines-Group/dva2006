@@ -45,7 +45,7 @@ golgotha.local.setSrc = function(cb) {
 <!-- Table Header Bars -->
 <tr class="title caps">
  <td class="left" colspan="5"><span class="nophone"><content:airline />&nbsp;</span>RAW FLIGHT SCHEDULE VALIDATION</td>
- <td class="right" colspan="5">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${srcInfo.source}" options="${srcs}" onChange="void golgotha.local.setSrc(this)" /></td>
+ <td class="right" colspan="6"><span class="nophone">SCHEDULE SOURCE </span><el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${srcInfo.source}" options="${srcs}" onChange="void golgotha.local.setSrc(this)" /></td>
 </tr>
 
 <tr class="title caps">
@@ -59,10 +59,12 @@ golgotha.local.setSrc = function(cb) {
  <td class="nophone" style="width:6%">ARRIVES</td>
  <td class="nophone" style="width:7%">DISTANCE</td>
  <td style="width:6%">DURATION</td>
+ <td class="nophone">ISSUE</td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="entry" items="${viewContext.results}">
+<c:set var="vr" value="${results[entry]}" scope="page" />
 <view:row entry="${entry}">
  <td class="small nophone">${entry.lineNumber}</td>
  <td class="pri bld"><el:cmd url="sched" linkID="${entry.source}-${entry.lineNumber}">${entry.flightCode}</el:cmd></td>
@@ -73,13 +75,14 @@ golgotha.local.setSrc = function(cb) {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
  <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
- <td><fmt:duration duration="${entry.duration}" t="HH:mm" /></td> 
+ <td><fmt:duration duration="${entry.duration}" t="HH:mm" /></td>
+ <td class="warn bld nophone">${vr.message}</td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="10"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>
+ <td colspan="11"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>
  <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" /></td>
 </tr>
 </view:table>
