@@ -42,14 +42,8 @@
 
 <!-- Table Tour Data -->
 <c:forEach var="t" items="${viewContext.results}">
-<c:set var="ac" value="${accessMap[t]}" scope="page" />
 <view:row entry="${t}">
-<c:if test="${ac.canEdit}">
  <td class="pri bld" colspan="2"><el:cmd url="tour" link="${t}">${t.name}</el:cmd></td>
-</c:if>
-<c:if test="${!ac.canEdit}">
- <td class="pri bld" colspan="2">${t.name}</td>
-</c:if>
  <td><fmt:date date="${t.startDate}" fmt="d" /></td>
  <td><fmt:date date="${t.endDate}" fmt="d" /></td>
 <c:if test="${empty t.networks}">

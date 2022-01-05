@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.TourAccessControl;
 /**
  * A Web Site Command to list flight Tours.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -55,7 +55,6 @@ public class TourListCommand extends AbstractViewCommand {
 		TourAccessControl ac = new TourAccessControl(ctx, null);
 		ac.validate();
 		ctx.setAttribute("access", ac, REQUEST);
-		ctx.setAttribute("accessMap", acMap, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
