@@ -4,6 +4,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="toursEnabled" name="online.tours" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
@@ -71,6 +72,9 @@
  <content:subitem><el:cmd url="graduates">Academy Graduates</el:cmd></content:subitem>
 </c:if>
  <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+<c:if test="${toursEnabled}">
+ <content:subitem><el:cmd url="tours">Flight Tours</el:cmd></content:subitem>
+</c:if>
  <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
 </content:submenu>
  
