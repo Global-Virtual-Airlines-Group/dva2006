@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Newsletter nws) throws DAOException {
-		try (PreparedStatement ps = prepare("INSERT INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLCATE KEY UPDATE "
+		try (PreparedStatement ps = prepare("INSERT INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
 			+ "NAME=N.NAME, CATEGORY=N.CATEGORY, FILESIZE=N.FILESIZE, SECURITY=N.SECURITY, PUBLISHED=N.PUBLISHED, BODY=N.BODY")) {
 			ps.setString(1, nws.getName());
 			ps.setString(2, nws.getCategory());
