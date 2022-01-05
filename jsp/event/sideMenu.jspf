@@ -4,6 +4,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="toursEnabled" name="online.tours" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
@@ -25,6 +26,9 @@
  <content:subitem><el:cmd url="events">All Events</el:cmd></content:subitem>
 <c:if test="${access.canCreate}">
  <content:subitem><el:cmd url="eventedit">New Online Event</el:cmd></content:subitem>
+</c:if>
+<c:if test="${toursEnabled}">
+ <content:subitem><el:cmd url="tours">Flight Tours</el:cmd></content:subitem>
 </c:if>
  <content:subitem><el:cmd url="flightboardmap">Online Flights Map</el:cmd></content:subitem>
  <content:subitem><el:cmd url="flightboard">Online Flights</el:cmd></content:subitem>

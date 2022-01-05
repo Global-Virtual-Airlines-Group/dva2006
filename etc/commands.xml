@@ -1339,13 +1339,13 @@
 	<command id="tours">
 		<name>Tour Profile List</name>
 		<class>org.deltava.commands.stats.TourListCommand</class>
-		<roles>Pilot</roles>
+		<roles>*</roles>
 	</command>
 
 	<command id="tour">
 		<name>Tour Profile</name>
 		<class>org.deltava.commands.stats.TourCommand</class>
-		<roles>Pilot</roles>
+		<roles>*</roles>
 	</command>
 	
 	<command id="tourdelete">

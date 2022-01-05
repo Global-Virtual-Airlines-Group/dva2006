@@ -324,6 +324,7 @@
 	<online>
         <log_all type="Boolean">true</log_all>
         <default_network>VATSIM</default_network>
+        <tours type="Boolean">true</tours>
 		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
