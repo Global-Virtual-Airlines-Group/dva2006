@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -236,13 +236,20 @@ public final class TestingHistoryHelper implements Cacheable {
 	}
 
 	/**
-	 * Returns the number of flight legs counted towards promotion in a particular Equipment Program. If no Equipment
-	 * Program is specified, this returns the total number of approved flight legs.
+	 * Returns the number of flight legs counted towards promotion in a particular Equipment Program. If no Equipment Program is specified, this returns the total number of approved flight legs.
 	 * @param eq the Equipment Program
 	 * @return the number of legs
 	 */
 	public int getFlightLegs(EquipmentType eq) {
 		return (int) _pireps.stream().filter(fr -> (fr.getStatus() == FlightStatus.OK)).filter(fr -> ((eq == null) || fr.getCaptEQType().contains(eq.getName()))).count();
+	}
+	
+	/**
+	 * Returns the Pilot's Flight Reports. <i>This Collection is unmodifiable.</i> 
+	 * @return a Collection of FlightReports
+	 */
+	public Collection<FlightReport> getFlights() {
+		return Collections.unmodifiableCollection(_pireps);
 	}
 	
 	/**

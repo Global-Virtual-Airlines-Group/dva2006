@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -92,10 +92,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			manualPIREP &= (heldPIREPs < SystemData.getInt("users.pirep.maxHeld", 5));
 			ctx.setAttribute("manualPIREP", Boolean.valueOf(manualPIREP), REQUEST);
 			ctx.setAttribute("heldPIREPCount", Integer.valueOf(heldPIREPs), REQUEST);
-			
-			// Check passenger count
-			GetFlightReportStatistics prsdao = new GetFlightReportStatistics(con);
-			ctx.setAttribute("totalPax", Integer.valueOf(prsdao.getPassengers(p.getID())), REQUEST);
 
 			// Save the pilot location
 			GetPilotBoard pbdao = new GetPilotBoard(con);
@@ -179,6 +175,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			TestingHistoryHelper testHistory = initTestHistory(p, con);
 			ctx.setAttribute("eqSwitchMaxStage", Integer.valueOf(testHistory.getMaxCheckRideStage()), REQUEST);
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
+			
+			// Check passenger count
+			int totalPax = testHistory.getFlights().stream().filter(fr -> ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED))).mapToInt(FlightReport::getPassengers).sum();
+			ctx.setAttribute("totalPax", Integer.valueOf(totalPax), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("CP", pdao.get(testHistory.getEquipmentType().getCPID()), REQUEST);
