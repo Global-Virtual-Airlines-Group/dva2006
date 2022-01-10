@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -494,24 +494,6 @@ public class GetFlightReportStatistics extends DAO {
 			results.addAll(execute(ps));
 			_statCache.add(results);
 			return results.clone();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns the total number of passengers carried by a Pilot.
-	 * @param pilotID the Pilot's database ID
-	 * @return the number of passengers
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getPassengers(int pilotID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)")) {
-			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, pilotID);
-			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() ? rs.getInt(1) : 0;
-			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
