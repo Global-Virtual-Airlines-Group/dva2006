@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -113,7 +113,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				t.load(new byte[0]);
 
 			// Check audit log
-			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "inputStream");
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "inputStream", "buffer");
 			AuditLog ae = AuditLog.create(t, delta, ctx.getUser().getID());
 
 			// Start transaction
