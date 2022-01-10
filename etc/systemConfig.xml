@@ -555,6 +555,7 @@
 		<video>/home/www/video</video>
 		<upload>/home/www/upload</upload>
 		<httplog>/var/log/www</httplog>
+		<newsletter>/home/www/nws</newsletter>
 		<archive>/home/www/pos_archive</archive>
 		<tile>/var/cache/tile</tile>
 	</path>
