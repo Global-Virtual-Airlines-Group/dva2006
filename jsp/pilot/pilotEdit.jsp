@@ -33,7 +33,7 @@ golgotha.form.validate({f:f.df, l:7, t:'Date Format'});
 golgotha.form.validate({f:f.tf, l:5, t:'Time Format'});
 golgotha.form.validate({f:f.nf, l:5, t:'Number Format'});
 golgotha.form.validate({f:f.viewCount, min:20, t:'View Size'});
-golgotha.form.validate({f:f.coolerImg, ext:['jpg','png','gif'], t:'${forumName} Cooler Signature Image', empty:true});
+golgotha.form.validate({f:f.coolerImg, ext:['jpg','png','gif','jpeg'], t:'${forumName} Cooler Signature Image', empty:true});
 golgotha.form.validate({f:f.staffTitle, l:8, t:'Staff Title'});
 golgotha.form.validate({f:f.staffArea, t:'Department Name'});
 golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
