@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -41,7 +41,7 @@ public class GetTour extends DAO {
 	public Tour get(int id, String dbName) throws DAOException {
 		
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.*, GROUP_CONCAT(TN.NETWORK), TB.SIZE, TB.ISPDF FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".TOURS T LEFT JOIN ");
 		sqlBuf.append(db);
@@ -73,7 +73,7 @@ public class GetTour extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Tour> getAll() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOURS T "
+		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOURS T "
 			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID")) {
 			List<Tour> results = execute(ps);
 			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
@@ -94,7 +94,7 @@ public class GetTour extends DAO {
 	public Collection<Tour> findLeg(RoutePair rp, Instant dt, String dbName) throws DAOException {
 		
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.*, GROUP_CONCAT(TN.NETWORK), TB.SIZE, TB.ISPDF FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".TOUR_LEGS TL, ");
 		sqlBuf.append(db);
@@ -102,7 +102,7 @@ public class GetTour extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (T.ID=TL.ID) AND (T.ACTIVE=?) AND (TL.AIRPORT_D=?) AND (TL.AIRPORT_A=?) HAVING (T.ID IS NOT NULL)");
+		sqlBuf.append(".TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (T.ID=TL.ID) AND (T.ACTIVE=?) AND (TL.AIRPORT_D=?) AND (TL.AIRPORT_A=?) GROUP BY T.ID HAVING (T.ID IS NOT NULL)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setBoolean(1, true);
