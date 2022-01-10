@@ -28,6 +28,7 @@ A new <content:airline /> Flight Tour <span class="pri bld">${tour.name}</span> 
 </c:when>
 <c:when test="${isDelete}">
 <div class="updateHdr">Flight Tour Deleted</div>
+<br />
 The <content:airline /> Flight Tour <span class="pri bld">${tour.name}</span> has been successfully deleted from the database.<br />
 </c:when>
 <c:otherwise>
