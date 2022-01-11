@@ -59,7 +59,8 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="125" labels="Finished,Not Started,Active,Inactive" classes="opt2,opt1, ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />
