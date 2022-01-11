@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.acars.Capabilities;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 1.0
  */
 
@@ -63,6 +63,15 @@ public class FlightReportFunctions {
 	 */
 	public static int pilotID(FlightReport fr) {
 		return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.PILOT);
+	}
+	
+	/**
+	 * Returns the Tour ID for this Flight Report.
+	 * @param fr the Flight Report
+	 * @return the Tour database ID
+	 */
+	public static int tourID(FlightReport fr) {
+		return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.TOUR);
 	}
 
 	/**
