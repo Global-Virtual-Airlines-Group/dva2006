@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,11 +7,12 @@ import java.util.*;
 import org.deltava.beans.help.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -37,9 +38,8 @@ public class GetHelp extends DAO {
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM HELPDESK WHERE (ID=?) LIMIT 1")) {
 				ps.setInt(1, id);
 				i = executeIssue(ps).stream().findFirst().orElse(null);
+				if (i == null) return null;
 			}
-		
-			if (i == null) return null;
 
 			// Load the comments
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT IC.*, IFS.NAME, IFS.SIZE FROM HELPDESK_COMMENTS IC LEFT JOIN HELPDESK_FILES IFS ON ((IC.ID=IFS.ID) AND (IC.CREATED_ON=IFS.CREATED_ON)) WHERE (IC.ID=?) ORDER BY IC.CREATED_ON")) {
@@ -70,7 +70,7 @@ public class GetHelp extends DAO {
 	 */
 	public Collection<Issue> getAll() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON DESC")) {
 			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -214,15 +214,10 @@ public class GetHelp extends DAO {
 			// Build the FAQ answer comments query
 			if (!results.isEmpty()) {
 				StringBuilder sqlBuf = new StringBuilder("SELECT * FROM HELPDESK_COMMENTS WHERE ID IN (");
-				for (Iterator<Integer> i = results.keySet().iterator(); i.hasNext();) {
-					Integer id = i.next();
-					sqlBuf.append(id.toString());
-					if (i.hasNext())
-						sqlBuf.append(',');
-				}
+				sqlBuf.append(StringUtils.listConcat(results.keySet(), ","));
+				sqlBuf.append(')');
 
 				// Execute the Query
-				sqlBuf.append(')');
 				try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 					try (ResultSet rs = ps.executeQuery()) {
 						while (rs.next()) {
@@ -235,7 +230,7 @@ public class GetHelp extends DAO {
 							// Stuff into issue
 							Issue i = results.get(Integer.valueOf(ic.getID()));
 							if (i != null)
-							i.addComment(ic);
+								i.addComment(ic);
 						}
 					}
 				}
@@ -257,8 +252,7 @@ public class GetHelp extends DAO {
 	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) "
-			+ "OR (LOCATE(?, I.BODY) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) OR (LOCATE(?, I.BODY) > 0)");
 		if (includeComments)
 			sqlBuf.append(" OR (LOCATE(?, IC.BODY) > 0)");
 		sqlBuf.append(") GROUP BY I.ID ORDER BY I.ISFAQ DESC, I.STATUS DESC, I.CREATED_ON");
