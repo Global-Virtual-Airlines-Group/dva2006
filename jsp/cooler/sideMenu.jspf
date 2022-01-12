@@ -4,6 +4,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="toursEnabled" name="online.tours" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
@@ -80,6 +81,9 @@
  <content:subitem><el:cmd url="findflight">Find a Flight</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+ <c:if test="${toursEnabled}">
+ <content:subitem><el:cmd url="tours">Flight Tours</el:cmd></content:subitem>
+</c:if>
 </content:submenu>
 
 <c:if test="${acarsEnabled}">
