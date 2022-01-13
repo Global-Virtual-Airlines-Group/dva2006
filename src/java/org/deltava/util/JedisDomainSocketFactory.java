@@ -7,6 +7,7 @@ import java.net.Socket;
 import org.newsclub.net.unix.*;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 /**
  * A Jedis socket factory to create domain socket connections.  
@@ -17,85 +18,32 @@ import redis.clients.jedis.*;
 
 class JedisDomainSocketFactory implements JedisSocketFactory {
 	
-	private String _socketFile;
+	private final String _socketFile;
 
+	/**
+	 * Creates the socket factory.
+	 * @param addr the domain socket path
+	 */
 	JedisDomainSocketFactory(String addr) {
 		_socketFile = addr;
 	}
 	
 	/**
 	 * Creates a socket to the given endpoint.
-	 * @throws IOException if the socket cannot be found or connected to
+	 * @throws JedisConnectionException if the socket cannot be found or connected to
 	 */
 	@Override
-	public Socket createSocket() throws IOException {
+	public Socket createSocket() throws JedisConnectionException {
+		try {
+			File f = new File(_socketFile);
+			if (!f.exists())
+				throw new FileNotFoundException(f.getAbsolutePath());
 		
-		// Check for the socket
-		File f = new File(_socketFile);
-		if (!f.exists())
-			throw new FileNotFoundException(f.getAbsolutePath());
-		
-		AFUNIXSocket sock = AFUNIXSocket.newInstance();
-		sock.connect(AFUNIXSocketAddress.of(f));
-		return sock;
-	}
-
-	@Deprecated
-	@Override
-	public int getConnectionTimeout() {
-		return 0;
-	}
-
-	@Deprecated
-	@Override
-	public String getDescription() {
-		return String.format("Socket Factory - %s", _socketFile);
-	}
-
-	@Deprecated
-	@Override
-	public String getHost() {
-		return _socketFile;
-	}
-
-	@Override
-	@Deprecated
-	public int getPort() {
-		return 0;
-	}
-
-	@Deprecated
-	@Override
-	public int getSoTimeout() {
-		return 0;
-	}
-
-	@Deprecated
-	@Override
-	public void setConnectionTimeout(int timeout) {
-		// empty
-	}
-
-	@Deprecated
-	@Override
-	public void setHost(String host) {
-		_socketFile = host;
-	}
-
-	@Override
-	@Deprecated
-	public void setPort(int p) {
-		// empty
-	}
-
-	@Override
-	@Deprecated
-	public void setSoTimeout(int arg0) {
-		// empty
-	}
-
-	@Override
-	public void updateHostAndPort(HostAndPort hp) {
-		_socketFile = hp.getHost();
+			AFUNIXSocket sock = AFUNIXSocket.newInstance();
+			sock.connect(AFUNIXSocketAddress.of(f));
+			return sock;
+		} catch (IOException ie) {
+			throw new JedisConnectionException(ie);
+		}
 	}
 }
