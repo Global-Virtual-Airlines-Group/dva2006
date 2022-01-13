@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 /**
  * A Jedis socket factory to create domain socket connections.  
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 10.0
  */
 
