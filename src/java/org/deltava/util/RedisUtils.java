@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -192,7 +192,7 @@ public class RedisUtils {
 	 */
 	public static void push(String key, String value, int maxLength) {
 		try (Jedis jc = getConnection()) {
-			long len = jc.rpush(key, value).longValue();
+			long len = jc.rpush(key, value);
 			if ((maxLength > 0) && (len > maxLength))
 				jc.ltrim(key, (len - maxLength), len);
 		}
