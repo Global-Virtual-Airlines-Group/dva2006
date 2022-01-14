@@ -60,7 +60,7 @@
 </content:region>
 </content:page>
 <div id="copyright" class="mapTextLabel"></div>
-<script>
+<script async>
 // Create the map
 const mapOpts = {center:{lat:52,lng:-35}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -88,7 +88,7 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	golgotha.local.loader.loadGinsu();
+	//golgotha.local.loader.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>
