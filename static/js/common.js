@@ -364,7 +364,7 @@ golgotha.form.validateFile = function(f, extTypes, title, allowBlank, maxSizeKB)
 			throw new golgotha.event.ValidationError('The ' + title + ' cannot be larger than ' + maxSizeKB + 'KB.', f);
 	}
 
-	if (allowBlank && (f.value.length == 0)) return true;
+	if ((allowBlank && (f.value.length == 0)) || (extTypes.length == 0)) return true;
 	const ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
 	for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
 		if (ext == e) return true;
