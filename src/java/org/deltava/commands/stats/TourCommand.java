@@ -241,6 +241,11 @@ public class TourCommand extends AbstractAuditFormCommand {
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(t.getProgressIDs(), "PILOTS"), REQUEST);
 			}
+			
+			// Remove dupes between progress and completion
+			Collection<Integer> progressIDs = new HashSet<Integer>(t.getProgressIDs());
+			progressIDs.removeAll(t.getCompletionIDs());
+			ctx.setAttribute("progressIDs", progressIDs, REQUEST);
 
 			readAuditLog(ctx, t);
 			ctx.setAttribute("tour", t, REQUEST);
