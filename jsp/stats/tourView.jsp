@@ -79,8 +79,8 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </tr>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="4"><span class="bld"><fmt:int value="${tour.progressIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
-<c:forEach var="pilotID" items="${tour.progressIDs}" varStatus="pilotNext">
+ <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
+<c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
@@ -115,8 +115,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td>&nbsp;
 <c:if test="${access.canEdit}">
 <el:cmdbutton url="tour" link="${tour}" op="edit" label="EDIT FLIGHT TOUR" /></c:if>
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton url="tourdelete" link="${tour}" op="edit" label="DELETE FLIGHT TOUR" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="tourdelete" link="${tour}" op="edit" label="DELETE FLIGHT TOUR" /></c:if>
 </td></tr>
 </el:table>
 <content:copyright />
