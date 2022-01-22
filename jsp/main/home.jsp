@@ -25,14 +25,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
-<meta property="og:title" content="<content:airline />" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://${airlineURL}" />
-<meta property="og:description" content="${desc}" />
-<meta property="og:site_name" content="<content:airline />" />
-<meta property="og:locality" content="Atlanta" />
-<meta property="og:region" content="GA" />
-<meta property="og:country-name" content="USA" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -43,9 +35,8 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004 and Flight 
- Simulator X (including FSX: Steam Edition). We also support Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11. We are working to implement more features of these programs into our aircraft 
- programs, and VATSIM approved Flight Academy. We are in no way affiliated with Delta Air Lines.<br />
+Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004, Flight  Simulator X (including Steam Edition)
+and Microsoft Flight Simulator 2020. We also support Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11. We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over <fmt:int value="${httpStats.bytes}" /> bytes worth of data.
 <c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in our ${forumName} discussion forum in the past 24 hours.</c:if>
