@@ -40,6 +40,11 @@
 <td>FLIGHTS</td>
 </tr>
 
+<!-- Tour Documentation -->
+<tr>
+ <td colspan="7" class="bld mid"><span class="nophone">For additional information about <span class="pri"><content:airline /></span> Flight Tours, please download and review the </span><el:link className="sec" url="/dva%20pilot%20guide%20to%20tours.pdf">Pilots' Guide to Tours</el:link></td>
+</tr>
+
 <!-- Table Tour Data -->
 <c:forEach var="t" items="${viewContext.results}">
 <view:row entry="${t}">
