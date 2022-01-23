@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.*;
-import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
 
@@ -534,7 +533,7 @@ public class FlightSubmissionHelper {
 	public void checkTour() throws DAOException {
 		
 		// Determine date to check
-		Instant dt = _isACARS ? ((ACARSFlightReport)_fr).getTakeoffTime() : _fr.getDate().with(ChronoField.SECOND_OF_DAY, 12 * 3600); // ensure middle of day for non-ACARS
+		Instant dt = _isACARS ? ((ACARSFlightReport)_fr).getTakeoffTime() : _fr.getDate(); // Non-ACARS should be 12:00 already
 		
 		GetTour trdao = new GetTour(_c);
 		GetFlightReports prdao = new GetFlightReports(_c);
