@@ -333,7 +333,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 <c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo}">
 <tr class="title caps">
- <td colspan="2">ACARS CLIENT DIAGNOSTIC DATA <span id="diagToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'acarsDiagData')">COLLAPSE</span></td>
+ <td colspan="2">ACARS CLIENT DIAGNOSTIC DATA <span id="diagToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsDiagData')">COLLAPSE</span></td>
 </tr>
 <c:if test="${!empty acarsClientInfo}">
 <tr class="acarsDiagData">
@@ -356,11 +356,11 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 </content:browser>
 <c:if test="${!empty statusHistory}">
 <tr class="title caps">
- <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY</td>
+ <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pirepHistory')">COLLAPSE</span></td>
 </tr>
 <c:forEach var="upd" items="${statusHistory}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
-<tr>
+<tr class="pirepHistory">
  <td class="ter bld mid"><fmt:defaultMethod object="${upd.type}" method="description" /></td>
  <td class="data"><fmt:date date="${upd.date}" /> - <span class="sec bld">${empty updAuthor ? 'SYSTEM' : updAuthor.name}</span> - ${upd.description}</td>
 </tr>
@@ -440,16 +440,13 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-const mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-const mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+const mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	google.maps.event.trigger(map, 'maptypeid_changed');	
-});
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
