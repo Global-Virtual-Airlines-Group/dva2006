@@ -42,7 +42,7 @@
 
 <!-- Tour Documentation -->
 <tr>
- <td colspan="7" class="bld mid"><span class="nophone">For additional information about <span class="pri"><content:airline /></span> Flight Tours, please download and review the </span><el:link className="sec" url="/library/dva%20pilot%20guide%20to%20tours.pdf">Pilots' Guide to Tours</el:link></td>
+ <td colspan="7" class="bld mid"><span class="nophone">For additional information about <span class="pri"><content:airline /></span> Flight Tours, please download and review the </span><el:link  url="/library/dva%20pilot%20guide%20to%20tours.pdf"><span class="sec und">Pilots' Guide to Tours</span></el:link></td>
 </tr>
 
 <!-- Table Tour Data -->
