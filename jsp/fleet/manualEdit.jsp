@@ -28,7 +28,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.title, l:10, t:'Manual Title'});
 golgotha.form.validate({f:f.version, min:1, t:'Revision Number'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
-golgotha.form.validate({f:f.file, ext:['pdf','xls'], t:'Uploaded Manual', empty:${!empty entry}});
+golgotha.form.validate({f:f.file, ext:['pdf','xls'], t:'Uploaded Manual', empty:${!empty entry}, maxSize:10240});
 <c:if test="${empty entry}">
 const fileParts = f.file.value.split('\\');
 const fName = fileParts[fileParts.length - 1].toLowerCase();
@@ -127,7 +127,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Update File</td>
- <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
+ <td class="data"><el:file name="file" className="small req" size="96" max="192" maxSize="10240" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
