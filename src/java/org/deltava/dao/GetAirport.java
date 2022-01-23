@@ -209,11 +209,21 @@ public class GetAirport extends DAO {
 	
 	/**
 	 * Returns all Airports with active Flight Tours.
+	 * @param dbName the database name
 	 * @return a Collection of Airports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getTourAirports() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT TL.AIRLINE, TL.AIRPORT_D, TL.AIRPORT_A FROM TOUR_LEGS TL, TOURS T WHERE (TL.ID=T.ID) AND (T.ACTIVE=?) AND (T.START_DATE<=NOW()) AND (T.END_DATE>=NOW())")) {
+	public Collection<Airport> getTourAirports(String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT TL.AIRLINE, TL.AIRPORT_D, TL.AIRPORT_A FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".TOUR_LEGS TL, ");
+		sqlBuf.append(db);
+		sqlBuf.append(".TOURS T WHERE (TL.ID=T.ID) AND (T.ACTIVE=?) AND (T.START_DATE<=NOW()) AND (T.END_DATE>=NOW())");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setBoolean(1, true);
 			Map<String, Airport> results = new HashMap<String, Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
