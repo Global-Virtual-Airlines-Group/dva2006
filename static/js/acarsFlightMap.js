@@ -1,9 +1,10 @@
+golgotha.maps = golgotha.maps || {};
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[], asPolygons:[]}; 
 golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#adad10',tx:0.2,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#ffa018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
 golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle, showAirspace)
 {
 // Disable checkboxes
-	const f = document.forms[0];
+const f = document.forms[0];
 f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled = true;
 
 // Build the XML Requester
