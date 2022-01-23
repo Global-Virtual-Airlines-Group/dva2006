@@ -1,4 +1,4 @@
-// Copyright 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -11,8 +11,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.ACARSError;
-import org.deltava.beans.event.Briefing;
-import org.deltava.beans.event.Event;
+import org.deltava.beans.event.*;
 import org.deltava.beans.stats.Tour;
 import org.deltava.beans.system.*;
 
@@ -29,7 +28,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 7.3
  */
 
@@ -208,6 +207,12 @@ public class AttachmentServlet extends DownloadServlet {
 				if ((t == null) || (t.getSize() < 1))
 					throw new NotFoundException("Invalid Flight Tour - " + url.getLastPath());
 				
+				// Validate Access to Tour
+				TourAccessControl ac = new TourAccessControl(sctx, t);
+				ac.validate();
+				if (!ac.getCanRead())
+					throw new ForbiddenException("Cannot view Briefing - Cannot view Tour " + t.getID());
+				
 				// Get the briefing
 				buffer = t.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
@@ -232,8 +237,7 @@ public class AttachmentServlet extends DownloadServlet {
 		}
 
 		// If we got nothing, abort
-		if (buffer == null)
-			return;
+		if (buffer == null) return;
 
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);
