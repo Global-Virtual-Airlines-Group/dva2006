@@ -1,13 +1,14 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
@@ -532,9 +533,12 @@ public class FlightSubmissionHelper {
 	 */
 	public void checkTour() throws DAOException {
 		
+		// Determine date to check
+		Instant dt = _isACARS ? ((ACARSFlightReport)_fr).getTakeoffTime() : _fr.getDate().with(ChronoField.SECOND_OF_DAY, 12 * 3600); // ensure middle of day for non-ACARS
+		
 		GetTour trdao = new GetTour(_c);
 		GetFlightReports prdao = new GetFlightReports(_c);
-		Collection<Tour> possibleTours = trdao.findLeg(_fr, _fr.getDate(), _db);
+		Collection<Tour> possibleTours = trdao.findLeg(_fr, dt, _db);
 		if (!possibleTours.isEmpty()) {
 			Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow());
 			Duration d = Duration.between(minDate, _fr.getSubmittedOn());
