@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public class AirportListService extends WebService {
 					GetAirport adao = new GetAirport(con);
 					GetScheduleAirport dao = new GetScheduleAirport(con);
 					Collection<Airport> alAirports = isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a);
-					alAirports.addAll(adao.getTourAirports());
+					alAirports.addAll(adao.getTourAirports(ctx.getDB()));
 					filter.add(new IATAFilter(alAirports));
 				} else {
 					if ("charts".equalsIgnoreCase(al)) {
@@ -97,9 +97,9 @@ public class AirportListService extends WebService {
 				GetAirport adao = new GetAirport(con);
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
+				schedAirports.addAll(adao.getTourAirports(ctx.getDB()));
 				schedAirports.addAll(dao.getOriginAirports(null));
 				schedAirports.addAll(dao.getDestinationAirports(null));
-				schedAirports.addAll(adao.getTourAirports());
 				schedAirports.addAll(adao.getEventAirports());
 				filter.add(new IATAFilter(schedAirports));
 			}
