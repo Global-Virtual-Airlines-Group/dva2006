@@ -1,4 +1,4 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 9.0
  */
 
@@ -47,7 +47,7 @@ public class GetVATSIMInfo extends OnlineNetworkDAO {
 			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facility", Facility.ATIS.ordinal())] : Facility.ATIS);
 			return c;
 		} catch (Exception e) {
-			log.error("Error parsing controller " + id + " - " + e.getMessage());
+			log.error(String.format("Error parsing controller %d - %s", Integer.valueOf(id), e.getMessage()));
 			return null;
 		}
 	}
@@ -60,9 +60,9 @@ public class GetVATSIMInfo extends OnlineNetworkDAO {
 			p.setName(po.getString("name"));
 			p.setServer(po.getString("server"));
 			p.setCallsign(po.getString("callsign"));
-			p.setAltitude(po.getInt("altitude"));
-			p.setGroundSpeed(po.getInt("groundspeed"));
-			p.setHeading(po.getInt("heading"));
+			p.setAltitude(po.optInt("altitude"));
+			p.setGroundSpeed(po.optInt("groundspeed"));
+			p.setHeading(po.optInt("heading"));
 			p.setPosition(po.getDouble("latitude"), po.getDouble("longitude"));
 			p.setLoginTime(parseDateTime(po.getString("logon_time")));
 			JSONObject fpo = po.optJSONObject("flight_plan");
@@ -76,7 +76,7 @@ public class GetVATSIMInfo extends OnlineNetworkDAO {
 			
 			return p;
 		} catch (Exception e) {
-			log.error("Error parsing pilot " + id + " - " + e.getMessage());
+			log.error(String.format("Error parsing pilot %d - %s", Integer.valueOf(id), e.getMessage()));
 			return null;
 		}
 	}
