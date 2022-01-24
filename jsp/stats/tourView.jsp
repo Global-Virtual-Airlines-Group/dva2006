@@ -92,9 +92,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <c:set var="leg" value="${leg + 1}" scope="page" />
 <tr class="mid">
  <td class="sec bld">Leg <fmt:int value="${leg}" /></td>
-<c:if test="${tour.matchLeg}">
  <td class="pri bld" style="width:15%;">${fl.flightCode}</td>
-</c:if>
  <td class="sec bld" style="width:15%">${fl.equipmentType}</td>
  <td class="small">${fl.airportD.name} (<fmt:airport airport="${fl.airportD}" />) - ${fl.airportA.name} (<fmt:airport airport="${fl.airportA}" />)</td>
  <td class="bld" colspan="${tour.matchLeg ? 1 : 2}"><fmt:date fmt="t" t="HH:mm" tz="${fl.airportD.TZ}" date="${fl.timeD}" /> - <fmt:date fmt="t" t="HH:mm" tz="${fl.airportA.TZ}" date="${fl.timeA}" /> (<fmt:int value="${fl.duration.toHoursPart()}" />h <fmt:int value="${fl.duration.toMinutesPart()}" />m)</td>
@@ -113,8 +111,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <el:table className="bar">
 <tr>	
  <td>&nbsp;
-<c:if test="${access.canEdit}">
-<el:cmdbutton url="tour" link="${tour}" op="edit" label="EDIT FLIGHT TOUR" /></c:if>
+<c:if test="${access.canEdit}"><el:cmdbutton url="tour" link="${tour}" op="edit" label="EDIT FLIGHT TOUR" /></c:if>
 <c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="tourdelete" link="${tour}" op="edit" label="DELETE FLIGHT TOUR" /></c:if>
 </td></tr>
 </el:table>
