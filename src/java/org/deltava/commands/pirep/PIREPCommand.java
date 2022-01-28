@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -408,6 +408,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(DatabaseID.PILOT));
 			
 			// If the flight report is a draft, then load it
+			boolean isACARS = (fr instanceof FDRFlightReport);
 			if (fr.getStatus() == FlightStatus.DRAFT) {
 				final int id = fr.getID();
 				Collection<FlightReport> draftReports = dao.getDraftReports(p.getID(), fr, ctx.getDB());
@@ -464,7 +465,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// If we're online and not on an event, list possible event
-			if (ac.getCanDispose() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
+			if (ac.getCanAdjustEvents() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
 				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr, SystemData.get("airline.code")), REQUEST);
 			
 			// Get the elite status if applicable
@@ -479,13 +480,16 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Get tour eligibility
+			GetTour trdao = new GetTour(con);
 			if (fr.getDatabaseID(DatabaseID.TOUR) != 0) {
-				GetTour tdao = new GetTour(con);
-				Tour t = tdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
+				Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
 				if (t != null) {
 					ctx.setAttribute("tour", t, REQUEST);
 					ctx.setAttribute("tourIdx", Integer.valueOf(t.getLegIndex(fr)), REQUEST);
 				}
+			} else if (ac.getCanAdjustEvents()) {
+				Instant dt = isACARS ? ((FDRFlightReport)fr).getTakeoffTime() : fr.getDate(); // Non-ACARS should be 12:00 already
+				ctx.setAttribute("possibleTours", trdao.findLeg(fr, dt, ctx.getDB()), REQUEST);
 			}
 
 			// Get the Navdata DAO
@@ -493,7 +497,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			navdao.setEffectiveDate(fr.getDate());
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
-			boolean isACARS = (fr instanceof FDRFlightReport);
 			if (isACARS) {
 				FDRFlightReport afr = (FDRFlightReport) fr;
 				mapType = MapType.GOOGLE;
