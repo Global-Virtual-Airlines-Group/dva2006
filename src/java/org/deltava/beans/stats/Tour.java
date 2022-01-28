@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -12,11 +12,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight tour data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
-public class Tour extends DatabaseDocumentBean implements Auditable, ViewEntry {
+public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry {
 
 	private String _name;
 	private boolean _active;
@@ -322,6 +322,16 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ViewEntry {
 	public boolean legMatches(FlightData f, Flight leg) {
 		boolean isOK = !_matchLeg || (FlightNumber.compare(f, leg) == 0); 
 		return  isOK && f.matches(leg);
+	}
+	
+	@Override
+	public String getComboName() {
+		return _name;
+	}
+	
+	@Override
+	public String getComboAlias() {
+		return getHexID();
 	}
 	
 	@Override
