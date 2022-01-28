@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.acars.Restriction;
@@ -33,6 +33,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canUpdateComments;
 	private boolean _canPreApprove;
 	private boolean _canProxySubmit;
+	private boolean _canAdjustEvents;
 
 	/**
 	 * Initializes the controller.
@@ -91,6 +92,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canViewComments = isHR || isPirep || _ourPIREP;
 		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
 		_canProxySubmit = isHR;
+		_canAdjustEvents = _canApprove || _canReject || _canHold /*isPirep && !_ourPIREP && !isDraft && (_ctx.isUserInRole("Event") || isHR) */;
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -248,5 +250,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanOverrideDateRange() {
 		return _canOverrideDateRange;
+	}
+	
+	/**
+	 * Returns if the user can adjust Tour/Online Event flags for this PIREP.
+	 * @return TRUE if Event/Tour credit can be adjusted, otherwise FALSE
+	 */
+	public boolean getCanAdjustEvents() {
+		return _canAdjustEvents;
 	}
 }

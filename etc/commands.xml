@@ -1245,7 +1245,13 @@
 	<command id="updevent">
 		<name>PIREP Update Event</name>
 		<class>org.deltava.commands.pirep.UpdateEventCommand</class>
-		<roles>PIREP</roles>
+		<roles>PIREP,Event,Operations</roles>
+	</command>
+
+	<command id="updtour">
+		<name>PIREP Update Tour</name>
+		<class>org.deltava.commands.pirep.UpdateTourCommand</class>
+		<roles>PIREP,Event,Operations</roles>
 	</command>
 
 	<command id="gaterecalc">

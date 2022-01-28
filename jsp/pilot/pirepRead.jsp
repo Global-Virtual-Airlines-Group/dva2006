@@ -162,10 +162,18 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Online Flight</td>
  <td class="data"><el:check type="radio" name="network" idx="*" width="84" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
 </tr>
-<c:if test="${(empty event) && (!empty possibleEvents)}">
+</c:if>
+<c:if test="${access.canAdjustEvents}">
+<c:if test="${fn:isOnline(pirep) && (empty event) && (!empty possibleEvents)}">
 <tr>
  <td class="label">Online Event</td>
  <td class="data"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" /> <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /></td>
+</tr>
+</c:if>
+<c:if test="${(empty tour) && (!empty possibleTours)}">
+<tr>
+ <td class="label">Flight Tour</td>
+ <td class="data"><el:combo name="flightTour" size="1" firstEntry="-" options="${possibleTours}" /> <el:cmdbutton url="updtour" post="true" link="${pirep}" label="UPDATE FLIGHT TOUR" /></td>
 </tr>
 </c:if>
 </c:if>

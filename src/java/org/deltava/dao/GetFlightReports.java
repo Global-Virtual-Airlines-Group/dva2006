@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -263,19 +263,36 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Loads all Flight Reports for a Pilot for a particular date range.
-	 * @param id the Pilot database ID
-	 * @param startDate the start date
-	 * @param days the number of days forward to include
-	 * @return a List of FlightReports
+	 * Returns all Flight Reports associated with a particular Pilot and Flight Tour.
+	 * @param pilotID the Pilot database ID
+	 * @param tourID the Tour database ID
+	 * @param dbName the database name
+	 * @return a List of Flight Reports, ordered by submission date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getLogbookCalendar(int id, java.time.Instant startDate, int days) throws DAOException {
-		return getLogbookCalendar(id, SystemData.get("airline.db"), startDate, days);
+	public List<FlightReport> getByTour(int pilotID, int tourID, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND (PR.TOUR_ID=?) ORDER BY PR.SUBMITTED");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, tourID);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Loads all Flight Reports for a Pilot for a particular date range.
 	 * @param id the Pilot database ID
