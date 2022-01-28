@@ -442,7 +442,7 @@ public class FlightSubmissionHelper {
 		}
 			
 		if ((bt.compareTo(minTime) < 0) || (bt.compareTo(maxTime) > 0))
-			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
+			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, !isEvent && !isTour);
 			
 		// Calculate timeliness of flight
 		if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT) && _isACARS) {
