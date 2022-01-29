@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -158,7 +158,7 @@ abstract class PilotReadDAO extends DAO {
 		int querySize = 0;
 		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((DatabaseBean) rawID).getID());
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((IDBean) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
 			Pilot p = _cache.get(id);

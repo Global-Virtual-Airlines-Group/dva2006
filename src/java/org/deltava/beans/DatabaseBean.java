@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.StringUtils;
@@ -7,26 +7,20 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A common abstract class for beans stored in the database with a numeric primary key.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 1.0
  */
 
-public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
+public abstract class DatabaseBean implements IDBean, Cacheable, Comparable<Object> {
 
 	private int _id;
 
-	/**
-	 * Return the database ID of this bean.
-	 * @return The primary key of the entry in the table in the database that corresponds to this object
-	 */
+	@Override
 	public int getID() {
 		return _id;
 	}
 
-	/**
-	 * Returns the database ID of this bean, formatted to a hexadecimal string.
-	 * @return the hexadecimal formatted database ID, or an empty string if zero
-	 */
+	@Override
 	public String getHexID() {
 		return (_id == 0) ? "" : StringUtils.formatHex(_id);
 	}
@@ -44,8 +38,7 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
 	}
 
 	/**
-	 * Validates a database ID. Used to enforce database ID behavior - that the ID cannot be zero or negative, and it cannot be updated once
-	 * set.
+	 * Validates a database ID. Used to enforce database ID behavior - that the ID cannot be zero or negative, and it cannot be updated once set.
 	 * @param oldID the old database ID
 	 * @param newID the new database ID
 	 * @throws IllegalArgumentException if the database ID is negative
@@ -59,11 +52,6 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
 			throw new IllegalStateException("Cannot change Datbase ID from " + oldID + " to " + newID);
 	}
 
-	/**
-	 * Tests for equality by comparing the class and database ID.
-	 * @param o the object to compare with
-	 * @return TRUE if the objects have the same class and database ID
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -71,27 +59,16 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
 		return (o instanceof DatabaseBean) && (compareTo(o) == 0) && (getClass() == o.getClass());
 	}
 
-	/**
-	 * Compares two database beans by comparing their IDs.
-	 * @see Comparable#compareTo(Object)
-	 */
 	@Override
 	public int compareTo(Object o) {
-		return Integer.compare(_id, ((DatabaseBean) o)._id);
+		return Integer.compare(_id, ((IDBean) o).getID());
 	}
 
-	/**
-	 * Returns the cache key for use in Form/DAO caches.
-	 * @return the cache key
-	 */
 	@Override
 	public Object cacheKey() {
 		return Integer.valueOf(getID());
 	}
 
-	/**
-	 * Returns the hash code of the database ID.
-	 */
 	@Override
 	public int hashCode() {
 		return _id;
