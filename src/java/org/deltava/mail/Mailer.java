@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -132,8 +132,8 @@ public class Mailer {
 		MessageTemplate mt = _ctx.getTemplate();
 		if (!StringUtils.isEmpty(mt.getNotifyContext())) {
 			Object ctx = _ctx.evaluate(mt.getNotifyContext()); 
-			if (ctx instanceof DatabaseBean)
-				ID = Integer.valueOf(((DatabaseBean) ctx).getID());
+			if (ctx instanceof IDBean)
+				ID = Integer.valueOf(((IDBean) ctx).getID());
 			else
 				log.warn(String.format("Context object %s not a DatabaseBean - %s", mt.getNotifyContext(), ctx.getClass().getName()));
 		}

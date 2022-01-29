@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -230,7 +230,7 @@ public class GetAcademyCourses extends DAO {
 					sqlBuf.append(id.toString());
 				}
 			} else
-				sqlBuf.append(((DatabaseBean) rawID).getID());	
+				sqlBuf.append(((IDBean) rawID).getID());	
 			
 			if (i.hasNext())
 				sqlBuf.append(',');
