@@ -1,16 +1,16 @@
-// Copyright 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.IDBean;
 
 /**
  * A Data Access Object to read Water Cooler last read marks.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 5.4
  */
 
@@ -73,7 +73,7 @@ public class GetCoolerLastRead extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, LASTREAD FROM common.COOLER_LASTREAD WHERE (AUTHOR_ID=?) AND (ID IN (");
 		for (Iterator<?> i = ids.iterator(); i.hasNext(); ) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((DatabaseBean) rawID).getID());
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((IDBean) rawID).getID());
 			sqlBuf.append(id.toString());
 			if (i.hasNext())
 				sqlBuf.append(',');
