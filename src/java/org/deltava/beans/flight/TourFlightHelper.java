@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to calculate Flight Tour eligibility.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 10.0
  */
 
@@ -75,7 +75,7 @@ public class TourFlightHelper {
 	 */
 	public boolean isComplete(Tour t) {
 		Collection<Integer> idxs = IntStream.rangeClosed(1, t.getFlightCount()).boxed().collect(Collectors.toCollection(TreeSet::new));
-		_flights.stream().mapToInt(fr -> fr.getDatabaseID(DatabaseID.TOUR)).filter(id -> (id != 0)).boxed().forEach(idxs::remove);
+		_flights.stream().filter(fr -> (fr.getDatabaseID(DatabaseID.TOUR) == t.getID())).mapToInt(fr -> t.getLegIndex(fr)).boxed().forEach(idxs::remove);
 		return idxs.isEmpty();
 	}
 	
