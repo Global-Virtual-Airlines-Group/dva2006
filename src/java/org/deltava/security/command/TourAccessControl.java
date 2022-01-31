@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.stats.Tour;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Tour beans.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -41,7 +41,7 @@ public class TourAccessControl extends AccessControl {
 		_canCreate = hasRole;
 		_canEdit = hasRole;
 		_canRead = (_t != null) && (_t.getActive() || hasRole);
-		_canEditLegs = (_t == null) ? _canCreate : (_canEdit && _t.getProgressIDs().isEmpty());
+		_canEditLegs = (_t == null) ? _canCreate : (_canEdit && _t.getProgress().isEmpty());
 		_canDelete = (_t != null) && (_ctx.isUserInRole("Admin") || _canEditLegs);
 	}
 
