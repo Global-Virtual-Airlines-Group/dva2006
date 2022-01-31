@@ -3,6 +3,7 @@ package org.deltava.beans.stats;
 
 import java.util.*;
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightData;
@@ -31,8 +32,7 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	private final List<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
 	private int _flightCount;
 	
-	private final Collection<Integer> _completionIDs = new HashSet<Integer>();
-	private final Collection<Integer>_progressIDs = new HashSet<Integer>();
+	private final Collection<TourProgress>_progress = new TreeSet<TourProgress>(Collections.reverseOrder());
 	
 	private AirlineInformation _owner;
 	
@@ -167,15 +167,15 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 * @return a Collection of Pilot database IDs
 	 */
 	public Collection<Integer> getCompletionIDs() {
-		return _completionIDs;
+		return _progress.stream().filter(tp -> (tp.getLegs() == getFlightCount())).map(TourProgress::getID).collect(Collectors.toSet());
 	}
 	
 	/**
 	 * Returns the IDs of Pilots that have completed at least one Flight in this Tour.
-	 * @return a Collection of Pilot database IDs
+	 * @return a Collection of TourProgress beans
 	 */
-	public Collection<Integer> getProgressIDs() {
-		return _progressIDs;
+	public Collection<TourProgress> getProgress() {
+		return _progress;
 	}
 	
 	/**
@@ -306,11 +306,7 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 * @param legs the number of legs completed
 	 */
 	public void addPilot(int id, int legs) {
-		Integer ID = Integer.valueOf(id);
-		if (legs > 0)
-			_progressIDs.add(ID);
-		if (legs >= getFlightCount())
-			_completionIDs.add(ID);
+		_progress.add(new TourProgress(id, getID(), legs));
 	}
 	
 	/**
