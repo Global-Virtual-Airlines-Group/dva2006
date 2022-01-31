@@ -2,6 +2,7 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
 import java.time.temporal.ChronoField;
@@ -12,7 +13,7 @@ import org.json.*;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.Tour;
-
+import org.deltava.beans.stats.TourProgress;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.comparators.*;
@@ -171,9 +172,9 @@ public class TourCommand extends AbstractAuditFormCommand {
 				t.getFlights().stream().map(JSONUtils::format).forEach(ja::put);
 				
 				// Load pilots in progress/completion
-				if (ac.getCanEdit() && (t.getProgressIDs().size() < 50)) {
+				if (ac.getCanEdit() && (t.getProgress().size() < 50)) {
 					GetPilot pdao = new GetPilot(con);
-					ctx.setAttribute("pilots", pdao.getByID(t.getProgressIDs(), "PILOTS"), REQUEST);
+					ctx.setAttribute("pilots", pdao.getByID(t.getProgress(), "PILOTS"), REQUEST);
 				}
 
 				// Save status attributes
@@ -237,13 +238,13 @@ public class TourCommand extends AbstractAuditFormCommand {
 				throw securityException("Cannot read Tour profile - " + t.getID());
 
 			// Load pilots in progress/completion
-			if (ac.getCanEdit() && (t.getProgressIDs().size() < 50)) {
+			Collection<Integer> progressIDs = t.getProgress().stream().map(TourProgress::getID).collect(Collectors.toSet());
+			if (ac.getCanEdit() && (t.getProgress().size() < 50)) {
 				GetPilot pdao = new GetPilot(con);
-				ctx.setAttribute("pilots", pdao.getByID(t.getProgressIDs(), "PILOTS"), REQUEST);
+				ctx.setAttribute("pilots", pdao.getByID(progressIDs, "PILOTS"), REQUEST);
 			}
 			
 			// Remove dupes between progress and completion
-			Collection<Integer> progressIDs = new HashSet<Integer>(t.getProgressIDs());
 			progressIDs.removeAll(t.getCompletionIDs());
 			ctx.setAttribute("progressIDs", progressIDs, REQUEST);
 
