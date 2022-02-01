@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -124,43 +124,51 @@ public class GetGates extends DAO {
 	 */
 	public List<Gate> getPopularGates(RoutePair rp, Simulator sim, boolean isDeparture) throws DAOException {
 		
-		// Check the cache
+		// Get the Gates
 		Airport a = isDeparture ? rp.getAirportD() : rp.getAirportA();
+		List<Gate> gates = getGates(a, sim);
+		
+		// Check the cache
 		GateUsage gu = new GateUsage(rp, isDeparture);
 		GateUsage gateUse = _useCache.get(gu.cacheKey());
 		if (gateUse != null) {
-			log.log((gateUse.getTotal() == 0) ? Level.WARN : org.apache.log4j.Level.INFO, gateUse.toString() + " total = " + gateUse.getTotal());
-			List<Gate> gates = getGates(a, sim);
+			log.log((gateUse.getTotal() == 0) ? Level.WARN : org.apache.log4j.Level.INFO, gateUse.toString() + " [cached] total = " + gateUse.getTotal());
 			gates.forEach(g -> g.setUseCount(gateUse.getUsage(g.getName())));
 			return CollectionUtils.sort(gates, CMP);
 		}
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),'') AS AL, IFNULL(GA.ZONE,0) AS INTL, NULL AS RG, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
-			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) "
-			+ "AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) ");
 		if (rp.getAirportD() != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY G.NAME");
 		
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) { 
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) { 
 			int pos = 0;
 			ps.setString(++pos, a.getICAO());
 			ps.setBoolean(++pos, isDeparture);
-			ps.setInt(++pos, sim.getCode());
 			if (rp.getAirportD() != null)
 				ps.setString(++pos, rp.getAirportD().getIATA());
 			if (rp.getAirportA() != null)
 				ps.setString(++pos, rp.getAirportA().getIATA());
 			
-			// Load the gates and save usage in the cache
-			List<Gate> results = execute(ps);
-			results.forEach(g -> { g.setRegion(a.getRegion()); gu.addGate(g.getName(), g.getUseCount()); });
-			log.log((gu.getTotal() == 0) ? Level.WARN : org.apache.log4j.Level.INFO, "Put " + gu.toString() + " total = " + gu.getTotal());
-			_useCache.add(gu);
-			return CollectionUtils.sort(results, CMP);
+			// Load gate usage
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					gu.addGate(rs.getString(1), rs.getInt(2));
+			}
+			
+			if (gu.getTotal() == 0) {
+				log.warn(gu.toString() + " [uncached] total = " + gu.getTotal());
+				log.warn(ps.toString());
+			} else {
+				gates.forEach(g -> g.setUseCount(gu.getUsage(g.getName())));
+				_useCache.add(gu);
+			}
+			
+			return CollectionUtils.sort(gates, CMP);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
