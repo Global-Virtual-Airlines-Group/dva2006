@@ -172,10 +172,15 @@ public class TourCommand extends AbstractAuditFormCommand {
 				t.getFlights().stream().map(JSONUtils::format).forEach(ja::put);
 				
 				// Load pilots in progress/completion
+				Collection<Integer> progressIDs = t.getProgress().stream().map(TourProgress::getID).collect(Collectors.toSet());
 				if (ac.getCanEdit() && (t.getProgress().size() < 50)) {
 					GetPilot pdao = new GetPilot(con);
-					ctx.setAttribute("pilots", pdao.getByID(t.getProgress(), "PILOTS"), REQUEST);
+					ctx.setAttribute("pilots", pdao.getByID(progressIDs, "PILOTS"), REQUEST);
 				}
+				
+				// Remove dupes between progress and completion
+				progressIDs.removeAll(t.getCompletionIDs());
+				ctx.setAttribute("progressIDs", progressIDs, REQUEST);
 
 				// Save status attributes
 				ctx.setAttribute("tour", t, REQUEST);
