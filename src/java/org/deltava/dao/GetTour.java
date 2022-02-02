@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.stats.Tour;
+import org.deltava.beans.stats.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
@@ -77,6 +77,47 @@ public class GetTour extends DAO {
 			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID")) {
 			List<Tour> results = execute(ps);
 			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Retrieves all Tours from the database that have at least one Flight Report linked to them.
+	 * @return a Collection of Tour beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Tour> getWithFlights() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM PIREPS P, TOURS T "
+			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (P.TOUR_ID>0) AND (T.ID=P.TOUR_ID) GROUP BY T.ID")) {
+			List<Tour> results = execute(ps);
+			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns progress by Pilot for a particular Tour.
+	 * @param tourID the Tour database ID
+	 * @return a Collection of TourProgress beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TourProgress> getProgress(int tourID) throws DAOException {
+		if (tourID < 1) return Collections.emptyList();
+		try (PreparedStatement ps = prepare("SELECT P.PILOT_ID, COUNT(P.ID) AS CNT FROM PIREPS P WHERE (P.TOUR_ID=?) AND ((P.STATUS=?) OR (P.STATUS=?) OR (P.STATUS=?)) GROUP BY P.PILOT_ID ORDER BY CNT DESC")) {
+			ps.setInt(1, tourID);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
+			ps.setInt(4, FlightStatus.HOLD.ordinal());
+			Collection<TourProgress> results = new ArrayList<TourProgress>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(new TourProgress(rs.getInt(1), tourID, rs.getInt(2)));
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

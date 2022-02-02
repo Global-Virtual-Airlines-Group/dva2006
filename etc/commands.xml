@@ -1353,7 +1353,13 @@
 		<class>org.deltava.commands.stats.TourCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="tourprogress">
+		<name>Tour Progress</name>
+		<class>org.deltava.commands.stats.TourProgressCommand</class>
+		<roles>Operations,Event,HR</roles>
+	</command>
+
 	<command id="tourdelete">
 		<name>Tour Profile Delete</name>
 		<class>org.deltava.commands.stats.TourDeleteCommand</class>
