@@ -88,7 +88,7 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	//golgotha.local.loader.loadGinsu();
+	golgotha.local.loader.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>
