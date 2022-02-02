@@ -72,14 +72,16 @@
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
+ <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${(tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${!empty pilots}"><span class="small">
+ <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${progressIDs.size() > 0}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
