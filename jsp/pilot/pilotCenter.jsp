@@ -54,6 +54,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
 <content:sysdata var="resourceEnabled" name="airline.resources.enabled" />
+<content:sysdata var="toursEnabled" name="online.tours" />
 <content:sysdata var="newsletterCats" name="airline.newsletters.categories" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
@@ -430,10 +431,14 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
  can have our automated system <el:cmd url="findflight">randomly select flights</el:cmd> for you to fly.</td>
 </tr>
-<c:if test="${tourAccess}">
+<c:if test="${toursEnabled && hasTourAccess}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="tours">Flight Tours</el:cmd></td>
  <td class="data">You can view, create and modify Flight Tour profiles.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="tourprogress">Flight Tour Progress</el:cmd></td>
+ <td class="data">You can view Pilot progression through all of the <content:airline /> Flight Tours.</td>
 </tr>
 </c:if>
 <tr>
