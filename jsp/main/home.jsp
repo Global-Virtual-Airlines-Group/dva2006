@@ -142,9 +142,10 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td colspan="2">RECENTLY COMPLETED FLIGHT TOURS</td>
 </tr>
 <c:forEach var="tour" items="${toursCompleted}">
+<c:set var="pilot" value="${updPilots[tour.ID]}" scope="page" />
 <tr>
  <td class="priB mid">${pilot.name}</td>
- <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.date}" /></td>
+ <td class="def mid">${tour.description} on <fmt:date fmt="d" date="${tour.date}" /></td>
 </tr>
 </c:forEach>
 </el:table>
