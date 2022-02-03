@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 9.2
+ * @version 10.2
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class HomeCommand extends AbstractCommand {
 	private final Random RND = new Random();
 	
 	private enum DynContent {
-		NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS, ACARS_TOLAND
+		NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS, ACARS_TOLAND, TOURS
 	}
 	
 	/**
@@ -64,8 +64,7 @@ public class HomeCommand extends AbstractCommand {
 			Instant now = Instant.now();
 			try {
 				GetProcData pdao = new GetProcData();
-				long runTime = pdao.getUptime(); 
-				ctx.setAttribute("runTime", Duration.between(now.minusSeconds(runTime), now), REQUEST);
+				ctx.setAttribute("runTime", Duration.between(now.minusSeconds(pdao.getUptime()), now), REQUEST);
 			} catch (DAOException de) {
 				log.error(de.getMessage());
 			}
@@ -161,12 +160,16 @@ public class HomeCommand extends AbstractCommand {
 				default:
 				case CENTURY_CLUB:
 				case PROMOTIONS:
+				case TOURS:
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
-					sudao.setQueryMax(5);
+					sudao.setQueryMax(10);
 					Collection<StatusUpdate> upds = null;
 					if (contentType == DynContent.CENTURY_CLUB) {
 						upds = sudao.getByType(UpdateType.RECOGNITION);
 						ctx.setAttribute("centuryClub", upds, REQUEST);
+					} else if (contentType == DynContent.TOURS) {
+						upds = sudao.getByType(UpdateType.TOUR);
+						ctx.setAttribute("toursCompleted", upds, REQUEST);
 					} else {
 						upds = sudao.getByType(UpdateType.EXTPROMOTION);
 						ctx.setAttribute("promotions", upds, REQUEST);
