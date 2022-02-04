@@ -20,6 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:attr attr="tourAccess" value="true" roles="Event.Operations,HR" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -72,7 +73,7 @@
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${(tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
@@ -80,7 +81,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </tr>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${progressIDs.size() > 0}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
