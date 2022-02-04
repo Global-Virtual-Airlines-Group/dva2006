@@ -55,7 +55,7 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="7">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>
