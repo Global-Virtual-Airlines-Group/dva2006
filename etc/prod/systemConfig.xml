@@ -560,8 +560,8 @@
 	<smtp>
 		<server>email-smtp.us-east-2.amazonaws.com</server>
 		<tls type="Boolean">true</tls>
-		<user>AKIAQNHLRAAHD43VX4GD</user>
-		<pwd>z4DFLyR4svl816obnV0ADt0bRhvMNM/rkm21KFg3</pwd>
+		<user>AKIAQNHLRAAHBXHXJPWZ</user>
+		<pwd>BCXd/XkX+GUNkyy2kYhadTZsBjHyvfHfJmKWt+H4hopV</pwd>
 		<multiChannel type="Boolean">true</multiChannel>
 	
 		<errors-to>webmaster@deltava.org</errors-to>
