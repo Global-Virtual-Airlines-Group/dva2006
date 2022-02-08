@@ -487,7 +487,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("tour", t, REQUEST);
 					ctx.setAttribute("tourIdx", Integer.valueOf(t.getLegIndex(fr)), REQUEST);
 				}
-			} else if (ac.getCanAdjustEvents()) {
+			} else if (ctx.isUserInRole("Operations") || ctx.isUserInRole("Event")) {
 				Instant dt = isACARS ? ((FDRFlightReport)fr).getTakeoffTime() : fr.getDate(); // Non-ACARS should be 12:00 already
 				ctx.setAttribute("possibleTours", trdao.findLeg(fr, dt, ctx.getDB()), REQUEST);
 			}
