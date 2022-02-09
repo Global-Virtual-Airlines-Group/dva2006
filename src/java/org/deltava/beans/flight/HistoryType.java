@@ -12,5 +12,5 @@ import org.deltava.beans.*;
 
 @Helper(FlightHistoryEntry.class)
 public enum HistoryType implements EnumDescription {
-	LIFECYCLE, SYSTEM, UPDATE, USER
+	LIFECYCLE, SYSTEM, UPDATE, USER, DISPATCH
 }
