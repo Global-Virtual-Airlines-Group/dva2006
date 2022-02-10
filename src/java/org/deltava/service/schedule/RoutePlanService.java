@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -145,7 +145,7 @@ public class RoutePlanService extends WebService {
 					if (schedInfo == null) {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);
-						dfr.setAirportA(aD);
+						dfr.setAirportA(aA);
 						dfr.setDate(Instant.now());
 						dfr.setEquipmentType(ac.getName());
 						dfr.setAuthorID(ctx.getUser().getID());
