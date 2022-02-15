@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.hr.*;
@@ -8,14 +8,14 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access controller for Job Posting applications.
  * @author Luke
- * @version 3.4
+ * @version 10.2
  * @since 3.4
  */
 
 public class JobApplicationAccessControl extends AccessControl {
 	
-	private JobPosting _jp;
-	private Application _a;
+	private final JobPosting _jp;
+	private final Application _a;
 	
 	private boolean _canView;
 
@@ -49,7 +49,7 @@ public class JobApplicationAccessControl extends AccessControl {
 		}
 		
 		// Check our access
-		_canView = _ctx.isUserInRole("HR") || (_a.getStatus() == Application.SHORTLIST) || (_a.getStatus() == Application.APPROVED);
+		_canView = _ctx.isUserInRole("HR") || (_a.getStatus() == ApplicantStatus.SHORTLIST) || (_a.getStatus() == ApplicantStatus.APPROVED);
 	}
 	
 	/**

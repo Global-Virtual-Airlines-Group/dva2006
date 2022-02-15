@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -6,19 +6,17 @@ import java.time.Instant;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A bean to store information about a job posting.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 3.4
  */
 
 public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	private String _title;
-	private int _status;
+	private JobStatus _status;
 	
 	private int _hireManagerID;
 	
@@ -31,15 +29,6 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	private String _summary;
 	private String _desc;
-	
-	public static final int OPEN = 0;
-	public static final int CLOSED = 1;
-	public static final int SHORTLIST = 2;
-	public static final int SELECTED = 3;
-	public static final int COMPLETE = 4;
-	
-	public static final String[] STATUS_NAMES = {"Open", "Closed", "Shortlisted", "Selected", "Complete"};
-	private static final String[] ROW_CLASSES = {null, "opt2", "opt3", "opt4", "opt1"};
 	
 	private final Collection<Comment> _comments = new ArrayList<Comment>();
 	private final Collection<Application> _apps = new ArrayList<Application>();
@@ -72,18 +61,10 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	/**
 	 * Returns the job posting status.
-	 * @return the status code
+	 * @return the JobStatus
 	 */
-	public int getStatus() {
+	public JobStatus getStatus() {
 		return _status;
-	}
-	
-	/**
-	 * Returns the job posting status name for display in a JSP.
-	 * @return the status name 
-	 */
-	public String getStatusName() {
-		return STATUS_NAMES[_status];
 	}
 	
 	/**
@@ -218,23 +199,12 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	/**
 	 * Updates the posting status.
-	 * @param status the status code
+	 * @param status the JobStatus
 	 */
-	public void setStatus(int status) {
-		if ((status < 0) || (status > STATUS_NAMES.length))
-			throw new IllegalArgumentException("Invalid Status - " + status);
-		
+	public void setStatus(JobStatus status) {
 		_status = status;
 	}
 	
-	/**
-	 * Updates the posting status.
-	 * @param status the status name
-	 */
-	public void setStatus(String status) {
-		setStatus(StringUtils.arrayIndexOf(STATUS_NAMES, status));
-	}
-
 	/**
 	 * Updates the minimum number of legs required to apply for this position.
 	 * @param legs the minimum number of legs
@@ -308,9 +278,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 
 	@Override
 	public String getRowClassName() {
-		if ((_status == OPEN) && _staffOnly) 
-			return "warn";
-		
-		return ROW_CLASSES[_status];
+		final String[] ROW_CLASSES = {null, "opt2", "opt3", "opt4", "opt1"};
+		return ((_status == JobStatus.OPEN) && _staffOnly) ? "warn" : ROW_CLASSES[_status.ordinal()];
 	}
 }

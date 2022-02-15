@@ -52,7 +52,7 @@ public class ShortListCommand extends AbstractCommand {
 			
 			// Update status
 			SetJobs jwdao = new SetJobs(con);
-			jp.setStatus(JobPosting.SHORTLIST);
+			jp.setStatus(JobStatus.SHORTLISTED);
 			jwdao.write(jp);
 			
 			// Create comment buffer
@@ -63,12 +63,12 @@ public class ShortListCommand extends AbstractCommand {
 			Collection<Application> SL = new ArrayList<Application>();
 			for (Application a : jp.getApplications()) {
 				boolean isSL = slIDs.contains(StringUtils.formatHex(a.getAuthorID()));
-				if (isSL && (a.getStatus() == Application.NEW)) {
-					a.setStatus(Application.SHORTLIST);
+				if (isSL && (a.getStatus() == ApplicantStatus.PENDING)) {
+					a.setStatus(ApplicantStatus.SHORTLIST);
 					SL.add(a);
 					buf.append("Added " + a.getName() + " to shortlist\r\n");
 				} else if (a.getShortlisted() && !isSL) {
-					a.setStatus(Application.NEW);
+					a.setStatus(ApplicantStatus.PENDING);
 					buf.append("Removed " + a.getName() + " from shortlist\r\n");
 				} else if (a.getShortlisted())
 					SL.add(a);

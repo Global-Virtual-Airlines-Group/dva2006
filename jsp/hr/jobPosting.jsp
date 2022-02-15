@@ -18,37 +18,34 @@
 <c:choose>
 <c:when test="${access.canApply}">
 <c:set var="formURL" value="jobapply.do" scope="page" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.body, l:32, t:'Application Text'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.body, l:32, t:'Application Text'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </c:when>
 <c:when test="${access.canShortlist}">
 <c:set var="formURL" value="jobsl.do" scope="page" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.sl, min:1, t:'Short-listed Applicant'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.sl, min:1, t:'Short-listed Applicant'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </c:when>
 <c:when test="${access.canSelect}">
 <c:set var="formURL" value="jobapprove.do" scope="page" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.sl, min:1, t:'Approved Applicant'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.sl, min:1, t:'Approved Applicant'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </c:when>
@@ -58,7 +55,7 @@ golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
 </c:choose>
-<script>
+<script async>
 golgotha.local.toggleBody = function(id)
 {
 const row = document.getElementById('desc' + id);
@@ -122,7 +119,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Posting Status</td>
- <td class="data"><span class="pri bld">${job.statusName}</span>
+ <td class="data"><span class="pri bld"><fmt:defaultMethod object="${job.status}" method="description" /></span>
 <c:if test="${job.staffOnly}">
 <br />
 <span class="sec bld caps">This Job Posting is visible to <content:airline /> Staff members only</span></c:if></td>

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to select short-listed applicants for a Job Posting. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -52,7 +52,7 @@ public class JobApproveCommand extends AbstractCommand {
 			
 			// Update status
 			SetJobs jwdao = new SetJobs(con);
-			jp.setStatus(JobPosting.SELECTED);
+			jp.setStatus(JobStatus.SELECTED);
 			jwdao.write(jp);
 			
 			// Create comment buffer
@@ -65,11 +65,11 @@ public class JobApproveCommand extends AbstractCommand {
 				Application a = i.next();
 				boolean isSelected = appIDs.contains(StringUtils.formatHex(a.getAuthorID()));
 				if (a.getShortlisted() && isSelected) {
-					a.setStatus(Application.APPROVED);
+					a.setStatus(ApplicantStatus.APPROVED);
 					selected.add(a);
 					buf.append("Selected " + a.getName() + " for hire\r\n");
 				} else if (a.getApproved() && !isSelected) {
-					a.setStatus(Application.SHORTLIST);
+					a.setStatus(ApplicantStatus.SHORTLIST);
 					buf.append("De-selected " + a.getName() + " for hire\r\n");	
 				}
 				

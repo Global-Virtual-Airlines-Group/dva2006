@@ -1,4 +1,4 @@
-// Copyright 2010, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to write Job Postings and Applications to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -33,7 +33,7 @@ public class SetJobs extends DAO {
 				+ "ON DUPLICATE KEY UPDATE CLOSES=N.CLOSES, STATUS=N.STATUS, TITLE=N.TITLE, MINLEGS=N.MINLEGS, MINAGE=N.MINAGE, STAFF_ONLY=N.STAFF_ONLY, HIRE_MGR=N.HIRE_MGR, SUMMARY=N.SUMMARY, "
 				+ "BODY=N.BODY")) {
 				ps.setTimestamp(1, createTimestamp(jp.getClosesOn()));
-				ps.setInt(2, jp.getStatus());
+				ps.setInt(2, jp.getStatus().ordinal());
 				ps.setString(3, jp.getTitle());
 				ps.setInt(4, jp.getMinLegs());
 				ps.setInt(5, jp.getMinAge());
@@ -61,7 +61,7 @@ public class SetJobs extends DAO {
 			ps.setInt(1, a.getID());
 			ps.setInt(2, a.getAuthorID());
 			ps.setTimestamp(3, createTimestamp(a.getCreatedOn()));
-			ps.setInt(4, a.getStatus());
+			ps.setInt(4, a.getStatus().ordinal());
 			ps.setString(5, a.getBody());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
