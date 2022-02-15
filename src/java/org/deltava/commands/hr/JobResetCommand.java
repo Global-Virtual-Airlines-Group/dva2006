@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to reset a closed Job Posting.
  * @author Luke
- * @version 3.6
+ * @version 10.2
  * @since 3.6
  */
 
@@ -46,16 +46,15 @@ public class JobResetCommand extends AbstractCommand {
 			
 			// Update the job and its applicants
 			SetJobs jwdao = new SetJobs(con);
-			jp.setStatus(JobPosting.CLOSED);
+			jp.setStatus(JobStatus.CLOSED);
 			jwdao.write(jp);
 			for (Application a : jp.getApplications()) {
-				if (a.getStatus() == Application.SHORTLIST) {
-					a.setStatus(Application.NEW);
+				if (a.getStatus() == ApplicantStatus.SHORTLIST) {
+					a.setStatus(ApplicantStatus.PENDING);
 					jwdao.write(a);
 				}
 			}
 			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

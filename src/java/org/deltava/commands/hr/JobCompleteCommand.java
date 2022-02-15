@@ -1,4 +1,4 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to mark a Job Posting hire process as complete.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 3.6
  */
 
@@ -46,7 +46,7 @@ public class JobCompleteCommand extends AbstractCommand {
 			
 			// Update status
 			SetJobs jwdao = new SetJobs(con);
-			jp.setStatus(JobPosting.COMPLETE);
+			jp.setStatus(JobStatus.COMPLETE);
 			jwdao.write(jp);
 			
 			// Write comment

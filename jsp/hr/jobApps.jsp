@@ -44,10 +44,10 @@
 <c:set var="job" value="${jobs[jobapp.ID]}" scope="page" />
 <c:set var="hireMgr" value="${hireMgrs[job.hireManagerID]}" scope="page" />
 <view:row entry="${jobapp}">
- <td><el:cmd url="profile" className="bld" linkID="${jobapp.authorID}">${jobapp.firstName} ${jobapp.lastName}</el:cmd></td>
+ <td><el:cmd url="profile" className="bld" linkID="${jobapp.authorID}">${jobapp.firstName}&nbsp;${jobapp.lastName}</el:cmd></td>
  <td><fmt:date date="${jobapp.createdOn}" fmt="d" /></td>
  <td><el:cmd url="job" link="${job}" className="sec bld">${job.title}</el:cmd></td>
- <td class="pri bld">${job.statusName}</td>
+ <td class="pri bld"><fmt:defaultMethod object="${job.status}" method="description" /></td>
  <td class="bld"><fmt:date date="${job.closesOn}" fmt="d" /></td>
  <td class="sec bld"><fmt:int value="${job.appCount}" /></td>
  <td>${hireMgr.name}</td>

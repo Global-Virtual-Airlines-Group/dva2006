@@ -35,7 +35,7 @@ public class ApplicationListCommand extends AbstractViewCommand {
 			// Get all of the jobs
 			GetJobs dao = new GetJobs(con);
 			Collection<JobPosting> allJobs = dao.getAll();
-			ctx.setAttribute("jobs", CollectionUtils.createMap(dao.getAll(), JobPosting::getID), REQUEST);
+			ctx.setAttribute("jobs", CollectionUtils.createMap(allJobs, JobPosting::getID), REQUEST);
 			
 			// Load hiring managers
 			Collection<Integer> IDs = allJobs.stream().map(JobPosting::getHireManagerID).collect(Collectors.toSet());
@@ -44,8 +44,8 @@ public class ApplicationListCommand extends AbstractViewCommand {
 			
 			// Get the applications
 			dao.setQueryStart(vc.getStart());
-        		dao.setQueryMax(vc.getCount());
-        		vc.setResults(dao.getApplications());
+       		dao.setQueryMax(vc.getCount());
+       		vc.setResults(dao.getApplications());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
