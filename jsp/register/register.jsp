@@ -254,9 +254,8 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="${cspan}"><span class="small">To most effectively place you in the equipment type program of your choice, please
- select your preferred equipment type program in each stage below. You may be placed in a different program than the one you
- selected depending on demand and pilot numbers.</span></td>
+ <td class="data" colspan="${cspan}"><span class="small">To most effectively place you in the equipment type program of your choice, please select your preferred equipment type program in each stage below. You may be 
+ placed in a different program than the one you selected depending on demand and pilot numbers.</span></td>
 </tr>
 <c:forEach var="stage" items="${eqTypes.keySet()}">
 <c:set var="stageEQ" value="${eqTypes[stage]}" scope="page" />
@@ -264,7 +263,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <c:if test="${stageEQ.size() > 1}">
 <tr>
  <td class="label">Stage <fmt:int value="${stage}" /></td>
- <td class="data" colspan="${cspan}"><el:check name="${sXparam}" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param[sXparam]}" /></td>
+ <td class="data" colspan="${cspan}"><el:check name="${sXparam}" type="radio" width="125" cols="6" options="${stageEQ}" checked="${param[sXparam]}" /></td>
 </tr>
 </c:if>
 </c:forEach>
@@ -275,8 +274,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label top" rowspan="2">Comments</td>
- <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist in processing 
- your application.</span></td>
+ <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist in processing your application.</span></td>
 </tr>
 <tr>
  <td class="data" colspan="${cspan}"><el:textbox name="comments" idx="*" width="80%" height="4" resize="true"></el:textbox></td>
