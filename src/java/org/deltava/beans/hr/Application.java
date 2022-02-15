@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import org.deltava.beans.ViewEntry;
@@ -6,20 +6,14 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store job posting application data.
  * @author Luke
- * @version 7.2
+ * @version 10.2
  * @since 3.4
  */
 
 public class Application extends ApplicantData implements ViewEntry {
 	
-	public static final int NEW = 0;
-	public static final int SHORTLIST = 1;
-	public static final int APPROVED = 2;
-	
-	public static final String[] STATUS_NAMES = {"Pending", "Shortlisted", "Approved"};
-
 	private int _authorID;
-	private int _status;
+	private ApplicantStatus _status;
 
 	/**
 	 * Creates the Application bean.
@@ -38,9 +32,9 @@ public class Application extends ApplicantData implements ViewEntry {
 
 	/**
 	 * Returns the Application status.
-	 * @return the status code
+	 * @return the ApplicantStatus
 	 */
-	public int getStatus() {
+	public ApplicantStatus getStatus() {
 		return _status;
 	}
 	
@@ -49,7 +43,7 @@ public class Application extends ApplicantData implements ViewEntry {
 	 * @return TRUE if shortlisted, otherwise FALSE
 	 */
 	public boolean getShortlisted() {
-		return (_status == SHORTLIST);
+		return (_status == ApplicantStatus.SHORTLIST);
 	}
 	
 	/**
@@ -57,15 +51,7 @@ public class Application extends ApplicantData implements ViewEntry {
 	 * @return TRUE if approved, otherwise FALSE
 	 */
 	public boolean getApproved() {
-		return (_status == APPROVED);
-	}
-	
-	/**
-	 * Returns the Application status name.
-	 * @return the status name
-	 */
-	public String getStatusName() {
-		return STATUS_NAMES[_status];
+		return (_status == ApplicantStatus.APPROVED);
 	}
 	
 	@Override
@@ -76,21 +62,15 @@ public class Application extends ApplicantData implements ViewEntry {
 
 	/**
 	 * Updates the application status.
-	 * @param status the status code
-	 * @throws IllegalArgumentException if an invalid status code is provided
+	 * @param status the ApplicantStatus
 	 */
-	public void setStatus(int status) {
-		if ((status < 0) || (status >= STATUS_NAMES.length))
-			throw new IllegalArgumentException("Invalid Application status - " + status);
-		
+	public void setStatus(ApplicantStatus status) {
 		_status = status;
 	}
 	
 	@Override
 	public String getRowClassName() {
-		if (_status == NEW)
-			return null;
-		
-		return (_status == SHORTLIST) ? "opt1" : "opt3";
+		if (_status == ApplicantStatus.PENDING) return null;
+		return (_status == ApplicantStatus.SHORTLIST) ? "opt1" : "opt3";
 	}
 }

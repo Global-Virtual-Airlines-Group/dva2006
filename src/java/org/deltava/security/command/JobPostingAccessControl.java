@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.time.Instant;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * An access controller for Job Postings.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 3.4
  */
 
@@ -62,7 +62,7 @@ public class JobPostingAccessControl extends AccessControl {
 		Pilot p = _ctx.getUser();
 		boolean isHireMgr = _ctx.isAuthenticated() && (p.getID() == _jp.getHireManagerID());
 		boolean isStaff = _ctx.isAuthenticated() && (p.getRank().isCP() || RoleUtils.hasAccess(p.getRoles(), STAFF_ROLES));
-		boolean canRead = (_jp.getStatus() == JobPosting.OPEN) || isHireMgr || isHR;
+		boolean canRead = (_jp.getStatus() == JobStatus.OPEN) || isHireMgr || isHR;
 		if (_jp.getStaffOnly())
 			canRead &= isStaff;
 		
@@ -73,19 +73,19 @@ public class JobPostingAccessControl extends AccessControl {
 			return;
 		
 		// Check if we have applications
-		_canEdit = isHR && (_jp.getStatus() < JobPosting.SELECTED);
+		_canEdit = isHR && (_jp.getStatus().ordinal() < JobStatus.SELECTED.ordinal());
 		_canDelete = (_jp.getAppCount() > 0) ? _ctx.isUserInRole("Admin") : isHR;
-		_canViewApplications = isHR || (isHireMgr && (_jp.getStatus() >= JobPosting.SHORTLIST));
-		_canShortList = isHR && (_jp.getStatus() == JobPosting.CLOSED);
-		_canReset = isHR && (_jp.getStatus() == JobPosting.SHORTLIST);
-		_canSelect = (_jp.getStatus() == JobPosting.SHORTLIST) && (isHR || isHireMgr);
+		_canViewApplications = isHR || (isHireMgr && (_jp.getStatus().ordinal() >= JobStatus.SHORTLISTED.ordinal()));
+		_canShortList = isHR && (_jp.getStatus() == JobStatus.CLOSED);
+		_canReset = isHR && (_jp.getStatus() == JobStatus.SHORTLISTED);
+		_canSelect = (_jp.getStatus() == JobStatus.SHORTLISTED) && (isHR || isHireMgr);
 		_canComment = isHR || _canShortList || _canSelect;
-		_canComplete = isHR && (_jp.getStatus() == JobPosting.SELECTED);
+		_canComplete = isHR && (_jp.getStatus() == JobStatus.SELECTED);
 			
 		// Check whether we can apply
 		Instant now = Instant.now();
 		Instant minDate = now.minusSeconds(_jp.getMinAge() * 86400);
-		_canApply = (_jp.getStatus() == JobPosting.OPEN) && (_jp.getClosesOn() != null) && (_jp.getClosesOn().isAfter(now)) && !isHireMgr;
+		_canApply = (_jp.getStatus() == JobStatus.OPEN) && (_jp.getClosesOn() != null) && (_jp.getClosesOn().isAfter(now)) && !isHireMgr;
 		_canApply &= (_jp.getMinLegs() <= p.getLegs()) && (p.getCreatedOn().isBefore(minDate));
 		if (_jp.getStaffOnly())
 			_canApply &= isStaff;

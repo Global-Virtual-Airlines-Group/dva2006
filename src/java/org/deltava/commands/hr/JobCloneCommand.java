@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to clone a Job posting.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.7
  */
 
@@ -73,7 +73,6 @@ public class JobCloneCommand extends AbstractCommand {
 			// Save in request
 			ctx.setAttribute("job", newjob, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("statuses", Arrays.asList(JobPosting.STATUS_NAMES), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

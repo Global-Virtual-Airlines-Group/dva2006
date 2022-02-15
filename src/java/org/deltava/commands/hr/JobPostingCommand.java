@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -16,12 +16,12 @@ import org.deltava.mail.*;
 import org.deltava.security.MultiUserSecurityContext;
 import org.deltava.security.command.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -63,7 +63,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 			
 			// Update from request
 			jp.setSummary(ctx.getParameter("summary"));
-			jp.setStatus(ctx.getParameter("status"));
+			jp.setStatus(EnumUtils.parse(JobStatus.class, ctx.getParameter("status"), JobStatus.OPEN));
 			jp.setDescription(ctx.getParameter("body"));
 			jp.setMinLegs(StringUtils.parse(ctx.getParameter("minLegs"), 0));
 			jp.setMinAge(StringUtils.parse(ctx.getParameter("minAge"), 0));
@@ -169,7 +169,6 @@ public class JobPostingCommand extends AbstractFormCommand {
 			// Save in request
 			ctx.setAttribute("job", jp, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("statuses", Arrays.asList(JobPosting.STATUS_NAMES), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

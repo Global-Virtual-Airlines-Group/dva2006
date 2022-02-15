@@ -31,6 +31,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="statuses" className="org.deltava.beans.hr.ApplicantStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -67,7 +68,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Posting Status</td>
- <td class="data"><el:combo name="status" idx="*" options="${statuses}" value="${job.statusName}" /></td>
+ <td class="data"><el:combo name="status" idx="*" options="${statuses}" value="${job.status}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
