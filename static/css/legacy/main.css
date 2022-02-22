@@ -355,6 +355,16 @@ body {
 	font: 12px tahoma, verdana, sans-serif;
 }
 
+body::-webkit-scrollbar {
+	background-color:#dedede;
+	width: 12px;
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #2828a1;
+	width: 10px;
+}
+
 div.ovalBorder, span.ovalBorder {
 	border: 1px solid;
 	padding: 12px;
