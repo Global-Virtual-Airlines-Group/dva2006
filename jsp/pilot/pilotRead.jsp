@@ -165,6 +165,13 @@ return true;
  <td colspan="${cspan}" class="data">${peID}</td>
 </tr>
 </c:if>
+<c:set var="posconID" value="${fn:networkID(pilot, 'POSCON')}" scope="page" />
+<c:if test="${!empty posconID}">
+<tr>
+ <td class="label">POSCON ID</td>
+ <td colspan="${cspan}" class="data">${posconID}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data sec">${pilot.location}</td>

@@ -130,6 +130,20 @@ ${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${du
  <td class="data">${IVAO_ID}</td>
 </tr>
 </c:if>
+<c:set var="PE_ID" value="${fn:networkID(applicant, 'PilotEdge')}" scope="page" />
+<c:if test="${!empty PE_ID}">
+<tr>
+ <td class="label">PilotEdge ID#</td>
+ <td class="data">${PE_ID}</td>
+</tr>
+</c:if>
+<c:set var="POSCON_ID" value="${fn:networkID(applicant, 'POSCON')}" scope="page" />
+<c:if test="${!empty POSCON_ID}">
+<tr>
+ <td class="label">POSCON ID#</td>
+ <td class="data">${POSCON_ID}</td>
+</tr>
+</c:if>
 <content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
 <c:if test="${!empty applicant.IMHandle[imAddr]}">
 <tr>
