@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -37,9 +37,9 @@ public class SetPilot extends PilotWriteDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
-			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
-			+ "RANKING=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, ACARS_UPDCH=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, "
+		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, POSCON_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
+			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, RANKING=?, "
+			+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, ACARS_UPDCH=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, "
 			+ "PROF_CR=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
@@ -52,41 +52,42 @@ public class SetPilot extends PilotWriteDAO {
 				ps.setString(5, p.getNetworkID(OnlineNetwork.VATSIM));
 				ps.setString(6, p.getNetworkID(OnlineNetwork.IVAO));
 				ps.setString(7, p.getNetworkID(OnlineNetwork.PILOTEDGE));
-				ps.setString(8, p.getTZ().getID());
-				ps.setInt(9, p.getNotifyCode());
-				ps.setInt(10, p.getEmailAccess());
-				ps.setBoolean(11, p.getShowSignatures());
-				ps.setBoolean(12, p.getShowSSThreads());
-				ps.setBoolean(13, p.getHasDefaultSignature());
-				ps.setBoolean(14, p.getShowNewPosts());
-				ps.setString(15, p.getUIScheme());
-				ps.setBoolean(16, p.getShowNavBar());
-				ps.setInt(17, p.getViewCount());
-				ps.setString(18, p.getDateFormat());
-				ps.setString(19, p.getTimeFormat());
-				ps.setString(20, p.getNumberFormat());
-				ps.setInt(21, p.getAirportCodeType().ordinal());
-				ps.setInt(22, p.getDistanceType().ordinal());
-				ps.setInt(23, p.getWeightType().ordinal());
-				ps.setInt(24, p.getMapType().ordinal());
-				ps.setInt(25, p.getRank().ordinal());
-				ps.setString(26, p.getEquipmentType());
-				ps.setInt(27, p.getStatus().ordinal());
-				ps.setBoolean(28, p.getNoExams());
-				ps.setBoolean(29, p.getNoVoice());
-				ps.setBoolean(30, p.getNoCooler());
-				ps.setBoolean(31, p.getNoTimeCompression());
-				ps.setInt(32, p.getACARSRestriction().ordinal());
-				ps.setInt(33, p.getACARSUpdateChannel().ordinal());
-				ps.setBoolean(34, p.isInvalid());
-				ps.setString(35, p.getLDAPName());
-				ps.setString(36, p.getMotto());
-				ps.setBoolean(37, p.getIsPermanent());
-				ps.setBoolean(38, p.getIsForgotten());
-				ps.setBoolean(39, p.getProficiencyCheckRides());
-				ps.setString(40, p.getFirstName());
-				ps.setString(41, p.getLastName());
-				ps.setInt(42, p.getID());
+				ps.setString(8, p.getNetworkID(OnlineNetwork.POSCON));
+				ps.setString(9, p.getTZ().getID());
+				ps.setInt(10, p.getNotifyCode());
+				ps.setInt(11, p.getEmailAccess());
+				ps.setBoolean(12, p.getShowSignatures());
+				ps.setBoolean(13, p.getShowSSThreads());
+				ps.setBoolean(14, p.getHasDefaultSignature());
+				ps.setBoolean(15, p.getShowNewPosts());
+				ps.setString(16, p.getUIScheme());
+				ps.setBoolean(17, p.getShowNavBar());
+				ps.setInt(18, p.getViewCount());
+				ps.setString(19, p.getDateFormat());
+				ps.setString(20, p.getTimeFormat());
+				ps.setString(21, p.getNumberFormat());
+				ps.setInt(22, p.getAirportCodeType().ordinal());
+				ps.setInt(23, p.getDistanceType().ordinal());
+				ps.setInt(24, p.getWeightType().ordinal());
+				ps.setInt(25, p.getMapType().ordinal());
+				ps.setInt(26, p.getRank().ordinal());
+				ps.setString(27, p.getEquipmentType());
+				ps.setInt(28, p.getStatus().ordinal());
+				ps.setBoolean(29, p.getNoExams());
+				ps.setBoolean(30, p.getNoVoice());
+				ps.setBoolean(31, p.getNoCooler());
+				ps.setBoolean(32, p.getNoTimeCompression());
+				ps.setInt(33, p.getACARSRestriction().ordinal());
+				ps.setInt(34, p.getACARSUpdateChannel().ordinal());
+				ps.setBoolean(35, p.isInvalid());
+				ps.setString(36, p.getLDAPName());
+				ps.setString(37, p.getMotto());
+				ps.setBoolean(38, p.getIsPermanent());
+				ps.setBoolean(39, p.getIsForgotten());
+				ps.setBoolean(40, p.getProficiencyCheckRides());
+				ps.setString(41, p.getFirstName());
+				ps.setString(42, p.getLastName());
+				ps.setInt(43, p.getID());
 				executeUpdate(ps, 1);
 			}
 			

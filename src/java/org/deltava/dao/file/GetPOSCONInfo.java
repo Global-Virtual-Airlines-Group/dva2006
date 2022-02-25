@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Data Access Object to parse a POSCON JSON servinfo feed. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 10.1
  */
 
@@ -68,7 +68,7 @@ public class GetPOSCONInfo extends OnlineNetworkDAO {
 				p.setAltitude(lto.optInt("alt_amsl"));
 				p.setGroundSpeed(lto.optInt("gs_kt"));
 				p.setHeading(Math.round(lto.optFloat("true_hdg")));
-				p.setPosition(lto.optDouble("lat"), lto.optDouble("lng"));
+				p.setPosition(lto.optDouble("lat"), lto.optDouble("long"));
 			}
 			
 			JSONObject fpo = po.optJSONObject("flightPlan");

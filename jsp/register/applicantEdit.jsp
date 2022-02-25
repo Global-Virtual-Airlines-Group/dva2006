@@ -98,6 +98,10 @@ golgotha.onDOMReady(function() {
  <td class="label">PilotEdge ID#</td>
  <td class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:networkID(applicant, 'PilotEdge')}" size="10" max="9" /></td>
 </tr>
+<tr>
+ <td class="label">POSCON ID#</td>
+ <td class="data"><el:text name="POSCON_ID" idx="*" value="${fn:networkID(applicant, 'POSCON')}" size="10" max="9" /></td>
+</tr>
 
 <!-- E-Mail Information -->
 <tr class="title">
