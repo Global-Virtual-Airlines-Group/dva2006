@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2015, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2015, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to serve Terminal Route/Gate/Runway data to ACARS clients.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 10.0
  */
 
@@ -69,7 +69,7 @@ public class XMLClientDataService extends DownloadService {
 		}
 		
 		// Check the cache
-		if ((d != null) && (d.toHours() < 8) && (f.length() > 10240) && (md != null)) {
+		if ((d != null) && (d.toHours() < 48) && (f.length() > 10240) && (md != null)) {
 			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", ZIP_NAME));
 			ctx.setContentType("application/zip");
 			ctx.setHeader("max-age", 1800);
