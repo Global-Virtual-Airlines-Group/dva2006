@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw flight schedule information.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 9.0
  */
 public class GetRawScheduleInfo extends DAO {
@@ -61,7 +61,7 @@ public class GetRawScheduleInfo extends DAO {
 	
 	/**
 	 * Returns departure Airports for a particular raw schedule source.
-	 * @param src the ScheduleSource
+	 * @param src the ScheduleSource, or null for all sources
 	 * @param aA the arrival Airport, or null for all flights
 	 * @return a List of Airport beans
 	 * @throws DAOException if a JDBC error occurs
@@ -69,15 +69,21 @@ public class GetRawScheduleInfo extends DAO {
 	public List<Airport> getOriginAirports(ScheduleSource src, Airport aA) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM RAW_SCHEDULE WHERE (SRC=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM RAW_SCHEDULE ");
+		if ((src != null) || (aA != null))
+			sqlBuf.append("WHERE ");
+		if (src != null) {
+			sqlBuf.append("(SRC=?) ");
+			if (aA != null)
+				sqlBuf.append("AND ");
+		}
+		
 		if (aA != null)
 			sqlBuf.append(" AND (AIRPORT_A=?)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, src.ordinal());
-			if (aA != null)
-				ps.setString(2, aA.getIATA());
-			
+			if (src != null) ps.setInt(1, src.ordinal());
+			if (aA != null) ps.setString(2, aA.getIATA());
 			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
@@ -92,7 +98,7 @@ public class GetRawScheduleInfo extends DAO {
 	
 	/**
 	 * Returns arrival Airports for a particular raw schedule source.
-	 * @param src the ScheduleSource
+	 * @param src the ScheduleSource, or null for all sources
 	 * @param aD the departure Airport, or null for all flights
 	 * @return a List of Airport beans
 	 * @throws DAOException if a JDBC error occurs
@@ -100,14 +106,21 @@ public class GetRawScheduleInfo extends DAO {
 	public List<Airport> getArrivalAirports(ScheduleSource src, Airport aD) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_A FROM RAW_SCHEDULE WHERE (SRC=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_A FROM RAW_SCHEDULE ");
+		if ((src != null) || (aD != null))
+			sqlBuf.append("WHERE ");
+		if (src != null) {
+			sqlBuf.append("(SRC=?) ");
+			if (aD != null)
+				sqlBuf.append("AND ");
+		}
+
 		if (aD != null)
 			sqlBuf.append(" AND (AIRPORT_D=?)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, src.ordinal());
-			if (aD != null)
-				ps.setString(2, aD.getIATA());
+			if (src != null) ps.setInt(1, src.ordinal());
+			if (aD != null) ps.setString(2, aD.getIATA());
 			
 			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
