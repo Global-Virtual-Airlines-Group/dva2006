@@ -94,7 +94,7 @@ golgotha.onDOMReady(function() {
 <c:if test="${acarsEnabled && (empty pilot.pilotCode)}">You can use <span class="pribld">${pilot.ID}</span> as a temporary ACARS User ID.</c:if>
 <br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
-You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.remoteAddr})<c:if test="${!empty ipAddrInfo}">, in ${ipAddrInfo.location}</c:if>.</td>
+You are visiting today from <span class="bld">${req.remoteHost}</span><c:if test="${req.remoteAddr != req.remoteHost}"> (${req.remoteAddr})</c:if><c:if test="${!empty ipAddrInfo}">, in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
