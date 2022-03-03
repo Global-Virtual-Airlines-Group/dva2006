@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -105,6 +105,8 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
      */
     public void setCallsign(String cs) {
         _callSign = cs.trim().toUpperCase();
+        if (_callSign.length() > 15)
+        	_callSign = _callSign.substring(0, 16);
     }
     
     /**
