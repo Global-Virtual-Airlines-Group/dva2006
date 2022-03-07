@@ -2,6 +2,7 @@
 package org.deltava.beans.hr;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.deltava.beans.*;
@@ -16,7 +17,7 @@ import org.deltava.beans.*;
 public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	private String _title;
-	private JobStatus _status;
+	private JobStatus _status = JobStatus.OPEN;
 	
 	private int _hireManagerID;
 	
@@ -144,13 +145,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * @return a Collection of Application beans
 	 */
 	public Collection<Application> getSelectedApplications() {
-		Collection<Application> apps = new ArrayList<Application>();
-		for (Application a : _apps) {
-			if (a.getApproved())
-				apps.add(a);
-		}
-		
-		return apps;
+		return _apps.stream().filter(Application::getApproved).collect(Collectors.toList());
 	}
 	
 	/**
