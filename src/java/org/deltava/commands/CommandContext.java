@@ -1,14 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A class for storing run-time data needed for Command invocations. This class handles reserving and releasing JDBC
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  * @see Command
  */
@@ -32,9 +34,6 @@ public class CommandContext extends HTTPContext {
 		super(req, rsp);
 	}
 
-	/**
-	 * Returns a JDBC Connection to the connection pool.
-	 */
 	@Override
 	public long release() {
 		long time = super.release();
@@ -68,13 +67,14 @@ public class CommandContext extends HTTPContext {
 		if (obj instanceof Integer)
 			return ((Integer) obj).intValue();
 		else if (obj == null)
-			throw new CommandException("Invalid Database ID - " + obj, false) {{ setStatusCode(400); }};
+			throw new CommandException("Invalid Database ID - null", false) {{ setStatusCode(400); }};
 		
 		// Try and convert into an integer
+		String s = String.valueOf(obj);
 		try {
-			return Integer.decode(String.valueOf(obj)).intValue();
+			return Integer.decode(s).intValue();
 		} catch (Exception e) {
-			throw new CommandException("Invalid Database ID - " + obj, false) {{ setStatusCode(400); }};
+			throw new CommandException(String.format("Invalid Database ID - %s", StringUtils.stripInlineHTML(s)), false) {{ setStatusCode(400); }};
 		}
 	}
 }
