@@ -79,7 +79,7 @@ public class GetRawScheduleInfo extends DAO {
 		}
 		
 		if (aA != null)
-			sqlBuf.append(" AND (AIRPORT_A=?)");
+			sqlBuf.append(" (AIRPORT_A=?)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (src != null) ps.setInt(1, src.ordinal());
@@ -116,7 +116,7 @@ public class GetRawScheduleInfo extends DAO {
 		}
 
 		if (aD != null)
-			sqlBuf.append(" AND (AIRPORT_D=?)");
+			sqlBuf.append(" (AIRPORT_D=?)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (src != null) ps.setInt(1, src.ordinal());
