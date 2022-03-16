@@ -13,7 +13,7 @@ import org.deltava.beans.ViewEntry;
 public class Application extends ApplicantData implements ViewEntry {
 	
 	private int _authorID;
-	private ApplicantStatus _status;
+	private ApplicantStatus _status = ApplicantStatus.PENDING;
 
 	/**
 	 * Creates the Application bean.
