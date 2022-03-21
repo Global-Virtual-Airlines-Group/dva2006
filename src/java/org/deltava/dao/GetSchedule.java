@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -402,16 +402,17 @@ public class GetSchedule extends DAO {
 				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 				entry.setEquipmentType(rs.getString(7));
 				entry.setLength(rs.getInt(8));
-				entry.setHistoric(rs.getBoolean(11));
-				entry.setAcademy(rs.getBoolean(12));
-				// DST adjust is 13
-				entry.setSource(ScheduleSource.values()[rs.getInt(14)]);
-				entry.setCodeShare(rs.getString(15));
+				entry.setHistoric(rs.getBoolean(12));
+				entry.setAcademy(rs.getBoolean(13));
+				// DST adjust is 14
+				entry.setSource(ScheduleSource.values()[rs.getInt(15)]);
+				entry.setCodeShare(rs.getString(16));
+				int adjustArrivalDays = rs.getInt(11);
 				
 				ScheduleSourceInfo info = getSource(entry.getSource());
 				long effectiveDate = info.getEffectiveDate().toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC);
 				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(effectiveDate));
-				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(effectiveDate));
+				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusDays(adjustArrivalDays).plusSeconds(effectiveDate));
 				results.add(entry);
 			}
 		}

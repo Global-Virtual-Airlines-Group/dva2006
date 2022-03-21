@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Flight;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 8.0
  */
 
@@ -185,19 +185,26 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
+	 * Updates the number of days forward to adjust the arrival date.
+	 * @param days the number of days
+	 */
+	public void setArrivalPlusDays(int days) {
+		_arrivalPlusDays = days;
+	}
+	
+	/**
 	 * Converts a RawScheduleEntry to a ScheduleEntry for the current date. 
 	 * @param dt today as a LocalDate
 	 * @return a SceduleEntry, or null if the flight does not operate
 	 */
 	public ScheduleEntry toToday(LocalDate dt) {
 		if (!operatesOn(dt)) return null;
-		
 		ScheduleEntry se = new ScheduleEntry(getAirline(), getFlightNumber(), getLeg());
 		se.setAirportD(getAirportD());
 		se.setAirportA(getAirportA());
 		se.setEquipmentType(getEquipmentType());
 		se.setTimeD(LocalDateTime.of(dt, getTimeD().toLocalTime()));
-		se.setTimeA(LocalDateTime.of(dt, getTimeA().toLocalTime()));
+		se.setTimeA(LocalDateTime.of(dt.plusDays(getArrivalPlusDays()), getTimeA().toLocalTime()));
 		se.setAcademy(getAcademy());
 		se.setHistoric(getHistoric());
 		se.setSource(getSource());
