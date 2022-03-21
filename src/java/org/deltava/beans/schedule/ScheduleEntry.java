@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.util.StringUtils;
@@ -9,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -32,6 +33,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	private boolean _historic;
 	private boolean _academy;
 	private boolean _hasDSTAdjustment;
+	
+	/**
+	 * Adjusts the arrival date/time forward by a certain number of days.
+	 */
+	protected int _arrivalPlusDays;
 
 	/**
 	 * Creates a new Schedule Entry object with a given flight.
@@ -150,6 +156,14 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public ScheduleSource getSource() {
 		return _src;
 	}
+	
+	/**
+	 * Returns the number of days forward to adjust the arrival time. 
+	 * @return the number of days
+	 */
+	public int getArrivalPlusDays() {
+		return _arrivalPlusDays;
+	}
 
 	/**
 	 * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
@@ -185,6 +199,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		_length = 0;
 		_timeD = ztD;
 		_timeA = ztA.plusSeconds(od - nd) ;
+		_arrivalPlusDays = (int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), _timeA.toLocalDate());
 		_hasDSTAdjustment = true;
 		return true;
 	}
@@ -211,8 +226,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public void setTimeA(LocalDateTime dt) {
 		_length = 0; // reset length
 		_timeA = ZonedDateTime.of(dt, getAirportTimeZone(getAirportA())); 
-		if ((_timeD != null) && _timeA.isBefore(_timeD))
+		if ((_timeD != null) && _timeA.isBefore(_timeD)) {
 			_timeA = _timeA.plusDays(1);
+			_arrivalPlusDays = 1;
+		} else if (_timeD != null)
+			_arrivalPlusDays = (int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), dt.toLocalDate());
 	}
 
 	/**

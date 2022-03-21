@@ -68,7 +68,7 @@
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) to ${entry.airportA.name} (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /><c:if test="${entry.arrivalPlusDays > 0}"> +${entry.arrivalPlusDays}</c:if></td>
  <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
  <td><fmt:duration duration="${entry.duration}" t="HH:mm" /></td> 
 </view:row>
