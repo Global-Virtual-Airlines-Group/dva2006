@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, ACADEMY, DST_ADJUST, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, PLUSDAYS, HISTORIC, ACADEMY, DST_ADJUST, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, entry.getAirline().getCode());
@@ -52,11 +52,12 @@ public class SetSchedule extends DAO {
 			ps.setInt(8, entry.getLength());
 			ps.setTimestamp(9, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
-			ps.setBoolean(11, entry.getHistoric());
-			ps.setBoolean(12, entry.getAcademy());
-			ps.setBoolean(13, entry.getHasDSTAdjustment());
-			ps.setInt(14, entry.getSource().ordinal());
-			ps.setString(15, entry.getCodeShare());
+			ps.setInt(11, entry.getArrivalPlusDays());
+			ps.setBoolean(12, entry.getHistoric());
+			ps.setBoolean(13, entry.getAcademy());
+			ps.setBoolean(14, entry.getHasDSTAdjustment());
+			ps.setInt(15, entry.getSource().ordinal());
+			ps.setString(16, entry.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -73,7 +74,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
@@ -89,10 +90,11 @@ public class SetSchedule extends DAO {
 			ps.setString(11, rse.getEquipmentType());
 			ps.setTimestamp(12, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(13, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			ps.setBoolean(14, rse.getForceInclude());
-			ps.setBoolean(15, rse.getUpdated());
-			ps.setBoolean(16, rse.getAcademy());
-			ps.setString(17, rse.getCodeShare());
+			ps.setInt(14, rse.getArrivalPlusDays());
+			ps.setBoolean(15, rse.getForceInclude());
+			ps.setBoolean(16, rse.getUpdated());
+			ps.setBoolean(17, rse.getAcademy());
+			ps.setString(18, rse.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

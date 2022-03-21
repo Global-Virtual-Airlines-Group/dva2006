@@ -258,11 +258,11 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
   (<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</td>
 <c:if test="${param.showUTCTimes}">
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /><c:if test="${entry.arrivalPlusDays > 0}"> +${entry.arrivalPlusDays}</c:if> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /><c:if test="${entry.arrivalPlusDays > 0}"> +${entry.arrivalPlusDays}</c:if></td>
 </c:if>
  <td class="small"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
