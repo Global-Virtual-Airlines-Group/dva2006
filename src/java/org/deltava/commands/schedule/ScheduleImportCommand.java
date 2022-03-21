@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -13,10 +13,10 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
-
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 import org.deltava.dao.file.GetSchedule;
+
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.*;
@@ -26,13 +26,36 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
 public class ScheduleImportCommand extends AbstractCommand {
 
 	protected static final Logger log = Logger.getLogger(ScheduleImportCommand.class);
+	
+	private static class RawDupeChecker implements Comparator<RawScheduleEntry> {
+		
+		protected RawDupeChecker() {
+			super();
+		}
+
+		@Override
+		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
+			
+			int tmpResult = rse1.getAirportD().compareTo(rse2.getAirportD());
+			if (tmpResult == 0)
+				tmpResult = rse1.getAirportA().compareTo(rse2.getAirportA());
+			if (tmpResult == 0)
+				tmpResult = rse1.compareTo(rse2);
+			if (tmpResult == 0)
+				tmpResult = rse1.getStartDate().compareTo(rse2.getStartDate());
+			if (tmpResult == 0)
+				tmpResult = rse1.getEndDate().compareTo(rse2.getEndDate());
+			
+			return (tmpResult == 0) ?  Integer.compare(rse1.getDayMap(), rse2.getDayMap()) : tmpResult;
+		}
+	}
 
 	/**
 	 * Executes the command.
@@ -179,6 +202,12 @@ public class ScheduleImportCommand extends AbstractCommand {
 				else
 					rse.setEquipmentType(eqTypes.get(0).getName());
 			}
+			
+			// Eliminate dupes
+			int rawEntryCount = entries.size();
+			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(new RawDupeChecker());
+			entries.removeIf(se -> !dupeFilter.add(se)); int dupeCount = rawEntryCount - entries.size(); 
+			log.info("Removed " + dupeCount + " duplicate schedule entries");
 
 			// Save the data
 			ctx.startTX();
@@ -210,6 +239,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			ctx.setAttribute("rawEntryStats", stats, REQUEST);
 			ctx.setAttribute("sources", stats, REQUEST);
 			ctx.setAttribute("status", st, REQUEST);
+			ctx.setAttribute("dupeCount", Integer.valueOf(dupeCount), REQUEST);
 			ctx.setAttribute("importCount", Integer.valueOf(entryCount), REQUEST);
 			
 			ctx.setAttribute("today", LocalDate.now(), REQUEST);

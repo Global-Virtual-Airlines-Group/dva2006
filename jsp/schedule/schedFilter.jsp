@@ -38,8 +38,7 @@ golgotha.local.toggleAll = function(src) {
 };
 
 golgotha.onDOMReady(function() {
-	const f = document.forms[0];
-	f.src.forEach(function(cb) { golgotha.local.updateSource(cb); });
+	document.forms[0].src.forEach(function(cb) { golgotha.local.updateSource(cb); });
 	return true;
 });
 </script>
@@ -62,7 +61,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Import Results</td>
- <td class="data"><fmt:int value="${importCount}" /> Raw Schedule Entries loaded (<fmt:int value="${purgeCount}" /> purged) from <span class="sec bld">${status.source.description}</span></td>
+ <td class="data"><fmt:int value="${importCount}" /> Raw Schedule Entries loaded (<fmt:int value="${purgeCount}" /> purged) from <span class="sec bld">${status.source.description}</span>.<c:if test="${dupeCount > 0}"><fmt:int value="${dupeCount}" /> duplicate entries removed.</c:if></td>
 </tr>
 <c:if test="${!empty status.errorMessages}">
 <tr>
