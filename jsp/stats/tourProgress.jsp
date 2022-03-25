@@ -46,7 +46,7 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
 <c:forEach var="tp" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[tp.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><el:cmd url="pilot" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="bld">${pilot.pilotCode}</td>
  <td class="sec nophone">${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td class="bld"><fmt:int value="${tp.legs}" /> / <fmt:int value="${tour.flightCount}" /></td>
