@@ -157,18 +157,21 @@ public class GetAcademyCourses extends DAO {
 	 * @param s the Status
 	 * @param sortBy the sort column SQL
 	 * @param c the Certification, or null for all
+	 * @param airlineCode the virtual airline code, or null for all
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getByStatus(Status s, String sortBy, Certification c) throws DAOException {
+	public Collection<Course> getByStatus(Status s, String sortBy, Certification c, String airlineCode) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
-			+ "(C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (C.CERTNAME=CA.CERTNAME) WHERE (C.CERTNAME=CR.NAME) AND (C.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM common.USERDATA UD, exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
+			+ "(C.ID=CC.COURSE_ID) LEFT JOIN exams.CERTAPPS CA ON (C.CERTNAME=CA.CERTNAME) WHERE (UD.ID=C.PILOT_ID) AND (C.CERTNAME=CR.NAME) AND (C.STATUS=?) ");
 		if (c != null)
 			sqlBuf.append("AND (C.CERTNAME=?) ");
 		else
 			sqlBuf.append(" AND (CA.AIRLINE=?)");
+		if (!StringUtils.isEmpty(airlineCode))
+			sqlBuf.append(" AND (UD.AIRLINE=?)");
 		
 		sqlBuf.append("GROUP BY C.ID ");
 		if (!StringUtils.isEmpty(sortBy)) {
@@ -179,6 +182,8 @@ public class GetAcademyCourses extends DAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, s.ordinal());
 			ps.setString(2, (c != null) ? c.getName() : SystemData.get("airline.code"));
+			if (!StringUtils.isEmpty(airlineCode))
+				ps.setString(3, airlineCode);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
