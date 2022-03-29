@@ -336,7 +336,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr id="flightDataLabel" class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
-<tr id="flightDataChart">
+<tr class="flightDataChart">
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
 <c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo}">
