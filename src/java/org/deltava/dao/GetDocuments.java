@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -7,13 +7,14 @@ import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.fleet.*;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -229,12 +230,13 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load from the Document Library table.
 	 */
 	private static List<Manual> loadManuals(PreparedStatement ps) throws SQLException {
-		List<Manual> results = new ArrayList<Manual>();
+		List<Manual> results = new ArrayList<Manual>(); AirlineInformation ai = SystemData.getApp(null);
 		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
 				Manual doc = new Manual(f);
+				doc.setOwner(ai);
 				doc.setName(rs.getString(2));
 				doc.setVersion(rs.getInt(4));
 				doc.setSecurity(Security.values()[rs.getInt(5)]);
@@ -257,11 +259,12 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load from the Newsletter Library table.
 	 */
 	private static List<Newsletter> loadNewsletters(PreparedStatement ps) throws SQLException {
-		List<Newsletter> results = new ArrayList<Newsletter>();
+		List<Newsletter> results = new ArrayList<Newsletter>(); AirlineInformation ai = SystemData.getApp(null);
 		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
 				Newsletter nws = new Newsletter(new File(SystemData.get("path.newsletter"), rs.getString(1)));
+				nws.setOwner(ai);
 				nws.setName(rs.getString(2));
 				nws.setCategory(rs.getString(3));
 				nws.setSecurity(Security.values()[rs.getInt(5)]);
