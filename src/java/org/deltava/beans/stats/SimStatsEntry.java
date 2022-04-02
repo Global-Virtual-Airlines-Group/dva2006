@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.Simulator;
 /**
  * A bean to store Simulator version statistics entries. 
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 8.1
  */
 
-public class SimStatsEntry extends LegHoursStatsEntry<Simulator> {
+public class SimStatsEntry extends LegHoursDateStatsEntry<Simulator> {
 
 	/**
 	 * Creates the bean.
