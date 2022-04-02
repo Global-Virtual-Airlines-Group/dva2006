@@ -1,18 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 import java.time.Instant;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.*;
 
 import org.deltava.beans.*;
-import org.deltava.util.ComboUtils;
+
+import org.deltava.util.*;
 
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 8.7
+ * @version 10.2
  * @since 1.0
  */
 
@@ -60,6 +60,10 @@ public class ScheduleSearchCriteria extends Flight {
 		setLeg(0);
 	}
 	
+	/**
+	 * Initializes the search criteria.
+	 * @param sortBy the sorting SQL clause
+	 */
 	public ScheduleSearchCriteria(String sortBy) {
 		super(null, 0, 0);
 		_sortBy = sortBy;
@@ -279,7 +283,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @see ScheduleSearchCriteria#getEquipmentTypes()
 	 */
 	public void addEquipmentType(String eqType) {
-		if (!"-".equals(eqType))
+		if (!StringUtils.isEmpty(eqType) && !"-".equals(eqType))
 			_eqTypes.add(eqType);
 	}
 
@@ -291,14 +295,10 @@ public class ScheduleSearchCriteria extends Flight {
 	public void setEquipmentTypes(Collection<String> eqTypes) {
 		if (eqTypes != null) {
 			_eqTypes.clear();
-			_eqTypes.addAll(eqTypes);
+			_eqTypes.forEach(this::addEquipmentType);
 		}
 	}
 
-	/**
-	 * Returns the equipment type.
-	 * @return the first equipment type
-	 */
 	@Override
 	public final String getEquipmentType() {
 		return (_eqTypes.isEmpty()) ? null : _eqTypes.iterator().next();
