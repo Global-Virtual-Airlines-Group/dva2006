@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class FindFlightCommand extends AbstractCommand {
 
 		// Get the airline and the airports
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		Collection<Aircraft> allEQ = new ArrayList<Aircraft>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -52,7 +53,9 @@ public class FindFlightCommand extends AbstractCommand {
 
 			// Get the equipment types
 			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("allEQ", acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).collect(Collectors.toList()), REQUEST);
+			acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).forEach(allEQ::add);
+			ctx.setAttribute("allEQ", allEQ, REQUEST);
+			ctx.setAttribute("allFamily", allEQ.stream().map(Aircraft::getFamily).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -95,13 +98,17 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
 		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
 		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
-		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 250))
-			criteria.setMaxResults(250);
+		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 500))
+			criteria.setMaxResults(500);
 
 		// Set equipment type(s)
+		final String f = ctx.getParameter("family");
 		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
 			criteria.setEquipmentTypes(ctx.getUser().getRatings());
-		else
+		else if (!StringUtils.isEmpty(f) && !"-".equals(f)) {
+			criteria.setEquipmentTypes(allEQ.stream().filter(ac -> f.equalsIgnoreCase(ac.getFamily())).map(Aircraft::getName).collect(Collectors.toSet()));
+			ctx.setAttribute("eqFamily", f, REQUEST);
+		} else
 			criteria.setEquipmentType(ctx.getParameter("eqType"));
 
 		// Validate sort criteria

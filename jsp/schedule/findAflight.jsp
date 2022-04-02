@@ -21,6 +21,7 @@
 <fmt:aptype var="useICAO" />
 <script>
 golgotha.ff = golgotha.ff || {};
+<fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!golgotha.form.comboSet(f.eqType) && !golgotha.form.comboSet(f.airline) && !golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA))
@@ -68,6 +69,8 @@ golgotha.ff.resetCombo = function(ev) {
 	return false; 
 };
 
+golgotha.ff.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
+golgotha.ff.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.ff.updateSort = function(cb) { return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb)); };
 golgotha.ff.refreshAirports = function() { updateAirline(document.forms[0].airline); };
 golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
@@ -129,7 +132,8 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.ff.resetCombo()" />
  <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
  <td class="label">Equipment</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${param.myEQTypes ? '-' : fafCriteria.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" /> - 
+ family <el:combo name="family" size="1" firstEntry="-" options="${allFamily}" value="${eqFamily}" onChange="void golgotha.ff.updateFamily(this)" /></td>
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
