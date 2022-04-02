@@ -49,6 +49,7 @@
 <c:forEach var="doc" items="${docs}">
 <c:set var="ac" value="${accessMap[doc]}" scope="page" />
 <c:set var="docType" value="${doc.type}" scope="page" />
+<c:set var="isValid" value="${doc.file().exists()}" scope="page" />
 <view:row entry="${doc}">
 <c:if test="${ac.canEdit}">
  <td class="pri bld"><el:cmd url="doclib" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
@@ -57,14 +58,17 @@
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
 <c:choose>
+<c:when test="${!isValid}">
+ <td>&nbsp;</td>
+</c:when>
 <c:when test="${docType.name() == 'XLS'}">
-<td><el:link url="/library/${doc.fileName}"><el:img src="library/excel.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
+ <td><el:link url="/library/${doc.fileName}"><el:img src="library/excel.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
 </c:when>
 <c:when test="${docType.name() == 'PDF'}">
-<td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
+ <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
 </c:when>
 <c:otherwise>
-<td><el:link url="/library/${doc.fileName}"><el:img src="library/download.png" className="noborder" caption="Download File" x="32" y="32" /></el:link></td>
+ <td><el:link url="/library/${doc.fileName}"><el:img src="library/download.png" className="noborder" caption="Download File" x="32" y="32" /></el:link></td>
 </c:otherwise>
 </c:choose>
  <td class="sec bld nophone"><fmt:int value="${doc.size / 1024}" />K</td>
@@ -76,7 +80,7 @@
 
 <!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
- <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td><a href="https://get.adobe.com/reader/" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our 
 manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
