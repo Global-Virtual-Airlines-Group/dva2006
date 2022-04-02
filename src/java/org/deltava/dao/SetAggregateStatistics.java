@@ -39,8 +39,7 @@ public class SetAggregateStatistics extends DAO {
 			updateEQ(fr.getEquipmentType());
 			updateDate(fr.getDate());
 			updatePilotDay(fr);
-			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))
-				updateNetwork(fr);
+			updateNetwork(fr);
 			if (fr.hasAttribute(FlightReport.ATTR_ACARS))
 				updateLanding(fr);
 			
@@ -258,7 +257,7 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(7, FlightReport.ATTR_DISPATCH);
 			ps.setInt(8, FlightStatus.OK.ordinal());
 			ps.setTimestamp(9, createTimestamp(fr.getDate()));
-			ps.setInt(10, fr.getNetwork().ordinal());
+			ps.setInt(10, (fr.getNetwork() == null) ? -1 : fr.getNetwork().ordinal());
 			executeUpdate(ps, 0);
 		}
 	}
