@@ -291,11 +291,12 @@ public class ScheduleSearchCriteria extends Flight {
 	 * Updates the equipment types to search with.
 	 * @param eqTypes a Collection of equipment type codes
 	 * @see ScheduleSearchCriteria#getEquipmentTypes()
+	 * @see ScheduleSearchCriteria#addEquipmentType(String)
 	 */
 	public void setEquipmentTypes(Collection<String> eqTypes) {
 		if (eqTypes != null) {
 			_eqTypes.clear();
-			_eqTypes.forEach(this::addEquipmentType);
+			eqTypes.forEach(this::addEquipmentType);
 		}
 	}
 
