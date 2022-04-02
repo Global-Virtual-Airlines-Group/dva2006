@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<content:js name="progress" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -68,12 +69,34 @@
 </c:otherwise>
 </c:choose>
 </c:if>
+<c:if test="${!empty tourProgress}">
+<tr class="title caps">
+ <td colspan="5">MY PROGRESS</td>
+</tr>
+<c:set var="pLeg" value="${tourProgress[maxLeg - 1]}" scope="page" />
+<c:set var="barPct" value="${maxLeg * 100 / tour.flights.size()}" scope="page" />
+<tr>
+ <td class="label top">Previous Leg</td>
+ <td class="data" colspan="4"><el:cmd url="pirep" link="${pLeg}" className="pri bld">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
+ ${pLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportA.IATA}"><fmt:airport airport="${pLeg.airportA}" /></el:cmd>)<span class="nophone ita"> flown on <fmt:date date="${pLeg.date}" fmt="d" /></span><br />
+ <span id="progressBar" class="bar" style="width:90%">&nbsp;</span></td>
+</tr>
+<c:if test="${maxLeg < tour.flights.size()}">
+<c:set var="nLeg" value="${tour.flights[maxLeg]}" scope="page" />
+<tr>
+ <td class="label">Next Leg</td>
+ <td class="data" colspan="4"><span class="sec bld">${nLeg.flightCode}</span>: ${nLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${nLeg.airportD.IATA}"><fmt:airport airport="${nLeg.airportD}" /></el:cmd>) - 
+ ${nLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${nLeg.airportA.IATA}"><fmt:airport airport="${nLeg.airportA}" /></el:cmd>)</td>
+</tr>
+</c:if>
+</c:if>
 <tr class="title caps">
  <td colspan="5">PILOT PROGRESS</td>
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
+ <c:if test="${!empty pilots}"><hr /></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
@@ -81,7 +104,8 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </tr>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br /><hr /></c:if>
+ <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
+ <c:if test="${!empty pilots}"><hr /></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
@@ -121,5 +145,12 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${barPct > 0}">
+<script async>
+const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
+golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:pr, text:{value:'', className:'pri', style:{color:'#000000'}}, fill:pr});
+golgotha.local.pb.setText(${barPct} + '% complete');
+golgotha.local.pb.set(${barPct} / 100.0);
+</script></c:if>
 </body>
 </html>
