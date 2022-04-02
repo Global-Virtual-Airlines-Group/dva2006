@@ -1,16 +1,16 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 6.2
  */
 
@@ -39,6 +39,8 @@ public class SetAggregateStatistics extends DAO {
 			updateEQ(fr.getEquipmentType());
 			updateDate(fr.getDate());
 			updatePilotDay(fr);
+			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))
+				updateNetwork(fr);
 			if (fr.hasAttribute(FlightReport.ATTR_ACARS))
 				updateLanding(fr);
 			
@@ -236,6 +238,27 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(15, Simulator.FS2020.getCode());
 			ps.setInt(16, FlightStatus.OK.ordinal());
 			ps.setString(17, eqType);
+			executeUpdate(ps, 0);
+		}
+	}
+
+	/*
+	 * Updates flight statistics for a particular online network.
+	 */
+	private void updateNetwork(FlightReport fr) throws SQLException {
+		try (PreparedStatement ps = prepare("REPLACE INTO FLIGHTSTATS_NETWORK (SELECT DATE, IF((ATTR & ?) > 0, 0, IF((ATTR & ?) > 0, 1, IF((ATTR & ?) > 0, 5, IF((ATTR & ?) > 0, 6, -1)))) AS NET, "
+			+ "COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, "
+			+ "COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)) GROUP BY DATE, NET HAVING (NET=?))")) {
+			ps.setInt(1, FlightReport.ATTR_VATSIM);
+			ps.setInt(2, FlightReport.ATTR_IVAO);
+			ps.setInt(3, FlightReport.ATTR_PEDGE);
+			ps.setInt(4, FlightReport.ATTR_POSCON);
+			ps.setInt(5, FlightReport.ATTR_ACARS);
+			ps.setInt(6, FlightReport.ATTR_HISTORIC);
+			ps.setInt(7, FlightReport.ATTR_DISPATCH);
+			ps.setInt(8, FlightStatus.OK.ordinal());
+			ps.setTimestamp(9, createTimestamp(fr.getDate()));
+			ps.setInt(10, fr.getNetwork().ordinal());
 			executeUpdate(ps, 0);
 		}
 	}
