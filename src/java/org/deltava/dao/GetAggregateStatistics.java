@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 
 /**
@@ -107,6 +107,51 @@ public class GetAggregateStatistics extends DAO {
 	}
 	
 	/**
+	 * Returns online network flight statstics by date.
+	 * @param srt
+	 * @param grp
+	 * @return a Collection of OnlineStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<OnlineStatsEntry> getOnlineStatistics(FlightStatsSort srt, FlightStatsGroup grp) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(grp.getSQL());
+		sqlBuf.append(" AS LABEL, SUM(F.LEGS) AS TOTAL, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS VL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS VH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS IL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS IH, "
+			+ "SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PEL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PEH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PSL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PSH FROM FLIGHTSTATS_NETWORK F GROUP BY LABEL ORDER BY ");
+		sqlBuf.append(srt.getSQL());
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, OnlineNetwork.VATSIM.ordinal());
+			ps.setInt(2, OnlineNetwork.VATSIM.ordinal());
+			ps.setInt(3, OnlineNetwork.IVAO.ordinal());
+			ps.setInt(4, OnlineNetwork.IVAO.ordinal());
+			ps.setInt(5, OnlineNetwork.PILOTEDGE.ordinal());
+			ps.setInt(6, OnlineNetwork.PILOTEDGE.ordinal());
+			ps.setInt(7, OnlineNetwork.POSCON.ordinal());
+			ps.setInt(8, OnlineNetwork.POSCON.ordinal());
+			
+			Collection<OnlineStatsEntry> results = new ArrayList<OnlineStatsEntry>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					OnlineStatsEntry st = new OnlineStatsEntry(rs.getString(1));
+					st.setTotalLegs(rs.getInt(2));
+					st.setNetwork(OnlineNetwork.VATSIM, rs.getInt(3), rs.getDouble(4));
+					st.setNetwork(OnlineNetwork.IVAO, rs.getInt(5), rs.getDouble(6));
+					st.setNetwork(OnlineNetwork.PILOTEDGE, rs.getInt(7), rs.getDouble(8));
+					st.setNetwork(OnlineNetwork.POSCON, rs.getInt(9), rs.getDouble(10));
+					results.add(st);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves aggregated Flight Report statistics.
 	 * @param s the statistics sorting option
 	 * @param grp the statistics grouping option
@@ -162,8 +207,7 @@ public class GetAggregateStatistics extends DAO {
 				entry.setHistoricLegs(rs.getInt(5));
 				entry.setDispatchLegs(rs.getInt(6));
 				entry.setACARSLegs(rs.getInt(7));
-				entry.setVATSIMLegs(rs.getInt(8));
-				entry.setIVAOLegs(rs.getInt(9));
+				entry.setOnlineLegs(rs.getInt(8) + rs.getInt(9));
 				entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(10));
 				entry.setFSVersionLegs(Simulator.FS2002, rs.getInt(11));
 				entry.setFSVersionLegs(Simulator.FS9, rs.getInt(12));

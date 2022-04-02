@@ -119,6 +119,7 @@
 <content:submenu title="Statistics" width="180">
  <content:subitem><el:cmd url="airlinestats">Airline Totals</el:cmd></content:subitem>
  <content:subitem><el:cmd url="flightstats">Flight Statistics</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="onlinestats">Online Statistics</el:cmd></content:subitem>
 <content:filter roles="HR,Operations">
  <content:subitem><el:cmd url="charterstats">Charter Statistics</el:cmd></content:subitem>
 </content:filter>
