@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.time.Instant;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.fleet.*;
-
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class GetLibrary extends DAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, DATABASE() AS DB FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".FLEET_AIRLINE FA, ");
 		sqlBuf.append(db);
@@ -77,7 +77,7 @@ public class GetLibrary extends DAO {
 	public Installer getInstaller(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, DATABASE() AS DB FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".FLEET WHERE (FILENAME=?) LIMIT 1");
 
@@ -117,7 +117,7 @@ public class GetLibrary extends DAO {
 	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT *, DATABASE() AS DB FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".FLEET WHERE (CODE=?) LIMIT 1");
 
@@ -209,12 +209,13 @@ public class GetLibrary extends DAO {
 		
 		// Determine the path
 		File p = new File(SystemData.get(isVideo ? "path.video" : "path.userfiles"));
-		List<FileEntry> results = new ArrayList<FileEntry>();
+		List<FileEntry> results = new ArrayList<FileEntry>(); AirlineInformation ai = SystemData.getApp(null);
 		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
 				File f = new File(p, rs.getString(1));
 				FileEntry entry = isVideo ? new Video(f) : new FileEntry(f);
+				entry.setOwner(ai);
 				entry.setName(rs.getString(2));
 				entry.setCategory(rs.getString(3));
 				entry.setSecurity(Security.values()[rs.getInt(5)]);
@@ -236,10 +237,11 @@ public class GetLibrary extends DAO {
 	private static List<Installer> loadInstallers(PreparedStatement ps) throws SQLException {
 		List<Installer> results = new ArrayList<Installer>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
+			boolean hasTotals = (rs.getMetaData().getColumnCount() > 12);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
 				Installer entry = new Installer(f);
+				entry.setOwner(SystemData.getApp(rs.getString(12)));
 				entry.setName(rs.getString(2));
 				entry.setImage(rs.getString(3));
 				entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
@@ -249,7 +251,7 @@ public class GetLibrary extends DAO {
 				if (f.exists())
 					entry.setLastModified(Instant.ofEpochMilli(f.lastModified()));
 				if (hasTotals)
-					entry.setDownloadCount(rs.getInt(12));
+					entry.setDownloadCount(rs.getInt(13));
 				
 				String fsCodes = rs.getString(10);
 				if (fsCodes != null) {
