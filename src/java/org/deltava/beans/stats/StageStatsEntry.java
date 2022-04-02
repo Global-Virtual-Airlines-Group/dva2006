@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.Instant;
@@ -6,11 +6,11 @@ import java.time.Instant;
 /**
  * A bean to store Equipment Stage statistics entries. 
  * @author Luke
- * @version 8.3
+ * @version 10.2
  * @since 8.1
  */
 
-public class StageStatsEntry extends LegHoursStatsEntry<Integer> {
+public class StageStatsEntry extends LegHoursDateStatsEntry<Integer> {
 
 	/**
 	 * Creates the bean.
