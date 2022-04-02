@@ -37,10 +37,13 @@
 <!--  Chart Header Bar -->
 <tr class="title caps">
  <td colspan="6" class="left">SIMULATOR VERSION CHART</td>
- <td colspan="5"><span class="und" onclick="golgotha.util.toggleExpand(this, 'chartRow'); golgotha.local.showChart()">EXPAND</span></td>
+ <td colspan="5"><span class="und" onclick="golgotha.local.showChart(); golgotha.util.toggleExpand(this, 'chartRow');">EXPAND</span></td>
 </tr>
 <tr class="chartRow" style="display:none;">
- <td colspan="11"><div id="flightStats" style="height:325px;"></div></td>
+ <td colspan="11"><div id="flightStats" style="height:345px;"></div></td>
+</tr>
+<tr class="chartRow" style="display:none;">
+ <td colspan="11"><div id="flightStatsBar" style="height:345px;"></div></td>
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps">
@@ -114,12 +117,13 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
+golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:{color:'black',fontName:'Verdana',fontSize:8}}};
+golgotha.local.charts.lgStyle = golgotha.local.charts.hStyle.textStyle;
 google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
-
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('get', 'simstats.ws', true);
 	xmlreq.onreadystatechange = function() {
@@ -135,10 +139,6 @@ golgotha.local.showChart = function() {
 };
 
 golgotha.local.renderChart = function() {
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
-
-    // Display the chart
-    const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
     const data = new google.visualization.DataTable();
     data.addColumn('string','Month');
     data.addColumn('number','Prepar3D');
@@ -149,7 +149,12 @@ golgotha.local.renderChart = function() {
     data.addColumn('number','FS2002');
     data.addColumn('number','Other');
     data.addRows(golgotha.local.chartData);
-    chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+
+    // Draw the charts
+    const c = new google.visualization.LineChart(document.getElementById('flightStats'));
+    const cb = new google.visualization.ColumnChart(document.getElementById('flightStatsBar'));
+    c.draw(data,{title:'Flight Legs by Simulator',hAxis:golgotha.local.charts.hStyle,legend:{textStyle:golgotha.local.charts.lgStyle}});
+    cb.draw(data,{title:'Percentage by Simulator',isStacked:'percent',hAxis:golgotha.local.charts.hStyle,legend:{textStyle:golgotha.local.charts.lgStyle}});
     return true;
 };
 </script>
