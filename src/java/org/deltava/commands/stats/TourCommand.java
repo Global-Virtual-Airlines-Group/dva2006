@@ -11,12 +11,13 @@ import java.time.format.DateTimeFormatterBuilder;
 import org.json.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.stats.Tour;
-import org.deltava.beans.stats.TourProgress;
+import org.deltava.beans.stats.*;
+
 import org.deltava.commands.*;
-import org.deltava.dao.*;
 import org.deltava.comparators.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.TourAccessControl;
 
@@ -252,6 +253,15 @@ public class TourCommand extends AbstractAuditFormCommand {
 			// Remove dupes between progress and completion
 			progressIDs.removeAll(t.getCompletionIDs());
 			ctx.setAttribute("progressIDs", progressIDs, REQUEST);
+			
+			// Load PIREPs and see current progress
+			if (ctx.isAuthenticated()) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), t.getStartDate(), (int)(Duration.between(t.getStartDate(), t.getEndDate()).toDays()));
+				tourFlights.removeIf(fr -> (fr.getDatabaseID(DatabaseID.TOUR) != t.getID()));
+				ctx.setAttribute("tourProgress", CollectionUtils.sort(tourFlights, new FlightReportComparator(FlightReportComparator.SUBMISSION)), REQUEST);
+				ctx.setAttribute("maxLeg", Integer.valueOf(tourFlights.stream().mapToInt(fr -> t.getLegIndex(fr)).max().orElse(0)), REQUEST);
+			}
 
 			readAuditLog(ctx, t);
 			ctx.setAttribute("tour", t, REQUEST);
