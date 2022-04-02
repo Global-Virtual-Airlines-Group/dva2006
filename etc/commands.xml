@@ -533,6 +533,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="onlinestats">
+		<name>Online Flight Statistics</name>
+		<class>org.deltava.commands.stats.OnlineStatsCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="acarsbuildstats">
 		<name>ACARS Client Build Statistics</name>
 		<class>org.deltava.commands.stats.ClientStatsCommand</class>
