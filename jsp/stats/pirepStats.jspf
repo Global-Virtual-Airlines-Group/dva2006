@@ -9,8 +9,7 @@
  <td style="width:6%">LEGS</td>
  <td class="nophone">PAX</td>
  <td>ACARS</td>
- <td>VATSIM</td>
- <td class="nophone">IVAO</td>
+ <td>ONLINE</td>
  <td class="nophone">HISTORIC</td>
  <td class="nophone">DISPATCH</td>
  <td class="nophone">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
@@ -28,8 +27,7 @@
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec small nophone"><fmt:int value="${stat.pax}" /></td>
  <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
- <td class="small"><fmt:int value="${stat.VATSIMLegs}" /> (<fmt:dec value="${(stat.VATSIMLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="small nophone"><fmt:int value="${stat.IVAOLegs}" /> (<fmt:dec value="${(stat.IVAOLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
  <td class="sec small nophone"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
  <td class="bld small nophone"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
 <c:if test="${hasPilotID}">
@@ -44,6 +42,6 @@
 <c:if test="${!noFooter}">
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="12"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="11"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </c:if>
