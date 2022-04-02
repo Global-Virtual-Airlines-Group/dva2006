@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -6,11 +6,11 @@ import java.time.*;
 /**
  * A bean to store flight legs/hours per year by percentile. 
  * @author Luke
- * @version 9.2
+ * @version 10.2
  * @since 9.2
  */
 
-public class PercentileStatsEntry extends LegHoursStatsEntry<Integer> {
+public class PercentileStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	
 	private int _total;
 	private final int _granularity;
