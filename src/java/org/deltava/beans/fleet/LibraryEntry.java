@@ -1,15 +1,17 @@
-// Copyright 2005, 2009, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2014, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
 
 import org.deltava.beans.ViewEntry;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -19,6 +21,8 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    private long _fileSize;
    private String _name;
    private String _description;
+   private AirlineInformation _owner;
+   
    private int _downloadCount;
    private Security _securityLevel = Security.PUBLIC;
    
@@ -66,6 +70,15 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     */
    public String getDescription() {
        return _description;
+   }
+   
+   /**
+    * Returns the owning Virtual Airline.
+    * @return an AirlineInformation bean
+    * @see LibraryEntry#setOwner(AirlineInformation)
+    */
+   public AirlineInformation getOwner() {
+	   return _owner;
    }
    
    /**
@@ -141,6 +154,15 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    public void setSecurity(Security level) {
        _securityLevel = level;
    }
+   
+   /**
+    * Updates the owning Virtual Airline.
+    * @param ai an AirlineInfromation bean
+    * @see LibraryEntry#getOwner()
+    */
+   public void setOwner(AirlineInformation ai) {
+	   _owner = ai;
+   }
 
    /**
     * Returns the underlying filesystem entry.
@@ -150,35 +172,21 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
       return _file;
    }
    
-   /**
-    * Compares two Library entries by comparing their names.
-    */
    @Override
    public int compareTo(LibraryEntry e2) {
     	return _name.compareTo(e2._name);
    }
    
-   /**
-    * Returns the hashcode of the entry name.
-    * @return the name's hashcode
-    */
    @Override
    public int hashCode() {
       return _name.hashCode();
    }
    
-   /**
-    * Returns the entry's table row CSS class name. 
-    */
    @Override
    public String getRowClassName() {
       return _file.exists() ? null : "warn";
    }
 
-   /**
-    * Returns the object's cache key.
-    * @return the entry name
-    */
    @Override
    public final Object cacheKey() {
       return getName();
