@@ -46,6 +46,14 @@ public class LoadCalculateCommand extends AbstractCommand {
 			if (!ac.getCanCalculateLoad())
 				throw securityException("Cannot calculate load factor on Flight Report " + fr.getID());
 			
+			// If it's draft, get the draft version with Gate data
+			if (fr.getStatus() == FlightStatus.DRAFT) {
+				final int id = fr.getID();
+				FlightReport dfr = frdao.getDraftReports(fr.getAuthorID(), fr, ctx.getDB()).stream().filter(p -> (p.getID() == id)).findFirst().orElse(null);
+				if (dfr != null)
+					fr = dfr;
+			}
+			
 			// Get the aircraft data
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(fr.getEquipmentType());
