@@ -79,7 +79,7 @@ public class GetLibrary extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, DATABASE() AS DB FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".FLEET WHERE (FILENAME=?) LIMIT 1");
+		sqlBuf.append(".FLEET F WHERE (F.FILENAME=?) LIMIT 1");
 
 		try {
 			List<Installer> results = new ArrayList<Installer>();
@@ -117,9 +117,9 @@ public class GetLibrary extends DAO {
 	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT *, DATABASE() AS DB FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, DATABASE() AS DB FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".FLEET WHERE (CODE=?) LIMIT 1");
+		sqlBuf.append(".FLEET F WHERE (F.CODE=?) LIMIT 1");
 
 		try {
 			List<Installer> results = new ArrayList<Installer>();
