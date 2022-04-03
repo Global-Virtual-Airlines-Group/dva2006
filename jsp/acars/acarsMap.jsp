@@ -195,7 +195,7 @@ golgotha.maps.reloadData = function(isReload) {
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	loaders.series.loadGinsu();
+	// loaders.series.loadGinsu();
 	return true;
 };
 </script>

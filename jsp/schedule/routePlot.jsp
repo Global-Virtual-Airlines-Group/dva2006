@@ -228,7 +228,7 @@ golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.local.loaders.series.loadGinsu();
+	// golgotha.local.loaders.series.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	golgotha.local.mapInit();
 	return true;
