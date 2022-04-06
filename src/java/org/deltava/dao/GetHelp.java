@@ -190,8 +190,9 @@ public class GetHelp extends DAO {
 	 */
 	public Collection<Issue> getActive() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
 			ps.setInt(1, IssueStatus.OPEN.ordinal());
+			ps.setInt(2, IssueStatus.ASSIGNED.ordinal());
 			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
