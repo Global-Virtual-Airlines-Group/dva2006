@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import org.deltava.beans.Pilot;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.AirlineComparator;
 import org.deltava.dao.*;
 
 import org.deltava.util.system.SystemData;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 8.7
+ * @version 10.2
  * @since 4.0
  */
 
@@ -148,9 +149,8 @@ public class NewAirportListCommand extends AbstractCommand {
 		}
 		
 		// Get active airlines
-		Collection<Airline> airlines = new TreeSet<Airline>();
-		for (String alCode : airports.keySet())
-			airlines.add(SystemData.getAirline(alCode));
+		Collection<Airline> airlines = new TreeSet<Airline>(new AirlineComparator(AirlineComparator.NAME));
+		airports.keySet().stream().map(alCode -> SystemData.getAirline(alCode)).filter(Objects::nonNull).forEach(airlines::add);
 		
 		// Save request attributes
 		ctx.setAttribute("airlines", airlines, REQUEST);

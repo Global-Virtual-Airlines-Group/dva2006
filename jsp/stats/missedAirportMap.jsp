@@ -24,7 +24,7 @@ golgotha.local.filter = function(combo) {
 		for (var y = 0; y < aps.length; y++)
 			aps[y].setVisible(isVisible);
 	}
-	
+
 	return true;
 };
 
@@ -64,7 +64,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -78,9 +78,9 @@ golgotha.local.airports.airlines.push('${entry.key}');
 <c:set var="aps" value="${entry.value}" scope="page" />
 golgotha.local.airports['${entry.key}'] = [];
 <c:forEach var="ap" items="${aps}">
-<map:marker var="airport" point="${ap}" marker="true" color="${airline.color}" />
-golgotha.local.airports['${entry.key}'].push(airport);
-airport.setMap(map);
+<map:marker var="golgotha.local.airport" point="${ap}" marker="true" color="${airline.color}" />
+golgotha.local.airports['${entry.key}'].push(golgotha.local.airport);
+golgotha.local.airport.setMap(map);
 </c:forEach>
 </c:forEach>
 </script>

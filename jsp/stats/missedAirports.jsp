@@ -52,7 +52,7 @@
  <td class="pri bld"><el:cmd url="airportinfo" linkID="${ap.IATA}">${ap.name}</el:cmd></td>
  <td class="bld nophone">${ap.ICAO}</td>
  <td class="sec">${ap.IATA}</td>
- <td class="small nophone">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
+ <td class="small nophone">${ap.country.name}&nbsp;<el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
  <td class="bld"><fmt:int value="${ap.airlineCodes.size()}" /></td>
 <c:choose>
 <c:when test="${srcSize == 0}">
