@@ -301,12 +301,11 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	}
 
 	/**
-	 * Adds a Pilot ID to this Tour's progress and completion IDs.
-	 * @param id the Pilot's database ID
-	 * @param legs the number of legs completed
+	 * Adds a Pilot's Tour progress ID to this Tour.
+	 * @param tp a TourProgress bean
 	 */
-	public void addPilot(int id, int legs) {
-		_progress.add(new TourProgress(id, getID(), legs));
+	public void addProgress(TourProgress tp) {
+		_progress.add(tp);
 	}
 	
 	/**

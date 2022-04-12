@@ -1,7 +1,7 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import org.deltava.beans.IDBean;
+import java.time.Instant;
 
 import org.deltava.util.StringUtils;
 
@@ -12,11 +12,14 @@ import org.deltava.util.StringUtils;
  * @since 10.2
  */
 
-public class TourProgress implements java.io.Serializable, IDBean, Comparable<TourProgress> {
+public class TourProgress implements java.io.Serializable, org.deltava.beans.IDBean, Comparable<TourProgress> {
 	
 	private final int _pilotID;
 	private final int _tourID;
 	private final int _legs;
+	
+	private Instant _firstLeg;
+	private Instant _lastLeg;
 
 	/**
 	 * Creates the bean.
@@ -59,6 +62,38 @@ public class TourProgress implements java.io.Serializable, IDBean, Comparable<To
 	 */
 	public int getLegs() {
 		return _legs;
+	}
+	
+	/**
+	 * Returns the flight date of the first leg in this Tour.
+	 * @return the flight date
+	 */
+	public Instant getFirstLeg() {
+		return _firstLeg;
+	}
+	
+	/**
+	 * Returns the flight date of the most recent leg in this Tour.
+	 * @return the flight date
+	 */
+	public Instant getLastLeg() {
+		return _lastLeg;
+	}
+
+	/**
+	 * Updates the flight date of the first leg in this Tour.
+	 * @param dt the flight date
+	 */
+	public void setFirstLeg(Instant dt) {
+		_firstLeg = dt;
+	}
+	
+	/**
+	 * Updates the flight date of the most recent leg in this Tour.
+	 * @param dt the flight date
+	 */
+	public void setLastLeg(Instant dt) {
+		_lastLeg = dt;
 	}
 
 	@Override
