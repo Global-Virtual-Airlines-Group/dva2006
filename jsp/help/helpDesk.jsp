@@ -52,7 +52,7 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 </content:filter>
 </el:table>
 
-<el:table className="view">
+<view:table cmd="helpdesk">
 <!-- My Issues -->
 <tr class="title caps">
  <td class="left" colspan="6">MY ISSUES</td>
@@ -114,7 +114,7 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <view:legend width="92" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </c:if>
-</el:table>
+</view:table>
 <br />
 <content:copyright />
 </content:region>
