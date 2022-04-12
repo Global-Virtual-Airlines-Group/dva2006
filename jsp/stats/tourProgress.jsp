@@ -33,12 +33,14 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td colspan="2" class="left"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT TOUR PROGRESS</td>
- <td colspan="2" class="right"><span class="nophone">SELECT TOUR </span><el:combo name="id" size="1" idx="*" required="true" firstEntry="[ SELECT ]" value="${tour}" options="${tours}" onChange="void golgotha.local.updateTour()" /></td>
+ <td colspan="4" class="right"><span class="nophone">SELECT TOUR </span><el:combo name="id" size="1" idx="*" required="true" firstEntry="[ SELECT ]" value="${tour}" options="${tours}" onChange="void golgotha.local.updateTour()" /></td>
 </tr>
 <tr class="title caps">
- <td style="width:50%">PILOT NAME</td>
+ <td style="width:40%">PILOT NAME</td>
  <td>PILOT ID</td>
  <td class="nophone">RANK</td>
+ <td class="nophone">STARTED</td>
+ <td class="nophone">COMPLETED</td>
  <td>FLIGHTS</td>
 </tr>
 
@@ -49,13 +51,15 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="bld">${pilot.pilotCode}</td>
  <td class="sec nophone">${pilot.rank.name}, ${pilot.equipmentType}</td>
+ <td class="nophone"><fmt:date date="${tp.firstLeg}" fmt="d" /></td>
+ <td class="nophone"><fmt:date date="${tp.lastLeg}" fmt="d" /></td>
  <td class="bld"><fmt:int value="${tp.legs}" /> / <fmt:int value="${tour.flightCount}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="6">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>

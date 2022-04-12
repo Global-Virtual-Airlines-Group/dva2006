@@ -107,15 +107,19 @@ public class GetTour extends DAO {
 	 */
 	public Collection<TourProgress> getProgress(int tourID) throws DAOException {
 		if (tourID < 1) return Collections.emptyList();
-		try (PreparedStatement ps = prepare("SELECT P.PILOT_ID, COUNT(P.ID) AS CNT FROM PIREPS P WHERE (P.TOUR_ID=?) AND ((P.STATUS=?) OR (P.STATUS=?) OR (P.STATUS=?)) GROUP BY P.PILOT_ID ORDER BY CNT DESC")) {
+		try (PreparedStatement ps = prepare("SELECT PILOT_ID, COUNT(ID) AS CNT, MIN(DATE) AS FD, MAX(DATE) AS LD FROM PIREPS WHERE (TOUR_ID=?) AND ((STATUS=?) OR (STATUS=?) OR (STATUS=?)) GROUP BY PILOT_ID ORDER BY CNT DESC, LD DESC, FD DESC")) {
 			ps.setInt(1, tourID);
 			ps.setInt(2, FlightStatus.OK.ordinal());
 			ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
 			ps.setInt(4, FlightStatus.HOLD.ordinal());
 			Collection<TourProgress> results = new ArrayList<TourProgress>();
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					results.add(new TourProgress(rs.getInt(1), tourID, rs.getInt(2)));
+				while (rs.next()) {
+					TourProgress tp = new TourProgress(rs.getInt(1), tourID, rs.getInt(2));
+					tp.setFirstLeg(toInstant(rs.getTimestamp(3)));
+					tp.setLastLeg(toInstant(rs.getTimestamp(4)));
+					results.add(tp);
+				}
 			}
 			
 			return results;
@@ -231,7 +235,7 @@ public class GetTour extends DAO {
 	 */
 	private void loadProgress(Tour t) throws SQLException {
 		
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.PILOT_ID, COUNT(P.ID) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.PILOT_ID, COUNT(P.ID), MIN(P.DATE), MAX(P.DATE) FROM ");
 		sqlBuf.append(t.getOwner().getDB());
 		sqlBuf.append(".PIREPS P WHERE (P.TOUR_ID=?) AND ((P.STATUS=?) OR (P.STATUS=?) OR (P.STATUS=?)) GROUP BY P.PILOT_ID");
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -240,8 +244,12 @@ public class GetTour extends DAO {
 			ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
 			ps.setInt(4, FlightStatus.HOLD.ordinal());
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					t.addPilot(rs.getInt(1), rs.getInt(2));
+				while (rs.next()) {
+					TourProgress tp = new TourProgress(rs.getInt(1), t.getID(), rs.getInt(2));
+					tp.setFirstLeg(toInstant(rs.getTimestamp(3)));
+					tp.setLastLeg(toInstant(rs.getTimestamp(4)));
+					t.addProgress(tp);
+				}
 			}
 		}
 	}
