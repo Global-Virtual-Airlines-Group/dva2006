@@ -1363,7 +1363,7 @@
 	<command id="tourprogress">
 		<name>Tour Progress</name>
 		<class>org.deltava.commands.stats.TourProgressCommand</class>
-		<roles>Operations,Event,HR</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="tourdelete">
