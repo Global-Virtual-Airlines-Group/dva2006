@@ -21,7 +21,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:attr attr="tourAccess" value="true" roles="Event.Operations,HR" />
+<content:attr attr="tourAccess" value="true" roles="Pilot" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
