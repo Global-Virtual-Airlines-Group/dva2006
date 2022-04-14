@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.doSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -33,8 +33,8 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <view:table cmd="issues">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="3" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>
- <td colspan="6">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
+ <td colspan="2" class="left caps"><span class="nophone"><content:airline /> DEVELOPMENT </span>ISSUES</td>
+ <td colspan="7">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
 <span class="nophone"> AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void golgotha.local.doSort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.doSort()" />
 &nbsp;&nbsp;<el:cmd url="isearch">SEARCH</el:cmd></span>&nbsp;<c:if test="${access.canCreate}"> | <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
@@ -70,8 +70,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
-<view:legend width="120" labels="Open,Fixed,Worked Around,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
+ <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><view:legend width="120" labels="Open,Fixed,Worked Around,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
 </tr>
 </view:table>
 </el:form>
