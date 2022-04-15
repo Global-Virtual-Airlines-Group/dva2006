@@ -39,8 +39,8 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
  <td style="width:40%">PILOT NAME</td>
  <td>PILOT ID</td>
  <td class="nophone">RANK</td>
- <td class="nophone">STARTED</td>
- <td class="nophone">COMPLETED</td>
+ <td class="nophone">FIRST LEG</td>
+ <td class="nophone">LAST LEG</td>
  <td>FLIGHTS</td>
 </tr>
 
