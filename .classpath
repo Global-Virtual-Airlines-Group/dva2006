@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jts-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/shapefilereader-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
@@ -32,7 +31,6 @@
 	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.4.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.15.jar"/>
@@ -44,7 +42,9 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.33.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.28.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20220320.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.21.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
