@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -11,13 +11,13 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
-
+import org.deltava.beans.stats.FrameRates;
 import org.deltava.dao.file.GetSerializedPosition;
 
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 4.1
  */
 
@@ -256,15 +256,23 @@ public class GetACARSPositions extends GetACARSData {
 	/**
 	 * Returns the average frame rate for a Flight.
 	 * @param flightID the ACARS flight ID
-	 * @return the rate in frames per second
+	 * @return a FrameRate bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public double getFrameRate(int flightID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT AVG(FRAMERATE) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")) {
+	public FrameRates getFrameRate(int flightID) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(FRAMERATE), MIN(FRAMERATE), MAX(FRAMERATE), AVG(FRAMERATE) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")) {
 			ps.setInt(1, flightID);
+			FrameRates fr = new FrameRates();
 			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() ? rs.getDouble(1) : 0;
+				if (rs.next()) {
+					fr.setSize(rs.getInt(1));
+					fr.setMin(rs.getInt(2));
+					fr.setMax(rs.getInt(3));
+					fr.setAverage(rs.getDouble(4));
+				}
 			}
+			
+			return fr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
