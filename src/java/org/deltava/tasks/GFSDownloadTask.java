@@ -1,4 +1,4 @@
-// Copyright 2013, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -25,13 +25,13 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 5.2
  */
 
 public class GFSDownloadTask extends Task {
 	
-	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.JET);
+	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.MID);
 
 	/**
 	 * Initializes the Task.
