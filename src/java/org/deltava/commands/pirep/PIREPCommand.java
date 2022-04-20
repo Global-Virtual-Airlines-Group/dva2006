@@ -551,6 +551,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						GetACARSPerformance apdao = new GetACARSPerformance(con);
 						ctx.setAttribute("acarsClientInfo", sysdao.get(afr.getAuthorID(), afr.getSimulator(), afr.getSubmittedOn()), REQUEST);
 						ctx.setAttribute("acarsTimerInfo", apdao.getTimers(info.getID()), REQUEST);
+						ctx.setAttribute("acarsFrames", apdao.getFrames(info.getID()), REQUEST);
 						if (info.getArchived())
 							ctx.setAttribute("archiveMetadata", ardao.getArchiveInfo(info.getID()), REQUEST);
 					}

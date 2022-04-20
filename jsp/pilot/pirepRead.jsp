@@ -339,7 +339,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr class="flightDataChart">
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
-<c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo}">
+<c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo || !empty acarsFrames}">
 <tr class="title caps">
  <td colspan="2">ACARS CLIENT DIAGNOSTIC DATA <span id="diagToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsDiagData')">COLLAPSE</span></td>
 </tr>
@@ -357,6 +357,13 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
  <td class="label top">ACARS Client Timers</td>
  <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" fmt="#0.00" />ms
  Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${tt.stdDev > 0}"> stdDev=<fmt:dec value="${tt.stdDev / tt.tickSize}" fmt="##0.00" />ms</c:if><c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
+</tr>
+</c:if>
+<c:if test="${!empty acarsFrames}">
+<tr class="acarsDiagData">
+ <td class="label top">Frame Rates</td>
+ <td class="data">Range: <fmt:int value="${acarsFrames.max}" /> fps (max) - <fmt:int value="${acarsFrames.getPercentile(50)}" /> fps (mid) - <fmt:int value="${acarsFrames.min}" /> fps (min) [<fmt:int value="'${acarsFrames.size}" /> samples]<br />
+P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="${acarsFrames.getPercentile(5)}" />, P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value="${acarsFrames.getPercentile(99)}" /></td>
 </tr>
 </c:if>
 </c:if>

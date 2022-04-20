@@ -1,7 +1,9 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.stats;
+package org.deltava.beans.acars;
 
 import java.util.*;
+
+import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean to store simulator frame rate statistics.
@@ -10,7 +12,7 @@ import java.util.*;
  * @since 10.2
  */
 
-public class FrameRates implements java.io.Serializable {
+public class FrameRates extends DatabaseBean {
 
 	private int _count;
 	private int _max;
