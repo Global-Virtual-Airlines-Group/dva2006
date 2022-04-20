@@ -11,7 +11,7 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
-import org.deltava.beans.stats.FrameRates;
+
 import org.deltava.dao.file.GetSerializedPosition;
 
 /**
