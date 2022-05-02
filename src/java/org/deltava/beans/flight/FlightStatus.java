@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.*;
@@ -43,6 +43,11 @@ public enum FlightStatus implements ViewEntry, EnumDescription {
 	 */
 	public boolean getIsComplete() {
 		return _isComplete;
+	}
+	
+	@Override
+	public String getDescription() {
+		return (this == OK) ? "Approved" : EnumDescription.super.getDescription();
 	}
 
 	@Override
