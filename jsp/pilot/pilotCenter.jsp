@@ -966,8 +966,8 @@ pilot Certification.</td>
  <td class="data">You can view statistics about the <content:airline /> membership and how long they have been members of the <content:airline />.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="rejectedpireps">Rejected Flight Reports</el:cmd></td>
- <td class="data">You can view rejected <content:airline /> Flight Reports.</td>
+ <td class="mid"><el:cmd className="bld" url="disposedpireps">Recently Disposed Flight Reports</el:cmd></td>
+ <td class="data">You can view recently Approved, Held or Rejected <content:airline /> Flight Reports.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="permusers">Permanent User Accounts</el:cmd></td>

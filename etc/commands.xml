@@ -1212,9 +1212,9 @@
 		<roles>PIREP</roles>
 	</command>
 	
-	<command id="rejectedpireps">
+	<command id="disposedpireps">
 		<name>Rejected Flight Reports</name>
-		<class>org.deltava.commands.pirep.RejectedFlightsCommand</class>
+		<class>org.deltava.commands.pirep.DisposedFlightsCommand</class>
 		<roles>HR,Operations</roles>
 	</command>
 

@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title><content:airline /> Rejected Flight Reports</title>
+<title><content:airline /> Disposed Flight Reports</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:favicon />
-<script>
+<script async>
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -25,15 +25,16 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="statuses" className="org.deltava.beans.flight.FlightStatus" exclude="DRAFT" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="rejectedpireps.do" method="post" validate="return false">
-<view:table cmd="rejectedpireps">
+<el:form action="disposedpireps.do" method="post" validate="return false">
+<view:table cmd="disposedpireps">
 <!-- Table Header Bar-->
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> REJECTED FLIGHT REPORTS</td>
- <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline /> RECENTLY DISPOSED </span>FLIGHT REPORTS</td>
+ <td colspan="3" class="right"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}"  onChange="void golgotha.local.sort()" /> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 <tr class="title caps">
  <td style="width:10%">DATE</td>
@@ -68,7 +69,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar force="${doScroll}"><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <br />

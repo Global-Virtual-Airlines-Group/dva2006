@@ -118,9 +118,12 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<FlightStatus> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME, GROUP_CONCAT(ER.EQTYPE) FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON "
-			+ "(PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ACARS_ONTIME AO ON (PR.ID=AO.ID) LEFT JOIN EQRATINGS ER ON ((ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?)) "
-			+ "WHERE (P.ID=PR.PILOT_ID) AND (");
+		boolean isOK = status.contains(FlightStatus.OK);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PILOTS P, PIREPS PR LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID)");
+		if (!isOK)
+			sqlBuf.append(" LEFT JOIN EQRATINGS ER ON ((ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?))");
+		
+		sqlBuf.append(" WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<FlightStatus> i = status.iterator(); i.hasNext();) {
 			FlightStatus st = i.next();
 			sqlBuf.append("(PR.STATUS=");
@@ -130,11 +133,13 @@ public class GetFlightReports extends DAO {
 				sqlBuf.append(" OR ");
 		}
 
-		sqlBuf.append(") GROUP BY PR.ID ORDER BY ");
+		sqlBuf.append(')');
+		if (!isOK) sqlBuf.append(" GROUP BY PR.ID ");
+		sqlBuf.append(" ORDER BY ");
 		sqlBuf.append(StringUtils.isEmpty(orderBy) ? "PR.DATE, PR.SUBMITTED, PR.ID" : orderBy);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
+			if (!isOK) ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
