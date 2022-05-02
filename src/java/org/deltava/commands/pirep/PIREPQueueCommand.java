@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -15,13 +15,11 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
  * @author Luke
- * @version 8.1
+ * @version 10.2
  * @since 1.0
  */
 
 public class PIREPQueueCommand extends AbstractViewCommand {
-	
-	private static final Collection<FlightStatus> PENDING = Arrays.asList(FlightStatus.SUBMITTED, FlightStatus.HOLD);
 
 	private static final String MY_EQ_SORT = "IF(IFNULL(LOCATE(?,GROUP_CONCAT(ER.EQTYPE)),0)=0,1,0), PR.DATE, PR.SUBMITTED, PR.ID";
 	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", "PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
@@ -54,7 +52,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			vc.setResults(dao.getByStatus(PENDING, isMyEQSort ? mySort : vc.getSortType()));
+			vc.setResults(dao.getByStatus(List.of(FlightStatus.SUBMITTED, FlightStatus.HOLD), isMyEQSort ? mySort : vc.getSortType()));
 			dao.getCaptEQType(vc.getResults());
 			
 			// Load the Pilots
