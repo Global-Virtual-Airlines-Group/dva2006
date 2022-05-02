@@ -107,16 +107,6 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
-	/**
-	 * Returns all Flight Reports in particular statuses.
-	 * @param status a Collection of Integer status codes
-	 * @return a List of FlightReports in the specified statuses
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightReport> getByStatus(Collection<FlightStatus> status) throws DAOException {
-		return getByStatus(status, null);
-	}
 
 	/**
 	 * Returns all Flight Reports in particular statuses.
