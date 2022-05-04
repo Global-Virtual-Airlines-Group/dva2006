@@ -25,7 +25,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:enum var="statuses" className="org.deltava.beans.flight.FlightStatus" exclude="DRAFT" />
+<content:enum var="statuses" className="org.deltava.beans.flight.FlightStatus" exclude="DRAFT,SUBMITTED" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -33,17 +33,17 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <view:table cmd="disposedpireps">
 <!-- Table Header Bar-->
 <tr class="title">
- <td colspan="4" class="left caps"><span class="nophone"><content:airline /> RECENTLY DISPOSED </span>FLIGHT REPORTS</td>
- <td colspan="3" class="right"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}"  onChange="void golgotha.local.sort()" /> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
+ <td colspan="3" class="left caps"><span class="nophone"><content:airline /> RECENTLY DISPOSED </span>FLIGHT REPORTS</td>
+ <td colspan="4" class="right"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}"  onChange="void golgotha.local.sort()" /> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 <tr class="title caps">
  <td style="width:10%">DATE</td>
- <td style="width:12%">INFO</td>
+ <td class="nophone" style="width:12%">INFO</td>
  <td style="width:12%">FLIGHT NUMBER</td>
  <td style="width:15%">PILOT NAME</td>
- <td style="width:25%">AIRPORTS</td>
+ <td class="nophone" style="width:25%">AIRPORTS</td>
  <td>EQUIPMENT</td>
- <td style="width:15%">REJECTED BY</td>
+ <td style="width:15%">${status.description} BY</td>
 </tr>
 
 <!-- Table Flight Report Data -->
@@ -52,7 +52,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:set var="disposedBy" value="${pilots[fn:DisposalID(pirep)]}" scope="page" />
 <tr>
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+ <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if>
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
@@ -61,7 +61,8 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small">${pilot.name}</td>
- <td class="small"><fmt:text value="${pirep.airportD.name} - ${pirep.airportA.name}" /></td>
+ <td class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - 
+ ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</td>
  <td class="sec">${pirep.equipmentType}</td>
  <td class="pri">${disposedBy.name}</td>
 </tr>
