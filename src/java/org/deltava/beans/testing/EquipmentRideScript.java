@@ -1,10 +1,10 @@
-// Copyright 2005, 2009, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 /**
  * A bean to store Check Ride scripts.
  * @author Luke
- * @version 8.7
+ * @version 10.2
  * @since 1.0
  */
 
@@ -99,6 +99,11 @@ public class EquipmentRideScript extends CheckRideScript {
 		int tmpResult = super.compareTo(cs2);
 		if  (tmpResult == 0) tmpResult = _eqType.compareTo(cs2._eqType);
 		return (tmpResult == 0) ? Boolean.compare(_isCurrency, cs2._isCurrency) : tmpResult;
+	}
+	
+	@Override
+	public boolean isCrossApp() {
+		return false;
 	}
 
 	@Override
