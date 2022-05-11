@@ -44,7 +44,7 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.28.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20220320.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.21.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-4.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-4.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
