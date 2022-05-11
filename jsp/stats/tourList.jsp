@@ -35,8 +35,8 @@
 </c:if>
 <td style="width:10%">START DATE</td>
 <td style="width:10%">END DATE</td>
-<td style="width:20%">NETWORKS</td>
-<td style="width:10%">&nbsp;</td>
+<td style="width:20%" class="nophone">NETWORKS</td>
+<td style="width:10%" class="nophone">&nbsp;</td>
 <td>FLIGHTS</td>
 </tr>
 <content:authUser>
@@ -52,12 +52,12 @@
  <td><fmt:date date="${t.startDate}" fmt="d" /></td>
  <td><fmt:date date="${t.endDate}" fmt="d" /></td>
 <c:if test="${empty t.networks}">
- <td class="sec bld">OFFLINE</td>
+ <td class="sec bld nophone">OFFLINE</td>
 </c:if>
 <c:if test="${!empty t.networks}">
- <td class="sec small bld"><fmt:list value="${t.networks}" delim=", " /></td>
+ <td class="sec small bld nophone"><fmt:list value="${t.networks}" delim=", " /></td>
 </c:if>
- <td class="small pri bld">${t.ACARSOnly ? 'ACARS Only' : "-"}</td>
+ <td class="small pri bld nophone">${t.ACARSOnly ? 'ACARS Only' : "-"}</td>
  <td><fmt:int value="${t.flightCount}" /></td>
 </view:row>
 </c:forEach>
@@ -65,7 +65,7 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="125" labels="Finished,Not Started,Active,Inactive" classes="opt2,opt1, ,warn" /></td>
+<view:legend width="125" labels="Expired,Not Started,Active,Inactive" classes="opt3,opt1, ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />

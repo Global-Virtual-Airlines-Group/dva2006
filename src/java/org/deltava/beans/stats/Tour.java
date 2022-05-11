@@ -346,7 +346,7 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 		if (now.isBefore(_startDate))
 			return "opt1";
 		if (now.isAfter(_endDate))
-			return "opt2";
+			return "opt3";
 
 		return null;
 	}
