@@ -119,7 +119,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="17" target="17" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="18" target="18" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -179,13 +179,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.17" compilerSourceVM="1.17" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.18" compilerSourceVM="1.18" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="17" source="17" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="18" source="18" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
@@ -583,7 +583,7 @@
 
 	    <!-- Compile the code -->
 	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
-	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern" fork="true">
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.18" target="1.18" compiler="modern" fork="true">
 	    	<include name="org/deltava/acars/*.java" />
 	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	        <classpath id="javac.classpath">
@@ -600,7 +600,7 @@
 		<manifest file="${java.io.tmpdir}/build/tracktile/META-INF/MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<attribute name="Main-Class" value="org.deltava.acars.PlotGlobalMap" />
-			<attribute name="Class-Path" value="log4j-1.2.17.jar jdom-2.0.6.jar mysql-connector-java-5.1.40-bin.jar golgotha.jar golgotha_ipc-2.10.jar" />
+			<attribute name="Class-Path" value="log4j-1.2.17.jar jdom-2.0.6.1.jar mysql-connector-java-8.0.29-bin.jar golgotha.jar golgotha_ipc-2.33.jar" />
 		</manifest>
 
 		<!-- Compress the base Java classes into a single JAR file -->
