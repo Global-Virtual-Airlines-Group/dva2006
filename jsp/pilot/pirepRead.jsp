@@ -23,7 +23,7 @@
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -40,7 +40,7 @@ return true;
 <c:if test="${isACARS}">
 <content:googleJS module="charts" />
 <content:js name="acarsFlightMap" />
-<script>
+<script async>
 <c:if test="${googleMap}">
 golgotha.local.zoomTo = function(lat, lng, zoom) {
 	map.setZoom((zoom == null) ? 12 : zoom);
@@ -300,11 +300,11 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <content:browser human="true">
 <tr class="title">
- <td colspan="2">ROUTE MAP</td>
+ <td colspan="2">ROUTE MAP <span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
 </tr>
 <c:choose>
 <c:when test="${googleMap}">
-<tr>
+<tr class="acarsMapData">
  <td class="label">Map Data</td>
  <td class="data"><span class="bld">
 <c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
@@ -316,17 +316,17 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty onlineTrack}"><span class="bld"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
  <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></span></c:if></td>
 </tr>
-<tr>
+<tr class="acarsMapData">
  <td colspan="2"><map:div ID="googleMap" height="575" /></td>
 </tr>
 </c:when>
 <c:when test="${googleStaticMap}">
-<tr>
+<tr class="acarsMapData">
  <td colspan="2" class="mid"><map:static w="1280" h="520" scale="2" markers="${filedRoute}" center="${mapCenter}" /></td>
 </tr>
 </c:when>
 <c:when test="${frMap}">
-<tr>
+<tr class="acarsMapData">
  <td colspan="2"><img src="https://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
@@ -340,32 +340,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
 <c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo || !empty acarsFrames}">
-<tr class="title caps">
- <td colspan="2">ACARS CLIENT DIAGNOSTIC DATA <span id="diagToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsDiagData')">COLLAPSE</span></td>
-</tr>
-<c:if test="${!empty acarsClientInfo}">
-<tr class="acarsDiagData">
- <td class="label top">System Information</td>
- <td class="data"><fmt:windows version="${acarsClientInfo.OSVersion}" /> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span><br />
-.NET <span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span><br />
-${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span><br />
-${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
-</tr>
-</c:if>
-<c:if test="${!empty acarsTimerInfo}">
-<tr class="acarsDiagData">
- <td class="label top">ACARS Client Timers</td>
- <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" fmt="#0.00" />ms
- Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${tt.stdDev > 0}"> stdDev=<fmt:dec value="${tt.stdDev / tt.tickSize}" fmt="##0.00" />ms</c:if><c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
-</tr>
-</c:if>
-<c:if test="${!empty acarsFrames}">
-<tr class="acarsDiagData">
- <td class="label top">Frame Rates</td>
- <td class="data">Range: <fmt:int value="${acarsFrames.max}" /> fps (max) - <fmt:int value="${acarsFrames.getPercentile(50)}" /> fps (mid) - <fmt:int value="${acarsFrames.min}" /> fps (min) [<fmt:int value="'${acarsFrames.size}" /> samples]<br />
-P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="${acarsFrames.getPercentile(5)}" />, P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value="${acarsFrames.getPercentile(99)}" /></td>
-</tr>
-</c:if>
+<%@ include file="/jsp/pilot/pirepACARSDiag.jspf" %>
 </c:if>
 </c:if>
 </content:browser>
@@ -422,7 +397,7 @@ P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="$
 &nbsp;<el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" /></content:filter></c:if>
 </c:if>
 <c:if test="${access.canDispose && (empty checkRide)}">
-<c:set var="bLabel" value="${(pirep.captEQType.size() == 0) ? 'SET' : 'CLEAR'}" scope="page" />
+<c:set var="bLabel" value="${empty pirep.captEQType ? 'SET' : 'CLEAR'}" scope="page" />
 &nbsp;<el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" /></c:if>
 <c:if test="${access.canEdit}">
 &nbsp;<el:cmdbutton url="pirep" link="${pirep}" op="edit" label="EDIT REPORT" /></c:if>
@@ -449,7 +424,7 @@ P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="$
 <content:browser human="true">
 <c:choose>
 <c:when test="${googleMap}">
-<script>
+<script async>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
