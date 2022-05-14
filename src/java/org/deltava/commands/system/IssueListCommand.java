@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -19,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display issues and comments.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
 public class IssueListCommand extends AbstractViewCommand {
    
-   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED", "I.RESOLVED DESC", "LC DESC"};
+   private static final String[] SORT_CODE = {"I.ID DESC", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED", "I.RESOLVED DESC", "LC DESC"};
    private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Created On", "Resolved On", "Last Comment"}, SORT_CODE);
     
     /**
