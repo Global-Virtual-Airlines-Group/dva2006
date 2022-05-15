@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -12,13 +12,13 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 1.0
  */
 
@@ -99,6 +99,9 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			EquipmentType eq = activeEQ.get(eqType);
 			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
 			txreq.setAircraftType(ctx.getParameter("acType"));
+			if (StringUtils.isEmpty(txreq.getAircraftType()))
+				txreq.setAircraftType(eq.getName());
+			
 			txreq.setSimulator(Simulator.fromName(ctx.getParameter("sim"), Simulator.UNKNOWN));
 			if (!eq.getOwner().getCode().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
@@ -137,9 +140,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Mailer m = new Mailer(p);
 			m.setContext(mctxt);
-			for (Pilot acp : pdao.getPilotsByEQ(eq, null, true, Rank.ACP))
-				m.setCC(acp);
-			
+			pdao.getPilotsByEQ(eq, null, true, Rank.ACP).forEach(m::setCC);
 			m.send(pdao.get(eq.getCPID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);

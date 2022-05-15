@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Program to transfer into'});
@@ -52,6 +52,7 @@ golgotha.local.updateAircraft = function(combo) {
 		acc.options[x + 1] = new Option(simTypes[x], simTypes[x]);
 
 	golgotha.util.display('acType', (simTypes.length > 1));
+	golgotha.util.display('noCR', (simTypes.length == 0));
 	acc.selectedIndex = (simTypes.length > 1) ? 0 : 1;
 	acc.required = (simTypes.length > 1);
 	return true;
@@ -85,6 +86,10 @@ golgotha.local.updateAircraft = function(combo) {
 <tr id="acType" style="display:none;">
  <td class="label">Preferred Aircraft</td>
  <td class="data"><el:combo name="acType" idx="*" size="1" options="${emptyList}" required="true" firstEntry="[ AIRCRAFT TYPE ]" /><span class="small ita nophone"> (Select the aircraft variant you would prefer to use for the check ride.)</span></td>
+</tr>
+<tr id="noCR" style="display:none;">
+ <td class="label">&nbsp;</td>
+ <td class="data"><span class="err bld ita">There is no Check Ride for this Simulator and this Equipment Program. This may cause a delay in Check Ride scheduling.</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
