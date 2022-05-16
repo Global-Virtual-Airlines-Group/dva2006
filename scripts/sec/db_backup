@@ -2,21 +2,25 @@
 # Database backup script
 # (c) 2005 - 2022 Global Virtual Airlines Group. All Rights Reserved.
 
+echo 'Starting'
+
 # Set archiving/mysqldump options
 full=0
 arc_util="pbzip2 -p2 -9 -b20 -c"
 dump_opt="--single-transaction -e -K -n -q"
 dump_create_opt="--single-transaction -e -K -q"
 dump_file_opt="--single-transaction -q -K --max-allowed-packet=16M"
-
-# Log Starting
-echo 'Starting'
 day_of_month=`date +%d`
 
+# Check for full backup
 if [ "$day_of_month" == "1" ] || [ "$day_of_month" == "16" ]
 then
-  echo 'Creating full backup'
-  full=1
+  hour_of_day=`date +%H`
+  if [ "$hour_of_day" -lt 13 ]
+  then
+    echo 'Creating full backup'
+    full=1
+  fi
 fi
 
 # Goto backup directory
