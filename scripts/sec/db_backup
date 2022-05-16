@@ -3,13 +3,21 @@
 # (c) 2005 - 2022 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
+full=0
 arc_util="pbzip2 -p2 -9 -b20 -c"
 dump_opt="--single-transaction -e -K -n -q"
 dump_create_opt="--single-transaction -e -K -q"
 dump_file_opt="--single-transaction -q -K --max-allowed-packet=16M"
 
 # Log Starting
-echo `date +%H:%M:%S`' Starting'
+echo 'Starting'
+day_of_month=`date +%d`
+
+if [ "$day_of_month" == "1" ] || [ "$day_of_month" == "16" ]
+then
+  echo 'Creating full backup'
+  full=1
+fi
 
 # Goto backup directory
 cd /home/backup/db
@@ -19,11 +27,11 @@ mysql="/usr/bin/mysql -h mysql.gva.aws --skip-column-names"
 mysqldump="/usr/bin/mysqldump -h mysql.gva.aws"
 
 # Dump core table
-echo `date +%H:%M:%S`' Writing mySQL configuration'
+echo 'Writing mySQL configuration'
 $mysqldump -e --flush-privileges -K `cat /etc/sqlbackup.conf` mysql | $arc_util > mysql.sql.bz2
 
 # Dump table definitions
-echo `date +%H:%M:%S`' Writing table definitions'
+echo 'Writing table definitions'
 $mysqldump -e -K -d --single-transaction --skip-triggers `cat /etc/sqlbackup.conf` common > common.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` events > event.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` acars > acars.sql
@@ -40,24 +48,24 @@ tar cfj create_tables.tar.bz2 *.sql
 rm *.sql
 
 # Dump e-mail data
-echo `date +%H:%M:%S`' Writing e-mail configuration'
+echo 'Writing e-mail configuration'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` postfix | $arc_util > postfix.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` rcmail | $arc_util > rcmail.sql.bz2
 
 # Dump GeoIP data
-echo `date +%H:%M:%S`' Writing GeoIP data'
+echo 'Writing GeoIP data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` geoip | $arc_util > geoip.sql.bz2
 
 # Dump online track data
-echo `date +%H:%M:%S`' Writing Online Track data'
+echo 'Writing Online Track data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` online | $arc_util > online.sql.bz2
 
 # Dump XACARS track data
-echo `date +%H:%M:%S`' Writing XACARS Track data'
+echo 'Writing XACARS Track data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` xacars | $arc_util > xacars.sql.bz2
 
 # Dump Common data/Water Cooler/Events
-echo `date +%H:%M:%S`' Writing Common data'
+echo 'Writing Common data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common AIRLINEINFO TZ METADATA COUNTRY AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS EQPROGRAMS EQAIRLINES AUTH AUTH_ALIAS AUTH_ROLES OCEANIC OCEANIC_ROUTES SYSINFODATA AUDIT_LOG | $arc_util > common.sql.bz2
 $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` common ISSUES ISSUE_AIRLINES ISSUE_COMMENTS ISSUE_FILES | $arc_util > issues.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common NAVDATA NAVLEGACY NAVREGIONS NAVCYCLE SIDSTAR_META SIDSTAR_WAYPOINTS AIRWAYS RUNWAYS RUNWAY_RENUMBER GATES GATE_AIRLINES ROUTE_CACHE MAGVAR FIR FIRALIAS AIRSPACE | $arc_util > navdata.sql.bz2
@@ -65,101 +73,114 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common CHARTS CHARTIMGS CHARTURLS
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common METARS TAFS | $arc_util > weather.sql.bz2
 
 # Dump events database
-echo `date +%H:%M:%S`' Writing Online Event data'
+echo 'Writing Online Event data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` events | $arc_util > events.sql.bz2
 
 # Dump testing database
-echo `date +%H:%M:%S`' Writing Examinations'
+echo 'Writing Examinations'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` exams | $arc_util > exams.sql.bz2
 
 # Dump Water Cooler
-echo `date +%H:%M:%S`' Writing Water Cooler'
+echo 'Writing Water Cooler'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_LASTREAD COOLER_REPORTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | $arc_util > cooler.sql.bz2
 
 # Dump Navigation Data if we're doing a full backup
-if [ "$1" = "full" ]
+if [ "$full" == "1" ]
 then
-  echo `date +%H:%M:%S`' Write last backup time'
+  echo 'Writing last backup time'
   echo 'SELECT UNIX_TIMESTAMP(NOW())' | $mysql `cat /etc/sqlbackup.conf` acars > lastbackuptime
 
-  echo `date +%H:%M:%S`' Writing ACARS Track Images'
-  $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars TRACKS | $arc_util > acars_tracks.sql.bz2
+  echo 'Writing ACARS Track Images'
+  $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars TRACKS TRACK_AIRPORTS | $arc_util > acars_tracks.sql.bz2
 fi
 
 # Dump ACARS data
-echo `date +%H:%M:%S`' Writing ACARS data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.MESSAGES --ignore-table=acars.POSITIONS acars | $arc_util > acars.sql.bz2
+echo 'Writing ACARS data'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars BANDWIDTH CONS ERRORS LIVERIES SIMINFO TAXI_TIMES VERSION_INFO WARNINGS | $arc_util > acars.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS | $arc_util > acars_positions.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS POSITION_ATC | $arc_util > acars_positions.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars FLIGHTS ARCHIVE DISPATCH_LOG FLIGHT_DISPATCH FLIGHT_DISPATCH_LOG FLIGHT_DISPATCHER \
+ FLIGHT_LOAD FLIGHT_SIDSTAR FLIGHT_SIDSTAR_WP GATEDATA ROUTES ROUTE_WP RWYDATA TOLAND PERFINFO FRAMERATES | $arc_util > acars_flights.sql.bz2
 
 # Write help desk
-echo `date +%H:%M:%S`' Writing help desk'
+echo 'Writing help desk'
 $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` dva HELPDESK HELPDESK_COMMENTS HELPDESK_FILES | $arc_util > dva_help.sql.bz2
 $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` afv HELPDESK HELPDESK_COMMENTS HELPDESK_FILES | $arc_util > afv_help.sql.bz2
 
 # Write flight statistics
-echo `date +%H:%M:%S`' Writing flight statistics'
+echo 'Writing flight statistics'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK | $arc_util > dva_stats.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK | $arc_util > afv_stats.sql.bz2
 
 # Write raw schedule
-echo `date +%H:%M:%S`' Writing raw schedule'
+echo 'Writing raw schedule'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > dva_raw_sched.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIRLINES RAW_SCHEDULE_DATES RAW_SCHEDULE_HISTORY | $arc_util > afv_raw_sched.sql.bz2
 
-# Write online track
-echo `date +%H:%M:%S`' Writing online tracks'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva ONLINE_TRACK | $arc_util > dva_online_track.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv ONLINE_TRACK | $arc_util > afv_online_track.sql.bz2
-
 # Dump DVA database
-echo `date +%H:%M:%S`' Writing DVA database'
+echo 'Writing DVA database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE \
  --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE \
  --ignore-table=dva.FLIGHTSTATS_LANDING --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES \
  --ignore-table=dva.FLIGHTSTATS_NETWORK \
+ --ignore-table=dva.PIREPS --ignore-table=dva.ACARS_PIREPS --ignore-table=dva.PIREP_COMMENT --ignore-table=dva.PIREP_ROUTE \
+ --ignore-table=dva.PIREP_DRAFT --ignore-table=dva.PROMO_EQ --ignore-table=dva.ACARS_ONTIME --ignore-table=dva.ONLINE_TRACK \
+ --ignore-table=dva.PIREP_STATUS_HISTORY \
  --ignore-table=dva.RAW_SCHEDULE --ignore-table=dva.RAW_SCHEDULE_DATES --ignore-table=dva.RAW_SCHEDULE_AIRLINES \
  --ignore-table=dva.HELPDESK_FILES --ignore-table=dva.HELPDESK --ignore-table=dva.HELPDESK_COMMENTS \
  --ignore-table=dva.FLIGHTSTATS_PILOT_DAY --ignore-table=dva.ONLINE_TRACK dva | $arc_util > dva.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dva_gscore.sql.bz2
 
+# Write DVA Flight data
+echo 'Writing DVA Flight data'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY ONLINE_TRACK | $arc_util > dva_pireps.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva ONLINE_TRACK | $arc_util > dva_online_track.sql.bz2 
+
 # Dump AFV database
-echo `date +%H:%M:%S`' Writing AFV database'
+echo 'Writing AFV database'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE \
  --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE \
  --ignore-table=afv.FLIGHTSTATS_LANDING --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES \
  --ignore-table=afv.FLIGHTSTATS_NETWORK \
+ --ignore-table=afv.PIREPS --ignore-table=afv.ACARS_PIREPS --ignore-table=afv.PIREP_COMMENT --ignore-table=afv.PIREP_ROUTE \
+ --ignore-table=afv.PIREP_DRAFT --ignore-table=afv.PROMO_EQ --ignore-table=afv.ACARS_ONTIME --ignore-table=afv.ONLINE_TRACK \
+ --ignore-table=afv.PIREP_STATUS_HISTORY \
  --ignore-table=afv.RAW_SCHEDULE --ignore-table=afv.RAW_SCHEDULE_DATES --ignore-table=afv.RAW_SCHEDULE_AIRLINES \
  --ignore-table=afv.HELPDESK_FILES --ignore-table=afv.HELPDESK --ignore-table=afv.HELPDESK_COMMENTS \
  --ignore-table=afv.FLIGHTSTATS_PILOT_DAY --ignore-table=afv.ONLINE_TRACK afv | $arc_util > afv.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > afv_gscore.sql.bz2
 
+# Write AFV Flight data
+echo 'Writing AFV Flight data'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY ONLINE_TRACK | $arc_util > afv_pireps.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv ONLINE_TRACK | $arc_util > afv_online_track.sql.bz2
+
 # Dump Galleries if we're doing a full backup
-if [ "$1" = "full" ]
+if [ "$full" == "1" ]
 then
-  echo `date +%H:%M:%S`' Writing DVA Image Gallery'
+  echo 'Writing DVA Image Gallery'
   $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERY | $arc_util > dva_gallery.sql.bz2
-  echo `date +%H:%M:%S`' Writing AFV Image Gallery'
+  echo 'Writing AFV Image Gallery'
   $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERY | $arc_util > afv_gallery.sql.bz2
 else  
-  echo `date +%H:%M:%S`' Writing Incremental DVA Image Gallery'
+  echo 'Writing Incremental DVA Image Gallery'
   $mysqldump $dump_opt -t `cat /etc/sqlbackup.conf` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" dva GALLERY | $arc_util > dva_gallery_inc.sql.bz2
-  echo `date +%H:%M:%S`' Writing Incremental AFV Image Gallery'
+  echo 'Writing Incremental AFV Image Gallery'
   $mysqldump $dump_opt -t `cat /etc/sqlbackup.conf` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" afv GALLERY | $arc_util > afv_gallery_inc.sql.bz2
 fi
 
 # Dump VATSIM data if we're doing a full backup
-if [ "$1" = "full" ]
+if [ "$full" == "1" ]
 then
-    echo `date +%H:%M:%S`' Writing VATSIM/IVAO/PilotEdge stats database'
+    echo 'Writing VATSIM/IVAO/PilotEdge stats database'
     $mysqldump $dump_opt `cat /etc/sqlbackup.conf` stats | $arc_util > stats.sql.bz2
 fi
 
 # Change file permissions
-echo `date +%H:%M:%S`' Setting file permissions'
+echo 'Setting file permissions'
 chown -R backup:users *
 chmod 640 *
 
 # Log Completion
-echo `date +%H:%M:%S`' Complete'
+echo 'Complete'
 exit 0
