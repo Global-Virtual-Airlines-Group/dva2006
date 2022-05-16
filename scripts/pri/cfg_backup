@@ -1,15 +1,14 @@
 #!/bin/bash
 # Configuration backup script
-# (c) 2005, 2006, 2007, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007, 2010, 2011, 2012, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
 
 # Copy configuration files
-tar vcfz awstats.tar.gz /usr/local/etc/awstats
-tar vcfz httpd.tar.gz /usr/local/apache24/conf
-tar vcfz tomcat.tar.gz /usr/local/tomcat/conf
-tar vcfz mysql.tar.gz /etc/my.cnf
+tar cfz httpd.tar.gz /usr/local/apache24/conf
+tar cfz tomcat.tar.gz /usr/local/tomcat/conf
+tar cfz mysql.tar.gz /etc/my.cnf
 
 # Update permissions
 chmod 660 *.tar.gz
