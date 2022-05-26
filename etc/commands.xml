@@ -390,6 +390,12 @@
 		<class>org.deltava.commands.gallery.GalleryCommand</class>
 		<roles>*</roles>
 	</command>
+
+	<command id="myimgs">
+		<name>My Image Gallery</name>
+		<class>org.deltava.commands.gallery.MyImagesCommand</class>
+		<roles>Pilot</roles>
+	</command>
 	
 	<command id="image">
 		<name>Gallery Image</name>
