@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -98,7 +98,7 @@ public class GetGallery extends DAO {
 	}
 	
 	/**
-	 * Retusn Images in the Image Gallery created on a specific date.
+	 * Returns Images in the Image Gallery created on a specific date.
 	 * @param dt the date the image was posted
 	 * @return a List of Image beans
 	 * @throws DAOException if a JDBC error occurs
@@ -107,6 +107,22 @@ public class GetGallery extends DAO {
 		try (PreparedStatement ps = prepare("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
 			+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE (DATE(I.DATE)=DATE(?)) ORDER BY I.DATE")) {
 			ps.setTimestamp(1, createTimestamp(dt));
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns Images created by a particular Pilot.
+	 * @param pilotID the Pilot's database ID
+	 * @return a List of Image beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Image> getUserGallyer(int pilotID) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
+			+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE (I.PILOT_ID=?) ORDER BY I.DATE DESC")) {
+			ps.setInt(1, pilotID);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
