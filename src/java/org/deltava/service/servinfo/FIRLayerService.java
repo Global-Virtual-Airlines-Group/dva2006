@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -16,7 +16,7 @@ import org.json.*;
 /**
  * A Web Service to display all FIR data as a Map layer.
  * @author Luke
- * @version 7.5
+ * @version 10.2
  * @since 6.0
  */
 
@@ -50,13 +50,14 @@ public class FIRLayerService extends WebService {
 			fo.put("oceanic", f.isOceanic());
 			fo.put("aux", f.isAux());
 			f.getBorder().forEach(loc -> fo.append("border", JSONUtils.format(loc)));
+			JSONUtils.ensureArrayPresent(fo, "border");
 			ja.put(fo);
 		}
 		 
 		// Dump to the output stream
 		String cb = ctx.getParameter("jsonp");
 		try {
-			ctx.setContentType(StringUtils.isEmpty(cb) ? "application/json" : "application/javascript", "UTF-8");
+			ctx.setContentType(StringUtils.isEmpty(cb) ? "application/json" : "text/javascript", "utf-8");
 			ctx.setExpiry(86400 * 7);
 			if (!StringUtils.isEmpty(cb)) {
 				ctx.print(cb);
@@ -75,10 +76,6 @@ public class FIRLayerService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
