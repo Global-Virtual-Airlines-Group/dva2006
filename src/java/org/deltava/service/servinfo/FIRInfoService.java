@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -79,6 +79,7 @@ public class FIRInfoService extends WebService {
 			fo.put("name", fir.getName());
 			fo.put("oceanic", fir.isOceanic());
 			fir.getBorder().forEach(loc -> fo.append("border", JSONUtils.format(loc)));
+			JSONUtils.ensureArrayPresent(fo, "border");
 			jo.append("firs", fo);
 		}
 		
@@ -86,7 +87,7 @@ public class FIRInfoService extends WebService {
 		JSONUtils.ensureArrayPresent(jo, "firs");
 		try {
 			boolean isJSONP = !StringUtils.isEmpty(ctx.getParameter("jsonp"));
-			ctx.setContentType(isJSONP ? "application/javascript": "application/json", "UTF-8");
+			ctx.setContentType(isJSONP ? "text/javascript": "application/json", "utf-8");
 			ctx.setExpiry(7200);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -97,10 +98,6 @@ public class FIRInfoService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
