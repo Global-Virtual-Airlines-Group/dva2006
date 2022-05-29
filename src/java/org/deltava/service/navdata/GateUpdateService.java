@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 6.3
  */
 
@@ -45,9 +45,10 @@ public class GateUpdateService extends WebService {
 		if (a == null)
 			return SC_NOT_FOUND;
 		
-		JSONArray ja = new JSONArray(new JSONTokener(ctx.getParameter("data")));
 		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
 		try {
+			JSONArray ja = new JSONArray(new JSONTokener(ctx.getParameter("data")));
+			
 			Connection con = ctx.getConnection();
 			GetGates gdao = new GetGates(con);
 			Map<String, Gate> gm = CollectionUtils.createMap(gdao.getAllGates(a, sim), Gate::getName);
@@ -70,6 +71,9 @@ public class GateUpdateService extends WebService {
 			// Save gate data
 			SetGates gwdao = new SetGates(con);
 			gwdao.update(updGates);
+			ctx.setHeader("updatedGates", updGates.size());
+		} catch (JSONException je) {
+			throw error(SC_BAD_REQUEST, je.getMessage());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -79,19 +83,11 @@ public class GateUpdateService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
