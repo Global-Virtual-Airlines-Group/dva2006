@@ -1,16 +1,18 @@
-//Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.schedule.*;
+
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -73,9 +75,8 @@ public class GetChart extends DAO {
 	 * @param a the Airport bean
 	 * @return a List of Chart objects
 	 * @throws DAOException if a JDBC error occurs
-	 * @see GetChart#getCharts(Airport)
 	 */
-	public List<Chart> getCharts(Airport a) throws DAOException {
+	public List<Chart> getCharts(ICAOAirport a) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME")) {
 			ps.setString(1, a.getICAO());
 			return execute(ps);
@@ -122,16 +123,8 @@ public class GetChart extends DAO {
 	 */
 	public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
 
-		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID IN (");
-		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
-			Integer id = i.next();
-			sqlBuf.append(String.valueOf(id));
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
-		sqlBuf.append("))");
+		sqlBuf.append(StringUtils.listConcat(IDs, ",")).append("))");
 		setQueryMax(IDs.size());
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
