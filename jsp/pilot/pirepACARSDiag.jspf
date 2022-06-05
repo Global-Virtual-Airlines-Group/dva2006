@@ -21,8 +21,14 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 </c:if>
 <c:if test="${!empty acarsFrames}">
 <tr class="acarsDiagData">
- <td class="label top">Frame Rates</td>
- <td class="data"><fmt:int value="${acarsFrames.max}" /> fps (max) - <fmt:int value="${acarsFrames.getPercentile(50)}" /> fps (mid) - <fmt:int value="${acarsFrames.min}" /> fps (min) [<fmt:int value="${acarsFrames.size}" /> samples]<br />
-P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="${acarsFrames.getPercentile(5)}" />, P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value="${acarsFrames.getPercentile(99)}" /></td>
+ <td class="label">Frame Rates</td>
+ <td class="data">MIN = <fmt:int value="${acarsFrames.min}" />, P1 = <fmt:int value="${acarsFrames.getPercentile(1)}" />, P5 = <fmt:int value="${acarsFrames.getPercentile(5)}" />, P50 = <fmt:int value="${acarsFrames.getPercentile(50)}" />, 
+P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value="${acarsFrames.getPercentile(99)}" />, MAX = <fmt:int value="${acarsFrames.max}" /> [<fmt:int value="${acarsFrames.size}" /> samples]</td>
+</tr>
+</c:if>
+<c:if test="${!empty acarsPerfCtrs}">
+<tr class="acarsDiagData">
+ <td class="label top">ACARS Performance Counters</td>
+ <td class="data"><c:forEach var="ctr" items="${acarsPerfCtrs.entrySet}" varStatus="ctrStatus"><span class="bld">${ctr.key}</span> <fmt:int value="${ctr.value}" /><c:if test="${!ctrStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:if>
