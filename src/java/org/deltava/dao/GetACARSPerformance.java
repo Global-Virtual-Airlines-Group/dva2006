@@ -53,6 +53,28 @@ public class GetACARSPerformance extends DAO {
 	}
 	
 	/**
+	 * Retrieves performance counter data for a given flight. 
+	 * @param flightID the ACARS Flight ID
+	 * @return a Map of counter values, keyed by name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<String, Integer> getCounters(int flightID) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME, VALUE FROM acars.PERFCOUNTER WHERE (ID=?)")) {
+			ps.setInt(1, flightID);
+			
+			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.put(rs.getString(1), Integer.valueOf(rs.getInt(2)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves frame rate data for a given flight.
 	 * @param flightID the ACARS Flight ID
 	 * @return a FrameRates bean, or null if not found
