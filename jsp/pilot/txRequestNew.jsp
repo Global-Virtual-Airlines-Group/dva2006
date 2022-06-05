@@ -66,7 +66,7 @@ golgotha.local.updateAircraft = function(combo) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
 <c:if test="${empty availableSims}">
-<content:enum var="availableSims" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" /></c:if>
+<content:enum var="availableSims" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9,XP12" /></c:if>
 
 <!-- Main Body Frame -->
 <content:region id="main">

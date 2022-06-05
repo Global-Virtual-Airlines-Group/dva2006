@@ -108,7 +108,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="FS98,FS2000,FS2002,XP9,UNKNOWN" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="FS98,FS2000,FS2002,XP9,XP12,UNKNOWN" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
