@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 7.3
  */
 
@@ -35,9 +35,9 @@ public class JSONUtils {
 		for (int x = 0; x < names.length; x++) {
 			String name = String.valueOf(names[x]);
 			Object oo = o.opt(name);
-			if (oo instanceof JSONObject)
+			if ((oo != null) && (!(oo instanceof JSONArray)))
 				o.put(name, new JSONArray(List.of(oo)));
-			else if (oo == null)
+			else
 				o.put(name, new JSONArray());
 		}
 	}
