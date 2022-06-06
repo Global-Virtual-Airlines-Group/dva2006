@@ -37,7 +37,7 @@ public class JSONUtils {
 			Object oo = o.opt(name);
 			if ((oo != null) && (!(oo instanceof JSONArray)))
 				o.put(name, new JSONArray(List.of(oo)));
-			else
+			else if (oo == null)
 				o.put(name, new JSONArray());
 		}
 	}
