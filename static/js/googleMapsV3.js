@@ -386,7 +386,7 @@ golgotha.maps.Marker = function(opts, pt) {
 		console.log('MarkerWithLabel not loaded!');
 		hasLabel = false;
 	}
-	
+
 	const icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + opts.color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
 	let mrkOpts = {position:pt, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER};
 	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
@@ -399,7 +399,7 @@ golgotha.maps.Marker = function(opts, pt) {
 		mrkOpts.labelStyle = opts.labelStyle;
 		mrkOpts.labelAnchor = new google.maps.Point((opts.label.length * 3), 0);
 	}
-	
+
 	const mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;	
@@ -410,21 +410,27 @@ golgotha.maps.Marker = function(opts, pt) {
 	return mrk;
 };
 
-golgotha.maps.IconMarker = function(opts, pt) {
-	if (opts == null) opts = {pal:0, icon:0};
+golgotha.maps.convertOptions = function(opts) {
+	opts = opts || {pal:0, icon:0};
 	let imgBase = null;
 	if (opts.pal > 0)
 		imgBase = self.location.protocol + '//maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
 	else
 		imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + opts.pal + '/icon' + opts.icon;
-
+	
 	const icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
 	const shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
-	let mrkOpts = {position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER};
+	let mrkOpts = {icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER};
 	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
 	if (opts.label != null)
 		mrkOpts.label = opts.label;
 
+	return mrkOpts;
+};
+
+golgotha.maps.IconMarker = function(opts, pt) {
+	const mrkOpts = golgotha.maps.convertOptions(opts);
+	mrkOpts.position = pt;
 	const mrk = new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;
