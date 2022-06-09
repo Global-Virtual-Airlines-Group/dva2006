@@ -32,8 +32,7 @@ golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
-	golgotha.airportLoad.setHelpers([f.airportA, f.id]);
-	golgotha.airportLoad.setText([f.airportA]);
+	golgotha.airportLoad.setHelpers([f.id]);
 	golgotha.gate.load({id:'${airport.ICAO}'}); 
 	return true;
 });
@@ -158,12 +157,6 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
  <td class="label top">Flight Time Distribution</td>
  <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
 </tr>
-<c:if test="${!empty connectingAirports}">
-<tr id="airportARow">
- <td class="label">Connecting Airport</td>
- <td class="data" colspan="2"><el:combo name="airportA" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${connectingAirports}" onChange="void golgotha.local.updateAirportA(this, '${airport.ICAO}')" /> <el:airportCode combo="airportA" idx="*" /></td>
-</tr>
-</c:if>
 <tr>
  <td class="label">Gate Legend</td>
  <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic Gate
