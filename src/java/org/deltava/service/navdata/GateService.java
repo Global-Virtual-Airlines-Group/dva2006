@@ -1,7 +1,9 @@
-// Copyright 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -10,6 +12,8 @@ import org.json.*;
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.AirlineComparator;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -20,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 6.3
  */
 
@@ -36,21 +40,24 @@ public class GateService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the airport(s)
-		Airport aa = SystemData.getAirport(ctx.getParameter("aa"));
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
 		
 		// Get simulator version
 		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
-		Collection<Gate> gates = new LinkedHashSet<Gate>();
+		Collection<Gate> gates = new LinkedHashSet<Gate>(); Collection<Airline> airlines = new TreeSet<Airline>(new AirlineComparator(AirlineComparator.NAME)); 
 		try {
-			GetGates gdao = new GetGates(ctx.getConnection());
-			if (aa == null) {
-				gates.addAll(gdao.getGates(a, sim));
-				gates.addAll(gdao.getAllGates(a, sim));
-			} else
-				gates.addAll(gdao.getPopularGates(new ScheduleRoute(a, aa), sim, true));
+			Connection con = ctx.getConnection();
+			
+			// Load Gates
+			GetGates gdao = new GetGates(con);
+			gates.addAll(gdao.getGates(a, sim));
+			gates.addAll(gdao.getAllGates(a, sim));
+			
+			// Load airlines
+			GetRawSchedule rsdao = new GetRawSchedule(con);
+			airlines.addAll(rsdao.getAirlines(null, a).stream().filter(al -> !al.getHistoric()).collect(Collectors.toList()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -62,8 +69,16 @@ public class GateService extends WebService {
 		jo.put("icao", a.getICAO());
 		jo.put("airportD", JSONUtils.format(a));
 		jo.put("maxUse", gates.stream().mapToInt(Gate::getUseCount).max().orElse(0));
-		if (aa != null)
-			jo.put("airportA", JSONUtils.format(aa));
+		
+		// Write airlines
+		for (Airline al : airlines) {
+			JSONObject ao = new JSONObject();
+			ao.put("code", al.getCode());
+			ao.put("name", al.getName());
+			ao.put("historic", al.getHistoric());
+			ao.put("color", al.getColor());
+			jo.accumulate("airlines", ao);
+		}
 		
 		// Write gate zones
 		List<GateZone> zones = new ArrayList<GateZone>(Arrays.asList(GateZone.values()));
@@ -77,22 +92,33 @@ public class GateService extends WebService {
 		
 		// Write gates
 		for (Gate g : gates) {
+			SelectableGate sg = new SelectableGate(g);
+			sg.setZoneOptions(zones);
+			sg.setAirlineOptions(airlines);
 			JSONObject go = new JSONObject();
-			go.put("id", g.getName());
-			go.put("ll", JSONUtils.format(g));
-			go.put("zone", g.getZone().ordinal());
-			go.put("useCount", g.getUseCount());
-			go.put("info", g.getInfoBox());
-			go.put("airlines", new JSONArray());
-			g.getAirlines().forEach(al -> go.accumulate("airlines", al.getCode()));
+			go.put("id", sg.getUniqueID());
+			go.put("name", sg.getName());
+			go.put("info", sg.getInfoBox());
+			go.put("ll", JSONUtils.format(sg));
+			go.put("zone", sg.getZone().ordinal());
+			go.put("useCount", sg.getUseCount());
+			sg.getAirlines().stream().filter(al -> !al.getHistoric()).forEach(al -> go.accumulate("airlines", al.getCode()));
+			for (Map.Entry<String, String> me : sg.getTabs().entrySet()) {
+				JSONObject to = new JSONObject();
+				to.put("name", me.getKey());
+				to.put("content", me.getValue());
+				go.accumulate("tabs", to);
+			}
+			
+			JSONUtils.ensureArrayPresent(go, "airlines", "tabs");
 			jo.accumulate("gates", go);
 		}
 		
 		// Write the JSON document
-		JSONUtils.ensureArrayPresent(jo, "gates", "zones");
+		JSONUtils.ensureArrayPresent(jo, "gates", "zones", "airlines");
 		try {
 			ctx.setContentType("application/json", "utf-8");
-			ctx.setExpiry(30);
+			ctx.setExpiry(20);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
