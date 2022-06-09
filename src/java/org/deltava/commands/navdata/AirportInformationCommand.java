@@ -53,6 +53,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			GetNavData nddao = new GetNavData(con);
 			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
 			ctx.setAttribute("rwys", allRwys.isEmpty() ? Collections.singleton(a) : allRwys.stream().map(GeoPosition::new).collect(Collectors.toSet()), REQUEST);
+			int maxLength = allRwys.stream().mapToInt(Runway::getLength).max().orElse(0);
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
@@ -91,7 +92,6 @@ public class AirportInformationCommand extends AbstractCommand {
 			TaxiTime ttYr = ttdao.getTaxiTime(a, LocalDate.now().getYear());
 			
 			// Get Aircraft for runway length
-			int maxLength = allRwys.stream().mapToInt(Runway::getLength).max().orElse(0);
 			String aCode = SystemData.get("airline.code");
 			GetAircraft acdao = new GetAircraft(con);
 			Collection<Aircraft> allAC = acdao.getAircraftTypes(aCode);
@@ -113,10 +113,6 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Save taxi times
 			ctx.setAttribute("taxiTime", ttAvg, REQUEST);
 			ctx.setAttribute("taxiTimeCY", ttYr, REQUEST);
-			
-			// Save destinations
-			GetScheduleAirport sadao = new GetScheduleAirport(con);
-			ctx.setAttribute("connectingAirports", sadao.getConnectingAirports(a, true, null), REQUEST);
 			
 			// Save operations
 			GetRawSchedule rsdao = new GetRawSchedule(con);
