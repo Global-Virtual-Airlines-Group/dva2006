@@ -52,21 +52,22 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Get runway data and build bounding box
 			GetNavData nddao = new GetNavData(con);
 			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
-			ctx.setAttribute("rwys", allRwys.isEmpty() ? Collections.singleton(a) : allRwys.stream().map(r -> new GeoPosition(r)).collect(Collectors.toSet()), REQUEST);
+			ctx.setAttribute("rwys", allRwys.isEmpty() ? Collections.singleton(a) : allRwys.stream().map(GeoPosition::new).collect(Collectors.toSet()), REQUEST);
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
 			List<RunwayUsage> allDRwys = rwdao.getPopularRunways(a, true); 
 			List<RunwayUsage> allARwys = rwdao.getPopularRunways(a, false);
-
+			
 			// Filter arrival/departure runways - first select those available due to winds, then other popular runways
-			UsagePercentFilter rf = new UsagePercentFilter(10);
-			UsageWindFilter wf = new UsageWindFilter(10, -7);
+			UsagePercentFilter rf = new UsagePercentFilter(22);
+			UsageWindFilter wf = new UsageWindFilter(22, -6);
 			Collection<Runway> dRwys = new LinkedHashSet<Runway>(wf.filter(allDRwys));
 			Collection<Runway> aRwys = new LinkedHashSet<Runway>(wf.filter(allARwys));
 			Collection<? extends Runway> validRunways = CollectionUtils.join(dRwys, aRwys);
 			dRwys.addAll(rf.filter(allDRwys)); aRwys.addAll(rf.filter(allARwys));
-			allDRwys.removeAll(dRwys); allARwys.removeAll(aRwys);
+			Collection<String> rwyIDs = CollectionUtils.join(dRwys, aRwys).stream().map(Runway::getName).collect(Collectors.toSet());
+			allRwys.removeIf(r -> rwyIDs.contains(r.getName()));
 			
 			// Determine valid runways for winds
 			RunwayComparator rc = new RunwayComparator(0, 0, true); // only sort by useCount
@@ -77,7 +78,12 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Get remaining runways
 			ctx.setAttribute("odRwyStats", CollectionUtils.createMap(allDRwys, Runway::getName), REQUEST);
 			ctx.setAttribute("oaRwyStats", CollectionUtils.createMap(allARwys, Runway::getName), REQUEST);
-			ctx.setAttribute("otherRunways", CollectionUtils.join(allDRwys, allARwys), REQUEST);
+			ctx.setAttribute("otherRunways", allRwys, REQUEST);
+			
+			// Get chart availability
+			GetChart chdao = new GetChart(con);
+			Collection<Chart.Type> chartTypes = chdao.getCharts(a).stream().map(Chart::getType).collect(Collectors.toSet());
+			ctx.setAttribute("chartTypes", chartTypes, REQUEST);
 			
 			// Get taxi times
 			GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
