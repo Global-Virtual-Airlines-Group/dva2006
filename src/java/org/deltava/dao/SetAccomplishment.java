@@ -1,4 +1,4 @@
-// Copyright 2010, 2014, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2015, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to save Accomplishment profiles.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 3.2
  */
 
@@ -31,7 +31,7 @@ public class SetAccomplishment extends DAO {
 	 */
 	public void write(Accomplishment a) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
 				+ "NAME=N.NAME, UNIT=N.UNIT, VAL=N.VAL, COLOR=N.COLOR, CHOICES=N.CHOICES, ACTIVE=N.ACTIVE, ALWAYS_SHOW=N.ALWAYS_SHOW")) {
 				ps.setString(1, a.getName());
 				ps.setInt(2, a.getUnit().ordinal());
@@ -40,6 +40,7 @@ public class SetAccomplishment extends DAO {
 				ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
 				ps.setBoolean(6, a.getActive());
 				ps.setBoolean(7, a.getAlwaysDisplay());
+				ps.setInt(8, a.getID());
 				executeUpdate(ps, 1);
 			}
 			
