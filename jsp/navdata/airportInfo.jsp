@@ -20,8 +20,7 @@
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
-<script>
-golgotha.gate.hasPFI = ${airport.hasPFI};
+<script async>
 golgotha.local.update = function(cb) {
 	if (!golgotha.form.check()) return false;
 	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(cb);
@@ -53,13 +52,13 @@ golgotha.onDOMReady(function() {
 <el:form action="airportinfo.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>AIRPORT INFORMATION - ${airport.name} (<fmt:airport airport="${airport}" />)</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>AIRPORT INFORMATION -<span class="nophone"> ${airport.name}</span> (<fmt:airport airport="${airport}" />)</td>
  <td style="width:35%" class="nophone right">AIRPORT <el:combo name="id" size="1" idx="*" value="${airport}" options="${airports}"  onChange="void golgotha.local.update(this)" />
  <el:text name="idCode" size="3" max="4" className="caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">IATA / ICAO Codes</td>
- <td class="data" colspan="2"><span class="pri bld">${airport.IATA}</span> / <span class="sec bld">${airport.ICAO}</span></td>
+ <td class="data" colspan="2"><span class="pri bld">${airport.IATA}</span> / <span class="sec bld">${airport.ICAO}</span><c:if test="${!empty chartTypes}"> - <el:cmd url="charts" linkID="${a.ICAO}" className="bld caps">Approach Charts</el:cmd></c:if></td>
 </tr>
 <tr>
  <td class="label">Location</td>
@@ -73,7 +72,7 @@ golgotha.onDOMReady(function() {
  <td class="label">Sunrise / Sunset</td>
  <c:choose>
 <c:when test="${(empty sunrise) && (empty sunset)}">
-<td class="data pri bld caps">Continuous ${isSummer ? 'Daylight' : 'Darkness'}</td>
+<td class="data pri bld caps" colspan="2">Continuous ${isSummer ? 'Daylight' : 'Darkness'}</td>
 </c:when> 
 <c:when test="${empty sunrise}">
  <td class="data sec bld">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
@@ -115,7 +114,7 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="2"><c:forEach var="rwy" items="${departureRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode }]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - 
- Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures</span></div>
+ Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures (<fmt:int value="${rwy.percentage}" />%)</span></div>
 </c:forEach></td>
 </tr>
 <tr>
@@ -123,7 +122,7 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="2"><c:forEach var="rwy" items="${arrivalRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) -
- Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals</span></div> 
+ Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals (<fmt:int value="${rwy.percentage}" />%)</span></div> 
 </c:forEach></td>
 <c:if test="${maxRwyLength > 0}">
 <c:if test="${!empty validAC}">
@@ -136,7 +135,7 @@ golgotha.onDOMReady(function() {
 <c:if test="${!empty invalidAC}">
 <tr>
  <td class="label top">Unauthorized Aircraft</td>
- <td class="data" colspan="2" ><span class="ita small">Due to runway lengths, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
+ <td class="data" colspan="2"><span class="ita small">Due to runway lengths, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
 <fmt:list value="${invalidAC}" delim=", " /></td>
 </tr>
 </c:if>
@@ -167,14 +166,12 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </c:if>
 <tr>
  <td class="label">Gate Legend</td>
- <td class="data"><span class="small"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;<content:airline /> Domestic Gates
- | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;<content:airline /> International Gates
- | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
- | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
- <td class="mid">&nbsp;<content:filter roles="Schedule,Operations"><c:if test="${!empty airlines}"><a id="editLink" href="javascript:void golgotha.gate.edit()">EDIT GATE DATA</a>
-<el:combo ID="airlineCombo" name="airline"  size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]"  style="display:none;" onChange="void golgotha.gate.updateAirline(this)" />
-<a id="saveLink" style="display:none;" href="javascript:void golgotha.gate.save()">SAVE GATE DATA</a>&nbsp;<a id="viewLink" style="display:none;" href="javascript:void golgotha.gate.view()">STOP DATA EDITING</a> 
-<span id="helpText" style="display:none;" class="small"><br />Double-click to associate a gate with <span id="airlineName"></span>, right-click to mark a gate as International<c:if test="${airport.hasPFI}">, middle-click to mark a gate as US PFI</c:if></span></c:if></content:filter></td>
+ <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic Gate
+ | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;International Gate
+<c:if test="${airport.hasPFI}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon16.png" alt="USPFI Gate" width="16" height="16" />&nbsp;US PFI Gate</c:if>
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gate
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gate
+<content:filter roles="Operations,Schedule"> | <el:cmd url="gateinfo" linkID="${airport.ICAO}" className="sec bld">EDIT GATE DATA</el:cmd></content:filter></td>
 </tr>
 <tr>
  <td colspan="3"><map:div ID="googleMap" height="570" /></td>
@@ -185,13 +182,12 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
 // Create the map
-const mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, clickableIcons:false, streetViewControl:false};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollwheel:false,clickableIcons:false,streetViewControl:false});
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.fitBounds(golgotha.local.mapBounds);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
@@ -199,7 +195,6 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'zoom_changed', function() {
 	map.toggle(golgotha.local.gates, (map.getZoom() > 11));
-	map.toggle(golgotha.local.ourGates, (map.getZoom() > 10));
 	return true;
 });
 
