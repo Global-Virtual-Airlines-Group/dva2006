@@ -16,19 +16,19 @@ OPTS="-avr --delete --progress --bwlimit=2560"
 # Back up base files
 cd /home/backup
 rsync $OPTS cfg/*.tar.gz $USER@$1:cfg 
-rsync $OPTS db/*.bz2 $USER@$1:db
-rsync $OPTS sites/*.tar.gz $USER@$1:sites
+rsync $OPTS --preallocate db/*.bz2 $USER@$1:db
+rsync $OPTS --preallocate sites/*.tar.gz $USER@$1:sites
 rsync $OPTS archive/* $USER@$1:archive
 
 # Backup logs via rsync
-rsync $OPTS httplogs/* $USER@$1:httplogs
-rsync $OPTS --exclude=svn.revision_base svn $USER@$1:
+rsync $OPTS --preallocate httplogs/* $USER@$1:httplogs
+rsync $OPTS --preallocate --exclude=svn.revision_base svn $USER@$1:
 
 # Backup mail
-rsync $OPTS mail/* $USER@$1:mail
+rsync $OPTS --preallocate mail/* $USER@$1:mail
 
 # Backup library
-rsync $OPTS library/* $USER@$1:library
+rsync $OPTS --preallocate library/* $USER@$1:library
 
 # Exit with success
 exit 0
