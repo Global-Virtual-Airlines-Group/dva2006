@@ -535,26 +535,28 @@ public class FlightSubmissionHelper {
 		// Determine date to check
 		Instant dt = _isACARS ? ((ACARSFlightReport)_fr).getTakeoffTime() : _fr.getDate(); // Non-ACARS should be 12:00 already
 		
+		// Load Tours
 		GetTour trdao = new GetTour(_c);
 		GetFlightReports prdao = new GetFlightReports(_c);
 		Collection<Tour> possibleTours = trdao.findLeg(_fr, dt, _db);
-		if (!possibleTours.isEmpty()) {
-			Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow());
-			Duration d = Duration.between(minDate, _fr.getSubmittedOn());
-			Collection<FlightReport> oldPireps = prdao.getLogbookCalendar(_fr.getAuthorID(), _db, minDate, (int)d.toDaysPart() + 1);
+		if (possibleTours.isEmpty()) return;
+
+		// Load flights within the range of the Tours
+		Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow());
+		Duration d = Duration.between(minDate, _fr.getSubmittedOn());
+		Collection<FlightReport> oldPireps = prdao.getLogbookCalendar(_fr.getAuthorID(), _db, minDate, (int)d.toDaysPart() + 1);
 		
-			// Init the helper and validate
-			TourFlightHelper tfh = new TourFlightHelper(_fr, true);
-			tfh.addFlights(oldPireps);
-			for (Tour t : possibleTours) {
-				int idx = tfh.isLeg(t);
-				if (idx > 0) {
-					_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Leg %d in Flight Tour %s", Integer.valueOf(idx), t.getName()));
-					_fr.setDatabaseID(DatabaseID.TOUR, t.getID());
-					break;
-				} else if (tfh.hasMessage())
-					tfh.getMessages().forEach(tmsg -> _fr.addStatusUpdate(0, HistoryType.SYSTEM, tmsg));
-			}
+		// Init the helper and validate - if multiple Tours validate, select the one with the highest leg
+		TourFlightHelper tfh = new TourFlightHelper(_fr, true);
+		tfh.addFlights(oldPireps);
+		for (Tour t : possibleTours) {
+			int idx = tfh.isLeg(t);
+			if (idx > 0) {
+				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Leg %d in Flight Tour %s", Integer.valueOf(idx), t.getName()));
+				_fr.setDatabaseID(DatabaseID.TOUR, t.getID());
+				break;
+			} else if (tfh.hasMessage())
+				tfh.getMessages().forEach(tmsg -> _fr.addStatusUpdate(0, HistoryType.SYSTEM, tmsg));
 		}
 	}
 }
