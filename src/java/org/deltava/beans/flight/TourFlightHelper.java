@@ -51,7 +51,7 @@ public class TourFlightHelper {
 	 * @return TRUE if there is at least one message, otherwise FALSE
 	 */
 	public boolean hasMessage() {
-		return (_msgs.size() > 1);
+		return (_msgs.size() > 0);
 	}
 	
 	private boolean filter(FlightReport fr) {
