@@ -129,14 +129,14 @@ public class GetTour extends DAO {
 	}
 	
 	/**
-	 * Retrieves all Tours that contain a particular Flight leg. 
+	 * Retrieves all Tours that contain a particular Flight leg.
 	 * @param rp the RoutePair
 	 * @param dt the flight date
 	 * @param dbName the database name
-	 * @return a Collection of Tour beans
+	 * @return a List of Tour beans, <i>sorted by descending matching leg number</i> 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Tour> findLeg(RoutePair rp, Instant dt, String dbName) throws DAOException {
+	public List<Tour> findLeg(RoutePair rp, Instant dt, String dbName) throws DAOException {
 		
 		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF FROM ");
@@ -147,13 +147,13 @@ public class GetTour extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (T.ID=TL.ID) AND (T.ACTIVE=?) AND (TL.AIRPORT_D=?) AND (TL.AIRPORT_A=?) GROUP BY T.ID HAVING (T.ID IS NOT NULL)");
+		sqlBuf.append(".TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (T.ID=TL.ID) AND (T.ACTIVE=?) AND (TL.AIRPORT_D=?) AND (TL.AIRPORT_A=?) GROUP BY T.ID HAVING (T.ID IS NOT NULL) ORDER BY TL.LEG DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setBoolean(1, true);
 			ps.setString(2, rp.getAirportD().getIATA());
 			ps.setString(3, rp.getAirportA().getIATA());
-			Collection<Tour> results = execute(ps).stream().filter(t -> t.isActiveOn(dt)).collect(Collectors.toList());
+			List<Tour> results = execute(ps).stream().filter(t -> t.isActiveOn(dt)).collect(Collectors.toList());
 			for (Tour t : results) {
 				t.setOwner(SystemData.getApp(dbName));
 				loadLegs(t);
