@@ -1,7 +1,6 @@
 var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}, nav:{sideMenu:false}};
-golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
-golgotha.util.isIOS = (!golgotha.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
-golgotha.util.isAndroid = (!golgotha.util.isIE && (navigator.platform.indexOf('Android') > -1));
+golgotha.util.isIOS = ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone'));
+golgotha.util.isAndroid = (navigator.platform.indexOf('Android') > -1);
 golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid); 
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.event.beacon = function() { return false; };

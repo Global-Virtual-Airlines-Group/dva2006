@@ -15,18 +15,14 @@ golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
 golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
-golgotha.maps.util = {isIE:golgotha.util.isIE, isIOS:golgotha.util.isIOS};
-golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
-golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
+golgotha.maps.setOpacity = function(e, tx) { e.style.opacity = tx; };
+golgotha.maps.util = {isIOS:golgotha.util.isIOS};
 golgotha.maps.util.unload = function() { 
 	for (m = golgotha.maps.instances.pop(); (m != null); m = golgotha.maps.instances.pop())
 		google.maps.event.clearListeners(m);
 
 	return true;
 };
-
-// Cross-browser opacity set
-golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
 
 // Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
