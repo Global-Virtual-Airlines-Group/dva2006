@@ -105,7 +105,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <el:combo name="lonDir" idx="*" size="1" options="${lonDir}" value="${lonEW}" /></td>
 </tr>
 <tr>
- <td class="label">Customs Zones</td>
+ <td class="label top">Customs Zones</td>
  <td class="data"><el:box name="isSchengen" value="true" idx="*" checked="${airport.isSchengen}" label="This Airport is located in the Schengen Zone" /><br />
 <el:box name="hasUSPFI" value="true" idx="*" checked="${airport.hasPFI}" label="This Airport has a US Customs Pre-Flight Inspection station" /></td>
 </tr>
