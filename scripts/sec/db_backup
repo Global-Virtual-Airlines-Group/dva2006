@@ -78,8 +78,8 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common METARS TAFS | $arc_util > 
 
 # Dump events database
 echo 'Writing Online Event data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=BRIEFINGS events | $arc_util > events.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` events BRIEFINGS | $arc_util > event_docs.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=events.BRIEFINGS events | $arc_util > events.sql.bz2
+$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` events BRIEFINGS | $arc_util > event_docs.sql.bz2
 
 # Dump testing database
 echo 'Writing Examinations'
@@ -109,9 +109,9 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars FLIGHTS ARCHIVE DISPATCH_LO
 
 # Write help desk
 echo 'Writing help desk'
-$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` dva HELPDESK HELPDESK_COMMENTS | $arc_util > dva_help.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva HELPDESK HELPDESK_COMMENTS | $arc_util > dva_help.sql.bz2
 $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` dva HELPDESK_FILES | $arc_util > dva_help_docs.sql.bz2
-$mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` afv HELPDESK HELPDESK_COMMENTS | $arc_util > afv_help.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv HELPDESK HELPDESK_COMMENTS | $arc_util > afv_help.sql.bz2
 $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` afv HELPDESK_FILES | $arc_util > afv_help_docs.sql.bz2
 
 # Write flight statistics
