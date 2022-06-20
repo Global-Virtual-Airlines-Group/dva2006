@@ -105,6 +105,11 @@ public class AirportInformationCommand extends AbstractCommand {
 			} else
 				ctx.setAttribute("validAC", validAC, REQUEST);
 			
+			// Load populaer alternates
+			GetACARSAlternate aadao = new GetACARSAlternate(con);
+			aadao.setQueryMax(5);
+			ctx.setAttribute("popularAlternates", aadao.getAlternates(a), REQUEST);
+			
 			// Save runways
 			ctx.setAttribute("toRwys", allDRwys, REQUEST);
 			ctx.setAttribute("ldgRwys", allARwys, REQUEST);
