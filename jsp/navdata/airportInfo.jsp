@@ -153,6 +153,12 @@ Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[wa
  <td class="data" colspan="2">Inbound: <c:if test="${!empty taxiTimeCY.inboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
 Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
 </tr>
+<c:if test="${!empty popularAlternates}">
+<tr>
+ <td class="label top">Common Alternates</td>
+ <td class="data" colspan="2"><c:forEach var="altA" items="${popularAlternates}" varStatus="altStatus">${altA.name} (<el:cmd url="airportinfo" linkID="${altA.IATA}"><fmt:airport airport="${altA}" /></el:cmd>) <span class="sec bld">(<fmt:distance value="${altA.distanceTo(airport)}" />)</span><c:if test="${!altStats.last}"><br /></c:if></c:forEach>
+</tr>
+</c:if>
 <tr id="flightTimeChart" style="display:none;">
  <td class="label top">Flight Time Distribution</td>
  <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
