@@ -489,7 +489,17 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 			} else if (ctx.isUserInRole("Operations") || ctx.isUserInRole("Event")) {
 				Instant dt = isACARS ? ((FDRFlightReport)fr).getTakeoffTime() : fr.getDate(); // Non-ACARS should be 12:00 already
-				ctx.setAttribute("possibleTours", trdao.findLeg(fr, dt, ctx.getDB()), REQUEST);
+				
+				// Make sure we haven't flown this leg already
+				List<Tour> possibleTours = trdao.findLeg(fr, dt, ctx.getDB()); final RoutePair rp = fr;
+				for (Iterator<Tour> i = possibleTours.iterator(); i.hasNext(); ) {
+					Tour t = i.next();
+					Collection<FlightReport> tourFlights = dao.getByTour(fr.getAuthorID(), t.getID(), ctx.getDB());
+					if (tourFlights.stream().anyMatch(tf -> rp.matches(tf)))
+						i.remove();
+				}
+				
+				ctx.setAttribute("possibleTours", possibleTours, REQUEST);
 			}
 
 			// Get the Navdata DAO
