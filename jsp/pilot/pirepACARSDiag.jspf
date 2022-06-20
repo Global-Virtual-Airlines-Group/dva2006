@@ -29,6 +29,6 @@ P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value
 <c:if test="${!empty acarsPerfCtrs}">
 <tr class="acarsDiagData">
  <td class="label top">ACARS Performance Counters</td>
- <td class="data"><c:forEach var="ctr" items="${acarsPerfCtrs.entrySet}" varStatus="ctrStatus"><span class="bld">${ctr.key}</span> <fmt:int value="${ctr.value}" /><c:if test="${!ctrStatus.last}"><br /></c:if></c:forEach></td>
+ <td class="data"><c:forEach var="ctr" items="${acarsPerfCtrs.entrySet()}" varStatus="ctrStatus"><span class="bld">${ctr.key}</span> <fmt:int value="${ctr.value}" /><c:if test="${!ctrStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:if>
