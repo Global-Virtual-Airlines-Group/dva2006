@@ -758,6 +758,7 @@
 		<enabled type="Boolean">true</enabled>
 		<assignto type="Integer">12617</assignto>
 		<list name="notify_roles" attr="role" unique="true">
+			<role>Operations</role>
 		</list>
 	</helpdesk>
 
