@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
 import java.util.zip.*;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +25,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 1.0
  */
 
@@ -42,8 +43,8 @@ public class FlightDataEarthService extends GoogleEarthService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if we add position records
-		boolean showData = Boolean.valueOf(ctx.getParameter("showData")).booleanValue();
-		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
+		boolean showData = Boolean.parseBoolean(ctx.getParameter("showData"));
+		boolean showRoute = Boolean.parseBoolean(ctx.getParameter("showRoute"));
 
 		// Set the maximum number of routes
 		int maxFlights = showRoute ? 8 : 24;
@@ -172,7 +173,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 		String prefix = (IDs.size() == 1) ? ("acarsFlight" + IDs.first().toString()) : "acarsFlights";
 
 		// Determine if we compress the KML or not
-		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
+		boolean noCompress = Boolean.parseBoolean(ctx.getParameter("noCompress"));
 		try {
 			if (noCompress) {
 				ctx.setContentType("application/vnd.google-earth.kml+xml");
@@ -186,7 +187,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 				// Create the ZIP output stream
 				try (ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream())) {
 					zout.putNextEntry(new ZipEntry("acarsFlights.kml"));
-					zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
+					zout.write(XMLUtils.format(doc, "UTF-8").getBytes(StandardCharsets.UTF_8));
 					zout.closeEntry();
 				}
 			}

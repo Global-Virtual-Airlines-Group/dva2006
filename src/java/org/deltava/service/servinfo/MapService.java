@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.2
  */
 
@@ -76,7 +76,7 @@ public class MapService extends WebService {
 		}
 		
 		// Display the controllers if required
-		boolean doATC = Boolean.valueOf(ctx.getParameter("atc")).booleanValue();
+		boolean doATC = Boolean.parseBoolean(ctx.getParameter("atc"));
 		if (doATC) {
 			for (Iterator<Controller> i = info.getControllers().iterator(); i.hasNext(); ) {
 				Controller usr = i.next();
@@ -98,7 +98,7 @@ public class MapService extends WebService {
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "pilots", "atc");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(30);
 			ctx.println(jo.toString());
 			ctx.commit();
