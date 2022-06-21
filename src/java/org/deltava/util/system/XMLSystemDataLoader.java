@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom2.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 8.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -99,8 +99,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      */
     @SuppressWarnings("unchecked")
     protected static List<? extends Object> processList(Element root) {
-        boolean isSorted = Boolean.valueOf(root.getAttributeValue("sorted", "false")).booleanValue();
-        boolean isUnique = Boolean.valueOf(root.getAttributeValue("unique", "false")).booleanValue();
+        boolean isSorted = Boolean.parseBoolean(root.getAttributeValue("sorted", "false"));
+        boolean isUnique = Boolean.parseBoolean(root.getAttributeValue("unique", "false"));
         
         // Figure out the type of collection to return
         String className = "java.util.ArrayList";
