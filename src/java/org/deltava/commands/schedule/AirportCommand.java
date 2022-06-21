@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -81,10 +81,10 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			a.setAirlines(ctx.getParameters("airline"));
 			a.setCountry(Country.get(ctx.getParameter("country")));
-			a.setASDE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
-			a.setHasPFI(Boolean.valueOf(ctx.getParameter("hasUSPFI")).booleanValue());
-			a.setIsSchengen(Boolean.valueOf(ctx.getParameter("isSchengen")).booleanValue());
-			a.setHasFictionalCode(Boolean.valueOf(ctx.getParameter("isFictional")).booleanValue());
+			a.setASDE(Boolean.parseBoolean(ctx.getParameter("hasADSE")));
+			a.setHasPFI(Boolean.parseBoolean(ctx.getParameter("hasUSPFI")));
+			a.setIsSchengen(Boolean.parseBoolean(ctx.getParameter("isSchengen")));
+			a.setHasFictionalCode(Boolean.parseBoolean(ctx.getParameter("isFictional")));
 			Airport oldA = SystemData.getAirport(ctx.getParameter("oldAirport"));
 			a.setSupercededAirport(((oldA == null) || oldA.getIATA().equals(a.getIATA())) ? null : oldA.getIATA());
 

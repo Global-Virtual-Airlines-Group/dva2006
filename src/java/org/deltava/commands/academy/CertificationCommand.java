@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -68,9 +68,9 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			cert.setCode(ctx.getParameter("code"));
 			cert.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
 			cert.setReqs(EnumUtils.parse(Prerequisite.class, ctx.getParameter("preReqs"), Prerequisite.ANY));
-			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
-			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
-			cert.setVisible(Boolean.valueOf(ctx.getParameter("visible")).booleanValue());
+			cert.setActive(Boolean.parseBoolean(ctx.getParameter("isActive")));
+			cert.setAutoEnroll(Boolean.parseBoolean(ctx.getParameter("autoEnroll")));
+			cert.setVisible(Boolean.parseBoolean(ctx.getParameter("visible")));
 			cert.setRideCount(StringUtils.parse(ctx.getParameter("rideCount"), 0));
 			cert.setReqCert((cert.getReqs() != Prerequisite.SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));

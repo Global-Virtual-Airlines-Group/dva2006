@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class EventSaveCommand extends AbstractCommand {
 			
 			// Get the briefing file
 			FileUpload bf = ctx.getFile("briefPDF", 4096 * 1024);
-			boolean deletePDF = Boolean.valueOf(ctx.getParameter("deleteBrief")).booleanValue();
+			boolean deletePDF = Boolean.parseBoolean(ctx.getParameter("deleteBrief"));
 			if ((bf != null) && PDFUtils.isPDF(bf.getBuffer())) {
 				Briefing b = new Briefing(bf.getBuffer());
 				e.setBriefing(b);
@@ -98,7 +98,7 @@ public class EventSaveCommand extends AbstractCommand {
 
 			// Populate fields from the request
 			e.setNetwork(EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null));
-			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
+			e.setCanSignup(Boolean.parseBoolean(ctx.getParameter("canSignup")));
 			if (!e.getCanSignup() && !StringUtils.isEmpty(ctx.getParameter("signupURL")))
 				e.setSignupURL(ctx.getParameter("signupURL"));
 			else
@@ -129,7 +129,7 @@ public class EventSaveCommand extends AbstractCommand {
 				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 				r.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups"), 0));
-				r.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV")).booleanValue());
+				r.setIsRNAV(Boolean.parseBoolean(ctx.getParameter("isRNAV")));
 				r.setName(ctx.getParameter("routeName"));
 				r.setActive(true);
 				e.addRoute(r);
@@ -172,7 +172,7 @@ public class EventSaveCommand extends AbstractCommand {
 			ctx.setAttribute("event", e, REQUEST);
 			
 			// Check for a banner image
-			boolean removeImg = Boolean.valueOf(ctx.getParameter("removeBannerImg")).booleanValue();
+			boolean removeImg = Boolean.parseBoolean(ctx.getParameter("removeBannerImg"));
 			FileUpload imgData = ctx.getFile("bannerImg", 524288);
 			if (imgData != null) {
 				// Check the image

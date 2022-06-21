@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -85,9 +85,9 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid equipment - " + entry.getEquipmentType());
 
 			// Update the entry
-			entry.setHistoric(a.getHistoric() || Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
-			entry.setAcademy(a.getAcademyOnly() || Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
-			entry.setForceInclude(Boolean.valueOf(ctx.getParameter("forceInclude")).booleanValue());
+			entry.setHistoric(a.getHistoric() || Boolean.parseBoolean(ctx.getParameter("isHistoric")));
+			entry.setAcademy(a.getAcademyOnly() || Boolean.parseBoolean(ctx.getParameter("isAcademy")));
+			entry.setForceInclude(Boolean.parseBoolean(ctx.getParameter("forceInclude")));
 			entry.setUpdated(true);
 			
 			// Parse times and days

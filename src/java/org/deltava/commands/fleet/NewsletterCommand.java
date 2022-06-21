@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014, 2015, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			fName = mFile.getName();
 
 		// Check if we notify people
-		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
+		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
 
 		// Create the Message Context
 		MessageContext mctxt = new MessageContext();

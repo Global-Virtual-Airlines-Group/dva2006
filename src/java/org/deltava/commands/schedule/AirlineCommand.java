@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -56,12 +56,12 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 				a = new Airline(ctx.getParameter("code"), ctx.getParameter("name")); 
 			
 			// Update the airline from the request
-			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			a.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			a.setApps(ctx.getParameters("airlines"));
 			a.setColor(ctx.getParameter("color"));
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
-			a.setScheduleSync(Boolean.valueOf(ctx.getParameter("sync")).booleanValue());
-			a.setHistoric(Boolean.valueOf(ctx.getParameter("historic")).booleanValue());
+			a.setScheduleSync(Boolean.parseBoolean(ctx.getParameter("sync")));
+			a.setHistoric(Boolean.parseBoolean(ctx.getParameter("historic")));
 			
 			// Add airlines that have flights in their schedule
 			GetScheduleInfo sidao = new GetScheduleInfo(con);

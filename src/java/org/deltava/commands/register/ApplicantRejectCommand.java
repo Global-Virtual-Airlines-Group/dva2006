@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ApplicantAccessControl;
 /**
  * A Web Site Command to reject Applicants.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 
 		Applicant a = null;
-		boolean updateBlacklist = Boolean.valueOf(ctx.getParameter("updateBlacklist")).booleanValue();
+		boolean updateBlacklist = Boolean.parseBoolean(ctx.getParameter("updateBlacklist"));
 		try {
 			Connection con = ctx.getConnection();
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -266,7 +266,7 @@ public class ThreadCommand extends AbstractCommand {
 		ctx.setAttribute("scores", SCORES, REQUEST);
 		
 		// Disable content filter if requested
-		boolean forceFilter = Boolean.valueOf(ctx.getParameter("filter")).booleanValue();
+		boolean forceFilter = Boolean.parseBoolean(ctx.getParameter("filter"));
 		boolean noFilter = (!forceFilter) || ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator");
 		ctx.setAttribute("noFilter", Boolean.valueOf(noFilter), REQUEST);
 

@@ -1,4 +1,4 @@
-// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -61,7 +61,7 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 		if (!CollectionUtils.isEmpty(ctx.getParameters("types")))
 			ctx.getParameters("types").stream().map(t -> AirspaceType.fromName(t)).filter(Objects::nonNull).forEach(types::add);
 		
-		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
+		boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
 		Country c = Country.get(ctx.getParameter("country"));
 		try (InputStream is = navData.getInputStream()) {
 			Connection con = ctx.getConnection();

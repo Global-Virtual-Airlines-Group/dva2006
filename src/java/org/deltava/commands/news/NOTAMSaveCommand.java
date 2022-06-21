@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 		
 		// Check if we're notifiying users 
-		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
+		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
 		Collection<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -58,8 +58,8 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
-				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
-				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
+				nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -69,8 +69,8 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
-				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
+				nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

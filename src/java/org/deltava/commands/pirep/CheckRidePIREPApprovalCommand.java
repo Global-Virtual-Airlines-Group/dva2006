@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 		mctx.addData("user", ctx.getUser());
 
 		// Get the checkride approval
-		boolean flightApproved = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue();
+		boolean flightApproved = Boolean.parseBoolean(ctx.getParameter("frApprove"));
 		CheckRideScoreOptions scoreAction = CheckRideScoreOptions.values()[StringUtils.parse(ctx.getParameter("crApprove"), 0)];
 		boolean isScored = (scoreAction != CheckRideScoreOptions.NONE);
 		Pilot p = null;

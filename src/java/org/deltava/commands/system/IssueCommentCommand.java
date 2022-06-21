@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.IssueAccessControl;
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Check if we're sending this comment via e-mail
-			boolean sendComment = Boolean.valueOf(ctx.getParameter("emailComment")).booleanValue();
+			boolean sendComment = Boolean.parseBoolean(ctx.getParameter("emailComment"));
 			if (sendComment) {
 				ctx.setAttribute("sendComment", Boolean.TRUE, REQUEST);
 				Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -82,7 +82,7 @@ public class IssueCommentCommand extends AbstractCommand {
 				mctx.addData("user", ctx.getUser());
 
 				// Check if we're sending to all commenters
-				boolean sendAll = Boolean.valueOf(ctx.getParameter("emailAll")).booleanValue();
+				boolean sendAll = Boolean.parseBoolean(ctx.getParameter("emailAll"));
 				if (sendAll)
 					i.getComments().stream().map(IssueComment::getAuthorID).forEach(pilotIDs::add);
 

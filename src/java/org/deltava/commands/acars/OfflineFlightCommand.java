@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -102,7 +102,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		// Convert the files to strings
 		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> flight = null;
 		boolean isOps = ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") || ctx.isUserInRole("Developer");
-		boolean noValidate = (isOps || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
+		boolean noValidate = (isOps || ctx.isSuperUser()) && Boolean.parseBoolean(ctx.getParameter("noValidate"));
 		try {
 			if (sha == null) sha = new String(shaF.getBuffer(), US_ASCII);
 			if (xml == null) xml = xmlF.getBuffer();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -69,9 +69,9 @@ public class ExamProfileCommand extends AbstractAuditFormCommand {
 			ep.setSize(StringUtils.parse(ctx.getParameter("size"), 1));
 			ep.setPassScore(StringUtils.parse(ctx.getParameter("passScore"), 1));
 			ep.setTime(StringUtils.parse(ctx.getParameter("time"), 15));
-			ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
-			ep.setNotify(Boolean.valueOf(ctx.getParameter("doNotify")).booleanValue());
+			ep.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+			ep.setAcademy(Boolean.parseBoolean(ctx.getParameter("isAcademy")));
+			ep.setNotify(Boolean.parseBoolean(ctx.getParameter("doNotify")));
 
 			// Update airlines
 			Collection<String> airlines = ctx.getParameters("airline");

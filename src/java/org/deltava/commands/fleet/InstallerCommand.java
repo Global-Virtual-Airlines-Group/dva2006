@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public class InstallerCommand extends LibraryEditCommand {
 		mctxt.addData("user", ctx.getUser());
 
 		// Check if we notify people
-		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
+		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
 		List<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();

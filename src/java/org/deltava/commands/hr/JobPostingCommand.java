@@ -69,7 +69,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 			jp.setMinAge(StringUtils.parse(ctx.getParameter("minAge"), 0));
 			jp.setClosesOn(parseDateTime(ctx, "close"));
 			jp.setHireManagerID(StringUtils.parse(ctx.getParameter("hireMgr"), 0));
-			jp.setStaffOnly(Boolean.valueOf(ctx.getParameter("staffOnly")).booleanValue());
+			jp.setStaffOnly(Boolean.parseBoolean(ctx.getParameter("staffOnly")));
 			
 			// Get users
 			if (isNew) {
