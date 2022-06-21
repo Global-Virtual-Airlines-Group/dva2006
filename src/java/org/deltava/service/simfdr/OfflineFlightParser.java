@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import java.util.*;
@@ -64,7 +64,7 @@ final class OfflineFlightParser {
 		FlightInfo inf = new FlightInfo(0);
 		inf.setVersion(StringUtils.parse(re.getAttributeValue("version"), 2));
 		inf.setClientBuild(StringUtils.parse(re.getAttributeValue("build"), 1));
-		inf.setIsACARS64Bit(Boolean.valueOf(re.getAttributeValue("is64Bit")).booleanValue());
+		inf.setIsACARS64Bit(Boolean.parseBoolean(re.getAttributeValue("is64Bit")));
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setAirportD(SystemData.getAirport(ie.getChildTextTrim("airportD")));
 		inf.setAirportA(SystemData.getAirport(ie.getChildTextTrim("airportA")));
@@ -102,7 +102,7 @@ final class OfflineFlightParser {
 		afr.setSimulator(inf.getSimulator());
 		afr.setDate(Instant.now());
 		afr.setSubmittedOn(afr.getDate());
-		afr.setRestoreCount(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue() ? 1 : 0);
+		afr.setRestoreCount(Boolean.parseBoolean(ie.getChildTextTrim("hasRestore")) ? 1 : 0);
 		afr.setFDE(ie.getChildTextTrim("airFile"));
 		afr.setSDK(ie.getChildTextTrim("sdk"));
 		afr.setCapabilities(StringUtils.parse(ie.getAttributeValue("capabilities", "0"), 0, true));
@@ -228,7 +228,7 @@ final class OfflineFlightParser {
 		pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 		pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
 		pos.setGroundOperations(StringUtils.parse(pe.getChildTextTrim("groundOps"), 0));
-		pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
+		pos.setNetworkConnected(Boolean.parseBoolean(pe.getChildTextTrim("networkConnected")));
 		pos.setRestoreCount(StringUtils.parse(pe.getChildTextTrim("restoreCount"), 0));
 		pos.setNAV1(pe.getChildTextTrim("nav1"));
 		pos.setNAV2(pe.getChildTextTrim("nav2"));

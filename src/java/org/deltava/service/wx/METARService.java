@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.sql.Connection;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch METAR data. 
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 2.3
  */
 
@@ -37,7 +37,7 @@ public class METARService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if using FlightAware data services
-		boolean useFA = Boolean.valueOf(ctx.getParameter("fa")).booleanValue();
+		boolean useFA = Boolean.parseBoolean(ctx.getParameter("fa"));
 		useFA &= SystemData.getBoolean("schedule.flightaware.enabled") && (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
 		
 		// Get the weather data
@@ -91,10 +91,6 @@ public class METARService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;

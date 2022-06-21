@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download Online Network IDs.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class OnlineIDService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Determine if we format using XML
-		boolean isXML = Boolean.valueOf(ctx.getParameter("xml")).booleanValue();
+		boolean isXML = Boolean.parseBoolean(ctx.getParameter("xml"));
 		
 		// Get the network name
 		String network = ctx.getParameter("network");

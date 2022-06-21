@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide JSON-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 8.3
+ * @version 10.2
  * @since 7.3
  */
 
@@ -37,13 +37,13 @@ public class MapProgressJSONService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Flight ID
-		String id = ctx.getParameter("id"); boolean isExternal = Boolean.valueOf(ctx.getParameter("isExternal")).booleanValue();
+		String id = ctx.getParameter("id"); boolean isExternal = Boolean.parseBoolean(ctx.getParameter("isExternal"));
 		int acarsID = StringUtils.parse(id, 0);
 		if ((acarsID < 1) && !isExternal) 
 			return SC_NOT_FOUND;
 
 		// Determine if we show the route
-		boolean doRoute = Boolean.valueOf(ctx.getParameter("route")).booleanValue();
+		boolean doRoute = Boolean.parseBoolean(ctx.getParameter("route"));
 
 		// Get the DAO and the route data
 		final List<GeoLocation> routePoints = new ArrayList<GeoLocation>();
@@ -115,7 +115,7 @@ public class MapProgressJSONService extends WebService {
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "savedPositions", "tempPositions", "waypoints");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(5);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -126,10 +126,6 @@ public class MapProgressJSONService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

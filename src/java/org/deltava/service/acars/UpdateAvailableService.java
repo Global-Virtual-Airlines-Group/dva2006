@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to determine whether a new ACARS client is available.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 4.1
  */
 
@@ -28,9 +28,9 @@ public class UpdateAvailableService extends WebService {
 		
 		// Parse the info
 		ClientInfo cInfo = new ClientInfo(StringUtils.parse(ctx.getParameter("version"), 3), StringUtils.parse(ctx.getParameter("build"), 100), StringUtils.parse(ctx.getParameter("beta"), 0));
-		if (Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue())
+		if (Boolean.parseBoolean(ctx.getParameter("dispatch")))
 			cInfo.setClientType(ClientType.DISPATCH);
-		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
+		else if (Boolean.parseBoolean(ctx.getParameter("atc")))
 			cInfo.setClientType(ClientType.ATC);
 		
 		// Get channel - override with pilot preferences
