@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -11,10 +11,9 @@ import org.deltava.beans.Person;
 import org.deltava.util.*;
 
 /**
- * An authenticator to validate users against a file repository. This should
- * typically be used for testing or backup purposes only.
+ * An authenticator to validate users against a file repository. This should typically be used for testing or backup purposes only.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -36,7 +35,7 @@ public class FileAuthenticator implements Authenticator {
 			_pwd = tokens.nextToken();
 			tokens.nextToken();
 			if (tokens.hasMoreTokens())
-				_enabled = Boolean.valueOf(tokens.nextToken()).booleanValue();
+				_enabled = Boolean.parseBoolean(tokens.nextToken());
 		}
 
 		UserInfo(String dn, String pwd, String uid) {

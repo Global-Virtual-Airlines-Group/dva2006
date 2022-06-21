@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to register caches from an XML file.
  * @author Luke
- * @version 7.4
+ * @version 10.2
  * @since 5.0
  */
 
@@ -43,8 +43,8 @@ public class CacheLoader {
 			CacheConfig cfg = new CacheConfig(ce.getAttributeValue("id"));
 			cfg.setMaxSize(StringUtils.parse(ce.getAttributeValue("max", "0"), 10));
 			cfg.setExpiryTime(StringUtils.parse(ce.getAttributeValue("expires", "-1"), 0));
-			cfg.setGeo(Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue());
-			cfg.setRemote(Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue());
+			cfg.setGeo(Boolean.parseBoolean(ce.getAttributeValue("geo", "false")));
+			cfg.setRemote(Boolean.parseBoolean(ce.getAttributeValue("remote", "false")));
 			if (cfg.isGeo())
 				cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 0.01));
 			
