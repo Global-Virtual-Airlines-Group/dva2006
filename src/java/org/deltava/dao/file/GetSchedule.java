@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -131,9 +131,9 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 						// Discard distance, load historic
 						tkns.nextToken();
-						entry.setHistoric(Boolean.valueOf(tkns.nextToken()).booleanValue());
-						entry.setForceInclude(Boolean.valueOf(tkns.nextToken()).booleanValue());
-						entry.setAcademy(Boolean.valueOf(tkns.nextToken()).booleanValue());
+						entry.setHistoric(Boolean.parseBoolean(tkns.nextToken()));
+						entry.setForceInclude(Boolean.parseBoolean(tkns.nextToken()));
+						entry.setAcademy(Boolean.parseBoolean(tkns.nextToken()));
 						results.add(entry);
 					} catch (Exception e) {
 						_status.addMessage("Error on line " + br.getLineNumber() + " - " + e.getMessage());
