@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 2.2
  */
 
@@ -42,7 +42,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 		criteria.setDBName(ctx.getDB());
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("maxLength"), 0));
 		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("maxLengthRange"), 0));
-		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("avoidVisitedDestination")).booleanValue());
+		criteria.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("avoidVisitedDestination")));
 		criteria.setExcludeHistoric(EnumUtils.parse(Inclusion.class, ctx.getParameter("avoidHistorical"), Inclusion.ALL));
 
 		// Get total legs to load

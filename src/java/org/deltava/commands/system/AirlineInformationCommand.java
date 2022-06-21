@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.BeanUtils;
 /**
  * A Web Site Command to edit Virtual Airline profiles.
  * @author Luke
- * @version 8.4
+ * @version 10.2
  * @since 5.0
  */
 
@@ -45,8 +45,8 @@ public class AirlineInformationCommand extends AbstractAuditFormCommand {
 				throw securityException("Cannot edit Virtual Airline profile");
 			
 			// Update fields
-			ai.setCanTransfer(Boolean.valueOf(ctx.getParameter("canTX")).booleanValue());
-			ai.setHistoricRestricted(Boolean.valueOf(ctx.getParameter("historicRestrict")).booleanValue());
+			ai.setCanTransfer(Boolean.parseBoolean(ctx.getParameter("canTX")));
+			ai.setHistoricRestricted(Boolean.parseBoolean(ctx.getParameter("historicRestrict")));
 			ai.setDB(ctx.getParameter("db"));
 			ai.setDomain(ctx.getParameter("domain"));
 			

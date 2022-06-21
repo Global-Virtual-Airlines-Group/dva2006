@@ -88,7 +88,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		criteria.setDBName(ctx.getDB());
-		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
+		criteria.setCheckDispatchRoutes(Boolean.parseBoolean(ctx.getParameter("checkDispatch")));
 		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
 		criteria.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
 		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
@@ -96,14 +96,14 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setPilotID(ctx.getUser().getID());
 		criteria.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
-		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
-		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
+		criteria.setNotVisitedD(Boolean.parseBoolean(ctx.getParameter("nVD")));
+		criteria.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("nVA")));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 500))
 			criteria.setMaxResults(500);
 
 		// Set equipment type(s)
 		final String f = ctx.getParameter("family");
-		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
+		if (Boolean.parseBoolean(ctx.getParameter("myEQTypes")))
 			criteria.setEquipmentTypes(ctx.getUser().getRatings());
 		else if (!StringUtils.isEmpty(f) && !"-".equals(f)) {
 			criteria.setEquipmentTypes(allEQ.stream().filter(ac -> f.equalsIgnoreCase(ac.getFamily())).map(Aircraft::getName).collect(Collectors.toSet()));
@@ -117,7 +117,7 @@ public class FindFlightCommand extends AbstractCommand {
 			sortType = ScheduleSearchCriteria.SORT_CODES[0];
 
 		// Check for descending sort
-		if (Boolean.valueOf(ctx.getParameter("sortDesc")).booleanValue())
+		if (Boolean.parseBoolean(ctx.getParameter("sortDesc")))
 			sortType += " DESC";
 
 		// Save the search criteria in the session

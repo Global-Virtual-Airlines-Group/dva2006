@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -234,7 +234,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 
 			// Diversion handling
-			boolean doDivert = Boolean.valueOf(ctx.getParameter("holdDivert")).booleanValue();
+			boolean doDivert = Boolean.parseBoolean(ctx.getParameter("holdDivert"));
 			if (doDivert && (op == FlightStatus.HOLD) && (fr instanceof ACARSFlightReport)) {
 				GetACARSData fidao = new GetACARSData(con);
 				FlightInfo fInfo = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));

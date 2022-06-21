@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 2.2
  */
 
@@ -48,7 +48,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check if we load history
-		boolean noHistory = Boolean.valueOf(ctx.getParameter("noHistory")).booleanValue();
+		boolean noHistory = Boolean.parseBoolean(ctx.getParameter("noHistory"));
 		long now = System.currentTimeMillis();
 		
 		// Initialize the calendar context

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -138,7 +138,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setDateFormat(ctx.getParameter("df"));
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
-			p.setShowNavBar(Boolean.valueOf(ctx.getParameter("showNavBar")).booleanValue());
+			p.setShowNavBar(Boolean.parseBoolean(ctx.getParameter("showNavBar")));
 			p.setACARSUpdateChannel(EnumUtils.parse(UpdateChannel.class, ctx.getParameter("acarsUpdateChannel"), UpdateChannel.RELEASE));
 
 			// Update IM handles
@@ -152,10 +152,10 @@ public class ProfileCommand extends AbstractFormCommand {
 				p.setLocation(ctx.getParameter("location"));
 
 			// Get Discussion Forum option checkboxes
-			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
-			p.setShowSSThreads(Boolean.valueOf(ctx.getParameter("showImageThreads")).booleanValue());
-			p.setShowNewPosts(Boolean.valueOf(ctx.getParameter("scrollToNewPosts")).booleanValue());
-			p.setHasDefaultSignature(Boolean.valueOf(ctx.getParameter("useDefaultSig")).booleanValue());
+			p.setShowSignatures(Boolean.parseBoolean(ctx.getParameter("showSigs")));
+			p.setShowSSThreads(Boolean.parseBoolean(ctx.getParameter("showImageThreads")));
+			p.setShowNewPosts(Boolean.parseBoolean(ctx.getParameter("scrollToNewPosts")));
+			p.setHasDefaultSignature(Boolean.parseBoolean(ctx.getParameter("useDefaultSig")));
 
 			// Set Notification Options
 			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
@@ -167,7 +167,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Determine if we are changing the pilot's status
 			if (p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) {
 				// Check Discussion Forum access
-				boolean coolerPostsLocked = Boolean.valueOf(ctx.getParameter("noCooler")).booleanValue();
+				boolean coolerPostsLocked = Boolean.parseBoolean(ctx.getParameter("noCooler"));
 				if (coolerPostsLocked != p.getNoCooler()) {
 					p.setNoCooler(coolerPostsLocked);
 					String forumName = SystemData.get("airline.forum");
@@ -179,7 +179,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Check Testing Center access
-				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
+				boolean examsLocked = Boolean.parseBoolean(ctx.getParameter("noExams"));
 				if (examsLocked != p.getNoExams()) {
 					p.setNoExams(examsLocked);
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
@@ -190,7 +190,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Check Voice server access
-				boolean voiceLocked = Boolean.valueOf(ctx.getParameter("noVoice")).booleanValue();
+				boolean voiceLocked = Boolean.parseBoolean(ctx.getParameter("noVoice"));
 				if (voiceLocked != p.getNoVoice()) {
 					p.setNoVoice(voiceLocked);
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
@@ -212,7 +212,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 				
 				// Check ACARS Time compression access
-				boolean compressLocked = Boolean.valueOf(ctx.getParameter("noTimeCompress")).booleanValue();
+				boolean compressLocked = Boolean.parseBoolean(ctx.getParameter("noTimeCompress"));
 				if (compressLocked != p.getNoTimeCompression()) {
 					p.setNoTimeCompression(compressLocked);
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
@@ -223,7 +223,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 				
 				// Check permanent account status
-				boolean newPermAccount = Boolean.valueOf(ctx.getParameter("permAccount")).booleanValue();
+				boolean newPermAccount = Boolean.parseBoolean(ctx.getParameter("permAccount"));
 				if (newPermAccount != p.getIsPermanent()) {
 					p.setIsPermanent(newPermAccount);
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
@@ -395,7 +395,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				// Update the image if it's OK
 				if (imgOK) {
-					boolean isAuth = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("isAuthSig")).booleanValue();
+					boolean isAuth = ctx.isUserInRole("HR") && Boolean.parseBoolean(ctx.getParameter("isAuthSig"));
 					if (isAuth) {
 						SignatureImage si = new SignatureImage(p.getID());
 						si.load(imgData.getBuffer());
@@ -419,7 +419,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 					log.info("Signature Updated");
 				}
-			} else if (Boolean.valueOf(ctx.getParameter("removeCoolerImg")).booleanValue()) {
+			} else if (Boolean.parseBoolean(ctx.getParameter("removeCoolerImg"))) {
 				sigdao.delete(p.getID());
 				ctx.setAttribute("sigRemoved", Boolean.TRUE, REQUEST);
 				log.info("Signature Removed");
@@ -435,7 +435,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					s.setTitle(ctx.getParameter("staffTitle"));
 					s.setSortOrder(StringUtils.parse(ctx.getParameter("staffSort"), 6));
 					s.setArea(ctx.getParameter("staffArea"));
-					removeStaffProfile = Boolean.valueOf(ctx.getParameter("removeStaff")).booleanValue();
+					removeStaffProfile = Boolean.parseBoolean(ctx.getParameter("removeStaff"));
 				}
 
 				// Update the staff profile table

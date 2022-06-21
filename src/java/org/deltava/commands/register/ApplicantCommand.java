@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -7,17 +7,20 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.Airport;
+
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.security.command.ApplicantAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -32,7 +35,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we are doing a hire at the same time
-		boolean doHire = Boolean.valueOf(ctx.getParameter("doHire")).booleanValue();
+		boolean doHire = Boolean.parseBoolean(ctx.getParameter("doHire"));
 		try {
 			Connection con = ctx.getConnection();
 

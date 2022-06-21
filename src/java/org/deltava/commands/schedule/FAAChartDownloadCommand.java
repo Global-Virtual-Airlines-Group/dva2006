@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 8.3
+ * @version 10.2
  * @since 5.0
  */
 
@@ -163,7 +163,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		int y = StringUtils.parse(ctx.getParameter("year"), 0) - 2000;
 		String metaURL = SystemData.get("schedule.chart.url.faa.meta");
 		metaURL = metaURL.replace("${YY}", StringUtils.format(y, "00")).replace("${MM}", ctx.getParameter("month"));
-		boolean noDL = Boolean.valueOf(ctx.getParameter("noDownload")).booleanValue();
+		boolean noDL = Boolean.parseBoolean(ctx.getParameter("noDownload"));
 		
 		// Calculate local file name
 		String localName = "faaChartMetadata-${YY}${MM}.xml".replace("${MM}", ctx.getParameter("month")).replace("${YY}", StringUtils.format(y, "00"));

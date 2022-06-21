@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
- * @version 7.4
+ * @version 10.2
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class ThreadStickCommand extends AbstractCommand {
 		}
 		
 		// Get sticky in channel
-		boolean stickChannel = Boolean.valueOf(ctx.getParameter("stickyChannel")).booleanValue();
+		boolean stickChannel = Boolean.parseBoolean(ctx.getParameter("stickyChannel"));
 		try {
 			Connection con = ctx.getConnection();
 

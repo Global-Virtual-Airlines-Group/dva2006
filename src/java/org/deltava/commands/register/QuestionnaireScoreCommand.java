@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command for scoring Applicant Questionnaires.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          int score = 0;
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
-            boolean isCorrect = Boolean.valueOf(ctx.getParameter("Score" + String.valueOf(x))).booleanValue();
+            boolean isCorrect = Boolean.parseBoolean(ctx.getParameter("Score" + String.valueOf(x)));
             q.setCorrect(isCorrect);
             if (isCorrect)
                score++;

@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Flight Academy Certification requirements.
  * @author Luke
- * @version 3.4
+ * @version 10.2
  * @since 1.0
  */
 
@@ -83,13 +83,10 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Determine if we want to add more requirements
-		boolean addMore = Boolean.valueOf(ctx.getParameter("doMore")).booleanValue();
-
-		// Forward to the JSP
+		// Determine if we want to add more requirements - Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
-		if (addMore) {
+		if (Boolean.parseBoolean(ctx.getParameter("doMore"))) {
 			result.setURL("certreqs", "edit", name);
 			result.setType(ResultType.REDIRECT);
 		} else {

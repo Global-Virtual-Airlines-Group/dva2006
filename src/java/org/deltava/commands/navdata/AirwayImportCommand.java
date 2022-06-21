@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -116,7 +116,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 			
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
-			boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
+			boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
 			if (doPurge) {
 				tt.start();
 				int purgeCount = dao.purgeAirways();

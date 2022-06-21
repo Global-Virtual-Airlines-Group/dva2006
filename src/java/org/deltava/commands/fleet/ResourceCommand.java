@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.ResourceAccessControl;
 /**
  * A Web Site Command to display/edit a Web Resource.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class ResourceCommand extends AbstractFormCommand {
 			r.setCategory(ctx.getParameter("category"));
 			r.setDescription(ctx.getParameter("desc"));
 			r.setLastUpdateID(ctx.getUser().getID());
-			r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+			r.setPublic(ac.getCanEdit() && Boolean.parseBoolean(ctx.getParameter("isPublic")));
 			
 			// Save the resource
 			SetResource wdao = new SetResource(con);

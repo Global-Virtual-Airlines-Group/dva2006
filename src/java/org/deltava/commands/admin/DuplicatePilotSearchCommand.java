@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to search for duplicate Pilots.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		}
 
 		// Check if we're doing an exact match
-		boolean exactMatch = Boolean.valueOf(ctx.getParameter("exactMatch")).booleanValue();
+		boolean exactMatch = Boolean.parseBoolean(ctx.getParameter("exactMatch"));
 
 		// Build the parameters
 		String fName1 = buildParameter(ctx.getParameter("firstName"), exactMatch);

@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to upload ACARS installers.
  * @author Luke
- * @version 7.5
+ * @version 10.2
  * @since 7.5
  */
 
@@ -33,7 +33,7 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		String fName = (String) ctx.getCmdParameter(Command.ID, null);
 		
 		// Build client version
-		int version = StringUtils.parse(ctx.getParameter("version"), 3); boolean isBeta = Boolean.valueOf(ctx.getParameter("isBeta")).booleanValue();
+		int version = StringUtils.parse(ctx.getParameter("version"), 3); boolean isBeta = Boolean.parseBoolean(ctx.getParameter("isBeta"));
 		int beta = isBeta ? StringUtils.parse(ctx.getParameter("beta"), 0) : 0;
 		ClientInfo info = new ClientInfo(version, StringUtils.parse(ctx.getParameter("build"), 0), beta);
 		String newFile = SystemData.get("airline.code") + "-ACARS" + version + (info.isBeta() ? "Beta" : "") + "Inc.exe";
