@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -110,8 +110,8 @@ public final class OfflineFlightParser {
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
-		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
-		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
+		inf.setScheduleValidated(Boolean.parseBoolean(ie.getChildTextTrim("schedOK")));
+		inf.setDispatchPlan(Boolean.parseBoolean(ie.getChildTextTrim("dispatchRoute")));
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
 		inf.setRouteID(StringUtils.parse(ie.getChildTextTrim("dispatchRouteID"), 0));
 		inf.setPassengers(StringUtils.parse(ie.getChildTextTrim("pax"), 0));
@@ -125,8 +125,8 @@ public final class OfflineFlightParser {
 		inf.setPlatform(OperatingSystem.values()[StringUtils.parse(ie.getChildTextTrim("platform"), 0)]);
 		String sim = ie.getChildTextTrim("fs_ver");
 		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
-		inf.setIsSim64Bit(Boolean.valueOf(ie.getChildTextTrim("is64Bit")).booleanValue());
-		inf.setIsACARS64Bit(Boolean.valueOf(ie.getChildTextTrim("isACARS64Bit")).booleanValue());
+		inf.setIsSim64Bit(Boolean.parseBoolean(ie.getChildTextTrim("is64Bit")));
+		inf.setIsACARS64Bit(Boolean.parseBoolean(ie.getChildTextTrim("isACARS64Bit")));
 		inf.setFDR(Recorder.ACARS); // need to set after sim
 		if (inf.getSimulator() == Simulator.UNKNOWN)
 			log.warn("Unknown simulator version - " + sim);
@@ -180,7 +180,7 @@ public final class OfflineFlightParser {
 					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
 					pos.setGroundOperations(StringUtils.parse(pe.getChildTextTrim("groundOps"), 0));
-					pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
+					pos.setNetworkConnected(Boolean.parseBoolean(pe.getChildTextTrim("networkConnected")));
 					pos.setRestoreCount(StringUtils.parse(pe.getChildTextTrim("restoreCount"), 0));
 					pos.setNAV1(pe.getChildTextTrim("nav1"));
 					pos.setNAV2(pe.getChildTextTrim("nav2"));
@@ -219,7 +219,7 @@ public final class OfflineFlightParser {
 		afr.setNetwork(EnumUtils.parse(OnlineNetwork.class, ie.getChildTextTrim("network"), null));
 		
 		// Check if it's a checkride
-		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());
+		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.parseBoolean(ie.getChildTextTrim("checkRide")));
 
 		// Set the times
 		afr.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
