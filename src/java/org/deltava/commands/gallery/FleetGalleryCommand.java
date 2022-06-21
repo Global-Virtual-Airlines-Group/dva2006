@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -32,8 +32,7 @@ public class FleetGalleryCommand extends AbstractViewCommand {
     public void execute(CommandContext ctx) throws CommandException {
     	
     	// Determining if we're opening the admin view
-    	boolean doAdmin = Boolean.valueOf((String) ctx.getCmdParameter(ID, null)).booleanValue();
-
+    	boolean doAdmin = Boolean.parseBoolean((String) ctx.getCmdParameter(ID, null));
         List<Image> results = new ArrayList<Image>();
         try {
             Connection con = ctx.getConnection();
@@ -73,9 +72,7 @@ public class FleetGalleryCommand extends AbstractViewCommand {
         }
         
         // Build the description array
-        List<String> descs = new ArrayList<String>();
-        for (Image img : results)
-            descs.add(StringUtils.stripInlineHTML(img.getDescription()));
+        List<String> descs = results.stream().map(Image::getDescription).map(StringUtils::stripInlineHTML).collect(Collectors.toList());
         
         // Save the results and description array
         ctx.setAttribute("fleetGallery", results, REQUEST);

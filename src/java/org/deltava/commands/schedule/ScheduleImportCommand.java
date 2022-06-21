@@ -83,7 +83,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			return;
 		}
 
-		ImportStatus st = null; boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
+		ImportStatus st = null; boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
 		File f = (ss == ScheduleSource.INNOVATA) ? new File(SystemData.get("schedule.innovata.file")) : new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		try {
 			// Get the DAOs

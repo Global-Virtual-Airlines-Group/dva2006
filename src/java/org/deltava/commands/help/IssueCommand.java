@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -61,7 +61,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 				int newAssignee = StringUtils.parse(ctx.getParameter("assignedTo"), i.getAssignedTo());
 				if (newAssignee != i.getAssignedTo()) {
 					i.setAssignedTo(newAssignee);
-					sendIssue = Boolean.valueOf(ctx.getParameter("sendIssue")).booleanValue();
+					sendIssue = Boolean.parseBoolean(ctx.getParameter("sendIssue"));
 				}
 
 				// Update subject
@@ -93,7 +93,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			// Update fields from the request
 			i.setBody(ctx.getParameter("body"));
 			if (ac.getCanUpdateStatus())
-				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+				i.setPublic(Boolean.parseBoolean(ctx.getParameter("isPublic")));
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oi, i);

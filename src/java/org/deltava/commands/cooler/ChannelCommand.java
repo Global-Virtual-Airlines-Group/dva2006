@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
- * @version 7.4
+ * @version 10.2
  * @since 1.0
  */
 
@@ -70,8 +70,8 @@ public class ChannelCommand extends AbstractAuditFormCommand {
 
 			// Update the channel from the request
 			c.setDescription(ctx.getParameter("desc"));
-			c.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			c.setAllowNewPosts(Boolean.valueOf(ctx.getParameter("allowNew")).booleanValue());
+			c.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+			c.setAllowNewPosts(Boolean.parseBoolean(ctx.getParameter("allowNew")));
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oc, c);

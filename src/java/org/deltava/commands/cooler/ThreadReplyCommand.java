@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 		
 		// Determine if we are editing the last post
-		boolean doEdit = Boolean.valueOf(ctx.getParameter("doEdit")).booleanValue();
+		boolean doEdit = Boolean.parseBoolean(ctx.getParameter("doEdit"));
 		Map<UserData, Pilot> notifyList = new LinkedHashMap<UserData, Pilot>();
 		try {
 			Connection con = ctx.getConnection();

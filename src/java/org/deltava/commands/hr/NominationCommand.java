@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.3
  */
 
@@ -86,7 +86,7 @@ public class NominationCommand extends AbstractFormCommand {
 			nc.setAuthorID(ctx.getUser().getID());
 			nc.setCreatedOn(Instant.now());
 			if (!isNew && access.getCanObject())
-				nc.setSupport(Boolean.valueOf(ctx.getParameter("support")).booleanValue());
+				nc.setSupport(Boolean.parseBoolean(ctx.getParameter("support")));
 			n.addComment(nc);
 			
 			// Load the authors IDs

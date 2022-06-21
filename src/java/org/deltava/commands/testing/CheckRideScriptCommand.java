@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 		
 		// Get the equipment type
 		String id = (String) ctx.getCmdParameter(ID, null);
-		boolean isCurrency = Boolean.valueOf(ctx.getParameter("isCurrency")).booleanValue();
+		boolean isCurrency = Boolean.parseBoolean(ctx.getParameter("isCurrency"));
 		EquipmentRideScriptKey key = EquipmentRideScriptKey.isValid(id) ? EquipmentRideScriptKey.parse(id) : new EquipmentRideScriptKey(ctx.getParameter("programType"), ctx.getParameter("eqType"), isCurrency);
 		try {
 			Connection con = ctx.getConnection();
@@ -48,7 +48,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			sc.setDescription(ctx.getParameter("msgText"));
 			sc.setEquipmentType(ctx.getParameter("eqType"));
 			sc.setIsCurrency(isCurrency);
-			sc.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
+			sc.setIsDefault(Boolean.parseBoolean(ctx.getParameter("isDefault")));
 			sc.getSimulators().clear();
 			ctx.getParameters("sims", Collections.emptySet()).stream().map(s ->Simulator.fromName(s, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 

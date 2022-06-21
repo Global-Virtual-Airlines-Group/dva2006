@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 8.6
+ * @version 10.2
  * @since 1.0
  */
 
@@ -87,7 +87,7 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 
 			// Check if we are using the script
 			String comments = ctx.getParameter("comments");
-			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
+			boolean useScript = Boolean.parseBoolean(ctx.getParameter("useScript"));
 			if (useScript) {
 				EquipmentRideScriptKey key = new EquipmentRideScriptKey(eq.getName(), ctx.getParameter("crType"), false);
 				GetExamProfiles epdao = new GetExamProfiles(con);

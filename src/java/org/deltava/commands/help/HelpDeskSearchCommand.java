@@ -1,4 +1,4 @@
-// Copyright 2009, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to search the Help Desk.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 2.7
  */
 
@@ -31,7 +31,7 @@ public class HelpDeskSearchCommand extends AbstractCommand {
 		
 		// Get search options
 		int maxResults = StringUtils.parse(ctx.getParameter("maxResults"), 20);
-		boolean searchComments = Boolean.valueOf(ctx.getParameter("doComments")).booleanValue();
+		boolean searchComments = Boolean.parseBoolean(ctx.getParameter("doComments"));
 
 		// Get command result
 		CommandResult result = ctx.getResult();

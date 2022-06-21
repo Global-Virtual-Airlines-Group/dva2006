@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 3.2
  */
 
@@ -60,8 +60,8 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 				throw securityException("Cannot " + (isNew ? "create" : "edit") + " Accomplishment profile");
 			
 			// Update fields
-			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			a.setAlwaysDisplay(Boolean.valueOf(ctx.getParameter("alwaysDisplay")).booleanValue());
+			a.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+			a.setAlwaysDisplay(Boolean.parseBoolean(ctx.getParameter("alwaysDisplay")));
 			a.setUnit(AccomplishUnit.valueOf(ctx.getParameter("units")));
 			a.setColor(StringUtils.parse("0x" + ctx.getParameter("color"), 0));
 			
@@ -115,7 +115,7 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 			}
 			
 			// Get count/all
-			boolean doAll = Boolean.valueOf(ctx.getParameter("doAll")).booleanValue();
+			boolean doAll = Boolean.parseBoolean(ctx.getParameter("doAll"));
 			doAll &= (a.getUnit() != AccomplishUnit.ADLEGS) && (a.getUnit() != AccomplishUnit.AALEGS);
 			a.setValue(doAll ? a.getChoices().size() : StringUtils.parse(ctx.getParameter("value"), 0));
 			

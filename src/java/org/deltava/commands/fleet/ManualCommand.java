@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -55,7 +55,7 @@ public class ManualCommand extends LibraryEditCommand {
 			fName = mFile.getName();
 
 		// Check if we notify people
-		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
+		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
 
 		// Create the Message Context
 		MessageContext mctxt = new MessageContext();
@@ -92,21 +92,21 @@ public class ManualCommand extends LibraryEditCommand {
 			entry.setDescription(ctx.getParameter("desc"));
 			entry.setName(ctx.getParameter("title"));
 			entry.setVersion(StringUtils.parse(ctx.getParameter("version"), 1));
-			entry.setShowOnRegister(Boolean.valueOf(ctx.getParameter("showRegister")).booleanValue());
+			entry.setShowOnRegister(Boolean.parseBoolean(ctx.getParameter("showRegister")));
 			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			entry.setLastModified(Instant.now());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
 			
 			// Populate Flight Academy Certifications
-			boolean hasCerts = Boolean.valueOf(ctx.getParameter("hasCerts")).booleanValue();
+			boolean hasCerts = Boolean.parseBoolean(ctx.getParameter("hasCerts"));
 			if (hasCerts) {
 				Collection<String> certs = ctx.getParameters("certNames");
 				entry.addCertifications((certs == null) ? new HashSet<String>() : certs);	
 			}
 			
 			// Set public field
-			boolean ignoreCerts = Boolean.valueOf(ctx.getParameter("ignoreCerts")).booleanValue();
+			boolean ignoreCerts = Boolean.parseBoolean(ctx.getParameter("ignoreCerts"));
 			entry.setIgnoreCertifcations(ignoreCerts && (!entry.getCertifications().isEmpty()));
 
 			// Get the message template

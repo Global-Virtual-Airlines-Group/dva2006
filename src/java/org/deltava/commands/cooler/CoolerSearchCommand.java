@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2013, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -87,8 +87,8 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
 			criteria.setChannel(ctx.getParameter("channel"));
 			criteria.setAuthorName(ctx.getParameter("pilotName"));
-			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
-			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
+			criteria.setSearchSubject(Boolean.parseBoolean(ctx.getParameter("checkSubject")));
+			criteria.setSearchNameFragment(Boolean.parseBoolean(ctx.getParameter("nameMatch")));
 			criteria.setMinimumDate(lud.toInstant(ZoneOffset.UTC));
 			
 			// Get the DAO and search

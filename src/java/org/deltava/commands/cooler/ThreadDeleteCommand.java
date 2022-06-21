@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to delete Water Cooler message threads.
  * @author Luke
- * @version 5.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class ThreadDeleteCommand extends AbstractCommand {
 			ctx.setAttribute("thread", mt, REQUEST);
 			
 			// If we're not forcing a delete, redirect
-			boolean isOK = Boolean.valueOf("force".equals(ctx.getCmdParameter(OPERATION, null))).booleanValue();
+			boolean isOK = "force".equals(ctx.getCmdParameter(OPERATION, null));
 			if (!isOK) {
 				ctx.release();
 				

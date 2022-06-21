@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 2.1
  */
 
@@ -43,7 +43,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			   vc.setSortType(SORT_CODE[0]);
 		
 		// Check if doing a descending sort
-		boolean isDesc = Boolean.valueOf(ctx.getParameter("isDesc")).booleanValue();
+		boolean isDesc = Boolean.parseBoolean(ctx.getParameter("isDesc"));
 		if (isDesc)
 			vc.setSortType(vc.getSortType() + " DESC");
 		

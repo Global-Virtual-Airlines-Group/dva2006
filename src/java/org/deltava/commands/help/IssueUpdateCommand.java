@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to update a Help Desk Issue.
  * @author Luke
- * @version 7.5
+ * @version 10.2
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class IssueUpdateCommand extends AbstractCommand {
 			i.getComments().forEach(ic -> comments.put(Long.valueOf(ic.getCreatedOn().toEpochMilli()), ic));
 
 			// Update FAQ attribute from the request
-			i.setFAQ(Boolean.valueOf(ctx.getParameter("isFAQ")).booleanValue());
+			i.setFAQ(Boolean.parseBoolean(ctx.getParameter("isFAQ")));
 
 			// Start the transaction
 			ctx.startTX();

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to approve or reject Senior Captain nominations.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 3.3
  */
 
@@ -30,7 +30,7 @@ public class NominationDisposeCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		boolean isApproved = Boolean.valueOf(String.valueOf(ctx.getCmdParameter(Command.OPERATION, Boolean.FALSE))).booleanValue();
+		boolean isApproved = Boolean.parseBoolean(String.valueOf(ctx.getCmdParameter(Command.OPERATION, Boolean.FALSE)));
 		try {
 			Connection con = ctx.getConnection();
 			

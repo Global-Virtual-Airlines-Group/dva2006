@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update flight routes for an Online Event.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -61,8 +61,8 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				maxRouteID = Math.max(maxRouteID, rt.getRouteID() + 1);
 				
 				// Check for delete/disable
-				boolean isDelete = Boolean.valueOf(ctx.getParameter("delete" + rt.getRouteID())).booleanValue();
-				boolean isDisable = Boolean.valueOf(ctx.getParameter("disable" + rt.getRouteID())).booleanValue();
+				boolean isDelete = Boolean.parseBoolean(ctx.getParameter("delete" + rt.getRouteID()));
+				boolean isDisable = Boolean.parseBoolean(ctx.getParameter("disable" + rt.getRouteID()));
 					
 				// Update the route
 				if (isDelete)
@@ -70,7 +70,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				else {
 					rt.setName(ctx.getParameter("routeName" + rt.getRouteID()));
 					rt.setRoute(ctx.getParameter("route" + rt.getRouteID()));
-					rt.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV" + rt.getRouteID())).booleanValue());
+					rt.setIsRNAV(Boolean.parseBoolean(ctx.getParameter("isRNAV" + rt.getRouteID())));
 					rt.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups" + rt.getRouteID()), 0));
 					wdao.save(rt);
 					if (isDisable)
@@ -85,7 +85,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 				r.setName(ctx.getParameter("routeName"));
 				r.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups"), 0));
-				r.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV")).booleanValue());
+				r.setIsRNAV(Boolean.parseBoolean(ctx.getParameter("isRNAV")));
 				r.setActive(true);
 				
 				// Save the route

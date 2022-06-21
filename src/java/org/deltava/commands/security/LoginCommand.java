@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class LoginCommand extends AbstractCommand {
 		}
 
 		// Check that JavaScript is working properly
-		boolean jsOK = Boolean.valueOf(ctx.getParameter("jsOK")).booleanValue();
+		boolean jsOK = Boolean.parseBoolean(ctx.getParameter("jsOK"));
 		if (!jsOK) {
 			result.setURL("/jsp/error/jsDisabled.jsp");
 			result.setSuccess(true);
@@ -310,7 +310,7 @@ public class LoginCommand extends AbstractCommand {
 		}
 
 		// Check if we are going to save the first/last names
-		boolean saveName = Boolean.valueOf(ctx.getParameter("saveInfo")).booleanValue();
+		boolean saveName = Boolean.parseBoolean(ctx.getParameter("saveInfo"));
 		if (saveName) {
 			Base64.Encoder b64e = Base64.getEncoder();
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;

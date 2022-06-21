@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -43,10 +43,10 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 		
 		// Check if we're merging exams and flights
-		boolean mergeFlights = Boolean.valueOf(ctx.getParameter("mergeFlights")).booleanValue();
-		boolean mergeExams = Boolean.valueOf(ctx.getParameter("mergeExams")).booleanValue();
-		boolean mergeCRs = Boolean.valueOf(ctx.getParameter("mergeCRs")).booleanValue();
-		boolean mergeFA = Boolean.valueOf(ctx.getParameter("mergeFA")).booleanValue();
+		boolean mergeFlights = Boolean.parseBoolean(ctx.getParameter("mergeFlights"));
+		boolean mergeExams = Boolean.parseBoolean(ctx.getParameter("mergeExams"));
+		boolean mergeCRs = Boolean.parseBoolean(ctx.getParameter("mergeCRs"));
+		boolean mergeFA = Boolean.parseBoolean(ctx.getParameter("mergeFA"));
 		
 		try {
 			Connection con = ctx.getConnection();

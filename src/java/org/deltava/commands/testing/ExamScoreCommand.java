@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Pilot Examinations.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public class ExamScoreCommand extends AbstractCommand {
          int score = 0;
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
-            boolean isCorrect = Boolean.valueOf(ctx.getParameter("Score" + String.valueOf(x))).booleanValue();
+            boolean isCorrect = Boolean.parseBoolean(ctx.getParameter("Score" + String.valueOf(x)));
             q.setCorrect(isCorrect);
             if (isCorrect)
                score++;

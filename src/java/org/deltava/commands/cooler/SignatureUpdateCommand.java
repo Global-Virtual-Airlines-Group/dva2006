@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.io.*;
@@ -93,7 +93,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			}
 
 			// Check if signature is authorized
-			boolean isAuth = (isHR || ctx.isUserInRole("Signature")) && Boolean.valueOf(ctx.getParameter("isAuth")).booleanValue();
+			boolean isAuth = (isHR || ctx.isUserInRole("Signature")) && Boolean.parseBoolean(ctx.getParameter("isAuth"));
 			
 			// Start transaction
 			ctx.startTX();

@@ -71,7 +71,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we are doing a submit & save
-		boolean doSubmit = Boolean.valueOf(ctx.getParameter("doSubmit")).booleanValue();
+		boolean doSubmit = Boolean.parseBoolean(ctx.getParameter("doSubmit"));
 		FlightReport fr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -267,7 +267,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Check if we're creating a new PIREP
 		Pilot usr = ctx.getUser();
 		boolean isNew = (ctx.getID() == 0);
-		boolean forcePage = (ctx.getSession() != null) && Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
+		boolean forcePage = (ctx.getSession() != null) && Boolean.parseBoolean(String.valueOf(ctx.getSession().getAttribute("forcePIREP")));
 
 		// Get the current date/time in the user's local zone
 		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));

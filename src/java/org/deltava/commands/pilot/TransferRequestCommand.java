@@ -106,7 +106,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			if (!eq.getOwner().getCode().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
 			else
-				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
+				txreq.setRatingOnly(Boolean.parseBoolean(ctx.getParameter("ratingOnly")));
 			
 			// If we're attempting to switch to our current program, request ratings only
 			if (txreq.getEquipmentType().equals(p.getEquipmentType()))

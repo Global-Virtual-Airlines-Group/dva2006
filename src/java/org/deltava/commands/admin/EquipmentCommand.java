@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -112,13 +112,13 @@ public class EquipmentCommand extends AbstractAuditFormCommand {
 			eq.setPromotionSwitchLength(StringUtils.parse(ctx.getParameter("switchDistance"), 0));
 			eq.setMaximumAccelTime(StringUtils.parse(ctx.getParameter("maxAccel"), 0));
 			eq.setMinimum1XTime(StringUtils.parse(ctx.getParameter("min1X"), 0));
-			eq.setNewHires(Boolean.valueOf(ctx.getParameter("newHires")).booleanValue());
-			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
+			eq.setNewHires(Boolean.parseBoolean(ctx.getParameter("newHires")));
+			eq.setACARSPromotionLegs(Boolean.parseBoolean(ctx.getParameter("acarsPromote")));
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
 			if (!eq.getIsDefault()) {
-				eq.setIsDefault(Boolean.valueOf(ctx.getParameter("makeDefault")).booleanValue());
-				eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+				eq.setIsDefault(Boolean.parseBoolean(ctx.getParameter("makeDefault")));
+				eq.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			} else
 				eq.setActive(true);
 			
@@ -150,7 +150,7 @@ public class EquipmentCommand extends AbstractAuditFormCommand {
 				wdao.update(eq, ctx.getParameter("eqType"));
 
 			// Update pilot ratings
-			boolean updatePilots = Boolean.valueOf(ctx.getParameter("updateRatings")).booleanValue();
+			boolean updatePilots = Boolean.parseBoolean(ctx.getParameter("updateRatings"));
 			if (updatePilots && !isNew) {
 				// Determine who is missing the ratings
 				GetPilot pdao = new GetPilot(con);

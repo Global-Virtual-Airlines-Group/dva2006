@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to detect airports no longer serviced by an Airline.
  * @author Luke
- * @version 8.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 		
 		// Get the airline list and determine if we write to the database
 		Collection<Airline> airlines = SystemData.getAirlines().values(); 
-		boolean updateDB = Boolean.valueOf(ctx.getParameter("updateDB")).booleanValue();
+		boolean updateDB = Boolean.parseBoolean(ctx.getParameter("updateDB"));
 		
 		int totalResults = 0;
 		Collection<Airport> updateAirports = new HashSet<Airport>();

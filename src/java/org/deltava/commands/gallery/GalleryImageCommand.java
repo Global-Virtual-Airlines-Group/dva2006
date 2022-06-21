@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -50,7 +50,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 				img.setName(ctx.getParameter("title"));
 				img.setDescription(ctx.getParameter("desc"));
 				if (ctx.isUserInRole("Fleet"))
-					img.setFleet(Boolean.valueOf(ctx.getParameter("isFleet")).booleanValue());
+					img.setFleet(Boolean.parseBoolean(ctx.getParameter("isFleet")));
 			} else {
 				// Check our access
 				GalleryAccessControl access = new GalleryAccessControl(ctx, null);
@@ -61,7 +61,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 				img = new Image(ctx.getParameter("title"), ctx.getParameter("desc"));
 				img.setAuthorID(ctx.getUser().getID());
 				if (ctx.isUserInRole("Fleet"))
-					img.setFleet(Boolean.valueOf(ctx.getParameter("isFleet")).booleanValue());
+					img.setFleet(Boolean.parseBoolean(ctx.getParameter("isFleet")));
 
 				// Get the image itself
 				FileUpload imgData = ctx.getFile("img", 0);

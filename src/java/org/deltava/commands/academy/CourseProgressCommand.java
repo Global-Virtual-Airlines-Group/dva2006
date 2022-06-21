@@ -1,4 +1,4 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to track Flight Academy course progress.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class CourseProgressCommand extends AbstractCommand {
 				CourseProgress cp = i.next();
 			
 				// Get the status
-				boolean isComplete = Boolean.valueOf(ctx.getParameter("progress" + cp.getID())).booleanValue();
+				boolean isComplete = Boolean.parseBoolean(ctx.getParameter("progress" + cp.getID()));
 				if (isComplete != cp.getComplete()) {
 					cp.setAuthorID(ctx.getUser().getID());
 					cp.setComplete(isComplete);

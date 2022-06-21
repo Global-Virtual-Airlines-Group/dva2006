@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -161,7 +161,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			}
 
 			// Create the Pilot poll
-			boolean hasPoll = Boolean.valueOf(ctx.getParameter("hasPoll")).booleanValue();
+			boolean hasPoll = Boolean.parseBoolean(ctx.getParameter("hasPoll"));
 			if (hasPoll) {
 				Collection<String> opts = StringUtils.split(ctx.getParameter("pollOptions"), "\n");
 				opts.forEach(opt -> mt.addOption(new PollOption(1, opt)));
@@ -204,7 +204,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			lwdao.write(mt);
 
 			// Create a notification entry if we requested on
-			if (Boolean.valueOf(ctx.getParameter("updateNotify")).booleanValue()) {
+			if (Boolean.parseBoolean(ctx.getParameter("updateNotify"))) {
 				SetCoolerNotification nwdao = new SetCoolerNotification(con);
 				nwdao.add(mt.getID(), ctx.getUser().getID());
 				ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);

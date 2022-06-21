@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -69,8 +69,8 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 			} else {
 				// Check if we're creating a multiple-choice or route plot question
-				boolean isMC = Boolean.valueOf(ctx.getParameter("isMultiChoice")).booleanValue();
-				boolean isRP = Boolean.valueOf(ctx.getParameter("isRoutePlot")).booleanValue();
+				boolean isMC = Boolean.parseBoolean(ctx.getParameter("isMultiChoice"));
+				boolean isRP = Boolean.parseBoolean(ctx.getParameter("isRoutePlot"));
 				if (isRP) {
 					RoutePlotQuestionProfile rqp = new RoutePlotQuestionProfile(ctx.getParameter("question"));
 					rqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
@@ -103,7 +103,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 
 			// Load the fields from the request
 			Collection<String> myExamNames = new HashSet<String>(ctx.getParameters("examNames", Collections.emptySet())); 
-			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			qp.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			qp.setAirlines(ctx.getParameters("airlines", Collections.emptySet()).stream().map(ac -> SystemData.getApp(ac)).filter(Objects::nonNull).collect(Collectors.toSet()));
 			qp.setReference(ctx.getParameter("reference"));
 			
@@ -126,7 +126,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 
 			// Save/delete the image
 			FileUpload imgData = ctx.getFile("imgData", 524288);
-			boolean clearImg = Boolean.valueOf(ctx.getParameter("clearImg")).booleanValue();
+			boolean clearImg = Boolean.parseBoolean(ctx.getParameter("clearImg"));
 			if (clearImg)
 				wdao.clearImage(qp.getID());
 			else if (imgData != null) {
@@ -198,7 +198,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			// Set the center of the map
 			if (qp == null) {
 				ctx.setAttribute("mapCenter", SystemData.getAirport(ctx.getUser().getHomeAirport()), REQUEST);
-				isRP = Boolean.valueOf(ctx.getParameter("isRP")).booleanValue();
+				isRP = Boolean.parseBoolean(ctx.getParameter("isRP"));
 			} else if (qp instanceof RoutePlot)
 				isRP = true;
 			

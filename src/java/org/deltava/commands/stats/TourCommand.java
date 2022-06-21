@@ -98,13 +98,13 @@ public class TourCommand extends AbstractAuditFormCommand {
 			t.getNetworks().clear();
 			Collection<String> networks = ctx.getParameters("network", Collections.emptySet());
 			networks.stream().map(n -> EnumUtils.parse(OnlineNetwork.class, n, null)).filter(Objects::nonNull).forEach(t::addNetwork);
-			t.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue() && !t.getFlights().isEmpty());
-			t.setAllowOffline(Boolean.valueOf(ctx.getParameter("allowOffline")).booleanValue());
-			t.setMatchEquipment(Boolean.valueOf(ctx.getParameter("matchEQ")).booleanValue());
-			t.setMatchLeg(Boolean.valueOf(ctx.getParameter("matchLeg")).booleanValue());
-			t.setACARSOnly(Boolean.valueOf(ctx.getParameter("acarsOnly")).booleanValue());
+			t.setActive(Boolean.parseBoolean(ctx.getParameter("active")) && !t.getFlights().isEmpty());
+			t.setAllowOffline(Boolean.parseBoolean(ctx.getParameter("allowOffline")));
+			t.setMatchEquipment(Boolean.parseBoolean(ctx.getParameter("matchEQ")));
+			t.setMatchLeg(Boolean.parseBoolean(ctx.getParameter("matchLeg")));
+			t.setACARSOnly(Boolean.parseBoolean(ctx.getParameter("acarsOnly")));
 			FileUpload bf = ctx.getFile("briefPDF", 8192 * 1024);
-			boolean deletePDF = Boolean.valueOf(ctx.getParameter("deleteBrief")).booleanValue();
+			boolean deletePDF = Boolean.parseBoolean(ctx.getParameter("deleteBrief"));
 			if ((bf != null) && PDFUtils.isPDF(bf.getBuffer()))
 				t.load(bf.getBuffer());
 			else if (!deletePDF) {

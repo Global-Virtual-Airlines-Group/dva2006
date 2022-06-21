@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import org.deltava.beans.system.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search Issues and comments.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class IssueSearchCommand extends AbstractCommand {
 		
 		// Get search options
 		int maxResults = StringUtils.parse(ctx.getParameter("maxResults"), 20);
-		boolean searchComments = Boolean.valueOf(ctx.getParameter("doComments")).booleanValue();
+		boolean searchComments = Boolean.parseBoolean(ctx.getParameter("doComments"));
 		IssueStatus status = EnumUtils.parse(IssueStatus.class, ctx.getParameter("status"), null);
 		IssueArea area = EnumUtils.parse(IssueArea.class, ctx.getParameter("area"), null);
 		

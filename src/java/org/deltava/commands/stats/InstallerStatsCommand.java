@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to retrieve Fleet Installer statistics.
  * @author Luke
- * @version 7.3
+ * @version 10.2
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class InstallerStatsCommand extends AbstractCommand {
 		ctx.setAttribute("isWindowsVersion", Boolean.valueOf(ofs == 0), REQUEST);
 
 		// Check if we're sorting by label or results
-		boolean sortLabel = Boolean.valueOf(ctx.getParameter("sortLabel")).booleanValue();
+		boolean sortLabel = Boolean.parseBoolean(ctx.getParameter("sortLabel"));
 		try {
 			GetSystemInfo dao = new GetSystemInfo(ctx.getConnection());
 			ctx.setAttribute("total", Integer.valueOf(dao.getTotals()), REQUEST);

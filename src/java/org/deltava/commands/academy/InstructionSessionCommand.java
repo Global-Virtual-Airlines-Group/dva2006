@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 		mctx.addData("user", ctx.getUser());
 		
 		// Check if the message should be sent
-		boolean noSend = Boolean.valueOf(ctx.getParameter("noSend")).booleanValue();
+		boolean noSend = Boolean.parseBoolean(ctx.getParameter("noSend"));
 
 		Pilot usr = null;
 		boolean isNew = (ctx.getID() == 0);
@@ -88,7 +88,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			s.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
 			s.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			s.setStatus(StringUtils.arrayIndexOf(InstructionSession.STATUS_NAMES, ctx.getParameter("status")));
-			s.setNoShow(Boolean.valueOf(ctx.getParameter("noShow")).booleanValue());
+			s.setNoShow(Boolean.parseBoolean(ctx.getParameter("noShow")));
 			s.setComments(ctx.getParameter("remarks"));
 			
 			// Load the message template

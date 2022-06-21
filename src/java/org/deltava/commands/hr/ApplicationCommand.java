@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to apply to a Job Posting.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 3.4
  */
 
@@ -48,7 +48,7 @@ public class ApplicationCommand extends AbstractCommand {
 			a.setBody(ctx.getParameter("body"));
 			
 			// Check if we're saving a profile
-			boolean saveProfile = Boolean.valueOf(ctx.getParameter("saveProfile")).booleanValue();
+			boolean saveProfile = Boolean.parseBoolean(ctx.getParameter("saveProfile"));
 			
 			// Start transaction
 			ctx.startTX();
@@ -58,7 +58,7 @@ public class ApplicationCommand extends AbstractCommand {
 			jwdao.write(a);
 			if (saveProfile) {
 				Profile p = new Profile(a);
-				p.setAutoReuse(Boolean.valueOf(ctx.getParameter("autoSubmit")).booleanValue());
+				p.setAutoReuse(Boolean.parseBoolean(ctx.getParameter("autoSubmit")));
 				jwdao.write(p);
 			}
 			

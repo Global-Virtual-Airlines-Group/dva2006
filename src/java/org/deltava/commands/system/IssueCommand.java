@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -125,7 +125,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			ctx.commitTX();
 
 			// Send the notification if it's a new issue
-			boolean sendIssue = Boolean.valueOf(ctx.getParameter("emailIssue")).booleanValue();
+			boolean sendIssue = Boolean.parseBoolean(ctx.getParameter("emailIssue"));
 			if ((isNew) && (sendIssue)) {
 				MessageContext mctx = new MessageContext();
 				mctx.addData("issue", i);
