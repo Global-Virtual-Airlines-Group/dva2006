@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to search for navigation aids in a particular area.
  * @author Luke
- * @version 7.3
+ * @version 10.2
  * @since 2.1
  */
 
@@ -36,7 +36,7 @@ public class NavaidSearchService extends WebService {
 
 		// Get the navaid to search for
 		int range = Math.min(1000, StringUtils.parse(ctx.getParameter("range"), 150));
-		boolean includeAirports = Boolean.valueOf(ctx.getParameter("airports")).booleanValue();
+		boolean includeAirports = Boolean.parseBoolean(ctx.getParameter("airports"));
 		
 		// Build the location
 		GeoLocation loc = new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), 0.0), StringUtils.parse(ctx.getParameter("lng"), 0.0));

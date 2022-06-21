@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download the ACARS incremental installer.
  * @author Luke
- * @version 6.1
+ * @version 10.2
  * @since 4.1
  */
 
@@ -28,8 +28,8 @@ public class UpdateDownloadService extends DownloadService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the installer to download
-		boolean isDispatch = Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue();
-		boolean isBeta = Boolean.valueOf(ctx.getParameter("beta")).booleanValue();
+		boolean isDispatch = Boolean.parseBoolean(ctx.getParameter("dispatch"));
+		boolean isBeta = Boolean.parseBoolean(ctx.getParameter("beta"));
 		StringBuilder buf = new StringBuilder(SystemData.get("airline.code"));
 		buf.append(isDispatch ? "-Dispatch" : "-ACARS3");
 		if (isBeta)

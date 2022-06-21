@@ -48,7 +48,7 @@ public class XMLClientDataService extends DownloadService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Determine if we are pulling old/new format data
-		boolean isOld = Boolean.valueOf(ctx.getParameter("legacy")).booleanValue();
+		boolean isOld = Boolean.parseBoolean(ctx.getParameter("legacy"));
 		final String ZIP_NAME = isOld ? XML_LEGACY_ZIP : XML_ZIP;
 		Metadata md = _md.get(ZIP_NAME);
 

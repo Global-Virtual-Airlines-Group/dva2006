@@ -1,4 +1,4 @@
-// Copyright 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display ACARS bandwidth statistics to a Google chart.
  * @author Luke
- * @version 7.3
+ * @version 10.2
  * @since 2.1
  */
 
@@ -33,7 +33,7 @@ public class BandwidthInfoService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get hourly or daily
-		boolean isDaily = Boolean.valueOf(ctx.getParameter("daily")).booleanValue();
+		boolean isDaily = Boolean.parseBoolean(ctx.getParameter("daily"));
 		List<Bandwidth> stats = null;
 		try {
 			GetACARSBandwidth bwdao = new GetACARSBandwidth(ctx.getConnection());
@@ -65,7 +65,7 @@ public class BandwidthInfoService extends WebService {
 		
 		// Dump to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (Exception e) {
@@ -75,10 +75,6 @@ public class BandwidthInfoService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle AJAX updates of Terminal Routes.
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 2.1
  */
 
@@ -49,7 +49,7 @@ public class TerminalRouteUpdateService extends WebService {
 		TerminalRoute tr = new TerminalRoute(a.getICAO(), ctx.getParameter("name"), rt);
 		tr.setTransition(ctx.getParameter("transition"));
 		tr.setRunway(ctx.getParameter("runway"));
-		tr.setCanPurge(Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue());
+		tr.setCanPurge(Boolean.parseBoolean(ctx.getParameter("canPurge")));
 		
 		try {
 			Connection con = ctx.getConnection();

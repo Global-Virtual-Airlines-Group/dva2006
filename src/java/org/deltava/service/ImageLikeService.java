@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A voting service for Image Gallery images. 
  * @author Luke
- * @version 10.0
+ * @version 10.2
  * @since 5.0
  */
 
@@ -47,7 +47,7 @@ public class ImageLikeService extends WebService {
 			ac.validate();
 			
 			// Check if we're liking
-			boolean isVoting = Boolean.valueOf(ctx.getParameter("like")).booleanValue();
+			boolean isVoting = Boolean.parseBoolean(ctx.getParameter("like"));
 			if (isVoting && ac.getCanLike()) {
 				SetGalleryImage iwdao = new SetGalleryImage(con);
 				iwdao.like(ctx.getUser().getID(), img.getID());
@@ -68,7 +68,7 @@ public class ImageLikeService extends WebService {
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {

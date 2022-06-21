@@ -66,7 +66,7 @@ public class RoutePlanService extends WebService {
 		fpgen.setCruiseAltitude(alt);
 
 		// Check if saving in PIREP
-		boolean saveDraft = Boolean.valueOf(ctx.getParameter("saveDraft")).booleanValue();
+		boolean saveDraft = Boolean.parseBoolean(ctx.getParameter("saveDraft"));
 		StringBuilder rteBuf = new StringBuilder();
 
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
@@ -176,7 +176,7 @@ public class RoutePlanService extends WebService {
 					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Updated Route via Route Plotter");
 				
 				// Calculate load factor if requested
-				boolean doPax = Boolean.valueOf(ctx.getParameter("precalcPax")).booleanValue();
+				boolean doPax = Boolean.parseBoolean(ctx.getParameter("precalcPax"));
 				if (doPax) {
 					EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 					AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));

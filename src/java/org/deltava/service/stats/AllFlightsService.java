@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to display Flight Report statistics to an Google chart.
  * @author Luke
- * @version 6.4
+ * @version 10.2
  * @since 2.1
  */
 
@@ -31,7 +31,7 @@ public class AllFlightsService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if we're displaying legs or hours
-		boolean isHours = Boolean.valueOf(ctx.getParameter("hours")).booleanValue();
+		boolean isHours = Boolean.parseBoolean(ctx.getParameter("hours"));
 		
 		// Get the Flight Report statistics - remove the last entry
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
@@ -60,7 +60,7 @@ public class AllFlightsService extends WebService {
 		}
 		
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(1800);
 			ctx.println(ja.toString());
 			ctx.commit();
@@ -71,10 +71,6 @@ public class AllFlightsService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

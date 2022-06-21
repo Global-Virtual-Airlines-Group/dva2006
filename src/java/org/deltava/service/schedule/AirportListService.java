@@ -48,7 +48,7 @@ public class AirportListService extends WebService {
 			Connection con = ctx.getConnection();
 			
 			// Check for not visited airports
-			if (Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue() && ctx.isAuthenticated()) {
+			if (Boolean.parseBoolean(ctx.getParameter("notVisited")) && ctx.isAuthenticated()) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
 				Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -62,12 +62,12 @@ public class AirportListService extends WebService {
 			}
 			
 			String al = ctx.getParameter("airline");
-			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
+			boolean useSched = Boolean.parseBoolean(ctx.getParameter("useSched"));
 			if (al != null) {
 				Airline a = SystemData.getAirline(al);
 				// Either search the schedule or return the SystemData list
 				if (useSched) {
-					boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
+					boolean isDest = Boolean.parseBoolean(ctx.getParameter("dst"));
 					GetAirport adao = new GetAirport(con);
 					GetScheduleAirport dao = new GetScheduleAirport(con);
 					Collection<Airport> alAirports = isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a);
@@ -85,7 +85,7 @@ public class AirportListService extends WebService {
 			// If we've specified a source airport filter that too
 			if (ctx.getParameter("code") != null) {
 				// Check if we are searching origin/departure
-				boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
+				boolean isDest = Boolean.parseBoolean(ctx.getParameter("dst"));
 				Airport a = SystemData.getAirport(ctx.getParameter("code"));
 				if (a == null)
 					throw error(SC_BAD_REQUEST, "Invalid Airport", false);
@@ -134,7 +134,7 @@ public class AirportListService extends WebService {
 			}
 			
 			// Add forced airport
-			boolean noCache = Boolean.valueOf(ctx.getParameter("noCache")).booleanValue();
+			boolean noCache = Boolean.parseBoolean(ctx.getParameter("noCache"));
 			if (noCache) {
 				GetAirport adao = new GetAirport(con);
 				allAirports.putAll(adao.getAll());

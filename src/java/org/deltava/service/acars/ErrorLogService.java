@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 9.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -62,12 +62,12 @@ public class ErrorLogService extends WebService {
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
 		err.setOSVersion(ctx.getParameter("os"));
-		err.setIs64Bit(Boolean.valueOf(ctx.getParameter("is64")).booleanValue());
+		err.setIs64Bit(Boolean.parseBoolean(ctx.getParameter("is64")));
 		err.setCLRVersion(ctx.getParameter("clr"));
 		err.setLocale(ctx.getParameter("locale"));
 		err.setTimeZone(ctx.getParameter("tz"));
 		err.setStateData(ctx.getParameter("stateData"));
-		err.setIsInfo(Boolean.valueOf(ctx.getParameter("isInfo")).booleanValue() || err.getMessage().startsWith("ACARS Client Log"));
+		err.setIsInfo(Boolean.parseBoolean(ctx.getParameter("isInfo")) || err.getMessage().startsWith("ACARS Client Log"));
 		err.setClientType(ClientType.PILOT);
 		if (err.getClientBuild() < 75) {
 			err.setClientType(ClientType.DISPATCH);
@@ -116,10 +116,6 @@ public class ErrorLogService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet to secure this Service.
-	 * @return TRUE
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
