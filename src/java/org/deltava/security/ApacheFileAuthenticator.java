@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2014, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * An Authenticator to authenticate users using an Apache-style password file. This authenticator only supports SHA
  * hashing of the password, not MD5 or crypt().
  * @author Luke
- * @version 7.0
+ * @version 10.2
  * @since 1.0
  */
 
@@ -225,7 +225,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * Helper method to retrieve a user's alias.
 	 */
 	private String getID(Person usr) {
-		boolean useAlias = Boolean.valueOf(_props.getProperty("apachefile.alias")).booleanValue();
+		boolean useAlias = Boolean.parseBoolean(_props.getProperty("apachefile.alias"));
 		if ((useAlias) && (usr instanceof Applicant))
 			return null;
 		

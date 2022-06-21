@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 8.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class TaskFactory {
             Class<?> c = Class.forName(className);
             Task t = (Task) c.getDeclaredConstructor().newInstance();
             t.setID(id);
-            t.setEnabled(Boolean.valueOf(e.getAttributeValue("enabled")).booleanValue());
+            t.setEnabled(Boolean.parseBoolean(e.getAttributeValue("enabled")));
            	log.debug(id + " enabled = " + t.getEnabled());
             
             // Load the time
