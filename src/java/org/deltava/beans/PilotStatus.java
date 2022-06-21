@@ -1,30 +1,25 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration of Pilot statuses. 
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 9.0
  */
 
-public enum PilotStatus implements ViewEntry {
-	ACTIVE("Active",null), INACTIVE("Inactive","opt2"), RETIRED("Retired","opt3"), TRANSFERRED("Transferred","opt1"), SUSPENDED("Suspended","err"), ONLEAVE("On Leave","warn");
+public enum PilotStatus implements ViewEntry, EnumDescription {
+	ACTIVE(null), INACTIVE("opt2"), RETIRED("opt3"), TRANSFERRED("opt1"), SUSPENDED("err"), ONLEAVE("warn");
 	
-	private final String _desc;
 	private final String _viewCSS;
 	
-	PilotStatus(String desc, String css) {
-		_desc = desc;
+	PilotStatus(String css) {
 		_viewCSS = css;
 	}
 	
-	/**
-	 * Returns the status description.
-	 * @return the description
-	 */
+	@Override
 	public String getDescription() {
-		return _desc;
+		return (this == ONLEAVE) ? "On Leave" : EnumDescription.super.getDescription(); 
 	}
 
 	@Override
