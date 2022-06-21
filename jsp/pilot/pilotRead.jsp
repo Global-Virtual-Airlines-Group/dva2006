@@ -18,19 +18,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <c:if test="${!empty loginAddrs}">
-<script>
-golgotha.local.toggleLoginAddrs = function(lnk)
-{
-var addrDiv = document.getElementById('loginAddrs');
-if (!addrDiv) return false;
+<script async>
+golgotha.local.toggleLoginAddrs = function(lnk) {
+	const addrDiv = document.getElementById('loginAddrs');
+	if (!addrDiv) return false;
 
-// Toggle the visibility
-var isHidden = (addrDiv.style.display == 'none');
-golgotha.util.display(addrDiv, isHidden);
-
-// Update the link
-lnk.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
-return true;
+	// Toggle the visibility
+	const isHidden = (addrDiv.style.display == 'none');
+	golgotha.util.display(addrDiv, isHidden);
+	lnk.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
+	return true;
 };
 </script></c:if>
 </head>

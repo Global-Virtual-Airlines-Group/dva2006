@@ -22,7 +22,7 @@
 <!-- Pilot Status History Data -->
 <c:forEach var="update" items="${statusUpdates}">
 <c:set var="author" value="${authors[update.authorID]}" scope="page" />
-<c:set var="isSuspended" value="${(update.type == UpdateType.SUSPENDED)}" scope="page" />
+<c:set var="isSuspended" value="${(update.type == 'SUSPENDED')}" scope="page" />
 <c:if test="${!update.type.isHidden || isHR}">
 <tr class="mid statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td class="pri bld"><fmt:date fmt="d" date="${update.date}" /></td>
