@@ -2,6 +2,12 @@
 # Configuration backup script
 # (c) 2005, 2006, 2007, 2010, 2011, 2012, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 
+# Check for folders
+if [ ! -d "/home/backup/cfg" ] || [ ! -d "/home/backup/sites" ] ;then
+ echo "Backup Paths not found!"
+ exit 1
+fi
+
 # Goto backup directory
 cd /home/backup/cfg
 
