@@ -5,6 +5,12 @@
 # Set archiving options
 arc_util="pbzip2 -9 -p4 -c"
 
+# Check for folders
+if [ ! -d "/home/backup/svn" ] || [ ! -d "/home/svn" ] ;then
+ echo "Backup Paths not found!"
+ exit 1
+fi
+
 # Goto backup directory
 cd /home/backup/svn
 
