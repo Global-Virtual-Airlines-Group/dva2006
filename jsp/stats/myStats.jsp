@@ -78,51 +78,75 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <tr class="title">
  <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS</td>
 </tr>
-
-<!-- Table Header Bar-->
-<tr class="title mid caps">
+<tr class="title mid caps tdStats">
  <td>#</td>
  <td style="width:15%">EQUIPMENT</td>
  <td style="width:10%">FLIGHTS</td>
  <td class="nophone" style="width:10%">HOURS</td>
- <td style="width:15%">AVERAGE SPEED</td>
- <td style="width:12%">STD. DEVIATION</td>
- <td style="width:15%">AVERAGE DISTANCE</td>
- <td>STD. DEVIATION</td>
+ <td style="width:18%">AVERAGE SPEED</td>
+ <td style="width:12%" class="nophone">STD. DEVIATION</td>
+ <td style="width:12%">AVERAGE DISTANCE</td>
+ <td class="nophone">STD. DEVIATION</td>
 </tr>
 
 <!-- Touchdown Speed Analysis -->
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${eqLandingStats}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<tr class="mid">
+<tr class="mid tdStats">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${entry.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
  <td class="nophone" ><fmt:dec value="${entry.hours}" /></td>
  <td class="pri bld"><fmt:dec value="${entry.averageSpeed}" fmt="#0.00" /> ft/min</td>
- <td class="sec"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
+ <td class="sec nophone"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
 <c:choose>
 <c:when test="${entry.distanceStdDeviation < 1}">
  <td colspan="2">N / A</td>
 </c:when>
 <c:otherwise>
  <td class="bld"><fmt:dec value="${entry.averageDistance}" fmt="#0" /> ft</td>
- <td><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
+ <td class="nophone"><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
 </c:otherwise>
 </c:choose>
 </tr>
 </c:forEach>
-</el:table>
 
+<!-- Best Landings -->
+<tr class="title">
+ <td colspan="8" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /></td>
+</tr>
+<tr class="title mid caps topLanding">
+ <td>#</td>
+ <td>FLIGHT</td>
+ <td>DATE</td>
+ <td>EQUIPMENT</td>
+ <td><span class="nophone">RUNWAY / </span>DISTANCE</td>
+ <td>SPEED</td>
+<td class="nophone" colspan="2">FLIGHT ROUTE</td>
+</tr>
+
+<c:set var="entryNumber" value="0" scope="page" />
+<c:forEach var="fr"  items="${bestLandings}">
+<c:set var="rw" value="${rwyDistance[fr.ID]}" scope="page" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
+<tr class="mid topLanding">
+ <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
+ <td><el:cmd url="pirep" link="${fr}" className="bld plain">${fr.flightCode}</el:cmd></td>
+ <td><fmt:date date="${fr.date}" fmt ="d" /></td>
+ <td class="sec bld">${fr.equipmentType}</td>
+ <td class="small sec bld"><span class="nophone">Runway ${rw.name}, </span><fmt:int value="${rw.distance}" /> feet</td>
+ <td class="pri bld"><fmt:int value="${fr.landingVSpeed}" /> feet/min</td>
+ <td colspan="2" class="small nophone">${fr.airportD.name} (<el:cmd url="airportinfo" linkID="${fr.airportD.IATA}"><fmt:airport airport="${fr.airportD}" /></el:cmd>) - ${fr.airportA.name} (<el:cmd url="airportinfo" linkID="${fr.airportA.IATA}"><fmt:airport airport="${fr.airportA}" /></el:cmd>)</td>
+</tr>
+</c:forEach>
+</el:table>
 
 <!-- Popular Routes -->
 <el:table className="form">
 <tr class="title">
  <td colspan="8" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)</span></td>
 </tr>
-
-<!-- Table Header Bar-->
 <tr class="title mid caps">
  <td>#</td>
  <td>FLIGHT ROUTE</td>
@@ -180,8 +204,8 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <content:copyright />
 </content:region>
 </content:page>
-<script>
-google.charts.load('current', {'packages':['corechart']});
+<script async>
+google.charts.load('current',{'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);

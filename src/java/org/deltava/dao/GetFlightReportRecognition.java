@@ -1,26 +1,24 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.flight.*;
+import org.deltava.beans.stats.LandingStatistics;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 9.0
+ * @version 10.2
  * @since 1.0
  */
 
 public class GetFlightReportRecognition extends DAO {
 	
 	private static final Cache<CacheableList<Integer>> _cache = CacheManager.getCollection(Integer.class, "GreasedLandings"); 
-	
-	private static final int OPT_VSPEED = -250;
-	private static final int OPT_DISTANCE = 1250;
 	
 	private int _dayFilter;
 
@@ -43,13 +41,14 @@ public class GetFlightReportRecognition extends DAO {
 
 	/**
 	 * Returns Flight Reports with the smoothest touchdown speed.
-	 * @return a List of ACARSFlightReports
+	 * @return a List of ACARSFlightReport database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Integer> getGreasedLandings() throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("ALL!" + _dayFilter);
+		String cacheKey = "ALL!" + _dayFilter;
+		CacheableList<Integer> results = _cache.get(cacheKey);
 		if ((results != null) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 
@@ -60,13 +59,13 @@ public class GetFlightReportRecognition extends DAO {
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, OPT_VSPEED);
-			ps.setInt(2, OPT_DISTANCE);
+			ps.setInt(1, LandingStatistics.OPT_VSPEED);
+			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
 			if (_dayFilter > 0)
 				ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<Integer>("ALL!" + _dayFilter);
+			results = new CacheableList<Integer>(cacheKey);
 			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
@@ -77,13 +76,14 @@ public class GetFlightReportRecognition extends DAO {
 
 	/**
 	 * Retrieves ACARS Flight Reports logged by staff members.
-	 * @return a List of ACARSFlightReport beans
+	 * @return a List of ACARSFlightReport database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Integer> getStaffReports() throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("STAFF!" + _dayFilter);
+		String cacheKey = "STAFF!" + _dayFilter;
+		CacheableList<Integer> results = _cache.get(cacheKey);
 		if ((results != null) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 
@@ -94,13 +94,13 @@ public class GetFlightReportRecognition extends DAO {
 		sqlBuf.append(" ORDER BY FACT, L.DATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, OPT_VSPEED);
-			ps.setInt(2, OPT_DISTANCE);
+			ps.setInt(1, LandingStatistics.OPT_VSPEED);
+			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
 			if (_dayFilter > 0)
 				ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<Integer>("STAFF!" + _dayFilter);
+			results = new CacheableList<Integer>(cacheKey);
 			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
@@ -112,13 +112,14 @@ public class GetFlightReportRecognition extends DAO {
 	/**
 	 * Retrieves ACARS Flight Reports for a particular equipment type.
 	 * @param eqType the equipment type
-	 * @return a List of ACARSFlightReport beans
+	 * @return a List of ACARSFlightReport database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Integer> getGreasedLandings(String eqType) throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("EQ!" + eqType + "$" + _dayFilter);
+		String cacheKey = "EQ!" + eqType + "$" + _dayFilter;
+		CacheableList<Integer> results = _cache.get(cacheKey);
 		if ((results != null) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 
@@ -129,14 +130,14 @@ public class GetFlightReportRecognition extends DAO {
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, OPT_VSPEED);
-			ps.setInt(2, OPT_DISTANCE);
+			ps.setInt(1, LandingStatistics.OPT_VSPEED);
+			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
 			ps.setString(3, eqType);
 			if (_dayFilter > 0)
 				ps.setInt(4, _dayFilter);
 			
 			// Add to the cache
-			results = new CacheableList<Integer>("EQ!" + eqType + "$" + _dayFilter);
+			results = new CacheableList<Integer>(cacheKey);
 			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
@@ -172,6 +173,43 @@ public class GetFlightReportRecognition extends DAO {
 					results.add(rs.getString(1));
 			}
 
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns top Landings for a particular Pilot.
+	 * @param pilotID the Pilots' database ID
+	 * @return a List of LandingInfo beans, sorted by descending score
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Integer> getGreasedLandings(int pilotID) throws DAOException {
+		
+		// Check the cache
+		String cacheKey = "USR!" + pilotID + "$" + _dayFilter;
+		CacheableList<Integer> results = _cache.get(cacheKey);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?)");
+		if (_dayFilter > 0)
+			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		sqlBuf.append(" ORDER BY FACT, DATE DESC");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, LandingStatistics.OPT_VSPEED);
+			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
+			ps.setInt(3, pilotID);
+			if (_dayFilter > 0) 
+				ps.setInt(4, _dayFilter);
+			
+			// Add to the cache
+			results = new CacheableList<Integer>(cacheKey);
+			results.addAll(execute(ps));
+			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
