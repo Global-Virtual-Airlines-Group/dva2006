@@ -5,6 +5,9 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.RunwayDistance;
+import org.deltava.beans.flight.DatabaseID;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
@@ -53,10 +56,9 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 				throw notFoundException("Invalid Pilot ID - " + userID);
 			
 			// Load legs
-			if (p.getACARSLegs() < 0) {
-				GetFlightReports frdao = new GetFlightReports(con);
+			GetFlightReportACARS frdao = new GetFlightReportACARS(con);
+			if (p.getACARSLegs() < 0)
 				frdao.getOnlineTotals(p, ctx.getDB());
-			}
 			
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
@@ -69,6 +71,26 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			Collection<RouteStats> popRoutes = stdao.getPopularRoutes(userID);
 			ctx.setAttribute("popularRoutes", popRoutes, REQUEST);
 			ctx.setAttribute("popularTotal", Integer.valueOf(popRoutes.stream().mapToInt(RouteStats::getFlights).sum()), REQUEST);
+			
+			// Get my best landings
+			GetFlightReportRecognition frrdao = new GetFlightReportRecognition(con); 
+			frrdao.setQueryMax(25); frrdao.setDayFilter(365);
+			Collection<Integer> landingIDs = frrdao.getGreasedLandings(userID);
+			
+			// Load PIREPs and runway data
+			GetACARSData acdao = new GetACARSData(con);
+			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
+			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
+			for (Integer pirepID : landingIDs) {
+				FlightReport fr = frdao.get(pirepID.intValue(), ctx.getDB());
+				pireps.add(fr);
+				RunwayDistance rd = acdao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+				if (rd != null) runways.put(pirepID, rd);
+			}
+			
+			ctx.setAttribute("bestLandings", pireps, REQUEST);
+			ctx.setAttribute("rwyDistance", runways, REQUEST);
+			ctx.setAttribute("bestLandingSince", pireps.stream().map(FlightReport::getDate).min(Comparator.naturalOrder()).orElse(null), REQUEST);
 
 			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);
