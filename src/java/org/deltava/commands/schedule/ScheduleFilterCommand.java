@@ -42,7 +42,9 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		try {
 			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
-			ctx.setAttribute("sources", rsdao.getSources(false, ctx.getDB()), REQUEST);
+			Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
+			ctx.setAttribute("sources", srcs, REQUEST);
+			ctx.setAttribute("loadedSources", srcs.stream().filter(ScheduleSourceInfo::getActive).collect(Collectors.toSet()), REQUEST);
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
