@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
@@ -75,7 +76,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Sources</td>
- <td class="data"><el:check name="src" width="210" options="${sources}" value="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
+ <td class="data"><el:check name="src" width="210" options="${sources}" value="${loadedSources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <tr>
  <td class="label">Purge Options</td>
