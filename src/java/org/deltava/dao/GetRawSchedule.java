@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 8.0
  */
 
@@ -75,7 +75,7 @@ public class GetRawSchedule extends DAO {
 			// Filter and add to the cache
 			results = new CacheableSet<ScheduleSourceInfo>(cacheKey);
 			if (isLoaded)
-				srcs.stream().filter(ssi -> (ssi.getDate() != null)).forEach(results::add);
+				srcs.stream().filter(ScheduleSourceInfo::getActive).forEach(results::add);
 			else
 				results.addAll(srcs);
 			
