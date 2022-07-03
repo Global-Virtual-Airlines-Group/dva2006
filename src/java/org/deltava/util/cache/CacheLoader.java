@@ -42,7 +42,7 @@ public class CacheLoader {
 		for (Element ce : doc.getRootElement().getChildren("cache")) {
 			CacheConfig cfg = new CacheConfig(ce.getAttributeValue("id"));
 			cfg.setMaxSize(StringUtils.parse(ce.getAttributeValue("max", "0"), 10));
-			cfg.setExpiryTime(StringUtils.parse(ce.getAttributeValue("expires", "-1"), 0));
+			cfg.setExpiryTime(parseExpiration(ce.getAttributeValue("expires", "-1")));
 			cfg.setGeo(Boolean.parseBoolean(ce.getAttributeValue("geo", "false")));
 			cfg.setRemote(Boolean.parseBoolean(ce.getAttributeValue("remote", "false")));
 			if (cfg.isGeo())
@@ -50,5 +50,19 @@ public class CacheLoader {
 			
 			CacheManager.register(Cacheable.class, cfg);
 		}
+	}
+	
+	private static int parseExpiration(String v) {
+		char c = Character.toLowerCase(v.charAt(v.length() - 1));
+		int factor = switch (c) {
+			case 'm' -> 60;
+			case 'h' -> 3600;
+			case 'd' -> 86400;
+			case 'w' -> 86400 * 7;
+			default -> 1;
+		};
+		
+		String vv = Character.isDigit(c) ? v : v.substring(0, v.length() - 1); 
+		return StringUtils.parse(vv, 0) * factor;
 	}
 }
