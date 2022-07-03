@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <caches>
 	<!-- Pilot data caches -->
-	<cache id="UserData" remote="true" expires="864000" />
-	<cache id="Pilots" remote="true" expires="14400" />
+	<cache id="UserData" remote="true" expires="4d" />
+	<cache id="Pilots" remote="true" expires="2d" />
 
 	<!-- Image caches -->
 	<cache id="Signature" max="640" />
-	<cache id="Image" max="32" expires="600" />
-	<cache id="Tracks" expires="604800" remote="true" />
-	<cache id="UploadState" expires="14400" max="32" />
+	<cache id="Image" max="32" expires="15m" />
+	<cache id="Tracks" expires="2d" remote="true" />
+	<cache id="UploadState" expires="4h" max="32" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />
 	<cache id="CoolerThreads" max="1024" expires="900" />
 
 	<!-- Navigation Data caches -->
-    <cache id="NavData" expires="86400" remote="true" />
-    <cache id="NavAirway" expires="86400" remote="true" />
-    <cache id="NavRunway" expires="86400" remote="true" />
-    <cache id="NavSIDSTAR" expires="86400" remote="true" />
-    <cache id="NavRoute" expires="86400" remote="true" />
-    <cache id="Airspace" expires="86400" remote="true" />
-    <cache id="Gates" remote="true" expires="86400" />
+    <cache id="NavData" expires="2d" remote="true" />
+    <cache id="NavAirway" expires="18h" remote="true" />
+    <cache id="NavRunway" expires="1d" remote="true" />
+    <cache id="NavSIDSTAR" expires="1d" remote="true" />
+    <cache id="NavRoute" expires="12h" remote="true" />
+	<cache id="Airspace" expires="86400" remote="true" />
+    <cache id="Gates" remote="true" expires="2d" />
     <cache id="GateUsage" remote="true" expires="86400" />
     <cache id="Alternates" remote="true" expires="86400" />
 	<cache id="FIRs" max="512" />
