@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -262,6 +262,26 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	}
 	
 	/**
+	 * Returns the local takeoff date/time. This is the simulator's local time at takeoff.
+	 * @return the takeoff date/time
+	 */
+	public ZonedDateTime getLocalTakeoffTime() {
+		if ((_departureTime == null) || !_stateChangeTimes.containsKey(StateChange.START) || !_stateChangeTimes.containsKey(StateChange.TAKEOFF)) return null;
+		Duration d = Duration.between(getStartTime(), getTakeoffTime());
+		return getTimeD().plus(d);
+	}
+	
+	/**
+	 * Returns the local landing date/time. This is the simulator's local time at touchdown.
+	 * @return the touchdown date/time
+	 */
+	public ZonedDateTime getLocalLandingTime() {
+		if ((_departureTime == null) || !_stateChangeTimes.containsKey(StateChange.END) || !_stateChangeTimes.containsKey(StateChange.LAND)) return null;
+		Duration d = Duration.between(getEndTime(), getLandingTime());
+		return getTimeA().plus(d);
+	}
+	
+	/**
 	 * Returns the flight arrival date/time in the simulator.
 	 * @return the arrival date/time
 	 */
@@ -444,16 +464,18 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	}
 	
 	/**
-	 * Updates the departure date/time.
+	 * Updates the departure date/time. This is the simulator's local time at start time.
 	 * @param dt the departure date/time
+	 * @see FDRFlightReport#getStartTime()
 	 */
 	public void setDepartureTime(Instant dt) {
 		_departureTime = dt;
 	}
-
+	
 	/**
-	 * Updates the arrival date/time.
+	 * Updates the arrival date/time. This is the simulators' local time at end time.
 	 * @param dt the arrival date/time
+	 * @see FDRFlightReport#getEndTime()
 	 */
 	public void setArrivalTime(Instant dt) {
 		_arrivalTime = dt;
