@@ -14,22 +14,34 @@ cd /home/backup/cfg
 # Copy configuration files
 tar cfz httpd.tar.gz /usr/local/apache24/conf
 tar cfz tomcat.tar.gz /usr/local/tomcat/conf
-tar cfz mysql.tar.gz /etc/my.cnf
+tar cfz mysql.tar.gz /etc/my.cnf /etc/redis.conf /etc/sysctl.conf
+tar cfz fail2ban.tar.gz /etc/fail2ban/fail2ban.conf /etc/fail2ban/jail.local
+
+# Backup systemd files
+BP="/usr/lib/systemd/system"
+TP="/usr/lib/tmpfiles.d"
+tar cfz systemd.tar.gz $BP/httpd.service $BP/tomcat.service $BP/redis.service $BP/mysqld.service $BP/backup-scp.* $BP/backup-cfg.* $BP/letsencrypt.*
+tar cfz tmpfiles.tar.gz $TP/httpd.conf $TP/golgotha.conf $TP/redis.conf $TP/mysql.conf $TP/tomcat.conf
+
+# Backup SSL
+tar cfz acme.tar.gz /root/.acme.sh/*
+tar cfz ssl.tar.gz /etc/ssl/private
+
+# Backup newrelic
+tar --exclude="*.jar" -c -z --file=newrelic.tar.gz /usr/local/newrelic/* 
+
+# Backup munin
+tar cfz munin.tar.gz /etc/munin/*.conf /etc/munin/plugin-conf.d /etc/munin/plugins
 
 # Update permissions
-chmod 660 *.tar.gz
+chmod 660 /home/backup/cfg/*.tar.gz
 chown backup:users *.tar.gz
 
 # Copy data directories
-cd /home/www/deltava.org
-tar --exclude="www/luke/*" -vcf /home/backup/sites/www.deltava.org.tar *
-
-cd /home/www/afva.net
-tar -vcf /home/backup/sites/www.afva.net.tar *
-gzip -f7 /home/backup/sites/*.tar
+tar --exclude="luke/*" -c -z --file=/home/backup/sites/www.deltava.org.tar.gz /home/www/deltava.org/*
+tar cfz /home/backup/sites/www.afva.net.tar.gz /home/www/afva.net/*
 
 # Update permissions
-cd /home/backup/sites
-chmod 660 *.tar.gz
-chown backup:users *.tar.gz
+chmod 660 /home/backup/sites/*.tar.gz
+chown backup:users /home/backup/sites/*.tar.gz
 exit 0
