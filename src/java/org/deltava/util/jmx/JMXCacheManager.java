@@ -12,10 +12,20 @@ import org.deltava.util.cache.*;
  * @since 10.2
  */
 
-public class JMXCacheManager implements CacheManagerMXBean {
+public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	
+	private final String _code;
 	private final Collection<? super CacheMBean> _info = new ArrayList<CacheMBean>();
 
+	/**
+	 * 
+	 * @param code
+	 */
+	public JMXCacheManager(String code) {
+		super();
+		_code = code;
+	}
+	
 	@Override
 	public CacheMBean[] getCacheInfo() {
 		return _info.toArray(new CacheMBean[0]);
@@ -26,5 +36,10 @@ public class JMXCacheManager implements CacheManagerMXBean {
 		_info.clear();
 		Collection<CacheInfo> info = CacheManager.getCacheInfo();
 		info.stream().map(CacheMBeanImpl::new).forEach(_info::add);
+	}
+	
+	@Override
+	public String toString() {
+		return _code + " JMX Cache Manager";
 	}
 }

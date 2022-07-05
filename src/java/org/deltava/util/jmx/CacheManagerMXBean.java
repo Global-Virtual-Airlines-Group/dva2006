@@ -19,9 +19,4 @@ public interface CacheManagerMXBean {
 	 * @return a Collection of CacheMBeans
 	 */
 	public CacheMBean[] getCacheInfo();
-	
-	/**
-	 * Updates cache statistics when called by the JMX client.
-	 */
-	public void update();
 }
