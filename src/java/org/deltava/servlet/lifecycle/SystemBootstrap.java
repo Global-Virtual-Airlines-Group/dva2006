@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -23,16 +23,18 @@ import org.deltava.taskman.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.jmx.*;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
 import org.gvagroup.jdbc.*;
+import org.gvagroup.tomcat.SharedWorker;
 
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.1
+ * @version 10.2
  * @since 1.0
  */
 
@@ -68,6 +70,14 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		} catch(IOException ie) {
 			log.warn("Cannot configure caches from code");
 		}
+		
+		// Init Redis
+		RedisUtils.init(SystemData.get("redis.addr"), SystemData.getInt("redis.port", 6379), SystemData.getInt("redis.db", 0), code);
+		
+		// Load caches into JMX
+		JMXCacheManager cm = new JMXCacheManager(code);
+		JMXUtils.register("org.gvagroup:type=CacheManager,name=" + code, cm);
+		SharedWorker.register(new JMXRefreshTask(cm, 60000));
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
@@ -83,6 +93,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			_jdbcPool.setDriver(SystemData.get("jdbc.driver"));
 			_jdbcPool.setSocket(SystemData.get("jdbc.socket"));
 			_jdbcPool.connect(SystemData.getInt("jdbc.pool_size"));
+			JMXConnectionPool jmxpool = new JMXConnectionPool(code, _jdbcPool);
+			JMXUtils.register("org.gvagroup:type=JDBCPool,name=" + code, jmxpool);
+			SharedWorker.register(new JMXRefreshTask(jmxpool, 60000));
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Cannot load JDBC driver class - " + SystemData.get("jdbc.Driver"));
 		} catch (ConnectionPoolException cpe) {
@@ -94,15 +107,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
 		SharedData.addData(SharedData.JDBC_POOL + code, _jdbcPool);
 		
-		// Init Redis
-		RedisUtils.init(SystemData.get("redis.addr"), SystemData.getInt("redis.port", 6379), SystemData.getInt("redis.db", 0), code);
-
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
 		try {
 			Class<?> c = Class.forName(authClass);
 			Authenticator auth = (Authenticator) c.getDeclaredConstructor().newInstance();
-			log.debug("Loaded class " + authClass);
+			log.debug(String.format("Loaded class %s", authClass));
 
 			// Initialize and store in the servlet context
 			auth.init(Authenticator.DEFAULT_PROPS_FILE);
@@ -122,7 +132,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			SystemData.add(SystemData.TASK_POOL, taskSched);
 			spawnDaemon(taskSched);
 		} catch (IOException ie) {
-			log.error("Cannot load scheduled tasks - " + ie.getMessage(), ie);
+			log.error(String.format("Cannot load scheduled tasks - %s", ie.getMessage()), ie);
 		}
 
 		// Load data from the database
@@ -169,8 +179,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				log.info("Loading Scheduled Task execution data");
 				GetSystemData sysdao = new GetSystemData(c);
 				Map<String, TaskLastRun> taskInfo = sysdao.getTaskExecution();
-				for (TaskLastRun tlr : taskInfo.values())
-					taskSched.setLastRunTime(tlr);
+				taskInfo.values().forEach(taskSched::setLastRunTime);
 			}
 			
 			// Load User Pool max values
@@ -208,15 +217,19 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	@Override
 	public void contextDestroyed(ServletContextEvent e) {
 		String code = SystemData.get("airline.code");
-		log.warn("Shutting Down " + code);
+		log.warn(String.format("Shutting Down %s", code));
 
 		// Shut down the extra threads
 		_daemons.clear();
 		_daemonGroup.interrupt();
 		
+		// Clean up shared worker and JMX
+		JMXUtils.clear();
+		SharedWorker.clear(Thread.currentThread().getContextClassLoader());
+		
 		// Shut down Redis and JDBC connection pools
 		try {
-			Thread.sleep(500);
+			Thread.sleep(750);
 		} catch (InterruptedException ie) {
 			log.warn("Interrupted waiting for servlets to clean up");
 		} finally {
@@ -226,7 +239,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		
 		// Clear shared data
 		SharedData.purge(code);
-		log.error("Shut down " + code);
+		log.error(String.format("Shut down %s", code));
 	}
 
 	/*
@@ -249,12 +262,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	public void uncaughtException(Thread t, Throwable e) {
 		Runnable sd = _daemons.get(t);
 		if (sd == null) {
-			log.error("Unknown daemon thread - " + t.getName());
+			log.error(String.format("Unknown daemon thread - %s", t.getName()));
 			return;
 		}
 
 		// Restart the daemon
-		log.error("Restarting " + sd, e);
+		log.error(String.format("Restarting %s", sd), e);
 		synchronized (_daemons) {
 			_daemons.remove(t);
 			spawnDaemon(sd);
