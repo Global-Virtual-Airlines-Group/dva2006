@@ -1,11 +1,12 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.zip.*;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 import org.deltava.beans.stats.HTTPStatistics;
 
@@ -19,19 +20,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate HTTP log statistics.
  * @author Luke
- * @version 8.1
+ * @version 10.2
  * @since 1.0
  */
 
 public class HTTPLogStatisticsTask extends Task {
 
 	private static class HTTPLogFilter implements FileFilter {
-
 		private final Instant _startTime = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).minusSeconds(1).toInstant(ZoneOffset.UTC);
-
-		HTTPLogFilter() {
-			super();
-		}
 
 		@Override
 		public boolean accept(File f) {
@@ -43,7 +39,7 @@ public class HTTPLogStatisticsTask extends Task {
 
 			try {
 				String ext = name.substring(name.lastIndexOf('.') + 1);
-				Instant d = Instant.ofEpochMilli(Long.parseLong(ext) * 1000);
+				Instant d = Instant.ofEpochSecond(Long.parseLong(ext));
 				return d.isBefore(_startTime);
 			} catch (Exception e) {
 				return false;
@@ -58,9 +54,6 @@ public class HTTPLogStatisticsTask extends Task {
 		super("HTTP Log Statistics", HTTPLogStatisticsTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 
@@ -87,10 +80,10 @@ public class HTTPLogStatisticsTask extends Task {
 					SetSystemLog dao = new SetSystemLog(ctx.getConnection());
 					dao.write(stats);
 					
-					// Convert to a GZIP'd file
-					File gzf = new File(SystemData.get("log.http.archive"), StringUtils.format(stats.getDate(), "yyyy-MMM-dd") + ".gz");
-					try (InputStream in = new FileInputStream(f)) {
-						try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(gzf), 32768)) {
+					// Convert to a BZIP'd file
+					File gzf = new File(SystemData.get("log.http.archive"), StringUtils.format(stats.getDate(), "yyyy-MMM-dd") + ".bz2");
+					try (InputStream in = new BufferedInputStream(new FileInputStream(f), 131072)) {
+						try (BZip2CompressorOutputStream out = new BZip2CompressorOutputStream(new FileOutputStream(gzf), BZip2CompressorOutputStream.chooseBlockSize(f.length()))) {
 							byte[] buf = new byte[65536];
 							int bytesRead = in.read(buf);
 							while (bytesRead != -1) {
