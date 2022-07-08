@@ -135,7 +135,7 @@ public class AttachmentServlet extends DownloadServlet {
 				// Serve the file
 				IssueComment iFile = idao.getFile(dbID);
 				if (iFile == null)
-					throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + dbID);
+					throw new NotFoundException("Cannot find attachment " + url.getLastPath() + "/" + dbID);
 				
 				buffer = iFile.getBuffer();
 				rsp.setContentType("application/octet-stream");
