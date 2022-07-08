@@ -18,6 +18,8 @@ import org.deltava.util.system.SystemData;
 
 public class TestSkyTeamScheduleLoad extends TestCase {
 	
+	private static final Logger log = Logger.getLogger(TestSkyTeamScheduleLoad.class);
+	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
 	
 	private Connection _c;
@@ -60,16 +62,17 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 	@SuppressWarnings("static-method")
 	public void testConvertPDF() throws Exception {
 		
-		File f = new File("C:\\Temp\\Skyteam_Timetable_Q3_2021.pdf");
+		File f = new File("C:\\Temp", "Skyteam_Timetable_Q2_2022.pdf");
 		assertTrue(f.exists());
 		
-		File txtF = new File("C:\\Temp\\skyteam2021.txt");
+		File txtF = new File("C:\\Temp", "skyteam2022.txt");
 		if (txtF.exists())
 			return;
 		
 		try (InputStream is = new FileInputStream(f)) {
 			GetPDFText prdao = new GetPDFText(is);
 			prdao.setStartPage(5);
+			prdao.setSortByPosition(true);
 			String txt = prdao.getText();
 			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(txtF), 131072); PrintWriter pw = new PrintWriter(os)) {
 				pw.write(txt);
@@ -79,7 +82,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\skyteam2021.txt");
+		File f = new File("C:\\Temp\\skyteam2022.txt");
 		assertTrue(f.exists());
 		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
@@ -88,14 +91,18 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 			dao.setAircraft(_acTypes);
 			dao.setAirlines(SystemData.getAirlines().values());
 			rawEntries.addAll(dao.process());
+			
+			ImportStatus st = dao.getStatus();
+			log.warn("Airports = " + st.getInvalidAirports());
+			log.warn("Equipment = " + st.getInvalidEquipment());
 		}
 		
 		assertFalse(rawEntries.isEmpty());
 		
 		/* SetSchedule rwdao = new SetSchedule(_c);
-		rwdao.purgeRaw(ScheduleSource.SKYTEAM);
+		log.info("Purged " + rwdao.purgeRaw(ScheduleSource.SKYTEAM) + " schedule entries");
 		for (RawScheduleEntry rse : rawEntries)
-			rwdao.writeRaw(rse);
+			rwdao.writeRaw(rse, false);
 		
 		_c.commit();
 		log.info("Wrote " + rawEntries.size() + " raw schedule entries"); */
