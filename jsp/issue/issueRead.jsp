@@ -112,7 +112,7 @@ golgotha.local.toggleCheckbox = function() {
  <td class="label top">${author.name}<span class="nophone"> (${author.pilotCode})</span><br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
-<c:if test="${!empty comment.name}">
+<c:if test="${(!empty comment.name) && (!empty user)}">
 <hr />
 Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K) <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>
 </tr>
