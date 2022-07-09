@@ -37,7 +37,7 @@
 </tr>
 <tr class="title caps">
  <td colspan="3"><el:cmdbutton url="sched" op="edit" label="NEW RAW SCHEDULE ENTRY" /></td>
- <td class="right" colspan="7">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.setSrc(this)" /></td>
+ <td class="right" colspan="7">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.update()" /></td>
 </tr>
 <tr class="title">
  <td class="left" colspan="3">OPERATED ON <el:text name="filterDate" size="8" max="10" value="${param.filterDate}" /></td>
@@ -86,7 +86,7 @@
 </content:region>
 </content:page>
 </body>
-<script>
+<script async>
 golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {
@@ -95,11 +95,6 @@ golgotha.local.createParams = function(o) {
 	}
 
 	return params.join('&');
-};
-
-golgotha.local.setSrc = function(cb) {
-	self.location = '/rawbrowse.do?src=' + escape(golgotha.form.getCombo(cb));
-	return true;
 };
 
 golgotha.local.update = function() {
