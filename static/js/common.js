@@ -125,6 +125,17 @@ golgotha.form.getCombo = function(combo) {
 };
 
 golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call && o.apply); };
+golgotha.util.createURLParams = function(o) {
+	let params = [];
+	for (p in o) {
+		let v = o[p];
+		if (o.hasOwnProperty(p) && !golgotha.util.isFunction(v) && (v != null))
+			params.push(p + '=' + encodeURIComponent(v));
+	}
+
+	return params.join('&');
+};
+
 golgotha.util.createScript = function(opts)
 {
 let url = opts.url;
@@ -167,7 +178,7 @@ golgotha.util.enable = function(n) {
 			if ((e) && (e.enable)) e.enable();
 		}
 	}
-	
+
 	return true; 
 };
 
