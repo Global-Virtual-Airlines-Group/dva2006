@@ -253,7 +253,7 @@ public class GetRawSchedule extends DAO {
 			ps.setInt(1, src.ordinal());
 			if (ld != null) {
 				ps.setTimestamp(2, Timestamp.valueOf(ld.atStartOfDay()));
-				ps.setTimestamp(3, Timestamp.valueOf(ld.atTime(23, 59, 59)));
+				ps.setTimestamp(3, Timestamp.valueOf(ld.atStartOfDay()));
 				ps.setInt(4, 1 << ld.getDayOfWeek().ordinal());
 			}
 
