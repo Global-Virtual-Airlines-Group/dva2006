@@ -41,7 +41,7 @@
 <view:row entry="${ssh}">
  <td class="pri bld"><fmt:date date="${ssh.date}" t="HH:mm:ss" /> - <fmt:date date="${ssh.endDate}" t="HH:mm:ss" fmt="t" /></td>
  <td class="small sec bld">${ssh.source.description}</td>
- <td class="bld"><fmt:date date="${ssh.effectiveDate}" fmt="d" /></td>
+ <td class="bld"><fmt:date date="${ssh.effectiveDate}" fmt="d" tzName="UTC" /></td>
  <td class="sec bld"><fmt:int value="${ssh.legs}" /></td>
  <td class="small nophone"><fmt:int value="${ssh.skipped}" /></td>
  <td class="pri nophone"><fmt:int value="${ssh.adjusted}" /></td>
