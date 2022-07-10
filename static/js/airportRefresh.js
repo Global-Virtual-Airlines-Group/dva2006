@@ -9,17 +9,6 @@ golgotha.airportLoad.config.clone = function() {
 	return o;
 };
 
-golgotha.airportLoad.config.URLParams = function() {
-	let params = [];
-	for (p in this) {
-		let v = this[p];
-		if (this.hasOwnProperty(p) && !golgotha.util.isFunction(v) && (v != null))
-			params.push(p + '=' + escape(v));
-	}
-	
-	return params.join('&');
-};
-
 // Get Airport code out of select option
 golgotha.airportLoad.config.getCode = function(opt) {
 	if (!opt.airport) return opt.value.toUpperCase();
@@ -138,7 +127,7 @@ golgotha.airportLoad.loadAirports = function(opts)
 {
 const oldCode = golgotha.form.getCombo(this); let combo = this;
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'airports.ws?' + opts.URLParams(), true);
+xmlreq.open('get', 'airports.ws?' + golgotha.util.createURLParams(opts), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const o = combo.options[combo.selectedIndex];
