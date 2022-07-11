@@ -58,10 +58,9 @@ combo.options[0] = new Option('-', '');
 for (var i = 0; i < data.length; i++) {
 	const e = data[i];
 	combo.options[i+1] = new Option(e.label, e.code);
-	if ((oldCode == e.code) || (oldCode == e.label)) combo.selectedIndex = (i+1);
+	if ((oldCode == e.code) || (oldCode == e.label) || e.isSelected) combo.selectedIndex = (i+1);
 }
 
-golgotha.event.beacon('Route Plotter', 'Update Routes');
 return true;
 };
 
@@ -105,10 +104,8 @@ xmlreq.onreadystatechange = function() {
 	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(wp) {
 		positions.push(wp.ll);
-		if (wp.pal)
-			var mrk = new golgotha.maps.IconMarker({pal:wp.pal, icon:wp.icon, info:wp.info, map:map}, wp.ll);
-		else
-			var mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map}, wp.ll);
+		const mrk = (wp.pal) ? new golgotha.maps.IconMarker({pal:wp.pal,icon:wp.icon,info:wp.info}, wp.ll) : new golgotha.maps.Marker({color:wp.color,info:wp.info}, wp.ll);
+		mrk.setMap(map);
 	});
 	
 	// Draw the route
@@ -146,6 +143,7 @@ xmlreq.onreadystatechange = function() {
 	golgotha.util.display('sids', (js.sid.length > 0));
 	golgotha.routePlot.updateRoutes(f.star, js.star);
 	golgotha.util.display('stars', (js.star.length > 0));
+	golgotha.event.beacon('Route Plotter', 'Update Routes');
 
 	// Display ETOPS rating
 	const etopsSpan = document.getElementById('rtETOPS');
@@ -300,28 +298,26 @@ return true;
 golgotha.routePlot.setRoute = function(combo)
 {
 	const f = document.forms[0];
-if (combo.selectedIndex < 1) {
-	f.cruiseAlt.value = '';
-	if (!golgotha.routePlot.keepRoute) {
-		f.route.value = '';
-		f.sid.selectedIndex = 0;
-		f.star.selectedIndex = 0;
+	if (combo.selectedIndex < 1) {
+		f.cruiseAlt.value = '';
+		if (!golgotha.routePlot.keepRoute) {
+			f.route.value = '';
+			f.sid.selectedIndex = 0;
+			f.star.selectedIndex = 0;
+		}
+
+		f.comments.value = ''
+		if (f.routeID) f.routeID.value = '0';
+		golgotha.routePlot.plotMap();
+		return true;
 	}
-
-	f.comments.value = ''
-	if (f.routeID)
-		f.routeID.value = '0';
-
-	golgotha.routePlot.plotMap();
-	return true;
-}
 
 // Update the route
 try {
 	const opt = combo.options[combo.selectedIndex];
 	f.cruiseAlt.value = opt.altitude;
 	f.route.value = opt.value;
-	f.comments.value = opt.comments ? opt.comments : '';
+	f.comments.value = opt.comments || '';
 	golgotha.form.setCombo(f.sid, opt.SID);
 	golgotha.form.setCombo(f.star, opt.STAR);
 	if (f.routeID)
@@ -349,8 +345,7 @@ if (airportsChanged) {
 	f.routes.options.length = 1;
 	f.routes.options[0] = new Option('No Routes Loaded', '');
 	f.routes.selectedIndex = 0;
-	if (!golgotha.routePlot.keepRoute)
-		f.route.value = '';
+	golgotha.routePlot.keepRoute = golgotha.routePlot.keepRoute || golgotha.form.comboSet(f.sid) || (f.route.value.length > 2); 
 	golgotha.util.show('routeList', false);
 	golgotha.routePlot.setRoute(f.routes);
 }
@@ -404,18 +399,13 @@ golgotha.routePlot.download = function() {
 		}
 
 		const ct = xmlreq.getResponseHeader('Content-Type');
-		const b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
+		const b = new Blob([xmlreq.response], {type:ct.substring(0, ct.indexOf(';')), endings:'native'});
 		saveAs(b, xmlreq.getResponseHeader('X-Plan-Filename'));
 		return true;
 	};
 
-	// Parse parameters
-	let params = []; const o = golgotha.routePlot.getAJAXParams();
-	for (p in o) {
-		if (o.hasOwnProperty(p))
-			params.push(p + '=' + o[p]);
-	}
-
-	xmlreq.send(params.join('&'));
+	// Generate parameters
+	const params = golgotha.util.createURLParams(golgotha.routePlot.getAJAXParams());
+	xmlreq.send(params);
 	return true;
 };

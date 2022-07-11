@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -95,6 +95,7 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Add the departure airport
+			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
 				GateZone gz = switch (dr.getFlightType()) {
 					case USPFI -> GateZone.USPFI;
@@ -117,6 +118,13 @@ public class RoutePlotMapService extends MapPlotService {
 				if (rwy.indexOf(' ') > 0)
 					rwy = rwy.substring(rwy.indexOf(' ') + 1);
 				
+				// Get the departure gate
+				Gate gateD = gdao.getGate(dr.getAirportD(), sim, req.optString("gateD"));
+				if (gateD != null)
+					routePoints.add(gateD);
+				else
+					routePoints.add(new AirportLocation(dr.getAirportD()));
+				
 				final String rwyD = rwy;
 				Collection<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
 				if (!StringUtils.isEmpty(rwyD))
@@ -124,12 +132,25 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				tRoutes.addAll(sids);
 				
-				// Get the departure gate
-				Gate gateD = gdao.getGate(dr.getAirportD(), sim, req.optString("gateD"));
-				if (gateD != null)
-					routePoints.add(gateD);
-				else
-					routePoints.add(new AirportLocation(dr.getAirportD()));
+				// Check if we have a SID, update if the sid is no longer applicable for the selected departure runway
+				TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, req.optString("sid"));
+				if ((sid != null) && !sid.getRunway().equals(rwy))
+					sid = dao.getBestRoute(dr.getAirportD(), TerminalRoute.Type.SID, sid.getName(), sid.getTransition(), rwy);
+				
+				if (sid != null) {
+					req.put("sid", sid.toString());
+					Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), sim);
+					if (r != null)
+						routePoints.add(r);
+					if (!CollectionUtils.isEmpty(wps))
+						routePoints.addAll(sid.getWaypoints(wps.get(0)));
+					else
+						routePoints.addAll(sid.getWaypoints());
+				} else if (dr.getAirportD() != null) {
+					Runway r = dao.getRunway(dr.getAirportD(), req.optString("runway"), sim);
+					if (r != null)
+						routePoints.add(r);
+				}
 				
 				// Add popular departure runways
 				if (doRunways) {
@@ -154,23 +175,6 @@ public class RoutePlotMapService extends MapPlotService {
 				}
 			}
 
-			// Check if we have a SID
-			List<String> wps = StringUtils.split(route, " ");
-			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, req.optString("sid"));
-			if (sid != null) {
-				Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), sim);
-				if (r != null)
-					routePoints.add(r);
-				if (!CollectionUtils.isEmpty(wps))
-					routePoints.addAll(sid.getWaypoints(wps.get(0)));
-				else
-					routePoints.addAll(sid.getWaypoints());
-			} else if (dr.getAirportD() != null) {
-				Runway r = dao.getRunway(dr.getAirportD(), req.optString("runway"), sim);
-				if (r != null)
-					routePoints.add(r);
-			}
-
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(route)) {
 				List<NavigationDataBean> points = dao.getRouteWaypoints(route, dr.getAirportD());
@@ -180,6 +184,7 @@ public class RoutePlotMapService extends MapPlotService {
 			// Check if we have a STAR
 			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.Type.STAR, req.optString("star"));
 			if (star != null) {
+				req.put("star", star.toString());
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
 				else
@@ -334,6 +339,7 @@ public class RoutePlotMapService extends MapPlotService {
 			tro.put("transition", tr.getTransition());
 			tro.put("label", tr.getCode());
 			tro.put("code", tr.toString().endsWith(".ALL") ? tr.getCode() + ".ALL" : tr.getCode());
+			tro.put("isSelected", tr.toString().equals(req.optString(tr.getType().name().toLowerCase(), "")));
 			jo.append(tr.getType().name().toLowerCase(), tro);
 		}
 		
