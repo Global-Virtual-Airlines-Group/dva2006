@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
+import java.util.zip.*;
 import java.util.stream.*;
 
 import junit.framework.TestCase;
@@ -62,10 +63,10 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 	@SuppressWarnings("static-method")
 	public void testConvertPDF() throws Exception {
 		
-		File f = new File("C:\\Temp", "Skyteam_Timetable_Q2_2022.pdf");
+		File f = new File("C:\\Temp", "Skyteam_Timetable_Q3_2022.pdf");
 		assertTrue(f.exists());
 		
-		File txtF = new File("C:\\Temp", "skyteam2022.txt");
+		File txtF = new File("C:\\Temp", "skyteam2022.txt.gz");
 		if (txtF.exists())
 			return;
 		
@@ -74,7 +75,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 			prdao.setStartPage(5);
 			prdao.setSortByPosition(true);
 			String txt = prdao.getText();
-			try (OutputStream os = new BufferedOutputStream(new FileOutputStream(txtF), 131072); PrintWriter pw = new PrintWriter(os)) {
+			try (OutputStream os = new GZIPOutputStream(new FileOutputStream(txtF), 131072); PrintWriter pw = new PrintWriter(os)) {
 				pw.write(txt);
 			}
 		}
@@ -82,11 +83,11 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\skyteam2022.txt");
+		File f = new File("C:\\Temp\\skyteam2022.txt.gz");
 		assertTrue(f.exists());
 		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
-		try (InputStream is = new FileInputStream(f)) {
+		try (InputStream is = new GZIPInputStream(new FileInputStream(f), 131072)) {
 			GetSkyTeamSchedule dao = new GetSkyTeamSchedule(is);
 			dao.setAircraft(_acTypes);
 			dao.setAirlines(SystemData.getAirlines().values());
