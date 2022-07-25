@@ -6,7 +6,7 @@ import org.deltava.beans.OnlineNetwork;
 /**
  * A bean to store online flight statistics entries.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 10.2
  */
 
@@ -25,7 +25,7 @@ public class OnlineStatsEntry extends LegHoursStatsEntry<OnlineNetwork> {
 	}
 	
 	/**
-	 * Returns the total number of flight legs flown across alln networks during this period.
+	 * Returns the total number of flight legs flown across all networks during this period.
 	 * @return the number of legs
 	 */
 	public int getOnlineLegs() {
@@ -33,7 +33,7 @@ public class OnlineStatsEntry extends LegHoursStatsEntry<OnlineNetwork> {
 	}
 	
 	/**
-	 * Returns the total number of flight hours flown across alln networks during this period.
+	 * Returns the total number of flight hours flown across all networks during this period.
 	 * @return the number of hours
 	 */
 	public double getOnlineHours() {
