@@ -294,6 +294,21 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
+<c:if test="${(!empty onTimeRoute) && (isACARS || fn:isDraft(pirep)) && (onTimeRoute.totalLegs > 0)}">
+<c:set var="otPct" value="${onTimeRoute.onTimeLegs / onTimeRoute.totalLegs}" scope="page" />
+<c:choose>
+<c:when test="${otPct >= 0.8}">
+<c:set var="otClass" value="pri" scope="page" /></c:when>
+<c:when test="${otPct < 0.5}">
+<c:set var="otClass" value="err" scope="page" /></c:when>
+<c:otherwise>
+<c:set var="otClass" value="ter" scope="page" /></c:otherwise>
+</c:choose>
+<tr>
+ <td class="label">On-Time Statistics</td>
+ <td class="data"><fmt:int value="${onTimeRoute.totalLegs}" /> flights, <fmt:int value="${onTimeRoute.onTimeLegs}" /> (<fmt:dec value="${otPct}" className="${otClass}" fmt="##0.0%" /> on time</td>
+</tr>
+</c:if>
 <c:if test="${isACARS}">
 <c:set var="cspan" value="1" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
