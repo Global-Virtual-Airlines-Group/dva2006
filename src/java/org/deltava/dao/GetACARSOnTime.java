@@ -67,7 +67,7 @@ public class GetACARSOnTime extends DAO {
 	public Map<OnTime,Integer> getOnTimeStatistics(int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AO.ONTIME, COUNT(P.ID) FROM ACARS_ONLINE AO, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT AO.ONTIME, COUNT(P.ID) FROM ACARS_ONTIME AO, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) ");
 		if (pilotID > 0)
 			sqlBuf.append("AND (P.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY AO.ONTIME");
@@ -94,9 +94,8 @@ public class GetACARSOnTime extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<OnTimeStatsEntry> getByDate(int maxDays) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT P.DATE, AO.ONTIME, COUNT(P.ID), SUM(P.FLIGHT_TIME) FROM ACARS_ONLINE, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) AND "
+		try (PreparedStatement ps = prepare("SELECT P.DATE, AO.ONTIME, COUNT(P.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P STRAIGHT_JOIN ACARS_ONTIME AO WHERE (AO.ID=P.ID) AND (P.STATUS=?) AND "
 			+ "(P.DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.DATE, AO.ONTIME")) {
-			// TODO: Put AO.ONTIME as last column to force PIREPS index usage rather than AO table scan
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setInt(2, maxDays);
 			Collection<OnTimeStatsEntry> results = new ArrayList<OnTimeStatsEntry>();
@@ -127,16 +126,15 @@ public class GetACARSOnTime extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public OnTimeStatsEntry getOnTimeStatistics(RoutePair rp) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT AO.ONTIME, COUNT(P.ID), SUM(P.FLIGHT_TIME) FROM ACARS_ONLINE AO, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) "
+		try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), SUM(P.FLIGHT_TIME), AO.ONTIME FROM ACARS_ONTIME AO, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) "
 			+ "AND (P.AIRPORT_D=?) AND (P.AIRPORT_A=?) GROUP BY AO.ONTIME")) {
-			// TODO: Put AO.ONTIME as last column to force PIREPS index usage rather than AO table scan
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setString(2, rp.getAirportD().getIATA());
 			ps.setString(3, rp.getAirportA().getIATA());
 			OnTimeStatsEntry st = new OnTimeStatsEntry(Instant.now());
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					st.set(OnTime.values()[rs.getInt(1)], rs.getInt(2), rs.getDouble(3));
+					st.set(OnTime.values()[rs.getInt(3)], rs.getInt(1), rs.getDouble(2));
 			}
 			
 			return st;
