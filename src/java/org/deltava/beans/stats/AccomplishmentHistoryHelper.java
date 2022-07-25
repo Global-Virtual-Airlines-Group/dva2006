@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 3.2
  */
 
@@ -51,6 +51,7 @@ public class AccomplishmentHistoryHelper {
 		private int _intlLegs;
 		private int _szLegs;
 		private int _tourLegs;
+		private int _onTimeLegs;
 		
 		private int _dspFlights;
 		private double _dspHours;
@@ -98,6 +99,11 @@ public class AccomplishmentHistoryHelper {
 				_intlLegs++;
 			if (fr.getSubmittedOn() == null)
 				fr.setSubmittedOn(fr.getDate());
+			if (fr instanceof ACARSFlightReport) {
+				ACARSFlightReport afr = (ACARSFlightReport) fr;
+				if ((afr.getOnTime() == OnTime.ONTIME) || (afr.getOnTime() == OnTime.EARLY))
+					_onTimeLegs++;
+			}
 		}
 		
 		static void incLeg(Map<String, MutableInteger> map, String key) {
@@ -192,6 +198,10 @@ public class AccomplishmentHistoryHelper {
 		
 		public int getOnlineLegs() {
 			return _onlineLegs;
+		}
+		
+		public int getOnTimeLegs() {
+			return _onTimeLegs;
 		}
 		
 		public int getDispatchedFlights() {
@@ -294,6 +304,7 @@ public class AccomplishmentHistoryHelper {
 			case OLEGS -> cnt.getOnlineLegs();
 			case HLEGS -> cnt.getHistoricLegs();
 			case TLEGS -> cnt.getTourLegs();
+			case OTLEGS -> cnt.getOnTimeLegs();
 			case EVENTS -> cnt.getEvents();
 			case AIRPORTS -> AccomplishmentFilter.filter(cnt.getAirports(), a).size();
 			case AIRPORTA -> AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
@@ -361,7 +372,7 @@ public class AccomplishmentHistoryHelper {
 				
 			case COUNTRIES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getCountries(), a));
-				codes.stream().map(code -> Country.get(code)).forEach(results::add);
+				codes.stream().map(Country::get).filter(Objects::nonNull).forEach(results::add);
 				break;
 			
 			case STATES:
