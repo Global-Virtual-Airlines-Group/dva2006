@@ -294,7 +294,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
-<c:if test="${(!empty onTimeRoute) && (isACARS || fn:isDraft(pirep)) && (onTimeRoute.totalLegs > 0)}">
+<c:if test="${(!empty onTimeRoute) && (onTimeRoute.totalLegs > 0)}">
 <c:set var="otPct" value="${onTimeRoute.onTimeLegs / onTimeRoute.totalLegs}" scope="page" />
 <c:choose>
 <c:when test="${otPct >= 0.8}">
@@ -304,9 +304,11 @@ golgotha.local.showRunwayChoices = function() {
 <c:otherwise>
 <c:set var="otClass" value="ter" scope="page" /></c:otherwise>
 </c:choose>
+</c:if>
+<c:if test="${(!empty onTimeRoute) && (empty onTimeEntry) && (isACARS || fn:isDraft(pirep)) && (onTimeRoute.totalLegs > 0)}">
 <tr>
  <td class="label">On-Time Statistics</td>
- <td class="data"><fmt:int value="${onTimeRoute.totalLegs}" /> flights, <fmt:int value="${onTimeRoute.onTimeLegs}" /> (<fmt:dec value="${otPct}" className="${otClass}" fmt="##0.0%" /> on time</td>
+ <td class="data"><fmt:int value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int value="${onTimeRoute.onTimeLegs}" /> On Time <span class="${otClass}">(<fmt:dec value="${otPct}" fmt="##0.0%" />)</span></td>
 </tr>
 </c:if>
 <c:if test="${isACARS}">
