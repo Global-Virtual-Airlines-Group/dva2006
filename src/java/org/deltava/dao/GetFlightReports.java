@@ -334,7 +334,7 @@ public class GetFlightReports extends DAO {
 		String db = formatDBName(sc.getDBName());
 		StringBuilder buf = new StringBuilder("SELECT PR.*, ");
 		buf.append(sc.getLoadComments() ? "PC.COMMENTS, PC.REMARKS" : "NULL, NULL");
-		buf.append(", APR.* FROM ");
+		buf.append(", APR.*, AO.ONTIME FROM ");
 		buf.append(db);
 		buf.append(".PIREPS PR LEFT JOIN ");
 		buf.append(db);
@@ -343,7 +343,9 @@ public class GetFlightReports extends DAO {
 			buf.append(db);
 		}
 		
-		buf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?)");
+		buf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ");
+		buf.append(db);
+		buf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (PR.PILOT_ID=?)");
 		if (sc.getEquipmentType() != null)
 			buf.append(" AND (PR.EQTYPE=?)");
 		if (sc.getAirportD() != null)
