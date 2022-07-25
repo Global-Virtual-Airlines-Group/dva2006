@@ -1,7 +1,8 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
+import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.1
  */
 
@@ -47,15 +48,21 @@ public class MyFlightsService extends WebService {
 		Collection<StageStatsEntry> stageStats = null;
 		Collection<SimStatsEntry> simStats = null;
 		Collection<LandingStatistics> landings = null;
-		Map<Integer, Integer> vsStats = null;
+		Map<Integer, Integer> vsStats = null; Map<OnTime, Integer> otStats = null;
 		try {
+			Connection con = ctx.getConnection();
+			
 			// Load statistics
-			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
+			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 			results = stdao.getPIREPStatistics(userID, FlightStatsSort.LEGS, FlightStatsGroup.EQ);
 			stageStats = stdao.getStageStatistics(userID);
 			simStats = stdao.getSimulatorStatistics(userID);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
+			
+			// Load ontime statistics
+			GetACARSOnTime otdao = new GetACARSOnTime(con);
+			otStats = otdao.getOnTimeStatistics(userID);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -127,6 +134,14 @@ public class MyFlightsService extends WebService {
 			jo.append("landingQuality", ea);
 		}
 		
+		// Create on-time statistics
+		for (Map.Entry<OnTime, Integer> ome : otStats.entrySet()) {
+			JSONArray ote = new JSONArray();
+			ote.put(ome.getKey().getDescription());
+			ote.put(ome.getValue().intValue());
+			jo.append("onTime", ote);
+		}
+		
 		// Create stage/flights by Month
 		int maxStage = stageStats.stream().mapToInt(StageStatsEntry::getMaxStage).max().orElse(1);
 		jo.put("maxStage", maxStage);
@@ -160,7 +175,7 @@ public class MyFlightsService extends WebService {
 		jo.put("calendar", jdo); jo.put("calendarHours", jdh);
 		jo.put("simCalendar", jso); jo.put("simCalendarHours", jsh);
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(600);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -171,10 +186,6 @@ public class MyFlightsService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
