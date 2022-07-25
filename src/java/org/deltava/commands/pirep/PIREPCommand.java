@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -478,6 +478,10 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("eliteScore", es, REQUEST);
 				}
 			}
+			
+			// List on-time statistics
+			GetACARSOnTime otdao = new GetACARSOnTime(con);
+			ctx.setAttribute("onTimeRoute", otdao.getOnTimeStatistics(fr), REQUEST);
 			
 			// Get tour eligibility
 			GetTour trdao = new GetTour(con);
