@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration to track Accomplishment units of measurement.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 6.3
  */
 
@@ -17,7 +17,7 @@ public enum AccomplishUnit implements ComboAlias {
 	STATES("States Visited", true), MEMBERDAYS("Days since joining", Data.NONE, false), AIRLINES("Airlines"), 	DFLIGHTS("Flights Dispatched", Data.DISPATCH, false), 
 	DHOURS("Dispatch Hours", Data.DISPATCH, false), EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited", true), PAX("Passengers Carried"),
 	AIRPORTD("Departure Airport", true), AIRPORTA("Arrival Airport", true), PROMOLEGS("Promotion Legs"), ADLEGS("Departures from Airport", true), AALEGS("Arrivals at Airport", true),
-	DOMESTIC("Domestic Legs"), INTL("International Legs"), SCHENGEN("Schengen Zone Legs"), TLEGS("Tour Legs");
+	DOMESTIC("Domestic Legs"), INTL("International Legs"), SCHENGEN("Schengen Zone Legs"), TLEGS("Tour Legs"), OTLEGS("On-Time Legs");
 
 	public enum Data {
 		NONE, DISPATCH, FLIGHTS
