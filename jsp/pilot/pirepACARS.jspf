@@ -267,10 +267,11 @@
 </c:if>
 </c:if>
 </c:if>
-<c:if test="${pirep.averageFrameRate > 0}">
+<c:if test="${(!empty acarsFrames) || (pirep.averageFrameRate > 0)}">
+<c:set var="avgFrames" value="${empty acarsFrames ? pirep.averageFrameRate : acarsFrames.average}" scope="page" />
 <tr>
  <td class="label">Average Frame Rate</td>
- <td class="data" colspan="${cspan}"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
+ <td class="data" colspan="${cspan}"><fmt:dec value="${avgFrames}" /> frames per second</td>
 </tr>
 </c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty onTimeEntry)}">
@@ -278,7 +279,8 @@
  <td class="label top">On-Time Performance</td>
  <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld">${pirep.onTime}</span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
  <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${onTimeEntry.timeD}" />, arrives <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${onTimeEntry.timeA}" />)</span>
-<c:if test="${!empty onTimeRoute}"><hr /><fmt:int value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int value="${onTimeRoute.onTimeLegs}" /> On Time <span class="${otClass}">(<fmt:dec value="${otPct}" fmt="##0.0%" />)</span></c:if>
+<c:if test="${!empty onTimeRoute}"><hr />All <content:airline /> Flights:<fmt:int className="bld" value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int className="pri bld" value="${onTimeRoute.onTimeLegs}" /> On Time
+ <span class="${otClass} bld">(<fmt:dec value="${otPct}" fmt="##0.0%" />)</span></c:if>
 </td>
 </tr>
 </c:if>
