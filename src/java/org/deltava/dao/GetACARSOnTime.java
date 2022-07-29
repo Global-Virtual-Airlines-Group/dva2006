@@ -9,6 +9,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.OnTimeStatsEntry;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -19,6 +20,29 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetACARSOnTime extends DAO {
+	
+	private static final Cache<RouteOnTime> _cache = CacheManager.get(RouteOnTime.class, "OnTimeRoute");
+	
+	private static class RouteOnTime extends OnTimeStatsEntry implements Cacheable {
+		private final String _cacheKey;
+		
+		public RouteOnTime(String cacheKey) {
+			super(Instant.now());
+			_cacheKey = cacheKey;
+		}
+
+		@Override
+		public Object cacheKey() {
+			return _cacheKey;
+		}
+		
+		static String createKey(RoutePair rp, String db) {
+			StringBuilder buf = new StringBuilder(db);
+			buf.append("!!");
+			buf.append(rp.createKey());
+			return buf.toString();
+		}
+	}
 
 	/**
 	 * Initializes the Data Access Object.
@@ -36,10 +60,8 @@ public class GetACARSOnTime extends DAO {
 	 */
 	public ScheduleEntry getOnTime(ACARSFlightReport afr) throws DAOException {
 		if (afr.getOnTime() == OnTime.UNKNOWN) return null;
-		
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE, FLIGHT, LEG, TIME_D, TIME_A, ATIME_D, ATIME_A FROM ACARS_ONTIME WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, afr.getID());
-			
 			ScheduleEntry se = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
@@ -122,21 +144,36 @@ public class GetACARSOnTime extends DAO {
 	/**
 	 * Returns on-time flight statistics for a particular flight route.
 	 * @param rp the RoutePair
+	 * @param db the database name
 	 * @return an OnlineStatsEntry bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public OnTimeStatsEntry getOnTimeStatistics(RoutePair rp) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), SUM(P.FLIGHT_TIME), AO.ONTIME FROM ACARS_ONTIME AO, PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) "
-			+ "AND (P.AIRPORT_D=?) AND (P.AIRPORT_A=?) GROUP BY AO.ONTIME")) {
+	public OnTimeStatsEntry getOnTimeStatistics(RoutePair rp, String db) throws DAOException {
+		
+		// Check the cache
+		String dbName = formatDBName(db); String key = RouteOnTime.createKey(rp, dbName);
+		RouteOnTime st = _cache.get(key);
+		if (st != null)
+			return st;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(P.ID), SUM(P.FLIGHT_TIME), AO.ONTIME FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_ONTIME AO, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS P WHERE (AO.ID=P.ID) AND (P.STATUS=?) AND (P.AIRPORT_D=?) AND (P.AIRPORT_A=?) GROUP BY AO.ONTIME");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setString(2, rp.getAirportD().getIATA());
 			ps.setString(3, rp.getAirportA().getIATA());
-			OnTimeStatsEntry st = new OnTimeStatsEntry(Instant.now());
+			st = new RouteOnTime(key);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					st.set(OnTime.values()[rs.getInt(3)], rs.getInt(1), rs.getDouble(2));
 			}
 			
+			_cache.add(st);
 			return st;
 		} catch (SQLException se) {
 			throw new DAOException(se);
