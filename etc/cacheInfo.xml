@@ -48,6 +48,7 @@
 	<cache id="FlightStats" max="16" expires="600" />
 	<cache id="ProgramStats" max="8" expires="1800" />
 	<cache id="APIStats" max="16" expires="600" />
+	<cache id="OnTimeRoute" remote="true" expires="24h" />
 
 	<!-- Weather caches -->
 	<cache id="METAR" max="256" expires="1800" />
