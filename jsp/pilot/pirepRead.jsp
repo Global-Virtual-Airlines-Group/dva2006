@@ -308,7 +308,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${(!empty onTimeRoute) && (empty onTimeEntry) && (isACARS || fn:isDraft(pirep)) && (onTimeRoute.totalLegs > 0)}">
 <tr>
  <td class="label">On-Time Statistics</td>
- <td class="data"><fmt:int className="bld" value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int className="pri bld" value="${onTimeRoute.onTimeLegs}" /> On Time
+ <td class="data small"><fmt:int className="bld" value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int className="pri bld" value="${onTimeRoute.onTimeLegs}" /> On Time
  <span class="${otClass} bld">(<fmt:dec value="${otPct}" fmt="##0.0%" />)</span></td>
 </tr>
 </c:if>
