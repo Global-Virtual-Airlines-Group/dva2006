@@ -481,7 +481,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// List on-time statistics
 			GetACARSOnTime otdao = new GetACARSOnTime(con);
-			ctx.setAttribute("onTimeRoute", otdao.getOnTimeStatistics(fr), REQUEST);
+			ctx.setAttribute("onTimeRoute", otdao.getOnTimeStatistics(fr, ctx.getDB()), REQUEST);
 			
 			// Get tour eligibility
 			GetTour trdao = new GetTour(con);
