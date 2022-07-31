@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
 import java.util.zip.*;
 
+import org.deltava.util.BZip2MultiInputStream;
+
 /**
- * A bean to store File Upload data in an HTTP servlet request. This bean can automatically
- * detect compressed (GZIP) content and creates the appropriate decompresser
- * output stream. This allows reduced memory usage when uploading large files.
+ * A bean to store File Upload data in an HTTP servlet request. This bean can automatically detect compressed (GZIP/BZIP2) content and creates the appropriate 
+ * decompresser output stream. This allows reduced memory usage when uploading large files.
  * @author Luke
- * @version 5.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -65,6 +66,8 @@ public class FileUpload {
     	try {
     		if (_name.endsWith(".gz"))
     			return new GZIPInputStream(is);
+    		else if (_name.endsWith(".bz2"))
+    			return new BZip2MultiInputStream(is);
     	} catch (Exception e) {
     		return is;
     	}
