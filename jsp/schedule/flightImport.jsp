@@ -12,8 +12,8 @@
 <content:js name="common" />
 <content:js name="resumable" />
 <content:js name="progress" />
-<script>
-golgotha.local.fileTypes = ['txt','pdf','gz','csv'];
+<script async>
+golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.schedType, t:'Schedule Type'});
@@ -70,7 +70,7 @@ golgotha.local.validate = function(f) {
  <td colspan="2">UPLOAD PROGRESS</td>
 </tr>
 <tr class="progress" style="display:none;">
- <td colspan="2" class="mid"><span id="progressBar" class="ovalBorder" style="width:85%; height:32px;"></span></td>
+ <td colspan="2" class="mid"><div id="progressBar" class="ovalBorder mid" style="width:85%; height:45px;"></div></td>
 </tr>
 </el:table>
 
@@ -87,7 +87,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script async>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');
@@ -109,7 +109,7 @@ golgotha.local.showProgress = function(doShow) {
 golgotha.local.updateProgress = function() {
     const p = golgotha.local.r.progress();
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
-    golgotha.local.pb.animate(p, {duration:50});
+    golgotha.local.pb.animate(p,{duration:50});
     if (p >= 1) {
     	const f = document.forms[0];
         console.log('Upload Complete');

@@ -12,17 +12,16 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
 let isOK = false;
 const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz'));
-	
+	isOK |= (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
+
 if (!isOK)
 	throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 

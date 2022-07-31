@@ -12,13 +12,13 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
-golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz'];
+<script async>
+golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 let isOK = false;
-fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 	isOK |= (fName == golgotha.local.dataFiles[x]);
 	
