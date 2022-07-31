@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -63,7 +63,7 @@ golgotha.local.validate = function(f) {
  <td colspan="2">UPLOAD PROGRESS</td>
 </tr>
 <tr class="progress" style="display:none;">
- <td colspan="2" class="mid"><span id="progressBar" class="ovalBorder" style="width:85%; height:32px;"></span></td>
+ <td colspan="2" class="mid"><div id="progressBar" class="ovalBorder mid" style="width:85%; height:32px;"></div></td>
 </tr>
 </el:table>
 
@@ -80,10 +80,10 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script async>
 golgotha.util.disable('SaveButton', true); golgotha.util.display('beta', ${latest.isBeta()});
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['exe']});
-var dt = document.getElementById('dropTarget');
+const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
 golgotha.local.r.on('fileAdded', function(f, ev) {
@@ -95,7 +95,7 @@ golgotha.local.r.on('fileAdded', function(f, ev) {
 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:'#1a4876', text:{value:'', className:'pri', style:{color:'#ffff'}}, fill:'#1a4876'});
 golgotha.local.showProgress = function(doShow) {
-    var pr = golgotha.util.getElementsByClass('progress', 'tr');
+    const pr = golgotha.util.getElementsByClass('progress', 'tr');
     pr.forEach(function(r) { golgotha.util.display(r, doShow); });
 };
 
@@ -105,7 +105,7 @@ golgotha.local.updateProgress = function() {
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
     golgotha.local.pb.animate(p, {duration: 50});
     if (p >= 1) {
-    	var f = document.forms[0];
+    	const f = document.forms[0];
         console.log('Upload Complete');
         golgotha.local.showProgress(false);
         golgotha.local.uploadComplete = true;
@@ -113,7 +113,7 @@ golgotha.local.updateProgress = function() {
         f.submit();
         return true;
     }
-    
+
     window.setTimeout(golgotha.local.updateProgress, 65);
     return true;
 };

@@ -11,12 +11,11 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
-golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz'];
+<script async>
+golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
 let isOK = false;
 const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
