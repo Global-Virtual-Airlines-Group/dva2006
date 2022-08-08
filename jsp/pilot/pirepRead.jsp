@@ -370,7 +370,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
 <tr class="pirepHistory">
  <td class="ter bld mid"><fmt:defaultMethod object="${upd.type}" method="description" /></td>
- <td class="data"><fmt:date date="${upd.date}" /> - <span class="sec bld">${empty updAuthor ? 'SYSTEM' : updAuthor.name}</span> - ${upd.description}</td>
+ <td class="data ellipsis"><span><fmt:date date="${upd.date}" /> - <span class="sec bld">${empty updAuthor ? 'SYSTEM' : updAuthor.name}</span> - ${upd.description}</span></td>
 </tr>
 </c:forEach>
 </c:if>

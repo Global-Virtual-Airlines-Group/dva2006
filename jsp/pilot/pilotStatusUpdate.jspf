@@ -27,7 +27,7 @@
 <tr class="mid statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td class="pri bld"><fmt:date fmt="d" date="${update.date}" /></td>
 <c:if test="${!isSuspended || isHR}">
- <td colspan="2" class="statusUpdDesc"><span>${update.description}</span></td>
+ <td colspan="2" class="ellipsis"><span>${update.description}</span></td>
 </c:if>
 <c:if test="${isSuspended && !isHR}">
  <td colspan="2">User Account Suspended</td>
