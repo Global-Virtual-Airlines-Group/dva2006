@@ -401,6 +401,24 @@ a:hover {
 	text-decoration: underline;
 }
 
+td.ellipsis {
+	position: relative;
+}
+
+td.ellipsis:before {
+ 	content: '&nbsp;';
+    visibility: hidden;
+}
+
+td.ellipsis span {
+	position: absolute;
+    left: 0;
+    right: 0;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 div.googleMapV3 {
 	user-select: none;
 	-moz-user-select: none;
