@@ -30,27 +30,6 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 	return true;
 };
 </script></c:if>
-<c:if test="${!empty statusUpdates}">
-<style type="text/css">
-td.statusUpdDesc {
-	position: relative;
-}
-
-td.statusUpdDesc:before {
- 	content: '&nbsp;';
-    visibility: hidden;
-}
-
-td.statusUpdDesc span {
-	position: absolute;
-    left: 0;
-    right: 0;
-	white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-</style>
-</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
