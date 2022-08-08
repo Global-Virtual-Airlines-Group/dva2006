@@ -8,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName}&nbsp;Search</title>
+<title><content:airline />&nbsp;${forumName}&nbsp;Search</title>
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" />
 <content:css name="form" />
@@ -18,17 +18,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if ((f.searchStr.value.length < 3) && (f.pilotName.value.length < 3)) {
-	golgotha.form.validate({f:f.searchStr, l:3, t:'Search Term'});
-	golgotha.form.validate({f:f.pilotName, l:3, t:'Pilot Name'});
-}
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if ((f.searchStr.value.length < 3) && (f.pilotName.value.length < 3)) {
+		golgotha.form.validate({f:f.searchStr, l:3, t:'Search Term'});
+		golgotha.form.validate({f:f.pilotName, l:3, t:'Pilot Name'});
+	}
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.setChannel = function(combo) {
@@ -108,12 +107,10 @@ golgotha.local.setChannel = function(combo) {
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd>
- <span class="small">(in <span class="pri">${thread.channel}</span>)</span></td>
+ <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd>&nbsp;<span class="small">(in <span class="pri">${thread.channel}</span>)</span></td>
  <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
  <td><fmt:int value="${thread.postCount}" /></td>
- <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by 
- <span class="pri bld">${lastPoster.name}</span></td>
+ <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by <span class="pri bld">${lastPoster.name}</span></td>
 </view:row>
 </c:forEach>
 
