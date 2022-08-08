@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,13 +11,14 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
 public class GetPilotOnline extends PilotReadDAO {
 	
 	private static final Cache<CacheableMap<String, Integer>> _idCache = CacheManager.getMap(String.class, Integer.class, "OnlineIDs");
+	private static final List<OnlineNetwork> ACTIVE_NETWORKS = List.of(OnlineNetwork.VATSIM, OnlineNetwork.IVAO, OnlineNetwork.PILOTEDGE, OnlineNetwork.POSCON);
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -35,9 +36,7 @@ public class GetPilotOnline extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, Integer> getIDs(OnlineNetwork network) throws DAOException {
-		
-		// This only supports VATSIM/IVAO/PE
-		if ((network != OnlineNetwork.VATSIM) && (network != OnlineNetwork.IVAO) && (network != OnlineNetwork.PILOTEDGE))
+		if (!ACTIVE_NETWORKS.contains(network))
 			return Collections.emptyMap();
 		
 		// Check the cache
@@ -71,13 +70,12 @@ public class GetPilotOnline extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Pilot> getPilots(OnlineNetwork network) throws DAOException {
-		if ((network != OnlineNetwork.VATSIM) && (network != OnlineNetwork.IVAO) && (network != OnlineNetwork.PILOTEDGE))
+		if (!ACTIVE_NETWORKS.contains(network))
 			return Collections.emptyList();
 		
 		// Build the SQL statement
-		String colName = (network == OnlineNetwork.PILOTEDGE ? "PE" : network.toString()) + "_ID";
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM PILOTS P WHERE ((P.STATUS=?) OR (P.STATUS=?)) AND (LENGTH(");
-		sqlBuf.append(colName);
+		sqlBuf.append((network == OnlineNetwork.PILOTEDGE ? "PE" : network.toString()) + "_ID");
 		sqlBuf.append(") > 0)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
