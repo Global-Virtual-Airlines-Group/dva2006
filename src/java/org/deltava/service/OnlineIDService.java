@@ -5,7 +5,7 @@ import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.dao.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download Online Network IDs.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -31,52 +31,36 @@ public class OnlineIDService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Determine if we format using XML
-		boolean isXML = Boolean.parseBoolean(ctx.getParameter("xml"));
-		
-		// Get the network name
-		String network = ctx.getParameter("network");
-		if (network != null) {
-			network = network.toUpperCase();
-			Collection<?> networks = (Collection<?>) SystemData.getObject("online.networks");
-			if (!networks.contains(network))
-				network = SystemData.get("online.default_network");
-		} else
-			network = SystemData.get("online.default_network");
+		// Determine if we format using JSON
+		boolean isJSON = Boolean.parseBoolean(ctx.getParameter("json"));
 		
 		// Get the network
-		OnlineNetwork net = OnlineNetwork.valueOf(network.toUpperCase());
-		
-		Collection<Pilot> pilots = null;
+		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), OnlineNetwork.valueOf(SystemData.get("online.default_network")));
+		final Collection<Pilot> pilots = new ArrayList<Pilot>();
 		try {
 			GetPilotOnline pdao = new GetPilotOnline(ctx.getConnection());
-			pilots = pdao.getPilots(net);
+			pilots.addAll(pdao.getPilots(net));
 		} catch (DAOException de) {
-			ServiceException se = error(500, de.getMessage(), de);
-			se.setLogStackDump(false);
-			throw se;
+			throw new ServiceException(500, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
 		
 		// If we're using XML, init the document
-		Element re = null;
-		Document doc = null;
-		if (isXML) {
-			doc = new Document();
-			re = new Element("pilots");
-			doc.setRootElement(re);
-		} else
-			ctx.setContentType("text/plain", "UTF-8");
+		JSONObject jo = new JSONObject();
+		jo.put("network", net.toString());
+		if (!isJSON)
+			ctx.setContentType("text/plain", "utf-8");
 		
 		// Write out the pilot list
 		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
 			Pilot p = i.next();
-			if (isXML && (re != null)) {
-				Element pe = new Element("pilot");
-				pe.setAttribute("id", p.getNetworkID(net));
-				pe.setAttribute("name", p.getName());
-				re.addContent(pe);
+			if (isJSON) {
+				JSONObject po = new JSONObject();
+				po.put("id", p.getID());
+				po.put("name", p.getName());
+				po.put("networkID", p.getNetworkID(net));
+				jo.accumulate("pilots", po);
 			} else {
 				ctx.print(p.getNetworkID(net));
 				ctx.print(" ");
@@ -85,9 +69,10 @@ public class OnlineIDService extends WebService {
 		}
 		
 		// If we're writing using XML, dump out the document
-		if (isXML) {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+		if (isJSON) {
+			JSONUtils.ensureArrayPresent(jo, "pilots");
+			ctx.setContentType("application/json", "utf-8");
+			ctx.println(jo.toString());
 		}
 		
 		try {
