@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -411,6 +411,7 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 		setAttribute(ATTR_IVAO, (network == OnlineNetwork.IVAO));
 		setAttribute(ATTR_FPI, (network == OnlineNetwork.FPI));
 		setAttribute(ATTR_PEDGE, (network == OnlineNetwork.PILOTEDGE));
+		setAttribute(ATTR_POSCON, (network == OnlineNetwork.POSCON));
 	}
 
 	/**
