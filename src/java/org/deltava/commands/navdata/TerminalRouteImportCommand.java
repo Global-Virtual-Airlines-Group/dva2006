@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.0
  */
 
@@ -188,6 +188,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		
 		// Purge the caches
 		CacheManager.invalidate("NavSIDSTAR");
+		CacheManager.invalidate("NavRunway");
 		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
