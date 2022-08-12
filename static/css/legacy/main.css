@@ -410,7 +410,7 @@ td.ellipsis:before {
     visibility: hidden;
 }
 
-td.ellipsis span {
+td.ellipsis > span {
 	position: absolute;
     left: 0;
     right: 0;
