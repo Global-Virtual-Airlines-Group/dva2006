@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -166,8 +166,8 @@ public class RoutePlotMapService extends MapPlotService {
 					if (popRunways.isEmpty())
 						popRunways.addAll(rf.filter(rwdao.getPopularRunways(dr.getAirportD(), null, true)));
 					
-					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
-					popRunways.stream().filter(r -> sidRunways.contains("RW" + r.getName())).forEach(runways::add);
+					final Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
+					popRunways.stream().filter(r -> filterSIDRwy(r, sidRunways)).forEach(runways::add);
 					
 					// Sort runways based on wind heading
 					if ((wxD != null) && (wxD.getWindSpeed() > 0))
@@ -410,5 +410,12 @@ public class RoutePlotMapService extends MapPlotService {
 		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
 		List<Gate> iGates = fdGates.stream().filter(g -> (g.getZone() == gz)).collect(Collectors.toList());
 		return iGates.isEmpty() ? fdGates : iGates;
+	}
+	
+	/*
+	 * Helper method to filter SID runways using current and optional old runway codes.
+	 */
+	private static boolean filterSIDRwy(Runway r, Collection<String> rwyCodes) {
+		return rwyCodes.contains("RW" + r.getName()) || ((r.getOldCode() != null) && rwyCodes.contains("RW" + r.getOldCode()));
 	}
 }
