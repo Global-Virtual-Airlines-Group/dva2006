@@ -1,10 +1,8 @@
-// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -15,14 +13,12 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to perform Restricted Airspace validation.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 7.3
  */
 
 @Helper(Airspace.class)
 public final class AirspaceHelper {
-	
-	private static final Logger log = Logger.getLogger(AirspaceHelper.class);
 	
 	private static final int SEGMENT_SIZE = 75;
 	private static final int CLIMB_RATE = 500;
@@ -60,7 +56,7 @@ public final class AirspaceHelper {
 		}
 			
 		// Now do the altitude checks
-		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>(rawGC.size());
+		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>(rawGC.size()); lastLoc = pr.getAirportD();
 		for (GeoLocation loc : rawGC) {
 			final int apDistance = Math.min(loc.distanceTo(pr.getAirportD()), loc.distanceTo(pr.getAirportA()));
 			int maxDistance = (pr.getWaypoints().size() < 4) ? 30 : Math.max(1, Math.min(20, apDistance / 5));
@@ -82,7 +78,6 @@ public final class AirspaceHelper {
 			lastLoc= loc;
 		}
 
-		log.info(pr.getWaypoints().size() + " => " + locs.size());
 		return classify(locs, includeRestricted);
 	}
 	
@@ -93,6 +88,6 @@ public final class AirspaceHelper {
 	 * @return a Collection of entered Airspace beans 
 	 */
 	public static Collection<Airspace> classify(Collection<? extends GeospaceLocation> locs, final boolean includeRestricted) {
-		return locs.parallelStream().map(loc -> Airspace.isRestricted(loc)).filter(Objects::nonNull).filter(a -> { return includeRestricted || (a.getType() == AirspaceType.P); }).collect(Collectors.toSet());
+		return locs.stream().map(loc -> Airspace.isRestricted(loc)).filter(Objects::nonNull).filter(a -> { return includeRestricted || (a.getType() == AirspaceType.P); }).collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 }
