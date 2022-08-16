@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Check for arguments
+if [ "$2" == "" ]
+then
+ echo "add_ffdhe <cert file> <bits> ..."
+ exit 1
+fi
+
+# Check for certificate file
+if [ ! -f "/etc/ssl/private/$1" ]; then
+	echo "Cannot find /etc/ssl/private/$1"
+	exit 4
+fi
+
+# Check for DHE params file
+if [ ! -f "/etc/ssl/private/ffdhe$2.pem" ]; then
+	echo "Cannot find /etc/ssl/private/ffdhe$2.pem"
+	exit 2
+fi
+
+# Check if cert already has DH params
+DH_CNT=$(grep "DH PARAM" /etc/ssl/private/$1 | wc -l)
+if [ $DH_CNT -ne 0 ]; then
+	echo "DH Param count for $1 = $DH_CNT"
+	exit 3
+fi
+
+TMP_FILE=$(mktemp -q /tmp/bar.XXXXXX)
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp file"
+    exit 5
+fi
+
+# Cleanup temp file
+trap 'rm -f -- "$TMP_FILE"' EXIT
+
+# Combine cert with DH prime
+cat /etc/ssl/private/$1 > $TMP_FILE
+cat /etc/ssl/private/ffdhe$2.pem >> $TMP_FILE
+chmod 644 $TMP_FILE
+mv $TMP_FILE /tmp/$1
+
+exit 0

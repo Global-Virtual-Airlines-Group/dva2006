@@ -1,0 +1,31 @@
+#!/bin/bash
+
+DORESTART=0
+LM=0
+if [ -f "/etc/ssl/private/acme.lastmod" ]; then
+        LM=$(cat "/etc/ssl/private/acme.lastmod")
+        HRLM=$(date -d @"$LM")
+        echo "Loaded last modified date of $HRLM"
+fi
+
+CERTS="/etc/ssl/private/*.pem"
+NEWEST_CERT=0
+
+for crt in $CERTS
+do
+        CLM=`stat -c %Y $crt`
+        if [ $CLM -gt $NEWEST_CERT ]; then
+                NEWEST_CERT=$CLM
+        fi
+done
+
+if [ $NEWEST_CERT -gt $LM ]; then
+        echo "Certificates updated, restarting Apache"
+        /usr/bin/apachectl graceful
+        echo $NEWEST_CERT > /etc/ssl/private/acme.lastmod
+        chmod 640 /etc/ssl/private/acme.lastmod
+else
+        echo "No certificates updated"
+fi
+
+exit 0
