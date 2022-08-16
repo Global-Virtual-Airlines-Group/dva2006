@@ -1,6 +1,10 @@
 #!/bin/bash
 
 DORESTART=0
+BITS=3072
+CERTS="/etc/ssl/private/*.crt.pem"
+NEWEST_CERT=0
+
 LM=0
 if [ -f "/etc/ssl/private/acme.lastmod" ]; then
         LM=$(cat "/etc/ssl/private/acme.lastmod")
@@ -8,22 +12,18 @@ if [ -f "/etc/ssl/private/acme.lastmod" ]; then
         echo "Loaded last modified date of $HRLM"
 fi
 
-CERTS="/etc/ssl/private/*.pem"
-NEWEST_CERT=0
-
 for crt in $CERTS
 do
         CLM=`stat -c %Y $crt`
         if [ $CLM -gt $NEWEST_CERT ]; then
                 NEWEST_CERT=$CLM
+                /usr/local/sbin/www/add_ffdhe $crt $BITS
         fi
 done
 
 if [ $NEWEST_CERT -gt $LM ]; then
-        echo "Certificates updated"
-        
-        echo "Restarting Apache"
-        /usr/bin/apachectl graceful
+        echo "Certificates updated - Restarting Apache"
+        /usr/local/bin/apachectl graceful
         echo $NEWEST_CERT > /etc/ssl/private/acme.lastmod
         chmod 640 /etc/ssl/private/acme.lastmod
 else

@@ -8,8 +8,8 @@ then
 fi
 
 # Check for certificate file
-if [ ! -f "/etc/ssl/private/$1" ]; then
-	echo "Cannot find /etc/ssl/private/$1"
+if [ ! -f "$1" ]; then
+	echo "Cannot find $1"
 	exit 4
 fi
 
@@ -20,7 +20,7 @@ if [ ! -f "/etc/ssl/private/ffdhe$2.pem" ]; then
 fi
 
 # Check if cert already has DH params
-DH_CNT=$(grep "DH PARAM" /etc/ssl/private/$1 | wc -l)
+DH_CNT=$(grep "DH PARAM" $1 | wc -l)
 if [ $DH_CNT -ne 0 ]; then
 	echo "DH Param count for $1 = $DH_CNT"
 	exit 3
@@ -36,9 +36,10 @@ fi
 trap 'rm -f -- "$TMP_FILE"' EXIT
 
 # Combine cert with DH prime
-cat /etc/ssl/private/$1 > $TMP_FILE
+echo "Adding ffdhe$2 to $1"
+cat $1 > $TMP_FILE
 cat /etc/ssl/private/ffdhe$2.pem >> $TMP_FILE
 chmod 644 $TMP_FILE
-mv $TMP_FILE /tmp/$1
-
+mv $1 /etc/ssl/private/old
+mv $TMP_FILE $1
 exit 0
