@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -1093,8 +1093,8 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 			p2.setPilotCode(getPilotCode());
 
 		p2._notifyOptions.addAll(_notifyOptions);
-		for (Map.Entry<IMAddress, String> me : getIMHandle().entrySet())
-			p2.setIMHandle(me.getKey(), me.getValue());
+		for (Map.Entry<ExternalID, String> me : getIMHandle().entrySet())
+			p2.setExternalID(me.getKey(), me.getValue());
 
 		return p2;
 	}

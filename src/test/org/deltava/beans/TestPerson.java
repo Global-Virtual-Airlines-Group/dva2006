@@ -67,7 +67,6 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("DN", "cn=John Smith");
         checkProperty("password", "password!!");
         checkProperty("email", "postmaster@dev.null");
-        checkProperty("rank", "Captain");
         checkProperty("equipmentType", "CRJ-200");
         checkProperty("location", "Southeastern US");
         checkProperty("homeAirport", "ATL");
@@ -80,13 +79,11 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("lastLogoff", Instant.now());
         checkProperty("loginCount", Integer.valueOf(12));
         checkProperty("loginHost", "localhost");
-        checkProperty("status", Integer.valueOf(2));
         checkProperty("dateFormat", "MM/dd/yyyy");
         checkProperty("timeFormat", "hh:mm:ss");
         checkProperty("numberFormat", "#,##0.0");
         checkProperty("TZ", TZInfo.UTC);
         checkProperty("UIScheme", "legacy");
-        checkProperty("IMHandle", "LJK");
         _p.setLastLogin(null);
         _p.setLastLogoff(null);
         _p.setHomeAirport(null);
@@ -122,16 +119,9 @@ public class TestPerson extends AbstractBeanTestCase {
         assertFalse(_p.hasNotifyOption(Notification.EVENT));
         _p.setNotifyOption(Notification.EVENT, true);
         assertTrue(_p.hasNotifyOption(Notification.EVENT));
+        assertEquals(1, _p.getNotifyOptions().size());
         _p.setNotifyOption(Notification.EVENT, false);
         assertFalse(_p.hasNotifyOption(Notification.EVENT));
-        try {
-            _p.setNotifyOption(null, true);
-            fail("NullPointerException expected");
-        } catch (NullPointerException npe) {
-        	// empty
-        }
-        
-        assertEquals(1, _p.getNotifyOptions().size());
     }
     
     public void testValidation() {

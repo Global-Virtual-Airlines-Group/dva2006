@@ -88,19 +88,19 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
- <td class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(applicant, 'VATSIM')}" size="10" max="9" /></td>
+ <td class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:externalID(applicant, 'VATSIM')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">IVAO ID#</td>
- <td class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(applicant, 'IVAO')}" size="10" max="9" /></td>
+ <td class="data"><el:text name="IVAO_ID" idx="*" value="${fn:externalID(applicant, 'IVAO')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">PilotEdge ID#</td>
- <td class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:networkID(applicant, 'PilotEdge')}" size="10" max="9" /></td>
+ <td class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:externalID(applicant, 'PilotEdge')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">POSCON ID#</td>
- <td class="data"><el:text name="POSCON_ID" idx="*" value="${fn:networkID(applicant, 'POSCON')}" size="10" max="9" /></td>
+ <td class="data"><el:text name="POSCON_ID" idx="*" value="${fn:externalID(applicant, 'POSCON')}" size="10" max="9" /></td>
 </tr>
 
 <!-- E-Mail Information -->

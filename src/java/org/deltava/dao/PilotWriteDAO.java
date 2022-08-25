@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support writing Pilot objects to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -87,14 +87,14 @@ public abstract class PilotWriteDAO extends DAO {
 	}
 	
 	/**
-	 * Writes a Pilot's social meda and instant messaging IDs to the database.
+	 * Writes a Pilot's external IDs to the database.
 	 * @param id the Pilot's database ID
 	 * @param addrs a Map of IM addresses, keyed by type 
 	 * @param db the database to write to
 	 * @param doClear TRUE if existing ratings should be cleared, otherwise FALSE
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeIMAddrs(int id, Map<IMAddress, String> addrs, String db, boolean doClear) throws SQLException {
+	protected void writeExternalIDs(int id, Map<ExternalID, String> addrs, String db, boolean doClear) throws SQLException {
 		
 		// Clear existing ratings
 		String dbName = formatDBName(db);
@@ -105,10 +105,10 @@ public abstract class PilotWriteDAO extends DAO {
 			}
 		}
 		
-		// Write the IM addrs to the database
+		// Write the IDs to the database
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PILOT_IMADDR (ID, TYPE, ADDR) VALUES (?, ?, ?)")) {
 			ps.setInt(1, id);
-			for (Map.Entry<IMAddress, String> me : addrs.entrySet()) {
+			for (Map.Entry<ExternalID, String> me : addrs.entrySet()) {
 				ps.setString(2, me.getKey().toString());
 				ps.setString(3, me.getValue());
 				ps.addBatch();

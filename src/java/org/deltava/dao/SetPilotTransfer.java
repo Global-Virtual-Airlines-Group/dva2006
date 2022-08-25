@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -82,7 +82,7 @@ public class SetPilotTransfer extends SetPilot {
 
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);
-			writeIMAddrs(id, p.getIMHandle(), dbName, false);
+			writeExternalIDs(id, p.getIMHandle(), dbName, false);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

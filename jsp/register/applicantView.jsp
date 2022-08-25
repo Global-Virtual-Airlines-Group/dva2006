@@ -116,28 +116,28 @@ ${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${du
  <td class="label">Location</td>
  <td class="data">${applicant.location}</td>
 </tr>
-<c:set var="VATSIM_ID" value="${fn:networkID(applicant, 'VATSIM')}" scope="page" />
+<c:set var="VATSIM_ID" value="${fn:externalID(applicant, 'VATSIM')}" scope="page" />
 <c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
  <td class="data">${VATSIM_ID}<c:if test="${access.canApprove}">&nbsp;<el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /><span id="validationInfo" class="sec ita bld"></span></c:if></td>
 </tr>
 </c:if>
-<c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="page" />
+<c:set var="IVAO_ID" value="${fn:externalID(applicant, 'IVAO')}" scope="page" />
 <c:if test="${!empty IVAO_ID}">
 <tr>
  <td class="label">IVAO ID#</td>
  <td class="data">${IVAO_ID}</td>
 </tr>
 </c:if>
-<c:set var="PE_ID" value="${fn:networkID(applicant, 'PilotEdge')}" scope="page" />
+<c:set var="PE_ID" value="${fn:externalID(applicant, 'PilotEdge')}" scope="page" />
 <c:if test="${!empty PE_ID}">
 <tr>
  <td class="label">PilotEdge ID#</td>
  <td class="data">${PE_ID}</td>
 </tr>
 </c:if>
-<c:set var="POSCON_ID" value="${fn:networkID(applicant, 'POSCON')}" scope="page" />
+<c:set var="POSCON_ID" value="${fn:externalID(applicant, 'POSCON')}" scope="page" />
 <c:if test="${!empty POSCON_ID}">
 <tr>
  <td class="label">POSCON ID#</td>
