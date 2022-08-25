@@ -1,4 +1,6 @@
 #!/bin/bash
+# DHE parameter add script
+# (c) 2022 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check for arguments
 if [ "$2" == "" ]
@@ -26,10 +28,24 @@ if [ $DH_CNT -ne 0 ]; then
 	exit 3
 fi
 
+# Check for the key file
+KEY_FILE=$(echo "$1" | sed "s/crt/key")
+if [ ! -f "$KEY_FILE" ]; then
+	echo "Cannot find $KEY_FILE"
+	exit 4
+fi
+
+# Check if the key file isn't ECC
+if [ "$KEY_FILE" == *".ecc."* ]; then
+	echo "$KEY_FILE is an ECC key"
+	exit 5
+fi
+
+# Create the temp file
 TMP_FILE=$(mktemp -q /tmp/bar.XXXXXX)
 if [ $? -ne 0 ]; then
     echo "$0: Can't create temp file"
-    exit 5
+    exit 6
 fi
 
 # Cleanup temp file
