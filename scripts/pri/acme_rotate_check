@@ -1,4 +1,6 @@
 #!/bin/bash
+# LetsEncrypt certificate update checker
+# (c) 2022 Global Virtual Airlines Group. All Rights Reserved.
 
 DORESTART=0
 BITS=3072
