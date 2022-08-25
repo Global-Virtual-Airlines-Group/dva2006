@@ -1,11 +1,11 @@
-// Copyright 2013, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
+import org.deltava.beans.Compression;
 import org.deltava.beans.schedule.Country;
 import org.deltava.beans.system.*;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import IP netblock geolocation data.
  * @author Luke
- * @version 8.7
+ * @version 10.3
  * @since 5.2
  */
 
@@ -48,41 +48,39 @@ public class IPBlockImportCommand extends AbstractCommand {
 		}
 
 		// Load the data
-		boolean isGZIP = fName.toLowerCase().endsWith(".gz");
+		Compression cmp = Compression.get(f.getAbsolutePath());
 		Collection<String> msgs = new ArrayList<String>(); int blockID = 1;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 
 			SetIPLocation ipwdao = new SetIPLocation(con);
-			try (InputStream fis = new FileInputStream(f)) {
-				try (InputStream is = isGZIP ? new GZIPInputStream(fis, 32768) : new BufferedInputStream(fis, 32768)) {
-					try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
-						String data = lr.readLine(); Collection<IPBlock> blocks = new ArrayList<IPBlock>(32); 
-						while (data != null) {
-							data = lr.readLine();
-							if (data == null)
-								break;
+			try (InputStream fis = new FileInputStream(f); InputStream is = cmp.getCompressedStream(fis)) {
+				try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
+					String data = lr.readLine(); Collection<IPBlock> blocks = new ArrayList<IPBlock>(32); 
+					while (data != null) {
+						data = lr.readLine();
+						if (data == null)
+							break;
 							
-							List<String> tkns = StringUtils.split(data, ",");
-							if (tkns.size() < 9) {
-								msgs.add("Invalid token count (" + tkns.size() + ", expected 10) at Line " + lr.getLineNumber());
-								if (msgs.size() > 1200) data = null;
-								continue;
-							}
+						List<String> tkns = StringUtils.split(data, ",");
+						if (tkns.size() < 9) {
+							msgs.add("Invalid token count (" + tkns.size() + ", expected 10) at Line " + lr.getLineNumber());
+							if (msgs.size() > 1200) data = null;
+							continue;
+						}
 
-							// Build the object
-							IPBlock ip = new IPBlock(++blockID, tkns.get(0));
-							ip.setCity(tkns.get(1)); // genoName ID
-							ip.setLocation(StringUtils.parse(tkns.get(7), 0.0d), StringUtils.parse(tkns.get(8), 0.0d));
-							if (tkns.size() > 9)
-								ip.setRadius(StringUtils.parse(tkns.get(9), 50));
-							if (!StringUtils.isEmpty(ip.getCity()))
-								blocks.add(ip);
-							if (blocks.size() > 200) {
-								ipwdao.write(blocks);
-								blocks.clear();
-							}
+						// Build the object
+						IPBlock ip = new IPBlock(++blockID, tkns.get(0));
+						ip.setCity(tkns.get(1)); // genoName ID
+						ip.setLocation(StringUtils.parse(tkns.get(7), 0.0d), StringUtils.parse(tkns.get(8), 0.0d));
+						if (tkns.size() > 9)
+							ip.setRadius(StringUtils.parse(tkns.get(9), 50));
+						if (!StringUtils.isEmpty(ip.getCity()))
+							blocks.add(ip);
+						if (blocks.size() > 200) {
+							ipwdao.write(blocks);
+							blocks.clear();
 						}
 					}
 				}
