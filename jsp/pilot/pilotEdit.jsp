@@ -210,19 +210,23 @@ golgotha.onDOMReady(function() {
 </c:if>
 <tr>
  <td class="label">VATSIM ID</td>
- <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(pilot, 'VATSIM')}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:externalID(pilot,'VATSIM')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">IVAO ID</td>
- <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(pilot, 'IVAO')}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${fn:externalID(pilot,'IVAO')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">PilotEdge ID</td>
- <td colspan="${cspan}" class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:networkID(pilot, 'PilotEdge')}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:externalID(pilot,'PilotEdge')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">POSCON ID</td>
- <td colspan="${cspan}" class="data"><el:text name="POSCON_ID" idx="*" value="${fn:networkID(pilot, 'POSCON')}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="POSCON_ID" idx="*" value="${fn:externalID(pilot,'POSCON')}" size="10" max="9" /></td>
+</tr>
+<tr>
+ <td class="label">Navigraph ID</td>
+ <td colspan="${cspan}" class="data"><el:text name="Navigraph_ID" idx="*" value="${fn:externalID(pilot,'Navigraph')}" size="12" max="16" /></td>
 </tr>
 <c:if test="${empty pilotLocation}">
 <tr>

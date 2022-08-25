@@ -223,7 +223,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 <c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="page" />
 <c:set var="myCerts" value="${fn:filterCerts(pilotCerts, allCerts)}" scope="page" />
-<c:set var="pilotRatings" value="${fn:filterRatings(allRatings[fn:networkID(pilot, event.network)], myCerts)}" scope="page" />
+<c:set var="pilotRatings" value="${fn:filterRatings(allRatings[fn:externalID(pilot, event.network)], myCerts)}" scope="page" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="page" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="page" />
 <c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="page" />
@@ -239,7 +239,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${!empty pilotRatings}">&nbsp;<span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
 </td>
  <td class="sec bld nophone">${signup.equipmentType}</td>
- <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
+ <td class="pri bld">${fn:externalID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
  <td class="small nophone"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
 </c:if>
@@ -286,7 +286,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </c:if>
 
 <content:authUser var="user">
-<c:if test="${!access.canSignup && event.canSignup && fn:isEventOpen(event) && (empty fn:networkID(user, event.network))}">
+<c:if test="${!access.canSignup && event.canSignup && fn:isEventOpen(event) && (empty fn:externalID(user, event.network))}">
 <!-- No Online ID Notice -->
 <tr>
  <td colspan="6" class="mid"><span class="pri bld">You cannot sign up for this Online Event because you have not provided your ${event.network} ID.</span><br />

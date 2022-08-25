@@ -503,11 +503,11 @@
 		<function-signature>boolean isSuspended(org.deltava.beans.Person)</function-signature>
 	</function>
 	
-	<!-- Display an Online Network ID -->
+	<!-- Display an External ID -->
 	<function>
-		<name>networkID</name>
+		<name>externalID</name>
 		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
-		<function-signature>java.lang.String getNetworkID(org.deltava.beans.Person, java.lang.String)</function-signature>
+		<function-signature>java.lang.String getExternalID(org.deltava.beans.Person, java.lang.String)</function-signature>
 	</function>
 
 	<!-- Check if a Person has an Instant Messenger address -->

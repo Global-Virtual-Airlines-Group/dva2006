@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class SetPilot extends PilotWriteDAO {
 			// Update the roles/ratings
 			writeRoles(p.getID(), p.getRoleData());
 			writeRatings(p.getID(), p.getRatings(), db, true);
-			writeIMAddrs(p.getID(), p.getIMHandle(), db, true);
+			writeExternalIDs(p.getID(), p.getIMHandle(), db, true);
 			writeAlias(p.getID(), p.getPilotCode(), p.getLDAPName());
 			commitTransaction();
 		} catch (SQLException se) {

@@ -1,12 +1,14 @@
-// Copyright 2006, 2008, 2010, 2014, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010, 2014, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -32,7 +34,7 @@ public class PersonFunctions {
 	 * @return TRUE if an Applicant, otherwise FALSE 
 	 */
 	public static boolean isApplicant(Person usr) {
-		return ((usr != null) && (usr instanceof Applicant));
+		return (usr instanceof Applicant);
 	}
 	
 	/**
@@ -41,7 +43,7 @@ public class PersonFunctions {
 	 * @return TRUE if a Pilot, otherwise FALSE 
 	 */
 	public static boolean isPilot(Person usr) {
-		return ((usr != null) && (usr instanceof Pilot));
+		return (usr instanceof Pilot);
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class PersonFunctions {
 	 * @return TRUE if a Supended Pilot, otherwise FALSE
 	 */
 	public static boolean isSuspended(Person usr) {
-		PilotStatus ps = isPilot(usr) ? ((Pilot) usr).getStatus() : null;
+		PilotStatus ps = (usr instanceof Pilot) ? ((Pilot) usr).getStatus() : null;
 		return (ps == PilotStatus.SUSPENDED);
 	}
 
@@ -60,7 +62,7 @@ public class PersonFunctions {
 	 * @return TRUE if an Active or On Leave Pilot, otherwise FALSE
 	 */
 	public static boolean isActive(Person usr) {
-		PilotStatus ps = isPilot(usr) ? ((Pilot) usr).getStatus() : null;
+		PilotStatus ps = (usr instanceof Pilot) ? ((Pilot) usr).getStatus() : null;
 		return (ps == PilotStatus.ACTIVE) || (ps == PilotStatus.ONLEAVE);
 	}
 	
@@ -71,40 +73,28 @@ public class PersonFunctions {
 	 * @return TRUE if the Person is a member of the Role, otherwise FALSE
 	 */
 	public static boolean hasRole(String roleName, Person usr) {
-		return isPilot(usr) && usr.isInRole(roleName);
+		return (usr instanceof Pilot) && usr.isInRole(roleName);
 	}
 	
 	/**
-	 * Returns a Person's online network ID.
+	 * Returns a Person's external ID.
 	 * @param usr the Person
-	 * @param name the network name
-	 * @return the network ID, or null 
+	 * @param name the external ID type name
+	 * @return the external ID, or null 
 	 */
-	public static String getNetworkID(Person usr, String name) {
-		try {
-			OnlineNetwork net = OnlineNetwork.valueOf(name.toUpperCase());
-			return (usr == null) ? null : usr.getNetworkID(net);
-		} catch (Exception e) {
-			// empty
-		}
-		
-		return null;
+	public static String getExternalID(Person usr, String name) {
+		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, name, null);
+		return (usr == null) ? null : usr.getNetworkID(net);
 	}
 	
 	/**
-	 * Returns whether a Person has a particular IM address.
+	 * Returns whether a Person has a particular external ID.
 	 * @param usr the Person
-	 * @param imType the Instant Message type
+	 * @param idType the external ID type name
 	 * @return TRUE if the Person has an address, otherwise FALSE
 	 */
-	public static boolean hasIM(Person usr, String imType) {
-		try {
-			IMAddress addr = IMAddress.valueOf(imType.toUpperCase());
-			return (usr == null) ? false : (usr.getIMHandle(addr) != null);
-		} catch (Exception e) {
-			// empty
-		}
-		
-		return false;
+	public static boolean hasExternalID(Person usr, String idType) {
+		ExternalID extID = EnumUtils.parse(ExternalID.class, idType, null);
+		return (usr != null) && (extID != null) && (usr.getExternalID(extID) != null);
 	}
 }
