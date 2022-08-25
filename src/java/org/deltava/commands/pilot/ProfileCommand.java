@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -142,9 +142,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setACARSUpdateChannel(EnumUtils.parse(UpdateChannel.class, ctx.getParameter("acarsUpdateChannel"), UpdateChannel.RELEASE));
 
 			// Update IM handles
-			for (IMAddress im : IMAddress.values()) {
-				if (im.getIsVisible())
-					p.setIMHandle(im, ctx.getParameter(im.toString() + "Handle"));
+			for (ExternalID extID : ExternalID.values()) {
+				if (extID.getIsVisible())
+					p.setExternalID(extID, ctx.getParameter(extID.toString() + "Handle"));
 			}
 			
 			// Set location
@@ -175,7 +175,6 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(forumName + " posts " + (coolerPostsLocked ? "locked out" : "enabled"));
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
 				}
 
 				// Check Testing Center access
@@ -186,7 +185,6 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
 				}
 
 				// Check Voice server access

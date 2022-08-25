@@ -134,7 +134,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
  <td class="label">Home Airport</td>
  <td colspan="${cspan}" class="data">${airport.name} (<fmt:airport airport="${airport}" />)</td>
 </tr>
-<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="page" />
+<c:set var="vatsimID" value="${fn:externalID(pilot,'VATSIM')}" scope="page" />
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
@@ -148,25 +148,32 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 </tr>
 </c:if>
 </c:if>
-<c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="page" />
+<c:set var="ivaoID" value="${fn:externalID(pilot,'IVAO')}" scope="page" />
 <c:if test="${!empty ivaoID}">
 <tr>
  <td class="label">IVAO ID</td>
  <td colspan="${cspan}" class="data">${ivaoID}</td>
 </tr>
 </c:if>
-<c:set var="peID" value="${fn:networkID(pilot, 'PilotEdge')}" scope="page" />
+<c:set var="peID" value="${fn:externalID(pilot,'PilotEdge')}" scope="page" />
 <c:if test="${!empty peID}">
 <tr>
  <td class="label">PilotEdge ID</td>
  <td colspan="${cspan}" class="data">${peID}</td>
 </tr>
 </c:if>
-<c:set var="posconID" value="${fn:networkID(pilot, 'POSCON')}" scope="page" />
+<c:set var="posconID" value="${fn:externalID(pilot,'POSCON')}" scope="page" />
 <c:if test="${!empty posconID}">
 <tr>
  <td class="label">POSCON ID</td>
  <td colspan="${cspan}" class="data">${posconID}</td>
+</tr>
+</c:if>
+<c:set var="navigraphID" value="${fn:externalID(pilot,'POSCON')}" scope="page" />
+<c:if test="${(!empty navigraphID) && access.canViewEmail}">
+<tr>
+ <td class="label">Navigraph ID</td>
+ <td colspan="${cspan}" class="data">${navigraphID}</td>
 </tr>
 </c:if>
 <tr>

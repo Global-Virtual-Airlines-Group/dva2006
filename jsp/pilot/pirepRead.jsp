@@ -94,7 +94,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
 </tr>
 <c:if test="${fn:network(pirep) == 'VATSIM'}">
-<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="page" />
+<c:set var="vatsimID" value="${fn:externalID(pilot, 'VATSIM')}" scope="page" />
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
@@ -107,7 +107,10 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Status</td>
  <td class="data bld"><span class="sec">${pirep.status}</span><c:if test="${!empty disposedBy}"> - by ${disposedBy.name}</c:if><c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
 <c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
-<content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
+<content:authUser anonymous="false">
+<c:set var="isMine" value="${pirep.authorID == user.ID}" scope="page" />
+<c:set var="hasSB" value="${!empty fn:externalID(user,'Navigraph')}" scope="page" />
+<c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>

@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -388,8 +388,7 @@ abstract class PilotReadDAO extends DAO {
 					if (p != null) {
 						String imType = rs.getString(2);
 						try {
-							IMAddress addrType = IMAddress.valueOf(imType);
-							p.setIMHandle(addrType, rs.getString(3));
+							p.setExternalID(ExternalID.valueOf(imType), rs.getString(3));
 						} catch (Exception e) {
 							log.warn("Unknown IM address type - " + imType);
 						}

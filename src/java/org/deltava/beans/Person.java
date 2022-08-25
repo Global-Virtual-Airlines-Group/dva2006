@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	private int _emailAccess;
 	private boolean _eMailInvalid;
 
-	private final Map<IMAddress, String> _imHandles = new TreeMap<IMAddress, String>();
+	private final Map<ExternalID, String> _imHandles = new TreeMap<ExternalID, String>();
 
 	private String _eqType;
 	private Rank _rank;
@@ -234,24 +234,22 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	}
 
 	/**
-	 * Returns the Person's Instant Messenger handle.
-	 * @param service the IM service name
-	 * @return the IM handle, or null if not found
+	 * Returns the Person's external IDs.
+	 * @param service the ID service name
+	 * @return the ID, or null if not found
 	 * @throws NullPointerException if service is null
-	 * @see Person#getIMHandle()
-	 * @see Person#setIMHandle(IMAddress, String)
 	 */
-	public String getIMHandle(IMAddress service) {
+	public String getExternalID(ExternalID service) {
 		return _imHandles.get(service);
 	}
 	
 	/**
-	 * Returns a Map containing this Person's Instant Messenger handles.
-	 * @return the Instant Messenger IDs
-	 * @see Person#getIMHandle(IMAddress)
+	 * Returns a Map containing this Person's external IDs.
+	 * @return the External IDs
+	 * @see Person#getExternalID(ExternalID)
 	 */
-	public Map<IMAddress, String> getIMHandle() {
-		return new TreeMap<IMAddress, String>(_imHandles);
+	public Map<ExternalID, String> getIMHandle() {
+		return new TreeMap<ExternalID, String>(_imHandles);
 	}
 	
 	/**
@@ -259,7 +257,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @param svc an IMAddress object
 	 * @return TRUE if the Person has an address for this service, otherwise FALSE
 	 */
-	public boolean hasIM(IMAddress svc) {
+	public boolean hasID(ExternalID svc) {
 		return _imHandles.containsKey(svc);
 	}
 
@@ -638,10 +636,9 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * Update this Person's Instant Messaging handle. If the handle is empty, it will be cleared.
 	 * @param svc the messaging service
 	 * @param handle the new handle
-	 * @throws NullPointerException if service is null
-	 * @see Person#getIMHandle(IMAddress)
+	 * @see Person#getExternalID(ExternalID)
 	 */
-	public void setIMHandle(IMAddress svc, String handle) {
+	public void setExternalID(ExternalID svc, String handle) {
 		if ((handle != null) && (!StringUtils.isEmpty(handle.trim())))
 			_imHandles.put(svc, handle);
 		else if (_imHandles.containsKey(svc))
