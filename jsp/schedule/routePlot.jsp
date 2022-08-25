@@ -48,7 +48,6 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="aCode" name="airline.code" />
 <content:empty var="emptyList" />
 <content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3D,XP9,XP10,XP12" />
 
@@ -167,7 +166,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button onClick="void plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
+ <td><el:button onClick="void golgotha.routePlot.plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -176,7 +175,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
