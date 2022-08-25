@@ -1,11 +1,11 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
+import org.deltava.beans.Compression;
 import org.deltava.beans.schedule.Country;
 import org.deltava.beans.system.IPLocation;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to load IP GeoLocation data.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 8.7
  */
 
@@ -48,44 +48,42 @@ public class IPGeoImportCommand extends AbstractCommand {
 		}
 
 		// Load the data
-		boolean isGZIP = fName.toLowerCase().endsWith(".gz");
+		Compression cmp = Compression.get(f.getAbsolutePath());
 		Collection<String> msgs = new ArrayList<String>(); int locCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 
 			SetIPLocation ipwdao = new SetIPLocation(con);
-			try (InputStream fis = new FileInputStream(f)) {
-				try (InputStream is = isGZIP ? new GZIPInputStream(fis, 32768) : new BufferedInputStream(fis)) {
-					try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
-						String data = lr.readLine();
-						while (data != null) {
-							data = lr.readLine();
-							if (data == null)
-								break;
+			try (InputStream fis = new FileInputStream(f); InputStream is = cmp.getCompressedStream(fis)) {
+				try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
+					String data = lr.readLine();
+					while (data != null) {
+						data = lr.readLine();
+						if (data == null)
+							break;
 
-							List<String> tkns = StringUtils.split(data, ",");
-							if (tkns.size() < 11) {
-								msgs.add("Invalid token count (" + tkns.size() + ", expected 14) at Line " + lr.getLineNumber());
-								continue;
-							}
-
-							// Build the object
-							IPLocation loc = new IPLocation(StringUtils.parse(tkns.get(0), 0));
-							loc.setCountry(Country.get(tkns.get(4)));
-
-							if (tkns.get(6).length() > 3) {
-								msgs.add("Invalid region code at Line " + lr.getLineNumber() + " - " + tkns.get(6));
-								loc.setRegionCode("");
-							} else {
-								loc.setRegionCode(tkns.get(6));
-								loc.setRegion(StringUtils.removeCSVQuotes(tkns.get(7)));
-							}
-
-							loc.setCityName(StringUtils.removeCSVQuotes(tkns.get(10)));
-							ipwdao.write(loc);
-							locCount++;
+						List<String> tkns = StringUtils.split(data, ",");
+						if (tkns.size() < 11) {
+							msgs.add("Invalid token count (" + tkns.size() + ", expected 14) at Line " + lr.getLineNumber());
+							continue;
 						}
+
+						// Build the object
+						IPLocation loc = new IPLocation(StringUtils.parse(tkns.get(0), 0));
+						loc.setCountry(Country.get(tkns.get(4)));
+
+						if (tkns.get(6).length() > 3) {
+							msgs.add("Invalid region code at Line " + lr.getLineNumber() + " - " + tkns.get(6));
+							loc.setRegionCode("");
+						} else {
+							loc.setRegionCode(tkns.get(6));
+							loc.setRegion(StringUtils.removeCSVQuotes(tkns.get(7)));
+						}
+
+						loc.setCityName(StringUtils.removeCSVQuotes(tkns.get(10)));
+						ipwdao.write(loc);
+						locCount++;
 					}
 				}
 			}
