@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -187,7 +187,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			GetElite eldao = new GetElite(con);
 			
 			HelpDeskAccessControl ac = null;
-			PilotComparator cmp = new PilotComparator(PersonComparator.LASTNAME);
+			PilotComparator cmp = new PilotComparator(PersonComparator.FIRSTNAME);
 			if (!isNew) {
 				//	Get the Issue
 				GetHelp idao = new GetHelp(con);
@@ -225,7 +225,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			}
 			
 			// Get Assignees
-			Collection<Pilot> assignees = new TreeSet<Pilot>(cmp);
+			Collection<Pilot> assignees = new HashSet<Pilot>();
 			assignees.addAll(pdao.getByRole("HR", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("Instructor", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("AcademyAdmin", ctx.getDB()));
@@ -233,7 +233,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			assignees.addAll(pdao.getByRole("Examination", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("Signature", ctx.getDB()));
 			assignees.addAll(pdao.getByRole("HelpDesk", ctx.getDB()));
-			List<Pilot> activeAssignees = assignees.stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
+			List<Pilot> activeAssignees = assignees.stream().sorted(cmp).filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
 			ctx.setAttribute("assignees", activeAssignees, REQUEST);
 			
 			// Get options for issue conversion
