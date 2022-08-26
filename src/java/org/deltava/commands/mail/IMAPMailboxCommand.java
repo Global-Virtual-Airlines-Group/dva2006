@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle IMAP mailbox profiles.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.2
  */
 
@@ -130,7 +130,7 @@ public class IMAPMailboxCommand extends AbstractAuditFormCommand {
 						while (runTime < 3500) {
 							ThreadUtils.sleep(200);
 							try {
-								if (p.exitValue() != 1)
+								if (p.exitValue() > 0)
 									throw new DAOException("Unable to create mailbox - error " + p.exitValue());
 
 								break;
