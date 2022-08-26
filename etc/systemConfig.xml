@@ -420,8 +420,6 @@
 
 		<key>
 			<analytics>UA-2066915-1</analytics>
-			<airCharts>***REMOVED***</airCharts>
-			<wunderground>***REMOVED***</wunderground>
 			<googleMaps>
 				<auth>***REMOVED***</auth>
 				<anon>***REMOVED***</anon>
@@ -437,6 +435,7 @@
 				<pub>***REMOVED***</pub>
 				<pvt>***REMOVED***</pvt>
 			</push>
+			<simrbief>***REMOVED***</simrbief>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
