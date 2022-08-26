@@ -9,7 +9,7 @@ package org.deltava.beans;
  */
 
 public enum ExternalID {
-	MSN("MSN", true), ICQ("ICQ", true), YIM("Yahoo", true), FB("Facebook", false), FBTOKEN("Facebook Token", false), FBPAGE("Facebook page", false), NAVIGRAPH("Navigraph", true);
+	MSN("MSN", false), ICQ("ICQ", false), YIM("Yahoo", false), FB("Facebook", false), FBTOKEN("Facebook Token", false), FBPAGE("Facebook page", false), NAVIGRAPH("Navigraph", true), DISCORD("Discord", true);
 	
 	private final String _name;
 	private final boolean _visible;

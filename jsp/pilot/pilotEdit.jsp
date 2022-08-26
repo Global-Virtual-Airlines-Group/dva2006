@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" buffer="32kb" autoFlush="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -224,10 +224,6 @@ golgotha.onDOMReady(function() {
  <td class="label">POSCON ID</td>
  <td colspan="${cspan}" class="data"><el:text name="POSCON_ID" idx="*" value="${fn:externalID(pilot,'POSCON')}" size="10" max="9" /></td>
 </tr>
-<tr>
- <td class="label">Navigraph ID</td>
- <td colspan="${cspan}" class="data"><el:text name="Navigraph_ID" idx="*" value="${fn:externalID(pilot,'Navigraph')}" size="12" max="16" /></td>
-</tr>
 <c:if test="${empty pilotLocation}">
 <tr>
  <td class="label">Location</td>
@@ -249,7 +245,7 @@ golgotha.onDOMReady(function() {
 
 <!-- E-Mail Information -->
 <tr class="title">
- <td colspan="${cspan + 1}">E-MAIL / INSTANT MESSAGING INFORMATION</td>
+ <td colspan="${cspan + 1}">E-MAIL / EXTERNAL IDs</td>
 </tr>
 <c:choose>
 <c:when test="${isHR && (user.ID != pilot.ID)}">
@@ -269,12 +265,12 @@ golgotha.onDOMReady(function() {
  <td class="label top">E-Mail Notifications</td>
  <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
 </tr>
-<content:enum var="imTypes" className="org.deltava.beans.IMAddress" />
-<c:forEach var="imType" items="${imTypes}">
-<c:if test="${imType.isVisible}">
+<content:enum var="extIDs" className="org.deltava.beans.ExternalID" />
+<c:forEach var="extID" items="${extIDs}">
+<c:if test="${extID.isVisible}">
 <tr>
- <td class="label">${imType} Address</td>
- <td colspan="${cspan}" class="data"><el:text name="${imType}Handle" idx="*" size="10" max="32" value="${pilot.IMHandle[imType]}" /></td>
+ <td class="label">${extID.name} ID</td>
+ <td colspan="${cspan}" class="data"><el:text name="${extID}Handle" idx="*" size="10" max="32" value="${pilot.getExternalID(extID)}" /></td>
 </tr>
 </c:if>
 </c:forEach>
