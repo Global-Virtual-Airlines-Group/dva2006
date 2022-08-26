@@ -420,8 +420,6 @@
 
 		<key>
 			<analytics>UA-2066915-1</analytics>
-			<airCharts>bc59d23a-a926-5a6d-83aa-8e477688a38d</airCharts>
-			<wunderground>e466a9feecedb389</wunderground>
 			<googleMaps>
 				<auth>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</auth>
 				<anon>AIzaSyADmgR8dXaYYznXKqJxzyZuDaFq0MD1vw4</anon>
@@ -437,6 +435,7 @@
 				<pub>BByMXptLsMPS8TSacmLR1MnxGKPsF1jCubl41PSvTQ67F1lwKXAE7_AebQxC8QHf3hyl8WEPjR_OpTJa78urWaY</pub>
 				<pvt>MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCCE3wh2-pWvk8ypmmyE695wwOQFrwOZwbuVmfDeXiWToA</pvt>
 			</push>
+			<simrbief>zifnwE1Tt2gMmlxqoLPEHA7wkTUYhCSR</simrbief>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
