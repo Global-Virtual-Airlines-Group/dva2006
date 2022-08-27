@@ -1,20 +1,23 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.flight.ACARSFlightReport;
 import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.beans.stats.RouteOnTime;
+
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write ACARS on-time data to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 8.4
  */
 
 public class SetACARSOnTime extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC Connection to use
@@ -50,6 +53,8 @@ public class SetACARSOnTime extends DAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("OnTimeRoute", RouteOnTime.createKey(afr, db));
 		}
 	}
 }
