@@ -8,7 +8,7 @@ import java.time.Instant;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.OnTimeStatsEntry;
-
+import org.deltava.beans.stats.RouteOnTime;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -23,27 +23,6 @@ public class GetACARSOnTime extends DAO {
 	
 	private static final Cache<RouteOnTime> _cache = CacheManager.get(RouteOnTime.class, "OnTimeRoute");
 	
-	private static class RouteOnTime extends OnTimeStatsEntry implements Cacheable {
-		private final String _cacheKey;
-		
-		public RouteOnTime(String cacheKey) {
-			super(Instant.now());
-			_cacheKey = cacheKey;
-		}
-
-		@Override
-		public Object cacheKey() {
-			return _cacheKey;
-		}
-		
-		static String createKey(RoutePair rp, String db) {
-			StringBuilder buf = new StringBuilder(db);
-			buf.append("!!");
-			buf.append(rp.createKey());
-			return buf.toString();
-		}
-	}
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
