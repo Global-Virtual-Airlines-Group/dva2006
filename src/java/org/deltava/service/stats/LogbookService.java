@@ -4,6 +4,7 @@ package org.deltava.service.stats;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.sql.Connection;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
@@ -55,23 +56,28 @@ public class LogbookService extends WebService {
 		lsc.setLoadComments(le instanceof JSONExport);
 		Collection<FlightReport> pireps = null;
 		try {
-			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			GetFlightReports frdao = new GetFlightReports(con);
 			pireps = frdao.getByPilot(userID, lsc);
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
+			
+			GetFlightReportHistory frhdao = new GetFlightReportHistory(con);
+			frhdao.loadStatus(userID, pireps);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
 
-
 		// Format flights
 		pireps.forEach(le::add);
 		
 		// Write the response
+		String fileName = String.format("logbook_%d.%s", Integer.valueOf(userID), le.getExtension());
 		try {
 			ctx.setContentType(le.getContentType(), "utf-8");
-			ctx.setHeader("Content-disposition", String.format("attachment; filename=logbook_%d.%s", Integer.valueOf(userID), le.getExtension()));
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", fileName));
+			ctx.setHeader("X-Logbook-Filename", fileName);
 			ctx.println(le.toString());
 			ctx.commit();
 		} catch (IOException ie) {
