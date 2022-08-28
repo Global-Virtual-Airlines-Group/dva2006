@@ -62,13 +62,6 @@ window.setTimeout(function() {
 return true;
 };
 
-golgotha.ff.resetCombo = function(ev) {
-	const e = ev || window.event; const t = e.target;
-	t.selectedIndex = 0; t.dispatchEvent(new Event('change'));
-	e.stopPropagation();
-	return false; 
-};
-
 golgotha.ff.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
 golgotha.ff.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.ff.updateSort = function(cb) { return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb)); };
@@ -129,7 +122,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.ff.resetCombo()" />
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.form.resetCombo()" />
  <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" /> - 
@@ -143,17 +136,17 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" onRightClick="return golgotha.ff.resetCombo()" />
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" onRightClick="return golgotha.form.resetCombo()" />
 <span class="nophone"> <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" /> <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></span></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" onRightClick="return golgotha.ff.resetCombo()" />
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" onRightClick="return golgotha.form.resetCombo()" />
 <span class="nophone"> <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" /> <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></span></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+1h)</td>
- <td class="data"><el:combo name="hourD" idx="*" size="1" options="${hours}" value="${fafCriteria.hourD}" onRightClick="return golgotha.ff.resetCombo()" /></td>
+ <td class="data"><el:combo name="hourD" idx="*" size="1" options="${hours}" value="${fafCriteria.hourD}" onRightClick="return golgotha.form.resetCombo()" /></td>
  <td class="label">Arrival Time (+1h)</td>
- <td class="data"><el:combo name="hourA" idx="*" size="1" options="${hours}" value="${fafCriteria.hourA}" onRightClick="return golgotha.ff.resetCombo()" /></td>
+ <td class="data"><el:combo name="hourA" idx="*" size="1" options="${hours}" value="${fafCriteria.hourA}" onRightClick="return golgotha.form.resetCombo()" /></td>
 </tr>
 <tr>
  <td class="label">Sort Flights by</td>

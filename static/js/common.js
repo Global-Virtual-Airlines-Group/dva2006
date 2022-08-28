@@ -275,6 +275,13 @@ f.submit();
 return true;
 };
 
+golgotha.form.resetCombo = function(ev) {
+	const e = ev || window.event; const t = e.target;
+	t.selectedIndex = 0; t.dispatchEvent(new Event('change'));
+	e.stopPropagation();
+	return false; 
+};
+
 golgotha.form.wrap = function(func, f) {
 	try {	
 		return func(f); 
