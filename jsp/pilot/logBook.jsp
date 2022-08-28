@@ -17,6 +17,13 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script async>
+golgotha.local.export = function(cb) {
+	const t = golgotha.form.getCombo(cb);
+	self.location = '/mylogbook.ws?id=${pilot.hexID}&export=' + t;
+	return true;
+};
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,8 +31,8 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:authUser var="user">
-<content:attr attr="showCSV" value="true" roles="HR,PIREP" />
-<c:set var="showCSV" value="${showCSV || (user.ID == pilot.ID)}" scope="page" /></content:authUser> 
+<content:attr attr="showExport" value="true" roles="HR,PIREP,Operations" />
+<c:set var="showExport" value="${showExport || (user.ID == pilot.ID)}" scope="page" /></content:authUser> 
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -35,7 +42,7 @@
 <tr class="title">
 <c:set var="cspan" value="${access.canPreApprove ? 4 : 7}" scope="page" />
  <td colspan="${cspan}" class="caps left"><span class="nophone">PILOT LOGBOOK FOR </span>${pilot.rank.name}&nbsp;<el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
-<c:if test="${showCSV}"><span class="nophone"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></span></c:if></td>
+<c:if test="${showExport}"><span class="nophone"> - EXPORT AS <el:combo name="export" size="1" idx="*" options="${exportTypes}" firstEntry="[ SELECT FORMAT]" onChange="void golgotha.local.export(this)" /></span></c:if></td>
 <c:if test="${access.canPreApprove}">
  <td class="nophone" colspan="3"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
 </c:if>
