@@ -800,8 +800,7 @@ public class GetFlightReports extends DAO {
 			ps.setInt(1, pilotID);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Integer id = Integer.valueOf(rs.getInt(1));
-					FlightReport fr = pMap.get(id);
+					FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
 					if (fr != null)
 						fr.setCaptEQType(rs.getString(2));
 				}
