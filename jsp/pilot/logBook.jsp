@@ -14,13 +14,42 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:js name="fileSaver" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.export = function(cb) {
+	if (!golgotha.form.check()) return false;
+	const f = document.forms[0];
+	golgotha.form.submit(f);
 	const t = golgotha.form.getCombo(cb);
-	self.location = '/mylogbook.ws?id=${pilot.hexID}&export=' + t;
+	const xmlreq = new XMLHttpRequest();
+	xmlreq.open('post', '/mylogbook.ws', true);
+	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xmlreq.responseType = 'blob';
+	xmlreq.onreadystatechange = function() {
+		if (xmlreq.readyState != 4) return false;
+		golgotha.form.clear(f);
+		if (xmlreq.status != 200) {
+			alert('Error ' + xmlreq.status + ' exporting logbook');
+			return false;
+		}
+
+		const ct = xmlreq.getResponseHeader('Content-Type');
+		const b = new Blob([xmlreq.response], {type:ct.substring(0, ct.indexOf(';')), endings:'native'});
+		saveAs(b, xmlreq.getResponseHeader('X-Logbook-Filename'));
+		return true;
+	};
+
+	const params = golgotha.util.createURLParams({export:t,id:f.id.value});
+	xmlreq.send(params);
+	return true;
+};
+
+golgotha.local.validate = function(f) { 
+	if (!golgotha.form.check()) return false;
+	golgotha.form.submit(f);
 	return true;
 };
 </script>
@@ -36,7 +65,7 @@ golgotha.local.export = function(cb) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="logbook.do" method="post" validate="return true">
+<el:form action="logbook.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
 <view:table cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
@@ -53,8 +82,8 @@ golgotha.local.export = function(cb) {
 <tr class="title">
  <td colspan="2"><span class="nophone">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></span></td>
  <td><el:cmd url="logcalendar" link="${pilot}">CALENDAR</el:cmd></td>
- <td colspan="4" class="right nophone">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
- <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
+ <td colspan="4" class="right nophone">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" onRightClick="return golgotha.form.resetCombo()" /> TO
+ <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" onRightClick="return golgotha.form.resetCombo()" /> SORT BY
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
  <el:button type="submit" label="FILTER" /></td>
 </tr>
