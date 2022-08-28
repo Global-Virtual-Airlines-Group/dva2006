@@ -1,14 +1,14 @@
-// Copyright 2011, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -16,14 +16,14 @@ import org.deltava.service.*;
 import org.deltava.util.StringUtils;
 
 /**
- * A Web Service to export a Pilot's log book in CSV format. 
+ * A Web Service to export a Pilot's log book. 
  * @author Luke
- * @version 10.1
+ * @version 10.3
  * @since 3.6
  */
 
 public class LogbookService extends WebService {
-
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -40,74 +40,39 @@ public class LogbookService extends WebService {
 		if (ctx.isUserInRole("PIREP") || ctx.isUserInRole("HR"))
 			userID = id;
 		
+		// Get the logbook exporter
+		LogbookExport le = null;
+		try {
+			Class<?> ec = Class.forName(String.format("org.deltava.service.stats.%s", ctx.getParameter("export")));
+			Constructor<?> cc = ec.getConstructor((Class<?>[]) null);
+			le = (LogbookExport) cc.newInstance((Object[]) null);
+		} catch (Exception cnfe) {
+			throw error(SC_BAD_REQUEST, cnfe.getMessage());
+		}
+		
 		// Get the Flight Reports
+		LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
+		lsc.setLoadComments(le instanceof JSONExport);
 		Collection<FlightReport> pireps = null;
 		try {
 			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
-			pireps = frdao.getByPilot(userID, new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB()));
+			pireps = frdao.getByPilot(userID, lsc);
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Write the CSV header
-		Map<String, Integer> promoCounts = new HashMap<String, Integer>();
-		ctx.println("Date,Submitted,Flight,Network,Departed,DCode,Arrived,ACode,Equipment,Distance,Time,ACARS,Promotion");
-		for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
-			FlightReport fr = i.next();
-			
-			// Calculate promotion count
-			int maxPromoCount = 0;
-			for (String captEQ : fr.getCaptEQType()) {
-				int promoCount = 0;
-				Integer pCount = promoCounts.get(captEQ);
-				if (pCount != null)
-					promoCount = pCount.intValue();
-				
-				promoCount++;
-				promoCounts.put(captEQ, Integer.valueOf(promoCount));
-				maxPromoCount = Math.max(maxPromoCount, promoCount);
-			}
-			
-			// Write data
-			ctx.print(StringUtils.format(fr.getDate(), p.getDateFormat()));
-			ctx.print(",");
-			ctx.print((fr.getSubmittedOn() == null) ? "-" : StringUtils.format(fr.getSubmittedOn(), p.getDateFormat()));
-			ctx.print(",");
-			ctx.print(fr.getFlightCode());
-			ctx.print(",");
-			ctx.print((fr.getNetwork() == null) ? "-" : fr.getNetwork().toString());
-			ctx.print(",");
-			ctx.print(fr.getAirportD().getName());
-			ctx.print(",");
-			ctx.print((p.getAirportCodeType() == Airport.Code.ICAO) ? fr.getAirportD().getICAO() : fr.getAirportD().getIATA());
-			ctx.print(",");
-			ctx.print(fr.getAirportA().getName());
-			ctx.print(",");
-			ctx.print((p.getAirportCodeType() == Airport.Code.ICAO) ? fr.getAirportA().getICAO() : fr.getAirportA().getIATA());
-			ctx.print(",");
-			ctx.print(fr.getEquipmentType());
-			ctx.print(",");
-			ctx.print(String.valueOf(fr.getDistance()));
-			ctx.print(",");
-			ctx.print(StringUtils.format(fr.getLength() / 10.0f, "#0.0"));
-			ctx.print(",");
-			ctx.print(fr.hasAttribute(FlightReport.ATTR_ACARS) ? "Y" : "-");
-			if (maxPromoCount > 0) {
-				ctx.print(",");
-				ctx.print(String.valueOf(maxPromoCount));
-				ctx.print(",");
-				ctx.println(StringUtils.listConcat(fr.getCaptEQType(), " "));
-			} else
-				ctx.println("");
-		}
+
+
+		// Format flights
+		pireps.forEach(le::add);
 		
 		// Write the response
 		try {
-			ctx.setContentType("text/csv", "utf-8");
-			ctx.setHeader("Content-disposition", "attachment; filename=logbook.csv");
+			ctx.setContentType(le.getContentType(), "utf-8");
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=logbook_%d.%s", Integer.valueOf(userID), le.getExtension()));
+			ctx.println(le.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
@@ -116,10 +81,6 @@ public class LogbookService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
