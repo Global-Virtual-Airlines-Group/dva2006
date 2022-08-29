@@ -22,7 +22,7 @@ class VolantaCSVExport extends CSVExport {
 	/**
 	 * Creates the exporter.
 	 */
-	VolantaCSVExport() {
+	public VolantaCSVExport() {
 		super("Origin,Destination,DepartureTime,Duration,Airline,FlightNumber,AircraftType,Distance");
 	}
 	
