@@ -48,7 +48,7 @@ public class LogbookService extends WebService {
 			Constructor<?> cc = ec.getConstructor((Class<?>[]) null);
 			le = (LogbookExport) cc.newInstance((Object[]) null);
 		} catch (Exception cnfe) {
-			throw error(SC_BAD_REQUEST, cnfe.getMessage());
+			throw error(SC_BAD_REQUEST, cnfe.getMessage(), cnfe);
 		}
 		
 		// Get the Flight Reports
