@@ -17,7 +17,7 @@ class DefaultCSVExport extends CSVExport {
 	/**
 	 * Creates the exporter.
 	 */
-	DefaultCSVExport() {
+	public DefaultCSVExport() {
 		super("Date,Submitted,Flight,Network,Departed,DCode,Arrived,ACode,Equipment,Distance,Time,ACARS,Promotion");
 	}
 	
