@@ -144,20 +144,6 @@ ${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${du
  <td class="data">${POSCON_ID}</td>
 </tr>
 </c:if>
-<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
-<c:if test="${!empty applicant.IMHandle[imAddr]}">
-<tr>
- <td class="label">AOL Instant Messenger</td>
- <td class="data">${applicant.IMHandle[imAddr]}</td>
-</tr>
-</c:if>
-<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="MSN" />
-<c:if test="${!empty applicant.IMHandle[imAddr]}">
-<tr>
- <td class="label">MSN Messenger</td>
- <td class="data">${applicant.IMHandle[imAddr]}</td>
-</tr>
-</c:if>
 
 <!-- E-Mail Information -->
 <tr class="title">
