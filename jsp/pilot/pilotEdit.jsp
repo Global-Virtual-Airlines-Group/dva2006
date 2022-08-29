@@ -91,7 +91,7 @@ golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
 	f.useDefaultSig.disabled = golgotha.local.hasSignature;
-	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
+	cfg.doICAO = ${useICAO}; cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
 });
