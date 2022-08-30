@@ -57,10 +57,17 @@ public class LogbookService extends WebService {
 		Collection<FlightReport> pireps = null;
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Load aircraft profiles
+			GetAircraft acdao = new GetAircraft(con);
+			le.loadAircraft(acdao.getAircraftTypes());
+			
+			// Load flights
 			GetFlightReports frdao = new GetFlightReports(con);
 			pireps = frdao.getByPilot(userID, lsc);
 			frdao.loadCaptEQTypes(userID, pireps, ctx.getDB());
 			
+			// Load flight status history
 			GetFlightReportHistory frhdao = new GetFlightReportHistory(con);
 			frhdao.loadStatus(userID, pireps);
 		} catch (DAOException de) {

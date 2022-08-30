@@ -6,7 +6,7 @@ import java.time.Instant;
 import org.json.JSONObject;
 
 import org.deltava.beans.flight.*;
-
+import org.deltava.beans.schedule.Aircraft;
 import org.deltava.util.JSONUtils;
 
 /**
@@ -65,6 +65,13 @@ public class JSONExport extends LogbookExport {
 		po.put("comments", fr.getComments());
 		po.put("remarks", fr.getRemarks());
 		po.put("route", fr.getRoute());
+		
+		// Load aircraft
+		Aircraft ac = getAircraft(fr.getEquipmentType());
+		JSONObject jao = new JSONObject();
+		jao.put("name", fr.getEquipmentType());
+		jao.put("icao", ac.getICAO());
+		po.put("aircraft", jao);
 		
 		// Convert status updates
 		for (FlightHistoryEntry upd : fr.getStatusUpdates()) {
