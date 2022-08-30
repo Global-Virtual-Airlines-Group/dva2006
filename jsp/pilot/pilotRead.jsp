@@ -169,7 +169,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
  <td colspan="${cspan}" class="data">${posconID}</td>
 </tr>
 </c:if>
-<c:set var="navigraphID" value="${fn:externalID(pilot,'POSCON')}" scope="page" />
+<c:set var="navigraphID" value="${fn:externalID(pilot,'Navigraph')}" scope="page" />
 <c:if test="${(!empty navigraphID) && access.canViewEmail}">
 <tr>
  <td class="label">Navigraph ID</td>
