@@ -4,6 +4,7 @@ package org.deltava.service.stats;
 import java.util.*;
 
 import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.schedule.Aircraft;
 
 /**
  * An interface for Pilot log book exporters.
@@ -15,6 +16,7 @@ import org.deltava.beans.flight.FlightReport;
 abstract class LogbookExport {
 	
 	private final Map<String, Integer> _promoCounts = new HashMap<String, Integer>();
+	private final Map<String, Aircraft> _aircraftTypes = new HashMap<String, Aircraft>();
 
 	/**
 	 * Adds and processes a Flight Report.
@@ -49,5 +51,22 @@ abstract class LogbookExport {
 		}
 		
 		return maxPromoCount;
+	}
+	
+	/**
+	 * Loads an Aircraft profile.
+	 * @param acType the aircraft name
+	 * @return an Aircraft, or null if not found
+	 */
+	protected Aircraft getAircraft(String acType) {
+		return _aircraftTypes.get(acType);
+	}
+
+	/**
+	 * Loads Aircraft profiles for translation.
+	 * @param acTypes a Collection of Aircraft
+	 */
+	public void loadAircraft(Collection<Aircraft> acTypes) {
+		acTypes.forEach(ac -> _aircraftTypes.put(ac.getName(), ac));
 	}
 }
