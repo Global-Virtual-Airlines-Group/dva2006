@@ -59,6 +59,12 @@
  <td class="data" colspan="${cspan}" class="sec bld"><fmt:capabilities map="${pirep.capabilities}" /></td>
 </tr>
 </c:if>
+<c:if test="${!empty pirep.tailCode}">
+<tr>
+ <td class="label">Aircraft Registration</td>
+ <td class="data" colspan="${cspan}" class="bld">${pirep.tailCode}</td>
+</tr>
+</c:if>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <tr>

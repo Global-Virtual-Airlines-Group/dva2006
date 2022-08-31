@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.4
  */
 
@@ -213,6 +213,7 @@ public final class OfflineFlightParser {
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
 		afr.setSDK(ae.getChildTextTrim("sdk"));
+		afr.setTailCode(ae.getChildTextTrim("tailCode"));
 		afr.setCapabilities(StringUtils.parse(ae.getAttributeValue("capabilities", "0"), 0, true));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());

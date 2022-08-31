@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -450,10 +450,10 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, "
-			+ "TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, "
-			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, "
-			+ "PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, TIME_BOARD, TIME_DEBOARD, TIME_ONLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, TAKEOFF_ALT, "
+			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, "
+			+ "GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
+			+ "TIME_BOARD, TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -519,6 +519,7 @@ public class SetFlightReport extends DAO {
 					ps.setLong(48, afr.getBoardTime().toSeconds());
 					ps.setLong(49, afr.getDeboardTime().toSeconds());
 					ps.setLong(50, afr.getOnlineTime().toSeconds());
+					ps.setString(51,  afr.getTailCode());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
 					ps.setInt(32, 0);
@@ -540,6 +541,7 @@ public class SetFlightReport extends DAO {
 					ps.setInt(48, 0);
 					ps.setInt(49, 0);
 					ps.setInt(50, 0);
+					ps.setString(51, null);
 				}
 
 				executeUpdate(ps, 1);
