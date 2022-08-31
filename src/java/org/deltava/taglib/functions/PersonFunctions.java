@@ -79,22 +79,22 @@ public class PersonFunctions {
 	/**
 	 * Returns a Person's external ID.
 	 * @param usr the Person
-	 * @param name the external ID type name
+	 * @param idType the external ID type name
 	 * @return the external ID, or null 
 	 */
-	public static String getExternalID(Person usr, String name) {
-		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, name, null);
-		return (usr == null) ? null : usr.getNetworkID(net);
+	public static String getExternalID(Person usr, String idType) {
+		ExternalID extID = EnumUtils.parse(ExternalID.class, idType, null);
+		return ((usr == null) || (extID == null)) ? null : usr.getExternalID(extID);
 	}
 	
 	/**
-	 * Returns whether a Person has a particular external ID.
+	 * Returns a Person's external ID.
 	 * @param usr the Person
-	 * @param idType the external ID type name
-	 * @return TRUE if the Person has an address, otherwise FALSE
+	 * @param netName the OnlineNetwork
+	 * @return the network ID, or null 
 	 */
-	public static boolean hasExternalID(Person usr, String idType) {
-		ExternalID extID = EnumUtils.parse(ExternalID.class, idType, null);
-		return (usr != null) && (extID != null) && (usr.getExternalID(extID) != null);
+	public static String getNetworkID(Person usr, String netName) {
+		OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, netName, null);
+		return ((usr == null) || (net == null)) ? null : usr.getNetworkID(net);
 	}
 }
