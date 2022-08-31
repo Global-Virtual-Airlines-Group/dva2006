@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -22,6 +22,8 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private Duration _boardTime = Duration.ZERO;
     private Duration _deboardTime = Duration.ZERO;
     private Duration _onlineTime = Duration.ZERO;
+    
+    private String _tailCode;
     
     private ILSCategory _ils;
     private double _landingG;
@@ -296,6 +298,22 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	 */
 	public OnTime getOnTime() {
 		return _onTime;
+	}
+	
+	/**
+	 * Returns the registration code of the aircraft.
+	 * @return the tail code
+	 */
+	public String getTailCode() {
+		return _tailCode;
+	}
+	
+	/**
+	 * Updates the registration code of the aircraft.
+	 * @param tc the tail code
+	 */
+	public void setTailCode(String tc) {
+		_tailCode = tc;
 	}
     
     /**

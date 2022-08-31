@@ -682,17 +682,18 @@ public class GetFlightReports extends DAO {
 					ap.setFDE(rs.getString(69));
 					ap.setAircraftCode(rs.getString(70));
 					ap.setSDK(rs.getString(71));
-					ap.setCapabilities(rs.getLong(72));
-					ap.setRestoreCount(rs.getInt(73));
-					ap.setAverageFrameRate(rs.getInt(74) / 10d);
-					ap.setClientBuild(rs.getInt(75));
-					ap.setBeta(rs.getInt(76));
+					ap.setTailCode(rs.getString(72));
+					ap.setCapabilities(rs.getLong(73));
+					ap.setRestoreCount(rs.getInt(74));
+					ap.setAverageFrameRate(rs.getInt(75) / 10d);
+					ap.setClientBuild(rs.getInt(76));
+					ap.setBeta(rs.getInt(77));
 					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(77)]);
+						ap.setOnTime(OnTime.values()[rs.getInt(78)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(75));
-					ap.setMinorVersion(rs.getInt(76));
+					ap.setMajorVersion(rs.getInt(76));
+					ap.setMinorVersion(rs.getInt(77));
 				}
 
 				results.add(p);
