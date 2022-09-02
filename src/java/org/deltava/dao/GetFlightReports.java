@@ -3,12 +3,14 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.io.StringReader;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.simbrief.*;
 import org.deltava.beans.stats.RouteStats;
 
 import org.deltava.util.*;
@@ -514,26 +516,18 @@ public class GetFlightReports extends DAO {
 	 * @return a SimBrief package, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public SimBrief getSimBrief(int id, String db) throws DAOException {
+	public BriefingPackage getSimBrief(int id, String db) throws DAOException {
 		
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT XML FROM ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".	PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
 		
-		SimBrief sbdata = null;
+		BriefingPackage sbdata = null;
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					sbdata = new SimBrief(id);
-					sbdata.setSimBriefID(rs.getString(2));
-					sbdata.setAIRAC(rs.getInt(3));
-					sbdata.setCreatedOn(toInstant(rs.getTimestamp(4)));
-					sbdata.setRunwayD(rs.getString(5));
-					sbdata.setRunwayA(rs.getString(6));
-					sbdata.setRoute(rs.getString(7));
-					sbdata.setXML(rs.getString(8));
-				}
+				if (rs.next())
+					sbdata = SimBriefParser.parse(new StringReader(rs.getString(1)));
 			}
 			
 			return sbdata;
