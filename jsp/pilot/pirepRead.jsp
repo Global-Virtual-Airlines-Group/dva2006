@@ -551,7 +551,7 @@ return true;
 <script async>
 <!-- SimBrief integration -->
 golgotha.local.sbSubmit = function() {
-	simbriefsubmit(self.location + '&time=' + golgotha.util.getTimestamp(1000));
+	simbriefsubmit(self.location);
 	return true;
 };
 </script>
