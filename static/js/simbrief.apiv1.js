@@ -64,8 +64,8 @@ function simbriefsubmit(outputpage)
 	outputpage_calc = null;
 	
 	do_simbriefsubmit(outputpage);
+	return true;
 }
-
 
 function do_simbriefsubmit(outputpage)
 {
