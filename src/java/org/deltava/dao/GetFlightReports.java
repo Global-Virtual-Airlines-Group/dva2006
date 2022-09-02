@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -436,6 +436,36 @@ public class GetFlightReports extends DAO {
 		// Set to zero
 		pilots.values().forEach(p -> { p.setACARSLegs(Math.max(0, p.getACARSLegs())); p.setOnlineLegs(Math.max(0, p.getOnlineLegs())); });
 	}
+	
+	/**
+	 * Loads a Draft Flight Report.
+	 * @param id the Flight Report database ID
+	 * @param dbName the database name
+	 * @return a DraftFlightReport, or null if not found <i>or the Flight Report is not in draft status</i>
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public DraftFlightReport getDraft(int id, String dbName) throws DAOException {
+
+		// Build the prepared statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PRT.ROUTE FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_ROUTE PRT ON (PR.ID=PRT.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_DRAFT PD ON (PR.ID=PD.ID) WHERE (PR.ID=?) AND (PR.STATUS=?)");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, id);
+			ps.setInt(2, FlightStatus.DRAFT.ordinal());
+			return execute(ps).stream().map(DraftFlightReport.class::cast).findFirst().orElse(null);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns Draft Flight Reports for a particular Pilot (with optional city pair).
@@ -563,7 +593,7 @@ public class GetFlightReports extends DAO {
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 76);
+			boolean hasOnTime = (md.getColumnCount() > 77);
 
 			// Iterate throught the results
 			while (rs.next()) {
