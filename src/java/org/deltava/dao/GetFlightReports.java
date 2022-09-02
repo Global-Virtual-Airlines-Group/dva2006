@@ -508,6 +508,41 @@ public class GetFlightReports extends DAO {
 	}
 	
 	/**
+	 * Loads a SimBrief briefing package for a Flight Report.
+	 * @param id the Flight Report database ID
+	 * @param db the database name
+	 * @return a SimBrief package, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public SimBrief getSimBrief(int id, String db) throws DAOException {
+		
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(db));
+		sqlBuf.append(".	PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
+		
+		SimBrief sbdata = null;
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					sbdata = new SimBrief(id);
+					sbdata.setSimBriefID(rs.getString(2));
+					sbdata.setAIRAC(rs.getInt(3));
+					sbdata.setCreatedOn(toInstant(rs.getTimestamp(4)));
+					sbdata.setRunwayD(rs.getString(5));
+					sbdata.setRunwayA(rs.getString(6));
+					sbdata.setRoute(rs.getString(7));
+					sbdata.setXML(rs.getString(8));
+				}
+			}
+			
+			return sbdata;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves held/submitted Flight diversions for a particular Pilot.
 	 * @param a the Airport diverted to
 	 * @param pilotID the Pilot's database ID

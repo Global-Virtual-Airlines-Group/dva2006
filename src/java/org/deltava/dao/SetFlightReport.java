@@ -274,6 +274,27 @@ public class SetFlightReport extends DAO {
 	}
 	
 	/**
+	 * Writes SimBrief dispatch data to the database.
+	 * @param sb the SimBrief package
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeSimBrief(SimBrief sb) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, RUNWAY_D, RUNWAY_A, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, sb.getID());
+			ps.setString(2, sb.getSimBriefID());
+			ps.setInt(3, sb.getAIRAC());
+			ps.setTimestamp(4, createTimestamp(sb.getCreatedOn()));
+			ps.setString(5, sb.getRunwayD());
+			ps.setString(6, sb.getRunwayA());
+			ps.setString(7, sb.getRoute());
+			ps.setString(8, sb.getXML());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Writes Elite program scores to the database.
 	 * @param sc the FlightEliteScore
 	 * @param dbName the database name
