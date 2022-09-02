@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -264,12 +264,22 @@ public class FlightReportFunctions {
 
 	/**
 	 * Returns if excessive takeoff or landing weight was detected.
-	 * @param fr the Flight Report
+	 * @param fr the FlightReport
 	 * @return TRUE if the WEIGHTWARN attribute is present, otherwise FALSE
 	 * @see FlightReport#ATTR_WEIGHTWARN
 	 */
 	public static boolean weightWarn(FlightReport fr) {
 		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WEIGHTWARN));
+	}
+	
+	/**
+	 * Returns if the flight was planned using SimBrief.
+	 * @param fr the FlightReport
+	 * @return TRUE if the SIMBRIEF attribute is present, otherwise FALSE
+	 * @see FlightReport#ATTR_SIMBRIEF
+	 */
+	public static boolean isSimBrief(FlightReport fr) {
+		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_SIMBRIEF));
 	}
 
 	/**
@@ -288,7 +298,7 @@ public class FlightReportFunctions {
 	 * @return TRUE if the Leg counts towards promotion, otherwise FALSE
 	 */
 	public static boolean promoLeg(FlightReport fr) {
-		return (fr != null) && (!fr.getCaptEQType().isEmpty());
+		return ((fr != null) && !fr.getCaptEQType().isEmpty());
 	}
 	
 	/**
