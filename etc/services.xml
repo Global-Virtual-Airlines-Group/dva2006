@@ -84,6 +84,10 @@
 	<service id="ridecount" class="org.deltava.service.exam.AcademyRideCountService" />
 	<service id="crsims" class="org.deltava.service.exam.CheckRideSimulatorService" />
 	
+	<!-- SimBrief Services -->
+	<service id="sbapi" class="org.deltava.service.simbrief.APICodeService" />
+	<service id="sburl" class="org.deltava.service.simbrief.URLCheckService" />
+	
 	<!-- simFDR Services -->
 	<service id="simfdr_user" class="org.deltava.service.simfdr.UserListService" />
 	<service id="simfdr_eq" class="org.deltava.service.simfdr.AvailableEquipmentService" />
