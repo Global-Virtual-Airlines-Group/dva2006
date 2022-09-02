@@ -625,12 +625,6 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="simbrief">
-		<name>SimBrief Plotter</name>
-		<class>org.deltava.commands.schedule.SimBriefCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
 	<command id="natplot">
 		<name>NAT Route Plotter</name>
 		<class>org.deltava.commands.schedule.NATPlotCommand</class>
