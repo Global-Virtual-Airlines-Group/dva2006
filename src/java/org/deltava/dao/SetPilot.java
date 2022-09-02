@@ -94,7 +94,7 @@ public class SetPilot extends PilotWriteDAO {
 			// Update the roles/ratings
 			writeRoles(p.getID(), p.getRoleData());
 			writeRatings(p.getID(), p.getRatings(), db, true);
-			writeExternalIDs(p.getID(), p.getIMHandle(), db, true);
+			writeExternalIDs(p.getID(), p.getExternalIDs(), db, true);
 			writeAlias(p.getID(), p.getPilotCode(), p.getLDAPName());
 			commitTransaction();
 		} catch (SQLException se) {

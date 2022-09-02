@@ -248,7 +248,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @return the External IDs
 	 * @see Person#getExternalID(ExternalID)
 	 */
-	public Map<ExternalID, String> getIMHandle() {
+	public Map<ExternalID, String> getExternalIDs() {
 		return new TreeMap<ExternalID, String>(_imHandles);
 	}
 	

@@ -1093,7 +1093,7 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 			p2.setPilotCode(getPilotCode());
 
 		p2._notifyOptions.addAll(_notifyOptions);
-		for (Map.Entry<ExternalID, String> me : getIMHandle().entrySet())
+		for (Map.Entry<ExternalID, String> me : getExternalIDs().entrySet())
 			p2.setExternalID(me.getKey(), me.getValue());
 
 		return p2;
