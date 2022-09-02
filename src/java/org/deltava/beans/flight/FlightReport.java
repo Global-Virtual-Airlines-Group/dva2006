@@ -137,6 +137,11 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	public static final int ATTR_POSCON = 0x800000;
 	
 	/**
+	 * Flight planned using SimBrief.
+	 */
+	public static final int ATTR_SIMBRIEF = 0x1000000;
+	
+	/**
 	 * Attribute mask for all warnings.
 	 */
 	public static final int ATTR_WARN_MASK = 0x26B861;
