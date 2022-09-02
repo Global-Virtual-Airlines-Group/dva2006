@@ -82,7 +82,7 @@ public class SetPilotTransfer extends SetPilot {
 
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);
-			writeExternalIDs(id, p.getIMHandle(), dbName, false);
+			writeExternalIDs(id, p.getExternalIDs(), dbName, false);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
