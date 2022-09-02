@@ -409,11 +409,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// If the flight report is a draft, then load it
 			boolean isACARS = (fr instanceof FDRFlightReport);
-			if (fr.getStatus() == FlightStatus.DRAFT) {
-				final int id = fr.getID();
-				Collection<FlightReport> draftReports = dao.getDraftReports(p.getID(), fr, ctx.getDB());
-				fr = draftReports.stream().filter(dfr -> (dfr.getID() == id)).findFirst().orElse(fr);
-			}
+			if (fr.getStatus() == FlightStatus.DRAFT)
+				fr = dao.getDraft(fr.getID(), ctx.getDB());
 			
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
@@ -444,6 +441,37 @@ public class PIREPCommand extends AbstractFormCommand {
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
+			
+			// Load taxi times
+			if (ac.getCanUseSimBrief() || isACARS) {
+				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con); int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
+				ctx.setAttribute("avgTaxiInTime", ttdao.getTaxiTime(fr.getAirportA(), year), REQUEST);
+				ctx.setAttribute("avgTaxiOutTime", ttdao.getTaxiTime(fr.getAirportD(), year), REQUEST);
+			}
+			
+			// Check for SimBrief package
+			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
+				SimBrief sb = dao.getSimBrief(fr.getID(), ctx.getDB());
+				ctx.setAttribute("sbPackage", sb, REQUEST);
+			}
+			
+			// Load SimBrief-specific data
+			if (ac.getCanUseSimBrief()) {
+				GetAircraft acdao = new GetAircraft(con);
+				Aircraft a = acdao.get(fr.getEquipmentType());
+				ctx.setAttribute("acInfo", a, REQUEST);
+				ctx.setAttribute("acPolicy", a.getOptions(SystemData.get("airline.code")), REQUEST);
+				ctx.setAttribute("versionInfo", VersionInfo.getFullBuild(), REQUEST);
+				
+				// Determine if deprture time has already passed
+				DraftFlightReport dfr = (DraftFlightReport) fr;
+				ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
+				ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), dfr.getTimeD().toLocalTime(), now.getZone());
+				if (zdt.isBefore(now))
+					zdt = ZonedDateTime.of(now.plusDays(1).toLocalDate(), zdt.toLocalTime(), zdt.getZone());
+				
+				ctx.setAttribute("departureTime", zdt, REQUEST);
+			}
 			
 			// Calculate the average time between the airports and user's networks
 			if (ac.getCanDispose()) {
@@ -586,11 +614,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Load the gates
 					GetGates gdao = new GetGates(con);
 					gdao.populate(info);
-					
-					// Load taxi times
-					GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con); int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
-					ctx.setAttribute("avgTaxiInTime", ttdao.getTaxiTime(afr.getAirportA(), year), REQUEST);
-					ctx.setAttribute("avgTaxiOutTime", ttdao.getTaxiTime(afr.getAirportD(), year), REQUEST);
 					
 					// Build the route
 					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
