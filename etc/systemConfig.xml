@@ -435,7 +435,7 @@
 				<pub>***REMOVED***</pub>
 				<pvt>***REMOVED***</pvt>
 			</push>
-			<simrbief>***REMOVED***</simrbief>
+			<simbrief>***REMOVED***</simbrief>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
