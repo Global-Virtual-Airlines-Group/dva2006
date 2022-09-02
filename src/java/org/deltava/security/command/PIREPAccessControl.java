@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import org.deltava.beans.ExternalID;
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.flight.*;
 
@@ -9,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -34,6 +35,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canPreApprove;
 	private boolean _canProxySubmit;
 	private boolean _canAdjustEvents;
+	private boolean _canUseSimBrief;
 
 	/**
 	 * Initializes the controller.
@@ -93,6 +95,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
 		_canProxySubmit = isHR;
 		_canAdjustEvents = _canApprove || _canReject || _canHold /*isPirep && !_ourPIREP && !isDraft && (_ctx.isUserInRole("Event") || isHR) */;
+		_canUseSimBrief = isDraft && _ourPIREP && _ctx.getUser().hasID(ExternalID.NAVIGRAPH);
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -258,5 +261,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanAdjustEvents() {
 		return _canAdjustEvents;
+	}
+
+	/**
+	 * Returns if the user can plot this flight using SimBrief.
+	 * @return TRUE if SimBrief can be invoked, otherwise FALSE
+	 */
+	public boolean getCanUseSimBrief() {
+		return _canUseSimBrief;
 	}
 }
