@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to calculate load factors on draft Flight Reports. 
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 10.0
  */
 
@@ -48,8 +48,7 @@ public class LoadCalculateCommand extends AbstractCommand {
 			
 			// If it's draft, get the draft version with Gate data
 			if (fr.getStatus() == FlightStatus.DRAFT) {
-				final int id = fr.getID();
-				FlightReport dfr = frdao.getDraftReports(fr.getAuthorID(), fr, ctx.getDB()).stream().filter(p -> (p.getID() == id)).findFirst().orElse(null);
+				DraftFlightReport dfr = frdao.getDraft(fr.getID(), ctx.getDB());
 				if (dfr != null)
 					fr = dfr;
 			}
