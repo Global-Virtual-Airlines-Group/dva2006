@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.simbrief.BriefingPackage;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
@@ -278,7 +279,7 @@ public class SetFlightReport extends DAO {
 	 * @param sb the SimBrief package
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeSimBrief(SimBrief sb) throws DAOException {
+	public void writeSimBrief(BriefingPackage sb) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, RUNWAY_D, RUNWAY_A, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, sb.getID());
 			ps.setString(2, sb.getSimBriefID());
