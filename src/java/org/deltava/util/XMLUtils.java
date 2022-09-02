@@ -7,7 +7,7 @@ import org.jdom2.output.*;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -18,6 +18,22 @@ public class XMLUtils {
 	 */ 
 	protected XMLUtils() {
 		super();
+	}
+	
+	/**
+	 * Finds a child element multiple levels down.
+	 * @param e the Element
+	 * @param names the ordered list of child names
+	 * @return an Element, or null if not found
+	 */
+	public static Element findChild(Element e, String... names) {
+		Element ce = e;
+		for (String n : names) {
+			ce = ce.getChild(n);
+			if (ce == null) return null;
+		}
+		
+		return ce;
 	}
 
 	/**
