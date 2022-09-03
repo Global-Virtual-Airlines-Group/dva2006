@@ -10,10 +10,10 @@ import java.nio.charset.StandardCharsets;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.flight.*;
+import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-import org.deltava.dao.file.GetSimBrief;
 
 import org.deltava.service.*;
 
@@ -45,15 +45,14 @@ public class URLCheckService extends WebService {
 		if (StringUtils.isEmpty(id))
 			throw error(SC_BAD_REQUEST, "No flight plan ID", false);
 		
-		SimBrief sbdata = null;
+		BriefingPackage sbdata = null;
 		try {
 			String url = String.format("https://www.simbrief.com/ofp/flightplans/xml/%s.xml", id);
 			GetURL urldao = new GetURL(url, null);
 			byte[] data = urldao.load();
 			
 			// Parse the data
-			GetSimBrief sbdao = new GetSimBrief(new ByteArrayInputStream(data));
-			sbdata = sbdao.parse();
+			sbdata = SimBriefParser.parse(new StringReader(new String(data, StandardCharsets.UTF_8)));
 			sbdata.setSimBriefID(id);
 			sbdata.setXML(new String(data, StandardCharsets.UTF_8));
 			sbdata.setURL(url);
@@ -64,7 +63,7 @@ public class URLCheckService extends WebService {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(sbdata.getID(), ctx.getDB());
 			if (fr == null)
-				throw error(SC_BAD_REQUEST, "Invalid Flight Report - " + sbdata.getID(), false);
+				throw error(SC_NOT_FOUND, "Invalid Flight Report - " + sbdata.getID(), false);
 			
 			// From here, load the draft
 			DraftFlightReport dfr = frdao.getDraft(fr.getID(), ctx.getDB());
