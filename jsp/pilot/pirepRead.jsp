@@ -18,7 +18,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<c:if test="${access.canUseSimBrief}">
+<c:if test="${access.canUseSimBrief && (empty sbPackage)}">
 <content:js name="simbrief.apiv1" /></c:if>
 <content:captcha action="pirep" authOnly="true" />
 <content:googleAnalytics eventSupport="true" />
@@ -111,8 +111,10 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
 <content:authUser anonymous="false">
 <c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd>
-<c:if test="${access.canUseSimBrief}"> - <a href="javascript:void golgotha.local.sbSubmit()" rel="nofollow"><el:img src="simbrief.png" x="43" y="12" caption="Plot using SimBrief" /></a></c:if>
-<c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
+<c:if test="${access.canUseSimBrief}"> - <c:if test="${empty sbPackage}"><a href="javascript:void golgotha.local.sbSubmit()" rel="nofollow"><el:img src="simbrief.png" x="46" y="14" caption="Plot using SimBrief" /></a></c:if>
+<c:if test="${!empty sbPackage}"><a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow">Download SimBrief Package</a></c:if></c:if>
+<c:if test="${!empty pirep.route && (empty sbPackage.flightPlans)}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if>
+<c:if test="${!empty sbPackage.flightPlans}"> - Download Flight Plan <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></c:if></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
@@ -194,7 +196,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div></c:if>
 <c:if test="${fn:isSimBrief(pirep)}">
-<div class="bld caps">Flight Legt planned using SimBrief</div></c:if>
+<div class="bld caps">Flight Leg planned using SimBrief</div></c:if>
 <c:if test="${isDivert}">
 <div class="warn bld caps">Flight diverted to Non-Scheduled Airport</div></c:if>
 <c:if test="${fn:isDivert(pirep) && !isDivert}">
@@ -550,8 +552,11 @@ return true;
 <c:if test="${access.canUseSimBrief}">
 <script async>
 <!-- SimBrief integration -->
-golgotha.local.sbSubmit = function() {
-	simbriefsubmit(self.location);
+golgotha.local.sbSubmit = function() { return simbriefsubmit(self.location); };
+golgotha.local.sbDownloadPlan = function(cb) {
+	if (cb.selectedIndex < 1) return false;
+	const o = cb.options[cb.selectedIndex];
+	self.location = '${sbPackage.basePlanURL}' + o.value;
 	return true;
 };
 </script>
@@ -570,7 +575,7 @@ golgotha.local.sbSubmit = function() {
 <el:text name="taxiout" type="hidden" value="${avgTaxiOutTime.outboundTime.toMinutes()}" />
 <el:text name="taxiin" type="hidden" value="${avgTaxiInTime.inboundTime.toMinutes()}" />
 <el:text name="pax" type="hidden" value="${pirep.passengers}" />
-<el:text name="date" type="hidden" value="${fn:upper(fn:dateFmt(pirep.date,'ddMMMyy'))}" />
+<el:text name="date" type="hidden" value="${fn:upper(fn:dateFmt(departureTime,'ddMMMyy'))}" />
 <el:text name="etopsrule" type="hidden" value="${acPolicy.ETOPS.time}" />
 <el:text name="deph" type="hidden" value="${pirep.timeD.hour}" />
 <el:text name="depm" type="hidden" value="${pirep.timeD.minute}" />
