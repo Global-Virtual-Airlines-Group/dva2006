@@ -36,10 +36,9 @@ public class APICodeService extends WebService {
 		// Calculate MD5
 		MessageDigester md = new MessageDigester("MD5", 512);
 		String md5 = MessageDigester.convert(md.digest(keyBuf.toString().getBytes()));
-		
 		try {
 			ctx.setContentType("text/javascript", "utf-8");
-			ctx.println("var api_code = '" + md5 + "';");
+			ctx.println(String.format("var api_code = '%s';", md5));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
