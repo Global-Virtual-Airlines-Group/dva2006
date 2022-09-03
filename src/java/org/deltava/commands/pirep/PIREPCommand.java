@@ -450,10 +450,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Check for SimBrief package
-			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
-				SimBrief sb = dao.getSimBrief(fr.getID(), ctx.getDB());
-				ctx.setAttribute("sbPackage", sb, REQUEST);
-			}
+			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF))
+				ctx.setAttribute("sbPackage", dao.getSimBrief(fr.getID(), ctx.getDB()), REQUEST);
 			
 			// Load SimBrief-specific data
 			if (ac.getCanUseSimBrief()) {
