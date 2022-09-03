@@ -25,6 +25,11 @@ public class BriefingPackage extends DatabaseBean {
 	private String _rwyD;
 	private String _rwyA;
 	
+	private int _baseFuel;
+	private int _taxiFuel;
+	private int _enrouteFuel;
+	private int _altFuel;
+	
 	private String _baseFPURL;
 	private final Collection<FlightPlan> _plans = new TreeSet<FlightPlan>();
 	
@@ -119,6 +124,50 @@ public class BriefingPackage extends DatabaseBean {
 		return _xml;
 	}
 	
+	/**
+	 * Returns the base fuel load.
+	 * @return fuel the fuel in pounds
+	 */
+	public int getBaseFuel() {
+		return _baseFuel;
+	}
+
+	/**
+	 * Returns the taxi fuel load.
+	 * @return fuel the fuel in pounds
+	 */
+	public int getTaxiFuel() {
+		return _taxiFuel;
+	}
+	
+	/**
+	 * Returns the enroute fuel load.
+	 * @return fuel the fuel in pounds
+	 */
+	public int getEnrouteFuel() {
+		return _enrouteFuel;
+	}
+	
+	/**
+	 * Returns the alternate fuel load.
+	 * @return fuel the fuel in pounds
+	 */
+	public int getAlternateFuel() {
+		return _altFuel;
+	}
+	
+	/**
+	 * Returns the total fuel load.
+	 * @return the fuel in pounds
+	 */
+	public int getTotalFuel() {
+		return _baseFuel + _taxiFuel + _enrouteFuel + _altFuel;
+	}
+	
+	/**
+	 * Adds a flight plan to the briefing package.
+	 * @param fp a FlightPlan
+	 */
 	public void addPlan(FlightPlan fp) {
 		_plans.add(fp);
 	}
@@ -193,5 +242,37 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setXML(String xml) {
 		_xml = xml;
+	}
+	
+	/**
+	 * Updates the base fuel load.
+	 * @param fuel the fuel in pounds
+	 */
+	public void setBaseFuel(int fuel) {
+		_baseFuel = fuel;
+	}
+	
+	/**
+	 * Updates the taxi fuel load.
+	 * @param fuel the fuel in pounds
+	 */
+	public void setTaxiFuel(int fuel) {
+		_taxiFuel = fuel;
+	}
+
+	/**
+	 * Updates the enroute fuel load.
+	 * @param fuel the fuel in pounds
+	 */
+	public void setEnrouteFuel(int fuel) {
+		_enrouteFuel = fuel;
+	}
+	
+	/**
+	 * Updates the alternate fuel load.
+	 * @param fuel the fuel in pounds
+	 */
+	public void setAlternateFuel(int fuel) {
+		_altFuel = fuel;
 	}
 }

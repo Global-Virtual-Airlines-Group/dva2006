@@ -21,19 +21,19 @@ public class XMLUtils {
 	}
 	
 	/**
-	 * Finds a child element multiple levels down.
+	 * Finds a child element multiple levels down and returns its value.
 	 * @param e the Element
 	 * @param names the ordered list of child names
 	 * @return an Element, or null if not found
 	 */
-	public static Element findChild(Element e, String... names) {
+	public static String getChildText(Element e, String... names) {
 		Element ce = e;
 		for (String n : names) {
 			ce = ce.getChild(n);
 			if (ce == null) return null;
 		}
 		
-		return ce;
+		return ce.getTextTrim();
 	}
 
 	/**
