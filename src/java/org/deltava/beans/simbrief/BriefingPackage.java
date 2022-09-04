@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.schedule.Airport;
 
 /**
  * A bean to store a SimBrief briefing package.
@@ -18,8 +19,11 @@ public class BriefingPackage extends DatabaseBean {
 	private String _sbID;
 	private Instant _createdOn;
 	
+	private Airport _airportL;
+	
 	private int _airac;
 	private String _url;
+	private String _cruiseAlt;
 	private String _route;
 	
 	private String _rwyD;
@@ -66,6 +70,22 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public int getAIRAC() {
 		return _airac;
+	}
+	
+	/**
+	 * Returns the arrival alternate Airport.
+	 * @return the alternate Airport
+	 */
+	public Airport getAirportL() {
+		return _airportL;
+	}
+	
+	/**
+	 * Returns the cruise altitude.
+	 * @return the altitude
+	 */
+	public String getCruiseAltitude() {
+		return _cruiseAlt;
 	}
 
 	/**
@@ -194,6 +214,22 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setAIRAC(int airac) {
 		_airac = airac;
+	}
+	
+	/**
+	 * Updates the destination alternate Airport.
+	 * @param a the Airport
+	 */
+	public void setAirportL(Airport a) {
+		_airportL = a;
+	}
+	
+	/**
+	 * Updates the cruise altitude.
+	 * @param alt the altitude in feet
+	 */
+	public void setCruiseAltitude(String alt) {
+		_cruiseAlt = alt;
 	}
 	
 	/**

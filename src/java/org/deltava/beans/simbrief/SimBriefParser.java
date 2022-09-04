@@ -9,6 +9,7 @@ import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A parser for SimBrief XML dispatch packages.
@@ -47,8 +48,9 @@ public class SimBriefParser {
 			throw new IllegalStateException(ie);
 		}
 		
+		// Validate XML elements
 		Element re = doc.getRootElement();
-		validateElements(re, "params", "general", "origin", "destination", "files", "fuel");
+		validateElements(re, "params", "general", "origin", "destination", "alternate", "files", "fuel", "atc");
 		
 		// Create the bean
 		Element pe = re.getChild("params");
@@ -58,6 +60,12 @@ public class SimBriefParser {
 		sb.setRoute(XMLUtils.getChildText(re, "general", "route_navigraph"));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
+		sb.setAirportL(SystemData.getAirport(XMLUtils.getChildText(re, "alternate", "iata_code")));
+		
+		// Calculate initial altitude
+		int alt = StringUtils.parse(XMLUtils.getChildText(re,  "atc", "initial_alt"), 0);
+		if (alt > 0)
+			sb.setCruiseAltitude(String.valueOf(alt * 100));
 		
 		// Load fuel
 		sb.setBaseFuel(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "reserve"), 0) + StringUtils.parse(XMLUtils.getChildText(re, "fuel", "contingency"), 0));
