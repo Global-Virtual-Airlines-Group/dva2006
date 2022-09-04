@@ -3,14 +3,14 @@ package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.io.IOException;
-
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.simbrief.BriefingPackage;
-import org.deltava.dao.DAOException;
-import org.deltava.dao.GetFlightReports;
-import org.deltava.security.command.PIREPAccessControl;
+
+import org.deltava.dao.*;
 import org.deltava.service.*;
+
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -58,7 +58,7 @@ public class PackageDownloadService extends WebService {
 			ctx.setContentType("text/xml", "utf-8");
 			ctx.println(sbdata.getXML());
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
