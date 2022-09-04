@@ -62,6 +62,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52E"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("48N030W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("485823N0302231W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("5430N02000W"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
 	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
@@ -129,6 +130,38 @@ protected void tearDown() throws Exception {
 	   gp.setLongitude(-95, 10, 20);
 	   
 	   i = Intersection.parse("401515N/951020W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   gp = new GeoPosition();
+	   gp.setLatitude(54, 30, 0);
+	   gp.setLongitude(-20, 0, 0);
+	   
+	   i = Intersection.parse("5430N02000W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   gp = new GeoPosition();
+	   gp.setLatitude(57, 30, 0);
+	   gp.setLongitude(-100, 0, 0);
+	   
+	   i = Intersection.parse("5730N1000000W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("5730N10000W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("5730N100W");
 	   assertNotNull(i);
 	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
