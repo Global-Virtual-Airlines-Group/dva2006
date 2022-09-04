@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -310,7 +310,7 @@ public class GetACARSData extends DAO {
 				info.setHasPIREP(rs.getBoolean(17));
 				info.setArchived(rs.getBoolean(18));
 				info.setScheduleValidated(rs.getBoolean(19));
-				info.setDispatchPlan(rs.getBoolean(20));
+				info.setDispatcher(DispatchType.values()[rs.getInt(20)]);
 				info.setIsMP(rs.getBoolean(21));
 				info.setClientBuild(rs.getInt(22));
 				info.setBeta(rs.getInt(23));
