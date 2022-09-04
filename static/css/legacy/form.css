@@ -125,6 +125,10 @@ tr.title input.check {
 	background-color: inherit;
 }
 
+table.bar select {
+	border: 1px solid #ffffff;
+}
+
 select.req {
 	border: 1px solid #e00404;
 }
