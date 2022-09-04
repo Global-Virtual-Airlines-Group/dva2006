@@ -124,8 +124,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty sbPackage}">
 <tr class="nophone">
  <td class="label">SimBrief Package</td>
- <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>, <fmt:weight value="${sbPackage.totalFuel}" /> fuel) - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow">Download SimBrief Package</a>
-<c:if test="${!empty sbPackage.flightPlans}"> - Download Flight Plan <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></c:if> </td>
+ <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>, <fmt:weight value="${sbPackage.totalFuel}" /> fuel) - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow">Download SimBrief Package</a></td>
 </tr>
 </c:if>
 </c:if>
@@ -422,7 +421,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
+ <td class="caps">
 <c:if test="${access.canSubmit}">
 &nbsp;<el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" /></c:if>
 <c:if test="${access.canApprove && !scoreCR}">
@@ -454,7 +453,8 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && assignAccess.canRelease}">
 &nbsp;<el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" /></c:if>
 <c:if test="${access.canUpdateComments}">
-&nbsp;<el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /></c:if></td>
+&nbsp;<el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /></c:if>
+<c:if test="${access.canUseSimBrief && (!empty sbPackage.flightPlans)}"><span class="nophone bld"> | DOWNOAD FLIGHT PLAN <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></span></c:if></td>
 </tr>
 </el:table>
 </el:form>
