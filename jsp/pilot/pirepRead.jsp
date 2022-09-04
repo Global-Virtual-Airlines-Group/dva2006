@@ -111,11 +111,24 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
 <content:authUser anonymous="false">
 <c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd>
-<c:if test="${access.canUseSimBrief}"> - <c:if test="${empty sbPackage}"><a href="javascript:void golgotha.local.sbSubmit()" rel="nofollow"><el:img src="simbrief.png" x="46" y="14" caption="Plot using SimBrief" /></a></c:if>
-<c:if test="${!empty sbPackage}"><a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow">Download SimBrief Package</a></c:if></c:if>
 <c:if test="${!empty pirep.route && (empty sbPackage.flightPlans)}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if>
-<c:if test="${!empty sbPackage.flightPlans}"> - Download Flight Plan <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></c:if></c:if></content:authUser></td>
+</c:if></content:authUser></td>
 </tr>
+<c:if test="${access.canUseSimBrief}">
+<c:if test="${empty sbPackage}">
+<tr class="nophone">
+ <td class="label">SimBrief Dispatch</td>
+ <td class="data"><a href="javascript:void golgotha.local.sbSubmit()" class="sec bld" rel="nofollow">Click Here</a> to create <el:img src="simbrief.png" x="46" y="14" caption="Plot using SimBrief" /> dispatch package</td>
+</tr>
+</c:if>
+<c:if test="${!empty sbPackage}">
+<tr class="nophone">
+ <td class="label">SimBrief Package</td>
+ <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>, <fmt:weight value="${sbPackage.totalFuel}" /> fuel) - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow">Download SimBrief Package</a>
+<c:if test="${!empty sbPackage.flightPlans}"> - Download Flight Plan <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></c:if> </td>
+</tr>
+</c:if>
+</c:if>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
  <td class="label">Submitted on</td>
@@ -552,11 +565,42 @@ return true;
 <c:if test="${access.canUseSimBrief}">
 <script async>
 <!-- SimBrief integration -->
-golgotha.local.sbSubmit = function() { return simbriefsubmit(self.location); };
+golgotha.local.sbSubmit = function() {
+	const f = document.getElementById('sbapiform');
+	try {
+		if (parseInt(f.pax.value) < 1)
+			return golgotha.local.loadPax(f);
+	} catch (e) {
+		return golgotha.local.loadPax(f);
+	}
+
+	return simbriefsubmit(self.location.href);
+};
+
+
 golgotha.local.sbDownloadPlan = function(cb) {
 	if (cb.selectedIndex < 1) return false;
 	const o = cb.options[cb.selectedIndex];
 	self.location = '${sbPackage.basePlanURL}' + o.value;
+	return true;
+};
+
+golgotha.local.loadPax = function(f) {
+	const xreq = new XMLHttpRequest();
+	xreq.open('get', 'sbpax.ws?id=${pirep.hexID}', true);
+	xreq.onreadystatechange = function() {
+		if (xreq.readyState != 4) return false;
+
+		const paxData = JSON.parse(xreq.responseText);	
+		if (!paxData.isCalculated)
+			console.log('Using existing passenger load of ' + paxData.pax);
+		else
+			f.pax.value = paxData.pax;
+
+		return simbriefsubmit(self.location.href);
+	};
+
+	xreq.send(null);
 	return true;
 };
 </script>
