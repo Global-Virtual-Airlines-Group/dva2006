@@ -141,6 +141,10 @@ input.ok {
 	border: 1px solid #20a020;
 }
 
+table.bar select {
+	border: 1px solid #ffffff;
+}
+
 select.req {
 	border: 1px solid #c01933;
 	color: #efe8ea;
