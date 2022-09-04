@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 10.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	
 	private boolean _offline;
 	private boolean _scheduleValidated;
-	private boolean _dispatchPlan;
+	private DispatchType _dispatcher = DispatchType.NONE;
 	private boolean _hasPIREP;
 	private boolean _archived;
 	private boolean _isMP;
@@ -503,11 +503,11 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	}
 
 	/**
-	 * Returns if this flight was planned by a Dispatcher.
-	 * @return TRUE if planned by a Dispatcher, otherwise FALSE
+	 * Returns the dispatcher type for this Flight.
+	 * @return a DispatchType
 	 */
-	public boolean isDispatchPlan() {
-		return _dispatchPlan;
+	public DispatchType getDispatcher() {
+		return _dispatcher;
 	}
 
 	@Override
@@ -597,10 +597,10 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 
 	/**
 	 * Marks this Flight as being planned by a Dispatcher.
-	 * @param isDP TRUE if planned by a Dispatcher, otherwise FALSE
+	 * @param dsp the DispatchType
 	 */
-	public void setDispatchPlan(boolean isDP) {
-		_dispatchPlan = isDP;
+	public void setDispatcher(DispatchType dsp) {
+		_dispatcher = dsp;
 	}
 
 	/**

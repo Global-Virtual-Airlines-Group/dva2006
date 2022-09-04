@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private OnlineNetwork _network;
 	private Simulator _sim;
 	private boolean _checkRide;
-	private boolean _dispatchRoute;
+	private DispatchType _dispatcher = DispatchType.NONE;
 	private String _phaseName;
 	private Recorder _fdr = Recorder.ACARS;
 	
@@ -69,10 +69,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
 	/**
 	 * Updates whether the pilot is flying using a Dispatch-generated flight route.
-	 * @param isDP TRUE if a dispatched plan, otherwise FALSE
+	 * @param dsp the DispatchType
 	 */
-	public void setDispatchPlan(boolean isDP) {
-		_dispatchRoute = isDP;
+	public void setDispatcher(DispatchType dsp) {
+		_dispatcher = dsp;
 	}
 
 	/**
@@ -331,10 +331,11 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		}
 		
 		boolean sterileCockpit = (!_busy && ((getRadarAltitude() < 5000) || (getAltitude() < 10000)));
-		if (_checkRide || _dispatchRoute || _busy || sterileCockpit) {
+		if (_checkRide || (_dispatcher != DispatchType.NONE) || _busy || sterileCockpit) {
 			buf.append("<br />");
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
-			if (_dispatchRoute) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
+			if (_dispatcher == DispatchType.DISPATCH) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
+			if (_dispatcher == DispatchType.SIMBRIEF) buf.append("<span class=\"ter bld\">USING SimBrief</span> ");
 			if (_busy) buf.append("<span class=\"error bld\">BUSY</span> ");
 			if (sterileCockpit) buf.append("<span class=\"ter bld\">STERILE COCKPIT</span>");
 		}
