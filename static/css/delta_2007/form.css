@@ -1,4 +1,4 @@
-/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010, 2015, 2022 Global Virtual Airlines Group. */
 
 table.form, table.bar {
 	table-layout: auto;
@@ -21,6 +21,7 @@ table.bar td {
 	text-align: center;
 	vertical-align: middle;
 	padding: 3px 3px 3px 3px;
+	color: #ffffff;
 }
 
 table.form tr {
