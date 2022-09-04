@@ -104,7 +104,7 @@ public class Intersection extends NavigationDataBean {
 			double lngM = Math.floor(((lng % 10000) - lngS) / 100);
 			double lngD = Math.floor(lng / 10000);
 			lng = lngD + (lngM / 60) + (lngS / 3600); 
-		} else if (lng >= 18000) {
+		} else if (lng >= 1800) {
 			double lngM = lng % 100;
 			double lngD = Math.floor(lng / 100);
 			lng = lngD + (lngM / 60);
