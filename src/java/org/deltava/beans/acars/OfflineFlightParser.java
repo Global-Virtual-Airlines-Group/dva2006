@@ -111,7 +111,6 @@ public final class OfflineFlightParser {
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
 		inf.setScheduleValidated(Boolean.parseBoolean(ie.getChildTextTrim("schedOK")));
-		inf.setDispatchPlan(Boolean.parseBoolean(ie.getChildTextTrim("dispatchRoute")));
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
 		inf.setRouteID(StringUtils.parse(ie.getChildTextTrim("dispatchRouteID"), 0));
 		inf.setPassengers(StringUtils.parse(ie.getChildTextTrim("pax"), 0));
@@ -119,6 +118,10 @@ public final class OfflineFlightParser {
 		inf.setLoadFactor(StringUtils.parse(ie.getChildTextTrim("loadFactor"), 0.0d));
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
+		
+		// Load dispatcher type (180+)
+		boolean isDispatch = Boolean.parseBoolean(ie.getChildTextTrim("dispatchRoute"));
+		inf.setDispatcher(isDispatch ? DispatchType.DISPATCH : EnumUtils.parse(DispatchType.class, ie.getChildTextTrim("dispatcher"), DispatchType.NONE));
 		result.setInfo(inf);
 		
 		// Load simulator and platform
@@ -200,7 +203,8 @@ public final class OfflineFlightParser {
 		// Build the PIREP entry
 		ACARSFlightReport afr = new ACARSFlightReport(al, flight, leg);
 		afr.setAttribute(FlightReport.ATTR_ACARS, true);
-		afr.setAttribute(FlightReport.ATTR_DISPATCH, inf.isDispatchPlan());
+		afr.setAttribute(FlightReport.ATTR_DISPATCH, (inf.getDispatcher() == DispatchType.DISPATCH));
+		afr.setAttribute(FlightReport.ATTR_SIMBRIEF, (inf.getDispatcher() == DispatchType.SIMBRIEF));
 		afr.setSimulator(inf.getSimulator());
 		afr.setStatus(FlightStatus.SUBMITTED);
 		afr.setSubmittedOn(Instant.now());
