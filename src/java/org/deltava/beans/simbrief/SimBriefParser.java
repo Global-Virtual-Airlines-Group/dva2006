@@ -2,7 +2,7 @@
 package org.deltava.beans.simbrief;
 
 import java.io.*;
-import java.util.Collection;
+import java.util.*;
 import java.time.Instant;
 
 import org.jdom2.*;
@@ -57,10 +57,14 @@ public class SimBriefParser {
 		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
-		sb.setRoute(XMLUtils.getChildText(re, "general", "route_navigraph"));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
 		sb.setAirportL(SystemData.getAirport(XMLUtils.getChildText(re, "alternate", "iata_code")));
+		
+		// Parse route
+		List<String> wps = StringUtils.split(XMLUtils.getChildText(re, "general", "route_navigraph"),  " ");
+		while (wps.contains("DCT")) wps.remove("DCT");
+		sb.setRoute(StringUtils.listConcat(wps, " "));
 		
 		// Calculate initial altitude
 		int alt = StringUtils.parse(XMLUtils.getChildText(re,  "atc", "initial_alt"), 0);
