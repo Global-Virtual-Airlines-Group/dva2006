@@ -54,7 +54,6 @@ public class URLCheckService extends WebService {
 			// Parse the data
 			sbdata = SimBriefParser.parse(new StringReader(new String(data, StandardCharsets.UTF_8)));
 			sbdata.setSimBriefID(id);
-			sbdata.setXML(new String(data, StandardCharsets.UTF_8));
 			sbdata.setURL(url);
 			log.info("Downloaded " + url + ", " + data.length + " bytes");
 			
