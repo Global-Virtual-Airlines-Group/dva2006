@@ -526,11 +526,8 @@ public class GetFlightReports extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					String xml = rs.getString(1);
-					sbdata = SimBriefParser.parse(new StringReader(xml));
-					sbdata.setXML(xml);
-				}
+				if (rs.next())
+					sbdata = SimBriefParser.parse(new StringReader(rs.getString(1)));
 			}
 			
 			return sbdata;

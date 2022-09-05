@@ -11,7 +11,7 @@ import org.deltava.service.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to download a SimBrief briefing package.
@@ -56,7 +56,7 @@ public class PackageDownloadService extends WebService {
 		
 		try {
 			ctx.setContentType("text/xml", "utf-8");
-			ctx.println(sbdata.getXML());
+			ctx.println(XMLUtils.format(sbdata.getXML(), "UTF-8"));
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

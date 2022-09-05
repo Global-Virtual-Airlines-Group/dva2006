@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.simbrief.BriefingPackage;
 import org.deltava.beans.system.AirlineInformation;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -289,7 +289,7 @@ public class SetFlightReport extends DAO {
 			ps.setString(6, sb.getRunwayD());
 			ps.setString(7, sb.getRunwayA());
 			ps.setString(8, sb.getRoute());
-			ps.setString(9, sb.getXML());
+			ps.setString(9, XMLUtils.format(sb.getXML(), "UTF-8"));
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

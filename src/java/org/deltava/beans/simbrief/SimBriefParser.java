@@ -60,6 +60,7 @@ public class SimBriefParser {
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
 		sb.setAirportL(SystemData.getAirport(XMLUtils.getChildText(re, "alternate", "iata_code")));
+		sb.setXML(doc);
 		
 		// Parse route
 		List<String> wps = StringUtils.split(XMLUtils.getChildText(re, "general", "route_navigraph"),  " ");
