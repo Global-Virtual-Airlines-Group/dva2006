@@ -464,9 +464,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
 				ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
-				ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), dfr.getTimeD().toLocalTime(), now.getZone());
-				if (zdt.isBefore(now))
-					zdt = ZonedDateTime.of(now.plusDays(1).toLocalDate(), zdt.toLocalTime(), zdt.getZone());
+				ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), now.toLocalTime(), now.getZone());
+				if (dfr.getTimeD() != null) {
+					zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), dfr.getTimeD().toLocalTime(), now.getZone());
+					if (zdt.isBefore(now))
+						zdt = ZonedDateTime.of(now.plusDays(1).toLocalDate(), zdt.toLocalTime(), zdt.getZone());
+				}
 				
 				ctx.setAttribute("departureTime", zdt, REQUEST);
 			}
