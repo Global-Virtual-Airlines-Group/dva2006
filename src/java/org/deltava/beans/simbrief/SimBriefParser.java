@@ -54,7 +54,8 @@ public class SimBriefParser {
 		
 		// Create the bean
 		Element pe = re.getChild("params");
-		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0));
+		PackageFormat fmt = EnumUtils.parse(PackageFormat.class, pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
+		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0), fmt);
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
