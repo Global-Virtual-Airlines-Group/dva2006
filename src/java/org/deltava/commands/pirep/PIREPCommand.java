@@ -21,6 +21,7 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
+import org.deltava.beans.simbrief.BriefingPackage;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.*;
@@ -450,8 +451,12 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Check for SimBrief package
-			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF))
-				ctx.setAttribute("sbPackage", dao.getSimBrief(fr.getID(), ctx.getDB()), REQUEST);
+			boolean hasSimBrief = false;
+			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
+				BriefingPackage sbPkg = dao.getSimBrief(fr.getID(), ctx.getDB());
+				ctx.setAttribute("sbPackage", sbPkg, REQUEST);
+				hasSimBrief = (sbPkg != null);
+			}
 			
 			// Load SimBrief-specific data
 			if (ac.getCanUseSimBrief()) {
@@ -460,6 +465,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("acInfo", a, REQUEST);
 				ctx.setAttribute("acPolicy", a.getOptions(SystemData.get("airline.code")), REQUEST);
 				ctx.setAttribute("versionInfo", VersionInfo.getFullBuild(), REQUEST);
+				
+				// Calculate Alternates
+				AlternateAirportHelper aah = new AlternateAirportHelper(SystemData.get("airline.code"));
+				List<Airport> alts = aah.calculateAlternates(a, fr.getAirportA());
+				if (alts.size() > 4)
+					alts.removeAll(alts.subList(4, alts.size()));
+				
+				ctx.setAttribute("alternates", alts, REQUEST);
 				
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
@@ -805,12 +818,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
-				mapType = MapType.GOOGLEStatic;
+				if (!hasSimBrief) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<GeoLocation> rt = List.of(fr.getAirportD(), fr.getAirportA());
 				ctx.setAttribute("mapRoute", rt, REQUEST);
 				ctx.setAttribute("filedRoute", rt, REQUEST);
-				if (!hasTrack && (mapType == MapType.GOOGLE))
+				if (!hasTrack && (mapType == MapType.GOOGLE) && !hasSimBrief)
 					mapType = MapType.GOOGLEStatic;
 			}
 
@@ -855,7 +868,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "] : " + ctx.getRequest().getRemoteHost() + " spider=" + isSpider);
 						mapType = MapType.GOOGLEStatic;
 					}
-				} else if (isSpider || isDraft || (predictedUse.getTotal() > dailyMax))
+				} else if (isSpider || (isDraft && !hasSimBrief) || (predictedUse.getTotal() > dailyMax))
 					mapType = MapType.GOOGLEStatic;
 			}				
 
