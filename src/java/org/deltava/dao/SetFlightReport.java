@@ -280,16 +280,17 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeSimBrief(BriefingPackage sb) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, FUEL, RUNWAY_D, RUNWAY_A, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, FUEL, OFPTYPE, RUNWAY_D, RUNWAY_A, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, sb.getID());
 			ps.setString(2, sb.getSimBriefID());
 			ps.setInt(3, sb.getAIRAC());
 			ps.setTimestamp(4, createTimestamp(sb.getCreatedOn()));
 			ps.setInt(5, sb.getTotalFuel());
-			ps.setString(6, sb.getRunwayD());
-			ps.setString(7, sb.getRunwayA());
-			ps.setString(8, sb.getRoute());
-			ps.setString(9, XMLUtils.format(sb.getXML(), "UTF-8"));
+			ps.setInt(6, sb.getFormat().ordinal());
+			ps.setString(7, sb.getRunwayD());
+			ps.setString(8, sb.getRunwayA());
+			ps.setString(9, sb.getRoute());
+			ps.setString(10, XMLUtils.format(sb.getXML(), "UTF-8"));
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
