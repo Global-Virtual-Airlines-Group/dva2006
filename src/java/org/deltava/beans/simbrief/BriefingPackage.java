@@ -18,6 +18,7 @@ import org.deltava.beans.schedule.Airport;
 
 public class BriefingPackage extends DatabaseBean {
 
+	private final PackageFormat _fmt;
 	private String _sbID;
 	private Instant _createdOn;
 	
@@ -44,10 +45,12 @@ public class BriefingPackage extends DatabaseBean {
 	/**
 	 * Creates the bean.
 	 * @param id the Flight Report database ID
+	 * @param fmt the PackageFormat
 	 */
-	BriefingPackage(int id) {
+	BriefingPackage(int id, PackageFormat fmt) {
 		super();
 		setID(id);
+		_fmt = fmt;
 	}
 
 	/**
@@ -56,6 +59,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public String getSimBriefID() {
 		return _sbID;
+	}
+	
+	/**
+	 * Returns the briefing package format.
+	 * @return the format
+	 */
+	public PackageFormat getFormat() {
+		return _fmt;
 	}
 
 	/**
