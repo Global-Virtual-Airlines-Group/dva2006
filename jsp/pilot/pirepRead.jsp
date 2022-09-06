@@ -114,20 +114,6 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty pirep.route && (empty sbPackage.flightPlans)}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if>
 </c:if></content:authUser></td>
 </tr>
-<c:if test="${access.canUseSimBrief}">
-<c:if test="${empty sbPackage}">
-<tr class="nophone">
- <td class="label">SimBrief Dispatch</td>
- <td class="data"><a href="javascript:void golgotha.local.sbSubmit()" class="sec bld" rel="nofollow">Click Here</a> to create <el:img src="simbrief.png" x="46" y="14" caption="Plot using SimBrief" /> dispatch package</td>
-</tr>
-</c:if>
-<c:if test="${!empty sbPackage}">
-<tr class="nophone">
- <td class="label">SimBrief Package</td>
- <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>, <fmt:weight value="${sbPackage.totalFuel}" /> fuel) - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" class="bld">Download SimBrief Package</a></td>
-</tr>
-</c:if>
-</c:if>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
  <td class="label">Submitted on</td>
@@ -336,6 +322,48 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${isACARS}">
 <c:set var="cspan" value="1" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
+</c:if>
+<c:if test="${access.canUseSimBrief}">
+<c:if test="${empty sbPackage}">
+<content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
+<tr class="title caps">
+ <td colspan="2">SimBrief DISPATCH SETTINGS</td>
+</tr>
+<tr>
+ <td class="label">Package Format</td>
+ <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /></td>
+</tr>
+<tr>
+ <td class="label">Cost Index</td>
+ <td class="data"><el:text name="costIndex" size="2" max="3" value="80" /></td>
+</tr>
+<tr class="title">
+ <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.local.sbSubmit()" /></td>
+</tr>
+</c:if>
+<c:if test="${!empty sbPackage}">
+<tr class="title caps">
+ <td colspan="2">SimBrief BRIEFING PACKAGE DATA</td>
+</tr>
+<tr>
+ <td class="label">SimBrief Package</td>
+ <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a></span></td>
+ </tr>
+ <tr>
+  <td class="label">Briefing Format</td>
+  <td class="data pri bld">${sbPackage.format.description}</td>
+ </tr>
+ <tr>
+ <td class="label">Fuel Load</td>
+ <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate</td>
+</tr>
+<c:if test="${!empty sbPackage.airportL}">
+<tr>
+ <td class="label">Primary Alternate</td>
+ <td class="data">${sbPackage.airportL.name} (<el:cmd url="airportinfo" linkID="${sbPackage.airportL.IATA}"><fmt:airport airport="${sbPackage.airportL}" /></el:cmd>) <span class="small"><fmt:distance value="${sbPackage.airportL.distanceTo(pirep.airportA)}" /> from destination)</span></td>
+</tr>
+</c:if>
+</c:if>
 </c:if>
 <content:browser human="true">
 <tr class="title">
@@ -565,24 +593,21 @@ return true;
 <c:if test="${access.canUseSimBrief}">
 <script async>
 <!-- SimBrief integration -->
+<c:if test="${empty sbPackage}">
 golgotha.local.sbSubmit = function() {
-	const f = document.getElementById('sbapiform');
+	golgotha.form.submit();
+	const f = document.forms[0];
+	const sbf = document.getElementById('sbapiform');
+	sbf.planformat = golgotha.form.getCombo(f.planformat);
+	sbf.civalue = f.costIndex.value;
 	try {
-		if (parseInt(f.pax.value) < 1)
-			return golgotha.local.loadPax(f);
+		if (parseInt(sbf.pax.value) < 1)
+			return golgotha.local.loadPax(sbf);
 	} catch (e) {
-		return golgotha.local.loadPax(f);
+		return golgotha.local.loadPax(sbf);
 	}
 
 	return simbriefsubmit(self.location.href);
-};
-
-
-golgotha.local.sbDownloadPlan = function(cb) {
-	if (cb.selectedIndex < 1) return false;
-	const o = cb.options[cb.selectedIndex];
-	self.location = '${sbPackage.basePlanURL}' + o.value;
-	return true;
 };
 
 golgotha.local.loadPax = function(f) {
@@ -603,8 +628,17 @@ golgotha.local.loadPax = function(f) {
 	xreq.send(null);
 	return true;
 };
+</c:if><c:if test="${!empty sbPackage}">
+golgotha.local.sbDownloadPlan = function(cb) {
+	if (cb.selectedIndex < 1) return false;
+	const o = cb.options[cb.selectedIndex];
+	self.location = '${sbPackage.basePlanURL}' + o.value;
+	return true;
+};</c:if>
 </script>
+<c:set var="altIdx" value="0" scope="page" />
 <el:form ID="sbapiform" method="post" action="" validate="return false">
+<el:text name="planformat" type="hidden" value="dal" />
 <el:text name="orig" type="hidden" value="${pirep.airportD.ICAO}" />
 <el:text name="dest" type="hidden" value="${pirep.airportA.ICAO}" />
 <el:text name="type" type="hidden" value="${acInfo.ICAO}" />
@@ -626,9 +660,17 @@ golgotha.local.loadPax = function(f) {
 <el:text name="steh" type="hidden" value="${pirep.duration.toHoursPart()}" />
 <el:text name="stem" type="hidden" value="${pirep.duration.toMinutesPart()}" />
 <el:text name="units" type="hidden" value="${pilot.weightType}S" />
+<el:text name="climb" type="hidden" value="250/310/80" />
+<el:text name="descent" type="hidden" value="82/300/250" />
 <el:text name="notams" type="hidden" value="0" />
 <el:text name="firnot" type="hidden" value="0" />
 <el:text name="maps" type="hidden" value="none" />
+<el:text name="cruise" type="hidden" value="CI" />
+<el:text name="civalue" type="hidden" value="80" />
+<el:text name="altn_count" type="hidden" value="${alternates.size()}" />
+<c:forEach var="alt" items="${alternates}">
+<c:set var="altIdx" value="${altIdx + 1}" scope="page" />
+<el:text name="altn_${altIdx}_id" type="hidden" value="${alt.ICAO}" /></c:forEach>
 </el:form>
 </c:if>
 </content:browser>
