@@ -5,7 +5,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import java.io.*;
 import java.sql.Connection;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +13,7 @@ import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-
+import org.deltava.dao.http.DAO.Compression;
 import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;
@@ -47,15 +46,11 @@ public class URLCheckService extends WebService {
 		
 		BriefingPackage sbdata = null;
 		try {
-			String url = String.format("https://www.simbrief.com/ofp/flightplans/xml/%s.xml", id);
-			GetURL urldao = new GetURL(url, null);
-			byte[] data = urldao.load();
-			
-			// Parse the data
-			sbdata = SimBriefParser.parse(new StringReader(new String(data, StandardCharsets.UTF_8)));
-			sbdata.setSimBriefID(id);
-			sbdata.setURL(url);
-			log.info("Downloaded " + url + ", " + data.length + " bytes");
+			GetSimBrief sbdao = new GetSimBrief();
+			sbdao.setCompression(Compression.GZIP, Compression.BROTLI);
+			sbdao.setConnectTimeout(3500);
+			sbdao.setReadTimeout(4500);
+			sbdata = sbdao.load(id);
 			
 			// Load the Flight Report
 			Connection con = ctx.getConnection();
@@ -71,7 +66,7 @@ public class URLCheckService extends WebService {
 			dfr.setAttribute(FlightReport.ATTR_SIMBRIEF, true);
 			if (!sbdata.getRoute().equalsIgnoreCase(dfr.getRoute())) {
 				dfr.setRoute(sbdata.getRoute());
-				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Updated Route via SimBrief");
+				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated Route via SimBrief");
 			}
 			
 			// Start transaction
