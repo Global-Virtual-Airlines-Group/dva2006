@@ -51,7 +51,7 @@ golgotha.local.zoomTo = function(lat, lng, zoom) {
 };</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 golgotha.local.showRunwayChoices = function() {
-	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no');
+	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
 </content:filter> 
 </script></c:if>
@@ -347,7 +347,8 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr>
  <td class="label">SimBrief Package</td>
- <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a></span></td>
+ <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
+ | <a href="javascript:void golgotha.local.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span></td>
  </tr>
  <tr>
   <td class="label">Briefing Format</td>
@@ -357,12 +358,12 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Fuel Load</td>
  <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate</td>
 </tr>
-<c:if test="${!empty sbPackage.airportL}">
+<c:forEach var ="ap" items="${sbPackage.alternates}">
 <tr>
- <td class="label">Primary Alternate</td>
- <td class="data">${sbPackage.airportL.name} (<el:cmd url="airportinfo" linkID="${sbPackage.airportL.IATA}"><fmt:airport airport="${sbPackage.airportL}" /></el:cmd>) <span class="small"><fmt:distance value="${sbPackage.airportL.distanceTo(pirep.airportA)}" /> from destination)</span></td>
+ <td class="label">Alternate</td>
+ <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>) <span class="small"><fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination)</span></td>
 </tr>
-</c:if>
+</c:forEach>
 </c:if>
 </c:if>
 <content:browser human="true">
@@ -482,7 +483,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 &nbsp;<el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" /></c:if>
 <c:if test="${access.canUpdateComments}">
 &nbsp;<el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /></c:if>
-<c:if test="${access.canUseSimBrief && (!empty sbPackage.flightPlans)}"><span class="nophone bld"> | DOWNOAD FLIGHT PLAN <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></span></c:if></td>
+<c:if test="${access.canUseSimBrief && (!empty sbPackage.flightPlans)}">&nbsp;<el:button label="VIEW PILOT BRIEFING" onClick="void golgotha.local.sbBriefingText()" /><span class="nophone bld"> | DOWNOAD FLIGHT PLAN <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></span></c:if>&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
@@ -498,10 +499,10 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-const mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}),scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
@@ -509,36 +510,30 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.e
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
 <map:points var="golgotha.maps.acarsFlight.routePoints" items="${mapRoute}" />
-<map:line var="golgotha.maps.acarsFlight.gRoute" src="golgotha.maps.acarsFlight.routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" />
-</c:if>
+<map:line var="golgotha.maps.acarsFlight.gRoute" src="golgotha.maps.acarsFlight.routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" /></c:if>
 <c:if test="${empty mapRoute && isACARS}">
-golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});
-</c:if>
+golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});</c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
 <map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
 <map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#80800f" width="2" transparency="0.5" geodesic="true" />
-</c:if>
+map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
+map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 <c:if test="${!empty onlineTrack}">
 <map:points var="golgotha.maps.acarsFlight.onlinePoints" items="${onlineTrack}" />
 <map:markers var="golgotha.maps.acarsFlight.otMarkers" items="${onlineTrack}" />
-<map:line var="golgotha.maps.acarsFlight.otRoute" src="golgotha.maps.acarsFlight.onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
-</c:if>
+<map:line var="golgotha.maps.acarsFlight.otRoute" src="golgotha.maps.acarsFlight.onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" /></c:if>
 <c:if test="${!empty mapRoute}">
-// Add the route and markers
-map.addMarkers(golgotha.maps.acarsFlight.gRoute);
-</c:if>
-<c:if test="${!empty filedRoute}">
-map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
-map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
-</c:if>
+map.addMarkers(golgotha.maps.acarsFlight.gRoute);</c:if>
+<c:if test="${(!empty sbPackage.alternates) && fn:isDraft(pirep)}">
+<map:markers var="golgotha.maps.acarsFlight.alts" items="${sbPackage.alternates}" />
+map.addMarkers(golgotha.maps.acarsFlight.alts);</c:if>
 <c:if test="${empty filedRoute}">
 // Airport markers
 <map:marker var="golgotha.maps.acarsFlight.gmA" point="${pirep.airportA}" />
 <map:marker var="golgotha.maps.acarsFlight.gmD" point="${pirep.airportD}" />
 golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgotha.maps.acarsFlight.gmD];
-map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
-</c:if>
+map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 <c:if test="${isACARS}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
@@ -615,7 +610,6 @@ golgotha.local.loadPax = function(f) {
 	xreq.open('get', 'sbpax.ws?id=${pirep.hexID}', true);
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
-
 		const paxData = JSON.parse(xreq.responseText);	
 		if (!paxData.isCalculated)
 			console.log('Using existing passenger load of ' + paxData.pax);
@@ -634,6 +628,28 @@ golgotha.local.sbDownloadPlan = function(cb) {
 	const o = cb.options[cb.selectedIndex];
 	self.location = '${sbPackage.basePlanURL}' + o.value;
 	return true;
+};
+
+golgotha.local.sbRefresh = function() {
+	const f = document.forms[0];
+	golgotha.form.submit(f);
+	const xreq = new XMLHttpRequest();
+	xreq.open('get', 'sbrefresh.ws?id=${pirep.hexID}', true);
+	xreq.onreadystatechange = function() {
+		if (xreq.readyState != 4) return false;
+		golgotha.form.clear(f);
+		if (xreq.status == 200)
+			location.reload();
+
+		return true;
+	};
+
+	xreq.send(null);
+	return true;
+};
+
+golgotha.local.sbBriefingText = function() {
+	return window.open('/briefing.do?id=${pirep.hexID}', 'rwyChoices', 'height=530,width=820,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };</c:if>
 </script>
 <c:set var="altIdx" value="0" scope="page" />
