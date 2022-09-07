@@ -451,11 +451,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Check for SimBrief package
-			boolean hasSimBrief = false;
+			BriefingPackage sbPkg = null;
 			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
-				BriefingPackage sbPkg = dao.getSimBrief(fr.getID(), ctx.getDB());
+				sbPkg = dao.getSimBrief(fr.getID(), ctx.getDB());
 				ctx.setAttribute("sbPackage", sbPkg, REQUEST);
-				hasSimBrief = (sbPkg != null);
 			}
 			
 			// Load SimBrief-specific data
@@ -800,7 +799,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Load the SID
 				if (rb.getSID() != null) {
-					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(rb.getSID()), rb.getSIDTransition(), (String) null);
+					String rwyD = (sbPkg == null) ? null : ("RW" + sbPkg.getRunwayD());
+					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(rb.getSID()), rb.getSIDTransition(), rwyD);
 					rb.add(sid);
 				}
 				
@@ -808,7 +808,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				// Load the STAR
 				if (rb.getSTAR() != null) {
-					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(rb.getSTAR()), rb.getSTARTransition(), (String) null);
+					String rwyA = (sbPkg == null) ? null : ("RW" + sbPkg.getRunwayA());
+					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(rb.getSTAR()), rb.getSTARTransition(), rwyA);
 					rb.add(star);
 				}
 
@@ -818,12 +819,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
-				if (!hasSimBrief) mapType = MapType.GOOGLEStatic;
+				if (sbPkg == null) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<GeoLocation> rt = List.of(fr.getAirportD(), fr.getAirportA());
 				ctx.setAttribute("mapRoute", rt, REQUEST);
 				ctx.setAttribute("filedRoute", rt, REQUEST);
-				if (!hasTrack && (mapType == MapType.GOOGLE) && !hasSimBrief)
+				if (!hasTrack && (mapType == MapType.GOOGLE) && (sbPkg == null))
 					mapType = MapType.GOOGLEStatic;
 			}
 
@@ -868,7 +869,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "] : " + ctx.getRequest().getRemoteHost() + " spider=" + isSpider);
 						mapType = MapType.GOOGLEStatic;
 					}
-				} else if (isSpider || (isDraft && !hasSimBrief) || (predictedUse.getTotal() > dailyMax))
+				} else if ((isSpider || isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))
 					mapType = MapType.GOOGLEStatic;
 			}				
 
