@@ -56,11 +56,12 @@ public class SimBriefParser {
 		Element pe = re.getChild("params");
 		PackageFormat fmt = EnumUtils.parse(PackageFormat.class, pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
 		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0), fmt);
+		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
-		sb.setAirportL(SystemData.getAirport(XMLUtils.getChildText(re, "alternate", "iata_code")));
+		re.getChildren("alternate").stream().map(ae -> SystemData.getAirport(ae.getChildTextTrim("iata_code"))).filter(Objects::nonNull).forEach(sb::addAirportL);
 		sb.setXML(doc);
 		
 		// Parse route
