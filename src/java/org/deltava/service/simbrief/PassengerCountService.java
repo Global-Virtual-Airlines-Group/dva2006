@@ -71,7 +71,7 @@ public class PassengerCountService extends WebService {
 				double loadFactor = lf.generate(Instant.now());
 				fr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 				fr.setLoadFactor(loadFactor);
-				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Requested pre-flight Load Factor for SimBrief");
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Requested pre-flight Load Factor for SimBrief");
 				
 				// Write the flight report
 				SetFlightReport frwdao = new SetFlightReport(con);
