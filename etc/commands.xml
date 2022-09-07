@@ -1242,6 +1242,12 @@
 		<roles>Developer,HR,Operations,PIREP</roles>
 	</command>
 
+	<command id="briefing">
+		<name>Flight Briefing Text</name>
+		<class>org.deltava.commands.pirep.BriefingCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="updrwy">
 		<name>PIREP Update Runway</name>	
 		<class>org.deltava.commands.pirep.UpdateRunwayCommand</class>
