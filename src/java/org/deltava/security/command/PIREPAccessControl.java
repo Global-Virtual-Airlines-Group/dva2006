@@ -36,6 +36,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canProxySubmit;
 	private boolean _canAdjustEvents;
 	private boolean _canUseSimBrief;
+	private boolean _canViewSimBrief;
 
 	/**
 	 * Initializes the controller.
@@ -96,6 +97,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canProxySubmit = isHR;
 		_canAdjustEvents = _canApprove || _canReject || _canHold /*isPirep && !_ourPIREP && !isDraft && (_ctx.isUserInRole("Event") || isHR) */;
 		_canUseSimBrief = isDraft && _ourPIREP && _ctx.getUser().hasID(ExternalID.NAVIGRAPH);
+		_canViewSimBrief = (_ourPIREP || isPirep) && _pirep.hasAttribute(FlightReport.ATTR_SIMBRIEF);
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -269,5 +271,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanUseSimBrief() {
 		return _canUseSimBrief;
+	}
+	
+	/**
+	 * Returns if the user can view the flight's SimBrief briefing data.
+	 * @return TRUE if the SimBrief data can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewSimBrief() {
+		return _canViewSimBrief;
 	}
 }
