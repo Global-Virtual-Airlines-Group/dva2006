@@ -88,6 +88,7 @@
 	<service id="sbapi" class="org.deltava.service.simbrief.APICodeService" />
 	<service id="sburl" class="org.deltava.service.simbrief.URLCheckService" />
 	<service id="sbpackage" class="org.deltava.service.simbrief.PackageDownloadService" />
+	<service id="sbrefresh" class="org.deltava.service.simbrief.PackageRefreshService" />
 	<service id="sbpax" class="org.deltava.service.simbrief.PassengerCountService" />
 	
 	<!-- simFDR Services -->
