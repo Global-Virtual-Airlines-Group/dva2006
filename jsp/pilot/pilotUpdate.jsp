@@ -80,7 +80,7 @@ ${msg}<br />
 </c:if>
 <c:if test="${spUpdated}">
 <!-- Updated Staff Profile -->
-<li>The Staff Profile for ${staff.title} ${pilot.name} has been updated.</li>
+<li>The Staff Profile for ${staff.title}&nbsp;${pilot.name} has been updated.</li>
 </c:if>
 <c:if test="${spRemoved}">
 <!-- Removed Staff Profile -->
