@@ -9,6 +9,8 @@ import org.jdom2.Document;
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.schedule.Airport;
 
+import org.deltava.util.XMLUtils;
+
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
@@ -20,9 +22,10 @@ public class BriefingPackage extends DatabaseBean {
 
 	private final PackageFormat _fmt;
 	private String _sbID;
+	private String _sbUserID;
 	private Instant _createdOn;
 	
-	private Airport _airportL;
+	private final List<Airport> _alternates = new ArrayList<Airport>();
 	
 	private int _airac;
 	private String _url;
@@ -62,6 +65,14 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the SimBrief User ID for this package.
+	 * @return the SimBrief user ID
+	 */
+	public String getSimBriefUserID() {
+		return _sbUserID;
+	}
+	
+	/**
 	 * Returns the briefing package format.
 	 * @return the format
 	 */
@@ -86,11 +97,11 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
-	 * Returns the arrival alternate Airport.
-	 * @return the alternate Airport
+	 * Returns the arrival alternate Airports.
+	 * @return a List of Airports
 	 */
-	public Airport getAirportL() {
-		return _airportL;
+	public List<Airport> getAlternates() {
+		return _alternates;
 	}
 	
 	/**
@@ -198,6 +209,14 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the HTML pilot briefing text.
+	 * @return the HTML text
+	 */
+	public String getBriefingText() {
+		return XMLUtils.getChildText(_xml.getRootElement(), "text", "plan_html");
+	}
+	
+	/**
 	 * Adds a flight plan to the briefing package.
 	 * @param fp a FlightPlan
 	 */
@@ -222,6 +241,14 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
+	 * Updates the SimBrief User ID.
+	 * @param id the SimBrief user ID
+	 */
+	public void setSimBriefUserID(String id) {
+		_sbUserID = id;
+	}
+	
+	/**
 	 * Updates the AIRAC version used for this route.
 	 * @param airac the AIRAC version
 	 */
@@ -230,11 +257,11 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
-	 * Updates the destination alternate Airport.
+	 * Adds a destination alternate Airport.
 	 * @param a the Airport
 	 */
-	public void setAirportL(Airport a) {
-		_airportL = a;
+	public void addAirportL(Airport a) {
+		_alternates.add(a);
 	}
 	
 	/**
