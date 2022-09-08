@@ -361,7 +361,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:forEach var ="ap" items="${sbPackage.alternates}">
 <tr>
  <td class="label">Alternate</td>
- <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>) <span class="small"><fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination)</span></td>
+ <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -640,6 +640,8 @@ golgotha.local.sbRefresh = function() {
 		golgotha.form.clear(f);
 		if (xreq.status == 200)
 			location.reload();
+		else if (xreq.status == 304)
+			console.log('SimBrief package not modified');
 
 		return true;
 	};
