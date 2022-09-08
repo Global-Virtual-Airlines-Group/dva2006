@@ -79,7 +79,7 @@ public class PackageRefreshService extends WebService {
 				frwdao.writeSimBrief(sbdata);
 				ctx.commitTX();
 			}
-		} catch (DAOException de) {
+		} catch (Exception de) {
 			ctx.rollbackTX();
 			if (de instanceof HTTPDAOException) {
 				HTTPDAOException hde = (HTTPDAOException) de;

@@ -518,7 +518,7 @@ public class GetFlightReports extends DAO {
 	 */
 	public BriefingPackage getSimBrief(int id, String db) throws DAOException {
 		
-		StringBuilder sqlBuf = new StringBuilder("SELECT XML FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT SIMBRIEF_ID, XML FROM ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".	PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
 		
@@ -526,8 +526,10 @@ public class GetFlightReports extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					sbdata = SimBriefParser.parse(new StringReader(rs.getString(1)));
+				if (rs.next()) {
+					sbdata = SimBriefParser.parse(new StringReader(rs.getString(2)));
+					sbdata.setSimBriefID(rs.getString(1));
+				}
 			}
 			
 			return sbdata;
