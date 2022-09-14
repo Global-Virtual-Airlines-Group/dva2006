@@ -1,33 +1,32 @@
-// Copyright 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.util.*;
 import java.time.Instant;
 import java.util.concurrent.*;
 
 import org.json.*;
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.system.*;
 import org.deltava.beans.wx.*;
 
-import org.deltava.dao.DAOException;
 import org.deltava.dao.http.GetWeatherTileLayers;
 
 import org.deltava.service.*;
 
-import org.deltava.util.JSONUtils;
-import org.deltava.util.TaskTimer;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
  * A Web Service to display TWC weather tile data.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 8.0
  */
 
+@Deprecated
 public class SeriesListService extends WebService {
 	
 	private static final Logger log = Logger.getLogger(SeriesListService.class);
@@ -53,15 +52,15 @@ public class SeriesListService extends WebService {
 		}
 	}
 	
-	private static SeriesList doLoad(boolean isAuth) throws DAOException {
+	private static SeriesList doLoad(boolean isAuth) {
 
 		GetWeatherTileLayers dao = new GetWeatherTileLayers();
 		dao.setReadTimeout(15000);
 		APILogger.add(new APIRequest(API.WeatherCo.createName("TILESERIES"), !isAuth));
 		TaskTimer tt = new TaskTimer();
-		Collection<WeatherTileLayer> layers = dao.getLayers();
+		//Collection<WeatherTileLayer> layers = dao.getLayers();
 		SeriesList sl = new SeriesList(30);
-		sl.addAll(layers);
+		//sl.addAll(layers);
 		log.info("Loaded TWC Series data in " + tt.stop() + "ms");
 		_cache.add(sl);
 		return sl;

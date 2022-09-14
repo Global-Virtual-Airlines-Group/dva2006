@@ -1,4 +1,4 @@
-// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -16,10 +16,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather tile layers.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 8.0
  */
 
+@Deprecated
 public class GetWeatherTileLayers extends DAO {
 	
 	/**
