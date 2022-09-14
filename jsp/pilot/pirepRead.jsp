@@ -593,8 +593,8 @@ golgotha.local.sbSubmit = function() {
 	golgotha.form.submit();
 	const f = document.forms[0];
 	const sbf = document.getElementById('sbapiform');
-	sbf.planformat = golgotha.form.getCombo(f.planformat);
-	sbf.civalue = f.costIndex.value;
+	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
+	sbf.civalue.value = f.costIndex.value;
 	try {
 		if (parseInt(sbf.pax.value) < 1)
 			return golgotha.local.loadPax(sbf);
