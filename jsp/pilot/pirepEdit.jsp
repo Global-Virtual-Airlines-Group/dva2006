@@ -159,7 +159,7 @@ return true;
 <content:empty var="emptyList" />
 <content:singleton var="apD" value="${pirep.airportD}" />
 <content:singleton var="apA" value="${pirep.airportA}" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,XP12" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
