@@ -62,7 +62,7 @@
 <c:if test="${hasMSFS}">
  <td>FS2020</td>
 </c:if> 
- <td class="nophone">X-Plane 11 / 10</td>
+ <td class="nophone">X-Plane 12 / 11 / 10</td>
 <c:if test="${!hasP3D && !hasMSFS}">
  <td class="nophone">FS2002 / FS2000</td>
 </c:if>
@@ -77,6 +77,7 @@
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
 <c:set var="has64" value="${eLegs['P3Dv4'] > 0}" scope="page" />
 <c:set var="hasP3D3" value="${eLegs['P3D'] > 0}" scope="page" />
+<c:set var="hasXP11" value="${eLegs['XP12'] > 0}" scope="page" />
 <c:set var="hasXP11" value="${eLegs['XP11'] > 0}" scope="page" />
 <c:set var="hasXP10" value="${eLegs['XP10'] > 0}" scope="page" />
 <c:set var="hasFS2K" value="${eLegs['FS2000'] > 0}" scope="page" />
@@ -95,7 +96,8 @@
 <c:if test="${hasMSFS}">
  <td class="small"><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${eLegs['FS2020'] * 100.0 / stat.legs}" />%)</td>
 </c:if>
- <td class="small nophone"><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if><c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}"> + </c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if>
+<c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
 <c:if test="${!hasP3D && !hasMSFS}">
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" />&nbsp;<c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" />&nbsp;</c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
 <c:set var="otherLegs" value="${eLegs['UNKNOWN']}" scope="page" />
