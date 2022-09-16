@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Inclusion;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -37,9 +38,14 @@ public class FindFlightCommand extends AbstractCommand {
 		// Set combo variables for JSP
 		ctx.setAttribute("sortTypes", ScheduleSearchCriteria.SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("hours", ScheduleSearchCriteria.HOURS, REQUEST);
+		
+		// Init search criteria
+		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
+		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
+		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 
 		// Get the airline and the airports
-		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 		Collection<Aircraft> allEQ = new ArrayList<Aircraft>();
 		try {
 			Connection con = ctx.getConnection();
@@ -50,6 +56,20 @@ public class FindFlightCommand extends AbstractCommand {
 			ctx.setAttribute("airports", airports, REQUEST);
 			if (ctx.getParameter("airline") == null)
 				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
+			
+			// Load recent PIREPs to see if we have a connected logbook
+			GetFlightReports frdao = new GetFlightReports(con);
+			frdao.setQueryMax(10);
+			List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC", ctx.getDB())).stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).collect(Collectors.toList());
+			if ((pireps.size() > 2) && (criteria.getAirportD() == null)) {
+				RoutePair lf = pireps.get(0);
+				RoutePair lf2 = pireps.get(1);
+				RoutePair lf3 = pireps.get(2);
+				if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
+					criteria.setAirportD(lf.getAirportA());
+					ctx.setAttribute("fafCriteria", criteria, SESSION);			
+				}
+			}
 
 			// Get the equipment types
 			GetAircraft acdao = new GetAircraft(con);
@@ -78,9 +98,6 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Populate the search criteria from the request
-		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
-		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
-		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
 		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("distRange"), 150));
@@ -98,8 +115,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
 		criteria.setNotVisitedD(Boolean.parseBoolean(ctx.getParameter("nVD")));
 		criteria.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("nVA")));
-		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 500))
-			criteria.setMaxResults(500);
+		criteria.setMaxResults(Math.max(0, Math.min(criteria.getMaxResults(), 500)));
 
 		// Set equipment type(s)
 		final String f = ctx.getParameter("family");
