@@ -1,4 +1,4 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Simulator;
 /**
  * A JSP tag to display Simulator service pack information.  
  * @author Luke
- * @version 7.5
+ * @version 10.3
  * @since 7.0
  */
 
@@ -66,6 +66,7 @@ public class SimulatorVersionTag extends TagSupport {
 				
 			case XP10:
 			case XP11:
+			case XP12:
 				out.print(_major);
 				out.print('.');
 				if (_minor < 10)
