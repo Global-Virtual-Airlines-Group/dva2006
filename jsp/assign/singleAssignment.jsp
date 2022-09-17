@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);
@@ -40,13 +40,13 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Equipment</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${pilot.ratings}" value="${criteria.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${pilot.ratings}" value="${criteria.equipmentType}" onRightClick="return golgotha.form.resetCombo()"  /></td>
  <td class="label">Flight Legs</td>
  <td class="data"><el:text name="legs" idx="*" size="1" max="1" value="${totalLegs}" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" onRightClick="return golgotha.form.resetCombo()"  /></td>
  <td class="label">Maximum Distnce</td>
  <td class="data"><el:text name="maxLength" idx="*" size="4" max="4" value="${(criteria.distance < 1) ? '' : criteria.distance}" />
  +/- <el:text name="maxLengthRange" idx="*" size="3" max="4" value="${(criteria.distance < 1) ? '' : criteria.distanceRange}" /> miles</td>
@@ -54,7 +54,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label top">Search Options</td>
  <td class="data" colspan="3">Historic Flights - <el:combo name="avoidHistorical" idx="*" size="1" options="${inclusionOpts}" value="${param.avoidHistorical}" /><br />
-<el:box name="avoidVisitedDestination" idx="*" value="true"  checked="${critieria.notVisitedA}" label="Exclude Visited Destination Airports" /></td>
+<el:box name="avoidVisitedDestination" idx="*" value="true"  checked="${criteria.notVisitedA}" label="Exclude Visited Destination Airports" /></td>
 </tr>
 </el:table>
 
