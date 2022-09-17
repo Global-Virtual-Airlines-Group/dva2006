@@ -323,8 +323,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:set var="cspan" value="1" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
-<c:if test="${access.canUseSimBrief}">
-<c:if test="${empty sbPackage}">
+<c:if test="${access.canUseSimBrief && (empty sbPackage)}">
 <content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
 <tr class="title caps">
  <td colspan="2">SimBrief DISPATCH SETTINGS</td>
@@ -341,7 +340,7 @@ golgotha.local.showRunwayChoices = function() {
  <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.local.sbSubmit()" /></td>
 </tr>
 </c:if>
-<c:if test="${!empty sbPackage}">
+<c:if test="${access.canViewSimBrief && (!empty sbPackage)}">
 <tr class="title caps">
  <td colspan="2">SimBrief BRIEFING PACKAGE DATA</td>
 </tr>
@@ -364,7 +363,6 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span></td>
 </tr>
 </c:forEach>
-</c:if>
 </c:if>
 <content:browser human="true">
 <tr class="title">
