@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
@@ -8,8 +8,8 @@ package org.deltava.beans.system;
  * @since 9.0
  */
 
-public enum IssueArea implements org.deltava.beans.ComboAlias {
-	WEBSITE("Web Site"), FLEET("Fleet Library"), MANUALS("Documentation"), EXAMS("Examinations"), ACARS("ACARS"), SERVER("Server Administration"), SCHEDULE("Flight Schedule"), DISPATCH("Dispatch");
+public enum IssueArea implements org.deltava.beans.EnumDescription {
+	WEBSITE("Web Site"), FLEET("Fleet Library"), MANUALS("Documentation"), EXAMS("Examinations"), ACARS("ACARS"), SERVER("Server Administration"), SCHEDULE("Flight Schedule"), DISPATCH("Dispatch"), EVENT("Event Software");
 	
 	private final String _desc;
 
@@ -21,10 +21,7 @@ public enum IssueArea implements org.deltava.beans.ComboAlias {
 		_desc = desc;
 	}
 	
-	/**
-	 * Returns a propercased description.
-	 * @return the description
-	 */
+	@Override
 	public String getDescription() {
 		return _desc;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -62,17 +62,18 @@ public final class IssueAccessControl extends AccessControl {
 		// Determine state variables
 		int userID = _ctx.getUser().getID();
 		boolean isOpen = (_i.getStatus() == IssueStatus.OPEN);
-		boolean isMine = ((_i.getAuthorID() == userID) || (_i.getAssignedTo() == userID));
+		boolean isAssigned = (_i.getAssignedTo() == userID);
+		boolean isMine = (_i.getAuthorID() == userID) || isAssigned;
 		
 		// Check read access
-		_canRead = (isOurAirline || isDev) && ((_i.getSecurity() == IssueSecurity.STAFF) ? isStaff : true);
+		_canRead = isMine || ((isOurAirline || isDev) && ((_i.getSecurity() == IssueSecurity.STAFF) ? isStaff : true));
 		boolean canReopen = (!isOpen && isMine) || isDev;
 
 		// Set access control variables
 		_canComment = _ctx.isUserInRole("Pilot") && _canRead && (isOpen || canReopen);
 		_canEdit = _canRead && ((isMine && isOpen) || isDev);
-		_canResolve = isDev || (isOurAirline && _ctx.isUserInRole("Operations"));
-		_canReassign = isDev && isOpen;
+		_canResolve = isDev || isAssigned || (isOurAirline && _ctx.isUserInRole("Operations"));
+		_canReassign = (isDev || isAssigned) && isOpen;
 	}
 
 	/**
