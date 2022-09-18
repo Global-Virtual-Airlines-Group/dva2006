@@ -611,9 +611,9 @@
 	<issue_track>
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">
-			<version>2.2</version>
 			<version>3.4</version>
-			<version>9.0</version>
+			<version>3.5</version>
+			<version>10.0</version>
 		</list>
 		
 		<assignto>
@@ -625,6 +625,7 @@
 			<acars type="Integer">43</acars>
 			<schedule type="Integer">43</schedule>
 			<dispatch type="Integer">43</dispatch>
+			<event type="Integer">8920</event>
 		</assignto>
 	</issue_track>
 	
