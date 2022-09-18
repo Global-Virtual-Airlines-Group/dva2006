@@ -67,6 +67,7 @@ public class FindFlightCommand extends AbstractCommand {
 				RoutePair lf3 = pireps.get(2);
 				if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
 					criteria.setAirportD(lf.getAirportA());
+					criteria.setMaxResults(25);
 					ctx.setAttribute("fafCriteria", criteria, SESSION);			
 				}
 			}
