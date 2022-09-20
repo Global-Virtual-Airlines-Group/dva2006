@@ -1,11 +1,11 @@
-// Copyright 2004, 2005, 2006, 2008, 2013, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2013, 2015, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An interface to store ACARS Flags constants.
  * @author Luke
  * @author Rahul
- * @version 8.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -13,9 +13,9 @@ public enum ACARSFlags {
 	PAUSED(0), TOUCHDOWN(1), PARKED(2), ONGROUND(3), SP_ARMED(4), GEARDOWN(5), AFTERBURNER(6),
 	AP_GPS(8), AP_NAV(9), AP_HDG(10), AP_APR(11), AP_ALT(12), AT_IAS(13), AT_MACH(14),
 	PUSHBACK(15), STALL(16), OVERSPEED(17), CRASH(18), AT_VNAV(19), AP_LNAV(20),
-	REVERSE(21),
-	AT_FLCH(22), 
-	AP_MGVERT(23); // AP_MGVERT is a special mode that indicates FLCH or VNAV with manual throttle - map the AT_???? modes to AP_????
+	REVERSE(21), AT_FLCH(22), 
+	AP_MGVERT(23), // AP_MGVERT is a special mode that indicates FLCH or VNAV with manual throttle - map the AT_???? modes to AP_???? 
+	SPOILERS(24);
 	
 	private static final int AP_ANY = AP_GPS.getMask() | AP_NAV.getMask() | AP_HDG.getMask() | AP_APR.getMask() | AP_ALT.getMask() | AP_LNAV.getMask();
 	private static final int AT_ANY = AT_FLCH.getMask() | AT_VNAV.getMask() | AT_IAS.getMask() | AT_MACH.getMask();
