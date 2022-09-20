@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 10.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -839,9 +839,11 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
 		if (isFlagSet(ACARSFlags.GEARDOWN) && !isFlagSet(ACARSFlags.ONGROUND))
 			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
-		if (isFlagSet(ACARSFlags.SP_ARMED)) {
+		if (isFlagSet(ACARSFlags.SP_ARMED) || isFlagSet(ACARSFlags.SPOILERS)) {
 			buf.append("<span class=\"ita\">");
 			buf.append(isFlagSet(ACARSFlags.ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
+			if (isFlagSet(ACARSFlags.SP_ARMED))
+				buf.append(" ARMED");
 			buf.append("</span><br />");
 		}
 
