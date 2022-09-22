@@ -71,6 +71,7 @@ public class PackageRefreshService extends WebService {
 				sbdata.setSimBriefID(pkg.getSimBriefID());
 				sbdata.setURL(pkg.getURL());
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated SimBrief package");
+				isUpdated = true;
 				
 				// Update route if necessary
 				if (!sbdata.getRoute().equals(fr.getRoute())) {
