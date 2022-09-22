@@ -72,10 +72,16 @@ public class PackageRefreshService extends WebService {
 				sbdata.setURL(pkg.getURL());
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated SimBrief package");
 				
+				// Update route if necessary
+				if (!sbdata.getRoute().equals(fr.getRoute())) {
+					fr.setRoute(sbdata.getRoute());
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated flight route via SimBrief");
+				}
+				
 				// Write the data
 				ctx.startTX();
 				SetFlightReport frwdao = new SetFlightReport(con);
-				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
+				frwdao.write(fr, ctx.getDB());
 				frwdao.writeSimBrief(sbdata);
 				ctx.commitTX();
 			}
