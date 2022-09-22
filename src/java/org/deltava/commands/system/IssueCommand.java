@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -217,12 +217,19 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			}
 
 			// Get developers
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Collection<Pilot> devs = new HashSet<Pilot>();
 			Collection<?> apps = ((Map<?, ?>) SystemData.getObject("apps")).values();
 			for (Iterator<?> it = apps.iterator(); it.hasNext();) {
 				AirlineInformation aInfo = (AirlineInformation) it.next();
 				devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
+			}
+			
+			// Get assignee (it may not be a dev)
+			if (i != null) {
+				UserData aud = uddao.get(i.getAssignedTo());
+				devs.add(pdao.get(aud));
 			}
 
 			// Save developers in request
@@ -231,7 +238,6 @@ public class IssueCommand extends AbstractAuditFormCommand {
 
 			// Get the Pilots posting in this issue
 			if (!isNew) {
-				GetUserData uddao = new GetUserData(con);
 				UserDataMap udm = uddao.get(getPilotIDs(i));
 				ctx.setAttribute("userData", udm, REQUEST);
 				ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
