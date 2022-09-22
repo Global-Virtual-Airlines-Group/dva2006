@@ -335,7 +335,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append("<br />");
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
 			if (_dispatcher == DispatchType.DISPATCH) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
-			if (_dispatcher == DispatchType.SIMBRIEF) buf.append("<span class=\"bld\">SIMBRIEF</span> ");
+			if (_dispatcher == DispatchType.SIMBRIEF) buf.append("<span class=\"bld\">PLANNED WITH SIMBRIEF</span> ");
 			if (_busy) buf.append("<span class=\"error bld\">BUSY</span> ");
 			if (sterileCockpit) buf.append("<span class=\"ter bld\">STERILE COCKPIT</span>");
 		}
