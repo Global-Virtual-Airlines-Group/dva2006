@@ -484,6 +484,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				ctx.setAttribute("departureTime", zdt, REQUEST);
+				ctx.setAttribute("departureTimeUTC", ZonedDateTime.ofInstant(zdt.toInstant(), ZoneOffset.UTC), REQUEST);
 			}
 			
 			// Calculate the average time between the airports and user's networks
