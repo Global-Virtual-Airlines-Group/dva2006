@@ -340,7 +340,7 @@ golgotha.local.showRunwayChoices = function() {
  <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.local.sbSubmit()" /></td>
 </tr>
 </c:if>
-<c:if test="${access.canViewSimBrief && (!empty sbPackage)}">
+<c:if test="${access.canViewSimBrief && (!empty sbPackage) && fn:isDraft(pirep)}">
 <tr class="title caps">
  <td colspan="2">SimBrief BRIEFING PACKAGE DATA</td>
 </tr>
@@ -671,8 +671,8 @@ golgotha.local.sbBriefingText = function() {
 <el:text name="pax" type="hidden" value="${pirep.passengers}" />
 <el:text name="date" type="hidden" value="${fn:upper(fn:dateFmt(departureTime,'ddMMMyy'))}" />
 <el:text name="etopsrule" type="hidden" value="${acPolicy.ETOPS.time}" />
-<el:text name="deph" type="hidden" value="${pirep.timeD.hour}" />
-<el:text name="depm" type="hidden" value="${pirep.timeD.minute}" />
+<el:text name="deph" type="hidden" value="${departureTimeUTC.hour}" />
+<el:text name="depm" type="hidden" value="${departureTimeUTC.minute}" />
 <el:text name="steh" type="hidden" value="${pirep.duration.toHoursPart()}" />
 <el:text name="stem" type="hidden" value="${pirep.duration.toMinutesPart()}" />
 <el:text name="units" type="hidden" value="${pilot.weightType}S" />
