@@ -174,6 +174,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td colspan="4"><el:button type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
 </tr>
 </el:table>
+<el:text name="doSearch" type="hidden" value="true" />
 </el:form>
 <c:if test="${!empty fafResults}">
 <el:form method="post" action="buildassign.do" validate="return golgotha.form.wrap(golgotha.ff.buildValidate, this)">

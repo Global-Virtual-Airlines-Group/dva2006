@@ -40,6 +40,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ctx.setAttribute("hours", ScheduleSearchCriteria.HOURS, REQUEST);
 		
 		// Init search criteria
+		boolean isSearch = Boolean.parseBoolean(ctx.getParameter("doSearch"));
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
 		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
@@ -58,17 +59,19 @@ public class FindFlightCommand extends AbstractCommand {
 				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
 			
 			// Load recent PIREPs to see if we have a connected logbook
-			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.setQueryMax(10);
-			List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC", ctx.getDB())).stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).collect(Collectors.toList());
-			if ((pireps.size() > 2) && (criteria.getAirportD() == null)) {
-				RoutePair lf = pireps.get(0);
-				RoutePair lf2 = pireps.get(1);
-				RoutePair lf3 = pireps.get(2);
-				if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
-					criteria.setAirportD(lf.getAirportA());
-					criteria.setMaxResults(25);
-					ctx.setAttribute("fafCriteria", criteria, SESSION);			
+			if (!isSearch) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				frdao.setQueryMax(10);
+				List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC", ctx.getDB())).stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).collect(Collectors.toList());
+				if ((pireps.size() > 2) && (criteria.getAirportD() == null)) {
+					RoutePair lf = pireps.get(0);
+					RoutePair lf2 = pireps.get(1);
+					RoutePair lf3 = pireps.get(2);
+					if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
+						criteria.setAirportD(lf.getAirportA());
+						criteria.setMaxResults(25);
+						ctx.setAttribute("fafCriteria", criteria, SESSION);			
+					}
 				}
 			}
 
@@ -93,7 +96,7 @@ public class FindFlightCommand extends AbstractCommand {
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/findAflight.jsp");
-		if (ctx.getParameter("airline") == null) {
+		if (!isSearch) {
 			result.setSuccess(true);
 			return;
 		}
