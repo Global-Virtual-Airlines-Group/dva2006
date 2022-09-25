@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 10.0
  */
 
@@ -542,9 +542,9 @@ public class FlightSubmissionHelper {
 		if (possibleTours.isEmpty()) return;
 
 		// Load flights within the range of the Tours
-		Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow());
+		Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow()).minusSeconds(86400);
 		Duration d = Duration.between(minDate, _fr.getSubmittedOn());
-		Collection<FlightReport> oldPireps = prdao.getLogbookCalendar(_fr.getAuthorID(), _db, minDate, (int)d.toDaysPart() + 1);
+		Collection<FlightReport> oldPireps = prdao.getLogbookCalendar(_fr.getAuthorID(), _db, minDate, (int)d.toDaysPart() + 2);
 		
 		// Init the helper and validate - if multiple Tours validate, select the one with the highest leg
 		TourFlightHelper tfh = new TourFlightHelper(_fr, true);
