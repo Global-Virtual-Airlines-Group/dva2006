@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Flight Tour - ${tour.name}</title>
@@ -149,7 +150,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <script async>
 const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:pr, text:{value:'', className:'pri', style:{color:'#000000'}}, fill:pr});
-golgotha.local.pb.setText(${barPct} + '% complete');
+golgotha.local.pb.setText(${Math.round(barPct * 10) / 10.0} + '% complete');
 golgotha.local.pb.set(${barPct} / 100.0);
 </script></c:if>
 </body>
