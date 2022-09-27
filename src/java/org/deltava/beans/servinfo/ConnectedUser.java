@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 3.4
  */
 
@@ -20,6 +20,9 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	private String _server;
 	private Instant _loginTime;
 	
+	/**
+	 * The user's position, or null if not set.
+	 */
 	protected GeoLocation _position;
 	
 	/**
@@ -48,6 +51,14 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns if the User has a location set.
+	 * @return TRUE if a location has been set, otherwise FALSE
+	 */
+	public boolean hasLocation() {
+		return (_position != null);
 	}
 	
 	/**
