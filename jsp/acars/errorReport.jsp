@@ -67,7 +67,7 @@
 </c:if>
 <tr>
  <td class="label">Reported from</td>
- <td class="data">${err.remoteAddr} (${err.remoteHost})<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if></td>
+ <td class="data"><fmt:ipaddr addr="${err}" info="${ipInfo}" showFlag="true" /></td>
 </tr>
 <c:if test="${!empty err.stackDump && !err.isInfo}">
 <tr>
