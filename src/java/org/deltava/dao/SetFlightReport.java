@@ -3,6 +3,8 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
@@ -592,13 +594,20 @@ public class SetFlightReport extends DAO {
 		buf.append(".PIREP_STATUS_HISTORY (ID, AUTHOR_ID, UPDATE_TYPE, CREATEDON, DESCRIPTION) VALUES (?, ?, ?, ?, ?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			Instant lastUpdateTime = Instant.MIN;
 			for (FlightHistoryEntry upd : upds) {
+				Instant updDate = upd.getDate().truncatedTo(ChronoUnit.MILLIS);
+				if (!updDate.isAfter(lastUpdateTime))
+					updDate = lastUpdateTime.plusMillis(5);
+				
+				// Write the data
 				ps.setInt(1, upd.getID());
 				ps.setInt(2, upd.getAuthorID());
 				ps.setInt(3, upd.getType().ordinal());
-				ps.setTimestamp(4, createTimestamp(upd.getDate()));
+				ps.setTimestamp(4, createTimestamp(updDate));
 				ps.setString(5, upd.getDescription());
 				ps.addBatch();
+				lastUpdateTime = updDate;
 			}
 			
 			executeUpdate(ps, 1, upds.size());
