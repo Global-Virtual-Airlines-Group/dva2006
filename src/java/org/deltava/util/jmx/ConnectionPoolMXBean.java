@@ -1,18 +1,26 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
+import java.time.Instant;
+
 import javax.management.MXBean;
 
 /**
  * An interface for JMX Beans that monitor a JDBC connection pool.
  * @author Luke
- * @version 2.4
- * @since 2.4
+ * @version 10.3
+ * @since 10.2
  */
 
 @MXBean
 public interface ConnectionPoolMXBean {
 
+	/**
+	 * The last update time.
+	 * @return the update date/time
+	 */
+	public Instant getUpdateTime();
+	
 	/**
 	 * Returns a collection of connection information.
 	 * @return a Collection of ConnectionMBeans
