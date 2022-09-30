@@ -6,10 +6,10 @@ import java.time.Instant;
 import org.gvagroup.jdbc.ConnectionInfo;
 
 /**
- * 
+ * A JMX bean for JDBC connection information.
  * @author Luke
- * @version 2.4
- * @since 2.4
+ * @version 10.2
+ * @since 10.2
  */
 
 public class ConnectionMBeanImpl implements ConnectionMBean {
