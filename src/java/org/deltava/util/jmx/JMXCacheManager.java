@@ -35,8 +35,8 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	}
 	
 	@Override
-	public Instant getUpdateTime() {
-		return _lastUpdated;
+	public Date getUpdateTime() {
+		return new Date(_lastUpdated.toEpochMilli());
 	}
 
 	@Override
