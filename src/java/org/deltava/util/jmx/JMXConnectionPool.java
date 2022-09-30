@@ -38,8 +38,8 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 	}
 	
 	@Override
-	public Instant getUpdateTime() {
-		return _lastUpdated;
+	public Date getUpdateTime() {
+		return new Date(_lastUpdated.toEpochMilli());
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
-import java.time.Instant;
+import java.util.Date;
 
 import javax.management.MXBean;
 
@@ -19,7 +19,7 @@ public interface ConnectionPoolMXBean {
 	 * The last update time.
 	 * @return the update date/time
 	 */
-	public Instant getUpdateTime();
+	public Date getUpdateTime();
 	
 	/**
 	 * Returns a collection of connection information.
