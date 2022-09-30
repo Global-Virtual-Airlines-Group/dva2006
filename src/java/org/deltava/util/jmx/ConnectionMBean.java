@@ -4,8 +4,8 @@ package org.deltava.util.jmx;
 /**
  * A JMX bean interface for JDBC connection information.
  * @author Luke
- * @version 2.4
- * @since 2.4
+ * @version 10.2
+ * @since 10.2
  */
 
 public interface ConnectionMBean {
