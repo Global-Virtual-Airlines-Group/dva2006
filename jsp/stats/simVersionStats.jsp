@@ -96,8 +96,8 @@
 <c:if test="${hasMSFS}">
  <td class="small"><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${eLegs['FS2020'] * 100.0 / stat.legs}" />%)</td>
 </c:if>
- <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}"> + </c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if>
-<c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}"> + </c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" className="ita" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if>
+<c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11'] + eLegs['XP12']) * 100.0 / stat.legs}" />%)</td>
 <c:if test="${!hasP3D && !hasMSFS}">
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" />&nbsp;<c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" />&nbsp;</c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
 <c:set var="otherLegs" value="${eLegs['UNKNOWN']}" scope="page" />
@@ -123,7 +123,7 @@
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:{color:'black',fontName:'Verdana',fontSize:8}}};
 golgotha.local.charts.lgStyle = golgotha.local.charts.hStyle.textStyle;
-google.charts.load('current', {'packages':['corechart']});
+google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const xmlreq = new XMLHttpRequest();
@@ -143,11 +143,11 @@ golgotha.local.showChart = function() {
 golgotha.local.renderChart = function() {
     const data = new google.visualization.DataTable();
     data.addColumn('string','Month');
+    data.addColumn('number','FS2020');
+    data.addColumn('number','X-Plane');
     data.addColumn('number','Prepar3D');
     data.addColumn('number','FSX');
     data.addColumn('number','FS2004');
-    data.addColumn('number','X-Plane');
-    data.addColumn('number','FS2020');
     data.addColumn('number','FS2002');
     data.addColumn('number','Other');
     data.addRows(golgotha.local.chartData);
