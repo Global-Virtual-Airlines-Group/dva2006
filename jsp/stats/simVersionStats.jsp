@@ -77,7 +77,7 @@
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
 <c:set var="has64" value="${eLegs['P3Dv4'] > 0}" scope="page" />
 <c:set var="hasP3D3" value="${eLegs['P3D'] > 0}" scope="page" />
-<c:set var="hasXP11" value="${eLegs['XP12'] > 0}" scope="page" />
+<c:set var="hasXP12" value="${eLegs['XP12'] > 0}" scope="page" />
 <c:set var="hasXP11" value="${eLegs['XP11'] > 0}" scope="page" />
 <c:set var="hasXP10" value="${eLegs['XP10'] > 0}" scope="page" />
 <c:set var="hasFS2K" value="${eLegs['FS2000'] > 0}" scope="page" />
