@@ -65,6 +65,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("5430N02000W"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("17VOR"));
 	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
    }
    

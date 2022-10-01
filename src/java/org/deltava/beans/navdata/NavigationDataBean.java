@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -160,9 +160,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		if (tmpResult == 0) tmpResult = _type.compareTo(nb2._type);
 		if (tmpResult == 0) {
 			GeoPosition gp = new GeoPosition(0, 0);
-			int d1 = gp.distanceTo(this);
-			int d2 = gp.distanceTo(nb2);
-			tmpResult = Integer.compare(d1, d2);
+			tmpResult = Integer.compare(gp.distanceTo(this), gp.distanceTo(nb2));
 		}
 
 		return tmpResult;
@@ -214,17 +212,11 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		return buf.toString();
 	}
 
-	/**
-	 * Returns the code's hash code.
-	 */
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 
-	/**
-	 * Checks for equality by comparing the codes.
-	 */
 	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof NavigationDataBean) ? (compareTo((NavigationDataBean) o2) == 0) : false;
@@ -307,7 +299,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 			return CodeType.CODE;
 		if (!Character.isDigit(code.charAt(0)))
 			return CodeType.CODE;
-		if (!Character.isLetter(code.charAt(code.length() - 1)))
+		if ("NSEW".indexOf(code.charAt(code.length() - 1)) == -1)
 			return CodeType.CODE;
 		
 		// Check for slash
