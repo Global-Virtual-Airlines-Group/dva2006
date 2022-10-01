@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.stats.RouteOnTime;
 import org.deltava.beans.simbrief.BriefingPackage;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -96,6 +97,7 @@ public class SetFlightReport extends DAO {
 			throw new DAOException(se);
 		} finally {
 			CacheManager.invalidate("Pilots", Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT)));
+			CacheManager.invalidate("OnTimeRoute", RouteOnTime.createKey(pirep, db));
 		}
 	}
 
