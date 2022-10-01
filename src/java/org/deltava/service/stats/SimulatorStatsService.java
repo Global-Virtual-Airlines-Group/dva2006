@@ -1,4 +1,4 @@
-// Copyright 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to graph simulator version statistics.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 7.4
  */
 
@@ -46,11 +46,11 @@ public class SimulatorStatsService extends WebService {
 			Map<String, Integer> legs = e.getVersionLegs();
 			JSONArray ma = new JSONArray();
 			ma.put(e.getLabel());
+			ma.put(legs.getOrDefault("FS2020", ZERO).intValue());
+			ma.put(legs.getOrDefault("XP10", ZERO).intValue() + legs.getOrDefault("XP11", ZERO).intValue() + legs.getOrDefault("XP12", ZERO).intValue());
 			ma.put(legs.getOrDefault("P3D", ZERO).intValue() + legs.getOrDefault("P3Dv4", ZERO).intValue());
 			ma.put(legs.getOrDefault("FSX", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS9", ZERO).intValue());
-			ma.put(legs.getOrDefault("XP10", ZERO).intValue() + legs.getOrDefault("XP11", ZERO).intValue());
-			ma.put(legs.getOrDefault("FS2020", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS2002", ZERO).intValue());
 			ma.put(legs.getOrDefault("UNKNOWN", ZERO).intValue() + legs.getOrDefault("FS2000", ZERO).intValue());
 			ja.put(ma);
@@ -69,10 +69,6 @@ public class SimulatorStatsService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
