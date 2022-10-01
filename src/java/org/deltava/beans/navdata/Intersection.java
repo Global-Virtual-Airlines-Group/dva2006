@@ -1,10 +1,10 @@
-// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 1.0
  */
 
