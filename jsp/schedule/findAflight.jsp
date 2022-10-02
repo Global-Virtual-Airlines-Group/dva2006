@@ -177,11 +177,12 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <el:text name="doSearch" type="hidden" value="true" />
 </el:form>
 <c:if test="${!empty fafResults}">
+<c:set var="cspan" value="${hasLastFlown ? 9 : 10}" scope="page" />
 <el:form method="post" action="buildassign.do" validate="return golgotha.form.wrap(golgotha.ff.buildValidate, this)">
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS</td>
+ <td colspan="${cspan}" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS</td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -193,8 +194,11 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td style="width:8%">DEPARTS</td>
  <td class="nophone" style="width:8%">ARRIVES</td>
  <td class="nophone" style="width:6%">LENGTH</td>
- <td class="nophone" style="width:5%">ROUTES</td>
+ <td class="nophone" style="width:5%" title="ACARS Dispatch Routes">ROUTES</td>
  <td class="nophone">DISTANCE</td>
+<c:if test="${hasLastFlight}" >
+ <td class="nophone">FLOWN</td>
+</c:if>
 </tr>
 
 <!-- Search Results -->
@@ -218,12 +222,15 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td class="small nophone"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
+<c:if test="${hasLastFlight}" >
+ <td class="pri bld nophone"<c:if test="${!empty flight.lastFlownOn}"> title="Last flown on <fmt:date date="${flight.lastFlownOn}" fmt="d" />"</c:if>><fmt:int value="${flight.flightCount}" /></td>
+</c:if>
 </view:row>
 </c:forEach>
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" /> <el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;<el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
+ <td colspan="${cspan}">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" /> <el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;<el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
