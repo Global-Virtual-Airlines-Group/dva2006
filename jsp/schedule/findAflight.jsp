@@ -165,7 +165,7 @@ golgotha.onDOMReady(function() {
  <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" />
 <span id="historicOpts"><br />
-Historic Flights - <el:combo name="historicOnly" options="${inclusionOpts}" value="${param.historicOnly}" size="1" idx="*" /></span></td>
+Historic Flights - <el:combo name="historicOnly" options="${inclusionOpts}" value="${fafCriteria.excludeHistoric}" size="1" idx="*" /></span></td>
  <td class="label top">ACARS Dispatch</td>
  <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
 Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" value="${fafCriteria.dispatchOnly}" size="1" idx="*" /></td>
