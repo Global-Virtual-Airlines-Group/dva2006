@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -218,9 +218,9 @@ public class GetScheduleSearch extends GetSchedule {
 		if (ssc.getLastFlownInterval() > -1)
 			havingParams.add(" (LF > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 		
-		StringBuilder buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
+		StringBuilder buf = new StringBuilder("SELECT S.*, (SELECT COUNT(R.ID) FROM acars.ROUTES R WHERE (S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(formatDBName(ssc.getDBName()));
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(".SCHEDULE S LEFT JOIN ");
 		buf.append(formatDBName(ssc.getDBName()));
 		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
 		if (!StringUtils.isEmpty(spm.getSQL()))
@@ -266,9 +266,9 @@ public class GetScheduleSearch extends GetSchedule {
 		
 		// Load the route pairs that match the criteria
 		String db = formatDBName(ssc.getDBName());
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, (SELECT COUNT(R.ID) FROM acars.ROUTES R WHERE (S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(".SCHEDULE S LEFT JOIN ");
 		buf.append(db);		
 		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
 		if (!StringUtils.isEmpty(spm.getSQL()))
@@ -304,9 +304,9 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Load all of the flights that match each route pair and the criteria
-		buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
+		buf = new StringBuilder("SELECT S.*, (SELECT COUNT(R.ID) FROM acars.ROUTES R WHERE (S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(".SCHEDULE S LEFT JOIN ");
 		buf.append(db);
 		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
 		if (!StringUtils.isEmpty(spm.getSQL()))
