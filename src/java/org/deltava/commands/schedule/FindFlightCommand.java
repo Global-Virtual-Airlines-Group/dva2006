@@ -185,6 +185,7 @@ public class FindFlightCommand extends AbstractCommand {
 				ctx.setAttribute("scheduleSources", srcs.stream().filter(srcInfo -> resultSources.contains(srcInfo.getSource())).collect(Collectors.toMap(ScheduleSourceInfo::getSource, Function.identity())), REQUEST);
 				ctx.setAttribute("fafResults", results, SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("hasLastFlight", Boolean.valueOf(results.stream().allMatch(ScheduleSearchEntry.class::isInstance)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
