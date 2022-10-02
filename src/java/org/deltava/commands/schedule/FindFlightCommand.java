@@ -40,11 +40,19 @@ public class FindFlightCommand extends AbstractCommand {
 		ctx.setAttribute("hours", ScheduleSearchCriteria.HOURS, REQUEST);
 		
 		// Init search criteria
+		ScheduleSearchCriteria ssc = (ScheduleSearchCriteria) ctx.getSession().getAttribute("fafCriteria");
 		boolean isSearch = Boolean.parseBoolean(ctx.getParameter("doSearch"));
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		int fn = Math.max(0, StringUtils.parse(ctx.getParameter("flightNumber"), 0));
 		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
-		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
-		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+		if (ssc != null) {
+			ssc.setAirline(a);
+			ssc.setFlightNumber(fn);
+			ssc.setLeg(leg);
+		} else
+			ssc = new ScheduleSearchCriteria(a, fn, leg);
+		
+		ssc.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 
 		// Get the airline and the airports
 		Collection<Aircraft> allEQ = new ArrayList<Aircraft>();
@@ -55,25 +63,25 @@ public class FindFlightCommand extends AbstractCommand {
 			GetScheduleAirport adao = new GetScheduleAirport(con);
 			Collection<Airport> airports = adao.getOriginAirports(a);
 			ctx.setAttribute("airports", airports, REQUEST);
-			if (ctx.getParameter("airline") == null)
-				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
 			
 			// Load recent PIREPs to see if we have a connected logbook
 			if (!isSearch) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				frdao.setQueryMax(10);
 				List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC", ctx.getDB())).stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).collect(Collectors.toList());
-				if ((pireps.size() > 2) && (criteria.getAirportD() == null)) {
+				if ((pireps.size() > 2) && (ssc.getAirportD() == null)) {
 					RoutePair lf = pireps.get(0);
 					RoutePair lf2 = pireps.get(1);
 					RoutePair lf3 = pireps.get(2);
 					if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
-						criteria.setAirportD(lf.getAirportA());
-						criteria.setMaxResults(25);
-						ctx.setAttribute("fafCriteria", criteria, SESSION);			
+						ssc.setAirportD(lf.getAirportA());
+						ssc.setMaxResults(25);
+						ctx.setAttribute("fafCriteria", ssc, SESSION);
+						ctx.setAttribute("airportsA", adao.getConnectingAirports(ssc.getAirportD(), true, a), REQUEST);
 					}
 				}
-			}
+			} else if (ctx.getParameter("airline") == null)
+				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
 
 			// Get the equipment types
 			GetAircraft acdao = new GetAircraft(con);
@@ -102,34 +110,34 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Populate the search criteria from the request
-		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
-		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("distRange"), 150));
-		criteria.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
-		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
-		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
-		criteria.setDBName(ctx.getDB());
-		criteria.setCheckDispatchRoutes(Boolean.parseBoolean(ctx.getParameter("checkDispatch")));
-		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
-		criteria.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
-		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
-		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
-		criteria.setPilotID(ctx.getUser().getID());
-		criteria.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
-		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
-		criteria.setNotVisitedD(Boolean.parseBoolean(ctx.getParameter("nVD")));
-		criteria.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("nVA")));
-		criteria.setMaxResults(Math.max(0, Math.min(criteria.getMaxResults(), 500)));
+		ssc.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+		ssc.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
+		ssc.setDistanceRange(StringUtils.parse(ctx.getParameter("distRange"), 150));
+		ssc.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
+		ssc.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
+		ssc.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
+		ssc.setDBName(ctx.getDB());
+		ssc.setCheckDispatchRoutes(Boolean.parseBoolean(ctx.getParameter("checkDispatch")));
+		ssc.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
+		ssc.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
+		ssc.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
+		ssc.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
+		ssc.setPilotID(ctx.getUser().getID());
+		ssc.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
+		ssc.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
+		ssc.setNotVisitedD(Boolean.parseBoolean(ctx.getParameter("nVD")));
+		ssc.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("nVA")));
+		ssc.setMaxResults(Math.max(0, Math.min(ssc.getMaxResults(), 500)));
 
 		// Set equipment type(s)
 		final String f = ctx.getParameter("family");
 		if (Boolean.parseBoolean(ctx.getParameter("myEQTypes")))
-			criteria.setEquipmentTypes(ctx.getUser().getRatings());
+			ssc.setEquipmentTypes(ctx.getUser().getRatings());
 		else if (!StringUtils.isEmpty(f) && !"-".equals(f)) {
-			criteria.setEquipmentTypes(allEQ.stream().filter(ac -> f.equalsIgnoreCase(ac.getFamily())).map(Aircraft::getName).collect(Collectors.toSet()));
+			ssc.setEquipmentTypes(allEQ.stream().filter(ac -> f.equalsIgnoreCase(ac.getFamily())).map(Aircraft::getName).collect(Collectors.toSet()));
 			ctx.setAttribute("eqFamily", f, REQUEST);
 		} else
-			criteria.setEquipmentType(ctx.getParameter("eqType"));
+			ssc.setEquipmentType(ctx.getParameter("eqType"));
 
 		// Validate sort criteria
 		String sortType = ctx.getParameter("sortType");
@@ -141,8 +149,8 @@ public class FindFlightCommand extends AbstractCommand {
 			sortType += " DESC";
 
 		// Save the search criteria in the session
-		criteria.setSortBy(sortType);
-		ctx.setAttribute("fafCriteria", criteria, SESSION);
+		ssc.setSortBy(sortType);
+		ctx.setAttribute("fafCriteria", ssc, SESSION);
 
 		// Check if we're doing a new search or returning back existing criteria
 		String opName = (String) ctx.getCmdParameter(OPERATION, "search");
@@ -156,13 +164,13 @@ public class FindFlightCommand extends AbstractCommand {
 
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
-				dao.setQueryMax(criteria.getMaxResults());
+				dao.setQueryMax(ssc.getMaxResults());
 				dao.setSources(srcs);
 
 				// Get destination airports
 				GetScheduleAirport adao = new GetScheduleAirport(con);
-				Collection<Airport> dsts = adao.getConnectingAirports(criteria.getAirportD(), true, criteria.getAirline());
-				if (criteria.getNotVisitedA()) {
+				Collection<Airport> dsts = adao.getConnectingAirports(ssc.getAirportD(), true, ssc.getAirline());
+				if (ssc.getNotVisitedA()) {
 					GetFlightReports frdao = new GetFlightReports(con);
 					Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
 					Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -172,7 +180,7 @@ public class FindFlightCommand extends AbstractCommand {
 					ctx.setAttribute("airportsA", dsts, REQUEST);
 
 				// Save results in the session - since other commands may reference these
-				Collection<ScheduleEntry> results = dao.search(criteria);
+				Collection<ScheduleEntry> results = dao.search(ssc);
 				Collection<ScheduleSource> resultSources = results.stream().map(ScheduleEntry::getSource).collect(Collectors.toSet());  
 				ctx.setAttribute("scheduleSources", srcs.stream().filter(srcInfo -> resultSources.contains(srcInfo.getSource())).collect(Collectors.toMap(ScheduleSourceInfo::getSource, Function.identity())), REQUEST);
 				ctx.setAttribute("fafResults", results, SESSION);
