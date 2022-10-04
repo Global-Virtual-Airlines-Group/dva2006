@@ -82,14 +82,18 @@ public class URLCheckService extends WebService {
 				// Load departure gate
 				GetGates gdao = new GetGates(con);
 				List<Gate> dGates = filter(gdao.getPopularGates(dfr, Simulator.P3Dv4, true), dfr.getAirline(), dgz);
-				if (!dGates.isEmpty())
+				if (!dGates.isEmpty()) {
+					log.info("Departure Gates = " + dGates.stream().map(Gate::getName).collect(Collectors.toSet()));
 					dfr.setGateD(dGates.get(0).getName());
+				}					
 				
 				// Load arrival gate
 				GateZone agz = (dfr.getFlightType() == FlightType.INTERNATIONAL) ? GateZone.INTERNATIONAL : GateZone.DOMESTIC;
 				List<Gate> aGates = filter(gdao.getPopularGates(dfr, Simulator.P3Dv4, false), dfr.getAirline(), agz);
-				if (!aGates.isEmpty())
+				if (!aGates.isEmpty()) {
+					log.info("Arrival Gates = " + aGates.stream().map(Gate::getName).collect(Collectors.toSet()));
 					dfr.setGateA(aGates.get(0).getName());
+				}
 			}
 			
 			// Start transaction
