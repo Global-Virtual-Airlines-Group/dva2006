@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class ImageServlet extends DownloadServlet {
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
 	private enum ImageType implements FileType {
-		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event");
+		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), PARTNER("partner");
 		
 		private final String _urlPart;
 		
@@ -191,6 +191,15 @@ public class ImageServlet extends DownloadServlet {
 					
 					rsp.setHeader("Cache-Control", "private");
 					rsp.setIntHeader("max-age", 60);
+					break;
+					
+				case PARTNER:
+					imgBuffer = dao.getPartnerBanner(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 600);
 					break;
 					
 				case EVENT:
