@@ -1,6 +1,8 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
+import java.time.Instant;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -14,8 +16,9 @@ public class PartnerInfo extends ImageBean {
 
 	private String _name;
 	private String _url;
-	
 	private String _desc;
+	
+	private Instant _lastRefer;
 	private int _referCount;
 	
 	private String _bannerExt;
@@ -62,6 +65,14 @@ public class PartnerInfo extends ImageBean {
 	}
 	
 	/**
+	 * Returns the time of the last partner referral.
+	 * @return the date/time of the last link out
+	 */
+	public Instant getLastRefer() {
+		return _lastRefer;
+	}
+	
+	/**
 	 * Queries if the Partner has a banner image.
 	 * @return TRUE if the partner has an image, otherwise FALSE
 	 */
@@ -99,6 +110,14 @@ public class PartnerInfo extends ImageBean {
 	 */
 	public void setReferCount(int cnt) {
 		_referCount = Math.max(0, cnt);
+	}
+	
+	/**
+	 * Updates the time of the last partner referral.
+	 * @param dt the date/time of the last link out
+	 */
+	public void setLastRefer(Instant dt) {
+		_lastRefer = dt;
 	}
 	
 	/**
