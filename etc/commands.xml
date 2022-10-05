@@ -20,6 +20,24 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="partners">
+		<name>Partner List</name>
+		<class>org.deltava.commands.main.PartnerListCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="partner">
+		<name>Partner Information</name>
+		<class>org.deltava.commands.main.PartnerInfoCommand</class>
+		<roles>Operations</roles>
+	</command>
+
+	<command id="partnerdelete">
+		<name>Partner Information Delete</name>
+		<class>org.deltava.commands.main.PartnerDeleteCommand</class>
+		<roles>Operations</roles>
+	</command>
+
 	<command id="prgroster">
 		<name>Program Metrics</name>
 		<class>org.deltava.commands.admin.ProgramRosterCommand</class>
