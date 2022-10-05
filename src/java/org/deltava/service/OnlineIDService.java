@@ -41,7 +41,7 @@ public class OnlineIDService extends WebService {
 			GetPilotOnline pdao = new GetPilotOnline(ctx.getConnection());
 			pilots.addAll(pdao.getPilots(net));
 		} catch (DAOException de) {
-			throw new ServiceException(500, de.getMessage(), de);
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
