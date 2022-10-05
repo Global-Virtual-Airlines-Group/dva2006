@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.gvagroup.tile.TileAddress;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -114,6 +114,16 @@ public class GetImage extends DAO {
      */
     public byte[] getEventBanner(int id) throws DAOException {
     	return execute(id, "SELECT IMG FROM events.BANNERS WHERE (ID=?) LIMIT 1");
+    }
+
+    /**
+     * Returns a Partner banner image.
+     * @param id the Partner database ID
+     * @return the banner image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getPartnerBanner(int id) throws DAOException {
+    	return execute(id, "SELECT IMG FROM PARTNER_IMGS WHERE (ID=?) LIMIT 1");
     }
     
     /**

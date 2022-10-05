@@ -243,6 +243,10 @@
 		<url-pattern>/gallery/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>dbImage</servlet-name>
+		<url-pattern>/partner/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>sigImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
     </servlet-mapping>
