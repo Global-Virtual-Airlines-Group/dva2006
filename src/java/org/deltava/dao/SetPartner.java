@@ -46,13 +46,18 @@ public class SetPartner extends DAO {
 			
 			// Save image
 			if (pi.isLoaded()) {
-				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PARTNER_IMGS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, ?) LIMIT 1")) {
+				try (PreparedStatement ps = prepare("REPLACE INTO PARTNER_IMGS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, ?)")) {
 					ps.setInt(1, pi.getID());
 					ps.setBlob(2, pi.getInputStream());
 					ps.setInt(3, pi.getWidth());
 					ps.setInt(4, pi.getHeight());
 					ps.setString(5, pi.getTypeName());
 					executeUpdate(ps, 1);
+				}
+			} else if (!isNew) {
+				try (PreparedStatement ps = prepare("DELETE FROM PARTNER_IMGS WHERE (ID=?)")) {
+					ps.setInt(1, pi.getID());
+					executeUpdate(ps, 0);
 				}
 			}
 			
@@ -70,6 +75,20 @@ public class SetPartner extends DAO {
 	 */
 	public void refer(int id) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PARTNERS SET REFERCOUNT=REFERCOUNT+1 WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Partner from the database.
+	 * @param id the Partner database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(int id) throws DAOException {
+		try (PreparedStatement ps = prepare("DELETE FROM PARTNERS WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {

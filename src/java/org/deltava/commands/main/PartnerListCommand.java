@@ -1,10 +1,14 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
+import java.util.*;
+
 import org.deltava.beans.PartnerInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.security.command.PartnerAccessControl;
 
 /**
  * A Web Site Command to display partner organization information.
@@ -33,10 +37,24 @@ public class PartnerListCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set access
+		Map<Integer, PartnerAccessControl> accessMap = new HashMap<Integer, PartnerAccessControl>();
+		for (PartnerInfo p : vc.getResults()) {
+			PartnerAccessControl pac = new PartnerAccessControl(ctx, p);
+			pac.validate();
+			accessMap.put(Integer.valueOf(p.getID()), pac);
+		}
+		
+		// Save access controller
+		PartnerAccessControl ac = new PartnerAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
+		ctx.setAttribute("accessMap", accessMap, REQUEST);
 
 		// Foward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/main/partnerList.jsp");
+		result.setURL("/jsp/main/partners.jsp");
 		result.setSuccess(true);
 	}
 }
