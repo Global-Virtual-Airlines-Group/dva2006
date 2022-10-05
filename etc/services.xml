@@ -34,6 +34,9 @@
 	<!-- Online Event services -->
 	<service id="events" class="org.deltava.service.EventInfoService" />
 
+	<!-- Partner Redirect Service -->
+	<service id="partner" class="org.deltava.service.PartnerRedirectService" />
+
 	<!-- Flight Schedule Services -->
 	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
 	<service id="aircraft" class="org.deltava.service.schedule.AircraftListService" />
