@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title><content:airline /> Partner Information<c:if test="${!empty partner}"> - ${partner.name}</c:if></title>
@@ -17,7 +18,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:4, t:'Partner Name'});
 	golgotha.form.validate({f:f.desc, l:15, t:'Partner Description'});
-	
+	golgotha.form.validate({f:f.img, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -49,6 +50,12 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:file name="img" idx="*" className="small"  size="80" max="144" /><c:if test="${partner.hasBanner}"><br />
 <el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
 </tr>
+<c:if test="${partner.referCount > 0}">
+<tr>
+ <td class="label">Referrals</td>
+ <td class="data"><fmt:int value="${partner.referCount}" className="sec bld" /> referrals, last on <fmt:date date="${partner.lastRefer}" t="HH:mm" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Description</td>
  <td class="data"><el:textbox name="desc" required="true" width="90%" height="3" resize="true">${partner.description}</el:textbox></td> 

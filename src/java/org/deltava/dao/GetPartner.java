@@ -63,9 +63,10 @@ public class GetPartner extends DAO {
 				pi.setURL(rs.getString(3));
 				pi.setDescription(rs.getString(4));
 				pi.setReferCount(rs.getInt(5));
-				pi.setWidth(rs.getInt(6));
-				pi.setHeight(rs.getInt(7));
-				pi.setBannerExtension(rs.getString(8));
+				pi.setLastRefer(toInstant(rs.getTimestamp(6)));
+				pi.setWidth(rs.getInt(7));
+				pi.setHeight(rs.getInt(8));
+				pi.setBannerExtension(rs.getString(9));
 				results.add(pi);
 			}
 		}
