@@ -35,15 +35,15 @@ public class SimBriefParser {
 	
 	/**
 	 * Parses a SimBrief XML briefing package.
-	 * @param r the XML Reader
+	 * @param xml the XML
 	 * @return a SimBrief bean
 	 */
-	public static BriefingPackage parse(Reader r) {
+	public static BriefingPackage parse(String xml) {
 		
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			doc = builder.build(r);
+			doc = builder.build(new StringReader(xml));
 		} catch (IOException | JDOMException ie) {
 			throw new IllegalStateException(ie);
 		}
