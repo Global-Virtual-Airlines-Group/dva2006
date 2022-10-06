@@ -52,7 +52,7 @@ public class GetSimBrief extends DAO {
 				throw new HTTPDAOException(url, statusCode);
 			
 			// Parse the data
-			BriefingPackage sbdata = SimBriefParser.parse(new StringReader(download()));
+			BriefingPackage sbdata = SimBriefParser.parse(download());
 			sbdata.setSimBriefID(id);
 			sbdata.setURL(url);
 			return sbdata;
