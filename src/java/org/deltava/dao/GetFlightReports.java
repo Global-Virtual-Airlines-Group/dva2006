@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.io.StringReader;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
@@ -527,7 +526,7 @@ public class GetFlightReports extends DAO {
 			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					sbdata = SimBriefParser.parse(new StringReader(rs.getString(2)));
+					sbdata = SimBriefParser.parse(rs.getString(2));
 					sbdata.setSimBriefID(rs.getString(1));
 				}
 			}
