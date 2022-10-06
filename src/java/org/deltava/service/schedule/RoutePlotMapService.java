@@ -95,20 +95,16 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Add the departure airport
+			GateHelper gh = new GateHelper(dr, dr.getAirline(), 8, false);
 			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
-				GateZone gz = switch (dr.getFlightType()) {
-					case USPFI -> GateZone.USPFI;
-					case INTERNATIONAL -> GateZone.INTERNATIONAL;
-					default -> GateZone.DOMESTIC;
-				};
-				
-				Collection<Gate> dGates = new LinkedHashSet<Gate>();
-				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim); 
-				dGates.addAll(filter(popGates, dr.getAirline(), gz));
+				gh.addDepartureGates(dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim));
+				List<Gate> dGates = gh.getDepartureGates();
 				if (dGates.size() < 3) {
-					Collection<Gate> allGates = gdao.getGates(dr.getAirportD(), sim);
-					filter(allGates, dr.getAirline(), gz).stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
+					gh.clear();
+					List<Gate> allGates = gdao.getGates(dr.getAirportD(), sim);
+					gh.addDepartureGates(allGates);
+					gh.getDepartureGates().stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
 					if (dGates.isEmpty())
 						allGates.stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
 				}
@@ -197,14 +193,14 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
-				GateZone gz = (dr.getFlightType() == FlightType.INTERNATIONAL) ? GateZone.INTERNATIONAL : GateZone.DOMESTIC;
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				Collection<Gate> aGates = new LinkedHashSet<Gate>();
-				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim);
-				aGates.addAll(filter(popGates, dr.getAirline(), gz));
+				gh.addArrivalGates(dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim));
+				List<Gate> aGates = gh.getArrivalGates();
 				if (aGates.size() < 3) {
+					gh.clear();
 					Collection<Gate> allGates = gdao.getGates(dr.getAirportA(), sim);
-					filter(allGates, dr.getAirline(), gz).stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
+					gh.addArrivalGates(allGates);
+					gh.getArrivalGates().stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
 					if (aGates.isEmpty())
 						allGates.stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
 				}
@@ -401,15 +397,6 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 
 		return SC_OK;
-	}
-	
-	/*
-	 * Helper method to filter gates.
-	 */
-	private static List<Gate> filter(Collection<Gate> gates, Airline a, GateZone gz) {
-		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
-		List<Gate> iGates = fdGates.stream().filter(g -> (g.getZone() == gz)).collect(Collectors.toList());
-		return iGates.isEmpty() ? fdGates : iGates;
 	}
 	
 	/*
