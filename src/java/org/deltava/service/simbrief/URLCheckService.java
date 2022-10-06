@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.*;
@@ -72,26 +72,23 @@ public class URLCheckService extends WebService {
 			}
 			
 			// Load gates if needed
-			if (StringUtils.isEmpty(dfr.getGateD()) && StringUtils.isEmpty(dfr.getGateA())) {
-				GateZone dgz = switch (dfr.getFlightType()) {
-					case USPFI -> GateZone.USPFI;
-					case INTERNATIONAL -> GateZone.INTERNATIONAL;
-					default -> GateZone.DOMESTIC;
-				};
+			if (!dfr.hasGates()) {
+				GetGates gdao = new GetGates(con);
+				GateHelper gh = new GateHelper(dfr, 5, true);
+				gh.addDepartureGates(gdao.getPopularGates(dfr, Simulator.P3Dv4, true));
+				gh.addArrivalGates(gdao.getPopularGates(dfr, Simulator.P3Dv4, false));
 				
 				// Load departure gate
-				GetGates gdao = new GetGates(con);
-				List<Gate> dGates = filter(gdao.getPopularGates(dfr, Simulator.P3Dv4, true), dfr.getAirline(), dgz);
+				List<Gate> dGates = gh.getDepartureGates();
 				if (!dGates.isEmpty()) {
-					log.info("Departure Gates = " + dGates.stream().map(Gate::getName).collect(Collectors.toSet()));
+					log.info("Departure Gates = " + dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
 					dfr.setGateD(dGates.get(0).getName());
-				}					
+				}	
 				
 				// Load arrival gate
-				GateZone agz = (dfr.getFlightType() == FlightType.INTERNATIONAL) ? GateZone.INTERNATIONAL : GateZone.DOMESTIC;
-				List<Gate> aGates = filter(gdao.getPopularGates(dfr, Simulator.P3Dv4, false), dfr.getAirline(), agz);
+				List<Gate> aGates = gh.getArrivalGates();
 				if (!aGates.isEmpty()) {
-					log.info("Arrival Gates = " + aGates.stream().map(Gate::getName).collect(Collectors.toSet()));
+					log.info("Arrival Gates = " + aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
 					dfr.setGateA(aGates.get(0).getName());
 				}
 			}
@@ -135,14 +132,5 @@ public class URLCheckService extends WebService {
 	@Override
 	public final boolean isSecure() {
 		return true;
-	}
-	
-	/*
-	 * Helper method to filter gates.
-	 */
-	private static List<Gate> filter(Collection<Gate> gates, Airline a, GateZone gz) {
-		List<Gate> fdGates = gates.stream().filter(g -> g.hasAirline(a)).collect(Collectors.toList());
-		List<Gate> iGates = fdGates.stream().filter(g -> (g.getZone() == gz)).collect(Collectors.toList());
-		return iGates.isEmpty() ? fdGates : iGates;
 	}
 }
