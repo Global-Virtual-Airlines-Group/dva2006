@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.8
  */
 
@@ -76,6 +76,14 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 */
 	public String getGateA() {
 		return _gateA;
+	}
+	
+	/**
+	 * Returns whether the flight has departure and arrival gates assigned.
+	 * @return TRUE if departure and arrival gates are assigned, otherwise FALSE
+	 */
+	public boolean hasGates() {
+		return !StringUtils.isEmpty(_gateD) && !StringUtils.isEmpty(_gateA);
 	}
 	
 	/**
