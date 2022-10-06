@@ -3,11 +3,16 @@ package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.io.StringReader;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.flight.DraftFlightReport;
-import org.deltava.beans.flight.HistoryType;
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.Simulator;
+import org.deltava.beans.flight.*;
+import org.deltava.beans.navdata.Gate;
+import org.deltava.beans.schedule.GateHelper;
 import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.*;
@@ -27,6 +32,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class PackageRefreshService extends WebService {
+	
+	private static final Logger log = Logger.getLogger(PackageRefreshService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -66,7 +73,7 @@ public class PackageRefreshService extends WebService {
 			String data = sbdao.refresh(pkg.getSimBriefUserID(), fr.getHexID());
 			
 			// Parse the data
-			BriefingPackage sbdata = SimBriefParser.parse(new StringReader(data));
+			BriefingPackage sbdata = SimBriefParser.parse(data);
 			if (sbdata.getCreatedOn().isAfter(pkg.getCreatedOn())) {
 				sbdata.setSimBriefID(pkg.getSimBriefID());
 				sbdata.setURL(pkg.getURL());
@@ -77,6 +84,28 @@ public class PackageRefreshService extends WebService {
 				if (!sbdata.getRoute().equals(fr.getRoute())) {
 					fr.setRoute(sbdata.getRoute());
 					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated flight route via SimBrief");
+				}
+				
+				// If we don't have gates, assign them
+				if (!fr.hasGates()) {
+					GetGates gdao = new GetGates(con);
+					GateHelper gh = new GateHelper(fr, 5, true);
+					gh.addDepartureGates(gdao.getPopularGates(fr, Simulator.P3Dv4, true));
+					gh.addArrivalGates(gdao.getPopularGates(fr, Simulator.P3Dv4, false));
+					
+					// Load departure gate
+					List<Gate> dGates = gh.getDepartureGates();
+					if (!dGates.isEmpty()) {
+						log.info("Departure Gates = " + dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+						fr.setGateD(dGates.get(0).getName());
+					}
+					
+					// Load arrival gate
+					List<Gate> aGates = gh.getArrivalGates();
+					if (!aGates.isEmpty()) {
+						log.info("Arrival Gates = " + aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+						fr.setGateA(aGates.get(0).getName());
+					}
 				}
 				
 				// Write the data
