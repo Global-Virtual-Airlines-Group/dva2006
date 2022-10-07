@@ -4,10 +4,7 @@ package org.deltava.service.simbrief;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
@@ -33,8 +30,6 @@ import org.deltava.util.StringUtils;
 
 public class PackageRefreshService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(PackageRefreshService.class);
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -95,17 +90,13 @@ public class PackageRefreshService extends WebService {
 					
 					// Load departure gate
 					List<Gate> dGates = gh.getDepartureGates();
-					if (!dGates.isEmpty()) {
-						log.info("Departure Gates = " + dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					if (!dGates.isEmpty())
 						fr.setGateD(dGates.get(0).getName());
-					}
 					
 					// Load arrival gate
 					List<Gate> aGates = gh.getArrivalGates();
-					if (!aGates.isEmpty()) {
-						log.info("Arrival Gates = " + aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					if (!aGates.isEmpty())
 						fr.setGateA(aGates.get(0).getName());
-					}
 				}
 				
 				// Write the data
