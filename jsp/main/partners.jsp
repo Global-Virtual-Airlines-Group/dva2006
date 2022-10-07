@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <html lang="en">
 <title><content:airline /> Partners</title>
-<content:expire expires="3600" />
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
