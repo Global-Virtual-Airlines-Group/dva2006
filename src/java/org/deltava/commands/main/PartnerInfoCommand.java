@@ -2,6 +2,7 @@
 package org.deltava.commands.main;
 
 import java.sql.Connection;
+import java.util.Collection;
 
 import org.deltava.beans.*;
 
@@ -10,6 +11,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PartnerAccessControl;
 
+import org.deltava.util.BeanUtils;
+
 /**
  * A Web Site Command to edit virtual airline Partner Information.
  * @author Luke
@@ -17,7 +20,7 @@ import org.deltava.security.command.PartnerAccessControl;
  * @since 10.3
  */
 
-public class PartnerInfoCommand extends AbstractFormCommand {
+public class PartnerInfoCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the profile.
@@ -31,10 +34,17 @@ public class PartnerInfoCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the partner data
+			PartnerInfo p = null, op = null;
 			GetPartner dao = new GetPartner(con);
-			PartnerInfo p = isNew ? new PartnerInfo(ctx.getParameter("name")) : dao.get(ctx.getID());
-			if (!isNew && (p == null))
-				throw notFoundException("Invalid Partner - " + ctx.getID());
+			if (!isNew) {
+				p = dao.get(ctx.getID());
+				if (p == null)
+					throw notFoundException("Invalid Partner - " + ctx.getID());
+
+				op = BeanUtils.clone(p);
+				p.setName(ctx.getParameter("name"));
+			} else
+				p = new PartnerInfo(ctx.getParameter("name"));
 			
 			// Check our access
 			PartnerAccessControl ac = new PartnerAccessControl(ctx, p);
@@ -44,7 +54,6 @@ public class PartnerInfoCommand extends AbstractFormCommand {
 				throw securityException(String.format("Cannot %s Partner Information", isNew? "create" : "edit"));
 			
 			// Update the fields
-			p.setName(ctx.getParameter("name"));
 			p.setURL(ctx.getParameter("url"));
 			p.setDescription(ctx.getParameter("desc"));
 			
@@ -55,14 +64,26 @@ public class PartnerInfoCommand extends AbstractFormCommand {
 			else if (Boolean.parseBoolean(ctx.getParameter("deleteImg")))
 				p.clear();
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(op, p);
+			AuditLog ae = AuditLog.create(p, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Save the partner
 			SetPartner pwdao = new SetPartner(con);
 			pwdao.write(p);
+			
+			// Write the audit log and commit
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 			
 			// Save in request
 			ctx.setAttribute("partner", p, REQUEST);
 			ctx.setAttribute("isCreated", Boolean.valueOf(isNew), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -97,6 +118,7 @@ public class PartnerInfoCommand extends AbstractFormCommand {
 				throw securityException(String.format("Cannot %s Partner Information", isNew? "create" : "edit"));
 			
 			// Save in request
+			readAuditLog(ctx, p);
 			ctx.setAttribute("partner", p, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {

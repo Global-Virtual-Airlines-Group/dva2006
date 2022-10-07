@@ -60,6 +60,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Description</td>
  <td class="data"><el:textbox name="desc" required="true" width="90%" height="3" resize="true">${partner.description}</el:textbox></td> 
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

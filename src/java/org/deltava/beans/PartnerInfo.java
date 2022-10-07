@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
  * @since 10.3
  */
 
-public class PartnerInfo extends ImageBean {
+public class PartnerInfo extends ImageBean implements Auditable {
 
 	private String _name;
 	private String _url;
@@ -30,6 +30,11 @@ public class PartnerInfo extends ImageBean {
 	public PartnerInfo(String name) {
 		super();
 		setName(name);
+	}
+	
+	@Override
+	public String getAuditID() {
+		return getHexID();
 	}
 
 	/**
