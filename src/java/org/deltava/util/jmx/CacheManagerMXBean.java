@@ -21,7 +21,25 @@ public interface CacheManagerMXBean {
 	 * @return the update date/time
 	 */
 	public Date getUpdateTime();
-
+	
+	/**
+	 * Recent cache request count.
+	 * @return the number of cache requests since the last refresh
+	 */
+	public Long getRequests();
+	
+	/**
+	 * Recent cache hit count.
+	 * @return the number of cache hits since the last refresh
+	 */
+	public Long getHits();
+	
+	/**
+	 * Recent cache miss count.
+	 * @return the number of cache misses since the last refresh
+	 */
+	public Long getMisses();
+	
 	/**
 	 * Returns a collection of cache information.
 	 * @return a Collection of CacheMBeans

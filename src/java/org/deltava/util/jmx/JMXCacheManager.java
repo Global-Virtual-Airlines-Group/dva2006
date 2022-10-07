@@ -18,6 +18,9 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	private final String _code;
 	private final Collection<? super CacheMBean> _info = new ArrayList<CacheMBean>();
 	
+	private long _reqs;
+	private long _hits;
+	
 	private Instant _lastUpdated;
 
 	/**
@@ -27,6 +30,21 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	public JMXCacheManager(String code) {
 		super();
 		_code = code;
+	}
+	
+	@Override
+	public Long getHits() {
+		return Long.valueOf(_hits);
+	}
+	
+	@Override
+	public Long getRequests() {
+		return Long.valueOf(_reqs);
+	}
+	
+	@Override
+	public Long getMisses() {
+		return Long.valueOf(_reqs - _hits);
 	}
 	
 	@Override
@@ -42,13 +60,21 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	@Override
 	public synchronized void update() {
 		_info.clear();
-		Collection<CacheInfo> info = CacheManager.getCacheInfo();
-		info.stream().map(CacheMBeanImpl::new).forEach(_info::add);
+		Collection<CacheInfo> info = CacheManager.getCacheInfo(); long reqs = 0; long hits = 0;
+		for (CacheInfo inf : info) {
+			CacheMBean mb = new CacheMBeanImpl(inf);
+			reqs += inf.getRequests();
+			hits += inf.getHits();
+			_info.add(mb);
+		}
+		
+		_reqs = Math.max(0, reqs - _reqs);
+		_hits = Math.max(0, hits - _hits);
 		_lastUpdated = Instant.now();
 	}
 	
 	@Override
 	public String toString() {
-		return _code + " JMX Cache Manager";
+		return String.format("%s JMX Cache Manager", _code);
 	}
 }
