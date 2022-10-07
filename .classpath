@@ -45,6 +45,6 @@
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-3.19.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.30.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.41.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.42.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
