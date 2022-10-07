@@ -74,7 +74,7 @@ public class SetPartner extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void refer(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PARTNERS SET REFERCOUNT=REFERCOUNT+1, LASTREFER=NOW() WHERE (ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PARTNERS SET REFERCOUNT=REFERCOUNT+1, LAST_REFER=NOW() WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
