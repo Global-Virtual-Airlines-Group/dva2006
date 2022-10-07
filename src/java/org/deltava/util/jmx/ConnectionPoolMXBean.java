@@ -22,6 +22,30 @@ public interface ConnectionPoolMXBean {
 	public Date getUpdateTime();
 	
 	/**
+	 * Returns the number of requests since the last update.
+	 * @return the number of connection pool requests
+	 */
+	public Long getRequests();
+	
+	/**
+	 * Returns the current size of the connection pool.
+	 * @return the number of connections
+	 */
+	public Integer getSize();
+	
+	/**
+	 * Returns the length of the maximum connection borrow time since the last refresh.
+	 * @return the borrow time in milliseconds
+	 */
+	public Integer getMaxBorrowTime();
+	
+	/**
+	 * Returns the length of the maximum connection wait time since the last refresh.
+	 * @return the wait time in milliseconds
+	 */
+	public Integer getMaxWaitTime();
+	
+	/**
 	 * Returns a collection of connection information.
 	 * @return a Collection of ConnectionMBeans
 	 */
