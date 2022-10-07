@@ -115,7 +115,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				t.load(new byte[0]);
 
 			// Check audit log
-			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "inputStream", "buffer");
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "buffer");
 			AuditLog ae = AuditLog.create(t, delta, ctx.getUser().getID());
 
 			// Start transaction
