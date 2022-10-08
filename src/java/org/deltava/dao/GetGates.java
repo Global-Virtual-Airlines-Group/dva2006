@@ -39,6 +39,11 @@ public class GetGates extends DAO {
 			fi.setGateA(g);
 	}
 	
+	private static void checkSimulator(Simulator sim) {
+		if ((sim == null) || (sim == Simulator.UNKNOWN))
+			throw new IllegalArgumentException(String.format("Invalid simulator - %s", sim));
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -88,6 +93,7 @@ public class GetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Gate> getGates(ICAOAirport a, Simulator sim) throws DAOException {
+		checkSimulator(sim);
 		
 		// Check the cache
 		String key = String.format("AP-%s-%s", a.getICAO(), sim.name());
@@ -121,6 +127,7 @@ public class GetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Gate> getPopularGates(RoutePair rp, Simulator sim, boolean isDeparture) throws DAOException {
+		checkSimulator(sim);
 		
 		// Get the Gates
 		Airport a = isDeparture ? rp.getAirportD() : rp.getAirportA();
@@ -181,6 +188,7 @@ public class GetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Gate getGate(ICAOAirport a, Simulator sim, String code) throws DAOException {
+		checkSimulator(sim);
 		Collection<Gate> gates = getGates(a, sim);
 		return gates.stream().filter(g -> (g.getName().equals(code))).findAny().orElse(null);
 	}
