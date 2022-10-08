@@ -66,7 +66,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" label="SAVE PARTNER INFORMATION" /></td>
+ <td><el:button type="submit" label="SAVE PARTNER INFORMATION" /><c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="partnerdelete" link="${partner}" label="DELETE PARTNER" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
