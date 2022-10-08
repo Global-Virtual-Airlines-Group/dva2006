@@ -20,6 +20,7 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	
 	private Instant _lastRefer;
 	private int _referCount;
+	private int _priority;
 	
 	private String _bannerExt;
 	
@@ -78,6 +79,14 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	}
 	
 	/**
+	 * Returns the partner priority.
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return _priority;
+	}
+	
+	/**
 	 * Queries if the Partner has a banner image.
 	 * @return TRUE if the partner has an image, otherwise FALSE
 	 */
@@ -123,6 +132,14 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	 */
 	public void setLastRefer(Instant dt) {
 		_lastRefer = dt;
+	}
+	
+	/**
+	 * Updates the partner priority.
+	 * @param p the priority
+	 */
+	public void setPriority(int p) {
+		_priority = Math.max(0, p);
 	}
 	
 	/**

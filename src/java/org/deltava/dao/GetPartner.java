@@ -44,7 +44,7 @@ public class GetPartner extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<PartnerInfo> getPartners() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT P.*, PI.X, PI.Y, PI.EXT FROM PARTNERS P LEFT JOIN PARTNER_IMGS PI ON (P.ID=PI.ID)")) {
+		try (PreparedStatement ps = prepare("SELECT P.*, PI.X, PI.Y, PI.EXT FROM PARTNERS P LEFT JOIN PARTNER_IMGS PI ON (P.ID=PI.ID) ORDER BY P.PRIORITY DESC, PI.ID")) {
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -58,15 +58,16 @@ public class GetPartner extends DAO {
 		List<PartnerInfo> results = new ArrayList<PartnerInfo>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				PartnerInfo pi = new PartnerInfo(rs.getString(2));
+				PartnerInfo pi = new PartnerInfo(rs.getString(3));
 				pi.setID(rs.getInt(1));
-				pi.setURL(rs.getString(3));
-				pi.setDescription(rs.getString(4));
-				pi.setReferCount(rs.getInt(5));
-				pi.setLastRefer(toInstant(rs.getTimestamp(6)));
-				pi.setWidth(rs.getInt(7));
-				pi.setHeight(rs.getInt(8));
-				pi.setBannerExtension(rs.getString(9));
+				pi.setPriority(rs.getInt(2));
+				pi.setURL(rs.getString(4));
+				pi.setDescription(rs.getString(5));
+				pi.setReferCount(rs.getInt(6));
+				pi.setLastRefer(toInstant(rs.getTimestamp(7)));
+				pi.setWidth(rs.getInt(8));
+				pi.setHeight(rs.getInt(9));
+				pi.setBannerExtension(rs.getString(10));
 				results.add(pi);
 			}
 		}

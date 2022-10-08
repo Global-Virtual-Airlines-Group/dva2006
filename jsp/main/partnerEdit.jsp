@@ -18,6 +18,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:4, t:'Partner Name'});
 	golgotha.form.validate({f:f.desc, l:15, t:'Partner Description'});
+	golgotha.form.validate({f:f.priority, min:0, t:'Partner Sort Order'});
 	golgotha.form.validate({f:f.img, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
 	golgotha.form.submit(f);
 	return true;
@@ -44,6 +45,10 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Partner URL</td>
  <td class="data"><el:text name="url" required="true" idx="*" size="64" max="144" value="${partner.URL}" /></td>
+</tr>
+<tr>
+ <td class="label">Sort Order</td>
+ <td class="data"><el:text name="priority" required="true" size="1" max="2" value="${partner.priority}" />&nbsp;<span class="small ita">(Higher values will be placed higher in the list.)</span></td>
 </tr>
 <tr>
  <td class="label top">Banner Image</td>
