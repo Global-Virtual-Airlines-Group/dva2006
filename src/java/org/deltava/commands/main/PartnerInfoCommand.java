@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.PartnerAccessControl;
 
 import org.deltava.util.BeanUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to edit virtual airline Partner Information.
@@ -56,6 +57,7 @@ public class PartnerInfoCommand extends AbstractAuditFormCommand {
 			// Update the fields
 			p.setURL(ctx.getParameter("url"));
 			p.setDescription(ctx.getParameter("desc"));
+			p.setPriority(StringUtils.parse(ctx.getParameter("priority"), 0));
 			
 			// Update the image
 			FileUpload fu = ctx.getFile("img", 262144);
