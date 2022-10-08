@@ -56,6 +56,7 @@
  <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
 </content:authUser>
  <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="partners">Our Partners</el:cmd></content:subitem>
 <content:filter roles="HR,PIREP,Examination">
  <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
 </content:filter>

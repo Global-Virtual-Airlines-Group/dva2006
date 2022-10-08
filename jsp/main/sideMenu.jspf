@@ -45,6 +45,7 @@
 </c:if>
  <content:subitem><el:cmd url="flightboardmap">Online Flights</el:cmd></content:subitem>
  <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="partners">Our Partners</el:cmd></content:subitem>
  <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
 <content:authUser>
  <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
