@@ -347,7 +347,7 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">SimBrief Package</td>
  <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
- | <a href="javascript:void golgotha.local.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span></td>
+ | <a href="javascript:void golgotha.local.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
  </tr>
  <tr>
   <td class="label">Briefing Format</td>
@@ -628,18 +628,30 @@ golgotha.local.sbDownloadPlan = function(cb) {
 	return true;
 };
 
+golgotha.local.showSBMessage = function(msg, cn) {
+	const sp = document.getElementById('sbMessage');
+	sp.className = cn;
+	sp.innerHTML = msg;
+	golgotha.util.display('sbMessageBox', true);
+	return true;
+};
+
 golgotha.local.sbRefresh = function() {
 	const f = document.forms[0];
 	golgotha.form.submit(f);
+	golgotha.util.display('sbMessageBox', false);
 	const xreq = new XMLHttpRequest();
 	xreq.open('get', 'sbrefresh.ws?id=${pirep.hexID}', true);
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
 		golgotha.form.clear(f);
-		if (xreq.status == 200)
-			location.reload();
-		else if (xreq.status == 304)
-			console.log('SimBrief package not modified');
+		if (xreq.status == 200) {
+			golgotha.local.showSBMessage('SimBrief package updated', 'ter');
+			window.setTimeout(function() { location.reload(); }, 950);
+		} else if (xreq.status == 304)
+			golgotha.local.showSBMessage('SimBrief package not modified', 'warn');
+		else if (xreq.status >= 500)
+			golgotha.local.showSBMessage('Error ' + xreq.status + ' updating package', 'error');
 
 		return true;
 	};
