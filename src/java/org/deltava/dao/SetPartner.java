@@ -31,12 +31,13 @@ public class SetPartner extends DAO {
 		boolean isNew = (pi.getID() == 0);
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepare("INSERT INTO PARTNERS (ID, NAME, URL, DESCRIPTION, REFERCOUNT) VALUES (?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE NAME=N.NAME, URL=N.URL, DESCRIPTION=N.DESCRIPTION, REFERCOUNT=N.REFERCOUNT")) {
+			try (PreparedStatement ps = prepare("INSERT INTO PARTNERS (ID, PRIORITY, NAME, URL, DESCRIPTION, REFERCOUNT) VALUES (?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE NAME=N.NAME, PRIORITY=N.PRIORITY, URL=N.URL, DESCRIPTION=N.DESCRIPTION, REFERCOUNT=N.REFERCOUNT")) {
 				ps.setInt(1, pi.getID());
-				ps.setString(2, pi.getName());
-				ps.setString(3, pi.getURL());
-				ps.setString(4, pi.getDescription());
-				ps.setInt(5, pi.getReferCount());
+				ps.setInt(2, pi.getPriority());
+				ps.setString(3, pi.getName());
+				ps.setString(4, pi.getURL());
+				ps.setString(5, pi.getDescription());
+				ps.setInt(6, pi.getReferCount());
 				executeUpdate(ps, 1);
 			}
 			
