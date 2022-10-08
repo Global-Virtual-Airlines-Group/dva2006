@@ -80,30 +80,34 @@ public class PackageRefreshService extends WebService {
 					fr.setRoute(sbdata.getRoute());
 					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated flight route via SimBrief");
 				}
+			}
 				
-				// If we don't have gates, assign them
-				if (!fr.hasGates()) {
-					GetGates gdao = new GetGates(con);
-					GateHelper gh = new GateHelper(fr, 5, true);
-					gh.addDepartureGates(gdao.getPopularGates(fr, Simulator.P3Dv4, true));
-					gh.addArrivalGates(gdao.getPopularGates(fr, Simulator.P3Dv4, false));
+			// If we don't have gates, assign them
+			if (!fr.hasGates()) {
+				GetGates gdao = new GetGates(con);
+				GateHelper gh = new GateHelper(fr, 5, true);
+				gh.addDepartureGates(gdao.getPopularGates(fr, Simulator.P3Dv4, true));
+				gh.addArrivalGates(gdao.getPopularGates(fr, Simulator.P3Dv4, false));
 					
-					// Load departure gate
-					List<Gate> dGates = gh.getDepartureGates();
-					if (!dGates.isEmpty())
-						fr.setGateD(dGates.get(0).getName());
+				// Load departure gate
+				List<Gate> dGates = gh.getDepartureGates();
+				if (!dGates.isEmpty())
+					fr.setGateD(dGates.get(0).getName());
 					
-					// Load arrival gate
-					List<Gate> aGates = gh.getArrivalGates();
-					if (!aGates.isEmpty())
-						fr.setGateA(aGates.get(0).getName());
-				}
+				// Load arrival gate
+				List<Gate> aGates = gh.getArrivalGates();
+				if (!aGates.isEmpty())
+					fr.setGateA(aGates.get(0).getName());
 				
-				// Write the data
+				isUpdated |= fr.hasGates();
+			}
+				
+			// Write the data
+			if (isUpdated) {
 				ctx.startTX();
 				SetFlightReport frwdao = new SetFlightReport(con);
 				frwdao.write(fr, ctx.getDB());
-				frwdao.writeSimBrief(sbdata);
+				if (!StringUtils.isEmpty(sbdata.getSimBriefID())) frwdao.writeSimBrief(sbdata); // non-null if updated
 				ctx.commitTX();
 			}
 		} catch (Exception de) {
