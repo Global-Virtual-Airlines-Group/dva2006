@@ -457,9 +457,9 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_ROUTE PRT ON (PR.ID=PRT.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREP_DRAFT PD ON (PR.ID=PD.ID) WHERE (PR.ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".PIREP_DRAFT PD ON (PR.ID=PD.ID) WHERE (PR.ID=?) AND (PR.STATUS=?) LIMIT 1");
 		
-		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, id);
 			ps.setInt(2, FlightStatus.DRAFT.ordinal());
 			return execute(ps).stream().map(DraftFlightReport.class::cast).findFirst().orElse(null);
