@@ -225,9 +225,6 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 <br />
 If you have questions or comments, please direct them to our Corporate Offices at <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
-<div class="nophone" style="float:left; margin-left:70px;"><a rel="nofollow" href="https://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
-<div class="nophone" style="clear:both;"></div>
-<br />
 <content:copyright />
 </content:region>
 </content:page>
