@@ -313,7 +313,10 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	 * @param tc the tail code
 	 */
 	public void setTailCode(String tc) {
-		_tailCode = tc;
+		if ((tc != null) && (tc.length() > 14))
+			_tailCode = tc.substring(0, 14).toUpperCase();
+		else if (tc != null)
+			_tailCode = tc.trim().toUpperCase();
 	}
     
     /**
