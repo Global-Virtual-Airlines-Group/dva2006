@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.1
  */
 
@@ -474,13 +474,11 @@ public class GetFlightReportStatistics extends DAO {
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
-			ps.setInt(2, FlightReport.ATTR_VATSIM);
-			ps.setInt(3, FlightReport.ATTR_IVAO);
-			ps.setInt(4, FlightReport.ATTR_HISTORIC);
-			ps.setInt(5, FlightReport.ATTR_DISPATCH);
-			ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			ps.setInt(7, FlightStatus.OK.ordinal());
-			ps.setInt(8, FlightReport.ATTR_CHARTER);
+			ps.setInt(2, FlightReport.ATTR_HISTORIC);
+			ps.setInt(3, FlightReport.ATTR_DISPATCH);
+			ps.setInt(4, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(5, FlightStatus.OK.ordinal());
+			ps.setInt(6, FlightReport.ATTR_CHARTER);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(ps.toString());
