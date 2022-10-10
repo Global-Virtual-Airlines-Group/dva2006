@@ -1,4 +1,4 @@
-// Copyright 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2013, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP tag to convert and format unit values. 
  * @author Luke
- * @version 5.2
+ * @version 10.3
  * @since 5.2
  */
 
@@ -31,9 +31,6 @@ public abstract class UnitFormatTag extends IntegerFormatTag {
 		_longUnits = useLong;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_longUnits = false;
@@ -50,19 +47,13 @@ public abstract class UnitFormatTag extends IntegerFormatTag {
 		fmtNoDecimals();
 		try {
 			JspWriter out = pageContext.getOut();
-			if (_className != null) {
-                out.print("<span class=\"");
-                out.print(_className);
-                out.print("\">");
-			}
-              
+			openSpan();
 			out.print(_nF.format(_value.doubleValue() * _unit.getFactor()));
 			out.print(' ');
 			out.print(_longUnits ? _unit.getUnitName() : _unit.name().toLowerCase());
 			if (_longUnits)
 				out.print('s');
-			if (_className != null)
-                out.print("</span>");
+			closeSpan();
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
