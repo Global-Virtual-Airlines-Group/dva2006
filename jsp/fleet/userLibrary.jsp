@@ -12,6 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -54,7 +55,7 @@
 </c:if>
  <td class="small bld"><el:link url="/usrlibrary/${entry.fileName}">DOWNLOAD</el:link></td>
  <td><el:profile location="${authorLoc}">${author.name}</el:profile></td>
- <td class="sec bld"><fmt:int value="${entry.size / 1024}" />K</td>
+ <td class="sec bld"><fmt:fileSize value="${entry.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${entry.description}" /></td>
 </view:row>
 </c:forEach>

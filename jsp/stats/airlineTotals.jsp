@@ -88,8 +88,8 @@
 <tr>
  <td class="pri bld caps">${tableInfo.name}</td>
  <td class="sec bld"><fmt:int value="${tableInfo.rows}" /></td>
- <td class="bld"><fmt:int value="${tableInfo.size}" /> bytes</td>
- <td class="sec bld nophone"><fmt:int value="${tableInfo.indexSize}" /> bytes</td>
+ <td class="bld"><fmt:fileSize value="${tableInfo.size}" /></td>
+ <td class="sec bld nophone"><fmt:fileSize value="${tableInfo.indexSize}" /></td>
  <td class="nophone"><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
 </tr>
 </c:forEach>
@@ -103,19 +103,19 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'allstats.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var statsData = JSON.parse(xmlreq.responseText);
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	const statsData = JSON.parse(xmlreq.responseText);
+	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
-	var chart = new google.visualization.LineChart(document.getElementById('flightStats'));
-	var data = new google.visualization.DataTable();
+	const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
+	const data = new google.visualization.DataTable();
 	data.addColumn('string','Date');
 	data.addColumn('number','Total Flights');
 	data.addColumn('number','Online Flights');

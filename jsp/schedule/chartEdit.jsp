@@ -15,7 +15,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airport, t:'Airport'});
@@ -63,7 +63,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${!empty chart}">
 <tr>
  <td class="label">Image Properties</td>
- <td class="data sec">${chart.imgType} image, <fmt:int value="${chart.size}" /> bytes</td>
+ <td class="data sec">${chart.imgType} image, <fmt:fileSize value="${chart.size}" /></td>
 </tr>
 <tr>
  <td class="label">Last Modified</td>

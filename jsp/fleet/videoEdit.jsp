@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -29,7 +29,7 @@ golgotha.local.validate = function(f) {
     	golgotha.local.r.upload();
     	return false;
     }
-    
+   
     golgotha.form.validate({f:f.title, l:10, t:'Video Title'});
     golgotha.form.validate({f:f.category, t:'Video Category'});
     golgotha.form.validate({f:f.desc, l:10, t:'Description'});
@@ -80,7 +80,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Video Information</td>
 <c:if test="${video.size > 0}">
- <td class="data"><span class="pri bld">${video.type}</span>, <span class="sec bld"><fmt:int value="${video.size}" /> bytes</span></td>
+ <td class="data"><span class="pri bld">${video.type}</span>, <span class="sec bld"><fmt:fileSize value="${video.size}" /></span></td>
 </c:if>
 <c:if test="${video.size == 0}">
  <td class="data warning bld caps">FILE NOT PRESENT ON FILESYSTEM</td>
@@ -130,7 +130,7 @@ golgotha.local.validate = function(f) {
 <script>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['mp4', 'mkv', 'm4v']});
-var dt = document.getElementById('dropTarget');
+const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
 golgotha.local.r.on('fileAdded', function(f, ev) {
@@ -142,12 +142,12 @@ golgotha.local.r.on('fileAdded', function(f, ev) {
 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:'#1a4876', text:{value:'', className:'pri', style:{color:'#ffff'}}, fill:'#1a4876'});
 golgotha.local.showProgress = function(doShow) {
-	var pr = golgotha.util.getElementsByClass('progress', 'tr');
+	const pr = golgotha.util.getElementsByClass('progress', 'tr');
 	pr.forEach(function(r) { golgotha.util.display(r, doShow); });
 };
 
 golgotha.local.updateProgress = function() {
-	var p = golgotha.local.r.progress();
+	const p = golgotha.local.r.progress();
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
 	golgotha.local.pb.animate(p, {duration: 50});
 	if (p >= 1) {

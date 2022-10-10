@@ -15,7 +15,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.setCategory = function(combo) {
 	self.location = '/newsletters.do?category=' + escape(golgotha.form.getCombo(combo));
 	return true;
@@ -61,7 +61,7 @@ golgotha.local.setCategory = function(combo) {
  <td class="pri bld"><el:link url="/newsletter/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/newsletter/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" className="noborder" /></el:link></td>
- <td class="sec bld nophone"><fmt:int value="${doc.size}" /></td>
+ <td class="sec bld nophone"><fmt:fileSize value="${doc.size}" /></td>
  <td class="small left" colspan="3"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>

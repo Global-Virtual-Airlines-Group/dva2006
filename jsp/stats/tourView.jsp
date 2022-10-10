@@ -59,7 +59,7 @@
 <c:when test="${tour.isPDF}">
 <tr>
  <td class="label top">Tour Briefing</td>
- <td class="data" colspan="4"><el:link url="/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:int value="${tour.size}" /> bytes, Adobe PDF document</span>
+ <td class="data" colspan="4"><el:link url="/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:fileSize value="${tour.size}" />, Adobe PDF document</span>
 </tr>
 </c:when>
 <c:otherwise>

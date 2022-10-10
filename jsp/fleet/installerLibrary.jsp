@@ -39,7 +39,7 @@
 <view:row entry="${installer}">
  <td class="pri bld"><el:cmd url="fleetlib" linkID="${installer.fileName}" op="edit">${installer.name}</el:cmd></td>
  <td class="nophone">${installer.code}</td>
- <td class="sec small nopgone"><fmt:int value="${installer.size}" /> bytes</td>
+ <td class="sec small nopgone"><fmt:fileSize value="${installer.size}" /></td>
  <td class="bld nophone">${installer.version}</td>
  <td class="small left" colspan="2"><fmt:text value="${installer.description}" /></td>
 </view:row>

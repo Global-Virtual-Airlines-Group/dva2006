@@ -14,27 +14,27 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.play = function(id, name) {
-	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
+	const tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
 	golgotha.local.stop();
 
-	var r = document.createElement('tr');
-	var c = document.createElement('td'); c.setAttribute('colspan', '5');
+	let r = document.createElement('tr');
+	let c = document.createElement('td'); c.setAttribute('colspan', '5');
 
 	// Create the video element
-	var v = document.createElement('video'); v.setAttribute('controls', 'true');
-	var src = document.createElement('source');
+	let v = document.createElement('video'); v.setAttribute('controls', 'true');
+	let src = document.createElement('source');
 	src.type = 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'; src.src='/video/' + name;
 	v.appendChild(src); c.appendChild(v); r.appendChild(c);
-	golgotha.local.video = {vid:v, row:r, ofs:id};
+	golgotha.local.video = {vid:v,row:r,ofs:id};
 	tbody.insertBefore(r, document.getElementById('video-' + (id+1)));
 	v.play();
 	return true;
 };
 
 golgotha.local.stop = function() {
-	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
+	const tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
 	if (golgotha.local.video != null) {
         golgotha.local.video.vid.pause();
         tbody.removeChild(golgotha.local.video.row);
@@ -88,7 +88,7 @@ golgotha.local.stop = function() {
 <c:if test="${!hasFile}">
  <td><a href="javascript:void golgotha.local.stop()"><el:img src="library/error.png" caption="No Video" x="48" y="48" className="noborder" /></a></td>
 </c:if>
- <td class="sec bld nophone"><fmt:int value="${video.size / 1024}" />K</td>
+ <td class="sec bld nophone"><fmt:fileSize value="${video.size}" /></td>
  <td class="small left nophone" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>
 </c:forEach>

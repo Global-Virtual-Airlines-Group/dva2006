@@ -101,7 +101,7 @@ return true;
 <tr>
  <td class="label">Document Size</td>
 <c:if test="${entry.size > 0}">
- <td class="data sec bld"><fmt:int value="${entry.size}" /> bytes</td>
+ <td class="data sec bld"><fmt:fileSize value="${entry.size}" /></td>
 </c:if>
 <c:if test="${entry.size == 0}">
  <td class="data warning bld caps">FILE NOT PRESENT ON FILESYSTEM</td>
