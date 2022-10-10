@@ -51,6 +51,29 @@
 	</tag>
 
 	<tag>
+		<description>File Size Format tag, for formatting file sizes</description>
+		<name>fileSize</name>
+		<tag-class>org.deltava.taglib.format.FileSizeFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>fmt</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Long</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Distance Format tag, for displaying distances</description>
 		<name>distance</name>
 		<tag-class>org.deltava.taglib.format.DistanceFormatTag</tag-class>
@@ -307,34 +330,6 @@
 			<name>tzName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>default</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
-
-	<tag>
-		<description>Duration Format tag, for formatting time intervals</description>
-		<name>duration</name>
-		<tag-class>org.deltava.taglib.format.DurationFormatTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>t</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>duration</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>java.time.Duration</type>
-		</attribute>
-		<attribute>
-			<name>className</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>default</name>
