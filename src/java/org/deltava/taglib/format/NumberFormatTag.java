@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 1.0
  */
 
@@ -89,22 +89,37 @@ abstract class NumberFormatTag extends UserSettingsTag {
     }
     
     /**
+     * Opens an optional formatting SPAN element.
+     * @throws Exception if an I/O error occurs
+     */
+    protected void openSpan() throws Exception {
+    	if (_className == null) return;
+    	JspWriter out = pageContext.getOut();
+    	out.print("<span class=\"");
+        out.print(_className);
+        out.print("\">");
+    }
+
+    /**
+     * Closes an optional formatting SPAN element.
+     * @throws Exception if an I/O error occurs
+     */
+    protected void closeSpan() throws Exception {
+    	if (_className != null)
+    		pageContext.getOut().print("</span>");
+    }
+    
+    /**
      * Formats the number and writes it to the JSP output writer.
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
     @Override
 	public int doEndTag() throws JspException {
-        JspWriter out = pageContext.getOut();
         try {
-            if (_className != null) {
-                out.print("<span class=\"");
-                out.print(_className);
-                out.print("\">");
-                out.print(_nF.format(_value.doubleValue()));
-                out.print("</span>");
-            } else
-            	out.print(_nF.format(_value.doubleValue()));
+        	openSpan();
+        	pageContext.getOut().print(_nF.format(_value.doubleValue()));
+        	closeSpan();
         } catch (Exception e) {
             throw new JspException(e);
         } finally {
