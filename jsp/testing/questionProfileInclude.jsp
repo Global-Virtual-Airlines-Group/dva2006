@@ -14,7 +14,8 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="examTake" />
-<script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.submit(f);
@@ -70,8 +71,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${question.size > 0}">
 <tr>
  <td class="label">Image Information</td>
- <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
- bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
+ <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:fileSize value="${question.size}" /> <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
  pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>

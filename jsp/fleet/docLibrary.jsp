@@ -71,7 +71,7 @@
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/download.png" className="noborder" caption="Download File" x="32" y="32" /></el:link></td>
 </c:otherwise>
 </c:choose>
- <td class="sec bld nophone"><fmt:int value="${doc.size / 1024}" />K</td>
+ <td class="sec bld nophone"><fmt:fileSize value="${doc.size}" /></td>
  <td class="small nophone"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
  <td class="bld nophone"><fmt:int value="${doc.version}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>

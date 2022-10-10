@@ -80,15 +80,14 @@ golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
 </tr>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
- bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:fileSize value="${q.size}" /> <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${isRP}">
 <!-- Map #${q.number} -->
 <script>
-var info = { examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance} };
+const info = {examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance}};
 info.mapCenter = <map:point point="${q.midPoint}" />
 info.aD = <map:marker point="${q.airportD}" />
 info.aA = <map:marker point="${q.airportA}" />

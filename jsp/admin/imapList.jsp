@@ -49,7 +49,7 @@
  <td class="small ita">NONE</td>
 </c:if>
 <c:if test="${mb.quota > 0}">
- <td class="small"><fmt:int value="${mb.quota / 1024 / 1024}" />MB</td>
+ <td class="small"><fmt:fileSize value="${mb.quota}" /></td>
 </c:if>
 <c:if test="${!empty mb.aliases}">
  <td class="left small">${fn:splice(mb.aliases, ', ')}</td>

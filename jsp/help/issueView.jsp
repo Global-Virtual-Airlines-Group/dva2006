@@ -127,7 +127,7 @@ return true;
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
 <c:if test="${!empty comment.name}">
 <hr />
-Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K) <a href="/helpdesk/${comment.createdOn.toEpochMilli()}/${issue.hexID}">Click to download</a></c:if></td>
+Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value="${comment.size }" />) <a href="/helpdesk/${comment.createdOn.toEpochMilli()}/${issue.hexID}">Click to download</a></c:if></td>
 </tr>
 </c:forEach>
 </c:if>

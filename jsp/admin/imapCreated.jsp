@@ -10,6 +10,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,7 +24,7 @@
 <div class="updateHdr">IMAP Mailbox Created</div>
 <br />
 An IMAP mailbox for ${pilot.name} has been created on the <content:airline /> IMAP server ${IMAPServer}. 
-${pilot.name}'s e-mail address has been set to ${imap.address}, with a mailbox quota of <fmt:int value="${imap.quota}" /> bytes.<br />
+${pilot.name}'s e-mail address has been set to ${imap.address}, with a mailbox quota of <fmt:fileSize value="${imap.quota}" />.<br />
 <br />
 <c:if test="${!empty scriptResults}">
 Mailbox creation script output:<br />
