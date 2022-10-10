@@ -139,7 +139,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <view:row entry="${doc}">
  <td class="mid nophone"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="32" y="32" /></el:link></td>
  <td class="pri bld mid"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
- <td class="sec bld mid nophone"><fmt:int value="${doc.size}" /> bytes</td>
+ <td class="sec bld mid nophone"><fmt:fileSize value="${doc.size}" /></td>
  <td class="small"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>

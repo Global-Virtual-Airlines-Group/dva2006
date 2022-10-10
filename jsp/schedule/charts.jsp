@@ -98,7 +98,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
- <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K</c:if>
+ <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:fileSize fmt="#,##0" value="${chart.size}" /></c:if>
 <c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
 </c:when>
 <c:otherwise>
@@ -107,8 +107,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
  <td class="small"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
- <td colspan="${cspan}">${chart.imgType} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
-<c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
+ <td colspan="${cspan}">${chart.imgType} image, <fmt:fileSize fmt="#,##0" value="${chart.size}" /><c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
 </c:otherwise>
 </c:choose>
 </view:row>

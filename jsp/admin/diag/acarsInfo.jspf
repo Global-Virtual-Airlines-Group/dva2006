@@ -91,8 +91,8 @@ return true;
 </view:row>
 <view:row entry="${con}">
  <td class="small"><fmt:int value="${tcp.msgsIn}" /> in, <fmt:int value="${tcp.msgsOut}" /> out</td>
- <td class="small"><fmt:int value="${tcp.bytesIn / 1024}" />K in, <fmt:int value="${tcp.bytesOut / 1024}" />K out
-<c:if test="${tcp.bytesSaved != 0}">, <span class="ita"><fmt:int value="${tcp.bytesSaved / 1024}" />K saved</span></c:if></td>
+ <td class="small"><fmt:fileSize value="${tcp.bytesIn}" /> in, <fmt:fileSize value="${tcp.bytesOut}" /> out
+<c:if test="${tcp.bytesSaved != 0}">, <span class="ita"><fmt:fileSize value="${tcp.bytesSaved}" />K saved</span></c:if></td>
  <td colspan="4" class="small"><c:if test="${con.compressed}"><span class="sec bld">COMPRESSED</span> </c:if>
 Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, <fmt:dec value="${tcp.bytesIn / tcp.bufferReads}" fmt="###0.0" /> bytes / read, 
  <fmt:int value="${tcp.bufferWrites}" /> writes, <fmt:dec value="${tcp.bufferWrites / tcp.msgsOut}" fmt="#0.00" /> writes / message,
@@ -104,7 +104,7 @@ Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, <fmt:dec value="${tcp.byte
 <c:if test="${!empty udp}">
 <view:row entry="${con}">
  <td class="small"><fmt:int value="${udp.msgsIn}" /> in, <fmt:int value="${udp.msgsOut}" /> out</td>
- <td class="small"><fmt:int value="${udp.bytesIn / 1024}" />K in, <fmt:int value="${udp.bytesOut / 1024}" />K out</td>
+ <td class="small"><fmt:fileSize value="${udp.bytesIn}" /> in, <fmt:fileSize value="${udp.bytesOut}" /> out</td>
  <td colspan="4" class="small">Buffer: <fmt:int value="${udp.bufferReads}" /> reads, 
 <fmt:dec value="${udp.bytesIn / udp.bufferReads}" fmt="###0.0" /> bytes / read, 
 <fmt:int value="${udp.bufferWrites}" /> writes, <fmt:dec value="${udp.bufferWrites / udp.msgsOut}" fmt="#0.00" /> 

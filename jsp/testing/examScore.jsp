@@ -13,13 +13,14 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <c:if test="${exam.routePlot}">
 <map:api version="3" /></c:if>
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
@@ -80,7 +81,7 @@ golgotha.local.validate = function(f) {
 </c:if>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" /> bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:fileSize value="${q.size}" /> <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>

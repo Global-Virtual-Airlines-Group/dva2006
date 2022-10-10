@@ -63,8 +63,7 @@ You have signed up for response notifications. Each time a new response is poste
 <br />
 Your attached image has been saved in the Image Gallery as a <span class="ita">${forumName} Screen Shot</span>.
 <c:if test="${imgResized}">Your attached image was too large to fit in the ${forumName}. <span class="sec bld">The maximum 
-${forumName} image size is <fmt:int value="${maxX}" />x<fmt:int value="${maxY}" /> pixels, or <fmt:int value="${maxSize / 1024}" />K.</span> 
-Your image has been scaled to match the ${forumName} limits, and some loss of image quality may occur.<br /></c:if>
+${forumName} image size is <fmt:int value="${maxX}" />x<fmt:int value="${maxY}" /> pixels, or <fmt:fileSize value="${maxSize}" />.</span> Your image has been scaled to match the ${forumName} limits, and some loss of image quality may occur.<br /></c:if>
 </c:if>
 <c:if test="${!empty notifyMsgs}">
 <br />

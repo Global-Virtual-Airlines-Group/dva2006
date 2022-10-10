@@ -295,8 +295,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Update Signature Image</td>
  <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
-<span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
-pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span></td>
+<span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> pixels, and the maximum file size is <fmt:fileSize value="${sigSize}" />.</span></td>
 </tr>
 <tr>
  <td class="label top">Display Options</td>

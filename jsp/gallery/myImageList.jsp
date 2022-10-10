@@ -43,7 +43,7 @@
 <tr>
  <td class="pri bld"><el:cmd url="image" link="${img}">${img.name}</el:cmd></td>
  <td><fmt:date date="${img.createdOn}" fmt="d" /></td>
- <td class="small nophone"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>
+ <td class="small nophone"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:fileSize value="${img.size}" /></td>
 <c:if test="${img.likeCount == 0}">
  <td class="small bld nophone">-</td>
 </c:if>

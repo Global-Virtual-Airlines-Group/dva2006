@@ -19,6 +19,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script>
 golgotha.local.validate = function(f)
@@ -71,7 +72,7 @@ return true;
 <tr>
  <td class="label">File Size</td>
 <c:if test="${entry.size > 0}">
- <td class="data sec bld"><fmt:int value="${entry.size}" /> bytes</td>
+ <td class="data sec bld"><fmt:fileSize value="${entry.size}" /></td>
 </c:if>
 <c:if test="${entry.size == 0}">
  <td class="data warning bld caps">FILE NOT PRESENT ON FILESYSTEM</td>
