@@ -16,7 +16,8 @@ abstract class NumberFormatTag extends UserSettingsTag {
 
     protected final DecimalFormat _nF;
     protected Number _value;
-    protected String _className;
+    private String _className;
+    protected String _zeroValue;
     
     /**
      * Initializes the tag.
@@ -47,6 +48,14 @@ abstract class NumberFormatTag extends UserSettingsTag {
     }
     
     /**
+     * Updates the content used if the value is zero.
+     * @param v the value
+     */
+    public final void setZero(String v) {
+    	_zeroValue = v;
+    }
+    
+    /**
      * Sets the value to format.
      * @param value the value to format
      */
@@ -61,6 +70,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
     protected void release(String pattern) {
         super.release();
         _className = null;
+        _zeroValue = null; 
         _nF.applyPattern(pattern);
     }
     
@@ -110,6 +120,14 @@ abstract class NumberFormatTag extends UserSettingsTag {
     }
     
     /**
+     * Prints the value, or the zero value if set and the value is zero.
+     * @throws Exception if an I/O error occurs
+     */
+    protected void printValue() throws Exception {
+    	pageContext.getOut().print(((_value.longValue() == 0) && (_zeroValue != null)) ? _zeroValue : _nF.format(_value.doubleValue()));
+    }
+    
+    /**
      * Formats the number and writes it to the JSP output writer.
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
@@ -118,7 +136,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
 	public int doEndTag() throws JspException {
         try {
         	openSpan();
-        	pageContext.getOut().print(_nF.format(_value.doubleValue()));
+        	printValue();
         	closeSpan();
         } catch (Exception e) {
             throw new JspException(e);
