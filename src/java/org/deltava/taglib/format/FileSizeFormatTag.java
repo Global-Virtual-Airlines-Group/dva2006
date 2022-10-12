@@ -49,7 +49,7 @@ public class FileSizeFormatTag extends IntegerFormatTag {
     	try {
     		JspWriter out = pageContext.getOut();
     		openSpan();
-    		out.print(_nF.format(_value.doubleValue()));
+    		printValue();
     		if (_showBytes || (_unit > 0)) out.print(UNITS[_unit]);
     		closeSpan();
     	} catch (Exception e) {
