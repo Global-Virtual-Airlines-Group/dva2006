@@ -88,8 +88,8 @@
 <tr>
  <td class="pri bld caps">${tableInfo.name}</td>
  <td class="sec bld"><fmt:int value="${tableInfo.rows}" /></td>
- <td class="bld"><fmt:fileSize value="${tableInfo.size}" /></td>
- <td class="sec bld nophone"><fmt:fileSize value="${tableInfo.indexSize}" /></td>
+ <td class="bld"><fmt:fileSize value="${tableInfo.size}" showBytes="false" /></td>
+ <td class="sec bld nophone"><fmt:fileSize value="${tableInfo.indexSize}" showBytes="false" zero="-" /></td>
  <td class="nophone"><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
 </tr>
 </c:forEach>
