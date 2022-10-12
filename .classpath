@@ -38,7 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/json-20220320.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.21.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-4.2.3.jar" sourcepath="lib/src/jedis-4.2.3.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.12.7.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.12.7.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.12.7.jar"/>
@@ -46,5 +45,6 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-8.0.30.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.42.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-4.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
