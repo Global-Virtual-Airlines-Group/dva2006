@@ -28,7 +28,7 @@ tr.buttons {
 tr {
 	font-family: tahoma, verdana;
 	vertical-align: middle;
-	background-color: #EFEFEF;
+	background-color: #efefef;
 	font-size: 9pt;
 }
 
@@ -40,13 +40,13 @@ td.postInfo {
 
 td.postDate {
 	font-size: 8pt;
-	background-color: #F7F7FF;
+	background-color: #f7f7ff;
 	height: 19px;
 }
 
 td.unread_postDate {
 	font-size: 8pt;
-	background-color: #F2FFF2;
+	background-color: #f2fff2;
 	height: 19px;
 }
 
@@ -63,16 +63,16 @@ td.postEdit {
 }
 
 input, textarea {
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 	font-size: 9pt;
 	color: #000000;
-	border: 1px solid #0000A1;
+	border: 1px solid #0000a1;
 	background: #F0F4F8;
 }
 
-*.postInfo :link, *.postInfo :visited, *.postInfo A:hover {
+*.postInfo :link, *.postInfo :visited, *.postInfo a:hover {
 	font-size: 8pt;
-	color: #0000A1;
+	color: #0000a1;
 	font-weight: bold;
 	text-decoration: none;
 	font-family: Tahoma, Verdana;
@@ -80,7 +80,7 @@ input, textarea {
 
 *.postEdit :link, *.postEdit :visited, *.postEdit :hover {
 	font-size: 8pt;
-	color: #0000A1;
+	color: #0000a1;
 	font-weight: bold;
 	text-decoration: none;
 	font-family: Tahoma, Verdana;
@@ -92,7 +92,7 @@ input, textarea {
 	font-weight: bold;
 	font-family: Tahoma, Verdana;
 	text-decoration: underline;
-	color: #EFFFFF;
+	color: #efffff;
 }
 
 blockquote {
@@ -111,4 +111,19 @@ blockquote cite {
 	display: block;
 	font-style: normal;
 	font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+	td.postDate {
+		background-color: #0f0f3f;	
+	}
+	
+	td.unread_postDate {
+		background-color: #1f1f4f;
+	}
+	
+	blockquote {
+		background-color: #00003f;
+		border: 1px dashed #7a7aff;
+	}
 }

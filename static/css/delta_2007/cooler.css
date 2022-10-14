@@ -112,3 +112,18 @@ blockquote cite {
 	font-style: normal;
 	font-weight: bold;
 }
+
+@media (prefers-color-scheme: dark) {
+	td.postDate {
+		background-color: #0f0f3f;	
+	}
+	
+	td.unread_postDate {
+		background-color: #1a4876;
+	}
+	
+	blockquote {
+		background-color: #00003f;
+		border: 1px dashed #1a4876;
+	}
+}

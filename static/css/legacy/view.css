@@ -109,3 +109,38 @@ table.view tr :link, table.view tr :visited {
 table.view :link:hover {
 	color: #0080d1;
 }
+
+@media (prefers-color-scheme: dark) {
+	table.view tr, td.def {
+		background-color: #00002f;
+		color: #e8e8ff;
+	}
+
+	table.view *.opt1 {
+		background-color: #a0a838;
+	}
+
+	table.view *.opt2 {
+		background-color: #085440;
+	}
+
+	table.view *.opt3 {
+		background-color: #30607f;
+	}
+
+	table.view *.opt4 {
+		background-color: #585078;
+	}
+
+	table.view *.warn {
+		background-color: #7f6f40;
+	}
+
+	table.view *.err {
+		background-color: #9f4040;
+	}
+	
+	table.view *.opt2 span.sec, table.view *.opt2 span.ter  {
+		text-shadow: 1px 1px #e8e8ff;
+	}
+}

@@ -110,3 +110,34 @@ table.view tr :link, table.view tr :visited {
 table.view :link:hover {
 	color: #c01933;
 }
+
+@media (prefers-color-scheme: dark) {
+	table.view tr, td.def {
+		background-color: #00002f;
+		color: #e8e8ff;
+	}
+
+	table.view *.opt1 {
+		background-color: #a8a83f;
+	}
+
+	table.view *.opt2 {
+		background-color: #207f68;
+	}
+
+	table.view *.opt3 {
+		background-color: #30607f;
+	}
+
+	table.view *.opt4 {
+		background-color: #58507f;
+	}
+
+	table.view *.warn {
+		background-color: #7f6f40;
+	}
+
+	table.view *.err {
+		background-color: #9f4040;
+	}
+}
