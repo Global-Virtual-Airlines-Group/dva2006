@@ -545,12 +545,48 @@ a.plain:hover {
 
 @media (max-width: 800px) {
     .nophone {
-       display:none;
+	   display:none;
+    }
+}
+
+@media (max-width: 940px) {
+    .notablet {
+	   display:none;
     }
 }
 
 @media (min-width: 801px) {
     .phone {
         display:none;
-    }	
+    }   
+}
+
+@media (min-width: 941px) {
+    .tablet {
+	   display:none;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+	img.header {
+		--image-filter: grayscale(50%);
+		filter: var(--image-filter);
+	}
+
+	body {
+		background-color: #080810;
+		color: #e8e8ef;
+	}
+
+	table {
+		color: #e8e8ff;
+	}
+	
+	a, a:visited {
+		color: #3040c0;
+	}
+
+	a.plain:hover {
+  	  color: #60a0e0;
+	}
 }
