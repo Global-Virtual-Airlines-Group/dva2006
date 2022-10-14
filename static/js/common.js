@@ -1,4 +1,4 @@
-var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}, nav:{sideMenu:false}};
+var golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{}};
 golgotha.util.isIOS = ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone'));
 golgotha.util.isAndroid = (navigator.platform.indexOf('Android') > -1);
 golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid);
@@ -9,22 +9,38 @@ golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefau
 golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
 golgotha.event.ValidationError = function(msg, el) { var e = new golgotha.event.Error(msg, true); e.focusElement = el; return e; };
 
-golgotha.util.getElementsByClass = function(cName, eName, parent)
-{
-if (parent == null) parent = document;
-let elements = [];
-const all = parent.getElementsByTagName((eName == null) ? '*' : eName);
-for (var x = 0; x < all.length; x++) {
-	const cl = all[x].className;
-	if (cl.split && (cl.split(' ').indexOf(cName) > -1))
-		elements.push(all[x]);
-}
-
-return elements;
+golgotha.charts.bg = golgotha.util.darkMode ? '#000021' : '#efefef';
+golgotha.charts.tx =  golgotha.util.darkMode ? '#efefef' : '#00002f';
+golgotha.charts.lgStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:9};
+golgotha.charts.ttStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:11};
+golgotha.charts.buildOptions = function(opts) {
+	const o = opts || {};
+	const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+	o.backgroundColor = golgotha.charts.bg;
+	o.vAxis = Object.assign({}, aX);
+	o.hAxis = Object.assign({}, aX);
+	o.legend = Object.assign({}, aX);
+	o.fontSize = 10;
+	o.fontName = o.fontName || 'Verdana';
+	o.textStyle = o.textStyle || Object.assign({}, golgotha.charts.lgStyle);
+	o.titleTextStyle = o.titleTextStyle || Object.assign({}, golgotha.charts.ttStyle);
+	return o;
 };
 
-golgotha.util.addClass = function(e, cl)
-{
+golgotha.util.getElementsByClass = function(cName, eName, parent) {
+	if (parent == null) parent = document;
+	let elements = [];
+	const all = parent.getElementsByTagName((eName == null) ? '*' : eName);
+	for (var x = 0; x < all.length; x++) {
+		const cl = all[x].className;
+		if (cl.split && (cl.split(' ').indexOf(cName) > -1))
+			elements.push(all[x]);
+	}
+
+	return elements;
+};
+
+golgotha.util.addClass = function(e, cl) {
 	if (!e) return false;
 	const c = e.className.split(' ');
 	if (c.indexOf(cl) < 0) c.push(cl);
