@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2015, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -91,6 +91,14 @@ public class InputTag extends FormElementTag {
      */
     public void setAutoComplete(boolean isAutoComplete) {
     	_data.setAttribute("autocomplete", isAutoComplete ? "on" : "off");
+    }
+    
+    /**
+     * Sets the autofill token for this field. This will automatically enable autocomplete.
+     * @param token the autofill token
+     */
+    public void setAutofill(String token) {
+    	_data.setAttribute("autocomplete", token);
     }
     
     /**

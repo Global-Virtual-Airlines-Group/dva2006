@@ -582,6 +582,11 @@
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
 		</attribute>
+		<attribute>
+			<name>autofill</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
 	</tag>
 	
 	<!-- Field tag, for defining airport codes -->
