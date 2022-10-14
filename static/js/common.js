@@ -1,8 +1,9 @@
 var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}, nav:{sideMenu:false}};
 golgotha.util.isIOS = ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone'));
 golgotha.util.isAndroid = (navigator.platform.indexOf('Android') > -1);
-golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid); 
+golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid);
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
+golgotha.util.darkMode = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 golgotha.event.beacon = function() { return false; };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
 golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
@@ -67,17 +68,18 @@ golgotha.util.display = function(e, isVisible) {
 	return (e != null);
 };
 
-golgotha.util.getStyle = function(sheet, cl) {
+golgotha.util.getStyle = function(sheet, cl, attr) {
+	attr = attr || 'color';
 	for (var x = 0; x < document.styleSheets.length; x++) {
 		const ss = document.styleSheets[x];
 		if ((ss.href == null) || (ss.href.indexOf(sheet) == -1)) continue;
-		for (var y = 0; y < ss.cssRules.length; y++) {
-			const cs = ss.cssRules[y];
+		for (var y = ss.cssRules.length; y > 0; y--) {
+			const cs = ss.cssRules[y - 1];
 			if ((cs.selectorText) && (cs.style) && (cs.selectorText.indexOf(cl) > -1))
-				return cs.style.color;
+				return cs.style[attr];
 		}
 	}
-	
+
 	return null;
 };
 
