@@ -111,7 +111,6 @@ xmlreq.open('GET', 'allstats.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const statsData = JSON.parse(xmlreq.responseText);
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
 	const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
@@ -122,7 +121,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','ACARS Flights');
 	data.addColumn('number','Historic Flights');
 	data.addRows(statsData);
-	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+	chart.draw(data,golgotha.charts.buildOptions());
 	return true;
 };
 

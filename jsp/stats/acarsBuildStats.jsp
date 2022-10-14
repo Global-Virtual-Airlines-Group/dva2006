@@ -75,8 +75,7 @@ golgotha.local.showChart = function(cb) {
 };
 
 golgotha.local.renderChart = function(cnt) {
-	var cd = golgotha.local.chartData;
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	const cd = golgotha.local.chartData;
 
 	// Display the chart
 	const lC = new google.visualization.ColumnChart(document.getElementById('clientLegs'));
@@ -93,8 +92,8 @@ golgotha.local.renderChart = function(cnt) {
 
 	golgotha.util.display('chartLegs', true); golgotha.util.display('chartHours', true);
 	const mnStyle = {title:'Week',format:'MM/dd'};
-	lC.draw(lData,{title:'Flights by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
-	hC.draw(hData,{title:'Hours by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Hours'},width:'100%'});
+	lC.draw(lData,golgotha.charts.buildOptions({title:'Flights by Build/Week',isStacked:true,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'}));
+	hC.draw(hData,golgotha.charts.buildOptions({title:'Hours by Build/Week',isStacked:true,hAxis:mnStyle,vAxis:{title:'Flight Hours'},width:'100%'}));
 	golgotha.form.clear(document.forms[0]);
 	return true;
 };

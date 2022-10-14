@@ -428,7 +428,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 <tr>
 <c:if test="${access.canDispose || access.canUpdateComments}">
- <td colspan="2" class="data"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox></td></c:if>
+ <td colspan="2" class="mid"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox></td></c:if>
 <c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
  <td colspan="2" class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td></c:if>
 </tr>
@@ -562,13 +562,14 @@ xreq.onreadystatechange = function() {
     const sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
 
 	// Create formatting options
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
-	const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
-	const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:lgStyle};
-	const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:lgStyle};
+	
+	const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+	const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+	const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	const s = [{targetAxisIndex:0},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
+	const opts = golgotha.charts.buildOptions({series:s,vAxes:[va0,va1],colors:[pr,sc,'#b8b8d8']});
 	const chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
-	chart.draw(data,{series:s,vAxes:[va0,va1],hAxis:ha,fontName:'Verdana',fontSize:10,colors:[pr,sc,'#b8b8d8']});
+	chart.draw(data,opts);
 <c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
 	return true;
 };
@@ -579,7 +580,6 @@ return true;
 </script>
 </c:when>
 <c:when test="${googleStatic}">
-
 <!--  Google static Map -->
 </c:when>
 </c:choose>
