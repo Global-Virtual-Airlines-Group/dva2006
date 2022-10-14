@@ -203,7 +203,6 @@ xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
 	const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
@@ -215,7 +214,8 @@ xmlreq.onreadystatechange = function() {
 	js.flights.forEach(function(h) { fData.addRow([h.hour, h.dd, h.di, h.ad, h.ai]); });
 	golgotha.util.display('flightTimeChart', true);
 	const mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
-	fC.draw(fData,{title:'Flights by Hour of Day',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+	const opts = golgotha.charts.buildOptions({title:'Flights by Hour of Day',isStacked:true,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+	fC.draw(fData,opts);
 	return true;
 };
 

@@ -103,9 +103,6 @@ golgotha.local.showChart = function() {
 };
 
 golgotha.local.renderChart = function() {
-	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
-
-    // Display the chart
     const chart = new google.visualization.LineChart(document.getElementById('onlineStats'));
     const data = new google.visualization.DataTable();
     data.addColumn('string','Month');
@@ -115,7 +112,7 @@ golgotha.local.renderChart = function() {
     data.addColumn('number','PilotEdge');
     data.addColumn('number','POSCON');
     data.addRows(golgotha.local.chartData);
-    chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+    chart.draw(data,golgotha.charts.buildOptions());
     return true;
 };
 </script>

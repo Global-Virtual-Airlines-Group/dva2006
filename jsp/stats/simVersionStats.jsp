@@ -121,8 +121,11 @@
 </content:page>
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
-golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:{color:'black',fontName:'Verdana',fontSize:8}}};
-golgotha.local.charts.lgStyle = golgotha.local.charts.hStyle.textStyle;
+golgotha.local.bg = golgotha.util.darkMode ? '#000021' : '#efefef';
+golgotha.local.tx =  golgotha.util.darkMode ? '#efefef' : '#00002f';
+golgotha.local.ttStyle = {color:golgotha.local.tx,fontName:'Verdana',fontSize:11};
+golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:{color:golgotha.local.tx,fontName:'Verdana',fontSize:8}}};
+golgotha.local.lgStyle = golgotha.local.charts.hStyle.textStyle;
 google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
@@ -153,10 +156,11 @@ golgotha.local.renderChart = function() {
     data.addRows(golgotha.local.chartData);
 
     // Draw the charts
+    const vX = {textStyle:golgotha.local.lgStyle,titleTextStyle:golgotha.local.ttStyle};
     const c = new google.visualization.LineChart(document.getElementById('flightStats'));
     const cb = new google.visualization.ColumnChart(document.getElementById('flightStatsBar'));
-    c.draw(data,{title:'Flight Legs by Simulator',hAxis:golgotha.local.charts.hStyle,legend:{textStyle:golgotha.local.charts.lgStyle}});
-    cb.draw(data,{title:'Percentage by Simulator',isStacked:'percent',hAxis:golgotha.local.charts.hStyle,legend:{textStyle:golgotha.local.charts.lgStyle}});
+    c.draw(data,{title:'Flight Legs by Simulator',backgroundColor:golgotha.local.bg,hAxis:golgotha.local.charts.hStyle,vAxis:vX,legend:{textStyle:golgotha.local.lgStyle},titleTextStyle:golgotha.local.ttStyle});
+    cb.draw(data,{title:'Percentage by Simulator',isStacked:'percent',backgroundColor:golgotha.local.bg,hAxis:golgotha.local.charts.hStyle,vAxis:vX,legend:{textStyle:golgotha.local.lgStyle},titleTextStyle:golgotha.local.ttStyle});
     return true;
 };
 </script>
