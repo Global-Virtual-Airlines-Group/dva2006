@@ -41,11 +41,6 @@ f.jsOK.value = 'true';
 return true;
 };
 </script>
-<style>
-input:-webkit-autofill, input:-webkit-autofill:focus {
-	color-scheme: dark;
-}
-</style>
 </head>
 <content:copyright visible="false" />
 <body onload="void golgotha.local.setFocus(document.forms[0])">
