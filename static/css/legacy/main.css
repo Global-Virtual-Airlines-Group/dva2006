@@ -431,6 +431,7 @@ div.mapInfoBox {
 	white-space: nowrap;
 	font-family: tahoma, verdana, sans-serif;
 	font-size: 8pt;
+	color: #000000;
 }
 
 div.mapInfoBox.navdata, div.mapInfoBox.pilotBoard {
