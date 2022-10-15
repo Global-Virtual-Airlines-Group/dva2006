@@ -222,4 +222,8 @@ div#spinner {
 	input.req, textarea.req, input.err {
 		background-color: #004080;
 	}
+
+	input:-webkit-autofill, input:-webkit-autofill:focus {
+		color-scheme: dark;
+	}
 }
