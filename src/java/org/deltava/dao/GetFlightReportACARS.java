@@ -1,16 +1,17 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.List;
+import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.Airline;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -22,6 +23,43 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public GetFlightReportACARS(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns all aircraft tail codes used for flights in a given Equipment Type and Airline.
+	 * @param eqType the Equipment Type
+	 * @param a the Airline
+	 * @param pilotID the Pilot database ID, or zero for all Pilots
+	 * @return a List of tail codes, order by descending popularity
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<String> getTailCodes(String eqType, Airline a, int pilotID) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT AP.TAILCODE, COUNT(P.ID) AS CNT FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.EQTYPE=?) AND (P.STATUS=?) AND (P.AIRLINE=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
+		if (pilotID != 0) sqlBuf.append("AND (P.PILOT_ID=?) ");
+		sqlBuf.append("GROUP BY AP.TAILCODE ORDER BY ");
+		sqlBuf.append((pilotID != 0) ? "CNT" : "P.SUBMITTED");
+		sqlBuf.append(" DESC");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, eqType);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setString(3, a.getCode());
+			ps.setInt(4, 4);
+			ps.setInt(5, 9);
+			if (pilotID != 0) ps.setInt(6, pilotID);
+			
+			List<String> results = new ArrayList<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
