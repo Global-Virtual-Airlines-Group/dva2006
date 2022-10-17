@@ -1,4 +1,4 @@
-/* Cascading Style Sheet for Water Cooler Signatures. (C) 2005, 2006, 2008, 2010 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for Water Cooler Signatures. (C) 2005, 2006, 2008, 2010, 2022 Global Virtual Airlines Group. */
 table.DVA_defaultSig {
 	width: 450px;
 	height: 134px;
@@ -35,4 +35,11 @@ span.DVA_defaultSig {
 	font-size: 10pt;
 	position: relative;
 	top: -20px;
+}
+
+@media (prefers-color-scheme: dark) {
+	table.DVA_defaultSig {
+		background-color: #080810 !important;
+		border-color: #080810 !important;
+	}
 }

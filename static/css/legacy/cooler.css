@@ -114,11 +114,15 @@ blockquote cite {
 }
 
 @media (prefers-color-scheme: dark) {
+		table.DVA_defaultSig {
+		background-color: #0f0f3f;
+	}
+	
 	td.postDate {
 		background-color: #0f0f3f;	
 	}
 	
-	td.unread_postDate {
+	td.unread_postDate, td.postEdit {
 		background-color: #1f1f4f;
 	}
 	
