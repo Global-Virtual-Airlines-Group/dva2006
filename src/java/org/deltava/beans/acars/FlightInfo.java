@@ -21,13 +21,15 @@ import org.deltava.util.*;
 
 public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, ViewEntry {
 
+	private Airline _a;
+	private int _flight;
+	
 	private int _pilotID;
 	private int _positionCount;
 
 	private Instant _startTime;
 	private Instant _endTime;
 
-	private String _flightCode;
 	private String _eqType;
 	private String _alt;
 
@@ -94,12 +96,12 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	
 	@Override
 	public Airline getAirline() {
-		return FlightCodeParser.parse(_flightCode).getAirline();
+		return _a;
 	}
 	
 	@Override
 	public int getFlightNumber() {
-		return FlightCodeParser.parse(_flightCode).getFlightNumber();
+		return _flight;
 	}
 	
 	@Override
@@ -163,7 +165,9 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 * @see FlightInfo#setFlightCode(String)
 	 */
 	public String getFlightCode() {
-		return _flightCode;
+		StringBuilder buf = new StringBuilder(_a.getCode());
+		buf.append(StringUtils.format(_flight, "#000"));
+		return buf.toString();
 	}
 
 	@Override
@@ -523,6 +527,22 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	public void setAuthorID(int id) {
 		_pilotID = Math.max(0, id);
 	}
+	
+	/**
+	 * Updates the Airline for the flight.
+	 * @param a the Airline
+	 */
+	public void setAirline(Airline a) {
+		_a = a;
+	}
+	
+	/**
+	 * Updates the flight number for the flight.
+	 * @param flight the flight number
+	 */
+	public void setFlight(int flight) {
+		_flight = flight;
+	}
 
 	/**
 	 * Updates the Disaptcher ID for the flight.
@@ -829,8 +849,11 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 * @throws NullPointerException if code is null
 	 * @see FlightInfo#getFlightCode()
 	 */
+	@Deprecated
 	public void setFlightCode(String code) {
-		_flightCode = code.toUpperCase();
+		Flight f = FlightCodeParser.parse(code);
+		_a = f.getAirline();
+		_flight = f.getFlightNumber();
 	}
 
 	/**
