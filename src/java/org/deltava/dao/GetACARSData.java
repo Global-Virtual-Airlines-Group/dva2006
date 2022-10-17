@@ -64,7 +64,7 @@ public class GetACARSData extends DAO {
 	 * @return a List of RouteEntry beans, ordered by time
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
+	public List<ACARSRouteEntry> getTakeoffLanding(int flightID) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME")) {
 			ps.setInt(1, flightID);
 			ps.setInt(2, ACARSFlags.TOUCHDOWN.getMask());
@@ -295,40 +295,41 @@ public class GetACARSData extends DAO {
 				info.setAuthorID(rs.getInt(2));
 				info.setStartTime(rs.getTimestamp(3).toInstant());
 				info.setEndTime(toInstant(rs.getTimestamp(4)));
-				info.setFlightCode(rs.getString(5));
-				info.setEquipmentType(rs.getString(6));
-				info.setAltitude(rs.getString(7));
-				info.setAirportD(SystemData.getAirport(rs.getString(8)));
-				info.setAirportA(SystemData.getAirport(rs.getString(9)));
-				info.setAirportL(SystemData.getAirport(rs.getString(10)));
-				// skip 11 - decode in 25
-				info.setRemoteHost(rs.getString(12));
-				info.setRoute(rs.getString(13));
-				info.setRemarks(rs.getString(14));
-				info.setSimulator(Simulator.fromVersion(rs.getInt(15), Simulator.UNKNOWN));
-				info.setOffline(rs.getBoolean(16));
-				info.setHasPIREP(rs.getBoolean(17));
-				info.setArchived(rs.getBoolean(18));
-				info.setScheduleValidated(rs.getBoolean(19));
-				info.setDispatcher(DispatchType.values()[rs.getInt(20)]);
-				info.setIsMP(rs.getBoolean(21));
-				info.setClientBuild(rs.getInt(22));
-				info.setBeta(rs.getInt(23));
-				info.setFDR(Recorder.values()[rs.getInt(24)]);
-				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
-				info.setTXCode(rs.getInt(27));
-				info.setAutopilotType(AutopilotType.values()[rs.getInt(28)]);
-				info.setPlatform(OperatingSystem.values()[rs.getInt(29)]);
-				info.setIsSim64Bit(rs.getBoolean(30));
-				info.setIsACARS64Bit(rs.getBoolean(31));
-				info.setRemoteAddr(rs.getString(32));
-				info.setRouteID(rs.getInt(33));
-				info.setDispatcherID(rs.getInt(34));
-				info.setDispatchLogID(rs.getInt(35));
-				info.setPassengers(rs.getInt(36));
-				info.setSeats(rs.getInt(37));
-				info.setLoadType(LoadType.values()[rs.getInt(38)]);
-				info.setLoadFactor(rs.getDouble(39));
+				info.setAirline(SystemData.getAirline(rs.getString(5)));
+				info.setFlight(rs.getInt(6));
+				info.setEquipmentType(rs.getString(7));
+				info.setAltitude(rs.getString(8));
+				info.setAirportD(SystemData.getAirport(rs.getString(9)));
+				info.setAirportA(SystemData.getAirport(rs.getString(10)));
+				info.setAirportL(SystemData.getAirport(rs.getString(11)));
+				// skip 12 - decode in 25
+				info.setRemoteHost(rs.getString(13));
+				info.setRoute(rs.getString(14));
+				info.setRemarks(rs.getString(15));
+				info.setSimulator(Simulator.fromVersion(rs.getInt(16), Simulator.UNKNOWN));
+				info.setOffline(rs.getBoolean(17));
+				info.setHasPIREP(rs.getBoolean(18));
+				info.setArchived(rs.getBoolean(19));
+				info.setScheduleValidated(rs.getBoolean(20));
+				info.setDispatcher(DispatchType.values()[rs.getInt(21)]);
+				info.setIsMP(rs.getBoolean(22));
+				info.setClientBuild(rs.getInt(23));
+				info.setBeta(rs.getInt(24));
+				info.setFDR(Recorder.values()[rs.getInt(25)]);
+				info.setSimulatorVersion(rs.getInt(26), rs.getInt(27));
+				info.setTXCode(rs.getInt(28));
+				info.setAutopilotType(AutopilotType.values()[rs.getInt(29)]);
+				info.setPlatform(OperatingSystem.values()[rs.getInt(30)]);
+				info.setIsSim64Bit(rs.getBoolean(31));
+				info.setIsACARS64Bit(rs.getBoolean(32));
+				info.setRemoteAddr(rs.getString(33));
+				info.setRouteID(rs.getInt(34));
+				info.setDispatcherID(rs.getInt(35));
+				info.setDispatchLogID(rs.getInt(36));
+				info.setPassengers(rs.getInt(37));
+				info.setSeats(rs.getInt(38));
+				info.setLoadType(LoadType.values()[rs.getInt(39)]);
+				info.setLoadFactor(rs.getDouble(40));
 				results.add(info);
 			}
 		}

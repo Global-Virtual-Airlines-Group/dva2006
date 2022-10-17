@@ -332,6 +332,12 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Package Format</td>
  <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /></td>
 </tr>
+<c:if test="${!empty tailCodes}">
+<tr>
+ <td class="label">Tail Code</td>
+ <td class="data"><el:combo name="tailCode" size="1" options="${tailCodes}" firstEntry="[ SELECT AIRCRAFT ]" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Cost Index</td>
  <td class="data"><el:text name="costIndex" size="2" max="3" value="80" /></td>
@@ -342,7 +348,7 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <c:if test="${access.canViewSimBrief && (!empty sbPackage) && fn:isDraft(pirep)}">
 <tr class="title caps">
- <td colspan="2">SimBrief BRIEFING PACKAGE DATA</td>
+ <td colspan="2">SimBrief BRIEFING PACKAGE INFORMATION</td>
 </tr>
 <tr>
  <td class="label">SimBrief Package</td>
@@ -593,6 +599,9 @@ golgotha.local.sbSubmit = function() {
 	const sbf = document.getElementById('sbapiform');
 	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
 	sbf.civalue.value = f.costIndex.value;
+	if golgotha.form.comboSet(f.tailCode) 
+		sbf.reg.value = golgotha.form.getCombo(f.tailCode).toUpperCase();
+
 	try {
 		if (parseInt(sbf.pax.value) < 1)
 			return golgotha.local.loadPax(sbf);
@@ -673,6 +682,7 @@ golgotha.local.sbBriefingText = function() {
 <el:text name="airline" type="hidden"  value="${pirep.airline.code}" />
 <el:text name="fltnum" type="hidden" value="${pirep.flightNumber}" />
 <el:text name="callsign" type="hidden" value="${pirep.shortCode}" />
+<el:text name="reg" type="hidden" value="" />
 <el:text name="route" type="hidden" value="${pirep.route}" />
 <el:text name="cpt" type="hidden" value="${pilot.name}" />
 <el:text name="dxname" type="hidden" value="Golgotha v${versionInfo}" />

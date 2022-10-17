@@ -397,7 +397,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAOs and load the flight report
-			GetFlightReports dao = new GetFlightReports(con);
+			GetFlightReportACARS dao = new GetFlightReportACARS(con);
 			GetPilot pdao = new GetPilot(con);
 			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
@@ -472,6 +472,10 @@ public class PIREPCommand extends AbstractFormCommand {
 					alts.removeAll(alts.subList(4, alts.size()));
 				
 				ctx.setAttribute("alternates", alts, REQUEST);
+				
+				// List possible tail codes
+				if (sbPkg == null)
+					ctx.setAttribute("tailCodes", dao.getTailCodes(a.getName(), fr.getAirline(), p.getID()), REQUEST);
 				
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
