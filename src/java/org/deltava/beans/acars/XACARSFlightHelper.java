@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to convert XACARS Flight Information records into Flight Reports.
  * @author Luke
- * @version 8.1
+ * @version 10.3
  * @since 4.1
  */
 
@@ -30,7 +30,8 @@ public final class XACARSFlightHelper {
 		
 		// Create the flight entry
 		FlightInfo fi = new FlightInfo(0);
-		fi.setFlightCode(inf.getFlightCode());
+		fi.setAirline(inf.getAirline());
+		fi.setFlight(inf.getFlightNumber());
 		fi.setAirportD(inf.getAirportD());
 		fi.setAirportA(inf.getAirportA());
 		fi.setEquipmentType(inf.getEquipmentType());

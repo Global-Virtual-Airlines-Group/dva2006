@@ -213,7 +213,8 @@ public final class OfflineFlightParser {
 		afr.setRestoreCount(StringUtils.parse(ie.getChildTextTrim("restoreCount"), 0));
 		afr.setRemarks(inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
-		inf.setFlightCode(afr.getFlightCode());
+		inf.setAirline(afr.getAirline());
+		inf.setFlight(afr.getFlightNumber());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
 		afr.setSDK(ae.getChildTextTrim("sdk"));
