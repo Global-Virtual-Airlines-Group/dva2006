@@ -290,7 +290,7 @@
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
 				</modified>
@@ -300,7 +300,7 @@
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
 				</modified>
@@ -313,7 +313,7 @@
 				<include name="golgotha.jar" />
 	 			<include name="golgotha_web.jar" />
 				<include name="golgotha_jsp.jar" />
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
 				</modified>
@@ -324,7 +324,7 @@
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="etc" includes="*.*">
 				<exclude name="log4j.test.properties" />
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
 				</modified>
@@ -334,13 +334,13 @@
 		<!-- Upload static content to the HTTP server -->
 		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" port="${http.dev.port}" verbose="yes" trust="yes" keyfile="${http.dev.key}">
 			<fileset dir="static">
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="${java.io.tmpdir}/build/min">
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
 				</modified>
@@ -375,7 +375,7 @@
 		<!-- Upload the scripts to web server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="scripts/pri">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
 				</modified>
@@ -385,7 +385,7 @@
 		<!-- Upload the scripts to services server -->
         <scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/sbin/www" port="${mail.ssh.port}" verbose="yes" trust="yes" keyfile="${mail.ssh.key}">
             <fileset dir="scripts/sec">
-                <modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+                <modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
                     <param name="algorithm.algorithm" value="MD5" />
                     <param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
                 </modified>
@@ -395,7 +395,7 @@
 		<!-- Upload murmur auth -->
 		<scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/murmur" port="${mail.ssh.port}" verbose="yes" trust="yes" keyfile="${mail.ssh.key}">
 			<fileset dir="scripts/murmur">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 				    <param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
 				</modified>
@@ -421,7 +421,7 @@
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
@@ -431,7 +431,7 @@
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
@@ -444,13 +444,13 @@
 				<include name="golgotha.jar" />
 				<include name="golgotha_web.jar" />
 				<include name="golgotha_jsp.jar" />
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
@@ -465,13 +465,13 @@
 				<include name="codeshares.txt" />
 				<include name="cacheInfo.xml" />
 				<include name="bb_config.xml" />
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="etc/prod">
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
@@ -481,13 +481,13 @@
 		<!-- Upload static content to the HTTP server -->
 		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}" port="${http.ssh.port}" verbose="yes" trust="yes" keyfile="${http.ssh.key}">
 			<fileset dir="static">
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="${java.io.tmpdir}/build/min">
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
 				</modified>
@@ -570,7 +570,7 @@
 		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes" port="${golgotha.ssh.port}" trust="yes" keyfile="${golgotha.ssh.key}">
 			<fileset dir="${java.io.tmpdir}/src">
 				<include name="*.tar.gz" />
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/src.cache.txt" />
 				</modified>
