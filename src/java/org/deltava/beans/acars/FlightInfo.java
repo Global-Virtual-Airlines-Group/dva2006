@@ -165,6 +165,7 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 * @see FlightInfo#setFlightCode(String)
 	 */
 	public String getFlightCode() {
+		if (_a == null) return null;
 		StringBuilder buf = new StringBuilder(_a.getCode());
 		buf.append(StringUtils.format(_flight, "#000"));
 		return buf.toString();
