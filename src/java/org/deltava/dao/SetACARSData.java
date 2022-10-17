@@ -17,9 +17,9 @@ import org.deltava.beans.navdata.*;
 
 public class SetACARSData extends DAO {
 
-	private static final String ISQL = "INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP, FDR, "
-			+ "REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, IS64, ACARS64, APTYPE, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String USQL = "UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, FSVERSION=?, "
+	private static final String ISQL = "INSERT INTO acars.FLIGHTS (AIRLINE, FLIGHT, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP, FDR, "
+			+ "REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, IS64, ACARS64, APTYPE, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String USQL = "UPDATE acars.FLIGHTS SET AIRLINE=?, FLIGHT=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, FSVERSION=?, "
 			+ "OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), CLIENT_BUILD=?, BETA_BUILD=?, SIM_MAJOR=?, SIM_MINOR=?, IS64=?, ACARS64=?, APTYPE=?, PILOT_ID=? WHERE (ID=?)";
 	
 	/**
@@ -39,32 +39,33 @@ public class SetACARSData extends DAO {
 		boolean isNew = (info.getID() == 0);
 		try {
 			try (PreparedStatement ps = prepare(isNew ? ISQL : USQL)) {
-				ps.setString(1, info.getFlightCode());
-				ps.setTimestamp(2, createTimestamp(info.getStartTime()));
-				ps.setTimestamp(3, createTimestamp(info.getEndTime()));
-				ps.setString(4, info.getEquipmentType());
-				ps.setString(5, info.getAltitude());
-				ps.setString(6, info.getAirportD().getIATA());
-				ps.setString(7, info.getAirportA().getIATA());
-				ps.setString(8, (info.getAirportL() == null) ? null : info.getAirportL().getIATA());
-				ps.setString(9, info.getRoute());
-				ps.setString(10, info.getRemarks());
-				ps.setInt(11, info.getSimulator().getCode());
-				ps.setBoolean(12, info.getOffline());
-				ps.setBoolean(13, true);
-				ps.setInt(14, info.getFDR().ordinal());
-				ps.setString(15, info.getRemoteHost());
-				ps.setString(16, info.getRemoteAddr());
-				ps.setInt(17, info.getClientBuild());
-				ps.setInt(18, info.getBeta());
-				ps.setInt(19, info.getSimMajor());
-				ps.setInt(20, info.getSimMinor());
-				ps.setBoolean(21, info.getIsSim64Bit());
-				ps.setBoolean(22, info.getIsACARS64Bit());
-				ps.setInt(23, info.getAutopilotType().ordinal());
-				ps.setInt(24, info.getAuthorID());
+				ps.setString(1, info.getAirline().getCode());
+				ps.setInt(2, info.getFlightNumber());
+				ps.setTimestamp(3, createTimestamp(info.getStartTime()));
+				ps.setTimestamp(4, createTimestamp(info.getEndTime()));
+				ps.setString(5, info.getEquipmentType());
+				ps.setString(6, info.getAltitude());
+				ps.setString(7, info.getAirportD().getIATA());
+				ps.setString(8, info.getAirportA().getIATA());
+				ps.setString(9, (info.getAirportL() == null) ? null : info.getAirportL().getIATA());
+				ps.setString(10, info.getRoute());
+				ps.setString(11, info.getRemarks());
+				ps.setInt(12, info.getSimulator().getCode());
+				ps.setBoolean(13, info.getOffline());
+				ps.setBoolean(14, true);
+				ps.setInt(15, info.getFDR().ordinal());
+				ps.setString(16, info.getRemoteHost());
+				ps.setString(17, info.getRemoteAddr());
+				ps.setInt(18, info.getClientBuild());
+				ps.setInt(19, info.getBeta());
+				ps.setInt(20, info.getSimMajor());
+				ps.setInt(21, info.getSimMinor());
+				ps.setBoolean(22, info.getIsSim64Bit());
+				ps.setBoolean(23, info.getIsACARS64Bit());
+				ps.setInt(24, info.getAutopilotType().ordinal());
+				ps.setInt(25, info.getAuthorID());
 				if (!isNew)
-					ps.setInt(25, info.getID());
+					ps.setInt(26, info.getID());
 			
 				executeUpdate(ps, 1);
 			}
