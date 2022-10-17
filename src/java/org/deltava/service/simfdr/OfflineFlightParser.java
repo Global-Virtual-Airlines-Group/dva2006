@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 7.0
  */
 
@@ -58,6 +58,7 @@ final class OfflineFlightParser {
 		
 		// Build the offline Flight
 		String cs = ie.getChildTextTrim("callsign");
+		Flight f = FlightCodeParser.parse(cs, SystemData.get("airline.code"));
 		OfflineFlight<SimFDRFlightReport, ACARSRouteEntry> of = new OfflineFlight<SimFDRFlightReport, ACARSRouteEntry>();
 		
 		// Build a flight data entry
@@ -71,7 +72,8 @@ final class OfflineFlightParser {
 		inf.setAirportL(SystemData.getAirport(ie.getChildTextTrim("airportL")));
 		inf.setRemoteAddr(ie.getChildTextTrim("remoteAddr"));
 		inf.setRemoteHost(ie.getChildTextTrim("remoteHost"));
-		inf.setFlightCode(cs);
+		inf.setAirline(f.getAirline());
+		inf.setFlight(f.getFlightNumber());
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setAutopilotType(EnumUtils.parse(AutopilotType.class, ie.getChildTextTrim("autopilotType"), AutopilotType.DEFAULT));
 		of.setInfo(inf);
@@ -85,10 +87,6 @@ final class OfflineFlightParser {
 			log.warn("Unknown simulator version - " + sim);
 		
 		// Build a flight data entry
-		Flight f = FlightCodeParser.parse(cs); 
-		if (f.getAirline() == null) 
-			f.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
-
 		SimFDRFlightReport afr = new SimFDRFlightReport(f.getAirline(), f.getFlightNumber(), f.getLeg());
 		afr.setAttribute(FlightReport.ATTR_SIMFDR, true);
 		afr.setStatus(FlightStatus.SUBMITTED);
