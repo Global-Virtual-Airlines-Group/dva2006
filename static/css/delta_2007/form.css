@@ -219,6 +219,10 @@ div#spinner {
 		color: #efefef;
 	}
 	
+	input.pri {
+		color: #dfdfff;
+	}
+	
 	input.req, textarea.req, input.err {
 		background-color: #004080;
 	}
