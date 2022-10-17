@@ -570,8 +570,8 @@ a.plain:hover {
 
 @media (prefers-color-scheme: dark) {
 	img.header {
-		--image-filter: grayscale(50%);
-		filter: var(--image-filter);
+		--image-filter:grayscale(50%);
+		filter:var(--image-filter);
 	}
 
 	body {
@@ -580,7 +580,7 @@ a.plain:hover {
 	}
 
 	table {
-		color: #e8e8ff;
+		color: #e8e8ef;
 	}
 	
 	a, a:visited {
