@@ -565,8 +565,8 @@ a.plain:hover {
 
 @media (prefers-color-scheme: dark) {
 	img.header {
-		--image-filter: grayscale(50%);
-		filter: var(--image-filter);
+		--image-filter:grayscale(50%);
+		filter:var(--image-filter);
 	}
 
 	body {
