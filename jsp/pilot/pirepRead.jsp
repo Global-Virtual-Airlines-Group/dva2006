@@ -590,8 +590,8 @@ return true;
 </c:when>
 </c:choose>
 <c:if test="${access.canUseSimBrief}">
-<script async>
 <!-- SimBrief integration -->
+<script async>
 <c:if test="${empty sbPackage}">
 golgotha.local.sbSubmit = function() {
 	golgotha.form.submit();
@@ -599,7 +599,7 @@ golgotha.local.sbSubmit = function() {
 	const sbf = document.getElementById('sbapiform');
 	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
 	sbf.civalue.value = f.costIndex.value;
-	if golgotha.form.comboSet(f.tailCode) 
+	if (golgotha.form.comboSet(f.tailCode)) 
 		sbf.reg.value = golgotha.form.getCombo(f.tailCode).toUpperCase();
 
 	try {
