@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
@@ -138,7 +138,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value
  <td class="label top">New Comment</td>
  <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="4" idx="*" className="req" resize="true"></el:textbox>
 <c:if test="${access.canUseTemplate && (!empty rspTemplates)}">
-<div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right nophone">
+<div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="small bld right nophone">
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />&nbsp;<el:button onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
 </c:if></div>
  </td>
