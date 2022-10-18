@@ -125,6 +125,14 @@ tr.title input.check {
 	background-color: inherit;
 }
 
+input[type="file"]::file-selector-button {
+	font-family: verdana, tahoma, sans-serif;
+	color: #ffffef;
+	background-color: #0000a1;
+	border: thin solid #000000;
+	border-radius: 2px;
+}
+
 table.bar select {
 	border: 1px solid #ffffff;
 }
