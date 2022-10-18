@@ -90,13 +90,13 @@
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
 </c:if>
 <c:if test="${hasP3D}">
- <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /></c:if><c:if test="${hasP3D3 && has64}"> + </c:if><c:if test="${hasP3D3}"><fmt:int value="${eLegs['P3D']}" /></c:if> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /></c:if><c:if test="${hasP3D3 && has64}">/</c:if><c:if test="${hasP3D3}"><fmt:int value="${eLegs['P3D']}" /></c:if> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
 </c:if>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
 <c:if test="${hasMSFS}">
  <td class="small"><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${eLegs['FS2020'] * 100.0 / stat.legs}" />%)</td>
 </c:if>
- <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}"> + </c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" className="ita" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if>
+ <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}">/</c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" className="ita" /></c:if><c:if test="${hasXP11 && hasXP10}">/</c:if>
 <c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11'] + eLegs['XP12']) * 100.0 / stat.legs}" />%)</td>
 <c:if test="${!hasP3D && !hasMSFS}">
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" />&nbsp;<c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" />&nbsp;</c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
@@ -121,11 +121,6 @@
 </content:page>
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
-golgotha.local.bg = golgotha.util.darkMode ? '#000021' : '#efefef';
-golgotha.local.tx =  golgotha.util.darkMode ? '#efefef' : '#00002f';
-golgotha.local.ttStyle = {color:golgotha.local.tx,fontName:'Verdana',fontSize:11};
-golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:{color:golgotha.local.tx,fontName:'Verdana',fontSize:8}}};
-golgotha.local.lgStyle = golgotha.local.charts.hStyle.textStyle;
 google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
@@ -156,11 +151,11 @@ golgotha.local.renderChart = function() {
     data.addRows(golgotha.local.chartData);
 
     // Draw the charts
-    const vX = {textStyle:golgotha.local.lgStyle,titleTextStyle:golgotha.local.ttStyle};
+    const hX = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',textStyle:golgotha.charts.lgStyle};
     const c = new google.visualization.LineChart(document.getElementById('flightStats'));
     const cb = new google.visualization.ColumnChart(document.getElementById('flightStatsBar'));
-    c.draw(data,{title:'Flight Legs by Simulator',backgroundColor:golgotha.local.bg,hAxis:golgotha.local.charts.hStyle,vAxis:vX,legend:{textStyle:golgotha.local.lgStyle},titleTextStyle:golgotha.local.ttStyle});
-    cb.draw(data,{title:'Percentage by Simulator',isStacked:'percent',backgroundColor:golgotha.local.bg,hAxis:golgotha.local.charts.hStyle,vAxis:vX,legend:{textStyle:golgotha.local.lgStyle},titleTextStyle:golgotha.local.ttStyle});
+    c.draw(data,golgotha.charts.buildOptions({title:'Flight Legs by Simulator',hAxis:hX}));
+    cb.draw(data,golgotha.charts.buildOptions({title:'Percentage by Simulator',isStacked:'percent',hAxis:hX}));
     return true;
 };
 </script>
