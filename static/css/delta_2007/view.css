@@ -1,5 +1,4 @@
-/* Cascading Style Sheet for Table Views (C) 2005 - 2015 Global Virtual Airlines Group. */
-
+/* Cascading Style Sheet for Table Views (C) 2005 - 2022 Global Virtual Airlines Group. */
 table.view {
 	width: 100%;
 	font-size: 10px;
@@ -118,11 +117,11 @@ table.view :link:hover {
 	}
 
 	table.view *.opt1 {
-		background-color: #a8a83f;
+		background-color: #20280a;
 	}
 
 	table.view *.opt2 {
-		background-color: #207f68;
+		background-color: #106050;
 	}
 
 	table.view *.opt3 {
