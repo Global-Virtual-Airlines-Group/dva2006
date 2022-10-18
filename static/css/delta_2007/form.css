@@ -131,6 +131,14 @@ tr.title input.check {
 	background-color: inherit;
 }
 
+input[type="file"]::file-selector-button {
+	font-family: verdana, tahoma, sans-serif;
+	color: #ffffef;
+	background-color: #1a4876;
+	border: thin solid #000000;
+	border-radius: 2px;
+}
+
 input.req, textarea.req, input.err {
 	background: #fff8fa;
 	border: 1px solid #c01933;
