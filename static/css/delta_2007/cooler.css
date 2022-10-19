@@ -114,6 +114,10 @@ blockquote cite {
 }
 
 @media (prefers-color-scheme: dark) {
+	table.DVA_defaultSig {
+		background-color: #0f0f3f;
+	}
+	
 	td.postDate {
 		background-color: #0f0f3f;	
 	}
@@ -125,5 +129,9 @@ blockquote cite {
 	blockquote {
 		background-color: #00003f;
 		border: 1px dashed #1a4876;
+	}
+	
+		*.postEdit :link, *.postEdit :visited, *.postEdit :hover {
+		color: #efefff;
 	}
 }
