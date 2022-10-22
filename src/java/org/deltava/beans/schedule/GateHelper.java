@@ -5,8 +5,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightType;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.flight.FlightType;
+import org.deltava.beans.stats.GateUsage;
 
 import org.deltava.comparators.GateComparator;
 
@@ -29,6 +30,9 @@ public class GateHelper {
 	
 	private final Collection<Gate> _dGates = new HashSet<Gate>();
 	private final Collection<Gate> _aGates = new HashSet<Gate>();
+	
+	private GateUsage _dUsage;
+	private GateUsage _aUsage;
 
 	/**
 	 * Creates the bean.
@@ -43,6 +47,8 @@ public class GateHelper {
 		_a = a;
 		_maxGates = Math.max(1, max);
 		_doShuffle = doShuffle;
+		_dUsage = new GateUsage(rp, true, 0);
+		_aUsage = new GateUsage(rp, false, 0);
 	}
 	
 	/**
@@ -58,17 +64,21 @@ public class GateHelper {
 	/**
 	 * Adds gates at the departure Airport.
 	 * @param gates a Collection of Gates
+	 * @param gu a GateUsage bean
 	 */
-	public void addDepartureGates(Collection<Gate> gates) {
+	public void addDepartureGates(Collection<Gate> gates, GateUsage gu) {
 		_dGates.addAll(gates);
+		_dUsage = gu;
 	}
 	
 	/**
 	 * Adds gates at the arrival Airport.
 	 * @param gates a Collection of Gates
+	 * @param gu a GateUsage bean
 	 */
-	public void addArrivalGates(Collection<Gate> gates) {
+	public void addArrivalGates(Collection<Gate> gates, GateUsage gu) {
 		_aGates.addAll(gates);
+		_aUsage = gu;
 	}
 	
 	/**
@@ -76,7 +86,9 @@ public class GateHelper {
 	 */
 	public void clear() {
 		_dGates.clear();
+		_dUsage.clear();
 		_aGates.clear();
+		_aUsage.clear();
 	}
 
 	/**
@@ -105,7 +117,13 @@ public class GateHelper {
 	 */
 	public List<Gate> getDepartureGates() {
 		List<Gate> filteredGates = filter(_dGates, _a, getDepartureZone());
-		return sortSliceShuffle(filteredGates.isEmpty() ? new ArrayList<Gate>(_dGates) : filteredGates);
+		if (filteredGates.isEmpty())
+			filteredGates.addAll(_dGates);
+
+		GateUsage gu =  _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a.getCode()) : _dUsage;
+		boolean hasRecent = (gu.getRecentSize() > 0);
+		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
+		return sortSliceShuffle(filteredGates);
 	}
 	
 	/**
@@ -114,7 +132,13 @@ public class GateHelper {
 	 */
 	public List<Gate> getArrivalGates() {
 		List<Gate> filteredGates = filter(_aGates, _a, getArrivalZone());
-		return sortSliceShuffle(filteredGates.isEmpty() ? new ArrayList<Gate>(_aGates) : filteredGates);
+		if (filteredGates.isEmpty())
+			filteredGates.addAll(_aGates);
+		
+		GateUsage gu =  _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a.getCode()) : _aUsage;
+		boolean hasRecent = (gu.getRecentSize() > 0);
+		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
+		return sortSliceShuffle(filteredGates);
 	}
 	
 	private List<Gate> sortSliceShuffle(List<Gate> results) {

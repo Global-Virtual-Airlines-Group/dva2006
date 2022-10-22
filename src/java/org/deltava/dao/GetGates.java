@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.FlightInfo;
@@ -30,7 +29,7 @@ public class GetGates extends DAO {
 	private static final Cache<GateUsage> _useCache = CacheManager.get(GateUsage.class, "GateUsage");
 	
 	private static final Comparator<Gate> CMP = new GateComparator(GateComparator.USAGE).reversed();
-	private static final int DAY_RANGE = 365;
+	private static final int DAY_RANGE = 730;
 
 	private static void populateFlight(FlightInfo fi, Gate g) {
 		if (g.getCode().equals(fi.getAirportD().getICAO()))
@@ -121,36 +120,29 @@ public class GetGates extends DAO {
 	/**
 	 * Returns popular Gates for a particular Route.
 	 * @param rp the RoutePair
-	 * @param sim the Simulator
 	 * @param isDeparture TRUE if returning preferred departure Gate, otherwise FALSE
 	 * @return a List of Gates, ordered by popularity
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Gate> getPopularGates(RoutePair rp, Simulator sim, boolean isDeparture) throws DAOException {
-		checkSimulator(sim);
-		
-		// Get the Gates
-		Airport a = isDeparture ? rp.getAirportD() : rp.getAirportA();
-		List<Gate> gates = getGates(a, sim);
+	public GateUsage getUsage(RoutePair rp, boolean isDeparture) throws DAOException {
 		
 		// Check the cache
 		GateUsage gu = new GateUsage(rp, isDeparture, DAY_RANGE);
 		GateUsage gateUse = _useCache.get(gu.cacheKey());
-		if (gateUse != null) {
-			boolean useRecent = (gateUse.getRecentSize() > 3);
-			List<Gate> results = gates.stream().map(g -> new Gate(g, useRecent ? gateUse.getRecentUsage(g.getName()) : gateUse.getTotalUsage(g.getName()))).collect(Collectors.toList()); // clone the gate
-			return CollectionUtils.sort(results, CMP);
-		}
+		if (gateUse != null)
+			return gateUse.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, COUNT(GD.ID) AS TCNT, SUM(IF(F.CREATED>DATE_SUB(NOW(), INTERVAL ? DAY),1,0)) AS CNT FROM acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) "
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, F.AIRLINE, COUNT(GD.ID) AS TCNT, SUM(IF(F.CREATED>DATE_SUB(NOW(), INTERVAL ? DAY),1,0)) AS CNT FROM acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) "
 			+ "AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) ");
 		if (rp.getAirportD() != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
-		sqlBuf.append("GROUP BY G.NAME");
-		
+		sqlBuf.append("GROUP BY G.NAME, F.AIRLINE");
+
+		gu = new GateUsage(rp, isDeparture, DAY_RANGE);
+		Airport a = isDeparture ? rp.getAirportD() : rp.getAirportA();
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) { 
 			int pos = 0;
 			ps.setInt(++pos, DAY_RANGE);
@@ -163,17 +155,12 @@ public class GetGates extends DAO {
 			
 			// Load gate usage
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					String g = rs.getString(1);
-					gu.addGate(g, rs.getInt(2), rs.getInt(3));
-				}
+				while (rs.next())
+					gu.addGate(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
 			}
 			
-			// Determine whether to use recent, or total
 			_useCache.add(gu);
-			boolean useRecent = (gu.getRecentSize() > 3);
-			List<Gate> results = gates.stream().map(g -> new Gate(g, useRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName()))).collect(Collectors.toList()); // clone the gate
-			return CollectionUtils.sort(results, CMP);
+			return gu.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -73,10 +73,11 @@ public class URLCheckService extends WebService {
 			
 			// Load gates if needed
 			if (!dfr.hasGates()) {
+				Simulator sim = (dfr.getSimulator() == Simulator.UNKNOWN) ? Simulator.P3Dv4 : dfr.getSimulator();
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(dfr, 5, true);
-				gh.addDepartureGates(gdao.getPopularGates(dfr, Simulator.P3Dv4, true));
-				gh.addArrivalGates(gdao.getPopularGates(dfr, Simulator.P3Dv4, false));
+				gh.addDepartureGates(gdao.getGates(dfr.getAirportD(), sim), gdao.getUsage(dfr, true));
+				gh.addArrivalGates(gdao.getGates(dfr.getAirportA(), sim), gdao.getUsage(dfr, false));
 				
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();
