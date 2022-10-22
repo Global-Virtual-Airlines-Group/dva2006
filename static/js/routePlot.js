@@ -123,14 +123,14 @@ xmlreq.onreadystatechange = function() {
 	if (js.airportA) golgotha.routePlot.aGates.mapCenter = js.airportA;
 
 	// Set the distance
+	const distUnit = js.distanceUnit || {id:'SM',name:'Statute Mile',factor:1.0};
 	const dstE = document.getElementById('rtDistance');
 	if ((dstE) && (js.distance > 0)) {
 		let distDelta = (js.distance - js.gcDistance) * 1.0 / js.distance;
 		distDelta = Math.round(distDelta * 10000) / 100;
+		dstE.innerHTML = ' - ' + Math.round(js.distance * distUnit.factor) + ' ' + distUnit.name.toLowerCase() + 's';
 		if (distDelta > 1)
-			dstE.innerHTML = ' - ' + js.distance + ' miles (' + distDelta + '% difference)';
-		else
-			dstE.innerHTML = ' - ' + js.distance + ' miles';
+			dstE.innerHTML += ' (' + distDelta + '% difference)';
 	} else if (dstE)
 		dstE.innerHTML = '';
 
