@@ -116,16 +116,28 @@ table.view :link:hover {
 		color: #e8e8ff;
 	}
 
+	table.view *.opt1 .pri, table.view *.opt2 .pri, table.view *.opt3 .pri, table.view *.opt4 .pri, table.view *.warn .pri, table.view *.err .pri {
+		color: #50aac8;		
+	}
+	
+	table.view *.opt2 .ok, table.view *.opt3 .ok {
+		color: #00b0b0;
+	}
+	
+	table.view *.opt2 .ter, table.view *.opt3 .ter {
+		color: #00b000;
+	}
+
 	table.view *.opt1 {
 		background-color: #20280a;
 	}
 
 	table.view *.opt2 {
-		background-color: #106050;
+		background-color: #084038;
 	}
 
 	table.view *.opt3 {
-		background-color: #30607f;
+		background-color: #20506f;
 	}
 
 	table.view *.opt4 {
@@ -133,7 +145,7 @@ table.view :link:hover {
 	}
 
 	table.view *.warn {
-		background-color: #7f6f40;
+		background-color: #5f4f10;
 	}
 
 	table.view *.err {
