@@ -98,18 +98,8 @@ public class RoutePlotMapService extends MapPlotService {
 			GateHelper gh = new GateHelper(dr, dr.getAirline(), 8, false);
 			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
-				gh.addDepartureGates(dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim));
-				List<Gate> dGates = gh.getDepartureGates();
-				if (dGates.size() < 3) {
-					gh.clear();
-					List<Gate> allGates = gdao.getGates(dr.getAirportD(), sim);
-					gh.addDepartureGates(allGates);
-					gh.getDepartureGates().stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
-					if (dGates.isEmpty())
-						allGates.stream().map(g -> new Gate(g, 0)).forEach(dGates::add);
-				}
-				
-				gates.addAll(dGates);
+				gh.addDepartureGates(gdao.getGates(dr.getAirportD(), sim), gdao.getUsage(dr, true));
+				gates.addAll(gh.getDepartureGates());
 				String rwy = req.optString("runway", "");
 				if (rwy.indexOf(' ') > 0)
 					rwy = rwy.substring(rwy.indexOf(' ') + 1);
@@ -194,18 +184,8 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				gh.addArrivalGates(dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim));
-				List<Gate> aGates = gh.getArrivalGates();
-				if (aGates.size() < 3) {
-					gh.clear();
-					Collection<Gate> allGates = gdao.getGates(dr.getAirportA(), sim);
-					gh.addArrivalGates(allGates);
-					gh.getArrivalGates().stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
-					if (aGates.isEmpty())
-						allGates.stream().map(g -> new Gate(g, 0)).forEach(aGates::add);
-				}
-				
-				gates.addAll(aGates);
+				gh.addArrivalGates(gdao.getGates(dr.getAirportA(), sim), gdao.getUsage(dr, false));
+				gates.addAll(gh.getArrivalGates());
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
 				
