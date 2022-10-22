@@ -239,8 +239,14 @@ public class RoutePlotMapService extends MapPlotService {
 			jo.put("airportD", JSONUtils.format(dr.getAirportD()));
 		if (dr.getAirportA() != null)
 			jo.put("airportA", JSONUtils.format(dr.getAirportA()));
-		if (dr.isPopulated())
-			jo.put("gcDistance", dr.getDistance());
+		if (dr.isPopulated()) {
+			DistanceUnit du = ctx.getUser().getDistanceType();
+			JSONObject duo = new JSONObject();
+			duo.put("id", du.name());
+			duo.put("name", du.getUnitName());
+			duo.put("factor", du.getFactor());
+			jo.put("distanceUnit", duo);
+		}
 		
 		// Add ETOPS rating
 		JSONObject eo = new JSONObject();
