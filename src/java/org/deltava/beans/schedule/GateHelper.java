@@ -120,7 +120,7 @@ public class GateHelper {
 		if (filteredGates.isEmpty())
 			filteredGates.addAll(_dGates);
 
-		GateUsage gu =  _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a.getCode()) : _dUsage;
+		GateUsage gu =  (_a != null) && _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a.getCode()) : _dUsage;
 		boolean hasRecent = (gu.getRecentSize() > 0);
 		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
@@ -135,7 +135,7 @@ public class GateHelper {
 		if (filteredGates.isEmpty())
 			filteredGates.addAll(_aGates);
 		
-		GateUsage gu =  _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a.getCode()) : _aUsage;
+		GateUsage gu =  (_a != null) && _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a.getCode()) : _aUsage;
 		boolean hasRecent = (gu.getRecentSize() > 0);
 		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
