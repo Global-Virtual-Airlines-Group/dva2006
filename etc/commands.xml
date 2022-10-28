@@ -2179,7 +2179,7 @@
 	<command id="hdconvert">
 		<name>Help Desk Issue Convert</name>
 		<class>org.deltava.commands.help.IssueConvertCommand</class>
-		<roles>HR</roles>
+		<roles>HR,HelpDesk</roles>
 	</command>
 	
 	<command id="hdupdate">
