@@ -256,8 +256,10 @@ public class TourCommand extends AbstractAuditFormCommand {
 			
 			// Load PIREPs and see current progress
 			if (ctx.isAuthenticated()) {
+				LocalDateTime ldt = LocalDateTime.ofInstant(t.getStartDate(), ZoneOffset.UTC);
+				Instant tourStart = t.getStartDate().minusSeconds(ldt.get(ChronoField.SECOND_OF_DAY));
 				GetFlightReports frdao = new GetFlightReports(con);
-				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), t.getStartDate(), (int)(Duration.between(t.getStartDate(), t.getEndDate()).toDays()));
+				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), tourStart, (int)(Duration.between(tourStart, t.getEndDate()).toDays()) + 1);
 				tourFlights.removeIf(fr -> (fr.getDatabaseID(DatabaseID.TOUR) != t.getID()));
 				ctx.setAttribute("tourProgress", CollectionUtils.sort(tourFlights, new FlightReportComparator(FlightReportComparator.SUBMISSION)), REQUEST);
 				ctx.setAttribute("maxLeg", Integer.valueOf(tourFlights.stream().mapToInt(fr -> t.getLegIndex(fr)).max().orElse(0)), REQUEST);
