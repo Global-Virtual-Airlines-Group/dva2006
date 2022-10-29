@@ -120,6 +120,10 @@ table.view :link:hover {
 		color: #50afd8;		
 	}
 	
+	table.view a.pri, table.view a.pri:visited {
+		color: #6080e0;
+	}
+	
 	table.view *.opt2 .ok, table.view *.opt3 .ok {
 		color: #00b0b0;
 	}
