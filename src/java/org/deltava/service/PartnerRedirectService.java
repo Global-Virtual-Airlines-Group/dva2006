@@ -35,7 +35,7 @@ public class PartnerRedirectService extends WebService {
 			GetPartner dao = new GetPartner(con);
 			PartnerInfo p = dao.get(StringUtils.parse(ctx.getParameter("id"), 0));
 			if (p == null)
-				throw error(SC_NOT_FOUND, "Unknown Partner - " + ctx.getParameter("id"));
+				throw error(SC_NOT_FOUND, "Unknown Partner - " + ctx.getParameter("id"), false);
 			
 			// Increment reference count and redirect
 			SetPartner pwdao = new SetPartner(con);
