@@ -120,7 +120,7 @@ table.view :link:hover {
 		color: #50afd8;		
 	}
 	
-	table.view a.pri, table.view a.pri:visited {
+	table.view a.pri, table.view a.pri:visited, table.view *.pri {
 		color: #6080e0;
 	}
 	
