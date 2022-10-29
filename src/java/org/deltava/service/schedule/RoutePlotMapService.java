@@ -240,7 +240,7 @@ public class RoutePlotMapService extends MapPlotService {
 		if (dr.getAirportA() != null)
 			jo.put("airportA", JSONUtils.format(dr.getAirportA()));
 		if (dr.isPopulated()) {
-			DistanceUnit du = ctx.getUser().getDistanceType();
+			DistanceUnit du = ctx.isAuthenticated() ? ctx.getUser().getDistanceType() : DistanceUnit.MI;
 			JSONObject duo = new JSONObject();
 			duo.put("id", du.name());
 			duo.put("name", du.getUnitName());
