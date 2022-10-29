@@ -131,7 +131,11 @@ blockquote cite {
 		border: 1px dashed #1a4876;
 	}
 	
-		*.postEdit :link, *.postEdit :visited, *.postEdit :hover {
+	*.postEdit :link, *.postEdit :visited {
 		color: #efefff;
+	}
+
+	*.postInfo :link, *.postInfo :visited {	
+		color: #6080e0;
 	}
 }
