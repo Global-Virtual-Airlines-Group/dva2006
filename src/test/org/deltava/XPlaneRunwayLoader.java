@@ -19,17 +19,15 @@ public class XPlaneRunwayLoader extends TestCase {
 	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?useSSL=false";
 	
-	private static final double M_TO_MI = 0.000621371;
 	private static final double FT_PER_M = 3.2808399;
 	
-	private static final Surface[] SFCS = new Surface[] { Surface.UNKNOWN, Surface.ASPHALT, Surface.CONCRETE, Surface.GRASS,
-			Surface.DIRT, Surface.GRAVEL, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN,
+	private static final Surface[] SFCS = { Surface.UNKNOWN, Surface.ASPHALT, Surface.CONCRETE, Surface.GRASS, Surface.DIRT, Surface.GRAVEL, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN,
 			Surface.UNKNOWN, Surface.SAND, Surface.WATER, Surface.ICE, Surface.UNKNOWN };
 	
 	private static final int WGS84_SRID = 4326;
 	
-	private static final Simulator SIM = Simulator.XP11;
-	private static final String DATA_FILE = "apt_xp11.dat";
+	private static final Simulator SIM = Simulator.XP10;
+	private static final String DATA_FILE = "apt10.dat";
 	
 	private Logger log;
 	
@@ -94,7 +92,7 @@ public class XPlaneRunwayLoader extends TestCase {
 				if ("1".equals(type)) {
 					String ap = dd.get(3).toUpperCase();
 					apCode = apCodes.contains(ap) ? ap : null; 
-					if (apCode != null) log.info("Processing " + apCode);
+					if (apCode != null) log.info("Processing " + apCode + " - line " + lr.getLineNumber());
 					continue;
 				} else if ("17".equals(type) || "16".equals(type)) {
 					apCode = null;
@@ -104,7 +102,7 @@ public class XPlaneRunwayLoader extends TestCase {
 				if ((apCode == null) || (!"100".equals(type))) continue;
 				
 				// Get surface type
-				int sfcType = StringUtils.parse(dd.get(1), 0); Surface s = SFCS[sfcType];
+				int sfcType = StringUtils.parse(dd.get(1), 0); Surface s = SFCS[Math.min(sfcType, 13)];
 
 				// Get runway position, heading, length
 				GeoLocation gl1 = new GeoPosition(StringUtils.parse(dd.get(8), 0.0d), StringUtils.parse(dd.get(9), 0.0d));
@@ -115,18 +113,16 @@ public class XPlaneRunwayLoader extends TestCase {
 				double width = StringUtils.parse(dd.get(0), 45.0);
 
 				// Get displaced threshold lengths (if any)
-				double dt1 = StringUtils.parse(dd.get(10), 0.0d);
+				double dt1 = StringUtils.parse(dd.get(10), 0.0d); // meters
 				double dt2 = StringUtils.parse(dd.get(19), 0.0d);
-				if (dt1 > 0)
-					gl1 = GeoUtils.bearingPointS(gl1, dt1 * M_TO_MI, hdg);
-				if (dt2 > 0)
-					gl2 = GeoUtils.bearingPointS(gl2, dt2 * M_TO_MI, GeoUtils.normalize(180 + hdg));
 				
+				String rwyName = dd.get(7); if (rwyName.length() == 2) rwyName = "0" + rwyName;
 				Runway r1 = new Runway(gl1.getLatitude(), gl1.getLongitude());
-				r1.setName(dd.get(7)); r1.setCode(apCode); r1.setSurface(s);
+				r1.setName(rwyName); r1.setCode(apCode); r1.setSurface(s);
 				r1.setHeading((int) GeoUtils.normalize(hdg));
-				r1.setLength((int)(l - dt1));
+				r1.setLength(l);
 				r1.setWidth((int) Math.round(width * FT_PER_M));
+				r1.setThresholdLength((int) Math.round(dt1 * FT_PER_M));
 				rwys.add(r1);
 
 				Runway r2 = new Runway(gl2.getLatitude(), gl2.getLongitude());
@@ -134,6 +130,7 @@ public class XPlaneRunwayLoader extends TestCase {
 				r2.setHeading((int) GeoUtils.normalize(hdg + 180));
 				r2.setLength((int)(l - dt2));
 				r2.setWidth(r1.getWidth());
+				r2.setThresholdLength((int) Math.round(dt2 * FT_PER_M));
 				rwys.add(r2);
 				
 			} while (data != null);
@@ -148,7 +145,7 @@ public class XPlaneRunwayLoader extends TestCase {
 			}
 
 			int rowsWritten = 0;
-			try (PreparedStatement ps = c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+			try (PreparedStatement ps = c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 				for (Runway r : rwys) {
 					ps.setString(1, r.getCode());
 					ps.setString(2, r.getName());
@@ -160,8 +157,9 @@ public class XPlaneRunwayLoader extends TestCase {
 					ps.setInt(8, r.getWidth());
 					ps.setDouble(9, 0);
 					ps.setInt(10, r.getSurface().ordinal());
-					ps.setString(11, formatLocation(r));
-					ps.setInt(12, WGS84_SRID);
+					ps.setInt(11, r.getThresholdLength());
+					ps.setString(12, formatLocation(r));
+					ps.setInt(13, WGS84_SRID);
 					ps.addBatch(); rowsWritten++;
 					if ((rowsWritten % 100) == 0) {
 						ps.executeBatch();
