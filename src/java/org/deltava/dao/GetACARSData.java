@@ -165,7 +165,7 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.WIDTH, IFNULL(RW.SURFACE, ?), RR.OLDCODE FROM acars.RWYDATA R LEFT JOIN "
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.WIDTH, RW.THRESHOLD, IFNULL(RW.SURFACE, ?), RR.OLDCODE FROM acars.RWYDATA R LEFT JOIN "
 					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND ((RW.NAME=R.RUNWAY) OR (RW.NAME=RR.OLDCODE)) "
 					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
 					ps.setInt(1, Surface.UNKNOWN.ordinal());
@@ -182,9 +182,10 @@ public class GetACARSData extends DAO {
 							r.setFrequency(rs.getString(10));
 							r.setMagVar(rs.getDouble(11));
 							r.setWidth(rs.getInt(12));
-							r.setSurface(Surface.values()[rs.getInt(13)]);
+							r.setThresholdLength(rs.getInt(13));
+							r.setSurface(Surface.values()[rs.getInt(14)]);
 							r.setSimulator(info.getSimulator());
-							r.setOldCode(rs.getString(14));
+							r.setOldCode(rs.getString(15));
 							if (rs.getBoolean(8))
 								info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 							else
