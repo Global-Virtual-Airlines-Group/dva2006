@@ -675,8 +675,12 @@ public class PIREPCommand extends AbstractFormCommand {
 						rb.add(info.getSTAR());
 
 					route.addAll(rb.getPoints());
-					if (info.getRunwayA() != null)
-						route.add(info.getRunwayA());
+					if (info.getRunwayA() != null) {
+						Runway rA = info.getRunwayA();
+						route.add(rA);
+						if (rA.getThresholdLength() > 0) route.add(rA.getThreshold());
+					}
+						
 					route.add((info.getGateA() != null) ? info.getGateA() : info.getAirportA());
 					
 					// Load departure and arrival runways
