@@ -319,7 +319,7 @@ public class FlightReportFunctions {
 
 	/**
 	 * Returns the Equipment Programs this Flight counts towards promotion to Captain in.
-	 * @param fr the Flight Report
+	 * @param fr the FlightReport
 	 * @return a comma-delimited string of Equipment Program names
 	 */
 	public static String promoTypes(FlightReport fr) {
@@ -328,11 +328,22 @@ public class FlightReportFunctions {
 
 	/**
 	 * Returns the name of the online network used on this Flight.
-	 * @param fr the Flight Report
+	 * @param fr the FlightReport
 	 * @return the name of the network, or &quot;Offline&quot; if flown offline
 	 * @see FlightReportFunctions#isOnline(FlightReport)
 	 */
 	public static String network(FlightReport fr) {
 		return ((fr == null) || (fr.getNetwork() == null)) ? "Offline" : fr.getNetwork().toString();
+	}
+
+	/**
+	 * Returns whether the Flight was logged using an aircraft-specific SDK.
+	 * @param fr the FlightReport
+	 * @return TRUE if an SDK was detected, otherwise FALSE
+	 */
+	public static boolean hasSDK(FlightReport fr) {
+		if (!(fr instanceof ACARSFlightReport)) return false;
+		String sdk = ((ACARSFlightReport) fr).getSDK();
+		return !StringUtils.isEmpty(sdk) && !"Generic".equalsIgnoreCase(sdk);
 	}
 }
