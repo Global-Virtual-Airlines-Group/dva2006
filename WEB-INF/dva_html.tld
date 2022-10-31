@@ -409,6 +409,12 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
 	</tag>
 	
 	<!-- Command Button tag, for defining HTML buttons that execute commands -->
@@ -416,6 +422,11 @@
 		<name>cmdbutton</name>
 		<tag-class>org.deltava.taglib.html.CommandButtonTag</tag-class>
 		<body-content>empty</body-content>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
 		<attribute>
 			<name>label</name>
 			<required>false</required>
@@ -456,6 +467,12 @@
 			<name>idx</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
 			<name>post</name>

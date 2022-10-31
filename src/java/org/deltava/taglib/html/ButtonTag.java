@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -6,9 +6,9 @@ import javax.servlet.jsp.JspException;
 import org.deltava.util.StringUtils;
 
 /**
- * A JSP tag to generate an XHTML button. Buttons will have a CSS class name of BUTTON unless it is explicitly overridden.
+ * A JSP tag to generate an HTML button. Buttons will have a CSS class name of BUTTON unless it is explicitly overridden.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -82,6 +82,14 @@ public class ButtonTag extends ElementTag {
 	public void setKey(String accessKey) {
 		_data.setAttribute("accesskey", accessKey);
 	}
+	
+	/**
+     * Marks this button as disabled.
+     * @param disabled TRUE if disabled, otherwise FALSE
+     */
+    public void setDisabled(boolean disabled) {
+    	_data.setAttribute("disabled", String.valueOf(disabled));
+    }
 	
     /**
      * Sets the tab index of this field. This does nothing if a negative, zero or non-numeric value is passed.

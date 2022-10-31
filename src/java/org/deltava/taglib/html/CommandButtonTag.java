@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2015, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 1.0 
  */
 
@@ -91,15 +91,6 @@ public class CommandButtonTag extends ButtonTag {
    }
 
    /**
-    * Overrides the className property from the superclass. <i>NOT IMPLEMENTED </i>.
-    * @throws UnsupportedOperationException
-    */
-   @Override
-   public final void setClassName(String className) {
-      throw new UnsupportedOperationException();
-   }
-
-   /**
     * Renders the tag. Sets the onClick property and calls the superclass renderer.
     * @return TagSupport.EVAL_PAGE
     * @throws JspException if an error occurs
@@ -126,7 +117,7 @@ public class CommandButtonTag extends ButtonTag {
       }
 
       // Sets the JavaScript get/post function
-      super.setOnClick("void golgotha.form." + ((_doPost) ? "post" : "get") + "(\'" + StringUtils.escapeQuotes(url.toString()) + "\')");
+      super.setOnClick("void golgotha.form." + (_doPost ? "post" : "get") + "(\'" + StringUtils.escapeQuotes(url.toString()) + "\')");
       super.setClassName("cmdButton");
 
       // Calls the superclass renderer
