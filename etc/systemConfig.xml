@@ -692,6 +692,7 @@
 			<pad_hours type="Double">0.5</pad_hours>
 			<assign_purge type="Integer">14</assign_purge>
 			<draft_purge type="Integer">30</draft_purge>
+			<review_delay type="Integer">32500</review_delay>
 
 			<!-- PIREP queue warning thresholds -->
 			<warn>

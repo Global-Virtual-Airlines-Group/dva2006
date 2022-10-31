@@ -25,19 +25,28 @@
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
+<content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
+<c:set var="hasDelay" value="${reviewDelay > 0}" scope="page" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-const act = f.action;
-if ((act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1)) {
-	golgotha.form.validate({f:f.crApprove, min:1, t:'Check Ride status'});
-	golgotha.form.validate({f:f.frApprove, min:1, t:'Flight Report status'});
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	const act = f.action;
+	if ((act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1)) {
+		golgotha.form.validate({f:f.crApprove, min:1, t:'Check Ride status'});
+		golgotha.form.validate({f:f.frApprove, min:1, t:'Flight Report status'});
+	}
+
+	golgotha.form.submit(f);
+	return true;
+};
+<c:if test="${hasDelay}">
+golgotha.local.enableButtons = function() {
+	const btns = golgotha.util.getElementsByClass('timedButton','input',document.forms[0]);
+	btns.forEach(function(bt) { golgotha.util.disable(bt, false); });
+	return true;
 }
 
-golgotha.form.submit(f);
-return true;
-};
+golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons, ${fn:hasSDK(pirep) ? 1250 : reviewDelay}); });</c:if>
 </script></c:if>
 <c:if test="${isACARS}">
 <content:googleJS module="charts" />
@@ -458,15 +467,15 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canSubmit}">
 &nbsp;<el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" /></c:if>
 <c:if test="${access.canApprove && !scoreCR}">
-&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" label="APPROVE" /></c:if>
+&nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="approve" post="true" disabled="${hasDelay}" label="APPROVE" /></c:if>
 <c:if test="${access.canHold}">
-&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" label="HOLD" /></c:if>
+&nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="hold" post="true" disabled="${hasDelay}" label="HOLD" /></c:if>
 <c:if test="${access.canRelease}">
 &nbsp;<el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" /></c:if>
 <c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide)) && !scoreCR}">
-&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
+&nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="reject" post="true" disabled="${hasDelay}" label="REJECT" />
 <c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
-&nbsp;<el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" /></content:filter></c:if>
+&nbsp;<el:cmdbutton className="timedButton" url="crflag" link="${pirep}" disabled="${hasDelay}" label="MARK AS CHECK RIDE" /></content:filter></c:if>
 </c:if>
 <c:if test="${access.canDispose && (empty checkRide)}">
 <c:set var="bLabel" value="${empty pirep.captEQType ? 'SET' : 'CLEAR'}" scope="page" />
