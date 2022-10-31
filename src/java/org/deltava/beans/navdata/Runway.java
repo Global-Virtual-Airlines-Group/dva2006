@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.List;
@@ -6,14 +6,12 @@ import java.util.List;
 import com.vividsolutions.jts.geom.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
-
 import org.deltava.util.*;
 
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -77,14 +75,19 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		return _threshold;
 	}
 	
+	private GeoLocation getThresholdLocation() {
+		if (_threshold == 0) return this;
+		double thresholdM = _threshold * 1.0d / GeoLocation.FEET_MILES;
+		return GeoUtils.bearingPointS(this, thresholdM, _heading - _magVar);
+	}
+	
 	/**
 	 * Returns the postion of the displaced runway threshold, if any. 
 	 * @return the GeoLocation of the threshold
 	 */
-	public GeoLocation getThreshold() {
-		if (_threshold == 0) return new GeoPosition(this);
-		double thresholdM = _threshold * 1.0d / GeoLocation.FEET_MILES;
-		return GeoUtils.bearingPoint(this, thresholdM, _heading);
+	public MapEntry getThreshold() {
+		if (_threshold == 0) return this;
+		return new RunwayThreshold(getThresholdLocation(), getName(), _threshold);
 	}
 	
 	/**
@@ -234,7 +237,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
  
 	@Override
 	public int distanceFeet(GeoLocation l2) {
-		return (_threshold == 0) ? super.distanceFeet(l2) : getThreshold().distanceFeet(l2);
+		return (_threshold == 0) ? super.distanceFeet(l2) : getThresholdLocation().distanceFeet(l2);
 	}
 	
 	/**
@@ -299,7 +302,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 			buf.append(getFrequency());
 		}
 
-		buf.append("<br />");
+		buf.append("<br /><br />");
 		buf.append(getHTMLPosition());
 		buf.append("</div>");
 		return buf.toString();
