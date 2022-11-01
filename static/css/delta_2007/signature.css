@@ -36,10 +36,3 @@ span.DVA_defaultSig {
 	position: relative;
 	top: -20px;
 }
-
-@media (prefers-color-scheme: dark) {
-	table.DVA_defaultSig {
-		background-color: #080810 !important;
-		border-color: #080810 !important;
-	}
-}
