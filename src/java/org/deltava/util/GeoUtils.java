@@ -225,28 +225,6 @@ public class GeoUtils {
 	}
 
 	/**
-	 * Determines the coordinates of a second point on a particular heading from the first. This converts the polar
-	 * coordinates provided into cartesian coordinates, and then adds them to the original point. <i>THIS ASSUMES
-	 * THE WORLD IS FLAT</b>.
-	 * @param p1 the original point
-	 * @param distance the distance in miles
-	 * @param angle the heading in degrees
-	 * @return a GeoLocation
-	 * @see GeoUtils#bearingPointS(GeoLocation, double, double)
-	 */
-	public static GeoLocation bearingPoint(GeoLocation p1, double distance, double angle) {
-
-		// Convert the miles to degrees of latitude, and the angle to radians
-		double dst = distance / GeoLocation.DEGREE_MILES;
-		double angrad = StrictMath.toRadians(angle);
-
-		// These are coordinates RELATIVE to the origin
-		double lat2 = dst * StrictMath.cos(angrad);
-		double lng2 = dst * StrictMath.sin(angrad);
-		return normalize(p1.getLatitude() + lat2, p1.getLongitude() + lng2);
-	}
-	
-	/**
 	 * Determines the coordinates of a second point on a particular heading from the first, assuming a spherical globe.
 	 * @param p1 the original point
 	 * @param distance the distance in miles

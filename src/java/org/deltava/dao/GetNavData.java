@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -132,7 +132,7 @@ public class GetNavData extends DAO {
 		// Convert the results
 		result = new NavigationDataMap();
 		for (NavigationDataBean nd : codeResults.getAll()) {
-			GeoLocation loc = GeoUtils.bearingPoint(nd, distance, hdg);
+			GeoLocation loc = GeoUtils.bearingPointS(nd, distance, hdg);
 			NavigationDataBean nd2 = new Intersection(code, loc.getLatitude(), loc.getLongitude());
 			nd2.setRegion(nd.getRegion());
 			result.add(nd2);
