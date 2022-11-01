@@ -146,6 +146,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 				}
 
 				// Create the message and send
+				notifyPilots.remove(ctx.getUser());
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctx);
 				notifyPilots.stream().filter(p-> p.getStatus() == PilotStatus.ACTIVE).forEach(mailer::setCC);
