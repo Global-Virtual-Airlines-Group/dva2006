@@ -49,7 +49,7 @@ public class TestAirspace extends TestCase {
 		assertNotNull(rsts);
 		assertFalse(rsts.isEmpty());
 		
-		GeoLocation gl2 = GeoUtils.bearingPoint(locs.get(0), 4, 135);
+		GeoLocation gl2 = GeoUtils.bearingPointS(locs.get(0), 4, 135);
 		rsts = Airspace.findRestricted(gl2, 5);
 		assertNotNull(rsts);
 		assertFalse(rsts.isEmpty());

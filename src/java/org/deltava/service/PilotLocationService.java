@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Pilot Locations on a map.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public class PilotLocationService extends WebService {
 		for (Pilot usr : pilots) {
 			FuzzyPosition fp = (FuzzyPosition) locations.get(Integer.valueOf(usr.getID()));
 			if (fp == null)  continue;
-			GeoLocation gl = isHR ? fp : GeoUtils.bearingPoint(fp, fp.getH(), rnd.nextInt(360));
+			GeoLocation gl = isHR ? fp : GeoUtils.bearingPointS(fp, fp.getH(), rnd.nextInt(360));
 					
 			// Init the location bean
 			PilotLocation loc = new PilotLocation(usr, gl);
