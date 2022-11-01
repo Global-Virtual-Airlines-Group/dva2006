@@ -112,30 +112,3 @@ blockquote cite {
 	font-style: normal;
 	font-weight: bold;
 }
-
-@media (prefers-color-scheme: dark) {
-	table.DVA_defaultSig {
-		background-color: #0f0f3f;
-	}
-	
-	td.postDate {
-		background-color: #0f0f3f;	
-	}
-	
-	td.unread_postDate, td.postEdit {
-		background-color: #1a4876;
-	}
-	
-	blockquote {
-		background-color: #00003f;
-		border: 1px dashed #1a4876;
-	}
-	
-	*.postEdit :link, *.postEdit :visited {
-		color: #efefff;
-	}
-
-	*.postInfo :link, *.postInfo :visited {	
-		color: #6080e0;
-	}
-}
