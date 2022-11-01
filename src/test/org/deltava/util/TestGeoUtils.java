@@ -37,19 +37,10 @@ public class TestGeoUtils extends TestCase {
 	public void testBearingPoint() {
 		GeoLocation l1 = new GeoPosition(0.00, 0.00);
 		
-		GeoLocation l2 = GeoUtils.bearingPoint(l1, GeoLocation.DEGREE_MILES, 90);
-		assertEquals(GeoLocation.DEGREE_MILES, l1.distanceTo(l2), 0.5);
-		GeoLocation l3 = GeoUtils.bearingPoint(l1, 15, -40);
-		assertEquals(15, l1.distanceTo(l3), 0.5);
-		
 		GeoLocation l4 = GeoUtils.bearingPointS(l1, GeoLocation.DEGREE_MILES, 90);
 		assertEquals(GeoLocation.DEGREE_MILES, l1.distanceTo(l4), 0.5);
 		GeoLocation l5 = GeoUtils.bearingPointS(l1, 15, -40);
 		assertEquals(15, l1.distanceTo(l5), 0.5);
-		
-		// Compare methods
-		int dst = l2.distanceFeet(l4);
-		assertTrue(dst < 350);
 	}
 	
 	public void testCourse() {
