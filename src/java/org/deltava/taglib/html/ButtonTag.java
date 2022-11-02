@@ -88,7 +88,8 @@ public class ButtonTag extends ElementTag {
      * @param disabled TRUE if disabled, otherwise FALSE
      */
     public void setDisabled(boolean disabled) {
-    	_data.setAttribute("disabled", String.valueOf(disabled));
+    	if (disabled)
+    		_data.setAttribute("disabled", "true");
     }
 	
     /**
