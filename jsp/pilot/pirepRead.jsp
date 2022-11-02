@@ -28,12 +28,15 @@
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <c:set var="hasDelay" value="${reviewDelay > 0}" scope="page" />
 <script async>
+golgotha.local.startTime = new Date();
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const act = f.action;
 	if ((act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1)) {
+		const now = new Date(); golgotha.local.startTime = golgotha.local.startTime || now;
 		golgotha.form.validate({f:f.crApprove, min:1, t:'Check Ride status'});
 		golgotha.form.validate({f:f.frApprove, min:1, t:'Flight Report status'});
+		f.reviewTime.value = now.getTime() - golgotha.local.startTime.getTime();
 	}
 
 	golgotha.form.submit(f);
@@ -443,7 +446,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 <tr>
 <c:if test="${access.canDispose || access.canUpdateComments}">
- <td colspan="2" class="mid"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox></td></c:if>
+ <td colspan="2" class="mid"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox><el:text name="reviewTime" type="hidden" value="0" /></td></c:if>
 <c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
  <td colspan="2" class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td></c:if>
 </tr>
