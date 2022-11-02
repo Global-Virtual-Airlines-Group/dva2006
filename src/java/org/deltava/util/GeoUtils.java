@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.math.*;
@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 1.0
  */
 
@@ -230,7 +230,6 @@ public class GeoUtils {
 	 * @param distance the distance in miles
 	 * @param angle the angle in degrees
 	 * @return a GeoLocation
-	 * @see GeoUtils#bearingPoint(GeoLocation, double, double)
 	 */
 	public static GeoLocation bearingPointS(GeoLocation p1, double distance, double angle) {
 
@@ -422,7 +421,7 @@ public class GeoUtils {
 	public static LinearRing toRing(Collection<GeoLocation> pts) {
 		List<GeoLocation> brd = new ArrayList<GeoLocation>(pts);
 		brd.add(brd.get(0));
-		List<Coordinate> cts = brd.stream().map(pt -> toCoordinate(pt)).collect(Collectors.toList());
+		List<Coordinate> cts = brd.stream().map(GeoUtils::toCoordinate).collect(Collectors.toList());
 		
 		GeometryFactory gf = new GeometryFactory();
 		return gf.createLinearRing(cts.toArray(new Coordinate[0]));
