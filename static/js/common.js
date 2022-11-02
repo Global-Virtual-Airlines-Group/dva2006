@@ -3,7 +3,7 @@ golgotha.util.isIOS = ((navigator.platform == 'iPad') || (navigator.platform == 
 golgotha.util.isAndroid = (navigator.platform.indexOf('Android') > -1);
 golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid);
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
-golgotha.util.darkMode = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+golgotha.util.darkMode = false; // (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 golgotha.event.beacon = function() { return false; };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
 golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
