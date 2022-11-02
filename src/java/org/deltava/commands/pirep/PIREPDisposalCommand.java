@@ -30,7 +30,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -65,11 +65,14 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Flight Report Not Found");
+				throw notFoundException(String.format("Invalid Flight Report - %d", Integer.valueOf(ctx.getID())));
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
 			access.validate();
+			
+			// Determine review time
+			int reviewTimeMS = StringUtils.parse(ctx.getParameter("reviewTime"), 0);
 
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -109,8 +112,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// If we cannot perform the operation, then stop
 			if (!isOK)
-				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
-
+				throw securityException(String.format("Cannot dispose of Flight Report #%d", Integer.valueOf(fr.getID())));
+			
 			// Load the comments
 			Collection<String> comments = new LinkedHashSet<String>();
 			if (ctx.getParameter("dComments") != null)
@@ -283,7 +286,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// Create status update
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
+				upd.setDescription(String.format("Assigned Pilot ID %s", p.getPilotCode()));
 				upds.add(upd);
 			}
 
