@@ -88,7 +88,7 @@ public class GetAggregateStatistics extends DAO {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
-			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
+			+ "SUM(SIMBRIEF) AS SBL, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
 			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, "
 			+ "SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, "
 			+ "common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
@@ -164,10 +164,10 @@ public class GetAggregateStatistics extends DAO {
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
-		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
-			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, "
-			+ "SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
+		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, "
+			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
+			+ "SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, "
+			+ "AVG(LOADFACTOR) AS LF, ");
 		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
 			sqlBuf.append("0 AS PIDS");
 		else
@@ -207,22 +207,23 @@ public class GetAggregateStatistics extends DAO {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4));
 				entry.setHistoricLegs(rs.getInt(5));
 				entry.setDispatchLegs(rs.getInt(6));
-				entry.setACARSLegs(rs.getInt(7));
-				entry.setOnlineLegs(rs.getInt(8) + rs.getInt(9));
-				entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(10));
-				entry.setFSVersionLegs(Simulator.FS2002, rs.getInt(11));
-				entry.setFSVersionLegs(Simulator.FS9, rs.getInt(12));
-				entry.setFSVersionLegs(Simulator.FSX, rs.getInt(13));
-				entry.setFSVersionLegs(Simulator.P3D, rs.getInt(14));
-				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(15));
-				entry.setFSVersionLegs(Simulator.XP10, rs.getInt(16));
-				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(17));
-				entry.setFSVersionLegs(Simulator.XP12, rs.getInt(18));
-				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(19));
-				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(20));
-				entry.setPax(rs.getInt(21));
-				entry.setLoadFactor(rs.getDouble(22));
-				entry.setPilotIDs(rs.getInt(23));
+				entry.setSimBriefLegs(rs.getInt(7));
+				entry.setACARSLegs(rs.getInt(8));
+				entry.setOnlineLegs(rs.getInt(9) + rs.getInt(10));
+				entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(11));
+				entry.setFSVersionLegs(Simulator.FS2002, rs.getInt(12));
+				entry.setFSVersionLegs(Simulator.FS9, rs.getInt(13));
+				entry.setFSVersionLegs(Simulator.FSX, rs.getInt(14));
+				entry.setFSVersionLegs(Simulator.P3D, rs.getInt(15));
+				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(16));
+				entry.setFSVersionLegs(Simulator.XP10, rs.getInt(17));
+				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(18));
+				entry.setFSVersionLegs(Simulator.XP12, rs.getInt(19));
+				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(20));
+				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(21));
+				entry.setPax(rs.getInt(22));
+				entry.setLoadFactor(rs.getDouble(23));
+				entry.setPilotIDs(rs.getInt(24));
 				results.add(entry);
 			}
 			

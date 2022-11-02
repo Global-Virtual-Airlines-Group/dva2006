@@ -9,7 +9,7 @@ import org.deltava.beans.Simulator;
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	private int _onlineLegs;
 	private int _historicLegs;
 	private int _dispatchLegs;
+	private int _simBriefLegs;
 	private final double _hours;
 	private final int _miles;
 	private int _pilotIDs;
@@ -77,6 +78,15 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	 */
 	public int getDispatchLegs() {
 		return _dispatchLegs;
+	}
+	
+	/**
+	 * Returns the number of SimBrief legs linked to this entry.
+	 * @return the number of legs plotted using SimBrief
+	 * @see FlightStatsEntry#setSimBriefLegs(int)
+	 */
+	public int getSimBriefLegs() {
+		return _simBriefLegs;
 	}
 	
 	/**
@@ -210,6 +220,15 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	 */
 	public void setDispatchLegs(int legs) {
 		_dispatchLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of SimBrief legs linked to this entry.
+	 * @param legs the number of legs planned using SimBrief
+	 * @see FlightStatsEntry#getSimBriefLegs()
+	 */
+	public void setSimBriefLegs(int legs) {
+		_simBriefLegs = legs;
 	}
 	
 	/**

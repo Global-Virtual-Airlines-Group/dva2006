@@ -12,6 +12,7 @@
  <td>ONLINE</td>
  <td class="nophone">HISTORIC</td>
  <td class="nophone">DISPATCH</td>
+ <td class="nophone">SIMBRIEF</td>
  <td class="nophone">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
 </tr>
@@ -30,6 +31,7 @@
  <td class="small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
  <td class="sec small nophone"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
  <td class="bld small nophone"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="small nophone"><fmt:int value="${stat.simBriefLegs}" /> (<fmt:dec value="${(stat.simBriefLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td> 
 <c:if test="${hasPilotID}">
  <td class="small nophone"><fmt:int value="${stat.pilotIDs}" /></td>
 </c:if>
@@ -42,6 +44,6 @@
 <c:if test="${!noFooter}">
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="11"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="12"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </c:if>
