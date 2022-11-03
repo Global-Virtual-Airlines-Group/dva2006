@@ -72,6 +72,7 @@ golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 // Distance conversion functions
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 golgotha.maps.degreesToMiles = function(d) { return d * 69.172 };
+golgotha.maps.feet2Meter = function (ft) { return ft / 3.2808399 };
 
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#dfefef'};
