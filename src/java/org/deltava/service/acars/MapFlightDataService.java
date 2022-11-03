@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -143,13 +143,18 @@ public class MapFlightDataService extends WebService {
 			ao.put("info", a.getInfoBox());
 			ao.put("ll", JSONUtils.format(a));
 			a.getBorder().forEach(pt -> ao.append("border", JSONUtils.format(pt)));
+			JSONUtils.ensureArrayPresent(ao, "border");
 			jo.append("airspace", ao);
 		}
+		
+		// Write departure/arrival runway disatnces
+		jo.putOpt("runwayD", formatRunway(info.getRunwayD()));
+		jo.putOpt("runwayA", formatRunway(info.getRunwayA()));
 		
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "positions", "airspace");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -159,11 +164,19 @@ public class MapFlightDataService extends WebService {
 		
 		return SC_OK;
    }
-
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
+	
+	/*
+	 * Helper method to format runway distance objects.
 	 */
+	private static JSONObject formatRunway(Runway r) {
+		if (!(r instanceof RunwayDistance)) return null;
+		RunwayDistance rd = (RunwayDistance) r;
+		JSONObject ro = JSONUtils.format(rd);
+		ro.put("distance", rd.getDistance());
+		ro.put("hdg", rd.getHeading());		
+		return ro;
+	}
+
 	@Override
 	public final boolean isLogged() {
 		return false;
