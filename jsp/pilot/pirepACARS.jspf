@@ -323,7 +323,7 @@
 </tr>
 <tr>
  <td class="label top">Reviewer Comments</td>
- <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
+ <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea><el:text name="reviewTime" type="hidden" value="0" /></td>
 </tr>
 <tr>
  <td class="label">Check Ride Status</td>
