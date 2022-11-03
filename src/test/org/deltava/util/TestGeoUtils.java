@@ -134,4 +134,12 @@ public class TestGeoUtils extends TestCase {
 		assertEquals(-45.25, loc4.getLatitude(), 0.0001);
 		assertEquals(87.22, loc4.getLongitude(), 0.0001);
 	}
+	
+	public void testDelta() {
+		assertEquals(2.0, GeoUtils.delta(359, 1), 0.001);
+		assertEquals(89, GeoUtils.delta(43, 314), 0.001);
+		assertEquals(89, GeoUtils.delta(225, 314), 0.001);
+		assertEquals(91, GeoUtils.delta(223, 314), 0.001);
+		assertEquals(180, GeoUtils.delta(134, 314), 0.001);
+	}
 }
