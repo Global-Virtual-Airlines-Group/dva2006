@@ -71,9 +71,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
 			access.validate();
 			
-			// Determine review time
-			int reviewTimeMS = StringUtils.parse(ctx.getParameter("reviewTime"), 0);
-
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 
@@ -88,9 +85,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				break;
 
 			case OK:
+				int reviewTime = StringUtils.parse(ctx.getParameter("reviewTime"), 0) / 1000;
 				ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
-				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Approved"); 
+				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, ((reviewTime > 0) && (reviewTime < 5)) ? String.format("Approved after %ds", Integer.valueOf(reviewTime)) : "Approved"); 
 				isOK = access.getCanApprove();
 				break;
 
@@ -107,7 +105,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				break;
 
 			default:
-				throw new IllegalArgumentException("Invalid Status - " + op);
+				throw new IllegalArgumentException(String.format("Invalid Status - %s", op));
 			}
 
 			// If we cannot perform the operation, then stop
@@ -131,7 +129,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
+				throw notFoundException(String.format("Unknown Pilot - %d", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT))));
 
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
