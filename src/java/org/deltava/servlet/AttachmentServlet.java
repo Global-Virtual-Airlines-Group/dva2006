@@ -28,7 +28,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 7.3
  */
 
@@ -37,19 +37,29 @@ public class AttachmentServlet extends DownloadServlet {
 	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
-		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues"), TOUR("tbrief", "Flight Tour Briefings");
+		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues"), TOUR("tbrief", "Flight Tour Briefings", false);
 		
 		private final String _urlPart;
 		private final String _realm;
+		private final boolean _isSecure;
 		
 		AttachType(String urlPart, String realm) {
+			this(urlPart, realm, true);
+		}
+		
+		AttachType(String urlPart, String realm, boolean isSecure) {
 			_urlPart = urlPart;
 			_realm = realm;
+			_isSecure = isSecure;
 		}
 		
 		@Override
 		public String getURLPart() {
 			return _urlPart;
+		}
+		
+		public boolean isSecure() {
+			return _isSecure;
 		}
 		
 		public String getRealm() {
@@ -79,7 +89,7 @@ public class AttachmentServlet extends DownloadServlet {
 		URLParser url = new URLParser(req.getRequestURI());
 		AttachType fType = (AttachType) getFileType(url, AttachType.values());
 		if (fType == null) {
-			log.warn("Invalid File type - " + url.getLastPath());
+			log.warn(String.format("Invalid File type - %s", url.getLastPath()));
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
@@ -88,7 +98,7 @@ public class AttachmentServlet extends DownloadServlet {
 		Pilot usr = (Pilot) req.getUserPrincipal();
 		if (usr == null)
 			usr = authenticate(req);
-		if (usr == null) {
+		if ((usr == null) && fType.isSecure()) {
 			challenge(rsp, fType.getRealm());
 			return;
 		}
@@ -102,7 +112,7 @@ public class AttachmentServlet extends DownloadServlet {
 
 			dbID = StringUtils.parseHex(name);
 		} catch (Exception e) {
-			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
+			log.warn(String.format("Error parsing ID %s - %s", url.getName(), e.getClass().getName()));
 			rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -112,7 +122,7 @@ public class AttachmentServlet extends DownloadServlet {
 
 		byte[] buffer = null;
 		if (log.isDebugEnabled())
-			log.debug("Getting " + fType.name() + " attachment ID" + dbID);
+			log.debug(String.format("Getting %s attachment ID %d", fType.name(), Integer.valueOf(dbID)));
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
@@ -124,7 +134,7 @@ public class AttachmentServlet extends DownloadServlet {
 				GetIssue idao = new GetIssue(c);
 				Issue i = idao.get(StringUtils.parse(url.getLastPath(), -1));
 				if (i == null)
-					throw new NotFoundException("Invalid Issue - " + url.getLastPath());
+					throw new NotFoundException(String.format("Invalid Issue - %s", url.getLastPath()));
 				
 				// Validate access to the thread
 				IssueAccessControl access = new IssueAccessControl(sctx, i);
@@ -184,52 +194,52 @@ public class AttachmentServlet extends DownloadServlet {
 				
 				buffer = cmt.getBuffer();
 				rsp.setContentType("application/octet-stream");
-				rsp.setHeader("Content-disposition", "attachment; filename=" + cmt.getName());
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=%s", cmt.getName()));
 				break;
 				
 			case EVENT:
 				GetEvent edao = new GetEvent(c);
 				Event e = edao.get(dbID);
 				if ((e == null) || (e.getBriefing() == null))
-					throw new NotFoundException("Invalid Event - " + url.getLastPath());
+					throw new NotFoundException(String.format("Invalid Event - %s", url.getLastPath()));
 				
 				// Get the briefing
 				Briefing eb = e.getBriefing();
 				buffer = eb.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
 				rsp.setContentType(eb.getContentType());
-				rsp.setHeader("Content-disposition", String.format("attachment; filename=eventBriefing_%d.%s", Integer.valueOf(dbID), eb.getExtension()));
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=EventBriefing_%s.%s", e.getName().replace(' ', '_'), eb.getExtension()));
 				break;
 				
 			case TOUR:
 				GetTour tdao = new GetTour(c);
 				Tour t = tdao.get(dbID, SystemData.get("airline.db"));
 				if ((t == null) || (t.getSize() < 1))
-					throw new NotFoundException("Invalid Flight Tour - " + url.getLastPath());
+					throw new NotFoundException(String.format("Invalid Flight Tour - %s", url.getLastPath()));
 				
 				// Validate Access to Tour
 				TourAccessControl ac = new TourAccessControl(sctx, t);
 				ac.validate();
 				if (!ac.getCanRead())
-					throw new ForbiddenException("Cannot view Briefing - Cannot view Tour " + t.getID());
+					throw new ForbiddenException(String.format("Cannot view Briefing - Cannot view Tour %d", Integer.valueOf(t.getID())));
 				
 				// Get the briefing
 				buffer = t.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
 				rsp.setContentType(t.getContentType());
-				rsp.setHeader("Content-disposition", String.format("attachment; filename=tourBriefing_%d.%s", Integer.valueOf(dbID), t.getExtension()));
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=TourBriefing_%s.%s", t.getName().replace(' ', '_'), t.getExtension()));
 				break;
 				
 			default:
-				throw new NotFoundException("Unknown file type - " + req.getRequestURI());
+				throw new NotFoundException(String.format("Unknown file type - %s", req.getRequestURI()));
 			}
 		} catch (ConnectionPoolException cpe) {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn("Error retrieving image - " + ce.getMessage());
+				log.warn(String.format("Error retrieving image - %s", ce.getMessage()));
 			else
-				log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+				log.error(String.format("Error retrieving image - %s", ce.getMessage()), ce.getLogStackDump() ? ce : null);
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {
@@ -243,7 +253,7 @@ public class AttachmentServlet extends DownloadServlet {
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength(buffer.length);
 		rsp.setBufferSize(Math.min(65536, buffer.length + 16));
-		rsp.setHeader("Cache-Control", "private");
+		if (fType.isSecure()) rsp.setHeader("Cache-Control", "private");
 
 		// Dump the data to the output stream
 		try (OutputStream os = rsp.getOutputStream()) {
