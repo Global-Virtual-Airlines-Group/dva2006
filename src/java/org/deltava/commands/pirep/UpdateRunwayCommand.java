@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 3.0
  */
 
@@ -40,7 +40,7 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			GetFlightReportACARS prdao = new GetFlightReportACARS(con);
 			FDRFlightReport afr = prdao.getACARS(ctx.getDB(), ctx.getID());
 			if (afr == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException(String.format("Invalid ACARS Flight ID - %d", Integer.valueOf(ctx.getID())));
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, afr);
@@ -65,17 +65,33 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			
 			// Check if we've changed anything
 			boolean isUpdated = false;
-			if ((rD != null) && (!rD.equals(info.getRunwayD()))) {
+			if (rD != null) {
 				int dist = rD.distanceFeet(afr.getTakeoffLocation());
-				info.setRunwayD(new RunwayDistance(rD, dist));
-				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated departure Runway to %s", info.getRunwayD().getName()));
-				isUpdated = true;
+				double delta = GeoUtils.delta(rD.getHeading(), GeoUtils.course(rD, afr.getTakeoffLocation()));
+				if (delta > 90)
+					dist = -dist;
+				
+				int oldDistance = (info.getRunwayD() != null) ? ((RunwayDistance)info.getRunwayD()).getDistance() : 0;
+				if ((!rD.equals(info.getRunwayD())) || (dist != oldDistance)) {
+					isUpdated = true;
+					info.setRunwayD(new RunwayDistance(rD, dist));
+					if (dist != oldDistance)
+						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated departure Runway to %s", info.getRunwayD().getName()));
+				}
 			}
-			if ((rA != null) && (!rA.equals(info.getRunwayA()))) {
+			if (rA != null) {
 				int dist = rA.distanceFeet(afr.getLandingLocation());
-				info.setRunwayA(new RunwayDistance(rA, dist));
-				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
-				isUpdated = true;
+				double delta = GeoUtils.delta(rA.getHeading(), GeoUtils.course(rA, afr.getLandingLocation()));
+				if (delta > 90)
+					dist = -dist;
+				
+				int oldDistance = (info.getRunwayA() != null) ? ((RunwayDistance)info.getRunwayA()).getDistance() : 0;
+				if ((!rA.equals(info.getRunwayA())) || (dist != oldDistance)) {
+					isUpdated = true;
+					info.setRunwayA(new RunwayDistance(rA, dist));
+					if (dist != oldDistance)
+						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
+				}
 			}
 					
 			// Save the runways and status history
@@ -90,7 +106,6 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				ctx.commitTX();
 			}
 			
-			// Save the PIREP ID
 			pirepID = afr.getID();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

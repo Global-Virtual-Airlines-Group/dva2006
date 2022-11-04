@@ -42,4 +42,13 @@ public class RunwayDistance extends Runway {
 	public int getDistance() {
 		return _distance;
 	}
+	
+	/**
+	 * Compares two RunwayDistance beans by comparing Runway ID and distance.
+	 * @param rd2 the RunwayDistance bean
+	 * @return TRUE if the runway and distance match, otherwise FALSE
+	 */
+	public boolean equals(RunwayDistance rd2) {
+		return super.equals(rd2) && (_distance == rd2._distance);
+	}
 }

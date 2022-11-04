@@ -171,9 +171,13 @@ public class MapFlightDataService extends WebService {
 	private static JSONObject formatRunway(Runway r) {
 		if (!(r instanceof RunwayDistance)) return null;
 		RunwayDistance rd = (RunwayDistance) r;
-		JSONObject ro = JSONUtils.format(rd);
+		double distanceMiles = rd.getDistance() * 1.0d / GeoLocation.FEET_MILES;
+		JSONObject ro = new JSONObject();
+		ro.put("name", r.getName());
+		ro.put("location", JSONUtils.format(rd));
 		ro.put("distance", rd.getDistance());
 		ro.put("hdg", rd.getHeading());		
+		ro.put("pt", JSONUtils.format(GeoUtils.bearingPointS(rd, distanceMiles, rd.getHeading() - rd.getMagVar())));
 		return ro;
 	}
 
