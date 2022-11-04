@@ -45,11 +45,11 @@ golgotha.local.validate = function(f) {
 <c:if test="${hasDelay}">
 golgotha.local.enableButtons = function() {
 	const btns = golgotha.util.getElementsByClass('timedButton','input',document.forms[0]);
-	btns.forEach(function(bt) { golgotha.util.disable(bt, false); });
+	btns.forEach(function(bt) { golgotha.util.disable(bt,false); });
 	return true;
 }
 
-golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons, ${fn:hasSDK(pirep) ? 1250 : reviewDelay}); });</c:if>
+golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons, ${(fn:hasSDK(pirep) || !isACARS) ? 1250 : reviewDelay}); });</c:if>
 </script></c:if>
 <c:if test="${isACARS}">
 <content:googleJS module="charts" />
