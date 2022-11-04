@@ -1,4 +1,3 @@
-golgotha.maps = golgotha.maps || {};
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[], asPolygons:[]}; 
 golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#adad10',tx:0.2,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#ffa018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
 golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle, showAirspace)
@@ -84,6 +83,11 @@ golgotha.maps.acarsFlight.removeAirspace = function(as) {
 
 golgotha.maps.acarsFlight.toggleAirspace = function(show) {
 	golgotha.maps.acarsFlight.airspace.forEach(show ? golgotha.maps.acarsFlight.addAirspace : golgotha.maps.acarsFlight.removeAirspace);
+};
+
+golgotha.maps.acarsFlight.showRunway = function(rd) {
+	let pl = new google.maps.Polyline({map:map, path:[rd.location,rd.pt], strokeWeight:5.5, strokeColor:'#0000a1', strokeOpacity:0.35, zIndex:golgotha.maps.z.POLYLINE+1});
+	return true;
 };
 
 golgotha.maps.acarsFlight.showFIR = function(code)
