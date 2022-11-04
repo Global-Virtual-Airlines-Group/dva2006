@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -11,11 +11,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
+import org.deltava.util.GeoUtils;
 
 /**
  * A Web Site Command to recalculate the runways used.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 4.0
  */
 
@@ -59,24 +60,32 @@ public class RunwayCalculateCommand extends AbstractCommand {
 			GetNavAirway navdao = new GetNavAirway(con);
 
 			// Load the departure runway
-			Runway rD = null;
+			RunwayDistance rD = null;
 			if (afr.getTakeoffHeading() > -1) {
 				LandingRunways lr = navdao.getBestRunway(afr.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = r.distanceFeet(afr.getTakeoffLocation());
+					double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getTakeoffLocation()));
+					if (delta > 90)
+						dist = -dist;
+					
 					rD = new RunwayDistance(r, dist);
 					isUpdated = !rD.equals(info.getRunwayD());
 				}
 			}
 
 			// Load the arrival runway
-			Runway rA = null;
+			RunwayDistance rA = null;
 			if (afr.getLandingHeading() > -1) {
 				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = r.distanceFeet(afr.getLandingLocation());
+					double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getLandingLocation()));
+					if (delta > 90)
+						dist = -dist;
+					
 					rA = new RunwayDistance(r, dist);
 					isUpdated |= !rA.equals(info.getRunwayA());
 				}

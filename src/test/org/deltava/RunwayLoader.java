@@ -14,7 +14,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
-
+import org.deltava.util.GeoUtils;
 import org.deltava.util.system.SystemData;
 
 public class RunwayLoader extends TestCase {
@@ -131,6 +131,10 @@ public class RunwayLoader extends TestCase {
 				
 				int dist = rwyD.distanceFeet(tdEntries.get(0));
 				if (dist < 65520) {
+					double delta = GeoUtils.delta(rwyD.getHeading(), GeoUtils.course(rwyD, tdEntries.get(0)));
+					if (delta > 90)
+						dist = -dist;
+					
 					info.setRunwayD(new RunwayDistance(rwyD, dist));
 					newData = true;
 				}
@@ -144,6 +148,10 @@ public class RunwayLoader extends TestCase {
 					
 				int dist = rwyA.distanceFeet(tdEntries.get(1));
 				if (dist < 65520) {
+					double delta = GeoUtils.delta(rwyA.getHeading(), GeoUtils.course(rwyA, tdEntries.get(1)));
+					if (delta > 90)
+						dist = -dist;
+					
 					info.setRunwayA(new RunwayDistance(rwyA, dist));
 					newData = true;
 				}

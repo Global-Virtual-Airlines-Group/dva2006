@@ -474,6 +474,10 @@ public class FlightSubmissionHelper {
 		Runway r = lr.getBestRunway();
 		if (r != null) {
 			int dist = r.distanceFeet(afr.getTakeoffLocation());
+			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getTakeoffLocation()));
+			if (delta > 90)
+				dist = -dist;
+			
 			_info.setRunwayD(new RunwayDistance(r, dist));
 			if (r.getLength() < opts.getTakeoffRunwayLength()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Minimum takeoff runway length for the %s is %d feet", _ac.getName(), Integer.valueOf(opts.getTakeoffRunwayLength())));
@@ -490,6 +494,10 @@ public class FlightSubmissionHelper {
 		r = lr.getBestRunway();
 		if (r != null) {
 			int dist = r.distanceFeet(afr.getLandingLocation());
+			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getLandingLocation()));
+			if (delta > 90)
+				dist = -dist;
+			
 			_info.setRunwayA(new RunwayDistance(r, dist));
 			if (r.getLength() < opts.getLandingRunwayLength()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Minimum landing runway length for the %s is %d feet", _ac.getName(), Integer.valueOf(opts.getLandingRunwayLength())));
