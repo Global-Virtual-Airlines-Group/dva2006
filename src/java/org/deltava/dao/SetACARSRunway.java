@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to write ACARS Runway and Gate data.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 5.1
  */
 
@@ -42,7 +42,7 @@ public class SetACARSRunway extends SetACARSData {
 				ps.setInt(6, rwyD.getLength());
 				ps.setInt(7, dist);
 				ps.setBoolean(8, true);
-				if (dist < 65200)
+				if (dist < 32700)
 					ps.addBatch();
 			}
 			
@@ -55,7 +55,7 @@ public class SetACARSRunway extends SetACARSData {
 				ps.setInt(6, rwyA.getLength());
 				ps.setInt(7, dist);
 				ps.setBoolean(8, false);
-				if (dist < 65200)
+				if (dist < 32700)
 					ps.addBatch();
 			}
 			
