@@ -122,7 +122,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td class="sec bld">Leg <fmt:int value="${leg}" /></td>
  <td class="pri bld" style="width:15%;">${fl.flightCode}</td>
  <td class="sec bld" style="width:15%">${fl.equipmentType}</td>
- <td class="small">${fl.airportD.name} (<el:cmd url="airportinfo" linkID="${fl.airportD.IATA}"><fmt:airport airport="${fl.airportD}" /></el:cmd>) - ${fl.airportA.name} (<el:cmd url="airportinfo" linkID="${fl.airportA.IATA}"><fmt:airport airport="${fl.airportA}" /></el:cmd>)</td>
+ <td class="small">${fl.airportD.name} (<el:cmd url="airportinfo" linkID="${fl.airportD.IATA}" authOnly="true"><fmt:airport airport="${fl.airportD}" /></el:cmd>) - ${fl.airportA.name} (<el:cmd url="airportinfo" linkID="${fl.airportA.IATA}" authOnly="true"><fmt:airport airport="${fl.airportA}" /></el:cmd>)</td>
  <td class="bld" colspan="${tour.matchLeg ? 1 : 2}"><fmt:date fmt="t" t="HH:mm" tz="${fl.airportD.TZ}" date="${fl.timeD}" /> - <fmt:date fmt="t" t="HH:mm" tz="${fl.airportA.TZ}" date="${fl.timeA}" /> (<fmt:int value="${fl.duration.toHoursPart()}" />h <fmt:int value="${fl.duration.toMinutesPart()}" />m)</td>
 </tr>
 </c:forEach>
