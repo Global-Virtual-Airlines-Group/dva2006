@@ -25,13 +25,13 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 5.2
  */
 
 public class GFSDownloadTask extends Task {
 	
-	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.MID);
+	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.JET);
 
 	/**
 	 * Initializes the Task.
