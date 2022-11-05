@@ -1,4 +1,4 @@
-// Copyright 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import org.deltava.beans.GeospaceLocation;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store GFS winds aloft and tropopause data.
  * @author Luke
- * @version 5.4
+ * @version 10.3
  * @since 5.2
  */
 
@@ -52,6 +52,10 @@ public class WindData implements GeospaceLocation, Cacheable {
 		return _alt;
 	}
 	
+	/**
+	 * Returns the pressure level for this data.
+	 * @return a PressureLevel
+	 */
 	public PressureLevel getLevel() {
 		return _pl;
 	}
@@ -74,13 +78,21 @@ public class WindData implements GeospaceLocation, Cacheable {
 	 * @return the direction in degrees
 	 */
 	public int getJetStreamDirection() {
-		return (int) (57.29578 * Math.atan2(_jetU, _jetV) +180); 
+		return (int)((270-Math.toDegrees(Math.atan2(_jetU, _jetV))) % 360);
 	}
 
+	/**
+	 * Sets the U wind component speed.
+	 * @param u the speed in m/s
+	 */
 	public void setJetStreamU(float u) {
 		_jetU = u;
 	}
 
+	/**
+	 * Sets the V wind component speed.
+	 * @param v the speed in m/s
+	 */
 	public void setJetStreamV(float v) {
 		_jetV = v;
 	}
