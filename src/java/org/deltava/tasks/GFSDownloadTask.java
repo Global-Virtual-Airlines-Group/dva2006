@@ -31,7 +31,7 @@ import org.gvagroup.tile.*;
 
 public class GFSDownloadTask extends Task {
 	
-	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.JET);
+	private static final List<PressureLevel> LEVELS = List.of(PressureLevel.LOJET, PressureLevel.JET);
 
 	/**
 	 * Initializes the Task.
