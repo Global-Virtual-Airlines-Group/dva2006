@@ -474,14 +474,15 @@ public class SetFlightReport extends DAO {
 	 */
 	public void writeACARS(FDRFlightReport fr, String dbName) throws DAOException {
 		String db = formatDBName(dbName);
+		boolean isACARS = (fr instanceof ACARSFlightReport);
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, TAKEOFF_ALT, "
 			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, "
-			+ "GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
-			+ "TIME_BOARD, TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
+			+ "TIME_BOARD, TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -526,28 +527,26 @@ public class SetFlightReport extends DAO {
 				ps.setInt(31, fr.getTotalFuel());
 				
 				// ACARS
-				if (fr instanceof ACARSFlightReport) {
+				if (isACARS) {
 					ACARSFlightReport afr = (ACARSFlightReport) fr; 
 					ps.setInt(32, afr.getTime(0));
 					ps.setInt(33, afr.getTime(1));
 					ps.setInt(34, afr.getTime(2));
 					ps.setInt(35, afr.getTime(4));
-					ps.setString(36, afr.getFDE());
-					ps.setString(37, afr.getAircraftCode());
-					ps.setString(38, afr.getSDK());
-					ps.setInt(39, afr.getRestoreCount());
-					ps.setInt(40, afr.getClientBuild());
-					ps.setInt(41, afr.getBeta());
-					ps.setDouble(42, afr.getLandingG());
-					ps.setInt(43, afr.getLandingCategory().ordinal());
-					ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
-					ps.setInt(45, afr.getPaxWeight());
-					ps.setInt(46, afr.getCargoWeight());
-					ps.setLong(47, afr.getCapabilities());
-					ps.setLong(48, afr.getBoardTime().toSeconds());
-					ps.setLong(49, afr.getDeboardTime().toSeconds());
-					ps.setLong(50, afr.getOnlineTime().toSeconds());
-					ps.setString(51,  afr.getTailCode());
+					ps.setString(36, afr.getSDK());
+					ps.setInt(37, afr.getRestoreCount());
+					ps.setInt(38, afr.getClientBuild());
+					ps.setInt(39, afr.getBeta());
+					ps.setDouble(40, afr.getLandingG());
+					ps.setInt(41, afr.getLandingCategory().ordinal());
+					ps.setInt(42, (int)(afr.getAverageFrameRate() * 10));
+					ps.setInt(43, afr.getPaxWeight());
+					ps.setInt(44, afr.getCargoWeight());
+					ps.setLong(45, afr.getCapabilities());
+					ps.setLong(46, afr.getBoardTime().toSeconds());
+					ps.setLong(47, afr.getDeboardTime().toSeconds());
+					ps.setLong(48, afr.getOnlineTime().toSeconds());
+					ps.setString(49,  afr.getTailCode());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
 					ps.setInt(32, 0);
@@ -555,24 +554,38 @@ public class SetFlightReport extends DAO {
 					ps.setInt(34, 0);
 					ps.setInt(35, 0);
 					ps.setString(36, null);
-					ps.setString(37, null);
-					ps.setString(38, null);
-					ps.setBoolean(39, false);
-					ps.setInt(40, xfr.getMajorVersion());
-					ps.setInt(41, xfr.getMinorVersion());
-					ps.setDouble(42, 0);
+					ps.setBoolean(37, false);
+					ps.setInt(38, xfr.getMajorVersion());
+					ps.setInt(39, xfr.getMinorVersion());
+					ps.setDouble(40, 0);
+					ps.setInt(41, 0);
+					ps.setInt(42, 0);
 					ps.setInt(43, 0);
 					ps.setInt(44, 0);
-					ps.setInt(45, 0);
+					ps.setLong(45, 0);
 					ps.setInt(46, 0);
-					ps.setLong(47, 0);
+					ps.setInt(47, 0);
 					ps.setInt(48, 0);
-					ps.setInt(49, 0);
-					ps.setInt(50, 0);
-					ps.setString(51, null);
+					ps.setString(49, null);
 				}
 
 				executeUpdate(ps, 1);
+			}
+			
+			// Write Metadata
+			if (isACARS) {
+				ACARSFlightReport afr = (ACARSFlightReport) fr;
+				sqlBuf = new StringBuilder("REPLACE INTO ");
+				sqlBuf.append(db);
+				sqlBuf.append(".ACARS_METADATA (ID, AUTHOR, ACPATH, FDE, CODE) VALUES (?, ?, ?, ?, ?)");
+				try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+					ps.setInt(1, afr.getID());
+					ps.setString(2, afr.getAuthor());
+					ps.setString(3, afr.getAircraftPath());
+					ps.setString(4, afr.getFDE());
+					ps.setString(5, afr.getAircraftCode());
+					executeUpdate(ps, 1);
+				}
 			}
 			
 			commitTransaction();
