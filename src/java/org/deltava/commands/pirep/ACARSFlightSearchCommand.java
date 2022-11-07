@@ -82,7 +82,7 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 						if (evdao.get(eventID) == null)
 							throw new IllegalArgumentException(id);
 							
-						vc.setResults(dao.getByEvent(eventID));	
+						vc.setResults(dao.getByEvent(eventID, ctx.getDB()));	
 					} catch (NumberFormatException nfe) {
 						ctx.setMessage("Invalid Event - " + id);
 					} catch (IllegalArgumentException iae) {
