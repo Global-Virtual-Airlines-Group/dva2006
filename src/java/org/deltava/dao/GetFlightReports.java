@@ -43,7 +43,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME, AM.AUTHOR, AM.ACPATH, AM.FDE, AM.CODE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
@@ -51,7 +51,9 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (PR.ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_METADATA AM ON (PR.ID=AM.ID) WHERE (PR.ID=?) LIMIT 1");
 
 		// Execute the query, if nothing returned then give back null, otherwise load primary eq types and route
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -79,7 +81,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME, AM.AUTHOR, AM.ACPATH, AM.FDE, AM.CODE FROM (");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(db);
@@ -87,7 +89,9 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_METADATA AM ON (PR.ID=AM.ID WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, acarsID);
@@ -619,11 +623,12 @@ public class GetFlightReports extends DAO {
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
-			boolean hasACARS = (md.getColumnCount() > 70);
+			boolean hasACARS = (md.getColumnCount() > 73);
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 77);
+			boolean hasOnTime = (md.getColumnCount() > 75);
+			boolean hasMetadata = (md.getColumnCount() > 79);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -739,21 +744,24 @@ public class GetFlightReports extends DAO {
 					ap.setBoardTime(rs.getInt(66));
 					ap.setDeboardTime(rs.getInt(67));
 					ap.setOnlineTime(rs.getInt(68));
-					ap.setFDE(rs.getString(69));
-					ap.setAircraftCode(rs.getString(70));
-					ap.setSDK(rs.getString(71));
-					ap.setTailCode(rs.getString(72));
-					ap.setCapabilities(rs.getLong(73));
-					ap.setRestoreCount(rs.getInt(74));
-					ap.setAverageFrameRate(rs.getInt(75) / 10d);
-					ap.setClientBuild(rs.getInt(76));
-					ap.setBeta(rs.getInt(77));
-					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(78)]);
+					ap.setSDK(rs.getString(69));
+					ap.setTailCode(rs.getString(70));
+					ap.setCapabilities(rs.getLong(71));
+					ap.setRestoreCount(rs.getInt(72));
+					ap.setAverageFrameRate(rs.getInt(73) / 10d);
+					ap.setClientBuild(rs.getInt(74));
+					ap.setBeta(rs.getInt(75));
+					if (hasOnTime) ap.setOnTime(OnTime.values()[rs.getInt(76)]);
+					if (hasMetadata) {
+						ap.setAuthor(rs.getString(77));
+						ap.setAircraftPath(rs.getString(78));
+						ap.setFDE(rs.getString(79));
+						ap.setAircraftCode(rs.getString(80));
+					}
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(76));
-					ap.setMinorVersion(rs.getInt(77));
+					ap.setMajorVersion(rs.getInt(74));
+					ap.setMinorVersion(rs.getInt(75));
 				}
 
 				results.add(p);
