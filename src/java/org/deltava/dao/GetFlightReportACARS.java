@@ -63,21 +63,6 @@ public class GetFlightReportACARS extends GetFlightReports {
 	}
 
 	/**
-	 * Returns all Flight Reports associated with a particular Online Event.
-	 * @param id the Online Event database ID
-	 * @return a List of FlightReports
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightReport> getByEvent(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)")) {
-			ps.setInt(1, id);
-			return execute(ps);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns all Flight Reports flown on a certain date.
 	 * @param dt the date
 	 * @return a List of FlightReports
