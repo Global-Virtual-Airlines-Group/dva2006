@@ -32,6 +32,8 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private String _code;
     private String _sdk;
     private long _capabilities;
+    private String _acAuthor;
+	private String _acPath;
     
     private Instant _departureTime;
     private Instant _arrivalTime;
@@ -189,6 +191,24 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     public String getAircraftCode() {
     	return _code;
     }
+    
+	/**
+	 * Returns the aircraft author.
+	 * @return the author name
+	 * @see ACARSFlightReport#setAuthor(String)
+	 */
+	public String getAuthor() {
+		return _acAuthor;
+	}
+	
+	/**
+	 * Returns the aircraft path in the simulator. 
+	 * @return the path name
+	 * @see ACARSFlightReport#setAircraftPath(String)
+	 */
+	public String getAircraftPath() {
+		return _acPath;
+	}
     
     @Override
 	public double getAverageFrameRate() {
@@ -458,6 +478,24 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	 */
 	public void setSDK(String sdk) {
 		_sdk = sdk;
+	}
+	
+	/**
+	 * Updates the aircraft author.
+	 * @param author the author name
+	 * @see ACARSFlightReport#getAuthor()
+	 */
+	public void setAuthor(String author) {
+		_acAuthor = author;
+	}
+
+	/**
+	 * Updates the aircraft path in the simulator. 
+	 * @param path the path name
+	 * @see ACARSFlightReport#getAircraftPath()
+	 */
+	public void setAircraftPath(String path) {
+		_acPath = path;
 	}
 	
 	/**

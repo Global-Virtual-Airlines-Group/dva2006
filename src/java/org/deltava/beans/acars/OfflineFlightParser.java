@@ -217,6 +217,8 @@ public final class OfflineFlightParser {
 		inf.setFlight(afr.getFlightNumber());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
+		afr.setAuthor(ae.getChildTextTrim("author"));
+		afr.setAircraftPath(ae.getChildTextTrim("acPath"));
 		afr.setSDK(ae.getChildTextTrim("sdk"));
 		afr.setTailCode(ae.getChildTextTrim("tailCode"));
 		afr.setCapabilities(StringUtils.parse(ae.getAttributeValue("capabilities", "0"), 0, true));
