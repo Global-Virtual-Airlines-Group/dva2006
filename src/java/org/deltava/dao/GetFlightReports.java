@@ -91,7 +91,7 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_METADATA AM ON (PR.ID=AM.ID WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_METADATA AM ON (PR.ID=AM.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, acarsID);
