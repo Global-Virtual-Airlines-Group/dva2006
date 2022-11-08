@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -98,8 +98,11 @@ public class InactivityUpdateTask extends Task {
 				Integer id = me.getKey();
 				Pilot p = pilots.get(id);
 				if (p.getIsPermanent())
-					log.warn("Ignoring " + p.getName() + " - Permanent Account");
-				else {
+					log.warn(String.format("Ignoring %s - Permanent Account", p.getName()));
+				else if ((p.getStatus() == PilotStatus.RETIRED) || (p.getStatus() == PilotStatus.SUSPENDED)) {
+					log.warn(String.format("Ignoring %s - Status = %s", p.getName(), p.getStatus()));
+					iwdao.delete(p.getID());
+				} else {
 					boolean noWarn = !ip.isNotified();
 					if (noWarn)
 						log.warn("Marking " + p.getName() + " Inactive after no participation in " + inactiveDays + " days");
