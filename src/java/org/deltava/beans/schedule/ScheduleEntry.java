@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -199,7 +199,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		_length = 0;
 		_timeD = ztD;
 		_timeA = ztA.plusSeconds(od - nd) ;
-		_arrivalPlusDays = (int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), _timeA.toLocalDate());
+		_arrivalPlusDays = Math.abs((int) ChronoUnit.DAYS.between(_timeD.toLocalDate(), _timeA.toLocalDate()));
 		_hasDSTAdjustment = true;
 		return true;
 	}
