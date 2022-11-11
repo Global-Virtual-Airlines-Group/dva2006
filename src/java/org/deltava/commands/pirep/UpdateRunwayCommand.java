@@ -46,13 +46,13 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, afr);
 			ac.validate();
 			if (!ac.getCanDispose())
-				throw securityException("Cannot modify runways");
+				throw securityException(String.format("Cannot modify Runways for ACARS Flight %d", Integer.valueOf(ctx.getID())));
 			
 			// Load the flight data
 			GetACARSData acdao = new GetACARSData(con);
 			FlightInfo info = acdao.getInfo(ctx.getID());
 			if (info == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException(String.format("Invalid ACARS Flight ID - %d", Integer.valueOf(ctx.getID())));
 			
 			// Get the runway codes
 			List<String> dRwy = StringUtils.split(ctx.getParameter("newRwyD"), " ");
@@ -71,11 +71,12 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				if (delta > 90)
 					dist = -dist;
 				
+				boolean runwayChanged = !rD.equals(info.getRunwayD());
 				int oldDistance = (info.getRunwayD() != null) ? ((RunwayDistance)info.getRunwayD()).getDistance() : 0;
-				if ((!rD.equals(info.getRunwayD())) || (dist != oldDistance)) {
+				if (runwayChanged || (dist != oldDistance)) {
 					isUpdated = true;
 					info.setRunwayD(new RunwayDistance(rD, dist));
-					if (dist != oldDistance)
+					if (runwayChanged || (Math.abs(dist - oldDistance) > 200))
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated departure Runway to %s", info.getRunwayD().getName()));
 				}
 			}
@@ -85,11 +86,12 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				if (delta > 90)
 					dist = -dist;
 				
+				boolean runwayChanged = !rA.equals(info.getRunwayA());
 				int oldDistance = (info.getRunwayA() != null) ? ((RunwayDistance)info.getRunwayA()).getDistance() : 0;
-				if ((!rA.equals(info.getRunwayA())) || (dist != oldDistance)) {
+				if (runwayChanged || (dist != oldDistance)) {
 					isUpdated = true;
 					info.setRunwayA(new RunwayDistance(rA, dist));
-					if (dist != oldDistance)
+					if (runwayChanged || (Math.abs(dist - oldDistance) > 200))
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
 				}
 			}
@@ -97,7 +99,6 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			// Save the runways and status history
 			if (isUpdated) {
 				ctx.startTX();
-				
 				SetACARSRunway awdao = new SetACARSRunway(con);
 				awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
 				
