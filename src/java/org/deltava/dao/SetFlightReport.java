@@ -582,8 +582,8 @@ public class SetFlightReport extends DAO {
 					ps.setInt(1, afr.getID());
 					ps.setString(2, afr.getAuthor());
 					ps.setString(3, afr.getAircraftPath());
-					ps.setString(4, afr.getFDE());
-					ps.setString(5, afr.getAircraftCode());
+					ps.setString(4, StringUtils.isEmpty(afr.getFDE()) ? null : afr.getFDE());
+					ps.setString(5, StringUtils.isEmpty(afr.getAircraftCode()) ? null : afr.getAircraftCode());
 					executeUpdate(ps, 1);
 				}
 			}
