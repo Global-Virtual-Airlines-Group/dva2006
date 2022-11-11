@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -158,7 +159,7 @@ public class AirportListService extends WebService {
 		}
 
 		// Generate the JSON document
-		JSONArray ja = new JSONArray();
+		JSONArray ja = new JSONArray(); Instant now = Instant.now();
 		for (Airport a : airports) {
 			JSONObject ao = new JSONObject();
 			ao.put("iata", a.getIATA());
@@ -166,12 +167,13 @@ public class AirportListService extends WebService {
 			ao.put("lat", a.getLatitude());
 			ao.put("lng", a.getLongitude());
 			ao.put("name", a.getName());
+			ao.put("utcOffset", a.getTZ().getZone().getRules().getOffset(now).getTotalSeconds());
 			ja.put(ao);
 		}
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(1800);
 			ctx.println(ja.toString());
 			ctx.commit();
