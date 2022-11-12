@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 10.0
  */
 
@@ -95,7 +95,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 			}
 
 			// Load from the request
-			t.getNetworks().clear();
+			t.clearNetworks();
 			Collection<String> networks = ctx.getParameters("network", Collections.emptySet());
 			networks.stream().map(n -> EnumUtils.parse(OnlineNetwork.class, n, null)).filter(Objects::nonNull).forEach(t::addNetwork);
 			t.setActive(Boolean.parseBoolean(ctx.getParameter("active")) && !t.getFlights().isEmpty());

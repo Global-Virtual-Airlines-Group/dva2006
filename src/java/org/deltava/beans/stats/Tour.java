@@ -13,7 +13,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight tour data.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 10.0
  */
 
@@ -183,6 +183,13 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public void clearFlights() {
 		_flights.clear();
+	}
+	
+	/**
+	 * Clears the list of Online Networks.
+	 */
+	public void clearNetworks() {
+		_networks.clear();
 	}
 	
 	@Override
