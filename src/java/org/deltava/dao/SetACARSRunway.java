@@ -42,7 +42,7 @@ public class SetACARSRunway extends SetACARSData {
 				ps.setInt(6, rwyD.getLength());
 				ps.setInt(7, dist);
 				ps.setBoolean(8, true);
-				if (Math.abs(dist) < 32700)
+				if (Math.abs(dist) < 32500)
 					ps.addBatch();
 			}
 			
@@ -55,7 +55,7 @@ public class SetACARSRunway extends SetACARSData {
 				ps.setInt(6, rwyA.getLength());
 				ps.setInt(7, dist);
 				ps.setBoolean(8, false);
-				if (Math.abs(dist) < 32700)
+				if (Math.abs(dist) < 32500)
 					ps.addBatch();
 			}
 			
