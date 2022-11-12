@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Tour beans.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 10.0
  */
 
@@ -33,7 +33,7 @@ public class TourAccessControl extends AccessControl {
 	}
 
 	@Override
-	public void validate() throws AccessControlException {
+	public void validate() {
 		validateContext();
 		
 		// Check creation access

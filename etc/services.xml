@@ -80,6 +80,11 @@
 	<service id="dupename" class="org.deltava.service.hr.DuplicateNameService" />
 	<service id="sceligible" class="org.deltava.service.hr.PilotNominationService" />
 	<service id="jobprofile" class="org.deltava.service.hr.JobProfileService" />
+	
+	<!-- Flight Tour Services -->
+	<service id="tour" class="org.deltava.service.stats.TourInfoService" />
+	<service id="tours" class="org.deltava.service.stats.TourListService" />
+	<service id="tourupdate" class="org.deltava.service.stats.TourUpdateService" />
 
 	<!-- Examination Services -->
 	<service id="answer" class="org.deltava.service.exam.TextService" />
