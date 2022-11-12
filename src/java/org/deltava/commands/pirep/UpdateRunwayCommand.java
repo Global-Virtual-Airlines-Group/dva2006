@@ -76,8 +76,10 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				if (runwayChanged || (dist != oldDistance)) {
 					isUpdated = true;
 					info.setRunwayD(new RunwayDistance(rD, dist));
-					if (runwayChanged || (Math.abs(dist - oldDistance) > 200))
+					if (runwayChanged)
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated departure Runway to %s", info.getRunwayD().getName()));
+					else if (Math.abs(dist - oldDistance) > 200)
+						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated takeoff distance from %d to %d feet", Integer.valueOf(oldDistance), Integer.valueOf(dist)));
 				}
 			}
 			if (rA != null) {
@@ -91,8 +93,10 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				if (runwayChanged || (dist != oldDistance)) {
 					isUpdated = true;
 					info.setRunwayA(new RunwayDistance(rA, dist));
-					if (runwayChanged || (Math.abs(dist - oldDistance) > 200))
+					if (runwayChanged)
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
+					else if (Math.abs(dist - oldDistance) > 200)
+						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated touchdown distance from %d to %d feet", Integer.valueOf(oldDistance), Integer.valueOf(dist)));
 				}
 			}
 					
