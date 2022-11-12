@@ -102,6 +102,9 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				SetACARSRunway awdao = new SetACARSRunway(con);
 				awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
 				
+				SetAggregateStatistics stdao = new SetAggregateStatistics(con);
+				stdao.updateLanding(afr);
+				
 				SetFlightReport frwdao = new SetFlightReport(con);
 				frwdao.writeHistory(afr.getStatusUpdates(), ctx.getDB());
 				ctx.commitTX();
