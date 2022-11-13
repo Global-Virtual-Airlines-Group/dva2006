@@ -54,7 +54,8 @@ xmlreq.onreadystatechange = function() {
 			f.rwyDebug.checked = true;
 			golgotha.local.zoomTo(golgotha.local.landing.lat, golgotha.local.landing.lng, 16);
 			map.toggle(golgotha.maps.acarsFlight.debugMarkers, true);
-		}
+		} else
+			map.toggle(golgotha.maps.acarsFlight.debugMarkers, false);
 	}
 
 	// Enable checkboxes
