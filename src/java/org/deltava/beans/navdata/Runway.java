@@ -77,7 +77,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	
 	private GeoLocation getThresholdLocation() {
 		if (_threshold == 0) return this;
-		double thresholdM = _threshold * 1.0d / GeoLocation.FEET_MILES;
+		double thresholdM = ((double)_threshold) / GeoLocation.FEET_MILES;
 		return GeoUtils.bearingPointS(this, thresholdM, _heading - _magVar);
 	}
 	
@@ -235,11 +235,6 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		_geo = GeoUtils.toGeometry(List.of(sl, sr, er, el));
 	}
  
-	@Override
-	public int distanceFeet(GeoLocation l2) {
-		return (_threshold == 0) ? super.distanceFeet(l2) : getThresholdLocation().distanceFeet(l2);
-	}
-	
 	/**
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.YELLOW
