@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report routes to a Google map.
  * @author Luke
- * @version 8.7
+ * @version 10.3
  * @since 5.4
  */
 
@@ -53,7 +53,7 @@ public class MyRouteMapService extends WebService {
 		}
 		
 		// Get the airports
-		Collection<Airport> airports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
+		Collection<Airport> airports = routes.stream().flatMap(rp -> rp.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		// Create the response
 		Collections.sort(routes, Collections.reverseOrder());
