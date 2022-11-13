@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,13 +18,13 @@ import org.deltava.util.JSONUtils;
 /**
  * A Web Service to display available Check Ride program/aircraft/simulator combinations.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 8.6
  */
 
 public class CheckRideSimulatorService extends WebService {
 	
-	private static final List<Simulator> DEFAULT_SIMS = List.of(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.P3Dv4, Simulator.XP10, Simulator.XP11, Simulator.FS2020);
+	private static final List<Simulator> DEFAULT_SIMS = List.of(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.P3Dv4, Simulator.XP10, Simulator.XP11, Simulator.XP12, Simulator.FS2020);
 	
 	/**
 	 * Executes the Web Service.
