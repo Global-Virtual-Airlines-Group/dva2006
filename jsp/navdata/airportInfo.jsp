@@ -74,13 +74,13 @@ golgotha.onDOMReady(function() {
 <td class="data pri bld caps" colspan="2">Continuous ${isSummer ? 'Daylight' : 'Darkness'}</td>
 </c:when> 
 <c:when test="${empty sunrise}">
- <td class="data sec bld">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
+ <td class="data sec bld" colspan="2">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
 </c:when>
 <c:when test="${empty sunset}">
- <td class="data sec bld">Continuous Daylight begins at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" /></td>
+ <td class="data sec bld" colspan="2">Continuous Daylight begins at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" /></td>
 </c:when>
 <c:otherwise>
- <td class="data">Sun rises at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" />, sets at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
+ <td class="data" colspan="2">Sun rises at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" />, sets at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
 </c:otherwise>
 </c:choose>
 </tr>
