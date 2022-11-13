@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Flight Tour - ${tour.name}</title>
@@ -13,6 +14,8 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:js name="progress" />
+<content:browser human="true"><c:if test="${!empty tour.flights}">
+<map:api version="3" /></c:if></content:browser>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -115,6 +118,8 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <tr class="title caps">
  <td colspan="5">FLIGHT LEGS REQUIRED FOR COMPLETION</td>
 </tr>
+<c:choose>
+<c:when test="${!empty tour.flights}">
 <c:set var="leg" value="0" scope="page" />
 <c:forEach var="fl" items="${tour.flights}">
 <c:set var="leg" value="${leg + 1}" scope="page" />
@@ -126,11 +131,44 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td class="bld" colspan="${tour.matchLeg ? 1 : 2}"><fmt:date fmt="t" t="HH:mm" tz="${fl.airportD.TZ}" date="${fl.timeD}" /> - <fmt:date fmt="t" t="HH:mm" tz="${fl.airportA.TZ}" date="${fl.timeA}" /> (<fmt:int value="${fl.duration.toHoursPart()}" />h <fmt:int value="${fl.duration.toMinutesPart()}" />m)</td>
 </tr>
 </c:forEach>
-<c:if test="${empty tour.flights}">
+<content:browser human="true">
+<tr class="title caps">
+ <td colspan="5">FLIGHT LEG MAP <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
+</tr>
+<tr class="tourMap">
+ <td colspan="5"><map:div ID="googleMap" height="475" /></td>
+</tr>
+<script async>
+const lines = [];
+<map:point var="golgotha.local.mapC" point="${ctr}" />
+<map:markers var="golgotha.local.airports" items="${tourAirports}" />
+<map:points var="golgotha.local.todo" items="${tourRemaining}" />
+<map:line var="golgotha.local.todoLine" width="1" color="#a000a1" geodesic="true" src="golgotha.local.todo" transparency="0.35" />
+lines.push(golgotha.local.todoLine);
+<c:if test="${!empty myTourRoute}">
+<map:points var="golgotha.local.progress" items="${myTourRoute}" />
+<map:line var="golgotha.local.progressLine" width="2" color="#0000a1" geodesic="true" src="golgotha.local.progress" transparency="0.5" />
+lines.push(golgotha.local.progressLine);</c:if>
+
+// Build the map
+const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:6,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+map.setMapTypeId(golgotha.maps.info.type);
+map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW});
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
+map.addMarkers(golgotha.local.airports);
+map.addMarkers(lines);
+</script>
+</content:browser>
+</c:when>
+<c:otherwise>
 <tr id="tourEmpty">
  <td colspan="2" class="pri bld mid">NO FLIGHT LEGS ARE ASSOCIATED WITH THIS TOUR</td>
 </tr>
-</c:if>
+</c:otherwise>
+</c:choose>
 <c:set var="auditCols" value="4" scope="request" />
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
