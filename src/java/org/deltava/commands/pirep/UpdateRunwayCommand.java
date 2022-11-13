@@ -4,6 +4,7 @@ package org.deltava.commands.pirep;
 import java.util.List;
 import java.sql.Connection;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.Runway;
@@ -66,8 +67,9 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			// Check if we've changed anything
 			boolean isUpdated = false;
 			if (rD != null) {
-				int dist = rD.distanceFeet(afr.getTakeoffLocation());
-				double delta = GeoUtils.delta(rD.getHeading(), GeoUtils.course(rD, afr.getTakeoffLocation()));
+				GeoLocation rw = (rD.getThresholdLength() > 0) ? rD.getThreshold() : rD;
+				int dist = rD.distanceFeet(afr.getTakeoffLocation()) - rD.getThresholdLength();
+				double delta = GeoUtils.delta(rD.getHeading(), GeoUtils.course(rw, afr.getTakeoffLocation()));
 				if (delta > 90)
 					dist = -dist;
 				
@@ -83,8 +85,9 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				}
 			}
 			if (rA != null) {
-				int dist = rA.distanceFeet(afr.getLandingLocation());
-				double delta = GeoUtils.delta(rA.getHeading(), GeoUtils.course(rA, afr.getLandingLocation()));
+				GeoLocation rw = (rA.getThresholdLength() > 0) ? rA.getThreshold() : rA;
+				int dist = rA.distanceFeet(afr.getLandingLocation()) - rA.getThresholdLength();
+				double delta = GeoUtils.delta(rA.getHeading(), GeoUtils.course(rw, afr.getLandingLocation()));
 				if (delta > 90)
 					dist = -dist;
 				
