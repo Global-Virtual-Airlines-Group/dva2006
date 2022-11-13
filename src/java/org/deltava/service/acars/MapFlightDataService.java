@@ -178,6 +178,10 @@ public class MapFlightDataService extends WebService {
 		ro.put("distance", rd.getDistance());
 		ro.put("hdg", rd.getHeading());		
 		ro.put("pt", JSONUtils.format(GeoUtils.bearingPointS(rd, distanceMiles, rd.getHeading() - rd.getMagVar())));
+		ro.put("thresholdLength", rd.getThresholdLength());
+		if (rd.getThresholdLength() > 0)
+			ro.put("threshold", JSONUtils.format(rd.getThreshold()));
+		
 		return ro;
 	}
 

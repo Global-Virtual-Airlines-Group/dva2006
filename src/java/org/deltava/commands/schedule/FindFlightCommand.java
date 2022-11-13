@@ -173,7 +173,7 @@ public class FindFlightCommand extends AbstractCommand {
 				if (ssc.getNotVisitedA()) {
 					GetFlightReports frdao = new GetFlightReports(con);
 					Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
-					Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
+					Collection<Airport> myAirports = routes.stream().flatMap(rp -> rp.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 					AirportFilter fl = new NOTFilter(new IATAFilter(myAirports));
 					ctx.setAttribute("airportsA", fl.filter(dsts), REQUEST);
 				} else

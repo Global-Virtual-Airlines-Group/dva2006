@@ -52,7 +52,7 @@ public class AirportListService extends WebService {
 			if (Boolean.parseBoolean(ctx.getParameter("notVisited")) && ctx.isAuthenticated()) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
-				Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
+				Collection<Airport> myAirports = routes.stream().flatMap(rp -> rp.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 				
 				// Add academy airports
 				GetSchedule sdao = new GetSchedule(con);
