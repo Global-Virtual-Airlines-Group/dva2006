@@ -473,8 +473,9 @@ public class FlightSubmissionHelper {
 		LandingRunways lr = navdao.getBestRunway(_fr.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 		Runway r = lr.getBestRunway();
 		if (r != null) {
-			int dist = r.distanceFeet(afr.getTakeoffLocation());
-			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getTakeoffLocation()));
+			GeoLocation rw = (r.getThresholdLength() > 0) ? r.getThreshold() : r;
+			int dist = r.distanceFeet(afr.getTakeoffLocation()) - r.getThresholdLength();
+			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(rw, afr.getTakeoffLocation()));
 			if (delta > 90)
 				dist = -dist;
 			
@@ -493,8 +494,9 @@ public class FlightSubmissionHelper {
 		lr = navdao.getBestRunway(_fr.getAirportA(), _fr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 		r = lr.getBestRunway();
 		if (r != null) {
-			int dist = r.distanceFeet(afr.getLandingLocation());
-			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(r, afr.getLandingLocation()));
+			GeoLocation rw = (r.getThresholdLength() > 0) ? r.getThreshold() : r;
+			int dist = r.distanceFeet(afr.getLandingLocation()) - r.getThresholdLength();
+			double delta = GeoUtils.delta(r.getHeading(), GeoUtils.course(rw, afr.getLandingLocation()));
 			if (delta > 90)
 				dist = -dist;
 			
