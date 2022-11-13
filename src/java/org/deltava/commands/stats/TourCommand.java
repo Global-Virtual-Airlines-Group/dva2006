@@ -254,6 +254,10 @@ public class TourCommand extends AbstractAuditFormCommand {
 			progressIDs.removeAll(t.getCompletionIDs());
 			ctx.setAttribute("progressIDs", progressIDs, REQUEST);
 			
+			// Build list of airports
+			Collection<Airport> tourAirports = t.getFlights().stream().flatMap(f -> f.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
+			ctx.setAttribute("tourAirports", tourAirports, REQUEST);
+			
 			// Load PIREPs and see current progress
 			if (ctx.isAuthenticated()) {
 				LocalDateTime ldt = LocalDateTime.ofInstant(t.getStartDate(), ZoneOffset.UTC);
@@ -261,8 +265,26 @@ public class TourCommand extends AbstractAuditFormCommand {
 				GetFlightReports frdao = new GetFlightReports(con);
 				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), tourStart, (int)(Duration.between(tourStart, t.getEndDate()).toDays()) + 1);
 				tourFlights.removeIf(fr -> (fr.getDatabaseID(DatabaseID.TOUR) != t.getID()));
-				ctx.setAttribute("tourProgress", CollectionUtils.sort(tourFlights, new FlightReportComparator(FlightReportComparator.SUBMISSION)), REQUEST);
-				ctx.setAttribute("maxLeg", Integer.valueOf(tourFlights.stream().mapToInt(fr -> t.getLegIndex(fr)).max().orElse(0)), REQUEST);
+				tourFlights.sort(new FlightReportComparator(FlightReportComparator.SUBMISSION));
+				
+				// Determine progress and remaining
+				int maxLeg = tourFlights.stream().mapToInt(fr -> t.getLegIndex(fr)).max().orElse(0);
+				List<Airport> myAirports = new ArrayList<Airport>();
+				tourFlights.forEach(rp -> filterRoute(rp, myAirports));
+				List<Airport> tourRemaining = new ArrayList<Airport>();
+				t.getFlights().subList(maxLeg, t.getFlights().size()).forEach(rp -> filterRoute(rp, tourRemaining));
+				
+				// Set status attributes
+				ctx.setAttribute("tourProgress", tourFlights, REQUEST);
+				ctx.setAttribute("tourRemaining", tourRemaining, REQUEST);
+				ctx.setAttribute("myTourRoute", myAirports, REQUEST);
+				ctx.setAttribute("maxLeg", Integer.valueOf(maxLeg), REQUEST);
+				ctx.setAttribute("ctr", tourAirports.isEmpty() ? tourFlights.get(tourFlights.size() - 1).getAirportA() : tourAirports.iterator().next(), REQUEST);
+			} else if (!tourAirports.isEmpty()) {
+				List<Airport> tourRemaining = new ArrayList<Airport>();
+				t.getFlights().forEach(rp -> filterRoute(rp, tourRemaining));
+				ctx.setAttribute("tourRemaining", tourRemaining, REQUEST);
+				ctx.setAttribute("ctr", tourAirports.iterator().next(), REQUEST);
 			}
 
 			readAuditLog(ctx, t);
@@ -279,5 +301,12 @@ public class TourCommand extends AbstractAuditFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/stats/tourView.jsp");
 		result.setSuccess(true);
+	}
+	
+	private static void filterRoute(RoutePair rp, List<Airport> results) {
+		if (results.isEmpty() || !results.get(results.size() -1).equals(rp.getAirportD()))
+			results.add(rp.getAirportD());
+		
+		results.add(rp.getAirportA());
 	}
 }
