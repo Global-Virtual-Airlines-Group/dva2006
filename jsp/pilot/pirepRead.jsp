@@ -62,6 +62,7 @@ golgotha.local.zoomTo = function(lat, lng, zoom) {
 	return true;
 };</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
+<map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
@@ -398,7 +399,9 @@ golgotha.local.showRunwayChoices = function() {
 <el:box name="showFPMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.filedMarkers, this.checked)" label="Navaid Markers" checked="true" /></span>
 <c:if test="${!empty routeCycleInfo}"> <span class="small ita nophone">(Cycle <span class="pri bld">${routeCycleInfo.ID}</span> released <fmt:date date="${routeCycleInfo.releasedOn}" fmt="d" />)</span></c:if>
 <c:if test="${!empty onlineTrack}"><span class="bld"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
- <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></span></c:if></td>
+ <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></span></c:if>
+ <content:filter roles="Developer"><span class="bld"> <el:box name="rwyDebug" idx="*" onChange="void golgotha.maps.acarsFlight.toggleDebug(this.checked)" label="Runway Debug" checked="false" /></span></content:filter>
+ </td>
 </tr>
 <tr class="acarsMapData">
  <td colspan="2"><map:div ID="googleMap" height="575" /></td>
@@ -528,6 +531,8 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.e
 <map:points var="golgotha.maps.acarsFlight.routePoints" items="${mapRoute}" />
 <map:line var="golgotha.maps.acarsFlight.gRoute" src="golgotha.maps.acarsFlight.routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" /></c:if>
 <c:if test="${empty mapRoute && isACARS}">
+<map:point var="golgotha.local.takeoff" point="${pirep.takeoffLocation}" />
+<map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
 golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});</c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
