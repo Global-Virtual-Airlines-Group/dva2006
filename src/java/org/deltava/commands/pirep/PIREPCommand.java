@@ -830,7 +830,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
 				if (sbPkg == null) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
-				Collection<GeoLocation> rt = List.of(fr.getAirportD(), fr.getAirportA());
+				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);
 				ctx.setAttribute("filedRoute", rt, REQUEST);
 				if (!hasTrack && (mapType == MapType.GOOGLE) && (sbPkg == null))
