@@ -1,10 +1,11 @@
-golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[], asPolygons:[]}; 
+golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[], asPolygons:[], debugMarkers:[]}; 
 golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#adad10',tx:0.2,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#ffa018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
 golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle, showAirspace)
 {
 // Disable checkboxes
 const f = document.forms[0];
 f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled = true;
+golgotha.util.disable(f.rwyDebug, true);
 
 // Build the XML Requester
 const xmlreq = new XMLHttpRequest();
@@ -44,6 +45,17 @@ xmlreq.onreadystatechange = function() {
 
 	golgotha.maps.acarsFlight.gRoute = new google.maps.Polyline({path:golgotha.maps.acarsFlight.routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	golgotha.event.beacon('ACARS', 'Flight Data');
+	if (f.rwyDebug) {
+		golgotha.maps.acarsFlight.showRunway(js.runwayD, golgotha.local.takeoff);
+		golgotha.maps.acarsFlight.showRunway(js.runwayA, golgotha.local.landing);
+		golgotha.util.disable(f.rwyDebug, false);
+		const isDebug = localStorage.getItem('golgotha.rwyDebug');
+		if (isDebug == 'true') {
+			f.rwyDebug.checked = true;
+			golgotha.local.zoomTo(golgotha.local.landing.lat, golgotha.local.landing.lng, 16);
+			map.toggle(golgotha.maps.acarsFlight.debugMarkers, true);
+		}
+	}
 
 	// Enable checkboxes
 	golgotha.util.disable(f.showFDR, false);
@@ -85,9 +97,32 @@ golgotha.maps.acarsFlight.toggleAirspace = function(show) {
 	golgotha.maps.acarsFlight.airspace.forEach(show ? golgotha.maps.acarsFlight.addAirspace : golgotha.maps.acarsFlight.removeAirspace);
 };
 
-golgotha.maps.acarsFlight.showRunway = function(rd) {
-	let pl = new google.maps.Polyline({map:map, path:[rd.location,rd.pt], strokeWeight:5.5, strokeColor:'#0000a1', strokeOpacity:0.35, zIndex:golgotha.maps.z.POLYLINE+1});
-	return true;
+golgotha.maps.acarsFlight.showRunway = function(rd, pd) {
+	const rw = rd.threshold || rd.location;
+	const dst = golgotha.maps.distance(rd.pt, pd);
+	golgotha.maps.acarsFlight.debugMarkers.push(new google.maps.Polyline({map:map, path:[rw,rd.pt], strokeWeight:7.5, strokeColor:'#0000a1', strokeOpacity:0.25, zIndex:golgotha.maps.z.POLYLINE+1}));
+	golgotha.maps.acarsFlight.debugMarkers.push(new google.maps.Circle({map:map, center:rd.pt, radius:golgotha.maps.feet2Meter(Math.abs(rd.distance)), strokeColor:'#0000a1', strokeOpacity:0.5, strokeWeight:1, fillColor:'#0000a1', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON}));
+	golgotha.maps.acarsFlight.debugMarkers.push(new golgotha.maps.IconMarker({map:map, pal:3, icon:38, opacity:0.5, info:'Actual Takeoff/Touchdown'}, pd));
+	if (dst > 15)
+		golgotha.maps.acarsFlight.debugMarkers.push(new golgotha.maps.IconMarker({map:map, pal:3, icon:53, opacity:0.5, info:'Runway Takeoff/Touchdown, distance=' + Math.round(dst) + ' meters'}, rd.pt));
+	if (rd.threshold)
+		golgotha.maps.acarsFlight.debugMarkers.push(new google.maps.Circle({map:map, center:rd.threshold, radius:golgotha.maps.feet2Meter(Math.abs(rd.distance)), strokeColor:'#a000a1', strokeOpacity:0.5, strokeWeight:1, fillColor:'#a000a1', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON}));
+};
+
+golgotha.maps.acarsFlight.toggleDebug = function(isEnabled) {
+	map.toggle(golgotha.maps.acarsFlight.debugMarkers, isEnabled);
+	localStorage.setItem('golgotha.rwyDebug', isEnabled);
+};
+
+golgotha.maps.distance = function (ll1, ll2) {
+	const l1 = new google.maps.LatLng(ll1); const l2 = new google.maps.LatLng(ll2); // this allows us to take LatLngLiterals
+	const R = 3958.8; // Radius of the Earth in miles
+	const rlat1 = l1.lat() * (Math.PI/180); // Convert to radians
+	const rlat2 = l2.lat() * (Math.PI/180); // Convert to radians
+    const difflat = rlat2-rlat1;
+	const difflon = (l2.lng()-l1.lng()) * (Math.PI/180); // Radian difference (longitudes)
+	const d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+	return golgotha.maps.miles2Meter(d);
 };
 
 golgotha.maps.acarsFlight.showFIR = function(code)
