@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.beans.schedule.GeoPosition;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * An interface to mark objects that contain a latitude/longitude pair.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -16,6 +16,11 @@ public interface GeoLocation {
 	 * Size of a degree in miles.
 	 */
 	public static final double DEGREE_MILES = 69.16;
+	
+	/**
+	 * Size of a degree in feet.
+	 */
+	public static final double DEGREE_FEET = 364567.2;
 	
 	/**
 	 * Size of a mile in feet.
@@ -67,12 +72,7 @@ public interface GeoLocation {
 	 */
 	public double getLongitude();
 	
-	/**
-	 * Calculates the distance between two GeoLocations.
-	 * @param gp2 the other GeoLocation
-	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
-	 */
-	default int distanceTo(GeoLocation gp2) {
+	private double distance(GeoLocation gp2) {
 	   if (gp2 == null) return -1;
 
 		// Convert the latitude to radians
@@ -85,10 +85,16 @@ public interface GeoLocation {
 		// Do the math - this makes my head hurt
 		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
 		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
-		double distD = Math.toDegrees(Math.acos(p1 + p2));
-
-		// Convert to miles and return
-		return (int) StrictMath.round(distD * DEGREE_MILES);
+		return Math.toDegrees(Math.acos(p1 + p2));
+	}
+	
+	/**
+	 * Calculates the distance between two GeoLocations.
+	 * @param l2 the other GeoLocation
+	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
+	 */
+	default int distanceTo(GeoLocation l2) {
+		return (int) StrictMath.round(distance(l2) * DEGREE_MILES);
 	}
 	
 	/**
@@ -98,21 +104,6 @@ public interface GeoLocation {
 	 * @see GeoPosition#distanceTo(GeoLocation)
 	 */
 	default int distanceFeet(GeoLocation l2) {
-		if (l2 == null) return -1;
-		
-		// Convert the latitude to radians
-		double lat1 = Math.toRadians(getLatitude());
-		double lat2 = Math.toRadians(l2.getLatitude());
-		
-		// Get the longitude difference in radians
-		double lngDiff = Math.toRadians(Math.abs(getLongitude() - l2.getLongitude()));
-		
-		// Do the math - this makes my head hurt
-		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
-		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
-		double distD = Math.toDegrees(Math.acos(p1 + p2));
-		
-		// Convert to miles and return
-		return (int) StrictMath.round(distD * DEGREE_MILES * FEET_MILES);
+		return (int) StrictMath.round(distance(l2) * DEGREE_FEET);
 	}
 }
