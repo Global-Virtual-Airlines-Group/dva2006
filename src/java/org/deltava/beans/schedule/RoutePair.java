@@ -1,12 +1,14 @@
-// Copyright 2009, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
+
+import java.util.*;
 
 import org.deltava.beans.flight.FlightType;
 
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.6
  */
 
@@ -38,6 +40,15 @@ public interface RoutePair {
 	 */
 	default boolean isPopulated() {
 		return ((getAirportD() != null) && (getAirportA() != null));
+	}
+	
+	/**
+	 * Returns the airports in this Route Pair. <i>This is only filled if both Airports are populated.</i>
+	 * @return a List of Airports, or an empty list if not populated.
+	 * @see RoutePair#isPopulated()
+	 */
+	default Collection<Airport> getAirports() {
+		return isPopulated() ? List.of(getAirportD(), getAirportA()) : Collections.emptyList();
 	}
 	
     /**
