@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -166,7 +166,7 @@ public class GetHelp extends DAO {
 		if (activeOnly)
 			sqlBuf.append("AND (I.STATUS<>?) ");
 
-		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
+		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
