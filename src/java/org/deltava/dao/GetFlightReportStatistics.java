@@ -419,9 +419,9 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, "
 			+ "AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-			+ "SUM(PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND "
-			+ "(EQR.RATED_EQ=F.EQTYPE))");
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SBL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND "
+			+ "(EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
@@ -433,12 +433,13 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(3, FlightReport.ATTR_IVAO);
 			ps.setInt(4, FlightReport.ATTR_HISTORIC);
 			ps.setInt(5, FlightReport.ATTR_DISPATCH);
-			ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			ps.setInt(7, FlightStatus.OK.ordinal());
-			ps.setString(8, eqType);
-			ps.setInt(9, EquipmentType.Rating.PRIMARY.ordinal());
+			ps.setInt(6, FlightReport.ATTR_SIMBRIEF);
+			ps.setInt(7, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(8, FlightStatus.OK.ordinal());
+			ps.setString(9, eqType);
+			ps.setInt(10, EquipmentType.Rating.PRIMARY.ordinal());
 			if (_dayFilter > 0)
-				ps.setInt(10, _dayFilter);
+				ps.setInt(11, _dayFilter);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(ps.toString());
@@ -476,9 +477,10 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_HISTORIC);
 			ps.setInt(3, FlightReport.ATTR_DISPATCH);
-			ps.setInt(4, FlightReport.ATTR_ONLINE_MASK);
-			ps.setInt(5, FlightStatus.OK.ordinal());
-			ps.setInt(6, FlightReport.ATTR_CHARTER);
+			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
+			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(6, FlightStatus.OK.ordinal());
+			ps.setInt(7, FlightReport.ATTR_CHARTER);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(ps.toString());
@@ -700,6 +702,7 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(++param, FlightReport.ATTR_ACARS);
 			ps.setInt(++param, FlightReport.ATTR_HISTORIC);
 			ps.setInt(++param, FlightReport.ATTR_DISPATCH);
+			ps.setInt(++param, FlightReport.ATTR_SIMBRIEF);
 			ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
 			ps.setInt(++param, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
@@ -732,10 +735,11 @@ public class GetFlightReportStatistics extends DAO {
 				entry.setACARSLegs(rs.getInt(7));
 				entry.setHistoricLegs(rs.getInt(8));
 				entry.setDispatchLegs(rs.getInt(9));
-				entry.setPilotIDs(rs.getInt(10));
-				entry.setOnlineLegs(rs.getInt(11));
-				entry.setPax(rs.getInt(12));
-				entry.setLoadFactor(rs.getDouble(13));
+				entry.setSimBriefLegs(rs.getInt(10));
+				entry.setPilotIDs(rs.getInt(11));
+				entry.setOnlineLegs(rs.getInt(12));
+				entry.setPax(rs.getInt(13));
+				entry.setLoadFactor(rs.getDouble(14));
 				results.add(entry);
 			}
 		}
@@ -748,8 +752,8 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	private static String getSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-			+ "AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP, AVG(F.LOADFACTOR) AS LF "
-			+ "FROM PIREPS F WHERE (F.STATUS=?) ";
+			+ "AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SBL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
 	
 	/*
@@ -757,8 +761,8 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	private static String getPilotJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, 1 AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM PILOTS P, PIREPS F "
-			+ "WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SBL, 1 AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP, "
+			+ "AVG(F.LOADFACTOR) AS LF FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
 	
 	/*
@@ -766,7 +770,7 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	private static String getAirportJoinSQL(String apColumn) {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP, AVG(F.LOADFACTOR) AS LF "
-			+ "FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
+			+ "SUM(F.PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
 	}
 }
