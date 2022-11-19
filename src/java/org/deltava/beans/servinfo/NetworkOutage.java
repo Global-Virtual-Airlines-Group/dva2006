@@ -1,4 +1,4 @@
-// Copyright 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A bean to track Online Network data feed outages.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 8.6
  */
 
@@ -101,17 +101,22 @@ public class NetworkOutage implements TimeSpan {
 	}
 	
 	/**
-	 * Creates a list of data feed outages from a Collection of data feed pull times.
+	 * Creates a list of data feed outages from a Collection of data feed pull times within a given time span.
 	 * @param net the OnlineNetwork 
+	 * @param ts the TimeSpan
 	 * @param fetchTimes a Collection of pull date/times
 	 * @param updateInterval the fetch interval in seconds
 	 * @return a Collection of NetworkOutage beans
 	 */
-	public static Collection<NetworkOutage> calculate(OnlineNetwork net, Collection<Instant> fetchTimes, int updateInterval) {
+	public static Collection<NetworkOutage> calculate(OnlineNetwork net, TimeSpan ts, Collection<Instant> fetchTimes, int updateInterval) {
 		Collection<NetworkOutage> results = new ArrayList<NetworkOutage>();
 		if (fetchTimes.size() < 2) return results;
 		
-		List<Instant> ft2 = new ArrayList<Instant>(fetchTimes); Instant lastPull = ft2.get(0);
+		// To determine outages at start/end of period, assume a fetch time right before the start, and right after
+		List<Instant> ft2 = new ArrayList<Instant>(fetchTimes);
+		ft2.add(0, ts.getStartTime().minusSeconds(updateInterval));
+		ft2.add(ts.getEndTime().plusSeconds(updateInterval));
+		Instant lastPull = ft2.get(0);
 		for (Instant ft : ft2) {
 			long fetchInterval = ft.getEpochSecond() - lastPull.getEpochSecond();
 			if (fetchInterval > (updateInterval + 60)) {
