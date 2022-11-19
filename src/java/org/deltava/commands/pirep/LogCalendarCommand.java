@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display a Pilot's log book in a Calendar. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.2
  */
 
@@ -43,7 +43,7 @@ public class LogCalendarCommand extends AbstractCalendarCommand {
             
             // Get the flight reports
             GetFlightReports prdao = new GetFlightReports(con);
-            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, ctx.getDB(), cctx.getStartDate(), cctx.getDays()).stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).collect(Collectors.toList());
+            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, ctx.getDB(), cctx.getStartTime(), cctx.getDays()).stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).collect(Collectors.toList());
             prdao.getCaptEQType(pireps);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 		} catch (DAOException de) {
