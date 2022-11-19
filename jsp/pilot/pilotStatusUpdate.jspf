@@ -2,6 +2,14 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:if test="${!empty statusUpdates}">
+<script async>
+golgotha.local.toggleEllipsis = function(tc) {
+	if (golgotha.util.hasClass(tc, 'ellipsis'))
+		golgotha.util.removeClass(tc, 'ellipsis');
+	else
+		golgotha.util.addClass(tc, 'ellipsis');
+};
+</script>
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:if test="${showStatusToggle}">
 <c:set var="toggleLabel" value="${statusCollapse ? 'EXPAND' : 'COLLAPSE'}" scope="page" />
@@ -27,7 +35,7 @@
 <tr class="mid statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td class="pri bld"><fmt:date fmt="d" date="${update.date}" /></td>
 <c:if test="${!isSuspended || isHR}">
- <td colspan="2" class="ellipsis"><span>${update.description}</span></td>
+ <td colspan="2" class="ellipsis" onclick="void golgotha.local.toggleEllipsis(this)"><span>${update.description}</span></td>
 </c:if>
 <c:if test="${isSuspended && !isHR}">
  <td colspan="2">User Account Suspended</td>
