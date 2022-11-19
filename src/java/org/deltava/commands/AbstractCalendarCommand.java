@@ -22,7 +22,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 
 	private static final List<ComboAlias> TYPE_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week"}, new String[] { "31", "7"});
 	
-	protected static final class CalendarContext {
+	protected static final class CalendarContext implements TimeSpan {
 		private final DateRange _dr;
 		private final int _days;
 		
@@ -32,12 +32,19 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 			_days = days;
 		}
 		
-		public Instant getStartDate() {
+		@Override
+		public Instant getStartTime() {
 			return _dr.getStartDate();
 		}
 		
-		public Instant getEndDate() {
+		@Override
+		public Instant getEndTime() {
 			return _dr.getEndDate();
+		}
+		
+		@Override
+		public Instant getDate() {
+			return _dr.getStartDate();
 		}
 		
 		public DateRange getRange() {
@@ -46,6 +53,13 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		
 		public int getDays() {
 			return _days;
+		}
+		
+		@Override
+		public int compareTo(Object o) {
+			TimeSpan ts2 = (TimeSpan) o;
+			int tmpResult = getStartTime().compareTo(ts2.getStartTime());
+			return (tmpResult == 0) ? getEndTime().compareTo(ts2.getEndTime()) : tmpResult;
 		}
 	}
 	
