@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Online Network data feed outages. 
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 8.6
  */
 
@@ -29,11 +29,10 @@ public class NetworkOutageCalendarCommand extends AbstractCalendarCommand {
 		CalendarContext cctx = initCalendar(ctx);
 		try {
 			GetOnlineTrack otdao = new GetOnlineTrack(ctx.getConnection());
-			Collection<OnlineNetwork> networks = otdao.getFetchNetworks(cctx.getStartDate(), cctx.getEndDate());
-			
+			Collection<OnlineNetwork> networks = otdao.getFetchNetworks(cctx);
 			Collection<NetworkOutage> outages = new TreeSet<NetworkOutage>();
 			for (OnlineNetwork net : networks)
-				outages.addAll(NetworkOutage.calculate(net, otdao.getFetches(net, cctx.getStartDate(), cctx.getEndDate()), 150));
+				outages.addAll(NetworkOutage.calculate(net, cctx, otdao.getFetches(net, cctx), 150));
 			
 			ctx.setAttribute("outages", outages, REQUEST);
 			ctx.setAttribute("networks", networks, REQUEST);
