@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.EnumUtils;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.4
  */
 
@@ -154,16 +154,15 @@ public class GetOnlineTrack extends DAO {
 	/**
 	 * Displays data collections occurring within a given time span.
 	 * @param network the OnlineNetwork
-	 * @param startTime the start date/time
-	 * @param endTime the end date/time
+	 * @param ts the TimeSpan
 	 * @return a Collection of fetch Instants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Instant> getFetches(OnlineNetwork network, Instant startTime, Instant endTime) throws DAOException {
+	public Collection<Instant> getFetches(OnlineNetwork network, TimeSpan ts) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT PULLTIME FROM online.TRACK_PULLS WHERE (NETWORK=?) AND (PULLTIME>=?) AND (PULLTIME<=?) ORDER BY PULLTIME")) {
 			ps.setString(1, network.toString());
-			ps.setTimestamp(2, createTimestamp(startTime));
-			ps.setTimestamp(3, createTimestamp(endTime));
+			ps.setTimestamp(2, createTimestamp(ts.getStartTime()));
+			ps.setTimestamp(3, createTimestamp(ts.getEndTime()));
 			
 			Collection<Instant> results = new ArrayList<Instant>();
 			try (ResultSet rs = ps.executeQuery()) {
@@ -178,16 +177,15 @@ public class GetOnlineTrack extends DAO {
 	}
 	
 	/**
-	 * Returns all Online Networks with an outage in a given time frame.
-	 * @param startTime the start date/time
-	 * @param endTime the end date/time
+	 * Returns all Online Networks with an outage in a given time span.
+	 * @param ts the TimeSpan
 	 * @return a Collection of OnlineNetwork beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<OnlineNetwork> getFetchNetworks(Instant startTime, Instant endTime) throws DAOException {
+	public Collection<OnlineNetwork> getFetchNetworks(TimeSpan ts) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT NETWORK FROM online.TRACK_PULLS WHERE (PULLTIME>=?) AND (PULLTIME<=?)")) {
-			ps.setTimestamp(1, createTimestamp(startTime));
-			ps.setTimestamp(2, createTimestamp(endTime));
+			ps.setTimestamp(1, createTimestamp(ts.getStartTime()));
+			ps.setTimestamp(2, createTimestamp(ts.getEndTime()));
 			
 			Collection<OnlineNetwork> networks = new HashSet<OnlineNetwork>();
 			try (ResultSet rs = ps.executeQuery()) {
