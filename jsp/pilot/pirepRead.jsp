@@ -401,7 +401,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty routeCycleInfo}"> <span class="small ita nophone">(Cycle <span class="pri bld">${routeCycleInfo.ID}</span> released <fmt:date date="${routeCycleInfo.releasedOn}" fmt="d" />)</span></c:if>
 <c:if test="${!empty onlineTrack}"><span class="bld"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
  <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></span></c:if>
- <content:filter roles="Developer"><span class="bld"> <el:box name="rwyDebug" idx="*" onChange="void golgotha.maps.acarsFlight.toggleDebug(this.checked)" label="Runway Debug" checked="false" /></span></content:filter>
+ <content:filter roles="Developer"><c:if test="${isACARS}}"><span class="bld"> <el:box name="rwyDebug" idx="*" onChange="void golgotha.maps.acarsFlight.toggleDebug(this.checked)" label="Runway Debug" checked="false" /></span>></c:if></content:filter>
  </td>
 </tr>
 <tr class="acarsMapData">
