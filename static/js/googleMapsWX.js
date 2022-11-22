@@ -575,7 +575,7 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 
 	container.init = function() { golgotha.maps.util.isIOS ? this.IOSinit() : this.STDinit(); };
 	container.update = function() { var pb = golgotha.maps.util.progress; pb.setCurrent(pb.getCurrent() + 1); return true; };
-	google.maps.event.addDomListener(btn, 'click', function() {
+	btn.addEventListener('click', function() {
 		if (map.animator) {
 			var isPlaying = opts.map.animator.isPlaying;
 			opts.map.animator.stop();
@@ -612,7 +612,7 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 		return true;
 	});
 
-	google.maps.event.addDomListener(btn, 'stop', function() {
+	btn.addEventListener('stop', function() {
 		if ((!this.isSelected) || opts.map.preload) return false;
 		opts.map.setStatus('');
 		golgotha.util.removeClass(this, 'displayed');

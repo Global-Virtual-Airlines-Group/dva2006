@@ -250,7 +250,7 @@ golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 	const btn = golgotha.maps.CreateButtonDiv(title); 
 	container.appendChild(btn);
 	if (ctx == null) ctx = window;
-	google.maps.event.addDomListener(btn, 'click', function() {
+	btn.addEventListener('click', function() {
 		if (this.isSelected) {
 			golgotha.util.removeClass(btn, 'displayed');
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
@@ -274,7 +274,7 @@ golgotha.maps.LayerSelectControl = function(opts, layers) {
 	if (opts.id != null) container.setAttribute('id', opts.id);
 	if (opts.c != null) golgotha.util.addClass(container, opts.c);
 	btn.layerFunc = (golgotha.util.isFunction(layers)) ? layers : (function() { return layers; });
-	google.maps.event.addDomListener(btn, 'click', function() {
+	btn.addEventListener('click', function() {
 		if (btn.disabled) return;
 		if (this.isSelected) {
 			golgotha.util.removeClass(btn, 'displayed');
@@ -313,7 +313,7 @@ golgotha.maps.LayerClearControl = function(map, opts) {
 	container.appendChild(btn);
 	if (opts.id != null) container.setAttribute('id', opts.id);
 	if (opts.c != null) golgotha.util.addClass(container, opts.c);
-	google.maps.event.addDomListener(btn, 'click', function() { map.clearSelects('layerSelect'); });
+	btn.addEventListener('click', function() { map.clearSelects('layerSelect'); });
 	return container;
 };
 
