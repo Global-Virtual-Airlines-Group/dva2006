@@ -482,9 +482,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
 				ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), now.toLocalTime(), now.getZone());
 				if (dfr.getTimeD() != null) {
-					zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), dfr.getTimeD().toLocalTime(), now.getZone());
+					zdt = ZonedDateTime.of(LocalDate.ofInstant(fr.getDate(), now.getZone()), dfr.getTimeD().toLocalTime(), dfr.getTimeD().getZone()); // use airport's zone, not user
 					if (zdt.isBefore(now))
-						zdt = ZonedDateTime.of(now.plusDays(1).toLocalDate(), zdt.toLocalTime(), zdt.getZone());
+						zdt = zdt.plusDays(1);
 				}
 				
 				ctx.setAttribute("departureTime", zdt, REQUEST);
