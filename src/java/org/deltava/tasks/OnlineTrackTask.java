@@ -4,6 +4,8 @@ package org.deltava.tasks;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Level;
+
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
@@ -39,11 +41,12 @@ public class OnlineTrackTask extends Task {
 		boolean logAll = SystemData.getBoolean("online.log_all");
 		for (Iterator<?> i = networkNames.iterator(); i.hasNext(); ) {
 			OnlineNetwork network = OnlineNetwork.valueOf(String.valueOf(i.next()).toUpperCase());
-			log.info("Loading " + network + " information for " + SystemData.get("airline.code"));
+			log.info(String.format("Loading %s information for %s", network, SystemData.get("airline.code")));
 			
 			// Get the network info
 			NetworkInfo info = ServInfoHelper.getInfo(network);
-			log.info("Loaded data for " + network + " valid as of " + info.getValidDate());
+			log.log((info.getValidDate() == null) ? Level.WARN : Level.INFO, String.format("Loaded data for %s valid as of %s", network, info.getValidDate()));
+			if (info.getValidDate() == null) continue;
 			
 			// Load the network IDs
 			Map<String, Integer> networkIDs = new HashMap<String, Integer>();
@@ -53,7 +56,7 @@ public class OnlineTrackTask extends Task {
 				networkIDs.putAll(podao.getIDs(network));
 				info.setPilotIDs(networkIDs);
 				if (log.isDebugEnabled())
-					log.debug("Loaded " + networkIDs.size() + " " + network + " IDs");
+					log.debug(String.format("Loaded %d %s IDs", Integer.valueOf(networkIDs.size()), network));
 				
 				// Aggregate the data for VATSIM
 				if (logAll && ((ctx.getLastRun() == null) || (info.getValidDate().isAfter(ctx.getLastRun())))) {
@@ -64,7 +67,7 @@ public class OnlineTrackTask extends Task {
 					SetOnlineTime otwdao = new SetOnlineTime(con);
 					otwdao.write(network, users, timeDelta);
 					if (log.isDebugEnabled())
-						log.debug("Wrote " + users.size() + " stats records for " + network);
+						log.debug(String.format("Wrote %d stats records for %s", Integer.valueOf(users.size()), network));
 				}
 				
 				// Loop through the pilots
@@ -104,11 +107,11 @@ public class OnlineTrackTask extends Task {
 				}
 				
 				// Log flight records written
-				log.info("Saved " + flightCount + " " + network + " position records");
+				log.info(String.format("Saved %d %s position records", Integer.valueOf(flightCount), network));
 				
 				// Purge old flight entries
 				int purgeCount = otwdao.purgeAll(48);
-				log.info("Purged " + purgeCount + " old flight tracks");
+				log.info(String.format("Purged %d old flight tracks", Integer.valueOf(purgeCount)));
 			} catch (DAOException de) {
 				ctx.rollbackTX();
 				log.error("Error loading " + network + " data", de);
