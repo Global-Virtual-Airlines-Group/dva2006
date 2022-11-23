@@ -74,7 +74,7 @@ public class TourInfoService extends TourService {
 					po.put("pilotCode", p.getPilotCode());
 					po.put("firstName", p.getFirstName());
 					po.put("lastName", p.getLastName());
-					ao.put("auhtor", po);
+					ao.put("author", po);
 				}
 				
 				jo.accumulate("revisionLog", ao);
