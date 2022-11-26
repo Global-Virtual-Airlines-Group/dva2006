@@ -146,11 +146,13 @@ public final class OfflineFlightParser {
 		else if (inf.getSimulator() == Simulator.FS2002)
 			inf.setSimulatorVersion(8, 0);
 		
+		// Create formatter
+		DateTimeFormatter mdtf = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy HH:mm:ss").appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).toFormatter();
+		
 		// Build the position entries
 		Element ppe = re.getChild("positions");
 		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (pL != null) {
-			DateTimeFormatter mdtf = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy HH:mm:ss").appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).toFormatter();
 			for (Element pe : pL) {
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
@@ -228,6 +230,17 @@ public final class OfflineFlightParser {
 		
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.parseBoolean(ie.getChildTextTrim("checkRide")));
+		
+		// Parse status messages
+		Element msgsE = re.getChild("msgs");
+		List<Element> mL = (msgsE != null) ? msgsE.getChildren("msg") : null;
+		if (mL != null) {
+			for (Element mE : mL) {
+				Instant dt = LocalDateTime.parse(mE.getChildTextTrim("time"), mdtf).toInstant(ZoneOffset.UTC);
+				FlightHistoryEntry fhe = new FlightHistoryEntry(0, EnumUtils.parse(HistoryType.class, mE.getAttributeValue("type"), HistoryType.USER), afr.getAuthorID(), dt, XMLUtils.getChildText(mE, "msg"));
+				afr.addStatusUpdate(fhe);
+			}
+		}
 
 		// Set the times
 		afr.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
