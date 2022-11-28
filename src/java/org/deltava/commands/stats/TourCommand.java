@@ -279,7 +279,10 @@ public class TourCommand extends AbstractAuditFormCommand {
 				ctx.setAttribute("tourRemaining", tourRemaining, REQUEST);
 				ctx.setAttribute("myTourRoute", myAirports, REQUEST);
 				ctx.setAttribute("maxLeg", Integer.valueOf(maxLeg), REQUEST);
-				ctx.setAttribute("ctr", tourAirports.isEmpty() ? tourFlights.get(tourFlights.size() - 1).getAirportA() : tourAirports.iterator().next(), REQUEST);
+				if (myAirports.isEmpty()) 
+					ctx.setAttribute("ctr", tourAirports.isEmpty() ? tourFlights.get(tourFlights.size() - 1).getAirportA() : tourAirports.iterator().next(), REQUEST);
+				else
+					ctx.setAttribute("ctr", myAirports.get(myAirports.size() - 1), REQUEST);
 			} else if (!tourAirports.isEmpty()) {
 				List<Airport> tourRemaining = new ArrayList<Airport>();
 				t.getFlights().forEach(rp -> filterRoute(rp, tourRemaining));
