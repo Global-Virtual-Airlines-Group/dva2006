@@ -8,7 +8,7 @@ import org.deltava.beans.stats.Tour;
 import org.deltava.util.JSONUtils;
 
 /**
- * A Web Service to 
+ * A Web Service to handle Flight Tours via API.
  * @author Luke
  * @version 10.3
  * @since 10.3
@@ -26,6 +26,7 @@ abstract class TourService extends org.deltava.service.WebService {
 		to.put("id", t.getID());
 		to.put("owner", t.getOwner().getCode());
 		to.put("name", t.getName());
+		to.put("status", t.getStatus().name());
 		to.put("active", t.getActive());
 		to.put("acarsOnly", t.getACARSOnly());
 		to.put("allowOffline", t.getAllowOffline());

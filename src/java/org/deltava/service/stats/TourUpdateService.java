@@ -10,12 +10,11 @@ import org.json.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.schedule.ScheduleEntry;
-import org.deltava.beans.stats.Tour;
+import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -41,7 +40,7 @@ public class TourUpdateService extends TourService {
 			Connection con = ctx.getConnection();
 			GetTour tdao = new GetTour(con);
 			Tour t = tdao.get(id, ctx.getDB());
-			if ((t == null) && (id == 0))
+			if ((t == null) && (id != 0))
 				return SC_NOT_FOUND;
 			
 			// Parse the object and update the bean
@@ -52,6 +51,7 @@ public class TourUpdateService extends TourService {
 				else
 					t.setName(jo.getString("name"));
 			
+				t.setStatus(EnumUtils.parse(TourStatus.class, jo.optString("status"), t.getStatus()));
 				t.setActive(jo.optBoolean("active"));
 				t.setACARSOnly(jo.optBoolean("acarsOnly"));
 				t.setAllowOffline(jo.optBoolean("allowOffline"));

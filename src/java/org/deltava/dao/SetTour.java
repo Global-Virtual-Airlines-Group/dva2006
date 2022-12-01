@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.Tour;
 /**
  * A Data Access Object to write Tour data to the database.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 10.0
  */
 
@@ -35,30 +35,32 @@ public class SetTour extends DAO {
 			
 			// Write the tour
 			if (t.getID() == 0) {
-				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO TOURS (NAME, START_DATE, END_DATE, ACTIVE, ACARS_ONLY, ALLOW_OFFLINE, MATCH_EQ, MATCH_LEG) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO TOURS (NAME, START_DATE, END_DATE, STATUS, ACTIVE, ACARS_ONLY, ALLOW_OFFLINE, MATCH_EQ, MATCH_LEG) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 					ps.setString(1, t.getName());
 					ps.setTimestamp(2, createTimestamp(t.getStartDate()));
 					ps.setTimestamp(3, createTimestamp(t.getEndDate()));
-					ps.setBoolean(4, t.getActive());
-					ps.setBoolean(5, t.getACARSOnly());
-					ps.setBoolean(6, t.getAllowOffline());
-					ps.setBoolean(7, t.getMatchEquipment());
-					ps.setBoolean(8, t.getMatchLeg());
+					ps.setInt(4, t.getStatus().ordinal());
+					ps.setBoolean(5, t.getActive());
+					ps.setBoolean(6, t.getACARSOnly());
+					ps.setBoolean(7, t.getAllowOffline());
+					ps.setBoolean(8, t.getMatchEquipment());
+					ps.setBoolean(9, t.getMatchLeg());
 					executeUpdate(ps, 1);
 				}
 			
 				t.setID(getNewID());
 			} else {
-				try (PreparedStatement ps = prepareWithoutLimits("UPDATE TOURS SET NAME=?, START_DATE=?, END_DATE=?, ACTIVE=?, ACARS_ONLY=?, ALLOW_OFFLINE=?, MATCH_EQ=?, MATCH_LEG=? WHERE (ID=?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("UPDATE TOURS SET NAME=?, START_DATE=?, END_DATE=?, STATUS=?, ACTIVE=?, ACARS_ONLY=?, ALLOW_OFFLINE=?, MATCH_EQ=?, MATCH_LEG=? WHERE (ID=?)")) {
 					ps.setString(1, t.getName());
 					ps.setTimestamp(2, createTimestamp(t.getStartDate()));
 					ps.setTimestamp(3, createTimestamp(t.getEndDate()));
-					ps.setBoolean(4, t.getActive());
-					ps.setBoolean(5, t.getACARSOnly());
-					ps.setBoolean(6, t.getAllowOffline());
-					ps.setBoolean(7, t.getMatchEquipment());
-					ps.setBoolean(8, t.getMatchLeg());
-					ps.setInt(9, t.getID());
+					ps.setInt(4, t.getStatus().ordinal());
+					ps.setBoolean(5, t.getActive());
+					ps.setBoolean(6, t.getACARSOnly());
+					ps.setBoolean(7, t.getAllowOffline());
+					ps.setBoolean(8, t.getMatchEquipment());
+					ps.setBoolean(9, t.getMatchLeg());
+					ps.setInt(10, t.getID());
 					executeUpdate(ps, 1);
 				}
 				

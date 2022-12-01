@@ -198,27 +198,28 @@ public class GetTour extends DAO {
 		List<Tour> results = new ArrayList<Tour>();
 		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
-			boolean hasNetworks = (md.getColumnCount() > 9);
-			boolean hasBriefingInfo = (md.getColumnCount() > 11);
-			boolean hasLegCount = (md.getColumnCount() > 12);
+			boolean hasNetworks = (md.getColumnCount() > 10);
+			boolean hasBriefingInfo = (md.getColumnCount() > 12);
+			boolean hasLegCount = (md.getColumnCount() > 13);
 			while (rs.next()) {
 				Tour t = new Tour(rs.getString(2));
 				t.setID(rs.getInt(1));
 				t.setStartDate(toInstant(rs.getTimestamp(3)));
 				t.setEndDate(toInstant(rs.getTimestamp(4)));
-				t.setActive(rs.getBoolean(5));
-				t.setACARSOnly(rs.getBoolean(6));
-				t.setAllowOffline(rs.getBoolean(7));
-				t.setMatchEquipment(rs.getBoolean(8));
-				t.setMatchLeg(rs.getBoolean(9));
-				if (hasLegCount) t.setFlightCount(rs.getInt(13));
+				t.setStatus(TourStatus.values()[rs.getInt(5)]);
+				t.setActive(rs.getBoolean(6));
+				t.setACARSOnly(rs.getBoolean(7));
+				t.setAllowOffline(rs.getBoolean(8));
+				t.setMatchEquipment(rs.getBoolean(9));
+				t.setMatchLeg(rs.getBoolean(10));
+				if (hasLegCount) t.setFlightCount(rs.getInt(14));
 				if (hasBriefingInfo) {
-					t.setForceSize(rs.getInt(11));
-					t.setForcePDF(rs.getBoolean(12));
+					t.setForceSize(rs.getInt(12));
+					t.setForcePDF(rs.getBoolean(13));
 				}
 				
 				if (hasNetworks) {
-					Collection<String> networks = StringUtils.split(rs.getString(10), ",");
+					Collection<String> networks = StringUtils.split(rs.getString(11), ",");
 					if (networks != null)
 						networks.stream().map(id -> OnlineNetwork.values()[Integer.parseInt(id)]).forEach(t::addNetwork);
 				}
