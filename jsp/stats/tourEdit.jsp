@@ -42,6 +42,7 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:enum var="networks" className="org.deltava.beans.OnlineNetwork"  exclude="INTVAS,FPI,ACARS" />
+<content:enum var="statuses" className="org.deltava.beans.stats.TourStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -65,6 +66,10 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">End Date</td>
  <td class="data" colspan="4"><el:text name="endDate" required="true" idx="*" size="9" max="10" value="${fn:dateFmt(tour.endDate, 'MM/dd/yyyy')}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+</tr>
+<tr>
+ <td class="label">Status</td>
+ <td class="data" colspan="4"><el:combo name="status" size="1" idx="*" required="true" options="${statuses}" firstEntry="[ SELECT ]" value="${tour.status}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
