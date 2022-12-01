@@ -20,6 +20,7 @@ import org.deltava.beans.system.AirlineInformation;
 public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry {
 
 	private String _name;
+	private TourStatus _status = TourStatus.PLANNING;
 	private boolean _active;
 	private Instant _startDate;
 	private Instant _endDate;
@@ -59,6 +60,14 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public boolean getActive() {
 		return _active;
+	}
+	
+	/**
+	 * Returns the status of the Tour.
+	 * @return the TourStatus
+	 */
+	public TourStatus getStatus() {
+		return _status;
 	}
 	
 	/**
@@ -203,6 +212,14 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public void setName(String name) {
 		_name = name.trim();
+	}
+	
+	/**
+	 * Updates the status of the Tour.
+	 * @param st the TourStatus
+	 */
+	public void setStatus(TourStatus st) {
+		_status = st;
 	}
 	
 	/**
