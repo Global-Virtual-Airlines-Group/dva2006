@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 9.1
+ * @version 10.3
  * @since 9.0
  */
 
@@ -83,6 +83,10 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 							int dayNumber = Character.getNumericValue(c);
 							se.addDayOfWeek((dayNumber == 1) ? DayOfWeek.SUNDAY : DayOfWeek.of(dayNumber - 1));
 						}
+						
+						// Check for B737-900ER
+						if (se.getAirline().getCode().equals("DL") && "B737-900".equals(se.getEquipmentType()))
+							se.setEquipmentType("B737-900ER");
 						
 						// Parse dates/times - if start date is more than 100 days in the past, add a year
 						LocalDate sd = LocalDate.parse(fd.startDate, _df);
