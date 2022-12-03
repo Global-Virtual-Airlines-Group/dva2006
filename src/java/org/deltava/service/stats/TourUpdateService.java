@@ -84,7 +84,8 @@ public class TourUpdateService extends TourService {
 					t.addFlight(se);
 				}
 			} catch (Exception e) {
-				throw error(SC_BAD_REQUEST, e.getMessage());
+				ctx.setHeader("error", e.getMessage());
+				throw error(SC_BAD_REQUEST, e.getMessage(), e);
 			}
 			
 			// Write the updated object
