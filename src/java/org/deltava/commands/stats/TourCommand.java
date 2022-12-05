@@ -98,8 +98,8 @@ public class TourCommand extends AbstractAuditFormCommand {
 			t.clearNetworks();
 			Collection<String> networks = ctx.getParameters("network", Collections.emptySet());
 			networks.stream().map(n -> EnumUtils.parse(OnlineNetwork.class, n, null)).filter(Objects::nonNull).forEach(t::addNetwork);
-			t.setActive(Boolean.parseBoolean(ctx.getParameter("active")) && !t.getFlights().isEmpty());
 			t.setStatus(EnumUtils.parse(TourStatus.class, ctx.getParameter("status"), t.getStatus()));
+			t.setActive(Boolean.parseBoolean(ctx.getParameter("active")) && !t.getFlights().isEmpty());
 			t.setAllowOffline(Boolean.parseBoolean(ctx.getParameter("allowOffline")));
 			t.setMatchEquipment(Boolean.parseBoolean(ctx.getParameter("matchEQ")));
 			t.setMatchLeg(Boolean.parseBoolean(ctx.getParameter("matchLeg")));
