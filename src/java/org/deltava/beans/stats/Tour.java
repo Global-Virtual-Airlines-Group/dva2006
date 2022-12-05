@@ -228,6 +228,8 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+		if (_active)
+			_status = TourStatus.COMPLETE;
 	}
 	
 	/**
