@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 8.0
  */
 
@@ -219,7 +219,7 @@ public class GetRawSchedule extends DAO {
 			sqlBuf.append("AND (AIRPORT_D=?)");
 		if (aA != null)
 			sqlBuf.append(" AND (AIRPORT_A=?)");
-		sqlBuf.append(" ORDER BY SRCLINE");
+		sqlBuf.append(" ORDER BY AIRLINE, FLIGHT, STARTDATE");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
