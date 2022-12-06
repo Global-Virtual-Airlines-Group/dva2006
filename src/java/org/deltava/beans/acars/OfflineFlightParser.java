@@ -236,7 +236,7 @@ public final class OfflineFlightParser {
 		List<Element> mL = (msgsE != null) ? msgsE.getChildren("msg") : null;
 		if (mL != null) {
 			for (Element mE : mL) {
-				Instant dt = LocalDateTime.parse(mE.getChildTextTrim("time"), mdtf).toInstant(ZoneOffset.UTC);
+				Instant dt = LocalDateTime.parse(mE.getAttributeValue("time"), mdtf).toInstant(ZoneOffset.UTC);
 				FlightHistoryEntry fhe = new FlightHistoryEntry(0, EnumUtils.parse(HistoryType.class, mE.getAttributeValue("type"), HistoryType.USER), afr.getAuthorID(), dt, XMLUtils.getChildText(mE, "msg"));
 				afr.addStatusUpdate(fhe);
 			}
