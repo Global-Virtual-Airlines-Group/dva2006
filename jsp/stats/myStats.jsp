@@ -17,6 +17,11 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<style type="text/css">
+img.spinner {
+	vertical-align:middle;
+}
+</style>
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
@@ -174,17 +179,18 @@ golgotha.local.swapTimeGraphs = function(rb) {
 </el:table>
 
 <!-- Charts -->
+<c:set var="uiScheme" value="${empty user.UIScheme ? 'legacy' : user.UIScheme.toLowerCase().replace(' ', '_')}" scope="page" />
 <el:table className="form nophone">
 <tr class="title">
  <td colspan="2" class="left">FLIGHT DATA VISUALIZATION</td>
 </tr>
-<tr>
- <td style="width:50%"><div id="qualBreakdown" style="width:100%; height:350px;"></div></td>
- <td style="width:50%"><div id="landingChart" style="width:100%; height:350px;"></div></td>
+<tr class="mid">
+ <td style="width:50%"><div id="qualBreakdown" style="width:100%; height:350px;"><el:img ID="qbSpinner" className="spinner" src="spinner_${uiScheme}.gif" caption="Loading" /></div></td>
+ <td style="width:50%"><div id="landingChart" style="width:100%; height:350px;"><el:img ID="lcSpinner" className="spinner" src="spinner_${uiScheme}.gif" caption="Loading" /></div></td>
 </tr>
 <tr id="landingCharts" class="mid">
- <td><div id="landingSpd" style="width:100%; height:350px;"></div></td>
- <td><div id="landingSct" style="width:100%; height:350px;"></div></td>
+ <td><div id="landingSpd" style="width:100%; height:350px;"><el:img ID="lsSpinner" className="spinner" src="spinner_${uiScheme}.gif" caption="Loading" /></div></td>
+ <td><div id="landingSct" style="width:100%; height:350px;"><el:img ID="ls2Spinner" className="spinner" src="spinner_${uiScheme}.gif" caption="Loading" /></div></td>
 </tr>
 <tr class="title">
  <td class="left">FLIGHT DATA OVER TIME</td>
@@ -223,6 +229,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('string','Equipment');
 	data.addColumn('number','Flight Legs');
 	data.addRows(golgotha.local.data.eqCount);
+	golgotha.util.display('qbSpinner', false);
 	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'}));
 
 	// Display the vertical speed chart
@@ -234,6 +241,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Optimal');
 	data.addColumn('number','Too Soft');
 	data.addRows(golgotha.local.data.landingSpd);
+	golgotha.util.display('lcSpinner', false);
 	const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	chart.draw(data,golgotha.charts.buildOptions({title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none'}));
 
@@ -246,6 +254,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Optimal');
 	data.addColumn('number','Too Soft');
 	data.addRows(golgotha.local.data.landingSct);
+	golgotha.util.display('lsSpinner', false);
 	const hX = {title:'Distance from Threshold (feet)',textStyle:golgotha.charts.charts,titleTextStyle:golgotha.charts.ttStyle};
 	const yX = {title:'Landing Speed (feet/min)',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	chart.draw(data,golgotha.charts.buildOptions({title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],hAxis:hX,vAxis:yX}));
@@ -256,6 +265,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('string','Landing Quality');
 	data.addColumn('number','Flight Legs');	
 	data.addRows(golgotha.local.data.landingQuality);
+	golgotha.util.display('ls2Spinner', false);
 	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'}));
 
 	// Massage data and init charts
