@@ -45,9 +45,15 @@ public class TestApplicant extends AbstractBeanTestCase {
         assertFalse(_a.isInRole("Pilot"));
     }
     
+    public void testHRComments() {
+    	assertNull(_a.getHRComments());
+    	_a.addHRComment("foo");
+    	assertEquals("foo", _a.getHRComments());
+    	_a.addHRComment("bar");
+    	assertEquals("foo\r\nbar", _a.getHRComments());
+    }
+    
     public void testValidation() {
-    	validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
-    	validateInput("status", Integer.valueOf(121), IllegalArgumentException.class);
     	assertFalse(_a.getStatus() == ApplicantStatus.APPROVED);
     	validateInput("pilotID", Integer.valueOf(123), IllegalStateException.class);
     	 _a.setStatus(ApplicantStatus.APPROVED);
