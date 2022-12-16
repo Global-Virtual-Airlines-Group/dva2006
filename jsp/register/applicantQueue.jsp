@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.sort = function(combo) {
 	if (!golgotha.form.comboSet(combo)) return false;
 	self.location = '/applicants.do?' + combo.name + '=' + escape(golgotha.form.getCombo(combo));
@@ -30,7 +30,6 @@ golgotha.local.sort = function(combo) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="maxSize" name="users.max" />
-<content:enum var="statuses" className="org.deltava.beans.ApplicantStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -43,7 +42,7 @@ golgotha.local.sort = function(combo) {
 
 <!-- Sort Bar -->
 <tr class="title">
- <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void golgotha.local.sort(this)" /></td>
+ <td colspan="2">&nbsp;</td>
  <td colspan="2" class="nophone">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.sort(this)" /></td>
  <td colspan="2">LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void golgotha.local.sort(this)" /></td>
 </tr>
@@ -62,7 +61,7 @@ golgotha.local.sort = function(combo) {
 <c:forEach var="applicant" items="${viewContext.results}">
 <c:set var="addrOK" value="${addrValid[applicant.ID]}" scope="page" />
 <c:set var="q" value="${qMap[applicant.ID]}" scope="page" />
-<tr>
+<view:row entry="${applicant}">
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
  <td class="small nophone">${applicant.location}</td>
@@ -87,13 +86,13 @@ golgotha.local.sort = function(combo) {
 <c:if test="${!addrOK}">
  <td class="small caps">UNVERIFIED</td>
 </c:if>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Scroll bar -->
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="100" labels="Pending,Approved,Rejected" classes="opt1, ,err" /></td>
+<view:legend width="100" labels="Pending,CAPTCHA" classes="opt1,warn" /></td>
 </tr>
 </view:table>
 </el:form>
