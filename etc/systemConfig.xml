@@ -589,6 +589,7 @@
 
 		<auto_reject type="Integer">5</auto_reject>
 		<ip_interval type="Integer">7</ip_interval>
+		<captcha_timeout type="Integer">48</captcha_timeout>
 		<from>DVA2750</from>
 		<list name="email.ok" attr="addr" unique="true">
 			<addr>luke@sce.net</addr>
