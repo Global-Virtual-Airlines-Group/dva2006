@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2015, 201, 20196 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -131,6 +131,19 @@ public class Applicant extends Person {
 	 */
 	public Simulator getSimVersion() {
 		return _simVersion;
+	}
+	
+	/**
+	 * Appends an HR comment to this Applicant.
+	 * @param c the comment
+	 */
+	public void addHRComment(String c) {
+		StringBuilder buf = new StringBuilder();
+		if (_hrComments != null)
+			buf.append(_hrComments).append("\r\n");
+		
+		buf.append(c);
+		_hrComments = buf.toString();
 	}
 
     /**
@@ -270,6 +283,6 @@ public class Applicant extends Person {
     
     @Override
     public String getRowClassName() {
-    	return _status.getRowClassName();
+    	return ((_status == ApplicantStatus.PENDING) && !_hasCaptcha) ? "warn" : _status.getRowClassName();
     }
 }
