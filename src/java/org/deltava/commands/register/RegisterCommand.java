@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -212,17 +212,13 @@ public class RegisterCommand extends AbstractCommand {
 					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
 					APILogger.add(new APIRequest(API.VATSIM.createName("CERT"), !ctx.isAuthenticated()));
 					if (c != null) {
-						StringBuilder buf = new StringBuilder("VATSIM ID exists\r\n");
+						a.addHRComment("VATSIM ID exists");
 						if (!c.isActive())
-							buf.append("VATSIM ID is inactive!\r\n");
+							a.addHRComment("VATSIM ID is inactive!");
 						if (!a.getNetworkID(OnlineNetwork.VATSIM).equals(String.valueOf(c.getID())))
-							buf.append("VATSIM ID does not match!\r\n");
-						if (StringUtils.isEmpty(buf))
-							a.setHRComments("VATSIM Information validated\r\n");
-						else
-							a.setHRComments(buf.toString());
+							a.addHRComment("VATSIM ID does not match!");
 					} else
-						a.setHRComments("Unknown/Invalid VATSIM ID\r\n");
+						a.addHRComment("Unknown/Invalid VATSIM ID");
 				} catch (IllegalStateException ise) {
 					log.warn(ise.getMessage());
 				} catch (Exception e) {
@@ -239,7 +235,7 @@ public class RegisterCommand extends AbstractCommand {
 		List<?> okAddrs = (List<?>) SystemData.getObject("registration.email.ok");
 		boolean checkAddr = (okAddrs == null) || (!okAddrs.contains(a.getEmail()));
 		if (!checkAddr)
-			log.warn("Skipping address uniqueness checks for " + a.getEmail());
+			log.warn(String.format("Skipping address uniqueness checks for %s", a.getEmail()));
 		
 		Examination ex = null;
 		Pilot eMailFrom = null;
@@ -248,38 +244,38 @@ public class RegisterCommand extends AbstractCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Check for Suspended User
-			StringBuilder buf = new StringBuilder();
-			if (!StringUtils.isEmpty(a.getHRComments()))
-				buf.append(a.getHRComments());
+			
 			javax.servlet.http.Cookie wc = ctx.getCookie("dvaAuthStatus");
 			javax.servlet.http.Cookie fn = ctx.getCookie("dva_fname64");
 			if (wc != null) {
-				buf.append("Suspended Pilot: ");
+				StringBuilder buf = new StringBuilder("Suspended Pilot: ");
 				try {
 					Pilot sp = pdao.get(StringUtils.parseHex(wc.getValue()));
 					buf.append(sp.getName());
 				} catch (Exception e) {
 					buf.append(wc.getValue());
 				} finally {
-					buf.append('\n');
+					a.addHRComment(buf.toString());
 				}
 			}
 			if (fn != null) {
 				Base64.Decoder b64d = Base64.getDecoder();
-				buf.append("PC used to login as: ");
+				StringBuilder buf = new StringBuilder("PC used to login as: ");
 				buf.append(new String(b64d.decode(fn.getValue()), StandardCharsets.UTF_8));
 				javax.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
 					buf.append(new String(b64d.decode(ln.getValue()), StandardCharsets.UTF_8));
 				}
+				
+				a.addHRComment(buf.toString());
 			}
 			
 			// Check for blacklist
 			GetSystemData sysdao = new GetSystemData(con);
 			BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
 			if (be != null) {
-				log.warn("Registration blacklist for " + a.getName() + " from " + be);
+				log.warn(String.format("Registration blacklist for %s from %s", a.getName(), be));
 				result.setURL("/jsp/register/blackList.jsp");
 				result.setSuccess(true);
 				return;
@@ -290,14 +286,14 @@ public class RegisterCommand extends AbstractCommand {
 			if (s != null) {
 				CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME);
 				a.setHasCAPTCHA((cr != null) && cr.getIsSuccess());
-				if (!a.getHasCAPTCHA())
-					buf.append("CAPTCHA Validation failed!\r\n");
-			}
+				if (!a.getHasCAPTCHA()) {
+					a.addHRComment("CAPTCHA Validation failed!");
+					if (cr != null)
+						cr.getMessages().forEach(a::addHRComment);
+				}
+			} else
+				a.addHRComment("No CAPTCHA / Session\r\n");
 			
-			// Add HR comments
-			if (buf.length() > 0)
-				a.setHRComments(buf.toString());
-
 			// Do address uniqueness check
 			if (checkAddr) {
 				GetUserData uddao = new GetUserData(con);
@@ -314,7 +310,7 @@ public class RegisterCommand extends AbstractCommand {
 
 						// Save airline
 						ctx.setAttribute("airline", info, REQUEST);
-						log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
+						log.warn(String.format("Duplicate IDs %s found for %s", dupeResults, a.getName()));
 
 						// Forward to JSP
 						result.setURL("/jsp/register/duplicateRegistration.jsp");
@@ -340,13 +336,13 @@ public class RegisterCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException("Invalid Examination - " + examName);
+				throw notFoundException(String.format("Invalid Examination - %s", examName));
 
 			// Load the question pool for the questionnaire
 			GetExamQuestions exqdao = new GetExamQuestions(con);
 			Collection<QuestionProfile> qPool = exqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())
-				throw notFoundException("Empty Question Pool for " + examName);
+				throw notFoundException(String.format("Empty Question Pool for %s", examName));
 
 			// Start the transaction
 			ctx.startTX();
@@ -404,15 +400,16 @@ public class RegisterCommand extends AbstractCommand {
 		ctx.setAttribute("applicant", a, REQUEST);
 
 		// Send an e-mail notification to the user
-		boolean isSMTPDebug = SystemData.getBoolean("smtp.testMode");
-		Mailer mailer = new Mailer(isSMTPDebug ? a : eMailFrom);
-		mailer.setContext(mctxt);
-		if (!isSMTPDebug)
-			mailer.setCC(MailUtils.makeAddress(SystemData.get("airline.mail.hr")));
+		if (a.getHasCAPTCHA()) {
+			boolean isSMTPDebug = SystemData.getBoolean("smtp.testMode");
+			Mailer mailer = new Mailer(isSMTPDebug ? a : eMailFrom);
+			mailer.setContext(mctxt);
+			if (!isSMTPDebug)
+				mailer.setCC(MailUtils.makeAddress(SystemData.get("airline.mail.hr")));
 		
-		// Send the message
-		if (a.getHasCAPTCHA())
+			// Send the message
 			mailer.send(a);
+		}
 
 		// Invalidate the temporary session
 		HttpSession s = ctx.getSession();
