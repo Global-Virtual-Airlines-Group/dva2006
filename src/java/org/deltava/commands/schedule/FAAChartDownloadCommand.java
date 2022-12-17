@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 5.0
  */
 
@@ -266,40 +266,42 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			// Create the thread pool
 			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
 			int poolSize = SystemData.getInt("schedule.chart.threads", 8);
-			ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-			exec.allowCoreThreadTimeOut(true);
-			
-			// Queue the charts
 			int queueSize = 0; TaskTimer tt = new TaskTimer(); 
-			for (ExternalChart ec : chartsToLoad) {
-				Runnable wrk = noDL ? new ChartSizer(work, ec) : new ChartLoader(work, ec); 
-				exec.execute(wrk);
-				queueSize++;
-			}
-				
-			// Start looping and writing charts
-			exec.shutdown(); int totalTime = 0; boolean keepRunning = true;
-			while (keepRunning && (totalTime < 600_000)) {
-				Thread.sleep(1000); totalTime += 1000; int charts = 0;
-				cwdao = new SetChart(ctx.getConnection()); ctx.startTX();
-				ExternalChart ec = work.poll(50, TimeUnit.MILLISECONDS);
-				while (ec != null) {
-					if ((ec.getID() != 0) && ec.isLoaded())
-						cwdao.save(ec);
-					else
-						cwdao.write(ec);
-					
-					ec.clear(); charts++;
-					totalTime += 35;
-					ec = work.poll(25, TimeUnit.MILLISECONDS);
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
+				exec.allowCoreThreadTimeOut(true);
+			
+				// Queue the charts
+				for (ExternalChart ec : chartsToLoad) {
+					Runnable wrk = noDL ? new ChartSizer(work, ec) : new ChartLoader(work, ec); 
+					exec.execute(wrk);
+					queueSize++;
 				}
 				
-				keepRunning = !exec.isTerminated() || !work.isEmpty();
-				ctx.commitTX(); ctx.release();
-				msgs.add(new LogMessage(charts + " charts saved to Database"));
+				// Start looping and writing charts
+				exec.shutdown(); int totalTime = 0; boolean keepRunning = true;
+				while (keepRunning && (totalTime < 600_000)) {
+					Thread.sleep(1000); totalTime += 1000; int charts = 0;
+					cwdao = new SetChart(ctx.getConnection()); ctx.startTX();
+					ExternalChart ec = work.poll(50, TimeUnit.MILLISECONDS);
+					while (ec != null) {
+						if ((ec.getID() != 0) && ec.isLoaded())
+							cwdao.save(ec);
+						else
+							cwdao.write(ec);
+					
+						ec.clear(); charts++;
+						totalTime += 35;
+						ec = work.poll(25, TimeUnit.MILLISECONDS);
+					}
+				
+					keepRunning = !exec.isTerminated() || !work.isEmpty();
+					ctx.commitTX(); ctx.release();
+					msgs.add(new LogMessage(charts + " charts saved to Database"));
+				}
+			
+				exec.awaitTermination(5, TimeUnit.SECONDS);
 			}
 			
-			exec.awaitTermination(5, TimeUnit.SECONDS);
 			long ms = tt.stop();
 			msgs.add(new LogMessage("sec bld", queueSize + " charts updated in " + StringUtils.format(ms/1000.0, "#0.00") + "s"));
 		} catch (InterruptedException | DAOException de) {
