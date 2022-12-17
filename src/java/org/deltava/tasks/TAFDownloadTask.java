@@ -1,4 +1,4 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -7,7 +7,8 @@ import java.time.ZonedDateTime;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetNOAAWeather;
+import org.deltava.dao.http.DAO.Compression;
+import org.deltava.dao.http.GetNOAAWeather;
 
 import org.deltava.taskman.*;
 import org.deltava.util.StringUtils;
@@ -15,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download TAF data.
  * @author Luke
- * @version 7.0
+ * @version 10.3
  * @since 2.7
  */
 
@@ -28,15 +29,13 @@ public class TAFDownloadTask extends Task {
 		super("TAF Download", TAFDownloadTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		int hour = ZonedDateTime.now().getHour();
 		hour -= (hour % 6);
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
+			wxdao.setCompression(Compression.GZIP, Compression.BROTLI);
 			log.info("Loading TAF cycle for " + StringUtils.format(hour, "00") + "00Z");
 			Map<String, TAF> tafs = wxdao.getTAFCycle(hour);
 			

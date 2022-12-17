@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -9,7 +9,8 @@ import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetNOAAWeather;
+import org.deltava.dao.http.DAO.Compression;
+import org.deltava.dao.http.GetNOAAWeather;
 
 import org.deltava.taskman.*;
 import org.deltava.util.StringUtils;
@@ -17,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 7.0
+ * @version 10.3
  * @since 2.7
  */
 
@@ -30,15 +31,13 @@ public class METARDownloadTask extends Task {
 		super("METAR Download", METARDownloadTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
 		int hour = ZonedDateTime.now().getHour();
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
+			wxdao.setCompression(Compression.GZIP, Compression.BROTLI);
 			log.info("Loading METAR cycle for " + StringUtils.format(hour, "00") + "00Z");
 			Map<String, METAR> data = wxdao.getMETARCycle(hour);
 			for (METAR m : data.values())
