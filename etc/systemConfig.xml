@@ -296,10 +296,8 @@
 		
 		<!-- Download locations -->
 		<url>
-			<metar>ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/</metar>
-			<taf>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/stations/</taf>
-			<metarCycle>ftp://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
-			<tafCycle>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
+			<metarCycle>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
+			<tafCycle>https://tgftp.nws.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
 		</url>
 	</weather>
 
