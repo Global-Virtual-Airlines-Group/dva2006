@@ -335,7 +335,7 @@
 		</time>
 	</task>
 
-	<task id="captchapurge" enabled="false">
+	<task id="captchapurge" enabled="true">
 		<class>org.deltava.tasks.ApplicantPurgeTask</class>
 		<time>
 			<min>0</min>
