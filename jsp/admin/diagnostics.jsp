@@ -29,7 +29,7 @@
 <map:usage var="s_APIuse" type="static" />
 <map:usage var="d_APIuse" type="dynamic" />
 <c:set var="startedOn" value="${applicationScope.startedOn}" scope="page" />
-<c:set var="execTime" value="${(systemTime.toEpochMilli() - startedOn.toEpochMilli()) / 1000}" scope="page" />
+<content:duration var="execTime" length="${(systemTime.toEpochMilli() - startedOn.toEpochMilli()) / 1000}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -62,8 +62,8 @@
 <c:if test="${!empty osMemInfo}">
 <tr>
  <td class="label top">Memory Usage</td>
- <td class="data"><fmt:int value="${osMemInfo['MemTotal']}" /> KB total physical memory<br />
-<fmt:int value="${osMemInfo['MemFree']}" /> KB free physical memory</td>
+ <td class="data"><fmt:fileSize value="${osMemInfo['MemTotal']}" /> KB total physical memory<br />
+<fmt:fileSize value="${osMemInfo['MemFree']}" /> KB free physical memory</td>
 </tr>
 </c:if>
 <tr>
@@ -76,7 +76,7 @@
 </tr>
 <tr>
  <td class="label">Application Started on</td>
- <td class="data"><fmt:date date="${startedOn}" /> (<fmt:int value="${execTime / 60}" /> minutes)</td>
+ <td class="data"><fmt:date date="${startedOn}" /> (<fmt:duration duration="${execTime}" />)</td>
 </tr>
 <c:if test="${!empty appNames}">
 <tr>
@@ -107,12 +107,18 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
  <td class="label">Database Transactions</td>
- <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" /> per minute)</td>
+ <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${daoUsageCount / execTime.toMinutes() }" /> per minute)</td>
 </tr>
 <c:if test="${!empty redisStatus}">
+<c:set var="rawUptime" value="${redisStatus['uptime_in_seconds']}" scope="page" />
+<content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
- <td class="label">Redis Status</td>
- <td class="data">Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean</td>
+ <td class="label top">Redis Status</td>
+ <td class="data">Server version: <span class="bld">${redisStatus['redis_version']}</span><br />
+ Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
+Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
+<fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec<br />
+Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
 </tr>
 </c:if>
 <tr>
