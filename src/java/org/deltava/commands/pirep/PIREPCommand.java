@@ -275,7 +275,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		ZonedDateTime today = ZonedDateTime.now(tz.getZone());
 		
 		// Get all airlines
-		Map<String, Airline> allAirlines = SystemData.getAirlines();
 		Collection<Airline> airlines = new TreeSet<Airline>();
 		PIREPAccessControl ac = null;
 		try {
@@ -317,7 +316,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
 
 				// Get the active airlines
-				allAirlines.values().stream().filter(Airline::getActive).forEach(airlines::add);
+				SystemData.getAirlines().stream().filter(Airline::getActive).forEach(airlines::add);
 			} else {
 				FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 				if (fr == null)
@@ -339,7 +338,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Get the active airlines
 				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0)
-					allAirlines.values().stream().filter(a -> (a.getActive() || fr.getAirline().equals(a))).forEach(airlines::add);
+					SystemData.getAirlines().stream().filter(a -> (a.getActive() || fr.getAirline().equals(a))).forEach(airlines::add);
 				else
 					airlines.add(fr.getAirline());
 			}
