@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.METAR;
 
 import org.deltava.commands.*;
-import org.deltava.comparators.RunwayComparator;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -106,11 +106,13 @@ public class RoutePlotCommand extends AbstractCommand {
 					dfr.setRoute(StringUtils.listConcat(wps, " "));
 				}
 			} else {
-				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
 				ctx.setAttribute("airportsA", Collections.emptyList(), REQUEST);
 				ctx.setAttribute("gatesD", Collections.emptyList(), REQUEST);
 				ctx.setAttribute("gatesA", Collections.emptyList(), REQUEST);
+				List<Airline> airlines = new ArrayList<Airline>(SystemData.getAirlines().values());
+				airlines.sort(new AirlineComparator(AirlineComparator.NAME));
+				ctx.setAttribute("airlines", airlines, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
