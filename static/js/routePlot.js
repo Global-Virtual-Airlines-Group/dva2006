@@ -18,6 +18,7 @@ if ((f.route) && (f.route.value.length > 0)) o.route = f.route.value;
 if (f.cruiseAlt) o.cruiseAlt = f.cruiseAlt.value;
 o.saveDraft = ((f.saveDraft) && f.saveDraft.checked);
 o.allSID = ((f.allSID) && f.allSID.checked);
+o.allGates = ((f.allGates) && f.allGates.checked);
 o.precalcPax = ((f.precalcPax) && !f.precalcPax.disabled && f.precalcPax.checked);
 o.getInactive = golgotha.routePlot.getInactive;
 o.etopsCheck = golgotha.routePlot.etopsCheck;
