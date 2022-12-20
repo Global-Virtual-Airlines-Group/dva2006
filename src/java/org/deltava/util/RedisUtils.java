@@ -12,13 +12,14 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 6.1
  */
 
 public class RedisUtils {
 	
 	private static final Logger log = Logger.getLogger(RedisUtils.class);
+	private static final List<String> INFO_KEYS = List.of("redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
 	/**
 	 * Key used for round-trip latency tests.
@@ -235,12 +236,29 @@ public class RedisUtils {
 	}
 	
 	/**
-	 * Returns the Redis connection pool status.
+	 * Returns the Redis server and connection pool status.
 	 * @return a Map of status attributes
 	 */
-	public static synchronized Map<String, Long> getStatus() {
+	public static synchronized Map<String, Object> getStatus() {
 		if (_client == null) return Collections.emptyMap();
-		Map<String, Long> results = new LinkedHashMap<String, Long>();
+		
+		// Get server info - convert to int if possible
+		Map<String, Object> results = new LinkedHashMap<String, Object>();
+		try (Jedis jc = _client.getResource()) {
+			List<String> inf = StringUtils.split(jc.info(), System.lineSeparator());
+			for (String ie : inf) {
+				int pos = ie.indexOf(':');
+				if (pos > 0) {
+					String k = ie.substring(0, pos); 
+					if (INFO_KEYS.contains(k)) {
+						String v = ie.substring(pos + 1); double nv = StringUtils.parse(v, Double.NaN);
+						results.put(k, Double.isNaN(nv) ? v : Double.valueOf(nv));
+					}
+				}
+			}
+		}
+		
+		// Get connection pool info
 		results.put("maxWait", Long.valueOf(_client.getMaxBorrowWaitTimeMillis()));
 		results.put("meanWait", Long.valueOf(_client.getMeanBorrowWaitTimeMillis()));
 		results.put("idle", Long.valueOf(_client.getNumIdle()));
