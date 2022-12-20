@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 3.2
  */
 
@@ -161,7 +161,7 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 		
 		// Get the command results
 		CommandResult result = ctx.getResult();
-		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines(), REQUEST);
 		
 		// Get the Accomplishment code - if we're new, check if the airport exists
 		boolean isNew = (ctx.getID() == 0);

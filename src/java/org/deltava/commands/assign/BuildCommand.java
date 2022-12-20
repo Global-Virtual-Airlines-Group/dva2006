@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -139,11 +139,8 @@ public class BuildCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Get Airlines
-		List<Airline> airlines = SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList());
-		Collections.sort(airlines);
-
 		// Save airlines and combo variables for JSP
+		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("sortTypes", ScheduleSearchCriteria.SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("hours", ScheduleSearchCriteria.HOURS, REQUEST);

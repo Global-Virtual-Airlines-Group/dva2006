@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a list of active Airlines. 
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 9.0
  */
 
@@ -33,10 +33,8 @@ public class AirlineListService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Get the airlines
-		Collection<Airline> airlines = new TreeSet<Airline>(SystemData.getAirlines().values());
-		
 		// Convert to JSON
+		Collection<Airline> airlines = SystemData.getAirlines();
 		JSONArray ja = new JSONArray();
 		for (Airline a : airlines) {
 			JSONObject ao = new JSONObject();
@@ -51,7 +49,7 @@ public class AirlineListService extends WebService {
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(1800);
 			ctx.println(ja.toString());
 			ctx.commit();

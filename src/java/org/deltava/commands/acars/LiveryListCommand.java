@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import org.deltava.beans.acars.Livery;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the available ACARS multi-player liveries. 
  * @author Luke
- * @version 7.0
+ * @version 10.3
  * @since 2.2
  */
 
@@ -39,7 +39,7 @@ public class LiveryListCommand extends AbstractViewCommand {
 		}
 		
 		// Save airlines
-		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
