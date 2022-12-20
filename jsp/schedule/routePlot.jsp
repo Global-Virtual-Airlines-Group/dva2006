@@ -76,7 +76,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
- <td class="data"><el:combo name="gateD" size="1" idx="*" options="${gatesD}" firstEntry="-" value="${flight.gateD}" onChange="golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="gateD" size="1" idx="*" options="${gatesD}" firstEntry="-" value="${flight.gateD}" onChange="golgotha.routePlot.plotMap()" /> <el:box name="allGates" value="true" checked="false" className="small" label="All" onChange="void golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="wxDr" style="display:none;">
  <td class="label">Origin Weather</td>

@@ -95,7 +95,7 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Add the departure airport
-			GateHelper gh = new GateHelper(dr, dr.getAirline(), 8, false);
+			GateHelper gh = new GateHelper(dr, dr.getAirline(), req.optBoolean("allGates") ? Integer.MAX_VALUE : 8, false);
 			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
 				gh.addDepartureGates(gdao.getGates(dr.getAirportD(), sim), gdao.getUsage(dr, true));
