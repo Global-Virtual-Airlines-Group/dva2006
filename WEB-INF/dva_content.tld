@@ -364,7 +364,25 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
+	<tag>
+		<description>Duration tag, to create a Duration as a page attribute</description>
+		<name>duration</name>
+		<tag-class>org.deltava.taglib.content.DurationTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>length</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Long</type>
+		</attribute>
+	</tag>
+
 	<tag>
 		<description>Default Method tag, used since EL cannot lookup interface default methods</description>
 		<name>defaultMethod</name>
