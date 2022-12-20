@@ -93,7 +93,7 @@ public class TestDeltaScheduleLoad extends TestCase {
 		try (InputStream is = new FileInputStream(f)) {
 			GetDeltaSchedule dao = new GetDeltaSchedule(is);
 			dao.setAircraft(_acTypes);
-			dao.setAirlines(SystemData.getAirlines().values());
+			dao.setAirlines(SystemData.getAirlines());
 			rawEntries.addAll(dao.process());
 			assertFalse(rawEntries.isEmpty());
 		}

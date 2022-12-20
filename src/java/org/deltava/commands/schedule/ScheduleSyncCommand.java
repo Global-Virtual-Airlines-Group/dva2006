@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to synchronize flight schedules between Airlines.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 6.0
  */
 
@@ -31,7 +31,7 @@ public class ScheduleSyncCommand extends AbstractCommand {
 		
 		// Copy request attributes
 		ctx.setAttribute("apps", SystemData.getApps().stream().filter(a -> !a.getCode().equals(SystemData.get("airline.code"))).collect(Collectors.toList()), REQUEST);
-		ctx.setAttribute("airlines", SystemData.getAirlines().values().stream().filter(a -> (a.getActive() && a.getScheduleSync())).collect(Collectors.toList()), REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines().stream().filter(a -> (a.getActive() && a.getScheduleSync())).collect(Collectors.toList()), REQUEST);
 
 		// Check for execution
 		CommandResult result = ctx.getResult();

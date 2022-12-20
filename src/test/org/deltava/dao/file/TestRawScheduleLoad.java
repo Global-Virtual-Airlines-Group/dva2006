@@ -74,8 +74,7 @@ public class TestRawScheduleLoad extends TestCase {
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
 			GetRawPDFSchedule dao = new GetRawPDFSchedule(is);
 			dao.setAircraft(_acTypes);
-			dao.setAirlines(SystemData.getAirlines().values());
-			
+			dao.setAirlines(SystemData.getAirlines());
 			rawEntries.addAll(dao.process());
 			assertFalse(rawEntries.isEmpty());
 		}

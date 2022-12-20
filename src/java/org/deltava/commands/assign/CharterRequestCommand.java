@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -13,8 +13,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.comparators.AirlineComparator;
-
 import org.deltava.security.command.CharterRequestAccessControl;
 
 import org.deltava.util.system.SystemData;
@@ -22,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and edit Charter flight Requests.
  * @author Luke
- * @version 10.0
+ * @version 103
  * @since 10.0
  */
 
@@ -130,9 +128,8 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			ctx.setAttribute("author", ctx.getUser(), REQUEST);
 		
 		// Save request attributes
-		List<Airline> airlines = SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList());
-		Collections.sort(airlines, new AirlineComparator(AirlineComparator.NAME));
-		airlines.addAll(SystemData.getAirlines().values());
+		List<Airline> airlines = SystemData.getAirlines().stream().filter(Airline::getActive).collect(Collectors.toList());
+		//airlines.addAll(SystemData.getAirlines().values());
 		ctx.setAttribute("chreq", req, REQUEST);
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		

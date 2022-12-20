@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.1
  */
 
@@ -51,7 +51,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			// Build Airline list
 			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
 			airlines.add(ComboUtils.fromString("All Airlines", "all"));
-			SystemData.getAirlines().values().stream().filter(Airline::getActive).forEach(airlines::add);			
+			SystemData.getAirlines().stream().filter(Airline::getActive).forEach(airlines::add);			
 			ctx.setAttribute("airlines", airlines, REQUEST);
 
 			try {

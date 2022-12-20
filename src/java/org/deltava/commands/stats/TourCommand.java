@@ -206,15 +206,11 @@ public class TourCommand extends AbstractAuditFormCommand {
 			ctx.release();
 		}
 
-		// Get airlines
-		Collection<Airline> airlines = new TreeSet<Airline>(new AirlineComparator(AirlineComparator.NAME));
-		airlines.addAll(SystemData.getAirlines().values());
-		ctx.setAttribute("airlines", airlines, REQUEST);
-
-		// Get airports
+		// Get airports / airlines
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		airports.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", airports, REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
