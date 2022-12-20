@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -163,7 +163,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		
 		// Build JSON object to store historical airlines
 		JSONObject jho = new JSONObject();
-		SystemData.getAirlines().values().forEach(a -> jho.put(a.getCode(), a.getHistoric()));
+		SystemData.getAirlines().forEach(a -> jho.put(a.getCode(), a.getHistoric()));
 		ctx.setAttribute("historicAL", jho, REQUEST);
 
 		// Forward to the JSP

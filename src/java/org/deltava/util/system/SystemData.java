@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -9,13 +9,14 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
+import org.deltava.comparators.AirlineComparator;
 import org.deltava.util.StringUtils;
 
 /**
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -50,10 +51,10 @@ public final class SystemData implements Serializable {
 		try {
 			Class<?> ldClass = Class.forName(loaderClassName);
 			loader = (SystemDataLoader) ldClass.getDeclaredConstructor().newInstance();
-			log.debug("Instantiated " + loaderClassName);
+			log.debug(String.format("Instantiated %s", loaderClassName));
 		} catch (Exception e) {
 			loader = new XMLSystemDataLoader();
-			log.info("Using default loader class " + loader.getClass().getSimpleName());
+			log.info(String.format("Using default loader class %s", loader.getClass().getSimpleName()));
 		}
 		
 		// Reset the properties
@@ -227,16 +228,11 @@ public final class SystemData implements Serializable {
 	 * Returns all airlines for the current web application.
 	 * @return a Collection of Airline beans
 	 */
-	public static Map<String, Airline> getAirlines() {
+	public static Collection<Airline> getAirlines() {
 		String code = (String) getObject("airline.code");
 		Map<?, ?> airlines = (Map<?, ?>) getObject("airlines");
-		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
-		for (Iterator<?> i = airlines.values().iterator(); i.hasNext(); ) {
-			Airline a = (Airline) i.next();
-			if (a.getApplications().contains(code))
-				results.put(a.getCode(), a);
-		}
-		
+		Collection<Airline> results = new TreeSet<Airline>(new AirlineComparator(AirlineComparator.NAME));
+		airlines.values().stream().map(Airline.class::cast).filter(a -> a.getApplications().contains(code)).forEach(results::add);
 		return results;
 	}
 	

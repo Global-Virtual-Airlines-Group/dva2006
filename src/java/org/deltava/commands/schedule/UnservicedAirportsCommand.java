@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to detect airports no longer serviced by an Airline.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airline list and determine if we write to the database
-		Collection<Airline> airlines = SystemData.getAirlines().values(); 
+		Collection<Airline> airlines = SystemData.getAirlines(); 
 		boolean updateDB = Boolean.parseBoolean(ctx.getParameter("updateDB"));
 		
 		int totalResults = 0;

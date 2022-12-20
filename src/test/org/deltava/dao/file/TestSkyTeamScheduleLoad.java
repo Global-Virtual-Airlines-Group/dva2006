@@ -90,7 +90,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 		try (InputStream is = new GZIPInputStream(new FileInputStream(f), 131072)) {
 			GetSkyTeamSchedule dao = new GetSkyTeamSchedule(is);
 			dao.setAircraft(_acTypes);
-			dao.setAirlines(SystemData.getAirlines().values());
+			dao.setAirlines(SystemData.getAirlines());
 			rawEntries.addAll(dao.process());
 			
 			ImportStatus st = dao.getStatus();

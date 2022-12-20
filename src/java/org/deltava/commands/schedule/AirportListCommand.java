@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports.
  * @author Luke
- * @version 7.3
+ * @version 10.3
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class AirportListCommand extends AbstractViewCommand {
 		Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
 		airlines.add(ComboUtils.fromString("No Airline", ""));
 		airlines.add(ComboUtils.fromString("No Gate Data", NO_GATE));
-		airlines.addAll(SystemData.getAirlines().values());
+		airlines.addAll(SystemData.getAirlines());
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
 		

@@ -71,7 +71,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			
 			// Save the user
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-			ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
+			ctx.setAttribute("airlines", SystemData.getAirlines(), REQUEST);
 
 			// Get additional parameters if we are redoing a search
 			criteria.setAirportD(ofr.get().getAirportA());
