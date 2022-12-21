@@ -119,29 +119,34 @@ public class GetAggregateStatistics extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
-		sqlBuf.append(" AS LABEL, SUM(F.LEGS) AS TOTAL, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS VL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS VH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS IL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS IH, "
-			+ "SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PEL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PEH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PSL, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PSH FROM FLIGHTSTATS_NETWORK F GROUP BY LABEL ORDER BY ");
+		sqlBuf.append(" AS LABEL, SUM(F.LEGS) AS TOTAL, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS VL, SUM(IF(F.NETWORK=?,F.DISTANCE, 0)) AS VD, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS VH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS IL, SUM(IF(F.NETWORK=?,F.DISTANCE, 0)) AS ID, "
+			+ "SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS IH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PEL, SUM(IF(F.NETWORK=?,F.DISTANCE, 0)) AS PED, SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PEH, SUM(IF(F.NETWORK=?,F.LEGS,0)) AS PSL, SUM(IF(F.NETWORK=?,F.DISTANCE, 0)) AS PSD, "
+			+ "SUM(IF(F.NETWORK=?,F.HOURS, 0)) AS PSH FROM FLIGHTSTATS_NETWORK F GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(srt.getSQL());
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, OnlineNetwork.VATSIM.ordinal());
 			ps.setInt(2, OnlineNetwork.VATSIM.ordinal());
-			ps.setInt(3, OnlineNetwork.IVAO.ordinal());
+			ps.setInt(3, OnlineNetwork.VATSIM.ordinal());
 			ps.setInt(4, OnlineNetwork.IVAO.ordinal());
-			ps.setInt(5, OnlineNetwork.PILOTEDGE.ordinal());
-			ps.setInt(6, OnlineNetwork.PILOTEDGE.ordinal());
-			ps.setInt(7, OnlineNetwork.POSCON.ordinal());
-			ps.setInt(8, OnlineNetwork.POSCON.ordinal());
+			ps.setInt(5, OnlineNetwork.IVAO.ordinal());
+			ps.setInt(6, OnlineNetwork.IVAO.ordinal());
+			ps.setInt(7, OnlineNetwork.PILOTEDGE.ordinal());
+			ps.setInt(8, OnlineNetwork.PILOTEDGE.ordinal());
+			ps.setInt(9, OnlineNetwork.PILOTEDGE.ordinal());
+			ps.setInt(10, OnlineNetwork.POSCON.ordinal());
+			ps.setInt(11, OnlineNetwork.POSCON.ordinal());
+			ps.setInt(12, OnlineNetwork.POSCON.ordinal());
 			
 			Collection<OnlineStatsEntry> results = new ArrayList<OnlineStatsEntry>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					OnlineStatsEntry st = new OnlineStatsEntry(rs.getString(1));
 					st.setTotalLegs(rs.getInt(2));
-					st.setNetwork(OnlineNetwork.VATSIM, rs.getInt(3), rs.getDouble(4));
-					st.setNetwork(OnlineNetwork.IVAO, rs.getInt(5), rs.getDouble(6));
-					st.setNetwork(OnlineNetwork.PILOTEDGE, rs.getInt(7), rs.getDouble(8));
-					st.setNetwork(OnlineNetwork.POSCON, rs.getInt(9), rs.getDouble(10));
+					st.setNetwork(OnlineNetwork.VATSIM, rs.getInt(3), rs.getInt(4), rs.getDouble(5));
+					st.setNetwork(OnlineNetwork.IVAO, rs.getInt(6), rs.getInt(7), rs.getDouble(8));
+					st.setNetwork(OnlineNetwork.PILOTEDGE, rs.getInt(9), rs.getInt(10), rs.getDouble(11));
+					st.setNetwork(OnlineNetwork.POSCON, rs.getInt(12), rs.getInt(13), rs.getDouble(14));
 					results.add(st);
 				}
 			}

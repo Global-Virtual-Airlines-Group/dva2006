@@ -95,7 +95,7 @@ public class GetACARSOnTime extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<OnTimeStatsEntry> getByDate(int maxDays) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT P.DATE, AO.ONTIME, COUNT(P.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P STRAIGHT_JOIN ACARS_ONTIME AO WHERE (AO.ID=P.ID) AND (P.STATUS=?) AND "
+		try (PreparedStatement ps = prepare("SELECT P.DATE, AO.ONTIME, COUNT(P.ID), SUM(P.DISTANCE), SUM(P.FLIGHT_TIME) FROM PIREPS P STRAIGHT_JOIN ACARS_ONTIME AO WHERE (AO.ID=P.ID) AND (P.STATUS=?) AND "
 			+ "(P.DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.DATE, AO.ONTIME")) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setInt(2, maxDays);
@@ -110,7 +110,7 @@ public class GetACARSOnTime extends DAO {
 						stats = new OnTimeStatsEntry(dt);
 					}
 					
-					stats.set(OnTime.values()[rs.getInt(2)], rs.getInt(3), rs.getDouble(4));
+					stats.set(OnTime.values()[rs.getInt(2)], rs.getInt(3), rs.getInt(4), rs.getDouble(5));
 				}
 			}
 			
@@ -136,7 +136,7 @@ public class GetACARSOnTime extends DAO {
 			return st;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(P.ID), SUM(P.FLIGHT_TIME), AO.ONTIME FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(P.ID), SUM(P.DISTANCE), SUM(P.FLIGHT_TIME), AO.ONTIME FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_ONTIME AO, ");
 		sqlBuf.append(dbName);
@@ -149,7 +149,7 @@ public class GetACARSOnTime extends DAO {
 			st = new RouteOnTime(key);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					st.set(OnTime.values()[rs.getInt(3)], rs.getInt(1), rs.getDouble(2));
+					st.set(OnTime.values()[rs.getInt(4)], rs.getInt(1), rs.getInt(2), rs.getDouble(3));
 			}
 			
 			_cache.add(st);

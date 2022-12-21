@@ -41,6 +41,14 @@ public class OnlineStatsEntry extends LegHoursStatsEntry<OnlineNetwork> {
 	}
 	
 	/**
+	 * Returns the total number of miles flown across all networks during this period.
+	 * @return the number of miles
+	 */
+	public int getOnlineDistance() {
+		return getKeys().stream().mapToInt(n -> getDistance(n)).sum();
+	}
+	
+	/**
 	 * Returns the total number of legs flown during this period.
 	 * @return the number of legs
 	 */
@@ -60,10 +68,11 @@ public class OnlineStatsEntry extends LegHoursStatsEntry<OnlineNetwork> {
 	 * Sets online network statistics.
 	 * @param net the OnlineNetwork
 	 * @param legs the number of legs
+	 * @param distance the flight distance in miles
 	 * @param hours the number of hours
 	 */
-	public void setNetwork(OnlineNetwork net, int legs, double hours) {
-		set(net, legs, hours);
+	public void setNetwork(OnlineNetwork net, int legs, int distance, double hours) {
+		set(net, legs, distance, hours);
 	}
 	
 	/**

@@ -145,35 +145,36 @@ public class MyFlightsService extends WebService {
 		// Create stage/flights by Month
 		int maxStage = stageStats.stream().mapToInt(StageStatsEntry::getMaxStage).max().orElse(1);
 		jo.put("maxStage", maxStage);
-		JSONArray jdo = new JSONArray(); JSONArray jdh = new JSONArray();
+		JSONArray jdo = new JSONArray(); JSONArray jdh = new JSONArray(); JSONArray jdd = new JSONArray();
 		for (StageStatsEntry entry : stageStats) {
 			JSONObject jd = JSONUtils.formatDate(entry.getDate());
-			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
-			da.put(jd); dh.put(jd);
+			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray(); JSONArray dd = new JSONArray();
+			da.put(jd); dh.put(jd); dd.put(jd);
 			
 			for (int x = 1; x <= maxStage; x++) {
 				da.put(entry.getLegs(x));
 				dh.put(entry.getHours(x));
+				dd.put(entry.getDistance(x));
 			}
 
-			jdo.put(da); jdh.put(dh);
+			jdo.put(da); jdh.put(dh); jdd.put(dd);
 		}
 		
 		// Create sim/flights by Month
 		Collection<Simulator> sims = simStats.stream().flatMap(ss -> ss.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
 		sims.forEach(s -> jo.append("sims", s.name()));
-		JSONArray jso = new JSONArray(); JSONArray jsh = new JSONArray();
+		JSONArray jso = new JSONArray(); JSONArray jsh = new JSONArray(); JSONArray jsd = new JSONArray();
 		for (SimStatsEntry entry : simStats) {
 			JSONObject jd = JSONUtils.formatDate(entry.getDate());
-			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray();
-			da.put(jd); dh.put(jd);
-			sims.forEach(s -> { da.put(entry.getLegs(s)); dh.put(entry.getHours(s)); });
-			jso.put(da); jsh.put(dh);
+			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray(); JSONArray dd = new JSONArray();
+			da.put(jd); dh.put(jd); dd.put(jd);
+			sims.forEach(s -> { da.put(entry.getLegs(s)); dh.put(entry.getHours(s)); dd.put(entry.getDistance(s)); });
+			jso.put(da); jsh.put(dh); jsd.put(dd);
 		}
 		
 		// Dump the JSON to the output stream
-		jo.put("calendar", jdo); jo.put("calendarHours", jdh);
-		jo.put("simCalendar", jso); jo.put("simCalendarHours", jsh);
+		jo.put("calendar", jdo); jo.put("calendarHours", jdh); jo.put("calendarDistance", jdd);
+		jo.put("simCalendar", jso); jo.put("simCalendarHours", jsh); jo.put("simCalendarDistance", jsd);
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(600);

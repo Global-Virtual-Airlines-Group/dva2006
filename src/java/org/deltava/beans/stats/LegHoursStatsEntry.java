@@ -1,23 +1,21 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
 
-import org.deltava.util.Tuple;
-
 /**
- * A bean to store ordered statistics entries that contain a key value plus hours/legs. 
+ * A bean to store ordered statistics entries that contain a key value plus hours/legs/distance. 
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 8.3
  * @param <K> The sort key
  */
 
 abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Serializable {
 
-	private static final Tuple<Integer, Double> ZERO = Tuple.create(Integer.valueOf(0), Double.valueOf(0));
+	private static final LegHoursStats ZERO = new LegHoursStats(0, 0, 0);
 	
-	private final SortedMap<K, Tuple<Integer, Double>> _legs = new TreeMap<K, Tuple<Integer, Double>>();
+	private final SortedMap<K, LegHoursStats> _legs = new TreeMap<K, LegHoursStats>();
 
 	/**
 	 * Returns tthe available keys.
@@ -33,7 +31,16 @@ abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Se
 	 * @return the number of legs
 	 */
 	public int getLegs(K key) {
-		return _legs.getOrDefault(key, ZERO).getLeft().intValue();
+		return _legs.getOrDefault(key, ZERO).getLegs();
+	}
+	
+	/**
+	 * Returns the flight distance for a particular key.
+	 * @param key the key value
+	 * @return the distance in miles 
+	 */
+	public int getDistance(K key) {
+		return _legs.getOrDefault(key, ZERO).getDistance();
 	}
 	
 	/**
@@ -42,7 +49,7 @@ abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Se
 	 * @return the number of hours
 	 */
 	public double getHours(K key) {
-		return _legs.getOrDefault(key, ZERO).getRight().doubleValue();
+		return _legs.getOrDefault(key, ZERO).getHours();
 	}
 	
 	/**
@@ -56,10 +63,11 @@ abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Se
 	/**
 	 * Adds a statistics entry.
 	 * @param key the key
-	 * @param legs the number of legs
-	 * @param hours the number of hours
+	 * @param legs the number of flight legs
+	 * @param distance the flight distance in miles
+	 * @param hours the number of flight hours
 	 */
-	protected void set(K key, int legs, double hours) {
-		_legs.put(key, Tuple.create(Integer.valueOf(legs), Double.valueOf(hours)));
+	protected void set(K key, int legs, int distance, double hours) {
+		_legs.put(key, new LegHoursStats(legs, distance, hours));
 	}
 }

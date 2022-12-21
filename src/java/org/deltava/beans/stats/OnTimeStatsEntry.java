@@ -42,10 +42,11 @@ public class OnTimeStatsEntry extends LegHoursDateStatsEntry<OnTime> {
 	 * Adds a statistics entry.
 	 * @param ot the OnTime entry
 	 * @param legs the number of legs
+	 * @param distance the flight distance in miles
 	 * @param hours the number of hours
 	 */
 	@Override
-	public void set(OnTime ot, int legs, double hours) {
-		super.set(ot, legs, hours);
+	public void set(OnTime ot, int legs, int distance, double hours) {
+		super.set(ot, legs, distance, hours);
 	}
 }

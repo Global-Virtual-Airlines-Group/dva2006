@@ -580,7 +580,8 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<StageStatsEntry> getStageStatistics(int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, IFNULL(ES.MAXSTAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.RATED_EQ) WHERE (F.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, IFNULL(ES.MAXSTAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.DISTANCE) AS DST, SUM(F.FLIGHT_TIME) AS HRS "
+			+ "FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.RATED_EQ) WHERE (F.STATUS=?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY LABEL, STG ORDER BY LABEL, STG");
@@ -600,7 +601,7 @@ public class GetFlightReportStatistics extends DAO {
 						results.add(sse);
 					}
 					
-					sse.setStage(rs.getInt(2), rs.getInt(3), rs.getDouble(4));
+					sse.setStage(rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5));
 				}
 			}
 			
@@ -619,7 +620,7 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<SimStatsEntry> getSimulatorStatistics(int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, F.FSVERSION, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F WHERE (F.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, F.FSVERSION, COUNT(F.ID) AS LEGS, SUM(F.DISTANCE) AS DST, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F WHERE (F.STATUS=?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY LABEL, F.FSVERSION ORDER BY LABEL, F.FSVERSION");
@@ -639,7 +640,7 @@ public class GetFlightReportStatistics extends DAO {
 						results.add(sse);
 					}
 					
-					sse.setSimulator(Simulator.fromVersion(rs.getInt(2), Simulator.UNKNOWN), rs.getInt(3), rs.getDouble(4));
+					sse.setSimulator(Simulator.fromVersion(rs.getInt(2), Simulator.UNKNOWN), rs.getInt(3), rs.getInt(4), rs.getDouble(5));
 				}
 			}
 			

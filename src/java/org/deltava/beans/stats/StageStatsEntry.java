@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A bean to store Equipment Stage statistics entries. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 8.1
  */
 
@@ -30,6 +30,15 @@ public class StageStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	}
 	
 	/**
+	 * Returns the flight distance for a particular stage.
+	 * @param stage the stage number
+	 * @return the distance in miles
+	 */
+	public int getDistance(int stage) {
+		return getDistance(Integer.valueOf(stage));
+	}
+	
+	/**
 	 * Returns the number of flight hours for a particular stage.
 	 * @param stage the stage number
 	 * @return the number of hours
@@ -50,9 +59,10 @@ public class StageStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	 * Sets stage statistics.
 	 * @param stage the stage number
 	 * @param legs the number of legs
+	 * @param distance the flight distance in miles
 	 * @param hours the number of hours
 	 */
-	public void setStage(int stage, int legs, double hours) {
-		set(Integer.valueOf(stage), legs, hours);
+	public void setStage(int stage, int legs, int distance, double hours) {
+		set(Integer.valueOf(stage), legs, distance, hours);
 	}
 }
