@@ -6,7 +6,7 @@ import java.time.*;
 /**
  * A bean to store flight legs/hours per year by percentile. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 9.2
  */
 
@@ -45,7 +45,7 @@ public class PercentileStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	 * @return the number of hours
 	 */
 	public int getDistance(int pctile) {
-		return (int)Math.round(getHours(Integer.valueOf(adjust(pctile))));
+		return getDistance(Integer.valueOf(adjust(pctile)));
 	}
 	
 	public int getTotal() {
@@ -59,7 +59,7 @@ public class PercentileStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	 * @param dst the distance in miles
 	 */
 	public void setPercentile(int pctile, int legs, int dst) {
-		set(Integer.valueOf(adjust(pctile)), legs, dst);
+		set(Integer.valueOf(adjust(pctile)), legs, dst, 0);
 	}
 	
 	public void setTotal(int cnt) {

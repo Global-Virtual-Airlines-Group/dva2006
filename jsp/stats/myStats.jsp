@@ -17,11 +17,6 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<style type="text/css">
-img.spinner {
-	vertical-align:middle;
-}
-</style>
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
@@ -54,8 +49,8 @@ golgotha.local.drawGraphs = function(stData, clData, label) {
 };
 
 golgotha.local.swapTimeGraphs = function(rb) {
-	const isLegs = (rb.value == 'LEGS');
-	return golgotha.local.drawGraphs(isLegs ? golgotha.local.data.calendar : golgotha.local.data.calendarHours, isLegs ? golgotha.local.data.simCalendar : golgotha.local.data.simCalendarHours, isLegs ? 'Legs' : 'Hours');
+	const data = golgotha.local.dataMap[rb.value];
+	return golgotha.local.drawGraphs(data[0], data[1], data[2]);
 };
 </script>
 </head>
@@ -269,13 +264,13 @@ xmlreq.onreadystatechange = function() {
 	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'}));
 
 	// Massage data and init charts
+	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours, golgotha.local.data.simCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance, golgotha.local.data.simCalendarDistance,"Distance"]};
 	const dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
-	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX);
-	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX);
+	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX); golgotha.local.data.calendarDistance.forEach(dateTX);
+	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX); golgotha.local.data.simCalendarDistance.forEach(dateTX);
 	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
 	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
-	golgotha.local.drawGraphs(golgotha.local.data.calendar, golgotha.local.data.simCalendar, 'Flights');
-	return true;
+	return golgotha.local.swapTimeGraphs(document.forms[0].timeGraphOpts);
 };
 
 xmlreq.send(null);

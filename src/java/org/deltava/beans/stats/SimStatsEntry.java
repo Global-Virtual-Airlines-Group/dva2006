@@ -8,7 +8,7 @@ import org.deltava.beans.Simulator;
 /**
  * A bean to store Simulator version statistics entries. 
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 8.1
  */
 
@@ -26,9 +26,10 @@ public class SimStatsEntry extends LegHoursDateStatsEntry<Simulator> {
 	 * Sets simulator statistics.
 	 * @param s the Simulator
 	 * @param legs the number of legs
+	 * @param distance the flight distance in miles
 	 * @param hours the number of hours
 	 */
-	public void setSimulator(Simulator s, int legs, double hours) {
-		set(s, legs, hours);
+	public void setSimulator(Simulator s, int legs, int distance, double hours) {
+		set(s, legs, distance, hours);
 	}
 }
