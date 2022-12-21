@@ -17,13 +17,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 2.1
  */
 
 public class MyFlightStatsCommand extends AbstractViewCommand {
 	
-	private static final List<ComboAlias> GRAPH_OPTS = ComboUtils.fromArray(new String[] {"Flight Legs", "Flight Hours"}, new String[] {"LEGS", "HOURS"});
+	private static final List<ComboAlias> GRAPH_OPTS = ComboUtils.fromArray(new String[] {"Flight Legs", "Flight Hours", "Flight Distance"}, new String[] {"LEGS", "HOURS", "DISTANCE"});
 
 	/**
 	 * Executes the command.
