@@ -27,7 +27,8 @@
 	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
     <cache id="GeoCountry" remote="true" geo="true" expires="864000" precision="0.01" />
-    <cache id="ATIS" remote="true" expires="900'"/>
+    <cache id="ATIS" remote="true" expires="900" />
+    <cache id="ATISCodes" max="4" expires="3600" />
 
 	<!-- VATSIM caches -->
 	<cache id="OnlineIDs" max="4" expires="3600" />

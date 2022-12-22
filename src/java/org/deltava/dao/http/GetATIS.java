@@ -25,6 +25,7 @@ import org.deltava.util.cache.*;
 
 public class GetATIS extends DAO {
 	
+	private static final Cache<CacheableCollection<String>> _facilityCache = CacheManager.getCollection(String.class, "ATISCodes");
 	private static final Cache<ATIS> _cache = CacheManager.get(ATIS.class, "ATIS");
 
 	/**
@@ -33,6 +34,12 @@ public class GetATIS extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public Collection<String> getFacilityCodes() throws DAOException {
+		
+		// Check the cache
+		CacheableCollection<String> codes = _facilityCache.get(ATIS.class);
+		if (codes != null)
+			return codes.clone();
+		
 		try {
 			setCompression(Compression.GZIP);
 			init("https://datis.clowd.io/api/facilities");
@@ -42,7 +49,11 @@ public class GetATIS extends DAO {
 				JSONArray ja = new JSONArray(new JSONTokener(br));
 				ja.forEach(c -> { results.add(c.toString()); });
 			}
-			
+
+			// Add to cache
+			codes = new CacheableSet<String>(ATIS.class);
+			codes.addAll(results);
+			_facilityCache.add(codes);
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
