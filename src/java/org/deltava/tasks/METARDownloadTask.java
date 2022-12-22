@@ -9,8 +9,7 @@ import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.DAO.Compression;
-import org.deltava.dao.http.GetNOAAWeather;
+import org.deltava.dao.http.*;
 
 import org.deltava.taskman.*;
 import org.deltava.util.StringUtils;

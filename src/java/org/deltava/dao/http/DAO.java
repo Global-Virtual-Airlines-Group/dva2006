@@ -18,46 +18,12 @@ import org.deltava.util.StringUtils;
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.4
  */
 
 public abstract class DAO {
 	
-	/**
-	 * HTTP compression enumeration.
-	 */
-	public enum Compression {
-		NONE, GZIP, COMPRESS, DEFLATE, BROTLI;
-		
-		/**
-		 * Returns the value for the accept-encoding header.
-		 * @return the header value
-		 */
-		public String getEncoding() {
-			return switch (this) {
-			case NONE -> "*";
-			case BROTLI -> "br";
-			default -> name().toLowerCase();
-			};
-		}
-		
-		/**
-		 * Determines compression type from a Content-Encoding header value.
-		 * @param hdr the header value
-		 * @return a Compression
-		 */
-		static Compression fromHeader(String hdr) {
-			for (int x = 0; x < values().length; x++) {
-				Compression c = values()[x];
-				if (c.getEncoding().equalsIgnoreCase(hdr))
-					return c;
-			}
-			
-			return Compression.NONE;
-		}
-	}
-
 	private String _method = "GET";
 	private final Collection<Compression> _compression = new HashSet<Compression>();
 	private Compression _rspCompression = Compression.NONE;
