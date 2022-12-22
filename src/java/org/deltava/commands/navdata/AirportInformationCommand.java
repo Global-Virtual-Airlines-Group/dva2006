@@ -15,14 +15,14 @@ import org.deltava.beans.wx.METAR;
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
-
+import org.deltava.dao.http.GetATIS;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 6.3
  */
 
@@ -109,6 +109,13 @@ public class AirportInformationCommand extends AbstractCommand {
 			GetACARSAlternate aadao = new GetACARSAlternate(con);
 			aadao.setQueryMax(5);
 			ctx.setAttribute("popularAlternates", aadao.getAlternates(a), REQUEST);
+			
+			// Load ATIS
+			GetATIS atdao = new GetATIS();
+			ATIS ad = atdao.get(a, ATISType.DEP);
+			ctx.setAttribute("atisD", ad, REQUEST);
+			if ((ad != null) && (ad.getType() == ATISType.DEP))
+				ctx.setAttribute("atisA", atdao.get(a, ATISType.ARR), REQUEST);
 			
 			// Save runways
 			ctx.setAttribute("toRwys", allDRwys, REQUEST);
