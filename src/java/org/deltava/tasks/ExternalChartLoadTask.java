@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.net.HttpURLConnection.*;
@@ -23,14 +23,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to load external approach charts.
  * @author Luke
- * @version 8.6
+ * @version 10.3
  * @since 4.0
  */
 
 public class ExternalChartLoadTask extends Task {
 	
 	/**
-	 * Non-fatal error codes
+	 * Non-fatal error codes.
 	 */
 	protected static final Collection<Integer> NONFATAL_CODES = Arrays.asList(Integer.valueOf(HTTP_BAD_METHOD), Integer.valueOf(HTTP_BAD_REQUEST),
 		Integer.valueOf(HTTP_FORBIDDEN), Integer.valueOf(HTTP_MOVED_TEMP), Integer.valueOf(HTTP_MOVED_PERM));
@@ -157,62 +157,64 @@ public class ExternalChartLoadTask extends Task {
 			}
 			
 			// Init the thread pool
-			int maxThreads = SystemData.getInt("schedule.chart.threads", 12);
-			ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-			exec.allowCoreThreadTimeOut(true);
-			
-			// Go through each airport, and check the max age
-			Connection con = ctx.getConnection();
-			GetChart cdao = new GetChart(con);
-			Map<Airport, Integer> chartAges = cdao.getMaxAges();
-			ctx.release();
-			
-			 TaskTimer tt = new TaskTimer();
 			Collection<AirportChartWork> apWork = new ArrayList<AirportChartWork>();
-			for (Airport a : acAirports) {
-				int maxChartAge = chartAges.getOrDefault(a, Integer.valueOf(-1)).intValue();
-				if ((maxChartAge == -1) || (maxChartAge >= maxAge)) {
-					AirportChartWork ap = new AirportChartWork(a);
-					apWork.add(ap);
-					exec.execute(ap);
+			int maxThreads = SystemData.getInt("schedule.chart.threads", 12); 
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
+				exec.allowCoreThreadTimeOut(true);
+				TaskTimer tt = new TaskTimer();
+			
+				// Go through each airport, and check the max age
+				Connection con = ctx.getConnection();
+				GetChart cdao = new GetChart(con);
+				Map<Airport, Integer> chartAges = cdao.getMaxAges();
+				ctx.release();
+			
+				for (Airport a : acAirports) {
+					int maxChartAge = chartAges.getOrDefault(a, Integer.valueOf(-1)).intValue();
+					if ((maxChartAge == -1) || (maxChartAge >= maxAge)) {
+						AirportChartWork ap = new AirportChartWork(a);
+						apWork.add(ap);
+						exec.execute(ap);
+					}
 				}
-			}
 
-			// Await shutdown
-			exec.shutdown();
-			exec.awaitTermination(5, TimeUnit.MINUTES);
-			log.info("Airport chart list (" + acAirports.size() + " airports) load completed in " + tt.stop() + "ms");
+				// Await shutdown
+				exec.shutdown();
+				exec.awaitTermination(5, TimeUnit.MINUTES);
+				log.info("Airport chart list (" + acAirports.size() + " airports) load completed in " + tt.stop() + "ms");
+			}
 			
 			// Reset thread pool
-			exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-			exec.allowCoreThreadTimeOut(true);
-			
-			// Load the chart data for each airport
-			tt.start();
 			Collection<ChartInfoWork> cWork = new ArrayList<ChartInfoWork>();
-			for (AirportChartWork aw: apWork) {
-				for (ExternalChart ec : aw.getResults()) {
-					ChartInfoWork cw = new ChartInfoWork(ec);
-					cWork.add(cw);
-					exec.execute(cw);
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
+				exec.allowCoreThreadTimeOut(true);
+			
+				// Load the chart data for each airport
+				TaskTimer tt = new TaskTimer();
+				for (AirportChartWork aw: apWork) {
+					for (ExternalChart ec : aw.getResults()) {
+						ChartInfoWork cw = new ChartInfoWork(ec);
+						cWork.add(cw);
+						exec.execute(cw);
+					}
 				}
-			}
 		
-			// Await shutdown
-			exec.shutdown();
-			exec.awaitTermination(5, TimeUnit.MINUTES);
-			log.info("Airport chart population (" + cWork.size() + " charts) completed in " + tt.stop() + "ms");
+				// Await shutdown
+				exec.shutdown();
+				exec.awaitTermination(5, TimeUnit.MINUTES);
+				log.info("Airport chart population (" + cWork.size() + " charts) completed in " + tt.stop() + "ms");
+			}
 			
 			// Get the external chart IDs
 			Map<String, ExternalChart> charts = new HashMap<String, ExternalChart>();
 			cWork.stream().filter(cw -> !StringUtils.isEmpty(cw.getChart().getExternalID())).map(ChartInfoWork::getChart).forEach(ec -> charts.put(ec.getExternalID(), ec));
 			
 			// Get a connection and start a transaction
-			con = ctx.getConnection();
+			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
 			// Determine the external-internal ID mappings
-			cdao = new GetChart(con);
+			GetChart cdao = new GetChart(con);
 			Map<String, Integer> idMap = cdao.getChartIDs(charts.keySet());
 			for (Map.Entry<String, Integer> me : idMap.entrySet()) {
 				ExternalChart exc = charts.get(me.getKey());
