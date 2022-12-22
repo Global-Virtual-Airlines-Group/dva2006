@@ -18,7 +18,6 @@ import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-import org.deltava.dao.http.DAO.Compression;
 import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;

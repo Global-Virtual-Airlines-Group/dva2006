@@ -1,7 +1,6 @@
 package org.deltava.dao.http;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.http.DAO.Compression;
 
 import junit.framework.TestCase;
 

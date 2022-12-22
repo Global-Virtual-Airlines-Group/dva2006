@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.IOException;
@@ -11,8 +11,7 @@ import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.http.DAO.Compression;
-import org.deltava.dao.http.GetVATSIMData;
+import org.deltava.dao.http.*;
 
 import org.deltava.service.*;
 
@@ -21,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 10.1
+ * @version 10.3
  * @since 1.0
  */
 
