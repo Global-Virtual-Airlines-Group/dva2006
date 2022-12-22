@@ -47,6 +47,7 @@ public class GetNOAAWeather extends DAO {
 	 */
 	public Map<String, METAR> getMETARCycle(int hour) throws DAOException {
 		try {
+			setCompression(Compression.GZIP);
 			init(getURL(SystemData.get("weather.url.metarCycle"), hour));
 			Map<String, METAR> results = new TreeMap<String, METAR>();
 			try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(getIn(), "UTF-8"), 65536)) {
@@ -91,6 +92,7 @@ public class GetNOAAWeather extends DAO {
 	 */
 	public Map<String, TAF> getTAFCycle(int hour) throws DAOException {
 		try {
+			setCompression(Compression.GZIP);
 			init(getURL(SystemData.get("weather.url.tafCycle"), hour));
 			Map<String, TAF> results = new TreeMap<String, TAF>();
 			try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(getIn(), "UTF-8"), 32768)) {
