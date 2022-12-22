@@ -108,6 +108,20 @@ golgotha.onDOMReady(function() {
  <br /></c:if>${wx.data}</td>
 </tr>
 </c:if>
+<c:if test="${!empty atisD}">
+<tr>
+ <td class="label top">${atisD.type.description} ATIS</td>
+ <td class="data" colspan="2"><span class="pri bld">${atisD.code}</span> - <span class="ita">Effective <fmt:date date="${atisD.effectiveDate}" t="HH:mm" default="N/A" /></span><br />
+<span class="small">${atisD.data}</span></td>
+</tr>
+</c:if>
+<c:if test="${!empty atisA}">
+<tr>
+ <td class="label top">${atisA.type.description} ATIS</td>
+ <td class="data" colspan="2"><span class="pri bld">${atisA.code}</span> - <span class="ita">Effective <fmt:date date="${atisA.effectiveDate}" t="HH:mm" default="N/A"/></span><br />
+<span class="small">${atisA.data}</span></td>
+</tr>
+</c:if>
 <tr>
  <td class="label top">Takeoff Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${departureRwys}">
