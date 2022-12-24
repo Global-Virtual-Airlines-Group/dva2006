@@ -41,7 +41,6 @@ public class GetATIS extends DAO {
 			return codes.clone();
 		
 		try {
-			setCompression(Compression.GZIP);
 			init("https://datis.clowd.io/api/facilities");
 			if (getResponseCode() != 200) return Collections.emptySet();
 			Collection<String> results = new TreeSet<String>();
@@ -78,7 +77,6 @@ public class GetATIS extends DAO {
 		
 		try {
 			ATIS result = null;
-			setCompression(Compression.GZIP);
 			init(String.format("https://datis.clowd.io/api/%s", ap.getICAO()));
 			if (getResponseCode() != 200) return null;
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"), 8192)) {
@@ -91,15 +89,17 @@ public class GetATIS extends DAO {
 				JSONArray ja = (JSONArray) o;
 				for (int x = 0; x < ja.length(); x++) {
 					JSONObject jo = ja.getJSONObject(x);
-					a = new ATIS(new AirportLocation(ap), EnumUtils.parse(ATISType.class, jo.getString("type").toUpperCase(), null));
+					a = new ATIS(ap, EnumUtils.parse(ATISType.class, jo.getString("type").toUpperCase(), null));
 					String data = jo.getString("datis");
 					a.setData(data);
 					int cpos = data.indexOf(" INFO ");
 					a.setCode((cpos < 0) ? '?' : data.charAt(cpos + 6));
 					
 					// Parse the date
-					int dpos = data.indexOf(" ", cpos + 8);
-					if (data.charAt(dpos - 1) == 'Z') dpos--;
+					int dpos = data.indexOf(' ', cpos + 8);
+					while (!Character.isDigit(data.charAt(dpos - 1)))
+						dpos--;
+					
 					String dt = data.substring(cpos + 8, dpos);
 					LocalTime lt = LocalTime.parse(dt, dtf);
 					LocalDateTime ldt = LocalDateTime.of(LocalDate.now(), lt);

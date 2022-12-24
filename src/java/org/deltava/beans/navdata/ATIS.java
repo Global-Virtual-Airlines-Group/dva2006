@@ -3,6 +3,8 @@ package org.deltava.beans.navdata;
 
 import java.time.Instant;
 
+import org.deltava.beans.schedule.Airport;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -14,7 +16,7 @@ import org.deltava.util.cache.Cacheable;
 
 public class ATIS implements Cacheable {
 	
-	private final AirportLocation _a;
+	private final Airport _a;
 	private final ATISType _type;
 	private String _data;
 	private char _code;
@@ -22,20 +24,20 @@ public class ATIS implements Cacheable {
 
 	/**
 	 * Creates the bean.
-	 * @param al an AirportLocation
+	 * @param a an Airport
 	 * @param t  the ATISType
 	 */
-	public ATIS(AirportLocation al, ATISType t) {
+	public ATIS(Airport a, ATISType t) {
 		super();
-		_a = al;
+		_a = a;
 		_type = t;
 	}
 	
 	/**
 	 * Returns the Airport for this ATI.
-	 * @return an AirportLocation
+	 * @return an Airport
 	 */
-	public AirportLocation getAirport() {
+	public Airport getAirport() {
 		return _a;
 	}
 	
@@ -97,6 +99,6 @@ public class ATIS implements Cacheable {
 
 	@Override
 	public Object cacheKey() {
-		return (_type == ATISType.COMBINED) ? _a.getCode() : String.format("%s/%s", _a.getCode(), _type.name());
+		return (_type == ATISType.COMBINED) ? _a.getICAO() : String.format("%s/%s", _a.getICAO(), _type.name());
 	}
 }
