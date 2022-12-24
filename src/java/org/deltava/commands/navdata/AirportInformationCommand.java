@@ -15,7 +15,7 @@ import org.deltava.beans.wx.METAR;
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetATIS;
+import org.deltava.dao.http.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -112,6 +112,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Load ATIS
 			GetATIS atdao = new GetATIS();
+			atdao.setCompression(Compression.GZIP);
 			ATIS ad = atdao.get(a, ATISType.DEP);
 			ctx.setAttribute("atisD", ad, REQUEST);
 			if ((ad != null) && (ad.getType() == ATISType.DEP))
