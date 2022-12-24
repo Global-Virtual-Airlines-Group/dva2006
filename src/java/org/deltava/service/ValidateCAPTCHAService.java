@@ -1,7 +1,8 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.deltava.commands.HTTPContext.CAPTCHA_ATTR_NAME;
 
 import java.io.*;
 
@@ -9,15 +10,14 @@ import javax.servlet.http.HttpSession;
 
 import org.deltava.beans.system.*;
 
-import org.deltava.commands.HTTPContext;
-import org.deltava.dao.http.GetGoogleCAPTCHA;
+import org.deltava.dao.http.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to validate Google RECAPTCHA tokens.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 9.0
  */
 
@@ -39,7 +39,7 @@ public class ValidateCAPTCHAService extends WebService {
 		// Check if we have something
 		HttpSession s = ctx.getRequest().getSession(false);
 		if (s != null) {
-			CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME); 
+			CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(CAPTCHA_ATTR_NAME); 
 			if ((cr != null) && cr.getIsSuccess()) {
 				ctx.getResponse().addDateHeader("Date", cr.getChallengeTime().toEpochMilli());
 				return SC_NOT_MODIFIED;
@@ -52,11 +52,12 @@ public class ValidateCAPTCHAService extends WebService {
 			GetGoogleCAPTCHA cdao = new GetGoogleCAPTCHA();
 			cdao.setConnectTimeout(2500);
 			cdao.setReadTimeout(3500);
+			cdao.setCompression(Compression.GZIP, Compression.BROTLI);
 			String rsp = sr.readLine(); 
 			if (!StringUtils.isEmpty(rsp)) {
 				CAPTCHAResult cr = cdao.validate(rsp, ctx.getRequest().getRemoteAddr());
 				s = ctx.getRequest().getSession(true);
-				s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);
+				s.setAttribute(CAPTCHA_ATTR_NAME, cr);
 			}
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
