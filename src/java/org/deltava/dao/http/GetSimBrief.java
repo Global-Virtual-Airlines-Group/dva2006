@@ -44,7 +44,6 @@ public class GetSimBrief extends DAO {
 	public BriefingPackage load(String id) throws DAOException {
 		String url = String.format("https://www.simbrief.com/ofp/flightplans/xml/%s.xml", id);
 		try {
-			setCompression(Compression.GZIP);
 			init(url);
 			
 			// If we're an error, throw a status code exception
@@ -74,7 +73,6 @@ public class GetSimBrief extends DAO {
 	public String refresh(String userID, String staticID) throws DAOException {
 		String url = String.format("https://www.simbrief.com/api/xml.fetcher.php?userid=%s&static_id=%s", userID, staticID);
 		try {
-			setCompression(Compression.GZIP);
 			init(url);
 			
 			// If we're an error, throw a status code exception
