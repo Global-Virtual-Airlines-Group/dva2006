@@ -4,6 +4,8 @@ package org.deltava.beans;
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
+
 import org.deltava.util.BZip2MultiInputStream;
 
 /**
@@ -14,7 +16,7 @@ import org.deltava.util.BZip2MultiInputStream;
  */
 
 public enum Compression {
-	NONE, GZIP, BZIP2;
+	NONE, GZIP, BZIP2, BROTLI;
 	
 	/**
 	 * Returns the compression type for a given file name.
@@ -27,6 +29,8 @@ public enum Compression {
 			return BZIP2;
 		else if (fn.endsWith(".gz"))
 			return GZIP;
+		else if (fn.endsWith(".br"))
+			return BROTLI;
 		
 		return NONE;
 	}
@@ -41,6 +45,7 @@ public enum Compression {
 		return switch (this) {
 			case GZIP -> new GZIPInputStream(is, 16384);
 			case BZIP2 -> new BZip2MultiInputStream(is);
+			case BROTLI -> new BrotliCompressorInputStream(is); 
 			default -> is;
 		};
 	}
