@@ -5,7 +5,7 @@
 <!-- HTTP Compression Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="6" class="left">HTTP COMPRESSION INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'httpCompressEntry')">COLLAPSE</span></td>
+ <td colspan="6" class="left">HTTP COMPRESSION INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'httpCompressionEntry')">COLLAPSE</span></td>
 </tr>
 
 <!-- HTTP Compression Data Title Bar -->
@@ -18,21 +18,15 @@
  <td>COMPRESSION RATIO</td>
 </tr>
 <c:forEach var="info" items="${httpCompression}">
+<c:if test="${info.requests > 0}">
 <tr class="httpCompressionEntry">
  <td class="pri bld">${info.ID}</td>
  <td><fmt:int value="${info.requests}"  /></td>
  <td class="sec bld"><fmt:int value="${info.rawSize}" /></td>
  <td class="bld"><fmt:int value="${info.size}" /></td>
-<c:choose>
-<c:when test="${info.requests == 0}">
- <td>-</td>
- <td>N/A</td>
-</c:when>
-<c:otherwise>
  <td class="bld"><fmt:dec value="${info.rawSize / info.requests}" /> bytes/request</td>
  <td class="sec bld"><fmt:dec value="${(info.size - info.rawSize) * 100.0 / info.size }" />%</td>
-</c:otherwise>
-</c:choose>
 </tr>
+</c:if>
 </c:forEach>
 </el:table>
