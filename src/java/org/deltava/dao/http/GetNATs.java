@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 6.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -37,9 +37,10 @@ public class GetNATs extends TrackDAO {
 	@Override
 	public String getTrackInfo() throws DAOException {
 		try {
+			setCompression(Compression.GZIP);
 			init(_url);
 			StringBuilder buf = new StringBuilder();
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "utf-8"))) {
 				boolean isWriting = false;
 				String data = br.readLine();
 				while (data != null) {

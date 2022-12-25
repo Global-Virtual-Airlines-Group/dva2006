@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2010, 2012, 2015, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Pacific Track data.
  * @author Luke
- * @version 6.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class GetPACOTs extends TrackDAO {
 	public String getTrackInfo() throws DAOException {
 		StringBuilder buf = new StringBuilder();
 		try {
+			setCompression(Compression.GZIP);
 			init(_url);
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"))) {
 				String data = br.readLine();

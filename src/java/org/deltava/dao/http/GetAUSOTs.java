@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get Australian Track data.
  * @author Luke
- * @version 7.0
+ * @version 10.3
  * @since 2.7
  */
 
@@ -37,6 +37,7 @@ public class GetAUSOTs extends TrackDAO {
 	public String getTrackInfo() throws DAOException {
 		StringBuilder buf = new StringBuilder(1024);
 		try {
+			setCompression(Compression.GZIP);
 			init(_url);
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"))) {
 				String data = br.readLine();
