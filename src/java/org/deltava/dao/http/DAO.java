@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
-
+import org.deltava.beans.stats.HTTPCompressionInfo;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.util.StringUtils;
@@ -22,16 +22,19 @@ import org.deltava.util.StringUtils;
  * @since 2.4
  */
 
-public abstract class DAO {
+abstract class DAO {
 	
 	private String _method = "GET";
 	private final Collection<Compression> _compression = new HashSet<Compression>();
 	private Compression _rspCompression = Compression.NONE;
-
+	
+	private final HTTPCompressionInfo _stats = HTTPCompressionInfo.get(getClass().getSimpleName()); 
+	
 	private int _readTimeout = 4500;
 	private int _connectTimeout = 2500;
 
 	private URLConnection _urlcon;
+	private CountingInputStream _rawStream;
 	private boolean _getErrorStream;
 
 	/*
@@ -49,7 +52,7 @@ public abstract class DAO {
 	public Compression getCompression() {
 		return _rspCompression;
 	}
-
+	
 	/**
 	 * Sets the HTTP method to use if not GET.
 	 * @param method the method name
@@ -102,7 +105,7 @@ public abstract class DAO {
 		URL u = new URL(url);
 		if (_urlcon != null) {
 			if (!_urlcon.getURL().equals(u))
-				throw new InterruptedIOException("Already connected to " + _urlcon.getURL().toExternalForm());
+				throw new InterruptedIOException(String.format("Already connected to %s", _urlcon.getURL().toExternalForm()));
 		}
 		
 		// Set timeouts and other stuff
@@ -181,12 +184,16 @@ public abstract class DAO {
 					_rspCompression = Compression.fromHeader(e);
 			}
 			
-			return switch (_rspCompression) {
-			case GZIP -> new GZIPInputStream(_urlcon.getInputStream());
-			case DEFLATE -> new InflaterInputStream(_urlcon.getInputStream(), new Inflater(true));
-			case BROTLI -> new BrotliCompressorInputStream(_urlcon.getInputStream());
-			default -> _urlcon.getInputStream();
+			// Get the InputStream, and wrap it to count bytes
+			_rawStream = new CountingInputStream(_urlcon.getInputStream(), _stats::updateRaw);
+			InputStream is = switch (_rspCompression) {
+			case GZIP -> new GZIPInputStream(_rawStream);
+			case DEFLATE -> new InflaterInputStream(_rawStream, new Inflater(true));
+			case BROTLI -> new BrotliCompressorInputStream(_rawStream);
+			default -> _rawStream;
 			};
+			
+			return new CountingInputStream(is, _stats::updateTotal);
 		} catch (IOException ie) {
 			if (_getErrorStream)
 				return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection) _urlcon).getErrorStream() : null;
@@ -221,5 +228,6 @@ public abstract class DAO {
 
 		_compression.clear();
 		_urlcon = null;
+		_rawStream = null;
 	}
 }

@@ -129,6 +129,7 @@ Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize va
 <%@ include file="/jsp/admin/diag/jdbcPool.jspf" %>
 <%@ include file="/jsp/admin/diag/daoCache.jspf" %>
 <%@ include file="/jsp/admin/diag/schedTasks.jspf" %>
+<%@ include file="/jsp/admin/diag/httpCompression.jspf" %>
 <c:if test="${acarsEnabled}">
 <%@ include file="/jsp/admin/diag/acarsInfo.jspf" %></c:if>
 <br />

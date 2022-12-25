@@ -11,9 +11,9 @@ import java.time.format.TextStyle;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.CommandStats;
+import org.deltava.beans.stats.HTTPCompressionInfo;
 
 import org.deltava.commands.*;
-
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 
@@ -127,6 +127,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Calculate DAO usage count and redis statistics
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
+		ctx.setAttribute("httpCompression", HTTPCompressionInfo.getInfo(), REQUEST);
 		ctx.setAttribute("redisStatus", RedisUtils.getStatus(), REQUEST);
 
 		// Get System properties
