@@ -6,7 +6,8 @@ import java.time.Instant;
 
 import org.jdom2.Document;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
+import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.XMLUtils;
@@ -24,8 +25,12 @@ public class BriefingPackage extends DatabaseBean {
 	private String _sbID;
 	private String _sbUserID;
 	private Instant _createdOn;
+	private String _tailCode;
 	
+	private ETOPS _etops = ETOPS.ETOPS60;
+	private GeoLocation _etopsMidpoint;
 	private final List<Airport> _alternates = new ArrayList<Airport>();
+	private final List<Airport> _etopsAlts = new ArrayList<Airport>();
 	
 	private int _airac;
 	private String _url;
@@ -118,6 +123,38 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public String getRoute() {
 		return _route;
+	}
+	
+	/**
+	 * Returns the aircraft tail code.
+	 * @return the tail code
+	 */
+	public String getTailCode() {
+		return _tailCode;
+	}
+	
+	/**
+	 * Returns the route ETOPS rating.
+	 * @return the ETOPS rating
+	 */
+	public ETOPS getETOPS() {
+		return _etops;
+	}
+	
+	/**
+	 * Returns the ETOPS diversion Airports.
+	 * @return a List of Airports
+	 */
+	public List<Airport> getETOPSAlternates() {
+		return _etopsAlts;
+	}
+	
+	/**
+	 * Returns the ETOPS equal time point location.
+	 * @return a GeoLocation, or null
+	 */
+	public GeoLocation getETOPSMidpoint() {
+		return _etopsMidpoint;
 	}
 	
 	/**
@@ -265,6 +302,22 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
+	 * Adds an ETOPS alternate Airport.
+	 * @param a the Airport
+	 */
+	public void addETOPSAlternate(Airport a) {
+		_etopsAlts.add(a);
+	}
+	
+	/**
+	 * Sets the ETOPS equal time midpoint.
+	 * @param loc
+	 */
+	public void setETOPSMidpoint(GeoLocation loc) {
+		_etopsMidpoint = loc;
+	}
+	
+	/**
 	 * Updates the cruise altitude.
 	 * @param alt the altitude in feet
 	 */
@@ -278,6 +331,22 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setRoute(String rt) {
 		_route = rt;
+	}
+	
+	/**
+	 * Updates the route's ETOPS rating.
+	 * @param e an ETOPS
+	 */
+	public void setETOPS(ETOPS e) {
+		_etops = e;
+	}
+	
+	/**
+	 * Updates the aircraft tail code.
+	 * @param tc the tail code
+	 */
+	public void setTailCode(String tc) {
+		_tailCode = tc;
 	}
 	
 	/**
