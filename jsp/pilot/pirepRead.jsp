@@ -339,20 +339,24 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <c:if test="${access.canUseSimBrief && (empty sbPackage)}">
 <content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
-<tr class="title caps">
+<tr class="title caps sbData">
  <td colspan="2">SimBrief DISPATCH SETTINGS</td>
 </tr>
-<tr>
+<tr class="sbData">
  <td class="label">Package Format</td>
  <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /></td>
 </tr>
 <c:if test="${!empty tailCodes}">
-<tr>
+<tr class="sbData">
  <td class="label">Tail Code</td>
  <td class="data"><el:combo name="tailCode" size="1" options="${tailCodes}" firstEntry="[ SELECT AIRCRAFT ]" /></td>
 </tr>
 </c:if>
-<tr>
+<tr class="sbData">
+ <td class="label">ETOPS Override</td>
+  <td class="data"><el:combo name="etopsOV" size="1" options="${etopsOV}" value="${acPolicy.ETOPS.time}" /></td>
+</tr>
+<tr class="sbData">
  <td class="label">Cost Index</td>
  <td class="data"><el:text name="costIndex" size="2" max="3" value="80" /></td>
 </tr>
@@ -383,10 +387,17 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span></td>
 </tr>
 </c:forEach>
+<c:if test="${sbPackage.ETOPS.time > 75}" >
+<tr>
+ <td class="label">ETOPS</td>
+ <td class="data"><span class="sec bld">${sbPackage.ETOPS}</span> - <span class="ita">Alternates : </span><c:forEach var="ap" items="${sbPackage.ETOPSAlternates}" varStatus="hasNext">${ap.name} (<el:cmd url="airportinfo" target="airportInfo" className="plain" linkID="${ap.IATA}"><fmt:airport airport="${ap}" />)</el:cmd>
+<c:if test="${!hasNext.last}">, </c:if></c:forEach></td>
+</tr>
+</c:if>
 </c:if>
 <content:browser human="true">
 <tr class="title">
- <td colspan="2">ROUTE MAP <span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
+ <td colspan="2">ROUTE MAP<c:if test="${filedETOPS.result.time > 75}"> - ${filedETOPS.result}</c:if><span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
 </tr>
 <c:choose>
 <c:when test="${googleMap}">
@@ -550,6 +561,9 @@ map.addMarkers(golgotha.maps.acarsFlight.gRoute);</c:if>
 <c:if test="${(!empty sbPackage.alternates) && fn:isDraft(pirep)}">
 <map:markers var="golgotha.maps.acarsFlight.alts" items="${sbPackage.alternates}" />
 map.addMarkers(golgotha.maps.acarsFlight.alts);</c:if>
+<c:if test="${(!empty sbMarkers) && fn:isDraft(pirep)}">
+<map:markers var="golgotha.maps.acarsFlight.sbMrks" items="${sbMarkers}" />
+map.addMarkers(golgotha.maps.acarsFlight.sbMrks);</c:if>
 <c:if test="${empty filedRoute}">
 // Airport markers
 <map:marker var="golgotha.maps.acarsFlight.gmA" point="${pirep.airportA}" />
@@ -617,6 +631,7 @@ golgotha.local.sbSubmit = function() {
 	const sbf = document.getElementById('sbapiform');
 	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
 	sbf.civalue.value = f.costIndex.value;
+	sbf.etopsrule.value = golgotha.form.getCombo(f.etopsOV);
 	if (golgotha.form.comboSet(f.tailCode)) 
 		sbf.reg.value = golgotha.form.getCombo(f.tailCode).toUpperCase();
 
