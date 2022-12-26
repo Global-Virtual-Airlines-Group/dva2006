@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store raw schedule statistics data.
  * @author Luke
- * @version 10.1
+ * @version 10.3
  * @since 9.0
  */
 
@@ -204,12 +204,20 @@ public class ScheduleSourceInfo implements ComboAlias, Cacheable, CalendarEntry 
 	
 	/**
 	 * Updates the number of flight legs for a particular Airline.
-	 * @param a the Airline bean
+	 * @param a the Airline
 	 * @param legs the number of legs
 	 */
 	public void addLegs(Airline a, int legs) {
 		Integer i = _airlineLegs.getOrDefault(a, Integer.valueOf(0));
 		_airlineLegs.put(a, Integer.valueOf(i.intValue() + legs));
+	}
+	
+	/**
+	 * Clears the number of flight legs for a particular Airline.
+	 * @param a the Airline
+	 */
+	public void clearLegs(Airline a) {
+		_airlineLegs.put(a, Integer.valueOf(0));
 	}
 	
 	/**
