@@ -442,6 +442,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 			
+			// Load the aircraft profile
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft acInfo = acdao.get(fr.getEquipmentType());
+			ctx.setAttribute("acInfo", acInfo, REQUEST);
+			
 			// Load taxi times
 			if (ac.getCanUseSimBrief() || isACARS) {
 				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con); int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
@@ -453,28 +458,33 @@ public class PIREPCommand extends AbstractFormCommand {
 			BriefingPackage sbPkg = null;
 			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
 				sbPkg = dao.getSimBrief(fr.getID(), ctx.getDB());
-				ctx.setAttribute("sbPackage", sbPkg, REQUEST);
+				if (sbPkg != null) {
+					List<NavigationDataBean> mrks = sbPkg.getETOPSAlternates().stream().map(ETOPSHelper::generateAlternateMarker).collect(Collectors.toList());
+					mrks.add(ETOPSHelper.generateMidpointMarker(sbPkg.getETOPSMidpoint(), sbPkg.getETOPSAlternates()));
+					ctx.setAttribute("sbPackage", sbPkg, REQUEST);
+					ctx.setAttribute("sbMarkers", mrks, REQUEST);
+				}
 			}
 			
 			// Load SimBrief-specific data
 			if (ac.getCanUseSimBrief()) {
-				GetAircraft acdao = new GetAircraft(con);
-				Aircraft a = acdao.get(fr.getEquipmentType());
-				ctx.setAttribute("acInfo", a, REQUEST);
-				ctx.setAttribute("acPolicy", a.getOptions(SystemData.get("airline.code")), REQUEST);
+				AircraftPolicyOptions opts = acInfo.getOptions(SystemData.get("airline.code"));
+				ctx.setAttribute("acPolicy", opts, REQUEST);
 				ctx.setAttribute("versionInfo", VersionInfo.getFullBuild(), REQUEST);
 				
 				// Calculate Alternates
 				AlternateAirportHelper aah = new AlternateAirportHelper(SystemData.get("airline.code"));
-				List<Airport> alts = aah.calculateAlternates(a, fr.getAirportA());
+				List<Airport> alts = aah.calculateAlternates(acInfo, fr.getAirportA());
 				if (alts.size() > 4)
 					alts.removeAll(alts.subList(4, alts.size()));
 				
 				ctx.setAttribute("alternates", alts, REQUEST);
 				
-				// List possible tail codes
-				if (sbPkg == null)
-					ctx.setAttribute("tailCodes", dao.getTailCodes(a.getName(), fr.getAirline(), p.getID()), REQUEST);
+				// List possible tail codes and ETOPS options
+				if (sbPkg == null) {
+					ctx.setAttribute("tailCodes", dao.getTailCodes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
+					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= opts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
+				}
 				
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
@@ -569,12 +579,6 @@ public class PIREPCommand extends AbstractFormCommand {
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
-					
-					// Get the aircraft profile
-					GetAircraft acdao = new GetAircraft(con);
-					Aircraft acInfo = acdao.get(fr.getEquipmentType());
-					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
-						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
 					// Get the flight score
 					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
@@ -827,7 +831,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.add(fr.getAirportD());
 				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
-				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);			
+				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);
+				ctx.setAttribute("filedETOPS", ETOPSHelper.classify(route), REQUEST);
 				if (sbPkg == null) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
