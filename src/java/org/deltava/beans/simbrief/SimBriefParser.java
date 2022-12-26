@@ -8,6 +8,9 @@ import java.time.Instant;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
+import org.deltava.beans.flight.ETOPS;
+import org.deltava.beans.schedule.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -50,7 +53,7 @@ public class SimBriefParser {
 		
 		// Validate XML elements
 		Element re = doc.getRootElement();
-		validateElements(re, "params", "general", "origin", "destination", "alternate", "files", "fuel", "atc");
+		validateElements(re, "params", "general", "origin", "destination", "alternate", "files", "fuel", "atc", "aircraft");
 		
 		// Create the bean
 		Element pe = re.getChild("params");
@@ -61,6 +64,7 @@ public class SimBriefParser {
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
+		sb.setTailCode(XMLUtils.getChildText(re, "aircraft", "reg"));
 		re.getChildren("alternate").stream().map(ae -> SystemData.getAirport(ae.getChildTextTrim("iata_code"))).filter(Objects::nonNull).forEach(sb::addAirportL);
 		sb.setXML(doc);
 		
@@ -79,6 +83,18 @@ public class SimBriefParser {
 		sb.setTaxiFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "taxi"), 0));
 		sb.setEnrouteFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "enroute_burn"), 0));
 		sb.setAlternateFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "alternate_burn"), 0));
+		
+		// Check for ETOPS
+		Element ee = re.getChild("etops");
+		if (ee != null) {
+			sb.setETOPS(EnumUtils.parse(ETOPS.class, "ETOPS" + ee.getChildTextTrim("rule"), sb.getETOPS()));
+			sb.setETOPSMidpoint(new GeoPosition(StringUtils.parse(XMLUtils.getChildText(ee, "equal_time_point", "pos_lat"), 0d), StringUtils.parse(XMLUtils.getChildText(ee, "equal_time_point", "pos_long"), 0d)));
+			for (Element ae : ee.getChildren("suitable_airport")) {
+				Airport ea = SystemData.getAirport(ae.getChildTextTrim("icao_code"));
+				if (ea != null)
+					sb.addETOPSAlternate(ea);
+			}
+		}
 		
 		// Parse flight plans
 		Element fe = re.getChild("files");

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 4.1
  */
 
@@ -26,16 +26,18 @@ public final class ETOPSHelper {
 	private static class WarningPoint extends NavigationDataBean {
 		
 		private final List<Airport> _closestAirports = new ArrayList<Airport>();
+		private final boolean _isWarning;
 		
-		WarningPoint(GeoLocation loc, Airport... aps) {
+		WarningPoint(GeoLocation loc, boolean isWarning, Collection<Airport> airports) {
 			super(Navaid.INT, loc.getLatitude(), loc.getLongitude());
-			setCode("ETOPS WARNING POINT");
-			_closestAirports.addAll(Arrays.asList(aps));
+			setCode(String.format("ETOPS %s POINT", isWarning ? "WARNING" : "EQUAL TIME"));
+			_isWarning = isWarning;
+			_closestAirports.addAll(airports);
 		}
-
+		
 		@Override
 		public String getIconColor() {
-			return RED;
+			return _isWarning ? RED : PURPLE;
 		}
 
 		@Override
@@ -58,15 +60,15 @@ public final class ETOPSHelper {
 			buf.append("</div>");
 			return buf.toString();
 		}
-
+		
 		@Override
 		public int getPaletteCode() {
-			return 3;
+			return _isWarning ? 3 : 4;
 		}
 
 		@Override
 		public int getIconCode() {
-			return 33;
+			return _isWarning ? 33 : 25;
 		}
 	}
 	
@@ -110,6 +112,25 @@ public final class ETOPSHelper {
 	 */
 	public static boolean isWarn(ETOPS ae, ETOPS re) {
 		return (ae != null) && (re != null) && (ae != ETOPS.INVALID) && (re.getTime() > ae.getTime());
+	}
+	
+	/**
+	 * Creates an ETOPS altenrate Airport marker.
+	 * @param a the Airport
+	 * @return a Marker
+	 */
+	public static AirportLocation generateAlternateMarker(Airport a) {
+		return new ClosestAirport(a);
+	}
+
+	/**
+	 * Generates the mid-point ETOPS marker. This is a convenience method for external code.
+	 * @param loc the GeoLocation
+	 * @param airports a List of closest Airports
+	 * @return a Marker
+	 */
+	public static NavigationDataBean generateMidpointMarker(GeoLocation loc, Collection<Airport> airports) {
+		return new WarningPoint(loc, false, airports);
 	}
 
 	/**
@@ -160,7 +181,7 @@ public final class ETOPSHelper {
 			}
 		}
 		
-		WarningPoint wp = (maxPT == null) ? null : new WarningPoint(maxPT, closestAirports[0], closestAirports[1]);
+		WarningPoint wp = (maxPT == null) ? null : new WarningPoint(maxPT, true, List.of(closestAirports[0], closestAirports[1]));
 		ETOPSResult r = new ETOPSResult(result, wp, msgs);
 		if (wp != null) {
 			r.add(new ClosestAirport(closestAirports[0]));
