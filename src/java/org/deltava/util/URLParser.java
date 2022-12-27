@@ -1,12 +1,14 @@
-// Copyright 2004, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2010, 2011, 2012, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A utility class to parse URLs.
  * @author Luke
- * @version 7.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -28,7 +30,7 @@ public class URLParser {
         String rURL = (extpos != -1) ? rawURL.substring(0, extpos) : rawURL; 
         StringTokenizer tokens = new StringTokenizer(rURL, "/");
         while (tokens.hasMoreTokens())
-            _elements.add(tokens.nextToken());
+            _elements.add(URLDecoder.decode(tokens.nextToken(), StandardCharsets.UTF_8));
     }
 
     /**
@@ -63,8 +65,7 @@ public class URLParser {
      * @return a LinkedList of path entries
      */
     public LinkedList<String> getPath() {
-    	return (_elements.size() == 1) ? new LinkedList<String>() : 
-    		new LinkedList<String>(_elements.subList(0, _elements.size() - 1));
+    	return (_elements.size() == 1) ? new LinkedList<String>() : new LinkedList<String>(_elements.subList(0, _elements.size() - 1));
     }
     
     /**

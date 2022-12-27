@@ -32,6 +32,15 @@ public class TestURLParser extends TestCase {
         assertFalse(_parser.containsPath("ext"));
         assertEquals(3, _parser.size());
     }
+    
+    public void testURLEncoding() {
+    	_parser = new URLParser("/newsletter/Delta%20FLY!%20March%202006.pdf");
+    	assertEquals("pdf", _parser.getExtension());
+    	assertEquals("newsletter", _parser.getLastPath());
+    	assertEquals("Delta FLY! March 2006", _parser.getName());
+    	assertEquals("Delta FLY! March 2006.pdf", _parser.getFileName());
+    	assertEquals(2, _parser.size());
+    }
 
     public void testNoExtension() {
         _parser = new URLParser("/path1/path2/name2");
