@@ -143,7 +143,7 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr>
  <td class="label">Departed from</td>
- <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
+ <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" target="airportInfo" linkID="${pirep.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
 </tr>
 <c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
@@ -154,7 +154,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
- <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
+ <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" target="airportInfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
 <c:if test="${isDivert}">&nbsp;<span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
 </tr>
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
@@ -223,7 +223,10 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${fn:airspaceWarn(pirep)}">
 <div class="error bld caps">Flight flown through Prohibited/Restricted Airspace</div></c:if>
 <c:if test="${fn:etopsWarn(pirep)}">
-<div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div></c:if>
+<c:if test="${fn:isDraft(pirep)}">
+<div class="warnbld caps">Planned Route exceeds Aircraft ETOPS rating</div></c:if>
+<c:if test="${!fn:isDraft(pirep)}">
+<div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div></c:if></c:if>
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div></c:if>
 <c:if test="${fn:weightWarn(pirep)}">
@@ -242,7 +245,7 @@ golgotha.local.showRunwayChoices = function() {
 <div class="ter bld caps">Flight Leg is Stage <fmt:int value="${tourIdx}" /> in the ${tour.name} Tour</div></c:if>
 <c:if test="${fn:isAcademy(pirep)}">
 <div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div></c:if>
- </td>
+</td>
 </tr>
 <tr>
  <td class="label">Flight Distance</td>
@@ -339,8 +342,8 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <c:if test="${access.canUseSimBrief && (empty sbPackage)}">
 <content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
-<tr class="title caps sbData">
- <td colspan="2">SimBrief DISPATCH SETTINGS</td>
+<tr class="title caps">
+ <td colspan="2">SimBrief DISPATCH SETTINGS<span id="sbToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
 </tr>
 <tr class="sbData">
  <td class="label">Package Format</td>
