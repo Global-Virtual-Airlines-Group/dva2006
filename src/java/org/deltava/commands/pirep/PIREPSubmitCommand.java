@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 10.1
+ * @version 10.3
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an error (typically database) occurs
+	 * @throws CommandException if an error occurs
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
@@ -69,6 +69,27 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
 			fsh.checkFlightReports();
+			
+			// Check ETOPS on route
+			if (StringUtils.isEmpty(pirep.getRoute())) {
+				GetNavRoute nddao = new GetNavRoute(con);
+				nddao.setEffectiveDate(pirep.getDate());
+				RouteBuilder rb = new RouteBuilder(pirep, pirep.getRoute());
+				nddao.getRouteWaypoints(rb.getRoute(), rb.getAirportD()).forEach(rb::add); // ignore sid/star for ETOPS calculations
+				ETOPSResult etops = ETOPSHelper.classify(GeoUtils.stripDetours(rb.getPoints(), 65));
+				
+				// Get aircraft data
+				GetAircraft acdao = new GetAircraft(con);
+				Aircraft a = acdao.get(pirep.getEquipmentType());
+				AircraftPolicyOptions opts = (a == null) ? null : a.getOptions(SystemData.get("airline.code"));
+				if (opts != null) {
+					pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, (etops.getResult().getTime() > opts.getETOPS().getTime()));
+					if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Filed route is %s, aircraft only rated for %s", etops.getResult(), opts.getETOPS()));
+					else if (etops.getResult().getTime() > 75)
+						pirep.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Filed route is %s", etops.getResult()));
+				}
+			}
 			
 			// Submitted!
 			pirep.setStatus(FlightStatus.SUBMITTED);
