@@ -445,7 +445,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Load the aircraft profile
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft acInfo = acdao.get(fr.getEquipmentType());
+			AircraftPolicyOptions acOpts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
 			ctx.setAttribute("acInfo", acInfo, REQUEST);
+			ctx.setAttribute("acPolicy", acOpts, REQUEST);
 			
 			// Load taxi times
 			if (ac.getCanUseSimBrief() || isACARS) {
@@ -468,8 +470,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Load SimBrief-specific data
 			if (ac.getCanUseSimBrief()) {
-				AircraftPolicyOptions opts = acInfo.getOptions(SystemData.get("airline.code"));
-				ctx.setAttribute("acPolicy", opts, REQUEST);
 				ctx.setAttribute("versionInfo", VersionInfo.getFullBuild(), REQUEST);
 				
 				// Calculate Alternates
@@ -481,9 +481,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("alternates", alts, REQUEST);
 				
 				// List possible tail codes and ETOPS options
-				if (sbPkg == null) {
+				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
 					ctx.setAttribute("tailCodes", dao.getTailCodes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
-					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= opts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
+					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= acOpts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
 				}
 				
 				// Determine if deprture time has already passed
@@ -817,7 +817,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					rb.add(sid);
 				}
 				
-				navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(wp -> rb.add(wp));
+				navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(rb::add);
 				
 				// Load the STAR
 				if (rb.getSTAR() != null) {
@@ -832,7 +832,15 @@ public class PIREPCommand extends AbstractFormCommand {
 				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);
-				ctx.setAttribute("filedETOPS", ETOPSHelper.classify(route), REQUEST);
+				
+				// Calculate ETOPS for route
+				ETOPSResult etopsInfo = ETOPSHelper.classify(route);
+				ctx.setAttribute("filedETOPS", etopsInfo, REQUEST);
+				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime())) {
+					fr.setAttribute(FlightReport.ATTR_ETOPSWARN, true);
+					mapType = MapType.GOOGLEStatic;
+				}
+					
 				if (sbPkg == null) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
