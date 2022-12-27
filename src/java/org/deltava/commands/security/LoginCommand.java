@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 10.2
+ * @version 10.3
  * @since 1.0
  */
 
@@ -349,7 +349,7 @@ public class LoginCommand extends AbstractCommand {
 		}
 		
 		// Mark us as complete
-		result.setURL("cookieCheck.do");
+		result.setURL("cookiecheck.do");
 		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
