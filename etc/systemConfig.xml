@@ -40,6 +40,7 @@
 			<list name="categories" attr="category" unique="true">
 				<category>Delta FLY!</category>
 				<category>Flight Academy</category>
+				<category>Airline Reports</category>
 				<category>Mad Dog Program</category>
 				<category>777 Program</category>
 				<category>A320 Program</category>
