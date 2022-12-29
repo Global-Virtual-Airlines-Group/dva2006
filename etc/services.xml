@@ -75,7 +75,6 @@
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
 	<service id="pilotmapclear" class="org.deltava.service.PilotLocationClearService" />
-	<service id="net_ids" class="org.deltava.service.OnlineIDService" />
 	<service id="id" class="org.deltava.service.hr.DatabaseIDService" />
 	<service id="dupename" class="org.deltava.service.hr.DuplicateNameService" />
 	<service id="sceligible" class="org.deltava.service.hr.PilotNominationService" />
@@ -148,6 +147,8 @@
 	<service id="fir" class="org.deltava.service.servinfo.FIRInfoService" />
 	<service id="firs" class="org.deltava.service.servinfo.FIRLayerService" />
 	<service id="vatsim_info" class="org.deltava.service.servinfo.PilotValidationService" />
+	<service id="net_ids" class="org.deltava.service.servinfo.OnlineIDService" />
+	<service id="net_flights" class="org.deltava.service.servinfo.OnlineFlightsService" />
 
 	<!-- Weather Services -->
 	<service id="metar" class="org.deltava.service.wx.METARService" />
