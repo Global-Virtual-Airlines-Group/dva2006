@@ -236,6 +236,44 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns approved Flight Reports flown on a particular Online Network.
+	 * @param net the OnlineNetwork
+	 * @param dbName the database name
+	 * @return a List of FlightReport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getByNetwork(OnlineNetwork net, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.STATUS=?) AND ((PR.ATTR & ?) > 0) ORDER BY PR.SUBMITTED DESC");
+		
+		// Calculate the attribute to use
+		int attr = switch (net) {
+			case VATSIM -> FlightReport.ATTR_VATSIM;
+			case IVAO -> FlightReport.ATTR_IVAO;
+			case POSCON -> FlightReport.ATTR_POSCON;
+			case PILOTEDGE -> FlightReport.ATTR_PEDGE;
+			default-> 0;
+		};
+
+		if (attr == 0) return Collections.emptyList();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, attr);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all Flight Reports associated with a particular Online Event.
