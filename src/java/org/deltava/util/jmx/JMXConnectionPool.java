@@ -73,7 +73,7 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 		Collection<ConnectionInfo> info = _pool.getPoolInfo();
 		info.stream().map(ConnectionMBeanImpl::new).forEach(_info::add);
 		_lastUpdated = Instant.now();
-		_size = _pool.getSize();
+		_size = (int) info.stream().filter(ConnectionInfo::getConnected).count();
 		_reqs = Math.max(0, _pool.getTotalRequests() - _reqs);
 		_maxBorrowTime = (int) _pool.getMaxBorrowTime();
 		_maxWaitTime = (int) _pool.getMaxWaitTime();
