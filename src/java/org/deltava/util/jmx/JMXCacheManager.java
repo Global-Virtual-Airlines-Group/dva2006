@@ -17,9 +17,12 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	
 	private final String _code;
 	private final Collection<? super CacheMBean> _info = new ArrayList<CacheMBean>();
-	
+
 	private long _reqs;
 	private long _hits;
+	
+	private long _prevReqs;
+	private long _prevHits;
 	
 	private Instant _lastUpdated;
 
@@ -68,8 +71,10 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 			_info.add(mb);
 		}
 		
-		_reqs = Math.max(0, reqs - _reqs);
-		_hits = Math.max(0, hits - _hits);
+		_reqs = Math.max(0, reqs - _prevReqs);
+		_hits = Math.max(0, hits - _prevHits);
+		_prevReqs = reqs;
+		_prevHits = hits;
 		_lastUpdated = Instant.now();
 	}
 	
