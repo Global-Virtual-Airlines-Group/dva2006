@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -165,7 +165,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
-		
 		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
 		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 
@@ -177,7 +176,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			ctx.setMessage(msg);
 			return;
 		}
-
+		
 		// Add PIREP fields from the request
 		ACARSFlightReport afr = flight.getFlightReport();
 		afr.setRank(ctx.getUser().getRank());
@@ -189,6 +188,17 @@ public class OfflineFlightCommand extends AbstractCommand {
 			inf.setAuthorID(ctx.getUser().getID());
 		
 		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
+		
+		// Get comments
+		String comments = ctx.getParameter("comments");
+		if (!StringUtils.isEmpty(comments)) {
+			StringBuilder buf = new StringBuilder();
+			if (!StringUtils.isEmpty(afr.getComments()))
+				buf.append(afr.getComments());
+			
+			buf.append(comments);
+			afr.setComments(buf.toString());
+		}
 		
 		// Get the client version
 		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
