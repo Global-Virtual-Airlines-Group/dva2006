@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.net.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Web Resource link data.
  * @author Luke
- * @version 7.0
+ * @version 10.4
  * @since 1.0
  */
 
-public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
+public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, Auditable, ExternalURL {
 	
 	private String _url;
 	private String _title;
@@ -38,21 +38,12 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 		setURL(url);
 	}
 
-	/**
-	 * Returns the Resource URL.
-	 * @return the URL
-	 * @see Resource#setURL(String)
-	 * @see Resource#getDomain()
-	 */
+	@Override
 	public String getURL() {
 		return _url;
 	}
-	
-	/**
-	 * Returns the Resource title.
-	 * @return the title
-	 * @see Resource#setTitle(String)
-	 */
+
+	@Override
 	public String getTitle() {
 		return _title;
 	}
@@ -152,7 +143,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	}
 	
 	/**
-	 * Updates the title of the Resource
+	 * Updates the title of the Resource.
 	 * @param title the title
 	 * @see Resource#getTitle()
 	 */
@@ -210,9 +201,6 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * @see Resource#getHits()
 	 */
 	public void setHits(int hits) {
-		if (hits < 0)
-			throw new IllegalArgumentException("Invalid Hit Count - " + hits);
-		
 		_hitCount = hits;
 	}
 	
@@ -224,19 +212,22 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	public void setPublic(boolean isPublic) {
 		_public = isPublic;
 	}
+
+	@Override
+	public String getAuditID() {
+		return Integer.toHexString(hashCode());
+	}
 	
-	/**
-	 * Returns the Resource URL.
-	 */
 	@Override
 	public String toString() {
 		return _url;
 	}
 	
-	/**
-	 * Returns the row CSS class name if displayed in a view table.
-	 * @return the CSS class name
-	 */
+	@Override
+	public int hashCode() {
+		return _url.hashCode();
+	}
+	
 	@Override
 	public String getRowClassName() {
 		return _public ? null : "opt2";
