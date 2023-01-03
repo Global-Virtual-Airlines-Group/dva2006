@@ -1,4 +1,4 @@
-// Copyright 2008, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display all IMAP mailboxes.
  * @author Luke
- * @version 10.0
+ * @version 10.3
  * @since 2.2
  */
 
@@ -36,23 +36,12 @@ public class MailboxListCommand extends AbstractViewCommand {
         	GetPilotEMail idao = new GetPilotEMail(con);
         	idao.setQueryStart(vc.getStart());
         	idao.setQueryMax(vc.getCount());
-        	vc.setResults(idao.getAll());
+        	vc.setResults(idao.getAll(ctx.getDB()));
         	
         	// Load the user data
         	Collection<Integer> IDs = vc.getResults().stream().map(IMAPConfiguration::getID).collect(Collectors.toSet());
         	GetUserData uddao = new GetUserData(con);
         	UserDataMap udm = uddao.get(IDs);
-        	
-        	// Trim out anyone who isn't part of our airline
-        	for (Iterator<IMAPConfiguration> i = vc.getResults().iterator(); i.hasNext(); ) {
-        		IMAPConfiguration cfg = i.next();
-        		Integer id = Integer.valueOf(cfg.getID());
-        		UserData ud = udm.get(id);
-        		if ((ud == null) || (!ud.getDB().equals(ctx.getDB()))) {
-        			i.remove();
-        			udm.remove(id);
-        		}
-        	}
         	
         	// Load the Pilots and save the results
         	GetPilot pdao = new GetPilot(con);

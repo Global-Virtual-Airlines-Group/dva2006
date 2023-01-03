@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IMAPConfiguration;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 9.0
+ * @version 10.3
  * @since 1.0
  */
 
@@ -40,11 +40,13 @@ public class GetPilotEMail extends DAO {
 
 	/**
 	 * Returns all IMAP mailbox profiles.
+	 * @param db the database name
 	 * @return a Collection of EMailConfiguration beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<IMAPConfiguration> getAll() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT ID, username, maildir, quota, allow_smtp, active FROM postfix.mailbox WHERE (ID>0) ORDER BY username")) {
+	public List<IMAPConfiguration> getAll(String db) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT m.ID, m.username, m.maildir, m.quota, m.allow_smtp, m.active FROM postfix.mailbox m, common.USERDATA ud WHERE (m.id=ud.ID) AND (ud.airline=?) ORDER BY m.username")) {
+			ps.setString(1, formatDBName(db));
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
