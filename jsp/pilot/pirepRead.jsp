@@ -367,31 +367,31 @@ golgotha.local.showRunwayChoices = function() {
  <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.local.sbSubmit()" /></td>
 </tr>
 </c:if>
-<c:if test="${access.canViewSimBrief && (!empty sbPackage) && fn:isDraft(pirep)}">
+<c:if test="${(access.ourFlight || (access.canViewSimBrief && fn:isDraft(pirep))) && (!empty sbPackage)}">
 <tr class="title caps">
- <td colspan="2">SimBrief BRIEFING PACKAGE INFORMATION</td>
+ <td colspan="2">SimBrief BRIEFING PACKAGE INFORMATION<span id="sbToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
 </tr>
-<tr>
+<tr class="sbData">
  <td class="label">SimBrief Package</td>
  <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
  | <a href="javascript:void golgotha.local.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
  </tr>
- <tr>
+ <tr class="sbData">
   <td class="label">Briefing Format</td>
   <td class="data pri bld">${sbPackage.format.description}</td>
  </tr>
- <tr>
+ <tr class="sbData">
  <td class="label">Fuel Load</td>
  <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate</td>
 </tr>
 <c:forEach var ="ap" items="${sbPackage.alternates}">
-<tr>
+<tr class="sbData">
  <td class="label">Alternate</td>
  <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span></td>
 </tr>
 </c:forEach>
 <c:if test="${sbPackage.ETOPS.time > 75}" >
-<tr>
+<tr class="sbData">
  <td class="label">ETOPS</td>
  <td class="data"><span class="sec bld">${sbPackage.ETOPS}</span> - <span class="ita">Alternates : </span><c:forEach var="ap" items="${sbPackage.ETOPSAlternates}" varStatus="hasNext">${ap.name} (<el:cmd url="airportinfo" target="airportInfo" className="plain" linkID="${ap.IATA}"><fmt:airport airport="${ap}" />)</el:cmd>
 <c:if test="${!hasNext.last}">, </c:if></c:forEach></td>
