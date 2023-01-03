@@ -1,8 +1,9 @@
-// Copyright 2006, 2011, 2014, 2015, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014, 2015, 2016, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 
 import org.deltava.beans.*;
@@ -15,12 +16,13 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
+import org.deltava.util.BeanUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -70,6 +72,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			// Get the DAO and the Library entry
 			GetDocuments dao = new GetDocuments(con);
 			nws = dao.getNewsletter(fName, ctx.getDB());
+			Newsletter on = BeanUtils.clone(nws);
 			
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, nws);
@@ -79,9 +82,10 @@ public class NewsletterCommand extends LibraryEditCommand {
 				throw securityException("Cannot create/edit Newsletter");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (nws != null))
-				throw new CommandException("Document " + fName + " already exists");
-			else if (isNew) {
+			if (isNew) {
+				if (nws != null)
+					throw new CommandException("Document " + fName + " already exists");
+				
 				File f = new File(SystemData.get("path.newsletter"), fName);
 				nws = new Newsletter(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
@@ -96,6 +100,10 @@ public class NewsletterCommand extends LibraryEditCommand {
 			nws.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			if (mFile != null)
 				nws.setSize(mFile.getBuffer().length);
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(on, nws);
+			AuditLog ae = AuditLog.create(nws, delta, ctx.getUser().getID());
 			
 			// Get the message template
 			if (!noNotify) {
@@ -114,6 +122,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);
 			wdao.write(nws);
+			writeAuditLog(ctx, ae);
 
 			// Dump the uploaded file to the filesystem
 			if (mFile != null) {

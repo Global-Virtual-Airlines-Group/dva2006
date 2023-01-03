@@ -21,7 +21,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -135,6 +135,7 @@ return true;
 <el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void golgotha.local.updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br />
 <el:box name="ignoreCerts" idx="*" value="true" checked="${entry.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

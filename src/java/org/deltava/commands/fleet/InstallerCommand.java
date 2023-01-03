@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -62,6 +62,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			// Get the DAO and the Library entry
 			GetLibrary dao = new GetLibrary(con);
 			Installer entry = dao.getInstaller(fName, ctx.getDB());
+			Installer oi = BeanUtils.clone(entry);
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
@@ -71,9 +72,10 @@ public class InstallerCommand extends LibraryEditCommand {
 				throw securityException("Cannot create/edit Fleet Library entry");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (entry != null)) {
-				throw notFoundException("Installer " + fName + " already exists");
-			} else if (isNew) {
+			if (isNew) {
+				if (entry != null)
+					throw notFoundException("Installer " + fName + " already exists");
+				
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Installer(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
@@ -103,6 +105,10 @@ public class InstallerCommand extends LibraryEditCommand {
 				appCodes.stream().map(c -> SystemData.getApp(c)).filter(Objects::nonNull).forEach(e::addApp);
 			}
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oi, entry);
+			AuditLog ae = AuditLog.create(entry, delta, ctx.getUser().getID());
+			
 			// Get the message template
 			if (!noNotify) {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -115,11 +121,17 @@ public class InstallerCommand extends LibraryEditCommand {
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				pilots = pdao.getNotifications(Notification.FLEET);
 			}
+			
+			// Start transaction
+			ctx.startTX();
 
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);
 			wdao.write(entry);
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

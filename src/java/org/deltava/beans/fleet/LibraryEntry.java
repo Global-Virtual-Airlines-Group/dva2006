@@ -1,9 +1,9 @@
-// Copyright 2005, 2009, 2012, 2014, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2014, 2015, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.cache.Cacheable;
@@ -11,11 +11,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
-public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheable, ViewEntry {
+public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheable, ViewEntry, Auditable {
 
    private final File _file;
    private long _fileSize;
@@ -170,6 +170,11 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     */
    public File file() {
       return _file;
+   }
+   
+   @Override
+   public String getAuditID() {
+	   return getFileName();
    }
    
    @Override
