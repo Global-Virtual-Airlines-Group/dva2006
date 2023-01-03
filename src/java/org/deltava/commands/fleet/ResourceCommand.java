@@ -1,10 +1,11 @@
-// Copyright 2006, 2009, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.fleet.Resource;
 
 import org.deltava.commands.*;
@@ -12,14 +13,16 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.ResourceAccessControl;
 
+import org.deltava.util.BeanUtils;
+
 /**
  * A Web Site Command to display/edit a Web Resource.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
-public class ResourceCommand extends AbstractFormCommand {
+public class ResourceCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Method called when saving the form.
@@ -33,7 +36,7 @@ public class ResourceCommand extends AbstractFormCommand {
 
 			// Get the DAO and the resource
 			GetResources dao = new GetResources(con);
-			Resource r = null;
+			Resource r = null, or = null;
 			if (ctx.getID() == 0) {
 				r = new Resource(ctx.getParameter("url"));
 				r.setAuthorID(ctx.getUser().getID());
@@ -42,6 +45,8 @@ public class ResourceCommand extends AbstractFormCommand {
 				r = dao.get(ctx.getID());
 				if (r == null)
 					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
+				
+				or = BeanUtils.clone(r);
 			}
 			
 			// Check our access
@@ -59,10 +64,20 @@ public class ResourceCommand extends AbstractFormCommand {
 			r.setLastUpdateID(ctx.getUser().getID());
 			r.setPublic(ac.getCanEdit() && Boolean.parseBoolean(ctx.getParameter("isPublic")));
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(or, r);
+			AuditLog ae = AuditLog.create(r, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Save the resource
 			SetResource wdao = new SetResource(con);
 			wdao.write(r);
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -99,6 +114,9 @@ public class ResourceCommand extends AbstractFormCommand {
 				ac.validate();
 				if (!ac.getCanEdit())
 					throw securityException("Cannot edit Web Resource");
+
+				// Load audit log
+				readAuditLog(ctx, r);
 
 				// Load the author IDs
 				Collection<Integer> IDs = new HashSet<Integer>();
