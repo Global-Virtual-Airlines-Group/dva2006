@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2014, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2014, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -17,11 +17,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
  * @author Luke
- * @version 10.0
+ * @version 10.4
  * @since 1.0
  */
 
-public abstract class LibraryEditCommand extends AbstractFormCommand {
+public abstract class LibraryEditCommand extends AbstractAuditFormCommand {
 
 	private static final List<String> DOC_TYPES = Arrays.asList("fleet", "manual", "newsletter");
 	private static final List<String> JSP_HDR = Arrays.asList("installer", "manual", "newsletter");
@@ -77,6 +77,11 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 			else if (!isNew)
 				entry = dao.getInstaller(fName, ctx.getDB());
 			
+			// Load the audit log
+			if (!isNew)
+				readAuditLog(ctx, entry);
+			
+			// Set access controller
 			if (access == null)
 				access = new FleetEntryAccessControl(ctx, entry);
 		} catch (DAOException de) {

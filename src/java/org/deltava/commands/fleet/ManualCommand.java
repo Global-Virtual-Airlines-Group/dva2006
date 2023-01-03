@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -9,17 +9,20 @@ import java.time.Instant;
 import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
 import org.deltava.commands.*;
+
 import org.deltava.dao.*;
 import org.deltava.dao.file.WriteBuffer;
+
 import org.deltava.mail.*;
 import org.deltava.security.command.ManualAccessControl;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -69,6 +72,7 @@ public class ManualCommand extends LibraryEditCommand {
 			// Get the Library entry
 			GetDocuments dao = new GetDocuments(con);
 			entry = dao.getManual(fName, ctx.getDB());
+			Manual oe = BeanUtils.clone(entry);
 
 			// Check our access level
 			ManualAccessControl access = new ManualAccessControl(ctx, null);
@@ -79,9 +83,10 @@ public class ManualCommand extends LibraryEditCommand {
 				throw securityException("Cannot create/edit Document Library entry");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (entry != null))
-				throw new CommandException("Document " + fName + " already exists");
-			else if (isNew) {
+			if (isNew) {
+				if (entry != null)
+					throw new CommandException("Document " + fName + " already exists");
+				
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Manual(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
@@ -108,6 +113,10 @@ public class ManualCommand extends LibraryEditCommand {
 			// Set public field
 			boolean ignoreCerts = Boolean.parseBoolean(ctx.getParameter("ignoreCerts"));
 			entry.setIgnoreCertifcations(ignoreCerts && (!entry.getCertifications().isEmpty()));
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oe, entry, "lastModified");
+			AuditLog ae = AuditLog.create(entry, delta, ctx.getUser().getID());
 
 			// Get the message template
 			if (!noNotify) {
@@ -126,14 +135,15 @@ public class ManualCommand extends LibraryEditCommand {
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);
 			wdao.write(entry, isNew);
+			writeAuditLog(ctx, ae);
 
 			// Dump the uploaded file to the filesystem
 			if (mFile != null) {
 				WriteBuffer fsdao = new WriteBuffer(entry.file());
 				fsdao.write(mFile.getBuffer());
 			}
-
-			// Commit the transaction
+			
+			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

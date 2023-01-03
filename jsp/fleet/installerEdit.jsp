@@ -21,7 +21,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.title, l:6, t:'Installer Title'});
@@ -116,6 +116,7 @@ golgotha.local.validate = function(f) {
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
