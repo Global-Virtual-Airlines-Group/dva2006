@@ -78,7 +78,7 @@ public class ManualCommand extends LibraryEditCommand {
 			ManualAccessControl access = new ManualAccessControl(ctx, null);
 			access.setEntry(entry);
 			access.validate();
-			boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
+			boolean ourAccess = isNew ? access.getCanCreate() : access.getCanEdit();
 			if (!ourAccess)
 				throw securityException("Cannot create/edit Document Library entry");
 
@@ -105,14 +105,11 @@ public class ManualCommand extends LibraryEditCommand {
 			
 			// Populate Flight Academy Certifications
 			boolean hasCerts = Boolean.parseBoolean(ctx.getParameter("hasCerts"));
-			if (hasCerts) {
-				Collection<String> certs = ctx.getParameters("certNames");
-				entry.addCertifications((certs == null) ? new HashSet<String>() : certs);	
-			}
+			if (hasCerts)
+				entry.addCertifications(ctx.getParameters("certNames", Collections.emptySet()));
 			
 			// Set public field
-			boolean ignoreCerts = Boolean.parseBoolean(ctx.getParameter("ignoreCerts"));
-			entry.setIgnoreCertifcations(ignoreCerts && (!entry.getCertifications().isEmpty()));
+			entry.setIgnoreCertifcations(Boolean.parseBoolean(ctx.getParameter("ignoreCerts")) && (!entry.getCertifications().isEmpty()));
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oe, entry, "lastModified");
