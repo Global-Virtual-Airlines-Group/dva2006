@@ -246,8 +246,10 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			}
 			
 			// Get associated documents
+			GetResources rdao = new GetResources(con);
 			GetDocuments ddao = new GetDocuments(con);
 			ctx.setAttribute("docs", ddao.getByCertification(ctx.getDB(), cert.getCode()), REQUEST);
+			ctx.setAttribute("rsrcs", rdao.getByCertification(ctx.getDB(), cert.getCode()), REQUEST);
 			
 			// Get audit log
 			readAuditLog(ctx, cert);

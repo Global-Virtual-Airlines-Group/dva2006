@@ -23,9 +23,7 @@ golgotha.form.validate({f:f.desc, l:8, t:'Resource Description'});
 golgotha.form.validate({f:f.category, t:'Resource Category'});
 
 // Prepend a protocol to the URL
-if (f.url.value.indexOf('://') == -1)
-	f.url.value = 'http://' + f.url.value;
-
+if (f.url.value.indexOf('://') == -1) f.url.value = 'https://' + f.url.value;
 golgotha.form.submit(f);
 return true;
 };
@@ -57,13 +55,21 @@ return true;
  <td class="label">Category</td>
  <td class="data"><el:combo name="category" idx="*" size="1" className="req" firstEntry="-" value="${resource.category}" options="${cats}" /></td>
 </tr>
+<content:filter roles="AcademyAdmin,Instructor,HR">
+<c:if test="${!empty certs}">
+<tr>
+ <td class="label top">Flight Academy Certifications</td>
+ <td class="data"><el:check name="certNames" width="175" cols="4" className="small" newLine="true" checked="${resource.certifications}" options="${certs}" /></td>
+</tr>
+<el:text type="hidden" name="hasCerts" value="true" readOnly="true" />
+</c:if>
+</content:filter>
 <c:if test="${!empty resource}">
 <c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
 <c:set var="lastUpd" value="${pilots[resource.lastUpdateID]}" scope="page" />
 <tr>
  <td class="label">Created on</td>
- <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by
- ${author.name} (${author.pilotCode})</td>
+ <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by ${author.name} (${author.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Last Updated by</td>
@@ -81,9 +87,11 @@ return true;
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.getPublic()}" label="This is a public Web Resource" /></td>
+ <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.getPublic()}" label="This is a public Web Resource" /><br />
+<el:box name="ignoreCerts" idx="*" value="true" checked="${resource.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
