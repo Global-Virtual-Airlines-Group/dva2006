@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to write Web Resources to a database.
  * @author Luke
- * @version 9.1
+ * @version 10.4
  * @since 1.0
  */
 
@@ -29,7 +29,8 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			startTransaction();
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, IGNORE_CERTS, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setInt(1, r.getID());
 				ps.setString(2, r.getURL());
 				ps.setString(3, r.getTitle());
@@ -41,12 +42,33 @@ public class SetResource extends DAO {
 				ps.setInt(9, r.getLastUpdateID());
 				ps.setInt(10, r.getHits());
 				ps.setBoolean(11, r.getPublic());
+				ps.setBoolean(12, r.getIgnoreCertifications());
 				executeUpdate(ps, 1);
 			}
 			
-			// Get new database ID
-			if (r.getID() == 0) r.setID(getNewID());
+			// Clean out the certification names, els get new ID
+			if (r.getID() != 0) {
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTRSRCS WHERE (ID=?)")) {
+					ps.setInt(1, r.getID());
+					executeUpdate(ps, 0);
+				}
+			} else
+				r.setID(getNewID());
+			
+			// Write the certification names
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTRSRCS (ID, CERT) VALUES (?, ?)")) {
+				ps.setInt(1, r.getID());
+				for (String cert : r.getCertifications()) {
+					ps.setString(2, cert);
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, r.getCertifications().size());
+			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

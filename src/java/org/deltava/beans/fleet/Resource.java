@@ -3,6 +3,8 @@ package org.deltava.beans.fleet;
 
 import java.net.*;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.TreeSet;
 
 import org.deltava.beans.*;
 
@@ -21,6 +23,9 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, A
 	private String _category;
 	private int _authorID;
 	private int _lastUpdateID;
+	
+	private final Collection<String> _certs = new TreeSet<String>();
+	private boolean _ignoreCerts;
 	
 	private Instant _created;
 	private int _hitCount;
@@ -122,6 +127,25 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, A
 		return _public;
 	}
 	
+    /**
+     * Returns whether this Resource should be shown to users not enrolled in the Flight Academy Certifications.
+     * @return TRUE if visible to all, otherwise FALSE
+     * @see Resource#setIgnoreCertifcations(boolean)
+     */
+    public boolean getIgnoreCertifications() {
+    	return _ignoreCerts;
+    }
+	
+    /**
+     * Returns all Certifications linked to this Resource.
+     * @return a Collection of Certification names
+     * @see Resource#addCertification(String)
+     * @see Resource#addCertifications(Collection)
+     */
+    public Collection<String> getCertifications() {
+    	return _certs;
+    }
+	
 	/**
 	 * Updates the URL of this Resource.
 	 * @param url the URL
@@ -169,6 +193,29 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, A
 		_category = cat;
 	}
 	
+    /**
+     * Adds a Flight Academy Certification to this Resource.
+     * @param cert the Certification name
+     * @see Resource#addCertifications(Collection)
+     * @see Resource#getCertifications()
+     */
+    public void addCertification(String cert) {
+    	_certs.add(cert);
+    }
+    
+    /**
+     * Clears the list of Flight Academy Certifications and replaces it with a new list.
+     * @param certs a Collection of Certification names
+     * @see Resource#addCertification(String)
+     * @see Resource#getCertifications()
+     */
+    public void addCertifications(Collection<String> certs) {
+    	if (certs != null) {
+    		_certs.clear();
+    		_certs.addAll(certs);
+    	}
+    }
+	
 	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
@@ -212,6 +259,15 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, A
 	public void setPublic(boolean isPublic) {
 		_public = isPublic;
 	}
+	
+    /**
+     * Marks this Resource as visible to users not enrolled in the specified Flight Academy Certifications.
+     * @param ignoreCerts TRUE if visible to all users, otherwise FALSE
+     * @see Resource#getIgnoreCertifications()
+     */
+    public void setIgnoreCertifcations(boolean ignoreCerts) {
+    	_ignoreCerts = ignoreCerts;
+    }
 
 	@Override
 	public String getAuditID() {

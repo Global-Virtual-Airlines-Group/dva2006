@@ -54,7 +54,7 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 			ac.validate();
 			boolean canSave = (r.getID() == 0) ? ac.getCanCreate() : ac.getCanEdit();
 			if (!canSave)
-				throw securityException("Cannot edit Web Resource");
+				throw securityException(String.format("Cannot %s Web Resource", (r.getID() == 0) ? "create" : "edit"));
 
 			// Copy fields from request
 			r.setTitle(ctx.getParameter("title"));
@@ -63,6 +63,15 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 			r.setDescription(ctx.getParameter("desc"));
 			r.setLastUpdateID(ctx.getUser().getID());
 			r.setPublic(ac.getCanEdit() && Boolean.parseBoolean(ctx.getParameter("isPublic")));
+			
+			// Populate Flight Academy Certifications
+			boolean hasCerts = Boolean.parseBoolean(ctx.getParameter("hasCerts"));
+			if (hasCerts) {
+				r.addCertifications(ctx.getParameters("certNames", Collections.emptySet()));
+				r.setPublic(true);
+			}
+			
+			r.setIgnoreCertifcations(Boolean.parseBoolean(ctx.getParameter("ignoreCerts")) && !r.getCertifications().isEmpty());
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(or, r);
@@ -126,6 +135,10 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 				// Save the User names
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+				
+				// Get Flight Academy certs
+				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
