@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to load Web Resource data.
  * @author Luke
- * @version 9.1
+ * @version 10.4
  * @since 1.0
  */
 
@@ -85,6 +85,28 @@ public class GetResources extends DAO {
 			ps.setBoolean(1, true);
 			ps.setInt(2, id);
 			if (catName != null) ps.setString(3, catName);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Resources associated with a particular Flight Academy certification.
+	 * @param dbName the database name
+	 * @param certName the Certification name
+	 * @return a Collection of Resource beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Resource> getByCertification(String dbName, String certName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT R.* FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".RESOURCES R, exams.CERTRSRCS CR WHERE (R.ID=CR.ID) AND (CR.CERT=?)");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, certName);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
