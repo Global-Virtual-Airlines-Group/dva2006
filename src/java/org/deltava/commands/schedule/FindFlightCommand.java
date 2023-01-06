@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class FindFlightCommand extends AbstractCommand {
 		
 		// Init search criteria
 		ScheduleSearchCriteria ssc = (ScheduleSearchCriteria) ctx.getSession().getAttribute("fafCriteria");
+		boolean hasCriteria = (ssc != null);
 		boolean isSearch = Boolean.parseBoolean(ctx.getParameter("doSearch"));
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 		int fn = Math.max(0, StringUtils.parse(ctx.getParameter("flightNumber"), 0));
@@ -72,7 +73,7 @@ public class FindFlightCommand extends AbstractCommand {
 					RoutePair lf = pireps.get(0);
 					RoutePair lf2 = pireps.get(1);
 					RoutePair lf3 = pireps.get(2);
-					if (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD())) {
+					if (!hasCriteria && (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD()))) {
 						ssc.setAirportD(lf.getAirportA());
 						ssc.setMaxResults(25);
 						ctx.setAttribute("fafCriteria", ssc, SESSION);
