@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import javax.management.MXBean;
 /**
  * An interface for cache manager JMX Beans. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.2
  * @see org.deltava.util.cache.CacheManager
  */
@@ -39,6 +39,12 @@ public interface CacheManagerMXBean {
 	 * @return the number of cache misses since the last refresh
 	 */
 	public Long getMisses();
+	
+	/**
+	 * Returns the cache hit ratio.
+	 * @return the cache hit percentage
+	 */
+	public Float getRatio();
 	
 	/**
 	 * Returns a collection of cache information.
