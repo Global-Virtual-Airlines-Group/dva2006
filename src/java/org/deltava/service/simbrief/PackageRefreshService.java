@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.3
  */
 
@@ -54,7 +54,8 @@ public class PackageRefreshService extends WebService {
 				throw error(SC_FORBIDDEN, "Cannot refresh SimBrief package for Flight Report " + fr.getID(), false);
 			
 			// Load the briefing
-			BriefingPackage pkg = frdao.getSimBrief(fr.getID(), ctx.getDB());
+			GetSimBriefPackages sbpdao = new GetSimBriefPackages(con);
+			BriefingPackage pkg = sbpdao.getSimBrief(fr.getID(), ctx.getDB());
 			if (pkg == null)
 				throw error(SC_NOT_FOUND, "No SimBrief package for Flight Report " + fr.getID(), false);
 			

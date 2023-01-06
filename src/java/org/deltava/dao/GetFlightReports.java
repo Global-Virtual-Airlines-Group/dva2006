@@ -9,7 +9,6 @@ import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.simbrief.*;
 import org.deltava.beans.stats.RouteStats;
 
 import org.deltava.util.*;
@@ -545,35 +544,6 @@ public class GetFlightReports extends DAO {
 			}
 
 			return execute(ps);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Loads a SimBrief briefing package for a Flight Report.
-	 * @param id the Flight Report database ID
-	 * @param db the database name
-	 * @return a SimBrief package, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public BriefingPackage getSimBrief(int id, String db) throws DAOException {
-		
-		StringBuilder sqlBuf = new StringBuilder("SELECT SIMBRIEF_ID, XML FROM ");
-		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".	PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
-		
-		BriefingPackage sbdata = null;
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setInt(1, id);
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					sbdata = SimBriefParser.parse(rs.getString(2));
-					sbdata.setSimBriefID(rs.getString(1));
-				}
-			}
-			
-			return sbdata;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

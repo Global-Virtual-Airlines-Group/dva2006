@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.3
  */
 
@@ -26,6 +26,7 @@ public class BriefingPackage extends DatabaseBean {
 	private String _sbUserID;
 	private Instant _createdOn;
 	private String _tailCode;
+	private String _airframeID;
 	
 	private ETOPS _etops = ETOPS.ETOPS60;
 	private GeoLocation _etopsMidpoint;
@@ -131,6 +132,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public String getTailCode() {
 		return _tailCode;
+	}
+	
+	/**
+	 * Returns the SimBrief custom airframe ID.
+	 * @return the aiframe ID
+	 */
+	public String getAirframeID() {
+		return _airframeID;
 	}
 	
 	/**
@@ -347,6 +356,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setTailCode(String tc) {
 		_tailCode = tc;
+	}
+	
+	/**
+	 * Updates the SimBrief custom airframe ID.
+	 * @param id the ID
+	 */
+	public void setAirframeID(String id) {
+		_airframeID = id;
 	}
 	
 	/**
