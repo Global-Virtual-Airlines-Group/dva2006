@@ -1,7 +1,9 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
+
+import java.sql.Connection;
 
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.simbrief.BriefingPackage;
@@ -16,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to download a SimBrief briefing package.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.3
  */
 
@@ -33,7 +35,8 @@ public class PackageDownloadService extends WebService {
 		
 		BriefingPackage sbdata = null;
 		try {
-			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(StringUtils.parse(ctx.getParameter("id"), 0), ctx.getDB());
 			if (fr == null)
 				throw error(SC_NOT_FOUND, "Invalid Flight Report - " + ctx.getParameter("id"), false);
@@ -45,7 +48,8 @@ public class PackageDownloadService extends WebService {
 				throw error(SC_FORBIDDEN, "Cannot view SimBrief package for Flight " + fr.getID(), false);
 			
 			// Load the package
-			sbdata = frdao.getSimBrief(fr.getID(), ctx.getDB());
+			GetSimBriefPackages sbdao = new GetSimBriefPackages(con);
+			sbdata = sbdao.getSimBrief(fr.getID(), ctx.getDB());
 			if (sbdata == null)
 				throw error(SC_NOT_FOUND, "No SimBrief package for Flight " + fr.getID(), false);
 		} catch (DAOException de) {

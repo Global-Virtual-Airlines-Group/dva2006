@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -284,7 +284,7 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeSimBrief(BriefingPackage sb) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, FUEL, OFPTYPE, RUNWAY_D, RUNWAY_A, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_SIMBRIEF (ID, SIMBRIEF_ID, AIRAC, CREATED, FUEL, OFPTYPE, RUNWAY_D, RUNWAY_A, TAILCODE, AIRFRAME_ID, ROUTE, XML) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, sb.getID());
 			ps.setString(2, sb.getSimBriefID());
 			ps.setInt(3, sb.getAIRAC());
@@ -293,8 +293,10 @@ public class SetFlightReport extends DAO {
 			ps.setInt(6, sb.getFormat().ordinal());
 			ps.setString(7, sb.getRunwayD());
 			ps.setString(8, sb.getRunwayA());
-			ps.setString(9, sb.getRoute());
-			ps.setString(10, XMLUtils.format(sb.getXML(), "UTF-8"));
+			ps.setString(9, sb.getTailCode());
+			ps.setString(10, sb.getAirframeID());
+			ps.setString(11, sb.getRoute());
+			ps.setString(12, XMLUtils.format(sb.getXML(), "UTF-8"));
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

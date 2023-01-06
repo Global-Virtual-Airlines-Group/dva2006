@@ -1,5 +1,7 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
+
+import java.sql.Connection;
 
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.simbrief.BriefingPackage;
@@ -12,7 +14,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to display a SimBrief pilot briefing.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.3
  */
 
@@ -26,7 +28,8 @@ public class BriefingCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
-			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
@@ -38,7 +41,8 @@ public class BriefingCommand extends AbstractCommand {
 				throw securityException("Cannot view SimBrief data for Flight Report " + fr.getID());
 			
 			// Load the SimBrief package
-			BriefingPackage pkg = frdao.getSimBrief(fr.getID(), ctx.getDB());
+			GetSimBriefPackages sbdao = new GetSimBriefPackages(con);
+			BriefingPackage pkg = sbdao.getSimBrief(fr.getID(), ctx.getDB());
 			if (pkg == null)
 				throw notFoundException("No SimBrief data for Flight Report " + ctx.getID());
 			
