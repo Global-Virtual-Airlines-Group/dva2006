@@ -11,13 +11,13 @@ package org.deltava.beans.system;
 public class VersionInfo {
 
     public static final int MAJOR = 10;
-    public static final int MINOR = 3;
+    public static final int MINOR = 4;
     
-    private static final int BUILD = 845;
-    private static final int HOTFIX = 1;
+    private static final int BUILD = 846;
+    private static final int HOTFIX = 0;
     
-    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2022 Global Virtual Airlines Group. All Rights Reserved.";
-    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2022 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
+    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2023 Global Virtual Airlines Group. All Rights Reserved.";
+    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2023 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
     // static class
     private VersionInfo() {
