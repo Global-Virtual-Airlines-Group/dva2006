@@ -106,15 +106,13 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		
-		Resource r = null;
-		if (ctx.getID() != 0) {
-			try {
-				Connection con = ctx.getConnection();
+		try {
+			Connection con = ctx.getConnection();
 
-				// Get the DAO and the resource
+			// Get the DAO and the resource
+			if (ctx.getID() != 0) {
 				GetResources dao = new GetResources(con);
-				r = dao.get(ctx.getID());
+				Resource r = dao.get(ctx.getID());
 				if (r == null)
 					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
 
@@ -127,34 +125,29 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 				// Load audit log
 				readAuditLog(ctx, r);
 
-				// Load the author IDs
-				Collection<Integer> IDs = new HashSet<Integer>();
-				IDs.add(Integer.valueOf(r.getAuthorID()));
-				IDs.add(Integer.valueOf(r.getLastUpdateID()));
-
-				// Save the User names
+				// Load the authors
 				GetPilot pdao = new GetPilot(con);
-				ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+				ctx.setAttribute("pilots", pdao.getByID(Set.of(Integer.valueOf(r.getAuthorID()), Integer.valueOf(r.getLastUpdateID())), "PILOTS"), REQUEST);
 				
-				// Get Flight Academy certs
-				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
-				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
-			} catch (DAOException de) {
-				throw new CommandException(de);
-			} finally {
-				ctx.release();
+				// Save in request
+				ctx.setAttribute("resource", r, REQUEST);
+				ctx.setAttribute("access", ac, REQUEST);
+			} else {
+				// Check our Access
+				ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
+				ac.validate();
+				if (!ac.getCanCreate())
+					throw securityException("Cannot create Web Resource");
 			}
+				
+			// Get Flight Academy certs
+			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+			ctx.setAttribute("certs", cdao.getAll(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
-		
-		// Check our Access
-		ResourceAccessControl ac = new ResourceAccessControl(ctx, r);
-		ac.validate();
-		if (!ac.getCanCreate())
-			throw securityException("Cannot create Web Resource");
-		
-		// Save the resource in the request
-		ctx.setAttribute("resource", r, REQUEST);
-		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
