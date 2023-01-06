@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 5.0
  */
 
@@ -32,14 +32,15 @@ public class CacheManager {
 	
 	/**
 	 * Returns information about all caches.
+	 * @param getRemoteSize TRUE to fetch remote cache sizes, otherwise FALSE
 	 * @return a Collection of CacheInfo objects
 	 */
-	public static Collection<CacheInfo> getCacheInfo() {
+	public static Collection<CacheInfo> getCacheInfo(boolean getRemoteSize) {
 		try {
 			_r.lock();
 			Collection<Map.Entry<String, Cache<?>>> entries = new ArrayList<>(_caches.entrySet());
 			List<CacheInfo> results = new ArrayList<CacheInfo>(entries.size() + 2);
-			entries.forEach(me -> results.add(new CacheInfo(me.getKey(), me.getValue())));
+			entries.forEach(me -> results.add(new CacheInfo(me.getKey(), me.getValue(), getRemoteSize)));
 			Collections.reverse(results);
 			return results;
 		} finally {
