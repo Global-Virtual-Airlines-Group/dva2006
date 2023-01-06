@@ -1,10 +1,10 @@
-// Copyright 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 8.0
+ * @version 10.4
  * @since 2.6
  */
 
@@ -24,16 +24,17 @@ public class CacheInfo implements java.io.Serializable, org.deltava.beans.ViewEn
 	 * Initializes the information bean from a Cache.
 	 * @param id the Cache ID
 	 * @param c the Cache
+	 * @param getRemoteSize TRUE to fetch remote cache sizes, otherwise FALSE 
 	 */
-	CacheInfo(String id, Cache<?> c) {
+	CacheInfo(String id, Cache<?> c, boolean getRemoteSize) {
 		super();
 		_id = id;
 		_type = c.getClass().getSimpleName();
 		_hits = c.getHits();
 		_reqs = c.getRequests();
-		_size = c.size();
 		_capacity = c.getMaxSize();
 		_isRemote = (c instanceof RedisCache);
+		_size = (!_isRemote || getRemoteSize) ? c.size() : 0;
 		_isGeo = (c instanceof GeoCache);
 		_errors = c.getErrors();
 	}
