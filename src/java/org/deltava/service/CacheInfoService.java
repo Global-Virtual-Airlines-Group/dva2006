@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Service to display application cache information.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 6.2
  */
 
@@ -34,13 +34,13 @@ public class CacheInfoService extends WebService {
 			throw error(SC_UNAUTHORIZED, "Not in Admin role", false);
 		
 		// Get cache info
-		List<CacheInfo> info = new ArrayList<CacheInfo>(CacheManager.getCacheInfo());
+		List<CacheInfo> info = new ArrayList<CacheInfo>(CacheManager.getCacheInfo(true));
 		String fmt = ctx.getUser().getNumberFormat();
 		
 		// Tell ACARS to update its cache
 		if (SystemData.getBoolean("acars.enabled")) {
 			EventDispatcher.send(new SystemEvent(EventType.CACHE_STATS));
-			ThreadUtils.sleep(50);
+			ThreadUtils.sleep(75);
 			
 			@SuppressWarnings("unchecked")
 			Collection<CacheInfo> acarsInfo = (Collection<CacheInfo>) IPCUtils.reserialize(SharedData.get(SharedData.ACARS_CACHEINFO));
@@ -74,7 +74,7 @@ public class CacheInfoService extends WebService {
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "caches");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(2);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -85,10 +85,6 @@ public class CacheInfoService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;

@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.*;
 /**
  * A JMX bean to export Cache Manager statistics.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.2
  */
 
@@ -51,6 +51,11 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	}
 	
 	@Override
+	public Float getRatio() {
+		return Float.valueOf((_reqs == 0) ? 0 : _hits * 1f / _reqs);
+	}
+	
+	@Override
 	public CacheMBean[] getCacheInfo() {
 		return _info.toArray(new CacheMBean[0]);
 	}
@@ -63,7 +68,7 @@ public class JMXCacheManager implements CacheManagerMXBean, JMXRefresh {
 	@Override
 	public synchronized void update() {
 		_info.clear();
-		Collection<CacheInfo> info = CacheManager.getCacheInfo(); long reqs = 0; long hits = 0;
+		Collection<CacheInfo> info = CacheManager.getCacheInfo(false); long reqs = 0; long hits = 0;
 		for (CacheInfo inf : info) {
 			CacheMBean mb = new CacheMBeanImpl(inf);
 			reqs += inf.getRequests();
