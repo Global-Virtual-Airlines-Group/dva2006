@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -41,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -459,7 +459,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check for SimBrief package
 			BriefingPackage sbPkg = null;
 			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
-				sbPkg = dao.getSimBrief(fr.getID(), ctx.getDB());
+				GetSimBriefPackages sbpdao = new GetSimBriefPackages(con);
+				sbPkg = sbpdao.getSimBrief(fr.getID(), ctx.getDB());
 				if (sbPkg != null) {
 					List<NavigationDataBean> mrks = sbPkg.getETOPSAlternates().stream().map(ETOPSHelper::generateAlternateMarker).collect(Collectors.toList());
 					mrks.add(ETOPSHelper.generateMidpointMarker(sbPkg.getETOPSMidpoint(), sbPkg.getETOPSAlternates()));
@@ -480,9 +481,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				ctx.setAttribute("alternates", alts, REQUEST);
 				
-				// List possible tail codes and ETOPS options
+				// List possible tail codes, custom airframes and ETOPS options
 				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
+					GetSimBriefPackages sbpdao = new GetSimBriefPackages(con);
 					ctx.setAttribute("tailCodes", dao.getTailCodes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
+					ctx.setAttribute("sbAirframes", sbpdao.getAirframes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
 					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= acOpts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
 				}
 				
