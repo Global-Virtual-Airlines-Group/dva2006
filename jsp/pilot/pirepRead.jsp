@@ -352,7 +352,8 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty tailCodes}">
 <tr class="sbData">
  <td class="label">Tail Code</td>
- <td class="data"><el:combo name="tailCode" size="1" options="${tailCodes}" firstEntry="[ SELECT AIRCRAFT ]" /></td>
+ <td class="data"><el:combo name="tailCode" size="1" options="${tailCodes}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void golgotha.local.sbAirframeUpdate(this)" />
+ <span id="sbAirframe" style="display:none;"><el:box name="disableCustomAirframe" value="true" label="Disable custom SimBrief airframe lookup" onChange="golgotha.local.sbCustomToggle(this)" /><span id="sbAirframeInfo"> - <span id="sbAirframeID" class="small ter ita"></span></span></span></td>
 </tr>
 </c:if>
 <tr class="sbData">
@@ -628,6 +629,9 @@ return true;
 <!-- SimBrief integration -->
 <script async>
 <c:if test="${empty sbPackage}">
+golgotha.local.acType = '${acInfo.ICAO}';
+golgotha.local.sbAirframes = {<c:forEach var="sbAirframe" items="${sbAirframes}" varStatus="hasNext">'${sbAirframe.tailCode}':'${sbAirframe.ID}'<c:if test="${!hasNext.last}">,</c:if></c:forEach>};
+golgotha.util.disable(document.forms[0].disableCustomAirframe, (golgotha.local.sbAirframes.length == 0));
 golgotha.local.sbSubmit = function() {
 	golgotha.form.submit();
 	const f = document.forms[0];
@@ -663,6 +667,43 @@ golgotha.local.loadPax = function(f) {
 	};
 
 	xreq.send(null);
+	return true;
+};
+
+golgotha.local.sbAirframeUpdate = function(cb) {
+	const sbf = document.getElementById('sbapiform');
+	if (cb.selectedIndex < 1) {
+		sbf.type.value = golgotha.local.acType;
+		golgotha.util.display('sbAirframe', false);
+		return true;	
+	}
+
+	const noCustom = cb.form.disableCustomAirframe.checked;
+	const customID = golgotha.local.sbAirframes[golgotha.form.getCombo(cb)];
+	sbf.type.value = (!noCustom && (customID)) ? customID : golgotha.local.acType;
+	golgotha.local.setSBID(customID);
+	golgotha.util.display('sbAirframe', (customID != null));
+	return true;
+};
+
+golgotha.local.sbCustomToggle = function(cb) {
+	const sbf = document.getElementById('sbapiform');
+	if (cb.checked) {
+		sbf.type.value = golgotha.local.acType;
+		golgotha.local.setSBID();
+	} else {
+		const customID = golgotha.local.sbAirframes[golgotha.form.getCombo(cb.form.tailCode)];
+		golgotha.local.setSBID(customID);
+		sbf.type.value = (customID) ? customID : golgotha.local.acType;
+	}
+
+	return true;
+};
+
+golgotha.local.setSBID = function(id) {
+	const sbID = document.getElementById('sbAirframeID');
+	sbID.innerText = (id) ? '(SimBrief ID: ' + id +')' : '';
+	golgotha.util.display('sbAirframeInfo', (id));
 	return true;
 };
 </c:if><c:if test="${!empty sbPackage}">
