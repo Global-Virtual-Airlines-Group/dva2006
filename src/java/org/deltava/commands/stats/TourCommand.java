@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.0
  */
 
@@ -70,8 +70,8 @@ public class TourCommand extends AbstractAuditFormCommand {
 			}
 
 			// Time parser init
-			t.setStartDate(parseDateTime(ctx, "start"));
-			t.setEndDate(parseDateTime(ctx, "end"));
+			t.setStartDate(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			t.setEndDate(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			ZonedDateTime zst = ZonedDateTime.ofInstant(t.getStartDate(), ZoneOffset.UTC);
 			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
 			tfb.parseDefaulting(ChronoField.YEAR_OF_ERA, zst.get(ChronoField.YEAR_OF_ERA));
@@ -188,6 +188,11 @@ public class TourCommand extends AbstractAuditFormCommand {
 				ctx.setAttribute("tour", t, REQUEST);
 				ctx.setAttribute("legData", ja.toString(), REQUEST);
 				ctx.setAttribute("access", ac, REQUEST);
+				
+				// Convert start/end date/times to user time zone
+				ZoneId tz = ctx.getUser().getTZ().getZone();
+				ctx.setAttribute("startDate", ZonedDateTime.ofInstant(t.getStartDate(), tz), REQUEST);
+				ctx.setAttribute("endDate", ZonedDateTime.ofInstant(t.getEndDate(), tz), REQUEST);
 			} else {
 				TourAccessControl ac = new TourAccessControl(ctx, null);
 				ac.validate();
