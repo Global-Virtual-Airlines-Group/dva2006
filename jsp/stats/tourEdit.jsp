@@ -60,12 +60,14 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="4"><el:check name="network" idx="*" cols="5" width="90" options="${networks}" checked="${tour.networks}" /></td>
 </tr>
 <tr>
- <td class="label">Start Date</td>
- <td class="data" colspan="4"><el:text name="startDate" required="true" idx="*" size="9" max="10" value="${fn:dateFmt(tour.startDate, 'MM/dd/yyyy')}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
+ <td class="label">Tour Starts on</td>
+ <td class="data" colspan="4"><el:text name="startDate" required="true" idx="*" size="9" max="10" value="${fn:dateFmt(startDate, 'MM/dd/yyyy')}" /> at <el:text name="startTime" required="true"  idx="*" size="4" max="5" value="${fn:dateFmt(startDate, 'HH:mm')}" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
- <td class="label">End Date</td>
- <td class="data" colspan="4"><el:text name="endDate" required="true" idx="*" size="9" max="10" value="${fn:dateFmt(tour.endDate, 'MM/dd/yyyy')}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+ <td class="label">Tour Ends on</td>
+ <td class="data" colspan="4"><el:text name="endDate" required="true" idx="*" size="9" max="10" value="${fn:dateFmt(endDate, 'MM/dd/yyyy')}" /> at <el:text name="endTime" required="true" idx="*" size="4" max="5" value="${fn:dateFmt(endDate, 'HH:mm')}" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Status</td>
@@ -189,7 +191,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </content:region>
 </content:page>
 <c:if test="${!empty tour.flights}">
-<script>
+<script async>
 golgotha.local.flightData = ${legData};
 const rows = golgotha.util.getElementsByClass('legRow', 'tr', document.getElementById('baseTable'));
 for (var x = 0; x < rows.length; x++)
