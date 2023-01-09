@@ -65,7 +65,10 @@ public class SimBriefParser {
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
 		sb.setTailCode(XMLUtils.getChildText(re, "aircraft", "reg"));
-		sb.setAirframeID(XMLUtils.getChildText(re, "api_params", "type"));
+		String airframeID = XMLUtils.getChildText(re, "api_params", "type");
+		if ((airframeID != null) && (airframeID.length() > 8))
+			sb.setAirframeID(airframeID);
+	
 		re.getChildren("alternate").stream().map(ae -> SystemData.getAirport(ae.getChildTextTrim("iata_code"))).filter(Objects::nonNull).forEach(sb::addAirportL);
 		sb.setXML(doc);
 		
