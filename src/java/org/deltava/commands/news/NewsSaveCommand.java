@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save System News entries.
  * @author Luke
- * @version 9.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -58,6 +58,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
+				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -65,8 +66,9 @@ public class NewsSaveCommand extends AbstractCommand {
 					throw securityException("Cannot edit System News entry");
 
 				// Create the news entry
-				nws = new News(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
+				nws = new News(ctx.getParameter("subject"), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
+				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
 
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

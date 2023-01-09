@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 					throw securityException("Cannot create NOTAM");
 
 				// Create the news entry
-				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
+				nws = new Notice(ctx.getParameter("subject"), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
 				nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
