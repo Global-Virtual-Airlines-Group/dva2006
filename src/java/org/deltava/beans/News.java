@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A class for storing System News entries.
  * @author Luke
- * @version 7.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -15,22 +15,20 @@ public class News extends DatabaseBean implements AuthoredBean {
     private Instant _date = Instant.now();
     private String _subject;
     private String _body;
+    private boolean _isHTML;
 
-    private String _author;
     private int _authorID;
 
     /**
      * Create a new System News entry object, with the Date defaulting to the current date/time
      * @param sbj This entry's title
-     * @param aN This entry's author's name
      * @param body This entry's content
      * @throws NullPointerException if sbj is null
      */
-    public News(String sbj, String aN, String body) {
+    public News(String sbj, String body) {
         super();
         setSubject(sbj);
         setBody(body);
-        _author = aN;
     }
 
     /**
@@ -50,14 +48,6 @@ public class News extends DatabaseBean implements AuthoredBean {
         return _subject;
     }
 
-    /**
-     * Return the name of this entry's author
-     * @return The Name of the author
-     */
-    public String getAuthorName() {
-        return _author;
-    }
-
     @Override
     public int getAuthorID() {
         return _authorID;
@@ -71,15 +61,14 @@ public class News extends DatabaseBean implements AuthoredBean {
     public String getBody() {
         return _body;
     }
-
+    
     /**
-     * Compare two System News entries by comparing their date.
-     * @see Comparable#compareTo(Object)
+     * Returns if this entry is raw HTML.
+     * @return TRUE if the entry is raw HTML, otherwise FALSE
+     * @see News#getIsHTML()
      */
-    @Override
-    public int compareTo(Object o2) {
-        News n2 = (News) o2;
-        return (_date.compareTo(n2.getDate()) * -1);
+    public boolean getIsHTML() {
+ 	   return _isHTML;
     }
 
     @Override
@@ -108,11 +97,26 @@ public class News extends DatabaseBean implements AuthoredBean {
     }
     
     /**
-     * Updates this entry's body content
+     * Updates this entry's body content.
      * @param body the new content
      * @see News#getBody()
      */
     public void setBody(String body) {
        _body = body;
+    }
+    
+    /**
+     * Updates if this entry is raw HTML.
+     * @param html TRUE if raw HTML text, otherwise FALSE
+     * @see News#getIsHTML()
+     */
+    public void setIsHTML(boolean html) {
+ 	   _isHTML = html;
+    }
+    
+    @Override
+    public int compareTo(Object o2) {
+        News n2 = (News) o2;
+        return -(_date.compareTo(n2.getDate()));
     }
 }

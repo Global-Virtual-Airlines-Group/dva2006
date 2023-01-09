@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 6.2
  */
 
@@ -87,8 +87,8 @@ public class GetAggregateStatistics extends DAO {
 	public Collection<FlightStatsEntry> getAirportStatistics(FlightStatsSort s, int apType) throws DAOException {
 
 		// Get the SQL statement to use
-		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
-			+ "SUM(SIMBRIEF) AS SBL, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, "
+			+ "SUM(TOUR) AS TLEGS, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
 			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, "
 			+ "SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, "
 			+ "common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
@@ -109,8 +109,8 @@ public class GetAggregateStatistics extends DAO {
 	
 	/**
 	 * Returns online network flight statstics by date.
-	 * @param srt
-	 * @param grp
+	 * @param srt the FlightStatsSort option
+	 * @param grp the FlightStatsGroup option
 	 * @return a Collection of OnlineStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -169,10 +169,9 @@ public class GetAggregateStatistics extends DAO {
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
-		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, "
-			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
-			+ "SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, "
-			+ "AVG(LOADFACTOR) AS LF, ");
+		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, SUM(TOUR) AS TLEGS, "
+			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, "
+			+ "SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
 		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
 			sqlBuf.append("0 AS PIDS");
 		else
@@ -213,22 +212,23 @@ public class GetAggregateStatistics extends DAO {
 				entry.setHistoricLegs(rs.getInt(5));
 				entry.setDispatchLegs(rs.getInt(6));
 				entry.setSimBriefLegs(rs.getInt(7));
-				entry.setACARSLegs(rs.getInt(8));
-				entry.setOnlineLegs(rs.getInt(9) + rs.getInt(10));
-				entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(11));
-				entry.setFSVersionLegs(Simulator.FS2002, rs.getInt(12));
-				entry.setFSVersionLegs(Simulator.FS9, rs.getInt(13));
-				entry.setFSVersionLegs(Simulator.FSX, rs.getInt(14));
-				entry.setFSVersionLegs(Simulator.P3D, rs.getInt(15));
-				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(16));
-				entry.setFSVersionLegs(Simulator.XP10, rs.getInt(17));
-				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(18));
-				entry.setFSVersionLegs(Simulator.XP12, rs.getInt(19));
-				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(20));
-				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(21));
-				entry.setPax(rs.getInt(22));
-				entry.setLoadFactor(rs.getDouble(23));
-				entry.setPilotIDs(rs.getInt(24));
+				entry.setTourLegs(rs.getInt(8));
+				entry.setACARSLegs(rs.getInt(9));
+				entry.setOnlineLegs(rs.getInt(10) + rs.getInt(11));
+				entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(12));
+				entry.setFSVersionLegs(Simulator.FS2002, rs.getInt(13));
+				entry.setFSVersionLegs(Simulator.FS9, rs.getInt(14));
+				entry.setFSVersionLegs(Simulator.FSX, rs.getInt(15));
+				entry.setFSVersionLegs(Simulator.P3D, rs.getInt(16));
+				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(17));
+				entry.setFSVersionLegs(Simulator.XP10, rs.getInt(18));
+				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(19));
+				entry.setFSVersionLegs(Simulator.XP12, rs.getInt(20));
+				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(21));
+				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(22));
+				entry.setPax(rs.getInt(23));
+				entry.setLoadFactor(rs.getDouble(24));
+				entry.setPilotIDs(rs.getInt(25));
 				results.add(entry);
 			}
 			

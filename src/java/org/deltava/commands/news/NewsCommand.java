@@ -1,7 +1,9 @@
-// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.*;
+import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.News;
 
@@ -13,7 +15,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to display the System News.
  * @author Luke
- * @version 7.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -29,10 +31,20 @@ public class NewsCommand extends AbstractViewCommand {
 
         ViewContext<News> vc = initView(ctx, News.class);
         try {
-            GetNews dao = new GetNews(ctx.getConnection());
+        	Connection con = ctx.getConnection();
+        	
+        	// Load the news
+            GetNews dao = new GetNews(con);
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
             vc.setResults(dao.getNews());
+            
+            // Get the pilot IDs
+            Collection<Integer> IDs = vc.getResults().stream().map(News::getAuthorID).collect(Collectors.toSet());
+            
+            // Load the pilots
+            GetPilot pdao = new GetPilot(con);
+            ctx.setAttribute("authors", pdao.getByID(IDs, "PILOTS"), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

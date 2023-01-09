@@ -1,4 +1,4 @@
-// Copyright 2005, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to write System News and NOTAMs to the database.
  * @author Luke
- * @version 9.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -30,13 +30,14 @@ public class SetNews extends DAO {
     */
    public void write(News n) throws DAOException {
 	   try {
-		   try (PreparedStatement ps = prepare("INSERT INTO NEWS (PILOT_ID, DATE, SUBJECT, BODY, ID) VALUES (?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE PILOT_ID=N.PILOT_ID, DATE=N.DATE, "
-				+ "SUBJECT=N.SUBJECT, BODY=N.BODY")) {
+		   try (PreparedStatement ps = prepare("INSERT INTO NEWS (PILOT_ID, DATE, ISHTML, SUBJECT, BODY, ID) VALUES (?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE PILOT_ID=N.PILOT_ID, DATE=N.DATE, "
+				+ "ISHTML=N.ISHTML, SUBJECT=N.SUBJECT, BODY=N.BODY")) {
 			   ps.setInt(1, n.getAuthorID());
 			   ps.setTimestamp(2, createTimestamp(n.getDate()));
-			   ps.setString(3, n.getSubject());
-			   ps.setString(4, n.getBody());
-			   ps.setInt(5, n.getID());
+			   ps.setBoolean(3, n.getIsHTML());
+			   ps.setString(4, n.getSubject());
+			   ps.setString(5, n.getBody());
+			   ps.setInt(6, n.getID());
 			   executeUpdate(ps, 1);
 		   }
          

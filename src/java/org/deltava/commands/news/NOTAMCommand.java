@@ -1,7 +1,9 @@
-// Copyright 2005, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.*;
+import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.News;
 
@@ -13,7 +15,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to display Notices to Airmen (NOTAMs).
  * @author Luke
- * @version 7.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -31,10 +33,20 @@ public class NOTAMCommand extends AbstractViewCommand {
         ViewContext<News> vc = initView(ctx, News.class);
         boolean doActive = !"all".equals(ctx.getCmdParameter(OPERATION, null));
         try {
-            GetNews dao = new GetNews(ctx.getConnection());
+        	Connection con = ctx.getConnection();
+        	
+        	// Get the NOTAMs
+            GetNews dao = new GetNews(con);
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
             vc.setResults(doActive? dao.getActiveNOTAMs() : dao.getNOTAMs());
+            
+            // Get the Pilot IDs
+            Collection<Integer> IDs = vc.getResults().stream().map(News::getAuthorID).collect(Collectors.toSet());
+            
+            // Get the authors
+            GetPilot pdao = new GetPilot(con);
+            ctx.setAttribute("authors", pdao.getByID(IDs, "PILOTS"), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
