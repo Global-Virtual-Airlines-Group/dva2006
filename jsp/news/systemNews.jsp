@@ -35,6 +35,7 @@
 <!-- Table Pilot Data -->
 <c:forEach var="news" items="${viewContext.results}">
 <c:set var="ac" value="${accessMap[news.ID]}" scope="page" />
+<c:set var="author" value="${authors[news.authorID]}" scope="page" />
 <tr>
  <td class="priB"><fmt:date fmt="d" date="${news.date}" /></td>
 <c:if test="${ac.canEdit}">
@@ -43,7 +44,7 @@
 <c:if test="${!ac.canEdit}">
  <td class="pri bld">${news.subject}</td>
 </c:if>
- <td class="secB">${news.authorName}</td>
+ <td class="secB">${author.name}</td>
 </tr>
 <tr>
  <td colspan="3" class="left"><fmt:text value="${news.body}" /></td>
@@ -53,9 +54,7 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="3">
-<c:if test="${access.canCreateNews}">
-<el:cmd url="newsedit">NEW SYSTEM NEWS ENTRY</el:cmd>&nbsp;|&nbsp;
-</c:if>
+<c:if test="${access.canCreateNews}"><el:cmd url="newsedit">NEW SYSTEM NEWS ENTRY</el:cmd>&nbsp;|&nbsp;</c:if>
 <view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>

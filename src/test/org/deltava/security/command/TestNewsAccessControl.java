@@ -20,7 +20,7 @@ public class TestNewsAccessControl extends AccessControlTestCase {
    @Override
 protected void setUp() throws Exception {
       super.setUp();
-      _nws = new News("Subject", "John Smith", "Stuff Happened");
+      _nws = new News("Subject", "Stuff Happened");
       _ac = new NewsAccessControl(_ctxt, _nws);
    }
 
@@ -54,7 +54,7 @@ protected void tearDown() throws Exception {
    }
    
    public void testNOTAMAccess() throws Exception {
-      _ac = new NewsAccessControl(_ctxt, new Notice("Subject", "John Smith", "Stuff Happened"));
+      _ac = new NewsAccessControl(_ctxt, new Notice("Subject", "Stuff Happened"));
       _ac.validate();
       
       assertFalse(_ac.getCanCreateNOTAM());

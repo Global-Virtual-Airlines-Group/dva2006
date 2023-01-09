@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'News Entry Title'});
@@ -50,18 +50,18 @@ golgotha.local.validate = function(f) {
  <td class="label top">Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="4" className="req" resize="true">${entry.body}</el:textbox></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isHTML" value="true" label="News Entry is HTML" checked="${entry.isHTML}" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
  <td>
-<c:if test="${access.canSave}">
-<el:button type="submit" label="SAVE SYSTEM NEWS ENTRY" />
-</c:if>
-<c:if test="${access.canDelete}">
-<el:cmdbutton url="newsdelete" link="${entry}" label="DELETE SYSTEM NEWS ENTRY" />
-</c:if>
+<c:if test="${access.canSave}"><el:button type="submit" label="SAVE SYSTEM NEWS ENTRY" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="newsdelete" link="${entry}" label="DELETE SYSTEM NEWS ENTRY" /></c:if>
  </td>
 </tr>
 </el:table>

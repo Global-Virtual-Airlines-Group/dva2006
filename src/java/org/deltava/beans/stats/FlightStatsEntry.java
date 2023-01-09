@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Simulator;
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	private int _historicLegs;
 	private int _dispatchLegs;
 	private int _simBriefLegs;
+	private int _tourLegs;
 	private final double _hours;
 	private final int _miles;
 	private int _pilotIDs;
@@ -87,6 +88,15 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	 */
 	public int getSimBriefLegs() {
 		return _simBriefLegs;
+	}
+	
+	/**
+	 * Returns the number of Flight Tour legs linked to this entry.
+	 * @return the number of Flight Tour legs 
+	 * @see FlightStatsEntry#setTourLegs(int)
+	 */
+	public int getTourLegs() {
+		return _tourLegs;
 	}
 	
 	/**
@@ -229,6 +239,15 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 	 */
 	public void setSimBriefLegs(int legs) {
 		_simBriefLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of Flight Tour legs linked to this entry.
+	 * @param legs the number of Tour legs 
+	 * @see FlightStatsEntry#getTourLegs()
+	 */
+	public void setTourLegs(int legs) {
+		_tourLegs = legs;
 	}
 	
 	/**

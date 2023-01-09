@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 6.2
  */
 
@@ -79,8 +79,8 @@ public class SetAggregateStatistics extends DAO {
 	 */
 	private void updatePilot(int pilotID) throws SQLException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_PILOT (SELECT PILOT_ID, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, "
-			+ "AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, "
+			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
+			+ "SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=?,1,0)) AS XP12, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) HAVING (PILOT_ID IS NOT NULL))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
@@ -152,12 +152,11 @@ public class SetAggregateStatistics extends DAO {
 	 */
 	private void updateAirport(Airport a, boolean isDeparture) throws SQLException {
 		String apColumn = isDeparture ? "AIRPORT_D" : "AIRPORT_A";
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_AIRPORT (SELECT ?, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=?,1,0)) AS XP12, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO, ? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) HAVING (ACARS IS NOT NULL))")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_AIRPORT (SELECT ?, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, "
+			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
+			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO, ? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) HAVING (ACARS IS NOT NULL))")) {
 			ps.setString(1, a.getIATA());
 			ps.setInt(2, FlightReport.ATTR_ACARS);
 			ps.setInt(3, FlightReport.ATTR_VATSIM);
@@ -187,12 +186,11 @@ public class SetAggregateStatistics extends DAO {
 	 * Updates flight statistics for a particular Date.
 	 */
 	private void updateDate(java.time.Instant dt) throws SQLException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_DATE (SELECT DATE, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=?,1,0)) AS XP12, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)))")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_DATE (SELECT DATE, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, "
+			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
+			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_VATSIM);
 			ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -220,12 +218,11 @@ public class SetAggregateStatistics extends DAO {
 	 * Updates flight statistics for a particular equipment type.
 	 */
 	private void updateEQ(String eqType) throws SQLException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_EQTYPE (SELECT EQTYPE, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=?,1,0)) AS XP12, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?) HAVING (EQTYPE IS NOT NULL))")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_EQTYPE (SELECT EQTYPE, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, "
+			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
+			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?) HAVING (EQTYPE IS NOT NULL))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_VATSIM);
 			ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -255,8 +252,8 @@ public class SetAggregateStatistics extends DAO {
 	private void updateNetwork(FlightReport fr) throws SQLException {
 		try (PreparedStatement ps = prepare("REPLACE INTO FLIGHTSTATS_NETWORK (SELECT DATE, IF((ATTR & ?) > 0, 0, IF((ATTR & ?) > 0, 1, IF((ATTR & ?) > 0, 5, IF((ATTR & ?) > 0, 6, -1)))) AS NET, "
 			+ "COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, "
-			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)) "
-			+ "GROUP BY DATE, NET HAVING (NET=?))")) {
+			+ "SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX) FROM PIREPS WHERE (STATUS=?) "
+			+ "AND (DATE=DATE(?)) GROUP BY DATE, NET HAVING (NET=?))")) {
 			ps.setInt(1, FlightReport.ATTR_VATSIM);
 			ps.setInt(2, FlightReport.ATTR_IVAO);
 			ps.setInt(3, FlightReport.ATTR_PEDGE);

@@ -36,6 +36,7 @@
 <!-- Table NOTAM Data -->
 <c:forEach var="notam" items="${viewContext.results}">
 <c:set var="ac" value="${accessMap[notam.ID]}" scope="page" />
+<c:set var="author" value="${authors[notam.authorID]}" scope="page" />
 <view:row entry="${notam}">
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
@@ -59,11 +60,8 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="3">
-<c:if test="${access.canCreateNOTAM}">
-<el:cmd url="notamedit">NEW NOTAM</el:cmd>&nbsp;|&nbsp;
-</c:if>
-<el:cmd url="notams" op="all">ALL NOTAMs</el:cmd>&nbsp;|<view:scrollbar>&nbsp;<view:pgUp />
-&nbsp;<view:pgDn /></view:scrollbar>&nbsp;|&nbsp;<el:cmd url="notams">ACTIVE NOTAMs</el:cmd></td>
+<c:if test="${access.canCreateNOTAM}"><el:cmd url="notamedit">NEW NOTAM</el:cmd>&nbsp;|&nbsp;</c:if>
+<el:cmd url="notams" op="all">ALL NOTAMs</el:cmd>&nbsp;|<view:scrollbar>&nbsp;<view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;|&nbsp;<el:cmd url="notams">ACTIVE NOTAMs</el:cmd></td>
 </tr>
 </view:table>
 <content:copyright />

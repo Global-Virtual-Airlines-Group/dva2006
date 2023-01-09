@@ -17,7 +17,7 @@ public class TestNotice extends AbstractBeanTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		_n = new Notice("SUBJ", "AUTHOR", "BODY");
+		_n = new Notice("SUBJ", "BODY");
 		setBean(_n);
 	}
 
@@ -29,7 +29,6 @@ public class TestNotice extends AbstractBeanTestCase {
 	
 	public void testConstructor() {
 		assertEquals("SUBJ", _n.getSubject());
-		assertEquals("AUTHOR", _n.getAuthorName());
 		assertEquals("BODY", _n.getBody());
 		assertEquals(0, _n.getAuthorID());
 		assertNotNull(_n.getDate());
@@ -54,7 +53,7 @@ public class TestNotice extends AbstractBeanTestCase {
 	}
 	
 	public void testComparator() {
-	    News n2 = new News("SUBJ2", "AUTHOR", "BODY2");
+	    News n2 = new News("SUBJ2", "BODY2");
 	    n2.setDate(Instant.now().plusSeconds(2));
 	    assertTrue(_n.compareTo(n2) > 0);
 	    assertTrue(n2.compareTo(_n) < 0);
