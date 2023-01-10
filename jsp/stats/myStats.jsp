@@ -69,10 +69,11 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <view:table cmd="mystats">
 <tr class="title">
  <td colspan="6" class="left caps"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT STATISTICS FOR ${pilot.name}<span class="nophone"> - <fmt:int value="${totalLegs}" /> FLIGHTS</span></td>
- <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
+ <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <c:set var="noFooter" value="true" scope="request" />
+<c:set var="noTours" value="true" scope="request" />
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
 
