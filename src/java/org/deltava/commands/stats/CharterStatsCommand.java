@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import org.deltava.beans.stats.*;
@@ -11,7 +11,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Web Site Command to display Charter Flight statistics.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 3.6
  */
 
@@ -45,6 +45,7 @@ public class CharterStatsCommand extends AbstractViewCommand {
 		
 		// Save the sorter types in the request
 		ctx.setAttribute("isCharter", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("noTours", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("hasPilotID", Boolean.valueOf(!grp.isPilotGroup()), REQUEST);
 		ctx.setAttribute("groupType", grp, REQUEST);
 		
