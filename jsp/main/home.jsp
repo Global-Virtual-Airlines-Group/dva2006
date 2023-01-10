@@ -218,7 +218,12 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td class="secB" style="width:20%;">${author.name}</td>
 </tr>
 <tr>
+<c:if test="${news.isHTML}">
+ <td class="left" colspan="3">${entry.body}</td>
+</c:if>
+<c:if test="${!news.isHTML}">
  <td class="left" colspan="3"><fmt:msg value="${entry.body}" bbCode="true" /></td>
+</c:if>
 </tr>
 </c:forEach>
 </el:table>

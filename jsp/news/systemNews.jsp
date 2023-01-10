@@ -47,15 +47,19 @@
  <td class="secB">${author.name}</td>
 </tr>
 <tr>
+<c:if test="${news.isHTML}">
+ <td colspan="3" class="left">${news.body}</td>
+</c:if>
+<c:if test="${!news.isHTML}">
  <td colspan="3" class="left"><fmt:text value="${news.body}" /></td>
+</c:if>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="3">
-<c:if test="${access.canCreateNews}"><el:cmd url="newsedit">NEW SYSTEM NEWS ENTRY</el:cmd>&nbsp;|&nbsp;</c:if>
-<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+<c:if test="${access.canCreateNews}"><el:cmd url="newsedit">NEW SYSTEM NEWS ENTRY</el:cmd>&nbsp;|&nbsp;</c:if><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <content:copyright />
