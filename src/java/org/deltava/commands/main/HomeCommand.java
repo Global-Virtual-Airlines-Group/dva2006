@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -85,9 +85,13 @@ public class HomeCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the system news and save in the request
+			GetPilot pdao = new GetPilot(con);
 			GetNews nwdao = new GetNews(con);
 			nwdao.setQueryMax(5);
-			ctx.setAttribute("latestNews", nwdao.getNews(), REQUEST);
+			List<News> latestNews = nwdao.getNews();
+			ctx.setAttribute("latestNews", latestNews, REQUEST);
+			Collection<Integer> IDs = latestNews.stream().map(News::getAuthorID).collect(Collectors.toSet());
+			ctx.setAttribute("authors", pdao.getByID(IDs, "PILOTS"), REQUEST);
 
 			// Get the HTTP statistics and save in the request
 			GetSystemData sysdao = new GetSystemData(con);
@@ -151,9 +155,8 @@ public class HomeCommand extends AbstractCommand {
 					break;
 
 				case NEW_HIRES:
-					GetPilot daoP = new GetPilot(con);
-					daoP.setQueryMax(10);
-					ctx.setAttribute("latestPilots", daoP.getNewestPilots(), REQUEST);
+					pdao.setQueryMax(10);
+					ctx.setAttribute("latestPilots", pdao.getNewestPilots(), REQUEST);
 					break;
 
 				// Newest Century Club members
@@ -176,8 +179,7 @@ public class HomeCommand extends AbstractCommand {
 					}
 					
 					// Load pilots
-					Collection<Integer> IDs = upds.stream().map(StatusUpdate::getID).collect(Collectors.toSet());
-					GetPilot pdao = new GetPilot(con);
+					IDs = upds.stream().map(StatusUpdate::getID).collect(Collectors.toSet());
 					ctx.setAttribute("updPilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 					break;
 			}
