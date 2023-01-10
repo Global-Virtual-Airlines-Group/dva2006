@@ -127,7 +127,7 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 
 				// Load the authors
 				GetPilot pdao = new GetPilot(con);
-				ctx.setAttribute("pilots", pdao.getByID(Set.of(Integer.valueOf(r.getAuthorID()), Integer.valueOf(r.getLastUpdateID())), "PILOTS"), REQUEST);
+				ctx.setAttribute("pilots", pdao.getByID(new HashSet<Integer>(List.of(Integer.valueOf(r.getAuthorID()), Integer.valueOf(r.getLastUpdateID()))), "PILOTS"), REQUEST);
 				
 				// Save in request
 				ctx.setAttribute("resource", r, REQUEST);
