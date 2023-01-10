@@ -100,7 +100,7 @@ public class GetNews extends DAO {
 	private static List<News> execute(PreparedStatement ps) throws SQLException {
 		List<News> results = new ArrayList<News>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);
+			boolean isNOTAM = (rs.getMetaData().getColumnCount() > 6);
 			while (rs.next()) {
 				News n;
 				if (isNOTAM) {
