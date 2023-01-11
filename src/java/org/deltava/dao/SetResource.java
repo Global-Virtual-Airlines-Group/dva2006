@@ -41,8 +41,8 @@ public class SetResource extends DAO {
 				ps.setInt(8, r.getAuthorID());
 				ps.setInt(9, r.getLastUpdateID());
 				ps.setInt(10, r.getHits());
-				ps.setBoolean(11, r.getPublic());
-				ps.setBoolean(12, r.getIgnoreCertifications());
+				ps.setBoolean(11, r.getIgnoreCertifications());
+				ps.setBoolean(12, r.getPublic());
 				executeUpdate(ps, 1);
 			}
 			
