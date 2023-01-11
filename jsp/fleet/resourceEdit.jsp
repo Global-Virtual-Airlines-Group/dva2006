@@ -14,18 +14,17 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.url, l:12, t:'Resource URL'});
-golgotha.form.validate({f:f.title, l:8, t:'Resource Title'});
-golgotha.form.validate({f:f.desc, l:8, t:'Resource Description'});
-golgotha.form.validate({f:f.category, t:'Resource Category'});
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.url, l:12, t:'Resource URL'});
+	golgotha.form.validate({f:f.title, l:8, t:'Resource Title'});
+	golgotha.form.validate({f:f.desc, l:8, t:'Resource Description'});
+	golgotha.form.validate({f:f.category, t:'Resource Category'});
 
-// Prepend a protocol to the URL
-if (f.url.value.indexOf('://') == -1) f.url.value = 'https://' + f.url.value;
-golgotha.form.submit(f);
-return true;
+	// Prepend a protocol to the URL
+	if (f.url.value.indexOf('://') == -1) f.url.value = 'https://' + f.url.value;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -66,14 +65,9 @@ return true;
 </content:filter>
 <c:if test="${!empty resource}">
 <c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
-<c:set var="lastUpd" value="${pilots[resource.lastUpdateID]}" scope="page" />
 <tr>
  <td class="label">Created on</td>
  <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by ${author.name} (${author.pilotCode})</td>
-</tr>
-<tr>
- <td class="label">Last Updated by</td>
- <td class="data">${lastUpd.name} (${lastUpd.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Hit Count</td>
