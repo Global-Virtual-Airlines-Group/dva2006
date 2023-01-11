@@ -74,7 +74,7 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 			r.setIgnoreCertifcations(Boolean.parseBoolean(ctx.getParameter("ignoreCerts")) && !r.getCertifications().isEmpty());
 			
 			// Check audit log
-			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(or, r);
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(or, r, "lastUpdateID");
 			AuditLog ae = AuditLog.create(r, delta, ctx.getUser().getID());
 			
 			// Start transaction
