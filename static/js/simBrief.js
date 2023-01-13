@@ -21,7 +21,7 @@ golgotha.simbrief.sbSubmit = function() {
 
 golgotha.simbrief.loadPax = function(f) {
 	const xreq = new XMLHttpRequest();
-	xreq.open('get', 'sbpax.ws?id=${pirep.hexID}', true);
+	xreq.open('get', 'sbpax.ws?id=' + golgotha.simbrief.id, true);
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
 		const paxData = JSON.parse(xreq.responseText);	
