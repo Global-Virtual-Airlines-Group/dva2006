@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -34,7 +34,7 @@ import org.gvagroup.tomcat.SharedWorker;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -43,14 +43,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	private static final Logger log = Logger.getLogger(SystemBootstrap.class);
 
 	private ConnectionPool _jdbcPool;
-	private final ThreadGroup _daemonGroup = new ThreadGroup("System Daemons");
 	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();
 
-	/**
-	 * Initialize the servlet context. This method will initialize the SystemData singleton, create the JDBC connection
-	 * pool and load "long-lived" bean collections like the Airlines and Airports.
-	 * @param e the ServletContext lifecycle event
-	 */
 	@Override
 	public void contextInitialized(ServletContextEvent e) {
 		e.getServletContext().setAttribute("startedOn", java.time.Instant.now());
@@ -210,18 +204,15 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		spawnDaemon(new IPCDaemon());
 	}
 
-	/**
-	 * Shut down resources used by the servlet context.
-	 * @param e the ServletContext lifecycle event
-	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent e) {
 		String code = SystemData.get("airline.code");
 		log.warn(String.format("Shutting Down %s", code));
 
 		// Shut down the extra threads
+		Collection<Thread> dt = new ArrayList<Thread>(_daemons.keySet());
 		_daemons.clear();
-		_daemonGroup.interrupt();
+		ThreadUtils.kill(dt, 500);
 		
 		// Clean up shared worker and JMX
 		JMXUtils.clear();
@@ -245,19 +236,15 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	/*
 	 * Helper method to spawn a system daemon.
 	 */
+	@SuppressWarnings("preview")
 	private void spawnDaemon(Runnable sd) {
-		Thread dt = new Thread(_daemonGroup, sd, sd.toString());
+		Thread dt = Thread.ofVirtual().name(sd.toString()).unstarted(sd);
 		dt.setDaemon(true);
 		dt.setUncaughtExceptionHandler(this);
 		_daemons.put(dt, sd);
 		dt.start();
 	}
 
-	/**
-	 * Uncaught system daemon thread exception handler.
-	 * @param t the daemon thred
-	 * @param e the uncaught exception
-	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		Runnable sd = _daemons.get(t);
