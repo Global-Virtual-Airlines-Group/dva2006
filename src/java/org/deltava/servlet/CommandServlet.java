@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -28,7 +28,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 10.1
+ * @version 10.4
  * @since 1.0
  */
 
@@ -45,41 +45,38 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 	protected final BlockingQueue<CommandLog> _cmdLogPool = new LinkedBlockingQueue<CommandLog>();
 	private int _maxCmdLogSize;
-	private CommandLogger _logThread;
+	
+	private CommandLogger _logger;
+	private Thread _logThread;
 
-	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
-	 */
 	@Override
 	public String getServletInfo() {
 		return "Command Controller Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
 
-	private class CommandLogger extends Thread {
+	private class CommandLogger implements Runnable {
 		
 		private final Logger tlog = Logger.getLogger(CommandLogger.class);
 		private final int _maxSize;
 
 		CommandLogger(int maxSize) {
-			super(SystemData.get("airline.code") + " Command Logger");
-			setDaemon(true);
+			super();
 			_maxSize = Math.max(1, maxSize);
 		}
 
 		@Override
 		public void run() {
 			tlog.info("Started");
-			while (!isInterrupted()) {
+			while (!Thread.currentThread().isInterrupted()) {
 				try {
-					sleep(10000);
+					Thread.sleep(10000);
 				} catch (InterruptedException ie) {
-					interrupt();
+					Thread.currentThread().interrupt();
 					tlog.warn("Interrupted");
 				}
 
 				// Check if we need to log
-				if ((_cmdLogPool.size() >= _maxSize) || isInterrupted()) {
+				if ((_cmdLogPool.size() >= _maxSize) || Thread.currentThread().isInterrupted()) {
 					Collection<CommandLog> entries = new ArrayList<CommandLog>();
 					_cmdLogPool.drainTo(entries);
 					ConnectionPool pool = getConnectionPool();
@@ -109,6 +106,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * @throws ServletException if an error occurs
 	 * @see CommandFactory#load(String)
 	 */
+	@SuppressWarnings("preview")
 	@Override
 	public void init() throws ServletException {
 		log.info("Initializing");
@@ -132,14 +130,13 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 		// Save the max command log size
 		_maxCmdLogSize = SystemData.getInt("cache.cmdlog", 20);
-		_logThread = new CommandLogger(_maxCmdLogSize);
+		_logger = new CommandLogger(_maxCmdLogSize);
+		_logThread = Thread.ofVirtual().name(SystemData.get("airline.code") + " Command Logger").unstarted(_logger);
+		_logThread.setDaemon(true);
 		_logThread.setUncaughtExceptionHandler(this);
 		_logThread.start();
 	}
 
-	/**
-	 * Shuts down the servlet. This just logs a message to the servlet log.
-	 */
 	@Override
 	public void destroy() {
 		log.info("Shutting Down");
@@ -340,6 +337,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 	}
 	
+	@SuppressWarnings("preview")
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t != _logThread) {
@@ -347,8 +345,9 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			return;
 		}
 		
-		_logThread = new CommandLogger(_maxCmdLogSize);
+		_logThread = Thread.ofVirtual().name(SystemData.get("airline.code") + " Command Logger").unstarted(_logger);
 		_logThread.setUncaughtExceptionHandler(this);
+		_logThread.setDaemon(true);
 		_logThread.start();
 		log.error(String.format("Restarted %s", t.getName()), e);
 	}
