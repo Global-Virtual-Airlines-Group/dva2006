@@ -121,6 +121,7 @@
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="19" target="19" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
+			<compilerarg value="--enable-preview" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
 		    	<fileset dir="lib">
