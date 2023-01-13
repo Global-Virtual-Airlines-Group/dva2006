@@ -64,10 +64,9 @@ golgotha.local.validate = function(f) {
 </c:if>
 </content:filter>
 <c:if test="${!empty resource}">
-<c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
 <tr>
  <td class="label">Created on</td>
- <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by ${author.name} (${author.pilotCode})</td>
+ <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by ${author.name} (<span class="pri">${author.pilotCode}</span>)</td>
 </tr>
 <tr>
  <td class="label">Hit Count</td>
