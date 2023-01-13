@@ -482,12 +482,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("alternates", alts, REQUEST);
 				
 				// List possible tail codes, custom airframes and ETOPS options
-				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
-					GetSimBriefPackages sbpdao = new GetSimBriefPackages(con);
-					ctx.setAttribute("tailCodes", dao.getTailCodes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
-					ctx.setAttribute("sbAirframes", sbpdao.getAirframes(acInfo.getName(), fr.getAirline(), p.getID()), REQUEST);
+				if ((sbPkg == null) && (acInfo != null) && (acOpts != null))
 					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= acOpts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
-				}
 				
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
