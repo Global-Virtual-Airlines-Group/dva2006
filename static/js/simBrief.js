@@ -71,7 +71,7 @@ golgotha.simbrief.sbAirframeUpdate = function(cb) {
 
 	const noCustom = cb.form.disableCustomAirframe.checked;
 	const ac = golgotha.simbrief.airframes[golgotha.form.getCombo(cb)];
-	sbf.type.value = noCustom ? golgotha.simbrief.acType : ac.id;
+	sbf.type.value = (noCustom || !ac.isCustom) ? golgotha.simbrief.acType : ac.id;
 	golgotha.simbrief.setSBID(noCustom ? null : ac.id);
 	golgotha.util.display('sbAirframe', ac.isCustom);
 	return true;
