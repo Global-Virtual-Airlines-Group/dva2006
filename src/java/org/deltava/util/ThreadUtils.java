@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 10.0
+ * @version 10.4
  * @since 1.0
  */
 
@@ -33,15 +33,6 @@ public class ThreadUtils {
 	}
 
 	/**
-	 * A null-safe way to determine if a ThreadGroup is alive. 
-	 * @param tg the ThreadGroup
-	 * @return TRUE if the ThreadGroup is alive, otherwise FALSE 
-	 */
-	public static boolean isAlive(ThreadGroup tg) {
-		return ((tg != null) && (tg.activeCount() > 0));
-	}
-	
-	/**
 	 * A null-safe way of killing a Thread that swallows thread lifecycle exceptions. 
 	 * @param t the Thread to kill
 	 * @param waitTime the time to wait for the thread to die in milliseconds
@@ -58,16 +49,16 @@ public class ThreadUtils {
 	}
 	
 	/**
-	 * A null-safe way of killing all Thread in a ThreadGroup that swallows thread lifecycle exceptions. 
-	 * @param tg the ThreadGroup to kill
+	 * A null-safe way of killing a number of threads that swallows thread lifecycle exceptions. 
+	 * @param threads a Collection of Threads to kill
 	 * @param waitTime the time to wait for the thread to die in milliseconds
 	 */
-	public static void kill(ThreadGroup tg, long waitTime) {
-		if (isAlive(tg))
-			tg.interrupt();
-		
+	public static void kill(Collection<Thread> threads, long waitTime) {
+		Collection<Thread> t2 = new ArrayList<Thread>(threads);
+		t2.forEach(Thread::interrupt);
 		int totalTime = 0;
-		while (isAlive(tg) && (totalTime < waitTime)) {
+		while ((t2.size() > 0) && (totalTime < waitTime)) {
+			t2.removeIf(ThreadUtils::isAlive);
 			sleep(125);
 			totalTime += 125;
 		}
