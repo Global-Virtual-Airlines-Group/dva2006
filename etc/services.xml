@@ -97,6 +97,7 @@
 	<service id="sbpackage" class="org.deltava.service.simbrief.PackageDownloadService" />
 	<service id="sbrefresh" class="org.deltava.service.simbrief.PackageRefreshService" />
 	<service id="sbpax" class="org.deltava.service.simbrief.PassengerCountService" />
+	<service id="sbairframes" class="org.deltava.service.simbrief.CustomAirframeService" />
 	
 	<!-- simFDR Services -->
 	<service id="simfdr_user" class="org.deltava.service.simfdr.UserListService" />
