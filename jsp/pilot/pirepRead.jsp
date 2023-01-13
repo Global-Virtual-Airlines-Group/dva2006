@@ -18,14 +18,18 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<c:if test="${access.canUseSimBrief && (empty sbPackage)}">
+<c:if test="${access.canUseSimBrief}">
+<content:js name="simBrief" />
+<c:if test="${empty sbPackage}">
 <content:js name="simbrief.apiv1" /></c:if>
+</c:if>
 <content:captcha action="pirep" authOnly="true" />
 <content:googleAnalytics eventSupport="true" />
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
+<content:empty var="emptyList" />
 <c:set var="hasDelay" value="${reviewDelay > 0}" scope="page" />
 <script async>
 golgotha.local.startTime = new Date();
@@ -349,13 +353,11 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Package Format</td>
  <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /></td>
 </tr>
-<c:if test="${!empty tailCodes}">
-<tr class="sbData">
+<tr id="sbTailCode" class="sbData" style="display:none;">
  <td class="label">Tail Code</td>
- <td class="data"><el:combo name="tailCode" size="1" options="${tailCodes}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void golgotha.local.sbAirframeUpdate(this)" />
- <span id="sbAirframe" style="display:none;"><el:box name="disableCustomAirframe" value="true" label="Disable custom SimBrief airframe lookup" onChange="golgotha.local.sbCustomToggle(this)" /><span id="sbAirframeInfo"> - <span id="sbAirframeID" class="small ter ita"></span></span></span></td>
+ <td class="data"><el:combo name="tailCode" size="1" options="${emptyList}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void golgotha.simbrief.sbAirframeUpdate(this)" />
+ <span id="sbAirframe" style="display:none;"><el:box name="disableCustomAirframe" value="true" label="Disable custom SimBrief airframe lookup" onChange="golgotha.simbrief.sbCustomToggle(this)" /><span id="sbAirframeInfo"> - <span id="sbAirframeID" class="small ter ita"></span></span></span></td>
 </tr>
-</c:if>
 <tr class="sbData">
  <td class="label">ETOPS Override</td>
   <td class="data"><el:combo name="etopsOV" size="1" options="${etopsOV}" value="${acPolicy.ETOPS.time}" /></td>
@@ -365,7 +367,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data"><el:text name="costIndex" size="2" max="3" value="80" /></td>
 </tr>
 <tr class="title">
- <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.local.sbSubmit()" /></td>
+ <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.simbrief.sbSubmit()" /></td>
 </tr>
 </c:if>
 <c:if test="${(access.ourFlight || (access.canViewSimBrief && fn:isDraft(pirep))) && (!empty sbPackage)}">
@@ -375,7 +377,7 @@ golgotha.local.showRunwayChoices = function() {
 <tr class="sbData">
  <td class="label">SimBrief Package</td>
  <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
- | <a href="javascript:void golgotha.local.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
+ | <a href="javascript:void golgotha.simbrief.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
  </tr>
  <c:if test="${!empty sbPackage.tailCode}">
  <tr class="sbData">
@@ -524,7 +526,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 &nbsp;<el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" /></c:if>
 <c:if test="${access.canUpdateComments}">
 &nbsp;<el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /></c:if>
-<c:if test="${access.canUseSimBrief && (!empty sbPackage.flightPlans)}">&nbsp;<el:button label="VIEW PILOT BRIEFING" onClick="void golgotha.local.sbBriefingText()" /><span class="nophone bld"> | DOWNOAD FLIGHT PLAN <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.local.sbDownloadPlan(this)" /></span></c:if>&nbsp;</td>
+<c:if test="${access.canUseSimBrief && (!empty sbPackage.flightPlans)}">&nbsp;<el:button label="VIEW PILOT BRIEFING" onClick="void golgotha.simbrief.sbBriefingText()" /><span class="nophone bld"> | DOWNOAD FLIGHT PLAN <el:combo name="sbPlanName" size="1" idx="*" firstEntry="[ SELECT FORMAT ]" options="${sbPackage.flightPlans}" onChange="golgotha.simbrief.sbDownloadPlan(this)" /></span></c:if>&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
@@ -634,127 +636,10 @@ return true;
 <c:if test="${access.canUseSimBrief}">
 <!-- SimBrief integration -->
 <script async>
-<c:if test="${empty sbPackage}">
-golgotha.local.acType = '${acInfo.ICAO}';
-golgotha.local.sbAirframes = {<c:forEach var="sbAirframe" items="${sbAirframes}" varStatus="hasNext">'${sbAirframe.tailCode}':'${sbAirframe.ID}'<c:if test="${!hasNext.last}">,</c:if></c:forEach>};
-golgotha.util.disable(document.forms[0].disableCustomAirframe, (golgotha.local.sbAirframes.length == 0));
-golgotha.local.sbSubmit = function() {
-	golgotha.form.submit();
-	const f = document.forms[0];
-	const sbf = document.getElementById('sbapiform');
-	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
-	sbf.civalue.value = f.costIndex.value;
-	sbf.etopsrule.value = golgotha.form.getCombo(f.etopsOV);
-	if (golgotha.form.comboSet(f.tailCode)) 
-		sbf.reg.value = golgotha.form.getCombo(f.tailCode).toUpperCase();
-
-	try {
-		if (parseInt(sbf.pax.value) < 1)
-			return golgotha.local.loadPax(sbf);
-	} catch (e) {
-		return golgotha.local.loadPax(sbf);
-	}
-
-	return simbriefsubmit(self.location.href);
-};
-
-golgotha.local.loadPax = function(f) {
-	const xreq = new XMLHttpRequest();
-	xreq.open('get', 'sbpax.ws?id=${pirep.hexID}', true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		const paxData = JSON.parse(xreq.responseText);	
-		if (!paxData.isCalculated)
-			console.log('Using existing passenger load of ' + paxData.pax);
-		else
-			f.pax.value = paxData.pax;
-
-		return simbriefsubmit(self.location.href);
-	};
-
-	xreq.send(null);
-	return true;
-};
-
-golgotha.local.sbAirframeUpdate = function(cb) {
-	const sbf = document.getElementById('sbapiform');
-	if (cb.selectedIndex < 1) {
-		sbf.type.value = golgotha.local.acType;
-		golgotha.util.display('sbAirframe', false);
-		return true;	
-	}
-
-	const noCustom = cb.form.disableCustomAirframe.checked;
-	const customID = golgotha.local.sbAirframes[golgotha.form.getCombo(cb)];
-	sbf.type.value = (!noCustom && (customID)) ? customID : golgotha.local.acType;
-	golgotha.local.setSBID(customID);
-	golgotha.util.display('sbAirframe', (customID != null));
-	return true;
-};
-
-golgotha.local.sbCustomToggle = function(cb) {
-	const sbf = document.getElementById('sbapiform');
-	if (cb.checked) {
-		sbf.type.value = golgotha.local.acType;
-		golgotha.local.setSBID();
-	} else {
-		const customID = golgotha.local.sbAirframes[golgotha.form.getCombo(cb.form.tailCode)];
-		golgotha.local.setSBID(customID);
-		sbf.type.value = (customID) ? customID : golgotha.local.acType;
-	}
-
-	return true;
-};
-
-golgotha.local.setSBID = function(id) {
-	const sbID = document.getElementById('sbAirframeID');
-	sbID.innerText = (id) ? '(SimBrief ID: ' + id +')' : '';
-	golgotha.util.display('sbAirframeInfo', (id));
-	return true;
-};
-</c:if><c:if test="${!empty sbPackage}">
-golgotha.local.sbDownloadPlan = function(cb) {
-	if (cb.selectedIndex < 1) return false;
-	const o = cb.options[cb.selectedIndex];
-	self.location = '${sbPackage.basePlanURL}' + o.value;
-	return true;
-};
-
-golgotha.local.showSBMessage = function(msg, cn) {
-	const sp = document.getElementById('sbMessage');
-	sp.className = cn;
-	sp.innerHTML = msg;
-	golgotha.util.display('sbMessageBox', true);
-	return true;
-};
-
-golgotha.local.sbRefresh = function() {
-	const f = document.forms[0];
-	golgotha.form.submit(f);
-	golgotha.util.display('sbMessageBox', false);
-	const xreq = new XMLHttpRequest();
-	xreq.open('get', 'sbrefresh.ws?id=${pirep.hexID}', true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		golgotha.form.clear(f);
-		if (xreq.status == 200) {
-			golgotha.local.showSBMessage('SimBrief package updated', 'ter');
-			window.setTimeout(function() { location.reload(); }, 950);
-		} else if (xreq.status == 304)
-			golgotha.local.showSBMessage('SimBrief package not modified', 'warn');
-		else if (xreq.status >= 500)
-			golgotha.local.showSBMessage('Error ' + xreq.status + ' updating package', 'error');
-
-		return true;
-	};
-
-	xreq.send(null);
-	return true;
-};
-
-golgotha.local.sbBriefingText = function() {
-	return window.open('/briefing.do?id=${pirep.hexID}', 'rwyChoices', 'height=530,width=820,menubar=no,toolbar=no,status=no,scrollbars=yes');
-};</c:if>
+golgotha.simbrief.id = '${pirep.hexID}';
+golgotha.simbrief.acType = '${acInfo.ICAO}';
+<c:if test="${empty sbPackage}">golgotha.simbrief.loadAirframes();</c:if>
+<c:if test="${!empty sbPackage}">golgotha.simbrief.planURL = '${sbPackage.basePlanURL}';</c:if>
 </script>
 <c:set var="altIdx" value="0" scope="page" />
 <el:form ID="sbapiform" method="post" action="" validate="return false">
