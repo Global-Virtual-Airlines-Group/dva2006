@@ -7,6 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.json.*;
+
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.simbrief.Airframe;
 
@@ -34,11 +35,12 @@ public class CustomAirframeService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		Collection<Airframe> results = new ArrayList<Airframe>();
+		Collection<String> tailCodes = new LinkedHashSet<String>();
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the flight report
-			GetFlightReports frdao = new GetFlightReports(con);
+			GetFlightReportACARS frdao = new GetFlightReportACARS(con);
 			FlightReport fr = frdao.get(StringUtils.parse(ctx.getParameter("id"), 0), ctx.getDB());
 			if (fr == null)
 				throw error(SC_NOT_FOUND, "Invalid Flight Report - " + ctx.getParameter("id"), false);
@@ -48,24 +50,41 @@ public class CustomAirframeService extends WebService {
 			ac.validate();
 			if (!ac.getCanUseSimBrief())
 				throw error(SC_FORBIDDEN, "Cannot generate SimBrief package for Flight Report " + fr.getID(), false);
-
-			// Load the airframes
+			
+			// Load the airframes / tail codes
 			GetSimBriefPackages sbdao = new GetSimBriefPackages(con);
 			results.addAll(sbdao.getAirframes(fr.getEquipmentType(), fr.getAirline(), fr.getAuthorID()));
+			tailCodes.addAll(frdao.getTailCodes(fr.getEquipmentType(), fr.getAirline(), fr.getAuthorID()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
 		
-		// Create the JSON object
+		// Remove air frames without tail code
+		results.removeIf(a -> !tailCodes.contains(a.getTailCode()));
+		
+		// Create the JSON object for airframes with SB data
 		JSONArray ja = new JSONArray();
 		for (Airframe a : results) {
 			JSONObject ao = new JSONObject();
 			ao.put("tailCode", a.getTailCode());
-			ao.put("id", a.getID());
 			ao.put("useCount", a.getUseCount());
 			ao.put("lastUsed", JSONUtils.formatDate(a.getLastUse()));
+			if (!StringUtils.isEmpty(a.getID())) {
+				ao.put("isCustom", true);
+				ao.put("id", a.getID());
+			}
+			
+			ja.put(ao);
+			tailCodes.remove(a.getTailCode());
+		}
+		
+		// Add tail codes
+		for (String tc : tailCodes) {
+			JSONObject ao = new JSONObject();
+			ao.put("tailCode", tc);
+			ao.put("useCount", 0);
 			ja.put(ao);
 		}
 		

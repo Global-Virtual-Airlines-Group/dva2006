@@ -7,8 +7,6 @@ import java.util.*;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.simbrief.*;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A Data Access Object to load SimBrief briefing package data.
  * @author Luke
@@ -72,13 +70,10 @@ public class GetSimBriefPackages extends DAO {
 			List<Airframe> results = new ArrayList<Airframe>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					String id = rs.getString(2);
-					if (!StringUtils.isEmpty(id)) {
-						Airframe af = new Airframe(rs.getString(1), id);
-						af.setUseCount(rs.getInt(3));
-						af.setLastUse(toInstant(rs.getTimestamp(4)));
-						results.add(af);
-					}
+					Airframe af = new Airframe(rs.getString(1), rs.getString(2));
+					af.setUseCount(rs.getInt(3));
+					af.setLastUse(toInstant(rs.getTimestamp(4)));
+					results.add(af);
 				}
 			}
 			
