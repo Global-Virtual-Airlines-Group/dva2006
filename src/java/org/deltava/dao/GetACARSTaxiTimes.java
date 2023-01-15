@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 8.6
  */
 
@@ -67,6 +67,9 @@ public class GetACARSTaxiTimes extends DAO {
 					int inCount = rs.getInt(4); int outCount = rs.getInt(5);
 					tt.setInboundTime((inCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(2) / inCount));
 					tt.setOutboundTime((outCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(3) / outCount));
+				} else {
+					tt.setInboundTime(Duration.ZERO);
+					tt.setOutboundTime(Duration.ZERO);
 				}
 			}
 			
