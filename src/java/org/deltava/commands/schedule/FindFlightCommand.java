@@ -52,7 +52,9 @@ public class FindFlightCommand extends AbstractCommand {
 		} else
 			ssc = new ScheduleSearchCriteria(a, fn, leg);
 		
-		ssc.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
+		if (aD != null)
+			ssc.setAirportD(aD);
 
 		// Get the airline and the airports
 		Collection<Aircraft> allEQ = new ArrayList<Aircraft>();
