@@ -70,17 +70,20 @@ public class FindFlightCommand extends AbstractCommand {
 			if (!isSearch) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				frdao.setQueryMax(10);
-				List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC", ctx.getDB())).stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).collect(Collectors.toList());
-				if ((pireps.size() > 2) && (ssc.getAirportD() == null)) {
-					RoutePair lf = pireps.get(0);
-					RoutePair lf2 = pireps.get(1);
-					RoutePair lf3 = pireps.get(2);
-					if (!hasCriteria && (lf2.getAirportA().equals(lf.getAirportD()) && lf3.getAirportA().equals(lf2.getAirportD()))) {
-						ssc.setAirportD(lf.getAirportA());
+				List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC, PR.SUBMITTED DESC, PR.ID DESC", ctx.getDB()));
+				if (!hasCriteria && (pireps.size() > 2) && (ssc.getAirportD() == null)) {
+					LogbookHistoryHelper lh = new LogbookHistoryHelper(pireps);
+					if (lh.isContinuous(3)) {
+						ssc.setAirportD(lh.getLastFlight().getAirportA());
 						ssc.setMaxResults(25);
 						ctx.setAttribute("fafCriteria", ssc, SESSION);
 						ctx.setAttribute("airportsA", adao.getConnectingAirports(ssc.getAirportD(), true, a), REQUEST);
 					}
+					
+					if (lh.isCurent(5))
+						ssc.setExcludeHistoric(Inclusion.EXCLUDE);
+					else if (lh.isHistoric(5))
+						ssc.setExcludeHistoric(Inclusion.INCLUDE);
 				}
 			} else if (ctx.getParameter("airline") == null)
 				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
