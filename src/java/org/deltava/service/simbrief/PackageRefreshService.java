@@ -6,6 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.List;
 import java.sql.Connection;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.GateHelper;
@@ -82,7 +83,7 @@ public class PackageRefreshService extends WebService {
 			}
 				
 			// If we don't have gates, assign them
-			if (!fr.hasGates()) {
+			if (!fr.hasGates() && (fr.getSimulator() != Simulator.UNKNOWN)) {
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(fr, 5, true);
 				gh.addDepartureGates(gdao.getGates(fr.getAirportD(), fr.getSimulator()), gdao.getUsage(fr, true));
