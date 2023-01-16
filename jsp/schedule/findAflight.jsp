@@ -31,35 +31,33 @@ golgotha.ff.validate = function(f) {
 	return true;
 };
 <c:if test="${!empty fafResults}">
-golgotha.ff.buildValidate = function(f)
-{
-if (!golgotha.form.check()) return false;
-const chks = (f.addFA  instanceof Array) ? f.addFA : [f.addFA];
-if (chks.length == 1) {
-	golgotha.form.submit(f);
-	chks[0].checked = true;
-	return true;
-}
+golgotha.ff.buildValidate = function(f) {
+	if (!golgotha.form.check()) return false;
+	const chks = (f.addFA  instanceof Array) ? f.addFA : [f.addFA];
+	if (chks.length == 1) {
+		golgotha.form.submit(f);
+		chks[0].checked = true;
+		return true;
+	}
 
-for (var x = 0; ((!isOK) && (x < chks.length)); x++)
-	isOK |= chks[x].checked;
+	for (var x = 0; (!isOK && (x < chks.length)); x++)
+		isOK |= chks[x].checked;
 
-return isOK && golgotha.form.submit(f);
+	return isOK && golgotha.form.submit(f);
 };
 </c:if>
-golgotha.ff.updateAirline = function(cb)
-{
-const f = document.forms[0];
-const cfg = golgotha.airportLoad.config.clone();
-cfg.airline = golgotha.form.getCombo(cb);
-golgotha.airportLoad.changeAirline([f.airportD], cfg);
-golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
-window.setTimeout(function() {
-	const cfg2 = cfg.clone();
-    cfg2.dst = true;
-    golgotha.airportLoad.changeAirline([f.airportA], cfg2);
-}, 250);
-return true;
+golgotha.ff.updateAirline = function(cb) {
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config.clone();
+	cfg.airline = golgotha.form.getCombo(cb);
+	golgotha.airportLoad.changeAirline([f.airportD], cfg);
+	golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
+	window.setTimeout(function() {
+		const cfg2 = cfg.clone();
+    	cfg2.dst = true;
+    	golgotha.airportLoad.changeAirline([f.airportA], cfg2);
+	}, 250);
+	return true;
 };
 
 golgotha.ff.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
@@ -102,6 +100,10 @@ golgotha.onDOMReady(function() {
 	f.airportD.notVisited = f.nVD.checked;
 	f.airportA.notVisited = f.nVA.checked;
 	golgotha.ff.updateSort(f.sortType);
+	if (golgotha.form.comboSet(f.airportD)) {
+		f.airportD.onchange();
+<c:if test="${!empty fafCriteria.airportA}">window.setTimeout(function() { golgotha.form.setCombo(f.airportA, '${useICAO ? fafCriteria.airportA.ICAO : fafCriteria.airportA.IATA}'); }, 500);</c:if>
+	}
 });
 </script>
 </head>
