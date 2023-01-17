@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -14,13 +14,16 @@ import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
+import org.deltava.security.command.TourAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Serivce to update a Flight Tour. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.3
  */
 
@@ -43,6 +46,13 @@ public class TourUpdateService extends TourService {
 			if ((t == null) && (id != 0))
 				return SC_NOT_FOUND;
 			
+			// Check our access
+			TourAccessControl ac = new TourAccessControl(ctx, t);
+			ac.validate();
+			boolean canExec = (t == null) ? ac.getCanCreate() : ac.getCanEdit();
+			if (!canExec)
+				throw error(SC_FORBIDDEN, String.format("Cannot %s Tour", (t == null) ? "create" : "update"), false);
+			
 			// Parse the object and update the bean
 			try {
 				JSONObject jo = new JSONObject(new JSONTokener(ctx.getBody()));
@@ -51,6 +61,7 @@ public class TourUpdateService extends TourService {
 				else
 					t.setName(jo.getString("name"));
 			
+				t.setOwner(SystemData.getApp(jo.optString("owner", SystemData.get("airline.code"))));
 				t.setStatus(EnumUtils.parse(TourStatus.class, jo.optString("status"), t.getStatus()));
 				t.setActive(jo.optBoolean("active"));
 				t.setACARSOnly(jo.optBoolean("acarsOnly"));
@@ -93,6 +104,7 @@ public class TourUpdateService extends TourService {
 			twdao.write(t);
 			ro = serialize(t); 
 		} catch (DAOException de) {
+			ctx.setHeader("X-Error-Msg", de.getMessage());
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
