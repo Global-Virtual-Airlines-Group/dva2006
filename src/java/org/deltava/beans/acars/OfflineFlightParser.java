@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 2.4
  */
 
@@ -238,7 +238,7 @@ public final class OfflineFlightParser {
 			for (Element mE : mL) {
 				HistoryType t = EnumUtils.parse(HistoryType.class, mE.getAttributeValue("type"), HistoryType.USER);
 				Instant dt = LocalDateTime.parse(mE.getAttributeValue("time"), mdtf).toInstant(ZoneOffset.UTC);
-				FlightHistoryEntry fhe = new FlightHistoryEntry((t == HistoryType.USER) ? inf.getAuthorID() : 0, t, afr.getAuthorID(), dt, mE.getTextTrim());
+				FlightHistoryEntry fhe = new FlightHistoryEntry(0, t, (t == HistoryType.USER) ? inf.getAuthorID() : 0, dt, mE.getTextTrim());
 				afr.addStatusUpdate(fhe);
 			}
 		}
