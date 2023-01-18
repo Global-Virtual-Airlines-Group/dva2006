@@ -104,15 +104,18 @@ public class TourUpdateService extends TourService {
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "buffer");
 			AuditLog ae = AuditLog.create(t, delta, ctx.getUser().getID());
-			ae.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-			ae.setRemoteHost(ctx.getRequest().getRemoteHost());
 			
 			// Write the updated object and audit log
 			ctx.startTX();
 			SetTour twdao = new SetTour(con);
-			SetAuditLog awdao = new SetAuditLog(con);
 			twdao.write(t);
-			awdao.write(ae);
+			if (ae != null) {
+				ae.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+				ae.setRemoteHost(ctx.getRequest().getRemoteHost());
+				SetAuditLog awdao = new SetAuditLog(con);
+				awdao.write(ae);
+			}
+			
 			ro = serialize(t);
 			ctx.commitTX();
 		} catch (DAOException de) {
