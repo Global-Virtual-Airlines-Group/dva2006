@@ -4,11 +4,12 @@ package org.deltava.service.stats;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.time.*;
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.json.*;
 
-import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.ScheduleEntry;
 import org.deltava.beans.stats.*;
 
@@ -42,7 +43,7 @@ public class TourUpdateService extends TourService {
 		try {
 			Connection con = ctx.getConnection();
 			GetTour tdao = new GetTour(con);
-			Tour t = tdao.get(id, ctx.getDB());
+			Tour t = tdao.get(id, ctx.getDB()); Tour ot = t;
 			if ((t == null) && (id != 0))
 				return SC_NOT_FOUND;
 			
@@ -67,6 +68,7 @@ public class TourUpdateService extends TourService {
 				t.setACARSOnly(jo.optBoolean("acarsOnly"));
 				t.setAllowOffline(jo.optBoolean("allowOffline"));
 				t.setMatchEquipment(jo.optBoolean("matchEQ"));
+				t.setMatchLeg(jo.optBoolean("matchLeg"));
 				t.setStartDate(Instant.ofEpochSecond(jo.getLong("startDate")));
 				t.setEndDate(Instant.ofEpochSecond(jo.getLong("endDate")));
 				
@@ -99,11 +101,22 @@ public class TourUpdateService extends TourService {
 				throw error(SC_BAD_REQUEST, e.getMessage(), e);
 			}
 			
-			// Write the updated object
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ot, t, "buffer");
+			AuditLog ae = AuditLog.create(t, delta, ctx.getUser().getID());
+			ae.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			ae.setRemoteHost(ctx.getRequest().getRemoteHost());
+			
+			// Write the updated object and audit log
+			ctx.startTX();
 			SetTour twdao = new SetTour(con);
+			SetAuditLog awdao = new SetAuditLog(con);
 			twdao.write(t);
-			ro = serialize(t); 
+			awdao.write(ae);
+			ro = serialize(t);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			ctx.setHeader("X-Error-Msg", de.getMessage());
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
