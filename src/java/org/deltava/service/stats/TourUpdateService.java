@@ -43,7 +43,7 @@ public class TourUpdateService extends TourService {
 		try {
 			Connection con = ctx.getConnection();
 			GetTour tdao = new GetTour(con);
-			Tour t = tdao.get(id, ctx.getDB()); Tour ot = t;
+			Tour t = tdao.get(id, ctx.getDB()); Tour ot = BeanUtils.clone(t);
 			if ((t == null) && (id != 0))
 				return SC_NOT_FOUND;
 			
