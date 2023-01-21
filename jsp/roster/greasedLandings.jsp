@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -33,13 +33,12 @@ golgotha.local.validate = function(f) {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="landings.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
-The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the best landings and the Pilots who made them. Landings are rated on a combination of touchdown speed (relative to an optimum rate) and 
-distance down the runway.<br />
+The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the best landings and the Pilots who made them. Landings are rated on a combination of touchdown speed (relative to an optimum rate) and distance down the runway.<br />
 <br />
 <el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
- <td class="left caps" colspan="3"><span class="nophone"><content:airline />&nbsp;</span>OPTIMAL LANDINGS</td>
+ <td class="left caps" colspan="4"><span class="nophone"><content:airline />&nbsp;</span>OPTIMAL LANDINGS</td>
  <td class="right" colspan="5">TOP <el:text name="viewCount" idx="*" size="1" max="2" value="${viewContext.count}" /> FLIGHTS <span class="nophone">WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${daysBack}" onChange="void golgotha.local.update()" /></span> 
  IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" /><span class="nophone"><el:button type="submit" label="GO" /></span></td>
 </tr>
@@ -53,6 +52,7 @@ distance down the runway.<br />
  <td>EQUIPMENT</td>
  <td style="width:10%">TOUCHDOWN</td>
  <td>DISTANCE</td>
+ <td style="width:8%">SCORE</td>
  <td class="nophone">AIRPORTS</td>
 </tr>
 
@@ -70,13 +70,14 @@ distance down the runway.<br />
  <td class="sec small">${pirep.equipmentType}</td>
  <td class="bld"><fmt:int value="${pirep.landingVSpeed}" /> ft/min</td>
  <td class="sec bld"><fmt:int value="${rwy.distance}" /> ft</td>
+ <td class="bld"><fmt:landscore default="N/A" value="${pirep.landingScore}" /></td>
  <td class="nophone"><span class="small">${pirep.airportA.name}</span> Runway ${rwy.name}</td>
 </tr>
 </c:forEach>
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="8">&nbsp;</td>
+ <td colspan="9">&nbsp;</td>
 </tr>
 </el:table>
 </el:form>

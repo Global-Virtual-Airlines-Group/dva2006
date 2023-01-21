@@ -118,7 +118,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 
 <!-- Best Landings -->
 <tr class="title">
- <td colspan="8" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /></td>
+ <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /></td>
 </tr>
 <tr class="title mid caps topLanding">
  <td>#</td>
@@ -127,6 +127,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td>EQUIPMENT</td>
  <td><span class="nophone">RUNWAY / </span>DISTANCE</td>
  <td>SPEED</td>
+ <td>SCORE</td>
 <td class="nophone" colspan="2">FLIGHT ROUTE</td>
 </tr>
 
@@ -141,6 +142,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td class="sec bld">${fr.equipmentType}</td>
  <td class="small sec bld"><span class="nophone">Runway ${rw.name}, </span><fmt:int value="${rw.distance}" /> feet</td>
  <td class="pri bld"><fmt:int value="${fr.landingVSpeed}" /> feet/min</td>
+ <td class="bld"><fmt:landscore default="N/A" value="${fr.landingScore}" /></td>
  <td colspan="2" class="small nophone">${fr.airportD.name} (<el:cmd url="airportinfo" linkID="${fr.airportD.IATA}"><fmt:airport airport="${fr.airportD}" /></el:cmd>) - ${fr.airportA.name} (<el:cmd url="airportinfo" linkID="${fr.airportA.IATA}"><fmt:airport airport="${fr.airportA}" /></el:cmd>)</td>
 </tr>
 </c:forEach>

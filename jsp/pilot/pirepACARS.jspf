@@ -297,6 +297,10 @@
  <td class="label">Flight Score</td>
  <td class="data caps" colspan="${cspan}"><span style="color:${flightScore.result.color}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn bld"><fmt:list value="${warnings}" delim=", " /></span></c:if></td>
 </tr>
+<tr>
+ <td class="label">Landing Score</td>
+ <td class="data bld"><fmt:landscore value="${pirep.landingScore}" /></td>
+</tr>
 </c:if>
 </content:filter>
 <c:if test="${!empty flightInfo.route}">
