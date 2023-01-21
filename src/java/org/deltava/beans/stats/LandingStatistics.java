@@ -1,26 +1,14 @@
-// Copyright 2007, 2009, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
-
-import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean used to track average landing speeds.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 2.1
  */
 
-public class LandingStatistics extends DatabaseBean {
-	
-	/**
-	 * Optimal vertical speed at touchdown.
-	 */
-	public static final int OPT_VSPEED = -250;
-	
-	/**
-	 * Optimal distance from runway threshold at touchdown.
-	 */
-	public static final int OPT_DISTANCE = 1250;
+public class LandingStatistics extends org.deltava.beans.DatabaseBean {
 	
 	private final String _name;
 	private final String _eqType;
@@ -35,8 +23,7 @@ public class LandingStatistics extends DatabaseBean {
 	private double _distStdDev;
 
 	/**
-	 * Initializes the bean. When displaying statistics across multiple pilots or
-	 * equipment types, either parameter (but not both) can be null
+	 * Initializes the bean. When displaying statistics across multiple pilots or equipment types, either parameter (but not both) can be null
 	 * @param name the pilot name
 	 * @param eqType the equipment type
 	 */
