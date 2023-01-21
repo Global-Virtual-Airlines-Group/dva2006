@@ -232,7 +232,7 @@ public class GetFlightReportStatistics extends DAO {
 		
 		try (PreparedStatement ps = prepare(buf.toString())) {
 			int pos = 0;
-			ps.setInt(++pos, LandingStatistics.OPT_VSPEED);
+			ps.setInt(++pos, LandingScorer.OPT_VSPEED);
 			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (eqType != null)
 				ps.setString(++pos, eqType);
@@ -286,7 +286,7 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			ps.setInt(3, pilotID);
 			ps.setInt(4, FlightStatus.OK.ordinal());
-			ps.setInt(5, LandingStatistics.OPT_VSPEED);
+			ps.setInt(5, LandingScorer.OPT_VSPEED);
 
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
@@ -332,7 +332,7 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append("GROUP BY L.EQTYPE HAVING (CNT>1) ORDER BY FACT");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingStatistics.OPT_VSPEED);
+			ps.setInt(1, LandingScorer.OPT_VSPEED);
 			ps.setInt(2, pilotID);
 			if (_dayFilter > 0)
 				ps.setInt(3, _dayFilter);

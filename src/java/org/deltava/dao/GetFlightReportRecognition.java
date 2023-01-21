@@ -1,18 +1,17 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.flight.*;
-import org.deltava.beans.stats.LandingStatistics;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -53,16 +52,14 @@ public class GetFlightReportRecognition extends DAO {
 			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SCORE FROM FLIGHTSTATS_LANDING ");
 		if (_dayFilter > 0)
 			sqlBuf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY FACT, DATE DESC");
+		sqlBuf.append(" ORDER BY SCORE DESC, DATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingStatistics.OPT_VSPEED);
-			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
 			if (_dayFilter > 0)
-				ps.setInt(3, _dayFilter);
+				ps.setInt(1, _dayFilter);
 
 			// Add to the cache
 			results = new CacheableList<Integer>(cacheKey);
@@ -88,16 +85,14 @@ public class GetFlightReportRecognition extends DAO {
 			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT L.ID, (((ABS(?-L.VSPEED) * 3) + (ABS(?-L.RWYDISTANCE) * 2)) / 5) AS FACT FROM STAFF S LEFT JOIN FLIGHTSTATS_LANDING L ON (L.PILOT_ID=S.ID)"); 
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.ID, L.SCORE FROM STAFF S LEFT JOIN FLIGHTSTATS_LANDING L ON (L.PILOT_ID=S.ID)"); 
 		if (_dayFilter > 0)
 			sqlBuf.append(" WHERE (L.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY FACT, L.DATE DESC");
+		sqlBuf.append(" ORDER BY SCORE DESC, L.DATE DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingStatistics.OPT_VSPEED);
-			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
 			if (_dayFilter > 0)
-				ps.setInt(3, _dayFilter);
+				ps.setInt(1, _dayFilter);
 
 			// Add to the cache
 			results = new CacheableList<Integer>(cacheKey);
@@ -124,17 +119,15 @@ public class GetFlightReportRecognition extends DAO {
 			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING WHERE (EQTYPE=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SCORE FROM FLIGHTSTATS_LANDING WHERE (EQTYPE=?)");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY FACT, DATE DESC");
+		sqlBuf.append(" ORDER BY SCORE DESC, DATE DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingStatistics.OPT_VSPEED);
-			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
-			ps.setString(3, eqType);
+			ps.setString(1, eqType);
 			if (_dayFilter > 0)
-				ps.setInt(4, _dayFilter);
+				ps.setInt(2, _dayFilter);
 			
 			// Add to the cache
 			results = new CacheableList<Integer>(cacheKey);
@@ -194,17 +187,15 @@ public class GetFlightReportRecognition extends DAO {
 			return results.clone().subList(0, _queryMax);
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SCORE FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?)");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY FACT, DATE DESC");
+		sqlBuf.append(" ORDER BY SCORE DESC, DATE DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingStatistics.OPT_VSPEED);
-			ps.setInt(2, LandingStatistics.OPT_DISTANCE);
-			ps.setInt(3, pilotID);
+			ps.setInt(1, pilotID);
 			if (_dayFilter > 0) 
-				ps.setInt(4, _dayFilter);
+				ps.setInt(2, _dayFilter);
 			
 			// Add to the cache
 			results = new CacheableList<Integer>(cacheKey);

@@ -482,8 +482,8 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, TAKEOFF_ALT, "
-			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, "
-			+ "GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
+			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, LADNING_SCORE, "
+			+ "END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
 			+ "TIME_BOARD, TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
@@ -523,52 +523,54 @@ public class SetFlightReport extends DAO {
 				ps.setInt(25, fr.getLandingLocation().getAltitude());
 				ps.setInt(26, fr.getLandingWeight());
 				ps.setInt(27, fr.getLandingFuel());
-				ps.setTimestamp(28, createTimestamp(fr.getEndTime()));
-				ps.setInt(29, fr.getGateWeight());
-				ps.setInt(30, fr.getGateFuel());
-				ps.setInt(31, fr.getTotalFuel());
+				ps.setTimestamp(29, createTimestamp(fr.getEndTime()));
+				ps.setInt(30, fr.getGateWeight());
+				ps.setInt(31, fr.getGateFuel());
+				ps.setInt(32, fr.getTotalFuel());
 				
 				// ACARS
 				if (isACARS) {
-					ACARSFlightReport afr = (ACARSFlightReport) fr; 
-					ps.setInt(32, afr.getTime(0));
-					ps.setInt(33, afr.getTime(1));
-					ps.setInt(34, afr.getTime(2));
-					ps.setInt(35, afr.getTime(4));
-					ps.setString(36, afr.getSDK());
-					ps.setInt(37, afr.getRestoreCount());
-					ps.setInt(38, afr.getClientBuild());
-					ps.setInt(39, afr.getBeta());
-					ps.setDouble(40, afr.getLandingG());
-					ps.setInt(41, afr.getLandingCategory().ordinal());
-					ps.setInt(42, (int)(afr.getAverageFrameRate() * 10));
-					ps.setInt(43, afr.getPaxWeight());
-					ps.setInt(44, afr.getCargoWeight());
-					ps.setLong(45, afr.getCapabilities());
-					ps.setLong(46, afr.getBoardTime().toSeconds());
-					ps.setLong(47, afr.getDeboardTime().toSeconds());
-					ps.setLong(48, afr.getOnlineTime().toSeconds());
-					ps.setString(49,  afr.getTailCode());
+					ACARSFlightReport afr = (ACARSFlightReport) fr;
+					ps.setInt(28, (int)Math.round(afr.getLandingScore() * 100));
+					ps.setInt(33, afr.getTime(0));
+					ps.setInt(34, afr.getTime(1));
+					ps.setInt(35, afr.getTime(2));
+					ps.setInt(36, afr.getTime(4));
+					ps.setString(37, afr.getSDK());
+					ps.setInt(38, afr.getRestoreCount());
+					ps.setInt(39, afr.getClientBuild());
+					ps.setInt(40, afr.getBeta());
+					ps.setDouble(41, afr.getLandingG());
+					ps.setInt(42, afr.getLandingCategory().ordinal());
+					ps.setInt(43, (int)(afr.getAverageFrameRate() * 10));
+					ps.setInt(44, afr.getPaxWeight());
+					ps.setInt(45, afr.getCargoWeight());
+					ps.setLong(46, afr.getCapabilities());
+					ps.setLong(47, afr.getBoardTime().toSeconds());
+					ps.setLong(48, afr.getDeboardTime().toSeconds());
+					ps.setLong(49, afr.getOnlineTime().toSeconds());
+					ps.setString(50,  afr.getTailCode());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
-					ps.setInt(32, 0);
+					ps.setInt(28, -1);
 					ps.setInt(33, 0);
 					ps.setInt(34, 0);
 					ps.setInt(35, 0);
-					ps.setString(36, null);
-					ps.setBoolean(37, false);
-					ps.setInt(38, xfr.getMajorVersion());
-					ps.setInt(39, xfr.getMinorVersion());
-					ps.setDouble(40, 0);
-					ps.setInt(41, 0);
+					ps.setInt(36, 0);
+					ps.setString(37, null);
+					ps.setBoolean(38, false);
+					ps.setInt(39, xfr.getMajorVersion());
+					ps.setInt(40, xfr.getMinorVersion());
+					ps.setDouble(41, 0);
 					ps.setInt(42, 0);
 					ps.setInt(43, 0);
 					ps.setInt(44, 0);
-					ps.setLong(45, 0);
-					ps.setInt(46, 0);
+					ps.setInt(45, 0);
+					ps.setLong(46, 0);
 					ps.setInt(47, 0);
 					ps.setInt(48, 0);
-					ps.setString(49, null);
+					ps.setInt(49, 0);
+					ps.setString(50, null);
 				}
 
 				executeUpdate(ps, 1);
