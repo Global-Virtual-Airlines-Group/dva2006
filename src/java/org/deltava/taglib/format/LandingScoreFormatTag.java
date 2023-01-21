@@ -66,7 +66,7 @@ public class LandingScoreFormatTag extends NumberFormatTag {
 	
 	@Override
 	public int doEndTag() throws JspException {
-		boolean noValue = (_value.intValue() < 0);
+		boolean noValue = (_value.doubleValue() < 0);
 		if (noValue && StringUtils.isEmpty(_default))
 			return EVAL_PAGE;
 		
