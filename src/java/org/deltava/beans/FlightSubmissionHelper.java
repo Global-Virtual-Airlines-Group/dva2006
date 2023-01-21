@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 10.0
  */
 
@@ -501,6 +501,7 @@ public class FlightSubmissionHelper {
 				dist = -dist;
 			
 			_info.setRunwayA(new RunwayDistance(r, dist));
+			afr.setLandingScore(LandingScorer.score(afr.getLandingVSpeed(), dist));
 			if (r.getLength() < opts.getLandingRunwayLength()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Minimum landing runway length for the %s is %d feet", _ac.getName(), Integer.valueOf(opts.getLandingRunwayLength())));
 				_fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
