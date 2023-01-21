@@ -63,7 +63,7 @@ public class SetAggregateStatistics extends DAO {
 			}
 			
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, DATE(APR.LANDING_TIME), PR.AIRPORT_A, APR.LANDING_VSPEED, "
-				+ "R.DISTANCE FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))")) {
+				+ "R.DISTANCE, APR.LANDING_SCORE FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))")) {
 				ps.setBoolean(1, false);
 				ps.setInt(2, 32500);
 				ps.setInt(3, fr.getID());
