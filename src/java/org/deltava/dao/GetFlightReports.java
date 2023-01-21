@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -631,12 +631,12 @@ public class GetFlightReports extends DAO {
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
-			boolean hasACARS = (md.getColumnCount() > 73);
+			boolean hasACARS = (md.getColumnCount() > 74);
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 75);
-			boolean hasMetadata = (md.getColumnCount() > 79);
+			boolean hasOnTime = (md.getColumnCount() > 76);
+			boolean hasMetadata = (md.getColumnCount() > 80);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -731,11 +731,11 @@ public class GetFlightReports extends DAO {
 					ap.setLandingLocation(new GeoPosition(rs.getDouble(50), rs.getDouble(51), rs.getInt(52)));
 					ap.setLandingWeight(rs.getInt(53));
 					ap.setLandingFuel(rs.getInt(54));
-					// Load column #55 with DVA ACARS only
-					ap.setEndTime(toInstant(rs.getTimestamp(56)));
-					ap.setGateWeight(rs.getInt(57));
-					ap.setGateFuel(rs.getInt(58));
-					ap.setTotalFuel(rs.getInt(59));
+					// Load columns #55+56 with DVA ACARS only
+					ap.setEndTime(toInstant(rs.getTimestamp(57)));
+					ap.setGateWeight(rs.getInt(58));
+					ap.setGateFuel(rs.getInt(59));
+					ap.setTotalFuel(rs.getInt(60));
 				}
 			
 				// Load DVA ACARS pirep data
@@ -743,33 +743,35 @@ public class GetFlightReports extends DAO {
 					ACARSFlightReport ap = (ACARSFlightReport) p;
 					ap.setLandingG(rs.getDouble(47));
 					ap.setLandingCategory(ILSCategory.values()[rs.getInt(55)]);
-					ap.setPaxWeight(rs.getInt(60));
-					ap.setCargoWeight(rs.getInt(61));
-					ap.setTime(0, rs.getInt(62));
-					ap.setTime(1, rs.getInt(63));
-					ap.setTime(2, rs.getInt(64));
-					ap.setTime(4, rs.getInt(65));
-					ap.setBoardTime(rs.getInt(66));
-					ap.setDeboardTime(rs.getInt(67));
-					ap.setOnlineTime(rs.getInt(68));
-					ap.setSDK(rs.getString(69));
-					ap.setTailCode(rs.getString(70));
-					ap.setCapabilities(rs.getLong(71));
-					ap.setRestoreCount(rs.getInt(72));
-					ap.setAverageFrameRate(rs.getInt(73) / 10d);
-					ap.setClientBuild(rs.getInt(74));
-					ap.setBeta(rs.getInt(75));
-					if (hasOnTime) ap.setOnTime(OnTime.values()[rs.getInt(76)]);
+					ap.setLandingScore(rs.getInt(56) / 100d);
+					
+					ap.setPaxWeight(rs.getInt(61));
+					ap.setCargoWeight(rs.getInt(62));
+					ap.setTime(0, rs.getInt(63));
+					ap.setTime(1, rs.getInt(64));
+					ap.setTime(2, rs.getInt(65));
+					ap.setTime(4, rs.getInt(66));
+					ap.setBoardTime(rs.getInt(67));
+					ap.setDeboardTime(rs.getInt(68));
+					ap.setOnlineTime(rs.getInt(69));
+					ap.setSDK(rs.getString(70));
+					ap.setTailCode(rs.getString(71));
+					ap.setCapabilities(rs.getLong(72));
+					ap.setRestoreCount(rs.getInt(73));
+					ap.setAverageFrameRate(rs.getInt(74) / 10d);
+					ap.setClientBuild(rs.getInt(75));
+					ap.setBeta(rs.getInt(76));
+					if (hasOnTime) ap.setOnTime(OnTime.values()[rs.getInt(77)]);
 					if (hasMetadata) {
-						ap.setAuthor(rs.getString(77));
-						ap.setAircraftPath(rs.getString(78));
-						ap.setFDE(rs.getString(79));
-						ap.setAircraftCode(rs.getString(80));
+						ap.setAuthor(rs.getString(78));
+						ap.setAircraftPath(rs.getString(79));
+						ap.setFDE(rs.getString(80));
+						ap.setAircraftCode(rs.getString(81));
 					}
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(74));
-					ap.setMinorVersion(rs.getInt(75));
+					ap.setMajorVersion(rs.getInt(75));
+					ap.setMinorVersion(rs.getInt(76));
 				}
 
 				results.add(p);
