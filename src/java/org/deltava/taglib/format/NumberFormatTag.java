@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009, 2013, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -61,6 +61,18 @@ abstract class NumberFormatTag extends UserSettingsTag {
      */
     public final void setValue(Number value) {
         _value = value;
+    }
+    
+    /**
+     * Returns a StringBuilder with the class name to allow subclasses to modify the css classes for the SPAN element.
+     * @return a StringBuilder
+     */
+    protected StringBuilder getClassNameBuilder() {
+    	StringBuilder buf = new StringBuilder();
+    	if (_className != null)
+    		buf.append(_className).append(' ');
+    	
+    	return buf;
     }
     
     /**
