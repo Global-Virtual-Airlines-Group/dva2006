@@ -66,6 +66,7 @@ public class PIREPScoreLoader extends TestCase {
 		tt.start();
 		results.parallelStream().forEach(fd -> fd._score = LandingScorer.score(fd._vSpeed, fd._rwyDistance));
 		log.info(String.format("%d scores calculated in %d ms", Integer.valueOf(results.size()), Long.valueOf(tt.stop())));
+		results.removeIf(fd -> (fd._score < 0));
 
 		_c.setAutoCommit(false);
 		tt.start(); int cnt = 0;
