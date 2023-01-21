@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     private double _landingN1;
     private int _landingHdg = -1;
     private GeospaceLocation _landingPos = new GeoPosition(0, 0);
+    private double _landingScore = -1;
 
     private int _gateWeight;
     private int _gateFuel;
@@ -250,6 +251,15 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
      */
     public GeospaceLocation getLandingLocation() {
     	return _landingPos;
+    }
+    
+    /**
+     * Returns the landing score.
+     * @return the score, or -1 for unknown
+     * @see FDRFlightReport#setLandingScore(double)
+     */
+    public double getLandingScore() {
+    	return _landingScore;
     }
 
     @Override
@@ -523,6 +533,15 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     public void setLandingLocation(GeospaceLocation loc) {
     	if (loc != null)
     		_landingPos = loc;
+    }
+    
+    /**
+     * Updates the landing score.
+     * @param sc the score from 0 to 1, or -1 for unknown
+     * @see FDRFlightReport#getLandingScore()
+     */
+    public void setLandingScore(double sc) {
+    	_landingScore = sc;
     }
 
     /**
