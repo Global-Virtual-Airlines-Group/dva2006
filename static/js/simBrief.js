@@ -6,6 +6,7 @@ golgotha.simbrief.sbSubmit = function() {
 	sbf.planformat.value = golgotha.form.getCombo(f.sbFormat).toLowerCase();
 	sbf.civalue.value = f.costIndex.value;
 	sbf.etopsrule.value = golgotha.form.getCombo(f.etopsOV);
+	sbf.units.value = golgotha.form.getCombo(f.sbWeightUnit) + 'S';
 	if (golgotha.form.comboSet(f.tailCode)) 
 		sbf.reg.value = golgotha.form.getCombo(f.tailCode).toUpperCase();
 

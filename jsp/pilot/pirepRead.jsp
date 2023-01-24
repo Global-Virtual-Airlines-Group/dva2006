@@ -346,12 +346,13 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <c:if test="${access.canUseSimBrief && (empty sbPackage)}">
 <content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
+<content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <tr class="title caps">
  <td colspan="2">SimBrief DISPATCH SETTINGS<span id="sbToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
 </tr>
 <tr class="sbData">
  <td class="label">Package Format</td>
- <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /></td>
+ <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /> Weights: <el:combo name="sbWeightUnit" size="1" options="${weightUnits}" value="${pilot.weightType}" /></td>
 </tr>
 <tr id="sbTailCode" class="sbData" style="display:none;">
  <td class="label">Tail Code</td>
@@ -360,7 +361,7 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr class="sbData">
  <td class="label">ETOPS Override</td>
-  <td class="data"><el:combo name="etopsOV" size="1" options="${etopsOV}" value="${acPolicy.ETOPS.time}" /></td>
+ <td class="data"><el:combo name="etopsOV" size="1" options="${etopsOV}" value="${acPolicy.ETOPS.time}" /></td>
 </tr>
 <tr class="sbData">
  <td class="label">Cost Index</td>
