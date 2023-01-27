@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -37,14 +37,15 @@ public class GetGallery extends DAO {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, G.PILOT_ID, T.ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, G.PILOT_ID, IF(UD.DB=?,T.ID,0) AS TID FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?) LIMIT 1");
+		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) LEFT JOIN common.USERDATA UD ON (T.AUTHOR=UD.ID) WHERE (G.ID=?) LIMIT 1");
 		
 		try {
 			Image img = null;
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-				ps.setInt(1, id);
+				ps.setString(1, db.toUpperCase());
+				ps.setInt(2, id);
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
 						img = new Image(rs.getString(1), rs.getString(2));
