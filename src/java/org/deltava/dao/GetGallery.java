@@ -37,7 +37,7 @@ public class GetGallery extends DAO {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, G.PILOT_ID, IF(UD.DB=?,T.ID,0) AS TID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, G.PILOT_ID, IF(UD.AIRLINE=?,T.ID,0) AS TID FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) LEFT JOIN common.USERDATA UD ON (T.AUTHOR=UD.ID) WHERE (G.ID=?) LIMIT 1");
 		
