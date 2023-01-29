@@ -41,12 +41,11 @@
 </c:if>
 <c:if test="${!isXACARS}">
 <content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
-<c:if test="${!empty pirep.FDE}">
 <tr>
- <td class="label">FDE File</td>
- <td class="data" colspan="${cspan}">${pirep.FDE}<c:if test="${!empty pirep.aircraftCode}">&nbsp;${pirep.aircraftCode}</c:if></td>
+ <td class="label">Aircraft Data</td>
+ <td class="data" colspan="${cspan}"><c:if test="${fn:hasFDE(pirep)}">${pirep.FDE}&nbsp;</c:if><c:if test="${!empty pirep.aircraftCode}">IATA: ${pirep.aircraftCode}</c:if><c:if test="${!empty pirep.author}"><span class="small ita nophone">&nbsp;Author: ${pirep.author}</span></c:if></td>
 </tr>
-</c:if></content:filter>
+</content:filter>
 <c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
 <tr>
  <td class="label">Aircraft SDK</td>
