@@ -1,21 +1,21 @@
-// Copyright 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
 import java.sql.Connection;
 
-import org.deltava.beans.acars.ClientInfo;
+import org.deltava.beans.acars.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to upload ACARS installers.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 7.5
  */
 
@@ -36,15 +36,15 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		int version = StringUtils.parse(ctx.getParameter("version"), 3); boolean isBeta = Boolean.parseBoolean(ctx.getParameter("isBeta"));
 		int beta = isBeta ? StringUtils.parse(ctx.getParameter("beta"), 0) : 0;
 		ClientInfo info = new ClientInfo(version, StringUtils.parse(ctx.getParameter("build"), 0), beta);
-		String newFile = SystemData.get("airline.code") + "-ACARS" + version + (info.isBeta() ? "Beta" : "") + "Inc.exe";
-		File nf = new File(SystemData.get("path.library"), newFile);
-		
-		// Get the uploaded file - look for a file
+		info.setClientType(EnumUtils.parse(ClientType.class, ctx.getParameter("clientType"), ClientType.PILOT));
+		String newFile = String.format("%s-%s-%d-%sInc.exe", SystemData.get("airline.code"), info.getClientType().getFilePrefix(), Integer.valueOf(info.getVersion()), info.isBeta() ? "Beta" : "");
+				
+		File nf = new File(SystemData.get("path.inc"), newFile);
 		File f = new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		if (f.exists())
 			fName = f.getName();
 		if (fName == null)
-			throw notFoundException("No Instaler Uploaded");
+			throw notFoundException("No Installer Uploaded");
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -56,10 +56,8 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 			SetACARSBuilds bwdao = new SetACARSBuilds(con);
 			bwdao.setLatest(info, false);
 			
-			if (nf.exists())
-				nf.delete();
-			
 			// Copy the file
+			if (nf.exists()) nf.delete();
 			if (!f.renameTo(nf))
 				throw new DAOException("Cannot move " + f.getAbsolutePath() + " to " + nf.getAbsolutePath());
 			
@@ -95,6 +93,7 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		ClientInfo inf = new ClientInfo(3, 0);
+		inf.setClientType(EnumUtils.parse(ClientType.class, ctx.getParameter("clientType"), ClientType.PILOT));
 		try {
 			GetACARSBuilds bdao = new GetACARSBuilds(ctx.getConnection());
 			ctx.setAttribute("latest", bdao.getLatestBeta(inf), REQUEST);

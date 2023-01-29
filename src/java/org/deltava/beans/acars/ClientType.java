@@ -1,4 +1,4 @@
-// Copyright 2011, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.EnumDescription;
@@ -16,5 +16,9 @@ public enum ClientType implements EnumDescription {
 	@Override
 	public String getDescription() {
 		return (this == ATC) ? name() : EnumDescription.super.getDescription(); 
+	}
+	
+	public String getFilePrefix() {
+		return (this == PILOT) ? "ACARS" : getDescription();
 	}
 }

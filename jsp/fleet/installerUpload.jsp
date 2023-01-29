@@ -30,7 +30,9 @@ golgotha.local.validate = function(f) {
 
     golgotha.form.submit(f);
     return true;
-};    
+};
+
+golgotha.local.updateType = function(cb) { self.location = '/acarsinstupdate.do?clientType=' + golgotha.form.comboGet(cb); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -38,6 +40,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="clientTypes" className="org.deltava.beans.acars.ClientType" exclude="ATC" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -45,6 +48,10 @@ golgotha.local.validate = function(f) {
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>ACARS INCREMENTAL INSTALLER UPDATE</td>
+</tr>
+<tr>
+ <td class="label">Client Type</td>
+ <td class="data"><el:combo name="clientType" size="1" idx="*" required="true" value="${latest.clientType}" options="${clientTypes}" onChange="void gologhta.local.updateType(this)" /></td>
 </tr>
 <tr id="selectFile">
  <td class="label top">Installer</td>
@@ -101,7 +108,7 @@ golgotha.local.showProgress = function(doShow) {
 
 golgotha.local.setBeta = function(cb) { golgotha.util.display('beta', cb.checked); };
 golgotha.local.updateProgress = function() {
-    var p = golgotha.local.r.progress();
+    const p = golgotha.local.r.progress();
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
     golgotha.local.pb.animate(p, {duration: 50});
     if (p >= 1) {
