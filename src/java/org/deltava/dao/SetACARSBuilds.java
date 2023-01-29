@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write ACARS client version data.
  * @author Luke
- * @version 9.0
+ * @version 10.4
  * @since 5.0
  */
 
@@ -45,6 +45,11 @@ public class SetACARSBuilds extends DAO {
 					ps.setString(3, String.valueOf(ver.getClientBuild()));
 					break;
 					
+				case EVENT:
+					ps.setString(1, isForced ? "forcedEvent" : "latestEvent");
+					ps.setString(3, String.valueOf(ver.getClientBuild()));
+					break;
+					
 				default:
 					ps.setString(1, ver.isBeta() ? "beta" : (isForced ? "forced" : "latest"));
 					ps.setString(3, getVersionBeta(ver));
@@ -74,6 +79,11 @@ public class SetACARSBuilds extends DAO {
 					
 					case ATC:
 						ps.setString(1, "minATC");
+						ps.setString(3, String.valueOf(ver.getClientBuild()));
+						break;
+						
+					case EVENT:
+						ps.setString(1, "minEvent");
 						ps.setString(3, String.valueOf(ver.getClientBuild()));
 						break;
 					
