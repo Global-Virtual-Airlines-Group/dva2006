@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.Capabilities;
 import org.deltava.beans.flight.*;
 
@@ -9,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -190,6 +191,15 @@ public class FlightReportFunctions {
 	 */
 	public static boolean hasOnTime(FlightReport fr) {
 		return (fr != null) && (fr instanceof ACARSFlightReport) && (((ACARSFlightReport) fr).getOnTime() != OnTime.UNKNOWN);
+	}
+	
+	/**
+	 * Returns if a Flight Report has a valid FDE file name.
+	 * @param fr the FlightReport
+	 * @return TRUE if a valid FDE file name is present, otherwise FALSE
+	 */
+	public static boolean hasFDE(FlightReport fr) {
+		return (fr != null) && (fr instanceof ACARSFlightReport) && (fr.getSimulator() != Simulator.FS2020) && !StringUtils.isEmpty(((ACARSFlightReport) fr).getFDE());
 	}
 
 	/**

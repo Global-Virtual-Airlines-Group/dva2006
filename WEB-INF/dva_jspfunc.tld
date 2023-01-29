@@ -242,6 +242,13 @@
 		<function-signature>boolean hasOnTime(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for valid FDE file -->
+	<function>
+		<name>hasFDE</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean hasFDE(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Unknown Route flag -->
 	<function>
 		<name>routeWarn</name>
