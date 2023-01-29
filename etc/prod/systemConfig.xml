@@ -558,6 +558,7 @@
 		<video>/home/www/video</video>
 		<upload>/home/www/upload</upload>
 		<tile>/var/cache/tile</tile>
+		<inc>/home/www/inc</inc>
 	</path>
 	
 	<smtp>
