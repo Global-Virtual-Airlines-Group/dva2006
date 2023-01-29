@@ -8,6 +8,7 @@ import java.time.Instant;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
+import org.deltava.beans.WeightUnit;
 import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
 
@@ -57,7 +58,9 @@ public class SimBriefParser {
 		
 		// Create the bean
 		Element pe = re.getChild("params");
-		PackageFormat fmt = EnumUtils.parse(PackageFormat.class, pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
+		String wtu = pe.getChildTextTrim("units");
+		WeightUnit wt = EnumUtils.parse(WeightUnit.class, wtu.substring(0, wtu.length() - 1), WeightUnit.LB);
+		PackageFormat fmt = PackageFormat.parse(pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
 		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0), fmt);
 		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
@@ -83,10 +86,10 @@ public class SimBriefParser {
 			sb.setCruiseAltitude(String.valueOf(alt * 100));
 		
 		// Load fuel
-		sb.setBaseFuel(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "reserve"), 0) + StringUtils.parse(XMLUtils.getChildText(re, "fuel", "contingency"), 0));
-		sb.setTaxiFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "taxi"), 0));
-		sb.setEnrouteFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "enroute_burn"), 0));
-		sb.setAlternateFuel(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "alternate_burn"), 0));
+		sb.setBaseFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "reserve"), 0) + StringUtils.parse(XMLUtils.getChildText(re, "fuel", "contingency"), 0), wt));
+		sb.setTaxiFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "taxi"), 0), wt));
+		sb.setEnrouteFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "enroute_burn"), 0), wt));
+		sb.setAlternateFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "alternate_burn"), 0), wt));
 		
 		// Check for ETOPS
 		Element ee = re.getChild("etops");
@@ -110,5 +113,9 @@ public class SimBriefParser {
 		}
 		
 		return sb;
+	}
+	
+	private static int parseWeight(int wt, WeightUnit dstUnit) {
+		return (int)Math.round(wt / dstUnit.getFactor());
 	}
 }
