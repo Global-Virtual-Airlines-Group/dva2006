@@ -62,7 +62,7 @@ public class GetSimBriefPackages extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Airframe> getAirframes(String eqType, Airline a, int pilotID) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT SB.TAILCODE, SB.AIRFRAME_ID, COUNT(SB.ID), MAX(SB.CREATED) FROM PIREP_SIMBRIEF SB, PIREPS P WHERE (P.ID=SB.ID) AND (P.PILOT_ID=?) AND (P.EQTYPE=?) AND (P.AIRLINE=?) GROUP BY SB.TAILCODE ORDER BY SB.CREATED DESC")) {
+		try (PreparedStatement ps = prepare("SELECT SB.TAILCODE, MAX(SB.AIRFRAME_ID), COUNT(SB.ID), MAX(SB.CREATED) FROM PIREP_SIMBRIEF SB, PIREPS P WHERE (P.ID=SB.ID) AND (P.PILOT_ID=?) AND (P.EQTYPE=?) AND (P.AIRLINE=?) GROUP BY SB.TAILCODE ORDER BY SB.CREATED DESC")) {
 			ps.setInt(1, pilotID);
 			ps.setString(2, eqType);
 			ps.setString(3, a.getCode());
