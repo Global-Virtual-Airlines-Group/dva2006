@@ -296,7 +296,13 @@
 		<class>org.deltava.commands.pilot.LeaveCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="discordreg">
+		<name>Discord User Registration</name>	
+		<class>org.deltava.commands.pilot.DiscordRegistrationCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="activate">
 		<name>Activate Pilot</name>
 		<class>org.deltava.commands.security.PilotActivationCommand</class>

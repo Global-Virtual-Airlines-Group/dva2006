@@ -79,6 +79,7 @@
 	<service id="dupename" class="org.deltava.service.hr.DuplicateNameService" />
 	<service id="sceligible" class="org.deltava.service.hr.PilotNominationService" />
 	<service id="jobprofile" class="org.deltava.service.hr.JobProfileService" />
+	<service id="discord_info" class="org.deltava.service.DiscordInfoService" />
 	
 	<!-- Flight Tour Services -->
 	<service id="tour" class="org.deltava.service.stats.TourInfoService" />
