@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2018, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 10.3
+ * @version 10.4
  * @since 1.0
  */
 
@@ -138,13 +138,14 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	/**
 	 * Returns users from the current database based on their Instant Message address.
 	 * @param addr the address
-	 * @return a Map of Pilots, keyed by database ID
+	 * @return a Pilot, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Pilot> getByIMAddress(String addr) throws DAOException {
+	public Pilot getByIMAddress(String addr) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)")) {
 			ps.setString(1, addr);
-			return getByID(executeIDs(ps), "PILOTS");
+			Collection<Integer> IDs = executeIDs(ps);
+			return IDs.isEmpty() ? null : get(IDs.stream().findFirst().get().intValue());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
