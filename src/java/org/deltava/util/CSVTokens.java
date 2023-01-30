@@ -31,7 +31,7 @@ public class CSVTokens {
 					x = ofs + 2;
 				}
 			} else {
-				int ofs = entry.indexOf(',', x + 1);
+				int ofs = entry.indexOf(',', x);
 				if (ofs == -1) {
 					_tkns.add(entry.substring(x + 1));
 					x = entry.length();
