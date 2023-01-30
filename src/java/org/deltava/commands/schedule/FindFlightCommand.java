@@ -53,7 +53,7 @@ public class FindFlightCommand extends AbstractCommand {
 			ssc = new ScheduleSearchCriteria(a, fn, leg);
 		
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
-		if (aD != null)
+		if ((aD != null) || isSearch)
 			ssc.setAirportD(aD);
 
 		// Get the airline and the airports
@@ -85,7 +85,7 @@ public class FindFlightCommand extends AbstractCommand {
 					else if (lh.isHistoric(5))
 						ssc.setExcludeHistoric(Inclusion.INCLUDE);
 				}
-			} else if (ctx.getParameter("airline") == null)
+			} else if (a == null)
 				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
 
 			// Get the equipment types
