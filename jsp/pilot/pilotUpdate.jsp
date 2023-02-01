@@ -62,6 +62,10 @@ ${msg}<br />
 <!-- Password Updated -->
 <li>The Web Site/ACARS password for ${pilot.name} has been updated.</li>
 </c:if>
+<c:if test="${discordRegister}">
+<!-- Discord account linked -->
+<li>A Discord account for ${pilot.name} has been successfully registered.</li>
+</c:if>
 <c:if test="${statusUpdated}">
 <!-- Updated Pilot Status -->
 <li>Pilot Status has been updated. ${pilot.firstName}'s status is now <span class="pri bld">${pilot.status.description}</span>.</li>
@@ -98,15 +102,12 @@ ${msg}<br />
 <c:if test="${eMailUpdateDupe}">
 <!-- Duplicate E-Mail Address -->
 <br />
-<li>The e-mail address for ${pilot.name} cannot be changed to ${newEmail}, since another <content:airline /> pilot has registered 
-using this e-mail address.</li>
+<li>The e-mail address for ${pilot.name} cannot be changed to ${newEmail}, since another <content:airline /> pilot has registered using this e-mail address.</li>
 </c:if>
 <c:if test="${!empty addrValid}">
 <!-- E-Mail Address updated -->
 <br />
-<li>The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
-will not take effect until the address has been validated.</span> To validate the new e-mail 
-address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
+<li>The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change will not take effect until the address has been validated.</span> To validate the new e-mail address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
 </c:if>
 <c:if test="${isBlocked}">
 <!-- User Suspended -->

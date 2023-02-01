@@ -24,6 +24,15 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		// Check our access - if we cannot get in, go directly to login page
+		CommandResult result = ctx.getResult();
+		if (!ctx.isAuthenticated()) {
+			ctx.setAttribute("referTo", ctx.getRequest().getRequestURI(), REQUEST);
+			CommandException ce = securityException("Not Authenticated");
+			ce.setForwardURL("/jsp/login.jsp");
+			throw ce;
+		}
+		
 		String uuid = ctx.getParameter("id"); 
 		try {
 			Connection con = ctx.getConnection();
@@ -34,6 +43,9 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 
 			// Update the discord ID
 			p.setExternalID(ExternalID.DISCORD, uuid);
+			ctx.setAttribute("discordRegister", Boolean.TRUE, REQUEST);
+			ctx.setAttribute("discordID", uuid, REQUEST);
+			ctx.setAttribute("pilot", p, REQUEST);
 			
 			// Save the pilot
 			SetPilot pwdao = new SetPilot(con);
@@ -45,8 +57,7 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 		}
 		
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/pilotUpdate.jsp");
+		result.setURL("/jsp/pilot/pilotUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}

@@ -300,7 +300,7 @@
 	<command id="discordreg">
 		<name>Discord User Registration</name>	
 		<class>org.deltava.commands.pilot.DiscordRegistrationCommand</class>
-		<roles>Pilot</roles>
+		<roles>*</roles>
 	</command>
 
 	<command id="activate">
