@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 10.2
+ * @version 10.4
  * @since 1.0
  */
 
@@ -157,7 +157,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REDIRECT);
-		result.setURL("aircraftList.do");
+		result.setURL("aircraftlist.do");
 	}
 
 	/**
