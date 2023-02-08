@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.*;
+
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
@@ -23,6 +24,8 @@ public class LoadCSVSchedule extends TestCase {
 	private Logger log;
 	
 	private Connection _c;
+	
+	private final ScheduleSource SRC = ScheduleSource.LEGACY; 
 
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy").toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
@@ -63,6 +66,11 @@ public class LoadCSVSchedule extends TestCase {
 		File f = new File("C:\\Temp", "wja_schedule_march.csv");
 		assertTrue(f.exists());
 		
+		// Get source info
+		GetRawSchedule rsdao = new GetRawSchedule(_c);
+		ScheduleSourceInfo srcInfo = rsdao.getSources(false, "dva").stream().filter(ssi -> ssi.getSource() == SRC).findFirst().orElse(null);
+		int baseLine = (srcInfo == null) ? 0 : srcInfo.getMaxLineNumber();
+		
 		// Load aircraft
 		GetAircraft acdao = new GetAircraft(_c);
 		Collection<Aircraft> allAC = acdao.getAll();
@@ -90,8 +98,9 @@ public class LoadCSVSchedule extends TestCase {
 				rse.setEndDate(rse.getStartDate());
 				rse.setTimeD(LocalDateTime.of(rse.getStartDate(), LocalTime.parse(csv.get(3), _tf)));
 				rse.setTimeA(LocalDateTime.of(rse.getStartDate(), LocalTime.parse(csv.get(4), _tf)));
-				rse.setSource(ScheduleSource.LEGACY);
-				rse.setLineNumber(lr.getLineNumber());
+				rse.setSource(SRC);
+				rse.setLineNumber(baseLine + lr.getLineNumber());
+				rse.setForceInclude(true);
 				
 				String ac = csv.get(5).toUpperCase();
 				Aircraft a = allAC.stream().filter(ap -> ap.getIATA().contains(ac)).findAny().orElse(null);
@@ -117,7 +126,7 @@ public class LoadCSVSchedule extends TestCase {
 		SetSchedule swdao = new SetSchedule(_c);
 		swdao.purge(ScheduleSource.LEGACY);
 		for (RawScheduleEntry rse : entries)
-			swdao.writeRaw(rse, true);
+			swdao.writeRaw(rse, false);
 		
 		_c.commit();
 	}
