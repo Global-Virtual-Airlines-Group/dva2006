@@ -1,15 +1,15 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
  * An enumeration of flight schedule sources.
  * @author Luke
- * @version 9.0
+ * @version 10.4
  * @since 9.0
  */
 
 public enum ScheduleSource implements org.deltava.beans.EnumDescription {
-	DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry");
+	DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry"), CUSTOM("Custom Import");
 	
 	private final String _desc;
 	
