@@ -6,11 +6,12 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to associate Pilots with a Discord user ID.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 10.4
  */
 
@@ -34,12 +35,16 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 		}
 		
 		String uuid = ctx.getParameter("id"); 
+		if (StringUtils.isEmpty(uuid))
+			throw notFoundException("No UUID present");
+		
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the pilot
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getUser().getID());
+			boolean isNew = p.hasID(ExternalID.DISCORD);
 
 			// Update the discord ID
 			p.setExternalID(ExternalID.DISCORD, uuid);
@@ -47,10 +52,22 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 			ctx.setAttribute("discordID", uuid, REQUEST);
 			ctx.setAttribute("pilot", p, REQUEST);
 			
-			// Save the pilot
+			// Create status update
+			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription(String.format("Discord Integration %s", isNew ? "created" : "updated"));
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Save the pilot/update
 			SetPilot pwdao = new SetPilot(con);
+			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			pwdao.write(p, ctx.getDB());
+			uwdao.write(upd, ctx.getDB());
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

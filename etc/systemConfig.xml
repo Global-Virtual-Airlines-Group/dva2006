@@ -11,12 +11,6 @@
 		<forum>Water Cooler</forum>
 		<db>dva</db>
 		<birthdate>06/10/2001</birthdate>
-		<voice>
-			<url>rw.deltava.org/DAL</url>
-			<mvs>
-				<enabled type="Boolean">true</enabled>
-			</mvs>
-		</voice>
 		
 		<!-- Do we have a file library? -->
 		<files>
@@ -198,8 +192,6 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://localhost/dva</url>
-		<user>dva</user>
-		<pwd>m4n3l5</pwd>
 		<socket>/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
@@ -395,16 +387,7 @@
 	
 	<security>
 		<ssl type="Boolean">true</ssl>
-		<simFDR>202a9e802bf2e36ee19be32e6811f779</simFDR>
-		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
-		<hash>
-			<salt>hashcode salt</salt>
-			<algorithm>SHA-256</algorithm>
-			<acars>
-				<salt>ha$h-Salt-ACARS-Value</salt>
-				<algorithm>SHA-256</algorithm>
-			</acars>
-		</hash>
+		<secrets>/usr/local/tomcat/conf/dva_secrets.properties</secrets>
 
 		<!-- Password settings -->
 		<password>
@@ -418,26 +401,6 @@
 			<maxAge type="Integer">-1</maxAge>
 		</cookie>
 
-		<key>
-			<analytics>UA-2066915-1</analytics>
-			<googleMaps>
-				<auth>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</auth>
-				<anon>AIzaSyADmgR8dXaYYznXKqJxzyZuDaFq0MD1vw4</anon>
-			</googleMaps>
-			<google>AIzaSyDipON4NxnUFpg1wEnqA5OugqaqYxaBXIU</google>
-			<vatsim>1db84fa44417fda98d313a5839f80ba8</vatsim>
-			<twc>d522aa97197fd864d36b418f39ebb323</twc>
-			<recaptcha>
-				<site>6LeME9UUAAAAAJrBAkDrmbXZPtohNT9clL65c0dm</site>
-				<secret>6LeME9UUAAAAAP2XT0uFlsZxZdbhhJpvUt3Mhv05</secret>
-			</recaptcha>
-			<push>
-				<pub>BByMXptLsMPS8TSacmLR1MnxGKPsF1jCubl41PSvTQ67F1lwKXAE7_AebQxC8QHf3hyl8WEPjR_OpTJa78urWaY</pub>
-				<pvt>MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCCE3wh2-pWvk8ypmmyE695wwOQFrwOZwbuVmfDeXiWToA</pvt>
-			</push>
-			<simbrief>zifnwE1Tt2gMmlxqoLPEHA7wkTUYhCSR</simbrief>
-		</key>
-		
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
 			<role>AcademyAdmin</role>
@@ -527,11 +490,6 @@
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
 			<max_load type="Integer">10</max_load>
-			<flightXML>
-				<user>gvagroup</user>			
-				<v2>18f14fe837c03e585d20b955d797fd711cd907b0</v2>
-				<v3>e8865f4fd85717e58df556ec8e56909ef23b9581</v3>			
-			</flightXML>
 		</flightaware>
 	</schedule>
 
@@ -658,9 +616,6 @@
 		</system>
 
 		<maxreports type="Integer">2</maxreports>
-		<search>
-			<idx>/var/search</idx>
-		</search>
 	</cooler>
 	
 	<users>
@@ -679,13 +634,6 @@
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">30</transfer_max>
 		<checkrde_max type="Integer">3</checkrde_max>
-
-		<twitter>
-			<url>
-				<tweet>https://api.twitter.com/1.1/statuses/update.json</tweet>
-			</url>
-		
-		</twitter>
 
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
@@ -720,12 +668,6 @@
 	<acars>
 		<enabled type="Boolean">true</enabled>
 		<max_offline_size type="Integer">4096000</max_offline_size>
-
-		<!-- Archive file permissions -->
-		<archive>
-			<owner>dva</owner>
-			<group>users</group>
-		</archive>
 
 		<!-- Live map settings -->
 		<livemap>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 1.0
  */
 
@@ -232,7 +232,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	 * this format will probably break the dispatch client!</i>
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		StringBuilder buf = new StringBuilder(_code);
 		buf.append('!');
 		buf.append(_type.ordinal());

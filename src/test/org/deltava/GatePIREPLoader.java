@@ -22,8 +22,7 @@ public class GatePIREPLoader extends TestCase {
 	
 	private static Logger log;
 
-	private static final String JDBC_URL = "jdbc:mysql://cerberus.gvagroup.org/acars";
-	//private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/acars";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/acars";
 	
 	private Connection _c;
 
@@ -101,18 +100,21 @@ public class GatePIREPLoader extends TestCase {
 				continue;
 			}
 			
-			Gate gD = null; Gate gA = null;
+			boolean isUpdated = false;
 			GeoComparator dgc = new GeoComparator(entries.get(0), true);
 			GeoComparator agc = new GeoComparator(entries.get(entries.size() - 1), true);
 			
 			// Get the closest departure gate
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-			dGates.addAll(gdao.getAllGates(fr.getAirportD(), fi.getSimulator()));
+			dGates.addAll(gdao.getGates(fr.getAirportD()));
 			if (!dGates.isEmpty()) {
 				Gate g = dGates.first();
 				int dist = g.distanceFeet(dgc.getLocation());
-				if (dist < 2250)
-					gD = g;
+				if (dist < 2250) {
+					fi.setGateD(g);
+					fi.setStartLocation(dgc.getLocation());
+					isUpdated = true;
+				}
 				
 				if (dist > 1000)
 					log.info(g.getName() + " at " + g.getCode() + " is " + dist + "ft from first point - " + fi.getID());
@@ -120,20 +122,23 @@ public class GatePIREPLoader extends TestCase {
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-			aGates.addAll(gdao.getAllGates(fr.getAirportA(), fi.getSimulator()));
+			aGates.addAll(gdao.getGates(fr.getAirportA()));
 			if (!aGates.isEmpty()) {
 				Gate g = aGates.first();
 				int dist = g.distanceFeet(agc.getLocation());
-				if (dist < 2250)
-					gA = g;
+				if (dist < 2250) {
+					fi.setGateA(g);
+					fi.setEndLocation(agc.getLocation());
+					isUpdated = true;
+				}
 				
 				if (dist > 1000)
 					log.info(g.getName() + " at " + g.getCode() + " is " + dist + "ft from last point - " + fi.getID());
 			}
 			
 			// Write gates
-			if ((gD != null) || (gA != null)) {
-				gwdao.writeGates(fi.getID(), gD, gA);
+			if (isUpdated) {
+				gwdao.writeGates(fi);
 				flightsDone++;
 				if ((flightsDone % 100) == 0) {
 					log.info(flightsDone + " flights updated");

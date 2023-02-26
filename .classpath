@@ -42,9 +42,9 @@
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.36.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.36.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.22.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.50.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-8.0.32.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

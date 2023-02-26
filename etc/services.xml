@@ -80,6 +80,7 @@
 	<service id="sceligible" class="org.deltava.service.hr.PilotNominationService" />
 	<service id="jobprofile" class="org.deltava.service.hr.JobProfileService" />
 	<service id="discord_info" class="org.deltava.service.DiscordInfoService" />
+	<service id="discord_unregister" class="org.deltava.service.DiscordUnregisterService" />
 	
 	<!-- Flight Tour Services -->
 	<service id="tour" class="org.deltava.service.stats.TourInfoService" />

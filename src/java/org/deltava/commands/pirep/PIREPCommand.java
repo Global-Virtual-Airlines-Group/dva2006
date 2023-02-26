@@ -749,6 +749,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (pd.isEmpty())
 					pd.addAll(tdao.get(fr.getID()));
 				
+				hasTrack |= !pd.isEmpty();
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().toEpochMilli()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
@@ -840,7 +841,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					mapType = MapType.GOOGLEStatic;
 				}
 					
-				if (sbPkg == null) mapType = MapType.GOOGLEStatic;
+				if ((sbPkg == null) && !hasTrack) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);

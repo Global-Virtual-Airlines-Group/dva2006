@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
-
+import org.deltava.comparators.GeoComparator;
 import org.deltava.util.*;
 
 public class SimGateLoader extends SceneryLoaderTestCase {
@@ -18,7 +18,19 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 
 	private static final String XML_PATH = "E:\\temp\\rwy";
 
-	private static final Simulator SIM = Simulator.FS2020;
+	private static final Simulator SIM = Simulator.P3Dv4;
+	
+	class DebugGate extends Gate {
+		
+		DebugGate(double lat, double lng) {
+			super(lat, lng);
+		}
+		
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -33,7 +45,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		DriverManager.setLoginTimeout(3);
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 	}
@@ -61,26 +73,39 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 			}
 		}
 		
-		codes.clear();
-		codes.add("KATL");
+		/* codes.clear();
+		codes.add("KBOS"); */
 
 		// Clear the table
-		/* try (PreparedStatement ps = _c.prepareStatement("DELETE FROM common.GATES WHERE (SIMVERSION=?)")) { 
-			ps.setInt(1, SIM.getCode());
-			ps.executeUpdate();
+		/* try (Statement s = _c.createStatement()) { 
+			s.executeUpdate("DELETE FROM gate.GATES");
 		} */
+		
+		// Load existing gates
+		List<Gate> allGates = new ArrayList<Gate>();
+		try (PreparedStatement ps = _c.prepareStatement("SELECT ICAO, NAME, LATITUDE, LONGITUDE, HDG FROM common.GATES WHERE (SIMVERSION=?) ORDER BY ICAO, NAME")) {
+			ps.setInt(1, SIM.getCode());
+			ps.setFetchSize(1000);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Gate g = new DebugGate(rs.getDouble(3), rs.getDouble(4));
+					g.setCode(rs.getString(1));
+					g.setName(rs.getString(2));
+					g.setHeading(rs.getInt(5));
+					allGates.add(g);
+				}
+			}
+		}
 		
 		// Open the file
 		File f = new File(rt, "g5.csv");
 		assertTrue(f.isFile());
 
 		// Init the prepared statement
-		try (PreparedStatement ps = _c.prepareStatement("INSERT INTO common.GATES (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG) VALUES (?, ?, ?, ?, ?, ?) AS G ON DUPLICATE KEY UPDATE "
-			+ "LATITUDE=G.LATITUDE, LONGITUDE=G.LONGITUDE, HDG=G.HDG")) {
-			ps.setInt(3, SIM.getCode());
+		try (PreparedStatement ps = _c.prepareStatement("INSERT INTO gate.NEWGATES (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, OLDNAME) VALUES (?, ?, ?, ?, ?, ?, ?) AS G ON DUPLICATE KEY UPDATE LATITUDE=G.LATITUDE, LONGITUDE=G.LONGITUDE, HDG=G.HDG, OLDNAME=G.OLDNAME")) {
 
 			// Load the CSV
-			String lastAP = null; boolean hasData = false;
+			String lastAP = null; boolean hasData = false; List<Gate> airportGates = new ArrayList<Gate>();
 			try (InputStream is = new FileInputStream(f); LineNumberReader lr = new LineNumberReader(new InputStreamReader(is), 262144)) {
 				String data = lr.readLine();
 				while (data != null) {
@@ -95,8 +120,11 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 						if (hasData) ps.executeBatch();
 						log.info("Processing " + apCode + " at Line " + lr.getLineNumber());
 						ps.setString(1, apCode);
+						ps.setInt(3, SIM.getCode());
 						lastAP = apCode;
 						hasData = false;
+						airportGates.clear();
+						allGates.stream().filter(g -> g.getCode().equalsIgnoreCase(apCode)).forEach(airportGates::add);
 					}
 					
 					String gateName = tkns.get(1);
@@ -109,11 +137,21 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 					
 					try {
 						String gateNumber = tkns.get(2);
-						Gate g = new Gate(Double.parseDouble(tkns.get(3)), Double.parseDouble(tkns.get(4)));
+						Gate g = new DebugGate(Double.parseDouble(tkns.get(3)), Double.parseDouble(tkns.get(4)));
 						g.setCode(apCode);
-						g.setSimulator(SIM);
 						g.setName(gateName + " " + gateNumber);
 						g.setHeading(Math.round(Float.parseFloat(tkns.get(6))));
+						
+						// Find the closest gate
+						ps.setString(7, null);
+						if (!airportGates.isEmpty()) {
+							GeoComparator cmp = new GeoComparator(g, true);
+							airportGates.sort(cmp);
+							Gate closestGate = airportGates.get(0);
+							int dst = g.distanceFeet(closestGate);
+							if (!g.getName().equals(closestGate.getName()) && (dst < 500))
+								ps.setString(7, closestGate.getName());
+						}
 						
 						// Save the entry
 						ps.setString(2, g.getName());

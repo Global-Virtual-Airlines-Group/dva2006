@@ -176,6 +176,17 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
  <td colspan="${cspan}" class="data">${navigraphID}</td>
 </tr>
 </c:if>
+<content:filter roles="Developer">
+<content:enum var="extIDs" className="org.deltava.beans.ExternalID" />
+<c:forEach var="extID" items="${extIDs}">
+<c:if test="${!extID.isVisible && !empty pilot.getExternalID(extID)}">
+<tr>
+ <td class="label">${extID.name}</td>
+ <td colspan="${cspan}" class="data">${pilot.getExternalID(extID)}</td>
+</tr>
+</c:if>
+</c:forEach>
+</content:filter>
 <tr>
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data sec">${pilot.location}</td>

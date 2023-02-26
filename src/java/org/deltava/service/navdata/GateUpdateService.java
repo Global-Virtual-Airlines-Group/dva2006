@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -8,7 +8,6 @@ import org.json.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 6.3
  */
 
@@ -45,13 +44,12 @@ public class GateUpdateService extends WebService {
 		if (a == null)
 			return SC_NOT_FOUND;
 		
-		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
 		try {
 			JSONArray ja = new JSONArray(new JSONTokener(ctx.getParameter("data")));
 			
 			Connection con = ctx.getConnection();
 			GetGates gdao = new GetGates(con);
-			Map<String, Gate> gm = CollectionUtils.createMap(gdao.getAllGates(a, sim), Gate::getName);
+			Map<String, Gate> gm = CollectionUtils.createMap(gdao.getGates(a), Gate::getName);
 			
 			// Update based on data
 			Collection<Gate> updGates = new HashSet<Gate>(); 

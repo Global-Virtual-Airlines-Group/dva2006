@@ -48,6 +48,7 @@ public class DiscordInfoService extends WebService {
 		jo.put("lastName", p.getLastName());
 		jo.put("eqType", p.getEquipmentType());
 		jo.put("rank", p.getRank().getName());
+		jo.put("pilotCode", p.getPilotCode());
 		jo.put("legs", p.getLegs());
 		jo.put("hours", p.getHours());
 		p.getRoles().forEach(r -> jo.accumulate("roles", r));
