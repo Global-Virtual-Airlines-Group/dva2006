@@ -38,6 +38,7 @@ import org.deltava.util.system.SystemData;
 public class FlightSubmissionHelper {
 	
 	private static final Logger log = Logger.getLogger(FlightSubmissionHelper.class);
+	private static final int MAX_GATE_DISTANCE = SystemData.getInt("pirep.gate_max_distance", 500);
 	
 	private final FlightReport _fr;
 	private final boolean _isACARS;
@@ -335,22 +336,27 @@ public class FlightSubmissionHelper {
 	 */
 	public void calculateGates() throws DAOException {
 		if (_rte.size() < 2) return;
-		
-		GeoComparator dgc = new GeoComparator(_rte.get(0), true);
-		GeoComparator agc = new GeoComparator(_rte.get(_rte.size() - 1), true);
+		GeoLocation startLoc = _rte.get(0);
+		GeoLocation endLoc = _rte.get(_rte.size() - 1);
+		GeoComparator dgc = new GeoComparator(startLoc, true);
+		GeoComparator agc = new GeoComparator(endLoc, true);
 	
-		// Get the closest departure gate
+		// Get the closest departure gate - Filter gates that are too far away from the start/end point
 		GetGates gdao = new GetGates(_c);
 		SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
 		dGates.addAll(gdao.getGates(_fr.getAirportD()));
-		_info.setGateD(dGates.stream().findFirst().orElse(null));
-		_info.setStartLocation(dgc.getLocation());
+		_info.setStartLocation(startLoc);
+		_info.setGateD(dGates.stream().filter(g -> (g.distanceFeet(startLoc) < 500)).findFirst().orElse(null));
+		if (_info.getGateD() == null)
+			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of starting location", Integer.valueOf(MAX_GATE_DISTANCE)));
 		
 		// Get the closest arrival gate
 		SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
 		aGates.addAll(gdao.getGates(_fr.getAirportA()));
-		_info.setGateA(aGates.stream().findFirst().orElse(null));
-		_info.setEndLocation(agc.getLocation());
+		_info.setEndLocation(endLoc);
+		_info.setGateA(aGates.stream().filter(g -> (g.distanceFeet(endLoc) < 500)).findFirst().orElse(null));
+		if (_info.getGateA() == null)
+			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of shutdown location", Integer.valueOf(MAX_GATE_DISTANCE)));
 	}
 	
 	/**
