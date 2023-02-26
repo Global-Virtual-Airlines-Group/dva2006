@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store IMAP mailbox data. 
  * @author Luke
- * @version 7.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -115,8 +115,7 @@ public class IMAPConfiguration extends DatabaseBean implements Auditable, ViewEn
      */
     public void setAliases(Collection<String> aliases) {
        _aliases.clear();
-       for (String a : aliases)
-    	   addAlias(a);
+       aliases.forEach(this::addAlias);
     }
 	
     /**
@@ -170,7 +169,9 @@ public class IMAPConfiguration extends DatabaseBean implements Auditable, ViewEn
     
 	@Override
     public String getRowClassName() {
-       return _active ? null : "warn";
+		if (!_active) return "warn";
+		
+       return _allowSMTP ? null : "opt2";
     }
 
 	@Override

@@ -85,7 +85,6 @@ public class GateWriter extends TestCase {
 		for (Gate g : me.getValue()) {
 			Element ge = new Element("gate");
 			ge.setAttribute("name", g.getName().startsWith("GATE ") ? g.getName().substring(5) : g.getName());
-			ge.setAttribute("sim", g.getSimulator().toString());
 			ge.setAttribute("type", g.getGateType().toString());
 			ge.setAttribute("hdg", String.valueOf(g.getHeading()));
 			ge.setAttribute("lat", df.format(g.getLatitude()));

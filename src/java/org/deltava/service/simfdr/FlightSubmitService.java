@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 7.0
  */
 
@@ -137,7 +137,7 @@ public class FlightSubmitService extends SimFDRService {
 			awdao.createFlight(ofr.getInfo());
 			fr.setDatabaseID(DatabaseID.ACARS, ofr.getInfo().getID());
 			awdao.writeRunways(ofr.getInfo().getID(), fsh.getACARSInfo().getRunwayD(), fsh.getACARSInfo().getRunwayA());
-			awdao.writeGates(ofr.getInfo().getID(), fsh.getACARSInfo().getGateD(), fsh.getACARSInfo().getGateA());
+			awdao.writeGates(fsh.getACARSInfo());
 			awdao.writePositions(ofr.getInfo().getID(), ofr.getPositions());
 			
 			// Write the flight report

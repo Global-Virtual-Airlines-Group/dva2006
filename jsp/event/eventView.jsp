@@ -19,7 +19,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -59,7 +59,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
 <el:table className="form view">
 <tr class="title caps">
- <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
+ <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" d="EEEE MMMM dd yyyy"  t="HH:mm" /></td>
 </tr>
 <c:if test="${event.hasBanner}">
 <tr class="nophone">

@@ -35,7 +35,7 @@
  <td style="width:20%">PILOT NAME</td>
  <td style="width:15%">ADDRESS</td>
  <td style="width:5%">QUOTA</td>
- <td>ALIASES</td>
+ <td class="nophone">ALIASES</td>
 </tr>
 
 <!-- Table Log Data -->
@@ -52,15 +52,15 @@
  <td class="small"><fmt:fileSize value="${mb.quota}" /></td>
 </c:if>
 <c:if test="${!empty mb.aliases}">
- <td class="left small">${fn:splice(mb.aliases, ', ')}</td>
+ <td class="left small nophone">${fn:splice(mb.aliases, ', ')}</td>
 </c:if>
-<c:if test="${empty mb.aliases}"><td class="left">-</td></c:if>
+<c:if test="${empty mb.aliases}"><td class="left nophone">-</td></c:if>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5"><view:legend width="100" labels="Active,Inactive" classes=" ,warn" /><br />
+ <td colspan="5"><view:legend width="100" labels="Active,Inactive,Web Only" classes=" ,warn,opt2" /><br />
 <view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>

@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 10.0
  */
 
@@ -342,13 +342,15 @@ public class FlightSubmissionHelper {
 		// Get the closest departure gate
 		GetGates gdao = new GetGates(_c);
 		SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-		dGates.addAll(gdao.getAllGates(_fr.getAirportD(), _fr.getSimulator()));
+		dGates.addAll(gdao.getGates(_fr.getAirportD()));
 		_info.setGateD(dGates.stream().findFirst().orElse(null));
+		_info.setStartLocation(dgc.getLocation());
 		
 		// Get the closest arrival gate
 		SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-		aGates.addAll(gdao.getAllGates(_fr.getAirportA(), _fr.getSimulator()));
+		aGates.addAll(gdao.getGates(_fr.getAirportA()));
 		_info.setGateA(aGates.stream().findFirst().orElse(null));
+		_info.setEndLocation(agc.getLocation());
 	}
 	
 	/**

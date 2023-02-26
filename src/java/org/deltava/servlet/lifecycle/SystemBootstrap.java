@@ -25,7 +25,7 @@ import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.jmx.*;
 import org.deltava.util.ipc.IPCDaemon;
-import org.deltava.util.system.SystemData;
+import org.deltava.util.system.*;
 
 import org.gvagroup.common.*;
 import org.gvagroup.jdbc.*;
@@ -34,7 +34,7 @@ import org.gvagroup.tomcat.SharedWorker;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -54,6 +54,18 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		String code = SystemData.get("airline.code");
 		log.info("Starting " + code);
 		SharedData.addApp(code);
+		
+		// Load Secrets
+		if (SystemData.has("security.secrets")) {
+			try {
+				SecretManager sm = new PropertiesSecretManager(SystemData.get("security.secrets"));
+				sm.load();
+				sm.getKeys().forEach(k -> SystemData.add(k, sm.get(k)));
+				log.info(String.format("Loaded %d secrets from %s", Integer.valueOf(sm.size()), SystemData.get("security.secrets")));
+			} catch (IOException ie) {
+				log.error("Error loading secrets - " + ie.getMessage(), ie);
+			}
+		}
 		
 		// Set start date
 		AirlineTotals.BIRTHDATE = StringUtils.parseInstant(SystemData.get("airline.birthdate"), "MM/dd/yyyy");
@@ -239,7 +251,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	@SuppressWarnings("preview")
 	private void spawnDaemon(Runnable sd) {
 		Thread dt = Thread.ofVirtual().name(sd.toString()).unstarted(sd);
-		dt.setDaemon(true);
 		dt.setUncaughtExceptionHandler(this);
 		_daemons.put(dt, sd);
 		dt.start();

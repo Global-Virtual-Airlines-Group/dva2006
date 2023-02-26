@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the gates used.
  * @author Luke
- * @version 10.0
+ * @version 10.5
  * @since 5.1
  */
 
@@ -49,6 +49,7 @@ public class GateCalculateCommand extends AbstractCommand {
 				throw securityException("Cannot modify gates");
 
 			// Convert the flight report
+			boolean isUpdated = false;
 			FDRFlightReport afr = (FDRFlightReport) fr;
 
 			// Load the flight data
@@ -65,20 +66,28 @@ public class GateCalculateCommand extends AbstractCommand {
 			// Get the closest departure gate
 			GetGates gdao = new GetGates(con);
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-			dGates.addAll(gdao.getAllGates(afr.getAirportD(), info.getSimulator()));
+			dGates.addAll(gdao.getGates(afr.getAirportD()));
 			Gate gD = dGates.isEmpty() ? null : dGates.first();
-			boolean isUpdated = (gD != null) && !gD.equals(info.getGateD());
+			if ((gD != null) && !gD.equals(info.getGateD())) {
+				isUpdated = true;
+				info.setGateD(gD);
+				info.setStartLocation(dgc.getLocation());
+			}
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-			aGates.addAll(gdao.getAllGates(afr.getAirportA(), info.getSimulator()));
+			aGates.addAll(gdao.getGates(afr.getAirportA()));
 			Gate gA = aGates.isEmpty() ? null : aGates.first();
-			isUpdated |= ((gA != null) && !gA.equals(info.getGateA()));
+			if  ((gA != null) && !gA.equals(info.getGateA())) {
+				isUpdated = true;
+				info.setGateA(gA);
+				info.setEndLocation(agc.getLocation());
+			}
 			
 			// Save the gates
 			if (isUpdated) {
 				SetACARSRunway awdao = new SetACARSRunway(con);
-				awdao.writeGates(info.getID(), gD, gA);
+				awdao.writeGates(info);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);

@@ -96,7 +96,6 @@ public class XPlaneGateLoader extends TestCase {
 				// Get gate position
 				Gate g = new Gate(StringUtils.parse(dd.get(0), 0d), StringUtils.parse(dd.get(1), 0d));
 				g.setCode(apCode);
-				g.setSimulator(SIM);
 				g.setHeading(Math.round(Float.parseFloat(dd.get(2))));
 				
 				// Get name

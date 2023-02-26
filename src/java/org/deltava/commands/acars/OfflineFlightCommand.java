@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 2.4
  */
 
@@ -347,7 +347,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			awdao.writeRunways(inf.getID(), inf.getRunwayD(), inf.getRunwayA());
-			awdao.writeGates(inf.getID(), inf.getGateD(), inf.getGateA());
+			awdao.writeGates(inf);
 			if (inf.getDispatcher() == DispatchType.DISPATCH)
 				awdao.writeDispatch(inf.getID(), inf.getDispatcherID(), inf.getRouteID());
 			if (!flight.getPositions().isEmpty())

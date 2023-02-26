@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 1.0
  */
 
@@ -66,9 +66,8 @@ public class RoutePlotCommand extends AbstractCommand {
 				
 				// Load gates
 				GetGates gdao = new GetGates(con);
-				Simulator gs = (sim == Simulator.UNKNOWN) ? Simulator.P3Dv4 : sim;
-				Gate gD = gdao.getGate(dfr.getAirportD(), gs, dfr.getGateD());
-				Gate gA = gdao.getGate(dfr.getAirportA(), gs, dfr.getGateA());
+				Gate gD = gdao.getGate(dfr.getAirportD(), dfr.getGateD());
+				Gate gA = gdao.getGate(dfr.getAirportA(), dfr.getGateA());
 				ctx.setAttribute("gatesD", CollectionUtils.nonNull(gD), REQUEST);
 				ctx.setAttribute("gatesA", CollectionUtils.nonNull(gA), REQUEST);
 				

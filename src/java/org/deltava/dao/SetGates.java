@@ -1,11 +1,10 @@
-// Copyright 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.Gate;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.util.cache.CacheManager;
@@ -13,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 6.3
  */
 
@@ -33,7 +32,7 @@ public class SetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Collection<Gate> gates) throws DAOException {
-		Collection<String> cacheKeys = new HashSet<String>();
+		Collection<String> cacheKeys = gates.stream().map(Gate::getCode).collect(Collectors.toSet());
 		try {
 			startTransaction();
 			
@@ -49,11 +48,9 @@ public class SetGates extends DAO {
 			}
 			
 			// Write gate data
-			Collection<String> cacheSimKeys = List.of(Simulator.FSX, Simulator.P3D, Simulator.P3Dv4).stream().map(Simulator::name).collect(Collectors.toSet());
-			int totalWrites = gates.stream().filter(g -> g.getAirlines().size() > 0).mapToInt(g -> g.getAirlines().size()).sum();
+			int totalWrites = gates.stream().filter(g -> !g.getAirlines().isEmpty()).mapToInt(g -> g.getAirlines().size()).sum();
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, ZONE) VALUES (?, ?, ?, ?)")) {
 				for (Gate g : gates) {
-					cacheSimKeys.stream().map(csk -> String.format("AP-%s-%s", g.getCode(), csk)).forEach(cacheKeys::add);
 					ps.setString(1, g.getCode());
 					ps.setString(2, g.getName());
 					ps.setInt(4, g.getZone().ordinal());
