@@ -210,8 +210,6 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://mysql.gva.aws/dva</url>
-		<user>dva</user>
-		<pwd>***REMOVED***</pwd>
 		<socket>/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
@@ -391,16 +389,7 @@
 
 	<security>
 		<ssl type="Boolean">true</ssl>
-		<simFDR>***REMOVED***</simFDR>
-		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
-		<hash>
-			<salt>***REMOVED***</salt>
-			<algorithm>SHA-256</algorithm>
-			<acars>
-				<salt>***REMOVED***</salt>
-				<algorithm>SHA-256</algorithm>
-			</acars>
-		</hash>
+		<secrets>/usr/local/tomcat/conf/dva_secrets.properties</secrets>
 
 		<!-- Password settings -->
 		<password>
@@ -413,28 +402,6 @@
 			<checkIP type="Boolean">false</checkIP>
 			<maxAge type="Integer">-1</maxAge>
 		</cookie>
-
-		<key>
-			<analytics>UA-2066915-1</analytics>
-			<airCharts>***REMOVED***</airCharts>
-			<wunderground>***REMOVED***</wunderground>
-			<twc>***REMOVED***</twc>
-			<googleMaps>
-				<auth>***REMOVED***</auth>
-				<anon>***REMOVED***</anon>
-			</googleMaps>
-			<google>***REMOVED***</google>
-			<vatsim>***REMOVED***</vatsim>
-			<recaptcha>
-				<site>***REMOVED***</site>
-				<secret>***REMOVED***</secret>
-			</recaptcha>
-			<push>
-				<pub>***REMOVED***</pub>
-				<pvt>***REMOVED***</pvt>
-			</push>
-			<simbrief>***REMOVED***</simbrief>
-		</key>
 
 		<list name="roles" attr="role" sorted="true">
 			<role>AcademyAdmin</role>
@@ -527,11 +494,6 @@
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
 			<max_load type="Integer">15</max_load>
-			<flightXML>
-				<user>gvagroup</user>			
-				<v2>***REMOVED***</v2>
-				<v3>***REMOVED***</v3>			
-			</flightXML>
 		</flightaware>
 	</schedule>
 
