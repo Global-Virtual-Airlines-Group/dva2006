@@ -120,7 +120,7 @@ golgotha.onDOMReady(function() {
 <el:form method="post" action="findflight.do" op="search" validate="return golgotha.form.wrap(golgotha.ff.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="4"><span class="nophone"><content:airline /> </span>FLIGHT SCHEDULE SEARCH</td>
+ <td colspan="4"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT SCHEDULE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Airline</td>

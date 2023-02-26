@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,24 +9,16 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 5.1
  */
 
 public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 
-	/**
-	 * Gate types.
-	 */
-	public enum Type implements EnumDescription {
-		GATE, PARKING, DOCK;
-	}
-	
 	private int _heading;
 	private int _number;
-	private Type _type = Type.GATE;
+	private GateType _type = GateType.GATE;
 	private int _useCount;
-	private Simulator _sim = Simulator.UNKNOWN;
 	
 	private GateZone _zone = GateZone.DOMESTIC;
 	private final Collection<Airline> _airlines = new TreeSet<Airline>();
@@ -56,7 +48,6 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		_zone = g._zone;
 		_type = g._type;
 		_airlines.addAll(g._airlines);
-		_sim = g._sim;
 	}
 	
 	/**
@@ -71,7 +62,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	 * Returns the gate type.
 	 * @return the Type
 	 */
-	public Type getGateType() {
+	public GateType getGateType() {
 		return _type;
 	}
 	
@@ -97,14 +88,6 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	 */
 	public GateZone getZone() {
 		return _zone;
-	}
-	
-	/**
-	 * Returns the Simulator this Gate exists in.
-	 * @return the Simulator
-	 */
-	public Simulator getSimulator() {
-		return _sim;
 	}
 	
 	@Override
@@ -146,7 +129,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	@Override
 	public void setName(String name) {
 		String n = name.toUpperCase();
-		for (Type t : Type.values()) {
+		for (GateType t : GateType.values()) {
 			if (n.contains(t.name())) {
 				_type = t;
 				break;
@@ -189,14 +172,6 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		_zone = z;
 	}
 	
-	/**
-	 * Updates the Simulator that this Gate exists in.
-	 * @param s a Simulator
-	 */
-	public void setSimulator(Simulator s) {
-		_sim = s;
-	}
-	
 	@Override
 	public String getComboAlias() {
 		return getName();
@@ -209,13 +184,12 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		buf.append(_useCount).append(" flights)");
 		return buf.toString();
 	}
-
 	
 	@Override
 	public String getIconColor() {
 		return GREY;
 	}
-
+	
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");

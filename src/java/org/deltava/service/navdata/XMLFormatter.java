@@ -1,11 +1,11 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
 import java.text.*;
 
 import org.jdom2.*;
-import org.deltava.beans.UseCount;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to handle XML translation for the {@link XMLClientDataService}.
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 10.0
  */
 
@@ -45,7 +45,6 @@ class XMLFormatter {
 		for (Gate g : me.getValue()) {
 			Element ge = new Element("gate");
 			ge.setAttribute("name", g.getName());
-			ge.setAttribute("sim", g.getSimulator().toString());
 			ge.setAttribute("hdg", String.valueOf(g.getHeading()));
 			ge.setAttribute("lat", df.format(g.getLatitude()));
 			ge.setAttribute("lng", df.format(g.getLongitude()));

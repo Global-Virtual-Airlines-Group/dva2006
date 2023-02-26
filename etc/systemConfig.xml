@@ -11,12 +11,6 @@
 		<forum>Water Cooler</forum>
 		<db>dva</db>
 		<birthdate>06/10/2001</birthdate>
-		<voice>
-			<url>rw.deltava.org/DAL</url>
-			<mvs>
-				<enabled type="Boolean">true</enabled>
-			</mvs>
-		</voice>
 		
 		<!-- Do we have a file library? -->
 		<files>
@@ -198,8 +192,6 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://localhost/dva</url>
-		<user>dva</user>
-		<pwd>***REMOVED***</pwd>
 		<socket>/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
@@ -395,16 +387,7 @@
 	
 	<security>
 		<ssl type="Boolean">true</ssl>
-		<simFDR>***REMOVED***</simFDR>
-		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
-		<hash>
-			<salt>hashcode salt</salt>
-			<algorithm>SHA-256</algorithm>
-			<acars>
-				<salt>***REMOVED***</salt>
-				<algorithm>SHA-256</algorithm>
-			</acars>
-		</hash>
+		<secrets>/usr/local/tomcat/conf/dva_secrets.properties</secrets>
 
 		<!-- Password settings -->
 		<password>
@@ -418,26 +401,6 @@
 			<maxAge type="Integer">-1</maxAge>
 		</cookie>
 
-		<key>
-			<analytics>UA-2066915-1</analytics>
-			<googleMaps>
-				<auth>***REMOVED***</auth>
-				<anon>***REMOVED***</anon>
-			</googleMaps>
-			<google>***REMOVED***</google>
-			<vatsim>***REMOVED***</vatsim>
-			<twc>***REMOVED***</twc>
-			<recaptcha>
-				<site>***REMOVED***</site>
-				<secret>***REMOVED***</secret>
-			</recaptcha>
-			<push>
-				<pub>***REMOVED***</pub>
-				<pvt>***REMOVED***</pvt>
-			</push>
-			<simbrief>***REMOVED***</simbrief>
-		</key>
-		
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
 			<role>AcademyAdmin</role>
@@ -527,11 +490,6 @@
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
 			<max_load type="Integer">10</max_load>
-			<flightXML>
-				<user>gvagroup</user>			
-				<v2>***REMOVED***</v2>
-				<v3>***REMOVED***</v3>			
-			</flightXML>
 		</flightaware>
 	</schedule>
 
@@ -658,9 +616,6 @@
 		</system>
 
 		<maxreports type="Integer">2</maxreports>
-		<search>
-			<idx>/var/search</idx>
-		</search>
 	</cooler>
 	
 	<users>
@@ -679,13 +634,6 @@
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">30</transfer_max>
 		<checkrde_max type="Integer">3</checkrde_max>
-
-		<twitter>
-			<url>
-				<tweet>https://api.twitter.com/1.1/statuses/update.json</tweet>
-			</url>
-		
-		</twitter>
 
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
@@ -720,12 +668,6 @@
 	<acars>
 		<enabled type="Boolean">true</enabled>
 		<max_offline_size type="Integer">4096000</max_offline_size>
-
-		<!-- Archive file permissions -->
-		<archive>
-			<owner>dva</owner>
-			<group>users</group>
-		</archive>
 
 		<!-- Live map settings -->
 		<livemap>

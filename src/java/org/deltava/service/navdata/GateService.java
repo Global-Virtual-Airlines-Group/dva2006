@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -9,7 +9,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 
-import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 6.3
  */
 
@@ -44,16 +43,13 @@ public class GateService extends WebService {
 		if (a == null)
 			return SC_NOT_FOUND;
 		
-		// Get simulator version
-		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.P3Dv4);
 		Collection<Gate> gates = new LinkedHashSet<Gate>(); Collection<Airline> airlines = new TreeSet<Airline>(new AirlineComparator(AirlineComparator.NAME)); 
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Load Gates
 			GetGates gdao = new GetGates(con);
-			gates.addAll(gdao.getGates(a, sim));
-			gates.addAll(gdao.getAllGates(a, sim));
+			gates.addAll(gdao.getGates(a));
 			
 			// Load airlines
 			GetRawSchedule rsdao = new GetRawSchedule(con);

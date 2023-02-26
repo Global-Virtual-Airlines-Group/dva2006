@@ -1,17 +1,16 @@
-// Copyright 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.io.*;
 
 import org.deltava.beans.Helper;
 
-import org.deltava.util.FileUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to handle ACARS position archive hash buckets.
  * @author Luke
- * @version 8.1
+ * @version 10.5
  * @since 6.2
  */
 
@@ -66,15 +65,5 @@ public class ArchiveHelper {
 	 */
 	public static InputStream getStream(File f) throws IOException {
 		return new BufferedInputStream(new FileInputStream(f));
-	}
-
-	/**
-	 * Sets permissions on an archive file.
-	 * @param f the File
-	 * @throws IOException if an error occurs
-	 */
-	public static void setPermissions(File f) throws IOException {
-		FileUtils.setPermissions(f, "OWNER_READ", "OWNER_WRITE", "GROUP_READ");
-		FileUtils.setOwner(f, SystemData.get("acars.archive.owner"), SystemData.get("acars.archive.group"));
 	}
 }
