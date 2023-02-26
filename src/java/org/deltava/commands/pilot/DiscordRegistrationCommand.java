@@ -25,18 +25,18 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		String uuid = ctx.getParameter("id");
+		if (StringUtils.isEmpty(uuid))
+			throw notFoundException("No UUID present");
+
 		// Check our access - if we cannot get in, go directly to login page
 		CommandResult result = ctx.getResult();
 		if (!ctx.isAuthenticated()) {
-			ctx.setAttribute("referTo", ctx.getRequest().getRequestURI(), REQUEST);
+			ctx.setAttribute("referTo", String.format("%s?id=%s", ctx.getRequest().getRequestURI(), uuid), REQUEST);
 			CommandException ce = securityException("Not Authenticated");
 			ce.setForwardURL("/jsp/login.jsp");
 			throw ce;
-		}
-		
-		String uuid = ctx.getParameter("id"); 
-		if (StringUtils.isEmpty(uuid))
-			throw notFoundException("No UUID present");
+		} 
 		
 		try {
 			Connection con = ctx.getConnection();
