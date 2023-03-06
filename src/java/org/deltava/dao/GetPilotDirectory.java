@@ -5,15 +5,13 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -45,20 +43,10 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 
 		// If we have no numbers, then abort
 		if (code.length() == 0) return null;
-
-		try (PreparedStatement ps =  prepare("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P "
-				+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID")) {
-			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, Integer.parseInt(code.toString()));
-
-			// Execute the query and get return value
-			Pilot result = execute(ps).stream().findFirst().orElse(null);
-			if (result == null)
-				return null;
-			
-			// Add roles/ratings
-			loadChildRows(result, SystemData.get("airline.db"));
-			return result;
+		try (PreparedStatement ps =  prepare("SELECT ID FROM PILOTS WHERE (PILOT_ID=?) LIMIT 1")) {
+			ps.setInt(1, Integer.parseInt(code.toString()));
+			Collection<Pilot> pilots = getByID(executeIDs(ps), "PILOTS").values();
+			return pilots.stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
