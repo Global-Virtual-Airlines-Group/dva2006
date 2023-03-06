@@ -112,7 +112,6 @@ public class GatePIREPLoader extends TestCase {
 				int dist = g.distanceFeet(dgc.getLocation());
 				if (dist < 2250) {
 					fi.setGateD(g);
-					fi.setStartLocation(dgc.getLocation());
 					isUpdated = true;
 				}
 				
@@ -128,7 +127,6 @@ public class GatePIREPLoader extends TestCase {
 				int dist = g.distanceFeet(agc.getLocation());
 				if (dist < 2250) {
 					fi.setGateA(g);
-					fi.setEndLocation(agc.getLocation());
 					isUpdated = true;
 				}
 				
