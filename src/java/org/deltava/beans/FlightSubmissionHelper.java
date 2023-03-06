@@ -335,26 +335,28 @@ public class FlightSubmissionHelper {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void calculateGates() throws DAOException {
-		if (_rte.size() < 2) return;
-		GeoLocation startLoc = _rte.get(0);
-		GeoLocation endLoc = _rte.get(_rte.size() - 1);
-		GeoComparator dgc = new GeoComparator(startLoc, true);
-		GeoComparator agc = new GeoComparator(endLoc, true);
+		if (!(_fr instanceof FDRFlightReport) ||  (_rte.size() < 2)) return;
+		FDRFlightReport ffr = (FDRFlightReport) _fr;
+		if (ffr.getStartLocation() == null)
+			ffr.setStartLocation(_rte.get(0));
+		if (ffr.getEndLocation() == null)
+			ffr.setEndLocation(_rte.get(_rte.size() - 1));
+		
+		GeoComparator dgc = new GeoComparator(ffr.getStartLocation(), true);
+		GeoComparator agc = new GeoComparator(ffr.getEndLocation(), true);
 	
 		// Get the closest departure gate - Filter gates that are too far away from the start/end point
 		GetGates gdao = new GetGates(_c);
 		SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
 		dGates.addAll(gdao.getGates(_fr.getAirportD()));
-		_info.setStartLocation(startLoc);
-		_info.setGateD(dGates.stream().filter(g -> (g.distanceFeet(startLoc) < 500)).findFirst().orElse(null));
+		_info.setGateD(dGates.stream().filter(g -> (g.distanceFeet(ffr.getStartLocation()) < 500)).findFirst().orElse(null));
 		if (_info.getGateD() == null)
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of starting location", Integer.valueOf(MAX_GATE_DISTANCE)));
 		
 		// Get the closest arrival gate
 		SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
 		aGates.addAll(gdao.getGates(_fr.getAirportA()));
-		_info.setEndLocation(endLoc);
-		_info.setGateA(aGates.stream().filter(g -> (g.distanceFeet(endLoc) < 500)).findFirst().orElse(null));
+		_info.setGateA(aGates.stream().filter(g -> (g.distanceFeet(ffr.getEndLocation()) < 500)).findFirst().orElse(null));
 		if (_info.getGateA() == null)
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("No Gate found within %d feet of shutdown location", Integer.valueOf(MAX_GATE_DISTANCE)));
 	}

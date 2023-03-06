@@ -37,12 +37,10 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	private Airport _airportA;
 	private Airport _airportL;
 
-	private GeoLocation _startLocation;
 	private Gate _gateD;
 	private Runway _rwyD;
 	private TerminalRoute _sid;
 	
-	private GeoLocation _endLocation;
 	private Gate _gateA;
 	private Runway _rwyA;
 	private TerminalRoute _star;
@@ -294,26 +292,6 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	 */
 	public String getRemarks() {
 		return _remarks;
-	}
-	
-	/**
-	 * Returns the first route position for this flight.
-	 * @return loc the first position
-	 * @see FlightInfo#getEndLocation()
-	 * @see FlightInfo#setStartLocation(GeoLocation)
-	 */
-	public GeoLocation getStartLocation() {
-		return _startLocation;
-	}
-
-	/**
-	 * Returns the final route position for this flight.
-	 * @return loc the final position
-	 * @see FlightInfo#getStartLocation()
-	 * @see FlightInfo#setEndLocation(GeoLocation)
-	 */
-	public GeoLocation getEndLocation() {
-		return _endLocation;
 	}
 	
 	/**
@@ -667,16 +645,6 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 	}
 	
 	/**
-	 * Updates the final route position for this flight.
-	 * @param loc the final position
-	 * @see FlightInfo#getEndLocation()
-	 * @see FlightInfo#setStartLocation(GeoLocation)
-	 */
-	public void setEndLocation(GeoLocation loc) {
-		_endLocation = new GeoPosition(loc);
-	}
-
-	/**
 	 * Updates the destination Airport for this flight.
 	 * @param a an Airport bean
 	 * @see FlightInfo#getAirportA()
@@ -706,16 +674,6 @@ public class FlightInfo extends ACARSLogEntry implements FlightData, TimeSpan, V
 		_rwyA = r;
 	}
 
-	/**
-	 * Updates the first route position for this flight.
-	 * @param loc the first position
-	 * @see FlightInfo#getStartLocation()
-	 * @see FlightInfo#setEndLocation(GeoLocation)
-	 */
-	public void setStartLocation(GeoLocation loc) {
-		_startLocation = new GeoPosition(loc);
-	}
-	
 	/**
 	 * Updates the origination Airport for this flight.
 	 * @param a an Airport bean

@@ -71,7 +71,6 @@ public class GateCalculateCommand extends AbstractCommand {
 			if ((gD != null) && !gD.equals(info.getGateD())) {
 				isUpdated = true;
 				info.setGateD(gD);
-				info.setStartLocation(dgc.getLocation());
 			}
 			
 			// Get the closest arrival gate
@@ -81,7 +80,6 @@ public class GateCalculateCommand extends AbstractCommand {
 			if  ((gA != null) && !gA.equals(info.getGateA())) {
 				isUpdated = true;
 				info.setGateA(gA);
-				info.setEndLocation(agc.getLocation());
 			}
 			
 			// Save the gates
