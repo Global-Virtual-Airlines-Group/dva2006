@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -10,6 +10,8 @@ import org.deltava.beans.Inclusion;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.filter.*;
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -63,7 +65,8 @@ public class FindFlightCommand extends AbstractCommand {
 
 			// Get the airports
 			GetScheduleAirport adao = new GetScheduleAirport(con);
-			Collection<Airport> airports = adao.getOriginAirports(a);
+			List<Airport> airports = adao.getOriginAirports(a);
+			airports.sort(new AirportComparator(AirportComparator.NAME));
 			ctx.setAttribute("airports", airports, REQUEST);
 			
 			// Load recent PIREPs to see if we have a connected logbook
