@@ -72,27 +72,19 @@ public class SetACARSRunway extends SetACARSData {
 	 */
 	public void writeGates(FlightInfo inf) throws DAOException {
 		if ((inf.getGateD() == null) && (inf.getGateA() == null)) return;
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.GATEDATA (ID, ICAO, GATE, LATITUDE, LONGITUDE, LL, ISDEPARTURE) VALUES (?, ?, ?, ?, ?, ST_PointFromText(?, ?), ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.GATEDATA (ID, ICAO, GATE, ISDEPARTURE) VALUES (?, ?, ?, ?)")) {
 			ps.setInt(1, inf.getID());
 			if (inf.getGateD() != null) {
 				ps.setString(2, inf.getGateD().getCode());
 				ps.setString(3, inf.getGateD().getName());
-				ps.setDouble(4, inf.getGateD().getLatitude());
-				ps.setDouble(5, inf.getGateD().getLongitude());
-				ps.setString(6, formatLocation(inf.getGateD()));
-				ps.setInt(7, WGS84_SRID);
-				ps.setBoolean(8, true);
+				ps.setBoolean(4, true);
 				ps.addBatch();
 			}
 			
 			if (inf.getGateA() != null) {
 				ps.setString(2, inf.getGateA().getCode());
 				ps.setString(3, inf.getGateA().getName());
-				ps.setDouble(4, inf.getGateA().getLatitude());
-				ps.setDouble(5, inf.getGateA().getLongitude());
-				ps.setString(6, formatLocation(inf.getGateA()));
-				ps.setInt(7, WGS84_SRID);
-				ps.setBoolean(8, false);
+				ps.setBoolean(4, false);
 				ps.addBatch();
 			}
 			

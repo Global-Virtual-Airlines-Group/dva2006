@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
 	 */
 	protected final Map<StateChange, Instant> _stateChangeTimes = new HashMap<StateChange, Instant>();
 	
+	private GeospaceLocation _startPos = new GeoPosition(0, 0);
     private int _taxiWeight;
     private int _taxiFuel;
     
@@ -44,6 +45,7 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
 
     private int _gateWeight;
     private int _gateFuel;
+    private GeospaceLocation _endPos = new GeoPosition(0, 0);
 
     private int _totalFuel;
     
@@ -66,6 +68,18 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     public Instant getStartTime() {
         return _stateChangeTimes.get(StateChange.START);
     }
+	
+	/**
+	 * Returns the first route position for this flight.
+	 * @return loc the first position
+	 * @see FDRFlightReport#getEndLocation()
+	 * @see FDRFlightReport#setStartLocation(GeoLocation)
+	 */
+	public GeoLocation getStartLocation() {
+		return _startPos;
+	}
+
+
     
     /**
      * Returns the date/time of pushback.
@@ -284,6 +298,16 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     public int getGateFuel() {
         return _gateFuel;
     }
+    
+	/**
+	 * Returns the final route position for this flight.
+	 * @return loc the final position
+	 * @see FDRFlightReport#getStartLocation()
+	 * @see FDRFlightReport#setEndLocation(GeoLocation)
+	 */
+	public GeoLocation getEndLocation() {
+		return _endPos;
+	}
 
     /**
      * Returns the total amount of fuel burned.
@@ -350,6 +374,16 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     public void setStartTime(Instant dt) {
         _stateChangeTimes.put(StateChange.START, dt);
     }
+    
+	/**
+	 * Updates the first route position for this flight.
+	 * @param loc the first position
+	 * @see FDRFlightReport#getStartLocation()
+	 * @see FDRFlightReport#setEndLocation(GeoLocation)
+	 */
+	public void setStartLocation(GeoLocation loc) {
+		_startPos = new GeoPosition(loc);
+	}
     
     /**
      * Updates the time the aircraft was pushed back.
@@ -552,6 +586,16 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
     public void setEndTime(Instant dt) {
         _stateChangeTimes.put(StateChange.END, dt);
     }
+    
+	/**
+	 * Updates the final route position for this flight.
+	 * @param loc the final position
+	 * @see FDRFlightReport#getEndLocation()
+	 * @see FDRFlightReport#setStartLocation(GeoLocation)
+	 */
+	public void setEndLocation(GeoLocation loc) {
+		_endPos = new GeoPosition(loc);
+	}
     
     /**
      * Updates the weight of the aircraft at the end of the flight. 

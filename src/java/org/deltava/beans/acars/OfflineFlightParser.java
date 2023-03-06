@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 2.4
  */
 
@@ -281,6 +281,13 @@ public final class OfflineFlightParser {
 			// empty
 		}
 		
+		// Set starting position
+		if (XMLUtils.hasElement(ie, "startLatitude")) {
+			double lat = parse(ie.getChildTextTrim("startLatitude"));
+			double lng = parse(ie.getChildTextTrim("startLongitude"));
+			afr.setStartLocation(new GeoPosition(lat, lng, Math.min(24000, StringUtils.parse(ie.getChildTextTrim("startAltitude"), 0))));
+		}
+		
 		// Set the takeoff position if present
 		afr.setTakeoffHeading(StringUtils.parse(ie.getChildTextTrim("takeoffHeading"), -1));
 		if (afr.getTakeoffHeading() > -1) {
@@ -295,6 +302,13 @@ public final class OfflineFlightParser {
 			double lat = parse(ie.getChildTextTrim("landingLatitude"));
 			double lng = parse(ie.getChildTextTrim("landingLongitude"));
 			afr.setLandingLocation(new GeoPosition(lat, lng, Math.min(24000, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0))));
+		}
+		
+		// Set ending position
+		if (XMLUtils.hasElement(ie, "shutdownLatitude")) {
+			double lat = parse(ie.getChildTextTrim("shutdownLatitude"));
+			double lng = parse(ie.getChildTextTrim("shutdownLongitude"));
+			afr.setEndLocation(new GeoPosition(lat, lng, Math.min(24000, StringUtils.parse(ie.getChildTextTrim("shutdownAltitude"), 0))));
 		}
 
 		// Load the 0X/1X/2X/4X times
