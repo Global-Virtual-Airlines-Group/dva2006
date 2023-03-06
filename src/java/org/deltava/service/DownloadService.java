@@ -1,4 +1,4 @@
-// Copyright 2008, 2011, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2013, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service supporting file downloads.
  * @author Luke
- * @version 6.0
+ * @version 10.5
  * @since 2.2
  */
 
@@ -31,7 +31,7 @@ public abstract class DownloadService extends WebService {
 		
 		// Check if we stream via mod_xsendfile
 		if (SystemData.getBoolean("airline.files.sendfile")) {
-			log.info("Sending " + f.getName() + " via mod_xsendfile");
+			if (log.isDebugEnabled()) log.debug("Sending " + f.getName() + " via mod_xsendfile");
 			rsp.addHeader("X-Sendfile", f.getAbsolutePath());
 			return;
 		}
@@ -41,14 +41,12 @@ public abstract class DownloadService extends WebService {
 		try {
 			rsp.setContentLength((int) f.length());
 			rsp.setBufferSize(bufferSize);
-			try (InputStream is = new FileInputStream(f)) {
-				try (OutputStream out = rsp.getOutputStream()) {
-					byte[] buf = new byte[bufferSize];
-					int bytesRead = is.read(buf, 0, bufferSize);
-					while (bytesRead != -1) {
-						out.write(buf, 0, bytesRead);
-						bytesRead = is.read(buf, 0, bufferSize);
-					}
+			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 65536); OutputStream out = rsp.getOutputStream()) {
+				byte[] buf = new byte[bufferSize];
+				int bytesRead = is.read(buf, 0, bufferSize);
+				while (bytesRead != -1) {
+					out.write(buf, 0, bytesRead);
+					bytesRead = is.read(buf, 0, bufferSize);
 				}
 			}
 		} catch (IOException ie) {

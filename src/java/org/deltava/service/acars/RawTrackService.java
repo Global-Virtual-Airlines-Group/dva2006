@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
  * @since 9.0
  */
 
-public class RawTrackService extends WebService {
+public class RawTrackService extends DownloadService {
 
 	/**
 	 * Executes the Web Service.
@@ -42,17 +42,7 @@ public class RawTrackService extends WebService {
 		try {
 			ctx.setContentType("application/octet-stream");
 			ctx.setHeader("Content-disposition", "attachment; filename=acars" + Integer.toHexString(acarsID).toUpperCase() + ".dat");
-			try (OutputStream os = ctx.getResponse().getOutputStream(); InputStream is = new BufferedInputStream(new FileInputStream(f), 65536)) {
-				byte[] buffer = new byte[16384];
-				int bytesRead = is.read(buffer);
-				while (bytesRead != -1) {
-					os.write(buffer, 0, bytesRead);
-					bytesRead = is.read(buffer);
-				}
-			}
-
-			ctx.getResponse().setContentLengthLong(f.length());
-			ctx.getResponse().flushBuffer();
+			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
