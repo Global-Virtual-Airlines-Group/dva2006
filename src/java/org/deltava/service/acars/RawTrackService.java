@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to serve serialized ACARS track data for analytics usage.
  * @author Luke
- * @version 9.2
+ * @version 10.5
  * @since 9.0
  */
 
@@ -42,14 +42,12 @@ public class RawTrackService extends WebService {
 		try {
 			ctx.setContentType("application/octet-stream");
 			ctx.setHeader("Content-disposition", "attachment; filename=acars" + Integer.toHexString(acarsID).toUpperCase() + ".dat");
-			try (OutputStream os = ctx.getResponse().getOutputStream()) {
-				try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384)) {
-					byte[] buffer = new byte[16384];
-					int bytesRead = is.read(buffer);
-					while (bytesRead != -1) {
-						os.write(buffer, 0, bytesRead);
-						bytesRead = is.read(buffer);
-					}
+			try (OutputStream os = ctx.getResponse().getOutputStream(); InputStream is = new BufferedInputStream(new FileInputStream(f), 65536)) {
+				byte[] buffer = new byte[16384];
+				int bytesRead = is.read(buffer);
+				while (bytesRead != -1) {
+					os.write(buffer, 0, bytesRead);
+					bytesRead = is.read(buffer);
 				}
 			}
 
