@@ -109,8 +109,7 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREPS (PILOT_ID, RANKING, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, "
-			+ "SUBMITTED, EVENT_ID, ASSIGN_ID, TOUR_ID, PAX, LOADFACTOR, FLIGHT_TYPE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(".PIREPS (PILOT_ID, RANKING, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, SUBMITTED, EVENT_ID, ASSIGN_ID, TOUR_ID, PAX, LOADFACTOR, FLIGHT_TYPE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		// Set the prepared statement parameters
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
@@ -481,10 +480,10 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, TAKEOFF_ALT, "
-			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, LANDING_SCORE, "
-			+ "END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, "
-			+ "TIME_BOARD, TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, START_LAT, START_LNG, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, TAKEOFF_ALT, "
+			+ "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, LANDING_SCORE, END_TIME, GATE_LAT, "
+			+ "GATE_LNG, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, SDK, RESTORE_COUNT, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, CARGO_WEIGHT, CAPABILITIES, TIME_BOARD, "
+			+ "TIME_DEBOARD, TIME_ONLINE, TAILCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -499,78 +498,82 @@ public class SetFlightReport extends DAO {
 				ps.setInt(1, fr.getID());
 				ps.setInt(2, fr.getDatabaseID(DatabaseID.ACARS));
 				ps.setTimestamp(3, createTimestamp(fr.getStartTime()));
-				ps.setTimestamp(4, createTimestamp(fr.getTaxiTime()));
-				ps.setInt(5, fr.getTaxiWeight());
-				ps.setInt(6, fr.getTaxiFuel());
-				ps.setTimestamp(7, createTimestamp(fr.getTakeoffTime()));
-				ps.setInt(8, fr.getTakeoffDistance());
-				ps.setInt(9, fr.getTakeoffSpeed());
-				ps.setDouble(10, fr.getTakeoffN1());
-				ps.setInt(11, fr.getTakeoffHeading());
-				ps.setDouble(12, fr.getTakeoffLocation().getLatitude());
-				ps.setDouble(13, fr.getTakeoffLocation().getLongitude());
-				ps.setInt(14, fr.getTakeoffLocation().getAltitude());
-				ps.setInt(15, fr.getTakeoffWeight());
-				ps.setInt(16, fr.getTakeoffFuel());
-				ps.setTimestamp(17, createTimestamp(fr.getLandingTime()));
-				ps.setInt(18, fr.getLandingDistance());
-				ps.setInt(19, fr.getLandingSpeed());
-				ps.setInt(20, fr.getLandingVSpeed());
-				ps.setDouble(21, fr.getLandingN1());
-				ps.setInt(22, fr.getLandingHeading());
-				ps.setDouble(23, fr.getLandingLocation().getLatitude());
-				ps.setDouble(24, fr.getLandingLocation().getLongitude());
-				ps.setInt(25, fr.getLandingLocation().getAltitude());
-				ps.setInt(26, fr.getLandingWeight());
-				ps.setInt(27, fr.getLandingFuel());
-				ps.setTimestamp(29, createTimestamp(fr.getEndTime()));
-				ps.setInt(30, fr.getGateWeight());
-				ps.setInt(31, fr.getGateFuel());
-				ps.setInt(32, fr.getTotalFuel());
+				ps.setDouble(4, fr.getStartLocation().getLatitude());
+				ps.setDouble(5, fr.getStartLocation().getLongitude());
+				ps.setTimestamp(6, createTimestamp(fr.getTaxiTime()));
+				ps.setInt(7, fr.getTaxiWeight());
+				ps.setInt(8, fr.getTaxiFuel());
+				ps.setTimestamp(9, createTimestamp(fr.getTakeoffTime()));
+				ps.setInt(10, fr.getTakeoffDistance());
+				ps.setInt(11, fr.getTakeoffSpeed());
+				ps.setDouble(12, fr.getTakeoffN1());
+				ps.setInt(13, fr.getTakeoffHeading());
+				ps.setDouble(14, fr.getTakeoffLocation().getLatitude());
+				ps.setDouble(15, fr.getTakeoffLocation().getLongitude());
+				ps.setInt(16, fr.getTakeoffLocation().getAltitude());
+				ps.setInt(17, fr.getTakeoffWeight());
+				ps.setInt(18, fr.getTakeoffFuel());
+				ps.setTimestamp(19, createTimestamp(fr.getLandingTime()));
+				ps.setInt(20, fr.getLandingDistance());
+				ps.setInt(21, fr.getLandingSpeed());
+				ps.setInt(22, fr.getLandingVSpeed());
+				ps.setDouble(23, fr.getLandingN1());
+				ps.setInt(24, fr.getLandingHeading());
+				ps.setDouble(25, fr.getLandingLocation().getLatitude());
+				ps.setDouble(26, fr.getLandingLocation().getLongitude());
+				ps.setInt(27, fr.getLandingLocation().getAltitude());
+				ps.setInt(28, fr.getLandingWeight());
+				ps.setInt(29, fr.getLandingFuel());
+				ps.setTimestamp(31, createTimestamp(fr.getEndTime()));
+				ps.setDouble(32, fr.getEndLocation().getLatitude());
+				ps.setDouble(33, fr.getEndLocation().getLongitude());
+				ps.setInt(34, fr.getGateWeight());
+				ps.setInt(35, fr.getGateFuel());
+				ps.setInt(36, fr.getTotalFuel());
 				
 				// ACARS
 				if (isACARS) {
 					ACARSFlightReport afr = (ACARSFlightReport) fr;
-					ps.setInt(28, (int)Math.round(afr.getLandingScore() * 100));
-					ps.setInt(33, afr.getTime(0));
-					ps.setInt(34, afr.getTime(1));
-					ps.setInt(35, afr.getTime(2));
-					ps.setInt(36, afr.getTime(4));
-					ps.setString(37, afr.getSDK());
-					ps.setInt(38, afr.getRestoreCount());
-					ps.setInt(39, afr.getClientBuild());
-					ps.setInt(40, afr.getBeta());
-					ps.setDouble(41, afr.getLandingG());
-					ps.setInt(42, afr.getLandingCategory().ordinal());
-					ps.setInt(43, (int)(afr.getAverageFrameRate() * 10));
-					ps.setInt(44, afr.getPaxWeight());
-					ps.setInt(45, afr.getCargoWeight());
-					ps.setLong(46, afr.getCapabilities());
-					ps.setLong(47, afr.getBoardTime().toSeconds());
-					ps.setLong(48, afr.getDeboardTime().toSeconds());
-					ps.setLong(49, afr.getOnlineTime().toSeconds());
-					ps.setString(50,  afr.getTailCode());
+					ps.setInt(30, (int)Math.round(afr.getLandingScore() * 100));
+					ps.setInt(37, afr.getTime(0));
+					ps.setInt(38, afr.getTime(1));
+					ps.setInt(39, afr.getTime(2));
+					ps.setInt(40, afr.getTime(4));
+					ps.setString(41, afr.getSDK());
+					ps.setInt(42, afr.getRestoreCount());
+					ps.setInt(43, afr.getClientBuild());
+					ps.setInt(44, afr.getBeta());
+					ps.setDouble(45, afr.getLandingG());
+					ps.setInt(46, afr.getLandingCategory().ordinal());
+					ps.setInt(47, (int)(afr.getAverageFrameRate() * 10));
+					ps.setInt(48, afr.getPaxWeight());
+					ps.setInt(49, afr.getCargoWeight());
+					ps.setLong(50, afr.getCapabilities());
+					ps.setLong(51, afr.getBoardTime().toSeconds());
+					ps.setLong(52, afr.getDeboardTime().toSeconds());
+					ps.setLong(53, afr.getOnlineTime().toSeconds());
+					ps.setString(54,  afr.getTailCode());
 				} else if (fr instanceof XACARSFlightReport) {
 					XACARSFlightReport xfr = (XACARSFlightReport) fr;
-					ps.setInt(28, -1);
-					ps.setInt(33, 0);
-					ps.setInt(34, 0);
-					ps.setInt(35, 0);
-					ps.setInt(36, 0);
-					ps.setString(37, null);
-					ps.setBoolean(38, false);
-					ps.setInt(39, xfr.getMajorVersion());
-					ps.setInt(40, xfr.getMinorVersion());
-					ps.setDouble(41, 0);
-					ps.setInt(42, 0);
-					ps.setInt(43, 0);
-					ps.setInt(44, 0);
-					ps.setInt(45, 0);
-					ps.setLong(46, 0);
+					ps.setInt(30, -1);
+					ps.setInt(37, 0);
+					ps.setInt(38, 0);
+					ps.setInt(39, 0);
+					ps.setInt(40, 0);
+					ps.setString(41, null);
+					ps.setBoolean(42, false);
+					ps.setInt(43, xfr.getMajorVersion());
+					ps.setInt(44, xfr.getMinorVersion());
+					ps.setDouble(45, 0);
+					ps.setInt(46, 0);
 					ps.setInt(47, 0);
 					ps.setInt(48, 0);
 					ps.setInt(49, 0);
-					ps.setString(50, null);
+					ps.setLong(50, 0);
+					ps.setInt(51, 0);
+					ps.setInt(52, 0);
+					ps.setInt(53, 0);
+					ps.setString(54, null);
 				}
 
 				executeUpdate(ps, 1);

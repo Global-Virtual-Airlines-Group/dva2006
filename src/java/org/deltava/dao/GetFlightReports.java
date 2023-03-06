@@ -635,8 +635,8 @@ public class GetFlightReports extends DAO {
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
-			boolean hasOnTime = (md.getColumnCount() > 76);
-			boolean hasMetadata = (md.getColumnCount() > 80);
+			boolean hasOnTime = (md.getColumnCount() > 80);
+			boolean hasMetadata = (md.getColumnCount() > 84);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -710,68 +710,70 @@ public class GetFlightReports extends DAO {
 					ap.setAttribute(FlightReport.ATTR_ACARS, true);
 					ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(28));
 					ap.setStartTime(toInstant(rs.getTimestamp(29)));
-					ap.setTaxiTime(toInstant(rs.getTimestamp(30)));
-					ap.setTaxiWeight(rs.getInt(31));
-					ap.setTaxiFuel(rs.getInt(32));
-					ap.setTakeoffTime(toInstant(rs.getTimestamp(33)));
-					ap.setTakeoffDistance(rs.getInt(34));
-					ap.setTakeoffSpeed(rs.getInt(35));
-					ap.setTakeoffN1(rs.getDouble(36));
-					ap.setTakeoffHeading(rs.getInt(37));
-					ap.setTakeoffLocation(new GeoPosition(rs.getDouble(38), rs.getDouble(39), rs.getInt(40)));
-					ap.setTakeoffWeight(rs.getInt(41));
-					ap.setTakeoffFuel(rs.getInt(42));
-					ap.setLandingTime(toInstant(rs.getTimestamp(43)));
-					ap.setLandingDistance(rs.getInt(44));
-					ap.setLandingSpeed(rs.getInt(45));
-					ap.setLandingVSpeed(rs.getInt(46));
-					// Load column #47 with DVA ACARS only
-					ap.setLandingN1(rs.getDouble(48));
-					ap.setLandingHeading(rs.getInt(49));
-					ap.setLandingLocation(new GeoPosition(rs.getDouble(50), rs.getDouble(51), rs.getInt(52)));
-					ap.setLandingWeight(rs.getInt(53));
-					ap.setLandingFuel(rs.getInt(54));
-					// Load columns #55+56 with DVA ACARS only
-					ap.setEndTime(toInstant(rs.getTimestamp(57)));
-					ap.setGateWeight(rs.getInt(58));
-					ap.setGateFuel(rs.getInt(59));
-					ap.setTotalFuel(rs.getInt(60));
+					ap.setStartLocation(new GeoPosition(rs.getDouble(30), rs.getDouble(31), 0));
+					ap.setTaxiTime(toInstant(rs.getTimestamp(32)));
+					ap.setTaxiWeight(rs.getInt(33));
+					ap.setTaxiFuel(rs.getInt(34));
+					ap.setTakeoffTime(toInstant(rs.getTimestamp(35)));
+					ap.setTakeoffDistance(rs.getInt(36));
+					ap.setTakeoffSpeed(rs.getInt(37));
+					ap.setTakeoffN1(rs.getDouble(38));
+					ap.setTakeoffHeading(rs.getInt(39));
+					ap.setTakeoffLocation(new GeoPosition(rs.getDouble(40), rs.getDouble(41), rs.getInt(42)));
+					ap.setTakeoffWeight(rs.getInt(43));
+					ap.setTakeoffFuel(rs.getInt(44));
+					ap.setLandingTime(toInstant(rs.getTimestamp(45)));
+					ap.setLandingDistance(rs.getInt(46));
+					ap.setLandingSpeed(rs.getInt(47));
+					ap.setLandingVSpeed(rs.getInt(48));
+					// Load column #49 with DVA ACARS only
+					ap.setLandingN1(rs.getDouble(50));
+					ap.setLandingHeading(rs.getInt(51));
+					ap.setLandingLocation(new GeoPosition(rs.getDouble(52), rs.getDouble(53), rs.getInt(54)));
+					ap.setLandingWeight(rs.getInt(55));
+					ap.setLandingFuel(rs.getInt(56));
+					// Load columns #57+58 with DVA ACARS only
+					ap.setEndTime(toInstant(rs.getTimestamp(59)));
+					ap.setGateWeight(rs.getInt(60));
+					ap.setGateFuel(rs.getInt(61));
+					ap.setEndLocation(new GeoPosition(rs.getDouble(62), rs.getDouble(63), 0));
+					ap.setTotalFuel(rs.getInt(64));
 				}
 			
 				// Load DVA ACARS pirep data
 				if (isACARS && !isXACARS) {
 					ACARSFlightReport ap = (ACARSFlightReport) p;
-					ap.setLandingG(rs.getDouble(47));
-					ap.setLandingCategory(ILSCategory.values()[rs.getInt(55)]);
-					ap.setLandingScore(rs.getInt(56) / 100d);
+					ap.setLandingG(rs.getDouble(49));
+					ap.setLandingCategory(ILSCategory.values()[rs.getInt(57)]);
+					ap.setLandingScore(rs.getInt(58) / 100d);
 					
-					ap.setPaxWeight(rs.getInt(61));
-					ap.setCargoWeight(rs.getInt(62));
-					ap.setTime(0, rs.getInt(63));
-					ap.setTime(1, rs.getInt(64));
-					ap.setTime(2, rs.getInt(65));
-					ap.setTime(4, rs.getInt(66));
-					ap.setBoardTime(rs.getInt(67));
-					ap.setDeboardTime(rs.getInt(68));
-					ap.setOnlineTime(rs.getInt(69));
-					ap.setSDK(rs.getString(70));
-					ap.setTailCode(rs.getString(71));
-					ap.setCapabilities(rs.getLong(72));
-					ap.setRestoreCount(rs.getInt(73));
-					ap.setAverageFrameRate(rs.getInt(74) / 10d);
-					ap.setClientBuild(rs.getInt(75));
-					ap.setBeta(rs.getInt(76));
-					if (hasOnTime) ap.setOnTime(OnTime.values()[rs.getInt(77)]);
+					ap.setPaxWeight(rs.getInt(65));
+					ap.setCargoWeight(rs.getInt(66));
+					ap.setTime(0, rs.getInt(67));
+					ap.setTime(1, rs.getInt(68));
+					ap.setTime(2, rs.getInt(69));
+					ap.setTime(4, rs.getInt(70));
+					ap.setBoardTime(rs.getInt(71));
+					ap.setDeboardTime(rs.getInt(72));
+					ap.setOnlineTime(rs.getInt(73));
+					ap.setSDK(rs.getString(74));
+					ap.setTailCode(rs.getString(75));
+					ap.setCapabilities(rs.getLong(76));
+					ap.setRestoreCount(rs.getInt(77));
+					ap.setAverageFrameRate(rs.getInt(78) / 10d);
+					ap.setClientBuild(rs.getInt(79));
+					ap.setBeta(rs.getInt(80));
+					if (hasOnTime) ap.setOnTime(OnTime.values()[rs.getInt(81)]);
 					if (hasMetadata) {
-						ap.setAuthor(rs.getString(78));
-						ap.setAircraftPath(rs.getString(79));
-						ap.setFDE(rs.getString(80));
-						ap.setAircraftCode(rs.getString(81));
+						ap.setAuthor(rs.getString(82));
+						ap.setAircraftPath(rs.getString(83));
+						ap.setFDE(rs.getString(84));
+						ap.setAircraftCode(rs.getString(85));
 					}
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(75));
-					ap.setMinorVersion(rs.getInt(76));
+					ap.setMajorVersion(rs.getInt(79));
+					ap.setMinorVersion(rs.getInt(80));
 				}
 
 				results.add(p);
