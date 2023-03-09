@@ -1,8 +1,9 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.sql.Connection;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and edit Charter flight Requests.
  * @author Luke
- * @version 103
+ * @version 10.5
  * @since 10.0
  */
 
@@ -177,6 +178,12 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			Aircraft eq = acdao.get(req.getEquipmentType());
 			ctx.setAttribute("eq", eq, REQUEST);
 			ctx.setAttribute("opts", eq.getOptions(ctx.getDB().toUpperCase()), REQUEST);
+			
+			// Get statistics
+			int interval = SystemData.getInt("schedule.charter.count_days", 90);
+			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
+			ctx.setAttribute("charterCount", Integer.valueOf(frsdao.getCharterCount(req.getAuthorID(), interval, req.getCreatedOn())), REQUEST);
+			ctx.setAttribute("charterCountStart", req.getCreatedOn().minus(interval, ChronoUnit.DAYS), REQUEST);
 			
 			// Check the schedule
 			GetSchedule sdao = new GetSchedule(con);
