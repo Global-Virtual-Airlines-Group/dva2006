@@ -29,6 +29,12 @@
  <td class="label">Requested by</td>
  <td class="data"><el:cmd url="profile" link="${author}" className="pri bld">${author.name}</el:cmd><c:if test="${!empty author.pilotCode}" ><span class="bld"> (${author.pilotCode })</span></c:if> on <fmt:date date="${chreq.createdOn}" className="sec bld" /></td>
 </tr>
+<c:if test="${charterCount > 0}">
+<tr>
+ <td class="label">Charters Flown</td>
+ <td class="data"><fmt:int value="${charterCount}" /> flights since <fmt:date date="${charterCountStart}" fmt="d" /></td>  
+</tr>
+</c:if>
 <c:if test="${!empty chreq.disposedOn}">
 <tr>
  <td class="label">Disposed on</td>

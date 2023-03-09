@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 2.1
  */
 
@@ -541,23 +541,26 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Returns the number of Charter flights flown by a Pilot in a particular time interval.
 	 * @param pilotID the Pilot's datbase ID
-	 * @param days the number of days, zero for all
+	 * @param days the number of days backwards, zero for all
+	 * @param dt the end date/time
 	 * @return the number of approved Charter flights
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getCharterCount(int pilotID, int days) throws DAOException {
+	public int getCharterCount(int pilotID, int days, Instant dt) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) AND ((ATTR & ?) > 0)");
-		if (days > 0)
-			sqlBuf.append(" AND (DATE >= DATE_SUB(CURDATE(), INTERVAL ? DAY))");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS<>?) AND ((ATTR & ?) > 0)");
+		if ((days > 0) && (dt != null))
+			sqlBuf.append(" AND (DATE >= DATE_SUB(DATE(?), INTERVAL ? DAY))");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
-			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(2, FlightStatus.REJECTED.ordinal());
 			ps.setInt(3, FlightReport.ATTR_CHARTER);
-			if (days > 0)
-				ps.setInt(4, days);
+			if ((days > 0) && (dt != null)) {
+				ps.setTimestamp(4, createTimestamp(dt));
+				ps.setInt(5, days);
+			}
 			
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
