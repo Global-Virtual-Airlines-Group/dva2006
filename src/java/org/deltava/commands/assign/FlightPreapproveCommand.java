@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 2.1
  */
 
@@ -73,8 +73,8 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				// Get the number of charter flights
 				int interval = SystemData.getInt("schedule.charter.count_days", 90);
 				GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-				ctx.setAttribute("charterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 0)), REQUEST);
-				ctx.setAttribute("charterFlightsInterval", Integer.valueOf(stdao.getCharterCount(usr.getID(), interval)), REQUEST);
+				ctx.setAttribute("charterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 0, null)), REQUEST);
+				ctx.setAttribute("charterFlightsInterval", Integer.valueOf(stdao.getCharterCount(usr.getID(), interval, Instant.now())), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
