@@ -120,7 +120,7 @@ return true;
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${cAuthor.name} (${cAuthor.pilotCode})<br />
+ <td class="label top">${cAuthor.name} (${empty cAuthor.pilotCode ? 'NEW PILOT' : cAuthor.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.toEpochMilli()}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.toEpochMilli()}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
