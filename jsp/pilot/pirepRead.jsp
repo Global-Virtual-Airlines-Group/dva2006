@@ -367,7 +367,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Cost Index</td>
  <td class="data"><el:text name="costIndex" size="2" max="3" value="80" /></td>
 </tr>
-<tr class="title">
+<tr class="title sbData">
  <td colspan="2" class="mid"><el:button label="GENERATE DISPATCH PACKAGE" onClick="void void golgotha.simbrief.sbSubmit()" /></td>
 </tr>
 </c:if>
