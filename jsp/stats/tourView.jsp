@@ -112,6 +112,12 @@
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
+<c:if test="${!empty tour.completionIDs}">
+<tr>
+ <td class="label">Average Completion Time</td>
+ <td class="data" colspan="4"><fmt:duration long="true" duration="${avgCompletionTime}"  className="bld" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Tour in Progress</td>
  <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />

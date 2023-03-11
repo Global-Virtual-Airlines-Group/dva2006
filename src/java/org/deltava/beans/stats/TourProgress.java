@@ -1,6 +1,7 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import java.time.Duration;
 import java.time.Instant;
 
 import org.deltava.util.StringUtils;
@@ -8,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to track Pilot progress within a Flight Tour.
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 10.2
  */
 
@@ -20,7 +21,7 @@ public class TourProgress implements java.io.Serializable, org.deltava.beans.IDB
 	
 	private Instant _firstLeg;
 	private Instant _lastLeg;
-
+	
 	/**
 	 * Creates the bean.
 	 * @param pilotID the Pilot database ID
@@ -78,6 +79,15 @@ public class TourProgress implements java.io.Serializable, org.deltava.beans.IDB
 	 */
 	public Instant getLastLeg() {
 		return _lastLeg;
+	}
+	
+	/**
+	 * Returns the amount of time the Tour has been in progress by a Pilot.
+	 * @return the Duration
+	 */
+	public Duration getProgressTime() {
+		Instant ed = (_firstLeg == _lastLeg) ? Instant.now() : _lastLeg;
+		return Duration.between(_firstLeg, ed);
 	}
 
 	/**

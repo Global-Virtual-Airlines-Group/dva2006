@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
-import java.time.temporal.ChronoField;
+import java.time.temporal.*;
 import java.time.format.DateTimeFormatterBuilder;
 
 import org.json.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 10.0
  */
 
@@ -250,6 +250,12 @@ public class TourCommand extends AbstractAuditFormCommand {
 			if (ac.getCanEdit() && (t.getProgress().size() < 50)) {
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(progressIDs, "PILOTS"), REQUEST);
+			}
+			
+			// Calculate time to completion
+			if (ac.getCanEdit()) {
+				double avgTime = t.getProgress().stream().filter(tp -> tp.getLegs() == t.getFlightCount()).mapToLong(tp -> tp.getProgressTime().toSeconds()).average().orElse(0);
+				ctx.setAttribute("avgCompletionTime", Duration.ofSeconds((long)avgTime).truncatedTo(ChronoUnit.HOURS), REQUEST);
 			}
 			
 			// Remove dupes between progress and completion
