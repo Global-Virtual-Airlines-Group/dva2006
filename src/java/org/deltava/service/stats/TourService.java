@@ -1,18 +1,19 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import org.json.*;
 
 import org.deltava.beans.stats.Tour;
-
+import org.deltava.beans.stats.TourProgress;
 import org.deltava.util.JSONUtils;
 
 /**
  * A Web Service to handle Flight Tours via API.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 10.3
  */
+
 abstract class TourService extends org.deltava.service.WebService {
 
 	/**
@@ -36,7 +37,16 @@ abstract class TourService extends org.deltava.service.WebService {
 		to.put("endDate", t.getEndDate().toEpochMilli() / 1000);
 		t.getNetworks().forEach(net -> to.accumulate("networks", net.name()));
 		t.getFlights().forEach(se -> to.accumulate("flights", JSONUtils.format(se)));
-		JSONUtils.ensureArrayPresent(to, "networks", "flights");
+		for (TourProgress tp : t.getProgress()) {
+			JSONObject po = new JSONObject();
+			po.put("id", tp.getID());
+			po.put("legs", tp.getLegs());
+			po.put("firstLeg", tp.getFirstLeg().toEpochMilli() / 1000);
+			po.put("lastLeg", tp.getLastLeg().toEpochMilli() / 1000);
+			to.accumulate("progress", po);
+		}
+		
+		JSONUtils.ensureArrayPresent(to, "networks", "flights", "progress");
 		return to;
 	}
 	
