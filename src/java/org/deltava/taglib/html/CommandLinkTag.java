@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2011, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016, 2017, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.time.ZonedDateTime;
-import java.time.format.*;
 import java.util.*;
+import java.time.*;
+import java.time.format.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 10.0
+ * @version 10.5
  * @since 1.0
  */
 
@@ -65,6 +65,14 @@ public class CommandLinkTag extends LinkTag {
 	 */
 	public void setAuthOnly(boolean authUsersOnly) {
 		_authOnly = authUsersOnly;
+	}
+	
+	/**
+	 * Sets whether to append a cache-busting paramter to the URL.
+	 * @param noCache TRUE to invalidate cache, otherwise FALSE
+	 */
+	public void setNoCache(boolean noCache) {
+		_cmdParams.put("cb", Long.toHexString(Instant.now().toEpochMilli()).toLowerCase());
 	}
 	
 	/**
