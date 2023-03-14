@@ -1,18 +1,18 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * An enumeration for ILS categories. 
  * @author Luke
- * @version 4.1
+ * @version 10.5
  * @since 4.1
  */
 
 public enum ILSCategory {
 	NONE(2500, 3500), CATI(200, 2400), CATII(100, 1150), CATIIIa(50, 660), CATIIIb(25, 250), CATIIIc(10, 50);
 
-	private int _ceiling;
-	private int _viz;
+	private final int _ceiling;
+	private final int _viz;
 	
 	ILSCategory(int ceiling, int viz) {
 		_ceiling = ceiling;
@@ -48,19 +48,5 @@ public enum ILSCategory {
         }
         
         return CATIIIc;
-	}
-	
-	/**
-	 * Returns an ILS category based on name.
-	 * @param name the category name
-	 * @return an ILSCategory, or null if not found
-	 */
-	public static ILSCategory get(String name) {
-		for (ILSCategory ic : values()) {
-			if (ic.name().equalsIgnoreCase(name))
-				return ic;
-        }
-		
-		return ILSCategory.NONE;
 	}
 }

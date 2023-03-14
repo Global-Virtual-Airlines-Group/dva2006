@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 7.0
  */
 
@@ -147,7 +147,7 @@ final class OfflineFlightParser {
 		afr.setTakeoffWeight(StringUtils.parse(ie.getChildTextTrim("takeoffWeight"), 0));
 		afr.setLandingFuel(StringUtils.parse(ie.getChildTextTrim("landingFuel"), 0));
 		afr.setLandingG(StringUtils.parse(ie.getChildTextTrim("landingG"), 0.0d));
-		afr.setLandingCategory(ILSCategory.get(ie.getChildTextTrim("landingCat")));
+		afr.setLandingCategory(EnumUtils.parse(ILSCategory.class, ie.getChildTextTrim("landingCat"), ILSCategory.NONE));
 		afr.setGateFuel(StringUtils.parse(ie.getChildTextTrim("gateFuel"), 0));
 		afr.setGateWeight(StringUtils.parse(ie.getChildTextTrim("gateWeight"), 0));
 		afr.setPaxWeight(StringUtils.parse(ie.getChildTextTrim("paxWeight"), 0));
