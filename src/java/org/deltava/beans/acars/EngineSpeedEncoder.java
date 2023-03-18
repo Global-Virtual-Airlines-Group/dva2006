@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.Helper;
 /**
  * A utility class to encode engine speeds into an array. 
  * @author Luke
- * @version 9.1
+ * @version 10.5
  * @since 9.1
  */
 
@@ -27,12 +27,10 @@ public class EngineSpeedEncoder {
 	 * @return the encoded data
 	 */
 	public static byte[] encode(int engineCount, double[] nx) {
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream(64)) {
-			try (DataOutputStream ds = new DataOutputStream(os)) {
-				ds.write(engineCount);
-				for (int x = 0; x < engineCount; x++)
-					ds.writeDouble(nx[x]);
-			}
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(64); DataOutputStream ds = new DataOutputStream(os)) {
+			ds.write(engineCount);
+			for (int x = 0; x < engineCount; x++)
+				ds.writeDouble(nx[x]);
 			
 			return os.toByteArray();
 		} catch (IOException ie) {
