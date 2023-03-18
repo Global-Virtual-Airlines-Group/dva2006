@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 4.1
  */
 
@@ -36,7 +36,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	public SerializedDataVersion archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return null;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv91 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv92 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
@@ -77,7 +77,7 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeShort(re.getVerticalSpeed());
 		out.writeFloat((float) re.getAOA());
 		out.writeFloat((float) re.getG());
-		out.writeShort(re.getEngineCount()); // v9
+		out.writeShort(re.getEngineCount()); // v9 (pre v92 this was zero)
 		out.writeDouble(re.getN1()); // was float in v8-
 		out.writeDouble(re.getN2()); // was float in v8-
 		for (int x = 0; x < re.getEngineCount(); x++) { // v9
