@@ -810,6 +810,11 @@ public class ACARSRouteEntry extends RouteEntry {
 		buf.append(" degrees<br />Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
 		buf.append(" feet/min<br />");
+		if (_engineCount > 0) {
+			buf.append(_engineCount);
+			buf.append("x avg. ");
+		}
+		
 		if (_avgN1 > 155) {
 			buf.append(StringUtils.format(_avgN1, "###0"));
 			buf.append(" RPM, ");
@@ -820,7 +825,16 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(StringUtils.format(_avgN1, "##0.0"));
 			buf.append("%, N<sub>2</sub>: ");
 			buf.append(StringUtils.format(_avgN2, "##0.0"));
-			buf.append('%');
+			buf.append("<br />");
+			for (int x = 0; x < _engineCount; x++) {
+				buf.append("Engine ");
+				buf.append(x+1);
+				buf.append(": ");
+				buf.append(_n1[x]);
+				buf.append("% N<sub>1</sub>, ");
+				buf.append(_n2[x]);
+				buf.append("% N<sub>2</sub><br />");
+			}
 		}
 		
 		buf.append("<br />Fuel Flow:");
