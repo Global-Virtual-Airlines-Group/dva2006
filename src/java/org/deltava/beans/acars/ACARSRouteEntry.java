@@ -65,6 +65,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
 	
 	private AutopilotType _ap = AutopilotType.DEFAULT;
+	private transient boolean _displayPerEngineNX;
 	
 	/**
 	 * Creates a new ACARS Route Entry bean.
@@ -77,11 +78,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		super(loc, dt);
 	}
 	
-	/**
-	 * Returns the aircraft altitude above <i>ground level</i>.
-	 * @return the altitude in feet AGL
-	 * @see ACARSRouteEntry#setRadarAltitude(int)
-	 */
 	@Override
 	public int getRadarAltitude() {
 		return _radarAlt;
@@ -339,7 +335,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Returns the amount of simulator free memory.
+	 * Returns the amount of simulator free memory. This will only return a valid value on 32-bit version of FSX/P3D.
 	 * @return the amount of free memory, in kilobytes
 	 * @see ACARSRouteEntry#setVASFree(int)
 	 */
@@ -382,6 +378,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public int getRestoreCount() {
 		return _restoreCount;
+	}
+	
+	/**
+	 * Sets whether to display per-engine N1/N2 values in the info box.
+	 * @param isDisplay TRUE to display per-engine N1/N2 values, otherwise FALSE
+	 * @see ACARSRouteEntry#getInfoBox()
+	 */
+	public void setDisplayPerEngineNX(boolean isDisplay) {
+		_displayPerEngineNX = isDisplay;
 	}
 	
 	/**
@@ -810,7 +815,8 @@ public class ACARSRouteEntry extends RouteEntry {
 		buf.append(" degrees<br />Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
 		buf.append(" feet/min<br />");
-		if (_engineCount > 0) {
+		boolean showPerEngine = isEngineOut() || _displayPerEngineNX;
+		if (showPerEngine && (_engineCount > 0)) {
 			buf.append(_engineCount);
 			buf.append("x avg. ");
 		}
@@ -825,15 +831,17 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(StringUtils.format(_avgN1, "##0.0"));
 			buf.append("%, N<sub>2</sub>: ");
 			buf.append(StringUtils.format(_avgN2, "##0.0"));
-			buf.append("<br />");
-			for (int x = 0; x < _engineCount; x++) {
-				buf.append("Engine ");
-				buf.append(x+1);
-				buf.append(": ");
-				buf.append(_n1[x]);
-				buf.append("% N<sub>1</sub>, ");
-				buf.append(_n2[x]);
-				buf.append("% N<sub>2</sub><br />");
+			if (showPerEngine) {
+				buf.append("<br />");
+				for (int x = 0; x < _engineCount; x++) {
+					buf.append("Engine ");
+					buf.append(x+1);
+					buf.append(": ");
+					buf.append(_n1[x]);
+					buf.append("% N<sub>1</sub>, ");
+					buf.append(_n2[x]);
+					buf.append("% N<sub>2</sub><br />");
+				}
 			}
 		}
 		
