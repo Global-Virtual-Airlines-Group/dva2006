@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 1.0
  */
 
@@ -57,8 +57,10 @@ public class MapFlightDataService extends WebService {
 			// Check airspace
 			for (GeospaceLocation rt : routePoints) {
 				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
-				if (re != null)
+				if (re != null) {
 					re.setAutopilotType(info.getAutopilotType());
+					re.setDisplayPerEngineNX(ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP"));
+				}
 				
 				Airspace a = Airspace.isRestricted(rt);
 				if (a != null)
