@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 4.1
  */
 
@@ -109,7 +109,8 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setRestoreCount(rs.getInt(40));
 						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(41));
 						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(42));
-						for (int eng = 0; eng < n1.length; eng++) {
+						entry.setEngineCount(Math.min(n1.length, n2.length));
+						for (int eng = 0; eng < entry.getEngineCount(); eng++) {
 							entry.setN1(eng, n1[eng]);
 							entry.setN2(eng, n2[eng]);
 						}
