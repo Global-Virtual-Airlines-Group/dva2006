@@ -15,13 +15,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
 	golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
 	golgotha.form.validate({f:f.airline, t:'Airline'});
 	golgotha.form.validate({f:f.eq, t:'Equipment Type'});
+	golgotha.form.validate({f:f.comments, l:10, t:'Charter Request Comments'});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -77,7 +78,7 @@ golgotha.onDOMReady(function() {
 </c:if>
 <tr>
  <td class='label top'>Comments</td>
- <td class="data"><el:textbox name="comments" idx="*"  height="3" width="90%" resize="true">${chreq.comments}</el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*"  height="3" width="90%" required="true" resize="true">${chreq.comments}</el:textbox></td>
 </tr>
 </el:table>
 
