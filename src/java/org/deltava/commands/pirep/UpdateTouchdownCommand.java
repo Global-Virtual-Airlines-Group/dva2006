@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 10.0
+ * @version 10.5
  * @since 3.1
  */
 
@@ -64,7 +64,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			if (!info.getArchived())
 				tdEntries = fddao.getTakeoffLanding(info.getID());
 			else {
-				try (InputStream in = ArchiveHelper.getStream(ArchiveHelper.getPositions(info.getID()))) {
+				try (InputStream in = new BufferedInputStream(new FileInputStream(ArchiveHelper.getPositions(info.getID())))) {
 					try (InputStream gi = new GZIPInputStream(in, 8192)) {
 						GetSerializedPosition psdao = new GetSerializedPosition(gi);
 						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.TOUCHDOWN)).collect(Collectors.toList());

@@ -181,7 +181,7 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Validate CRC-32
 		byte[] rawData = null; CRC32 crc = new CRC32();
-		try (InputStream is = ArchiveHelper.getStream(f)) {
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
 				byte[] buffer = new byte[8192];
 				int bytesRead = is.read(buffer);
