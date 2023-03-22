@@ -17,7 +17,7 @@
 <c:if test="${!empty archiveMetadata}">
 <tr>
  <td class="label">Archive Information</td>
- <td class="data" colspan="${cspan}"><span class="pri bld">${archiveMetadata.format}</span> Bucket <span class="sec bld">${archiveMetadata.bucket}</span> <span class="small nophone"><fmt:fileSize value="${archiveMetadata.size}" />, <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span></td>
+ <td class="data" colspan="${cspan}"><span class="pri bld">${archiveMetadata.format}</span> Location <span class="sec bld">${archiveMetadata.bucket}/${archiveMetadata.hexID.substring(2)}</span> <span class="small nophone">Size = <fmt:fileSize value="${archiveMetadata.size}" />, <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
