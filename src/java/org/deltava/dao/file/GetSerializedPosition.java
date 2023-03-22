@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 4.1
  */
 
@@ -136,7 +136,7 @@ public class GetSerializedPosition extends DAO {
 			if (version.getVersion() > 7) {
 				re.setGroundOperations(in.readInt());
 				re.setCG(in.readFloat());
-				if ((version == SerializedDataVersion.ACARSv91) || (version.getVersion() > 9))
+				if ((version.ordinal() > SerializedDataVersion.ACARSv91.ordinal()) || (version.getVersion() > 9))
 					re.setRestoreCount(in.readShort());
 			}
 			
