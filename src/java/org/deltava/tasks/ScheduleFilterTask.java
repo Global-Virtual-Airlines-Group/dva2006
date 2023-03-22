@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.sql.*;
@@ -12,12 +12,13 @@ import org.deltava.dao.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 8.0
  */
 
@@ -39,12 +40,14 @@ public class ScheduleFilterTask extends Task {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			Collection<ScheduleSourceInfo> srcInfos = rsdao.getSources(true, ctx.getDB());
 			Collection<ScheduleSourceHistory> srcs = srcInfos.stream().map(inf -> new ScheduleSourceHistory(inf)).collect(Collectors.toCollection(ArrayList::new));
-			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines();
+			Map<ScheduleSource, Collection<Airline>> srcAirlines = rsdao.getSourceAirlines(); // TODO: These are the loaded airlines!
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());
-				airlines.forEach(src::clearLegs);
+				src.setAirlines(airlines);
 				log.info("Importing " + src.getAirlines() + " from " + src.getSource());
 			}
+			
+			// TODO: Are we ensuring that previously imported airlines are not getting restored?
 			
 			// Start transaction
 			ctx.startTX();
@@ -123,6 +126,7 @@ public class ScheduleFilterTask extends Task {
 			}
 			
 			ctx.commitTX();
+			CacheManager.invalidate("ScheduleSource", true);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
