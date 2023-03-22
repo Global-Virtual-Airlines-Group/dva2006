@@ -41,4 +41,13 @@ public enum SerializedDataVersion {
 	public static SerializedDataVersion fromCode(int code) {
 		return ((code < 0) || (code >= values().length)) ? null : values()[code];
 	}
+	
+	/**
+	 * More legible compare operation. Checks if this version is equal to or newer than a specific version.
+	 * @param v a minimum SerializedDataVersion
+	 * @return TRUE if the equal or greater, otherwise FALSE
+	 */
+	public boolean atLeast(SerializedDataVersion v) {
+		return (ordinal() >= v.ordinal());
+	}
 }
