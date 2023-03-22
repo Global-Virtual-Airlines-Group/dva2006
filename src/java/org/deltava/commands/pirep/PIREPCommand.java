@@ -41,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.4
+ * @version 10.5
  * @since 1.0
  */
 
@@ -647,7 +647,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					Collection<NavigationDataBean> rtePoints = new ArrayList<NavigationDataBean>();
 					if (ArchiveHelper.getRoute(fr.getID()).exists()) {
 						GetNavCycle ncdao = new GetNavCycle(con);
-						try (InputStream in = ArchiveHelper.getStream(ArchiveHelper.getRoute(fr.getID()))) {
+						try (InputStream in = new BufferedInputStream(new FileInputStream(ArchiveHelper.getRoute(fr.getID())))) {
 							GetSerializedRoute rtdao = new GetSerializedRoute(in);
 							ArchivedRoute arcRt = rtdao.read();
 							rtePoints.addAll(arcRt.getWaypoints());
@@ -737,7 +737,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				File f = ArchiveHelper.getOnline(fr.getID());
 				Collection<PositionData> pd = new ArrayList<PositionData>();
 				if (f.exists()) {
-					try (InputStream in = ArchiveHelper.getStream(f)) {
+					try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
 						GetSerializedOnline stdao = new GetSerializedOnline(in);
 						pd.addAll(stdao.read());
 					} catch (IOException ie) {
