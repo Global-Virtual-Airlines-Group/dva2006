@@ -53,7 +53,7 @@ public class GetSerializedPosition extends DAO {
 		try (DataInputStream in = new DataInputStream(getStream())) {
 			SerializedDataVersion ver = SerializedDataVersion.values()[in.readShort()];
 			in.readInt(); // flight ID
-			return (ver != SerializedDataVersion.XACARS) ? loadACARS(in, ver) : loadXACARS(in);
+			return ver.isXACARS() ? loadXACARS(in) : loadACARS(in, ver);
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
@@ -101,15 +101,15 @@ public class GetSerializedPosition extends DAO {
 			re.setSimRate(in.readShort());
 			
 			// Load weather and sim time
-			if (version.getVersion() > 2) {
+			if (version.atLeast(SerializedDataVersion.ACARSv2)) {
 				re.setTemperature(in.readShort());
 				re.setPressure(in.readInt());
 				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
-				if (version.getVersion() > 3)
+				if (version.atLeast(SerializedDataVersion.ACARSv4))
 					re.setVASFree(in.readInt());
-				if ((version == SerializedDataVersion.ACARSv41) || (version.getVersion() >= 5))
+				if (version.atLeast(SerializedDataVersion.ACARSv41))
 					re.setAirspace(AirspaceType.values()[in.readShort()]);
-				if (version.getVersion() > 4)
+				if (version.atLeast(SerializedDataVersion.ACARSv5))
 					re.setWeight(in.readInt());
 			} else
 				re.setSimUTC(re.getDate()); // ensure non-null
@@ -122,23 +122,24 @@ public class GetSerializedPosition extends DAO {
 				re.setNAV2(StringUtils.isEmpty(n2) ? null : n2);
 			}
 			
-			if (version.getVersion() > 5) {
+			if (version.atLeast(SerializedDataVersion.ACARSv6)) {
 				String adf1 = in.readUTF();
 				re.setADF1(StringUtils.isEmpty(adf1) ? null : adf1);
 			}
 			
-			if (version.getVersion() > 6) {
+			if (version.atLeast(SerializedDataVersion.ACARSv7)) {
 				byte b = in.readByte();
 				re.setNetworkConnected((b & 0x1) > 0);
 				re.setACARSConnected((b & 0x2) == 0);
 			}
 				
-			if (version.getVersion() > 7) {
+			if (version.atLeast(SerializedDataVersion.ACARSv8)) {
 				re.setGroundOperations(in.readInt());
 				re.setCG(in.readFloat());
-				if ((version.ordinal() > SerializedDataVersion.ACARSv91.ordinal()) || (version.getVersion() > 9))
-					re.setRestoreCount(in.readShort());
 			}
+			
+			if (version.atLeast(SerializedDataVersion.ACARSv91))
+				re.setRestoreCount(in.readShort());
 			
 			// Check for ATC1
 			String com1 = in.readUTF();
