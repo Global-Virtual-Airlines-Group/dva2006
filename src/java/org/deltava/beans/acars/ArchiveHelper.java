@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2018, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.io.*;
@@ -23,6 +23,15 @@ public class ArchiveHelper {
 	private ArchiveHelper() {
 		super();
 	}
+	
+	/**
+	 * Calculates the bucket for a given flight ID.
+	 * @param id the flight ID
+	 * @return the bucket name
+	 */
+	public static String getBucket(int id) {
+		return Integer.toHexString(id % BUCKETS);
+	}
 
 	/**
 	 * Returns the File containing archived ACARS position data.
@@ -30,8 +39,7 @@ public class ArchiveHelper {
 	 * @return a File, which may or may not exist
 	 */
 	public static File getPositions(int id) {
-		String hash = Integer.toHexString(id % BUCKETS);
-		File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
+		File path = new File(SystemData.get("path.archive"), getBucket(id)); path.mkdirs();
 		return new File(path, Integer.toHexString(id) + ".dat");
 	}
 	
@@ -41,8 +49,7 @@ public class ArchiveHelper {
 	 * @return a File, which may or may not exist
 	 */
 	public static File getRoute(int id) {
-		String hash = Integer.toHexString(id % BUCKETS);
-		File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
+		File path = new File(SystemData.get("path.archive"), getBucket(id)); path.mkdirs();
 		return new File(path, Integer.toHexString(id) + ".rte");
 	}
 	
@@ -52,18 +59,7 @@ public class ArchiveHelper {
 	 * @return a File, which may or may not exist
 	 */
 	public static File getOnline(int id) {
-		String hash = Integer.toHexString(id % BUCKETS);
-		File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
+		File path = new File(SystemData.get("path.archive"), getBucket(id)); path.mkdirs();
 		return new File(path, Integer.toHexString(id) + ".onl");
-	}
-	
-	/**
-	 * Returns a buffered Input stream to a File.
-	 * @param f the File
-	 * @return an InputStream
-	 * @throws IOException if an I/O error occurs
-	 */
-	public static InputStream getStream(File f) throws IOException {
-		return new BufferedInputStream(new FileInputStream(f));
 	}
 }
