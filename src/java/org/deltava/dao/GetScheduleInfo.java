@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class GetScheduleInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleSourceHistory> getHistory() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM RAW_SCHEDULE_HISTORY ORDER BY IMPORTDATE DESC, SRC")) {
+		try (PreparedStatement ps = prepare("SELECT * FROM RAW_SCHEDULE_HISTORY ORDER BY IMPORTDATE DESC, SRC DESC")) {
 			Collection<ScheduleSourceHistory> results = new ArrayList<ScheduleSourceHistory>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
