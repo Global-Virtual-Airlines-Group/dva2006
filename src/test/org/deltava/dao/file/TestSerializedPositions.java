@@ -2,8 +2,8 @@ package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.Collection;
-import java.util.zip.GZIPInputStream;
 
+import org.deltava.beans.Compression;
 import org.deltava.beans.acars.RouteEntry;
 import org.deltava.beans.acars.SerializedDataVersion;
 
@@ -33,10 +33,9 @@ public class TestSerializedPositions extends TestCase {
 		assertNotNull(data);
 		assertEquals(f.length(), data.length);
 		
-		int fw = ((data[1] << 8) & 0xFF00) + data[0];
-		assertTrue(fw == GZIPInputStream.GZIP_MAGIC);
-		
-		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
+		Compression c = Compression.detect(f);
+		assertEquals(Compression.GZIP, c);
+		try (InputStream gz = c.getStream(new ByteArrayInputStream(data))) {
 			GetSerializedPosition posdao = new GetSerializedPosition(gz);
 			Collection<? extends RouteEntry> entries = posdao.read();
 			assertNotNull(entries);
@@ -55,10 +54,9 @@ public class TestSerializedPositions extends TestCase {
 		assertNotNull(data);
 		assertEquals(f.length(), data.length);
 		
-		int fw = ((data[1] << 8) & 0xFF00) + data[0];
-		assertTrue(fw == GZIPInputStream.GZIP_MAGIC);
-		
-		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
+		Compression c = Compression.detect(f);
+		assertEquals(Compression.GZIP, c);
+		try (InputStream gz = c.getStream(new ByteArrayInputStream(data))) {
 			GetSerializedPosition posdao = new GetSerializedPosition(gz);
 			Collection<? extends RouteEntry> entries = posdao.read();
 			assertNotNull(entries);
