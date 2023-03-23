@@ -31,21 +31,17 @@ public class TestSerializedPositions extends TestCase {
 
 		byte[] data = load(f); 
 		assertNotNull(data);
-		assertTrue(data.length > 10);
+		assertEquals(f.length(), data.length);
 		
 		int fw = ((data[1] << 8) & 0xFF00) + data[0];
 		assertTrue(fw == GZIPInputStream.GZIP_MAGIC);
 		
 		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
 			GetSerializedPosition posdao = new GetSerializedPosition(gz);
-			assertEquals(SerializedDataVersion.ACARSv92, posdao.getFormat());
-		}
-		
-		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
-			GetSerializedPosition posdao = new GetSerializedPosition(gz);
 			Collection<? extends RouteEntry> entries = posdao.read();
 			assertNotNull(entries);
 			assertFalse(entries.isEmpty());
+			assertEquals(SerializedDataVersion.ACARSv92, posdao.getFormat());
 		}
 	}
 	
@@ -54,23 +50,20 @@ public class TestSerializedPositions extends TestCase {
 		
 		File f = new File("data/acars/ACARSv91.dat");
 		assertTrue(f.exists());
+		
 		byte[] data = load(f); 
 		assertNotNull(data);
-		assertTrue(data.length > 10);
+		assertEquals(f.length(), data.length);
 		
 		int fw = ((data[1] << 8) & 0xFF00) + data[0];
 		assertTrue(fw == GZIPInputStream.GZIP_MAGIC);
 		
 		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
 			GetSerializedPosition posdao = new GetSerializedPosition(gz);
-			assertEquals(SerializedDataVersion.ACARSv91, posdao.getFormat());
-		}
-		
-		try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(data))) {
-			GetSerializedPosition posdao = new GetSerializedPosition(gz);
 			Collection<? extends RouteEntry> entries = posdao.read();
 			assertNotNull(entries);
 			assertFalse(entries.isEmpty());
+			assertEquals(SerializedDataVersion.ACARSv91, posdao.getFormat());
 		}
 	}
 }

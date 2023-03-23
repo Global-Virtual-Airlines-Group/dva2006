@@ -1,6 +1,8 @@
 // Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
+import static org.deltava.beans.acars.SerializedDataVersion.*;
+
 import java.io.*;
 import java.time.Instant;
 import java.util.*;
@@ -22,6 +24,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class GetSerializedPosition extends DAO {
+	
+	private SerializedDataVersion _v;
 
 	/**
 	 * Initializes the Data Access Object.
@@ -37,8 +41,10 @@ public class GetSerializedPosition extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public SerializedDataVersion getFormat() throws DAOException {
+		if (_v != null) return _v;
 		try (DataInputStream in = new DataInputStream(getStream())) {
-			return SerializedDataVersion.fromCode(in.readShort());
+			_v = SerializedDataVersion.fromCode(in.readShort());
+			return _v;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
@@ -51,15 +57,15 @@ public class GetSerializedPosition extends DAO {
 	 */
 	public Collection<? extends RouteEntry> read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(getStream())) {
-			SerializedDataVersion ver = SerializedDataVersion.values()[in.readShort()];
+			_v = SerializedDataVersion.fromCode(in.readShort());
 			in.readInt(); // flight ID
-			return ver.isXACARS() ? loadXACARS(in) : loadACARS(in, ver);
+			return _v.isXACARS() ? loadXACARS(in) : loadACARS(in);
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
 	}
 	
-	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in, SerializedDataVersion version) throws IOException {
+	private Collection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
 		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
@@ -81,7 +87,7 @@ public class GetSerializedPosition extends DAO {
 			re.setVerticalSpeed(in.readShort());
 			re.setAOA(in.readFloat());
 			re.setG(in.readFloat());
-			if (version.getVersion() >= 9) {
+			if (_v.atLeast(ACARSv9)) {
 				re.setEngineCount(in.readShort());
 				re.setN1(in.readDouble());
 				re.setN2(in.readDouble());
@@ -101,44 +107,44 @@ public class GetSerializedPosition extends DAO {
 			re.setSimRate(in.readShort());
 			
 			// Load weather and sim time
-			if (version.atLeast(SerializedDataVersion.ACARSv2)) {
+			if (_v.atLeast(ACARSv2)) {
 				re.setTemperature(in.readShort());
 				re.setPressure(in.readInt());
 				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
-				if (version.atLeast(SerializedDataVersion.ACARSv4))
+				if (_v.atLeast(ACARSv4))
 					re.setVASFree(in.readInt());
-				if (version.atLeast(SerializedDataVersion.ACARSv41))
+				if (_v.atLeast(ACARSv41))
 					re.setAirspace(AirspaceType.values()[in.readShort()]);
-				if (version.atLeast(SerializedDataVersion.ACARSv5))
+				if (_v.atLeast(ACARSv5))
 					re.setWeight(in.readInt());
 			} else
 				re.setSimUTC(re.getDate()); // ensure non-null
 			
 			// Load NAV1/NAV2
-			if (version != SerializedDataVersion.ACARS) {
+			if (_v.atLeast(ACARSv2)) {
 				String n1 = in.readUTF();
 				String n2 = in.readUTF();
 				re.setNAV1(StringUtils.isEmpty(n1) ? null : n1);
 				re.setNAV2(StringUtils.isEmpty(n2) ? null : n2);
 			}
 			
-			if (version.atLeast(SerializedDataVersion.ACARSv6)) {
+			if (_v.atLeast(ACARSv6)) {
 				String adf1 = in.readUTF();
 				re.setADF1(StringUtils.isEmpty(adf1) ? null : adf1);
 			}
 			
-			if (version.atLeast(SerializedDataVersion.ACARSv7)) {
+			if (_v.atLeast(ACARSv7)) {
 				byte b = in.readByte();
 				re.setNetworkConnected((b & 0x1) > 0);
 				re.setACARSConnected((b & 0x2) == 0);
 			}
 				
-			if (version.atLeast(SerializedDataVersion.ACARSv8)) {
+			if (_v.atLeast(ACARSv8)) {
 				re.setGroundOperations(in.readInt());
 				re.setCG(in.readFloat());
 			}
 			
-			if (version.atLeast(SerializedDataVersion.ACARSv91))
+			if (_v.atLeast(ACARSv91))
 				re.setRestoreCount(in.readShort());
 			
 			// Check for ATC1
@@ -153,7 +159,7 @@ public class GetSerializedPosition extends DAO {
 			}
 			
 			// Check for ATC2
-			String com2 = (version.getVersion() > 1) ? in.readUTF() : null;
+			String com2 = _v.atLeast(ACARSv2) ? in.readUTF() : null;
 			if (!StringUtils.isEmpty(com2)) {
 				re.setCOM2(com2);
 				Controller atc = new Controller(in.readInt(), null);
