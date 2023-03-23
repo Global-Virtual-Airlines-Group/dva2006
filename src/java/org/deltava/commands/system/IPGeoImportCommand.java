@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to load IP GeoLocation data.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 8.7
  */
 
@@ -55,7 +55,7 @@ public class IPGeoImportCommand extends AbstractCommand {
 			ctx.startTX();
 
 			SetIPLocation ipwdao = new SetIPLocation(con);
-			try (InputStream fis = new FileInputStream(f); InputStream is = cmp.getCompressedStream(fis)) {
+			try (InputStream fis = new FileInputStream(f); InputStream is = cmp.getStream(fis)) {
 				try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
 					String data = lr.readLine();
 					while (data != null) {
