@@ -1,14 +1,13 @@
-// Copyright 2005, 2006, 2007, 2013, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
-import java.util.zip.*;
 
 /**
  * A bean to store File Upload data in an HTTP servlet request. This bean can automatically detect compressed (GZIP/BZIP2) content and creates the appropriate 
  * decompresser output stream. This allows reduced memory usage when uploading large files.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 1.0
  */
 
@@ -63,16 +62,15 @@ public class FileUpload {
     }
     
     /**
-     * Returns an input stream backed by the buffer. This will automatically generate a
-     * {@link GZIPInputStream} if the data is already in GZIP format. If the raw data needs to be
-     * obtained, wrapping a {@link ByteArrayInputStream} around the buffer should be used.
+     * Returns an input stream backed by the buffer. This will automatically generate an appropriate compression inputstream if the data is in a compressed format.
      * @return an input stream
      * @see FileUpload#getBuffer()
+     * @see Compression#getStream(InputStream)
      */
     public InputStream getInputStream() {
     	InputStream is = new ByteArrayInputStream(_buffer);
     	try {
-    		return _compress.getCompressedStream(is);
+    		return _compress.getStream(is);
     	} catch (Exception e) {
     		return is;
     	}
@@ -84,7 +82,7 @@ public class FileUpload {
      * @throws IOException if an I/O error occurs
      */
     public void load(InputStream is) throws IOException {
-        try (ByteArrayOutputStream outStream = new ByteArrayOutputStream(32768)) {
+        try (ByteArrayOutputStream outStream = new ByteArrayOutputStream(16384)) {
         	byte[] buffer = new byte[32768];
         	int bytesRead = is.read(buffer);
         	while (bytesRead != -1) {
