@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 9.0
+ * @version 10.5
  * @since 5.0
  */
 
@@ -24,6 +24,7 @@ public class GetURL extends DAO {
 	
 	private boolean _forceDL;
 	private long _lastModified = -1;
+	private int _statusCode;
 	
 	/**
 	 * Initializes the Data Access Object
@@ -34,6 +35,14 @@ public class GetURL extends DAO {
 		super();
 		_url = url;
 		_outFile = fileName;
+	}
+	
+	/**
+	 * Returns the HTTP status code for this request.
+	 * @return the HTTP status code
+	 */
+	public int getStatusCode() {
+		return _statusCode;
 	}
 	
 	/**
@@ -61,8 +70,8 @@ public class GetURL extends DAO {
 		File tmp = null;
 		try {
 			File outF = new File(_outFile);
-			if (_lastModified == -1)
-				_lastModified = outF.exists() ? outF.lastModified() : -1;
+			if ((_lastModified == -1) && outF.exists())
+				_lastModified =  outF.lastModified();
 			init(_url);
 			
 			// If we're not forcing the download and it exists, do a head request to check
@@ -70,13 +79,13 @@ public class GetURL extends DAO {
 				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
 				
 			// Check the status code, if not modified exit out
-			int statusCode = getResponseCode();
-			if (!_forceDL && (statusCode == SC_NOT_MODIFIED))
+			_statusCode = getResponseCode();
+			if (!_forceDL && (_statusCode == SC_NOT_MODIFIED))
 				return outF;
 			
 			// If we're an error, throw a status code exception
-			if (statusCode >= SC_BAD_REQUEST)
-				throw new HTTPDAOException(_url, statusCode);
+			if (_statusCode >= SC_BAD_REQUEST)
+				throw new HTTPDAOException(_url, _statusCode);
 			
 			// Download the file
 			tmp = File.createTempFile("dl-url", "$$$", outF.getParentFile());
@@ -114,13 +123,13 @@ public class GetURL extends DAO {
 				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
 			
 			// Check the status code, if not modified exit out
-			int statusCode = getResponseCode();
-			if (!_forceDL && (statusCode == SC_NOT_MODIFIED))
+			_statusCode = getResponseCode();
+			if (!_forceDL && (_statusCode == SC_NOT_MODIFIED))
 				return null;
 			
 			// If we're an error, throw a status code exception
-			if (statusCode >= SC_BAD_REQUEST)
-				throw new HTTPDAOException(_url, statusCode);
+			if (_statusCode >= SC_BAD_REQUEST)
+				throw new HTTPDAOException(_url, _statusCode);
 			
 			// Download the file
 			try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
