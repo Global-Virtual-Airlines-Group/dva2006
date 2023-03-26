@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -9,7 +9,7 @@ import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-
+import org.deltava.beans.Compression;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 10.2
+ * @version 10.5
  * @since 1.0
  */
 
@@ -92,6 +92,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			GetAircraft acdao = new GetAircraft(con);
 
 			Collection<RawScheduleEntry> entries = new ArrayList<RawScheduleEntry>();
+			Compression c = Compression.detect(f);
 			try (InputStream fis = new FileInputStream(f)) {
 				switch (ss) {
 				case DELTA:
@@ -117,8 +118,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 					break;
 
 				case INNOVATA:
-					try (GZIPInputStream zis = new GZIPInputStream(fis, 131072)) {
-						GetFullSchedule dao = new GetFullSchedule(zis);
+					try (InputStream is = c.getStream(fis)) {
+						GetFullSchedule dao = new GetFullSchedule(is);
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));

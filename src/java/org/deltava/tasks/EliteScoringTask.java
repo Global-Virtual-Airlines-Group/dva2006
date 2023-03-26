@@ -1,12 +1,12 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.sql.Connection;
-import java.util.zip.GZIPInputStream;
 
+import org.deltava.beans.Compression;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 9.2
  */
 
@@ -97,9 +97,12 @@ public class EliteScoringTask extends Task {
 					// Load the archived positions
 					Collection<RouteEntry> entries = new ArrayList<RouteEntry>();
 					File f = ArchiveHelper.getPositions(fr.getDatabaseID(DatabaseID.ACARS));
-					try (InputStream is = new GZIPInputStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
-						GetSerializedPosition psdao = new GetSerializedPosition(is);
-						entries.addAll(psdao.read());
+					try {
+						Compression c = Compression.detect(f);
+						try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
+							GetSerializedPosition psdao = new GetSerializedPosition(is);
+							entries.addAll(psdao.read());
+						}
 					} catch (IOException ie) {
 						log.error("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
 					}
