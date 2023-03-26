@@ -107,7 +107,7 @@ public class GetSerializedPosition extends DAO {
 			re.setSimRate(in.readShort());
 			
 			// Load weather and sim time
-			if (_v.atLeast(ACARSv2)) {
+			if (_v.atLeast(ACARSv3)) {
 				re.setTemperature(in.readShort());
 				re.setPressure(in.readInt());
 				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
