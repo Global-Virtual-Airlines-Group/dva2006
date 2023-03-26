@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 10.1
+ * @version 10.5
  * @since 1.0
  */
 
@@ -30,12 +30,14 @@ public class InsertGoogleAPITag extends TagSupport {
 	
 	private static final int MIN_API_VERSION = 3;
 	private static final String DEFAULT_CYCLE = "quarterly";
+	private static final String DEFAULT_CALLBACK = "golgotha.util.mapAPILoaded";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
 	private String _cycle;
+	private String _cb;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
 	
 	private boolean _isAnonymous;
@@ -75,6 +77,14 @@ public class InsertGoogleAPITag extends TagSupport {
 		_libraries.addAll(StringUtils.split(libList, ","));
 	}
 	
+	/**
+	 * Sets the JavaScript callback function to be called when the Google Maps API has completed loading.
+	 * @param cb the callback function name
+	 */
+	public void setCallback(String cb) {
+		_cb = cb;
+	}
+	
 	@Override
 	public void setPageContext(PageContext ctx) {
 		super.setPageContext(ctx);
@@ -89,6 +99,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		_majorVersion = MIN_API_VERSION;
 		_minorVersion = null;
 		_cycle = null;
+		_cb = null;
 	}
 
 	/**
@@ -108,11 +119,24 @@ public class InsertGoogleAPITag extends TagSupport {
 		if ((_majorVersion == 3) && (_minorVersion == null) && (_cycle == null))
 			_cycle = DEFAULT_CYCLE;
 		
+		// Build the Map context object
+		JSONObject mco = new JSONObject();
+		mco.put("IMG_PATH", SystemData.get("path.img"));
+		mco.put("API", _majorVersion);
+		mco.putOpt("cycle", _cycle);
+		mco.putOpt("minor", _minorVersion);
+		mco.put("tileHost", SystemData.get("weather.tileHost"));
+		mco.put("seriesData", Collections.emptyMap());
+		
 		// Insert the API version
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<script src=\"https://");
+			out.print("<script");
+			if (_cb != null)
+				out.print(" async");
+			
+			out.print(" src=\"https://");
 			out.print(V3_API_URL);
 			if (_cycle == null) {
 				out.print(String.valueOf(_majorVersion));
@@ -134,19 +158,9 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			out.print("&key=");
 			out.print(SystemData.get("security.key.googleMaps." + (_isAnonymous ? "anon" : "auth")));
+			out.print("&callback=");
+			out.print((_cb == null) ? DEFAULT_CALLBACK : _cb);
 			out.println("\"></script>");
-			
-			// Build the Map context object
-			JSONObject mco = new JSONObject();
-			mco.put("IMG_PATH", SystemData.get("path.img"));
-			mco.put("API", _majorVersion);
-			mco.putOpt("cycle", _cycle);
-			mco.putOpt("minor", _minorVersion);
-			mco.put("tileHost", SystemData.get("weather.tileHost"));
-			mco.put("seriesData", Collections.emptyMap());
-			JSONObject mkeys = new JSONObject();
-			mkeys.put("twc", SystemData.get("security.key.twc"));
-			mco.put("keys", mkeys);
 			
 			// Init common code
 			out.print("<script id=\"golgothaMCO\">");
