@@ -26,6 +26,11 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>callback</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>libraries</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

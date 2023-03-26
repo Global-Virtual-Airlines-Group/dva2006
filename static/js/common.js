@@ -27,6 +27,11 @@ golgotha.charts.buildOptions = function(opts) {
 	return o;
 };
 
+golgotha.util.mapAPILoaded = function() {
+	console.log('Google Maps API loaded');
+	return true;
+};
+
 golgotha.util.getElementsByClass = function(cName, eName, parent) {
 	if (parent == null) parent = document;
 	let elements = [];
