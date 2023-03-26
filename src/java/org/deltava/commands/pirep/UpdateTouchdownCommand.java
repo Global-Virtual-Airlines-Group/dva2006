@@ -4,11 +4,11 @@ package org.deltava.commands.pirep;
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Compression;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.FDRFlightReport;
 import org.deltava.beans.schedule.GeoPosition;
@@ -64,9 +64,11 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			if (!info.getArchived())
 				tdEntries = fddao.getTakeoffLanding(info.getID());
 			else {
-				try (InputStream in = new BufferedInputStream(new FileInputStream(ArchiveHelper.getPositions(info.getID())))) {
-					try (InputStream gi = new GZIPInputStream(in, 8192)) {
-						GetSerializedPosition psdao = new GetSerializedPosition(gi);
+				try {
+					File f = ArchiveHelper.getPositions(info.getID());
+					Compression c = Compression.detect(f);
+					try (InputStream in = c.getStream(new BufferedInputStream(new FileInputStream(f)))) {
+						GetSerializedPosition psdao = new GetSerializedPosition(in);
 						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.TOUCHDOWN)).collect(Collectors.toList());
 					}
 				} catch (IOException ie) {
