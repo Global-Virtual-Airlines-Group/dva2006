@@ -83,11 +83,10 @@ public class FileUpload {
      */
     public void load(InputStream is) throws IOException {
         try (ByteArrayOutputStream outStream = new ByteArrayOutputStream(16384)) {
-        	byte[] buffer = new byte[32768];
-        	int bytesRead = is.read(buffer);
-        	while (bytesRead != -1) {
-        		outStream.write(buffer, 0, bytesRead);
-        		bytesRead = is.read(buffer);
+        	int b = is.read();
+        	while (b != -1) {
+        		outStream.write(b);
+        		b = is.read();
         	}
         
         	_buffer = outStream.toByteArray();
