@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.util.zip.*;
+import java.util.zip.CRC32;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -181,18 +181,15 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Validate CRC-32
 		byte[] rawData = null; CRC32 crc = new CRC32();
-		try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
-			try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
-				byte[] buffer = new byte[8192];
-				int bytesRead = is.read(buffer);
-				while (bytesRead > 0) {
-					crc.update(buffer, 0, bytesRead);
-					out.write(buffer, 0, bytesRead);
-					bytesRead = is.read(buffer);
-				}
-				
-				rawData = out.toByteArray();
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f)); ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+			int b = is.read();
+			while (b != -1) {
+				crc.update(b);
+				out.write(b);
+				b = is.read();
 			}
+				
+			rawData = out.toByteArray();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
@@ -202,14 +199,17 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Deserialize and validate
 		List<GeospaceLocation> results = new ArrayList<GeospaceLocation>();
-		try (GZIPInputStream gi = new GZIPInputStream(new ByteArrayInputStream(rawData))) {
-			GetSerializedPosition psdao = new GetSerializedPosition(gi);
-			Collection<? extends RouteEntry> entries = psdao.read();
-			for (RouteEntry entry : entries) {
-				if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())
-					results.add(new GeoPosition(entry));
-				else
-					results.add(entry);
+		try {
+			Compression c = Compression.detect(f);
+			try (InputStream is = c.getStream(new ByteArrayInputStream(rawData))) {
+				GetSerializedPosition psdao = new GetSerializedPosition(is);
+				Collection<? extends RouteEntry> entries = psdao.read();
+				for (RouteEntry entry : entries) {
+					if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())
+						results.add(new GeoPosition(entry));
+					else
+						results.add(entry);
+				}
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
