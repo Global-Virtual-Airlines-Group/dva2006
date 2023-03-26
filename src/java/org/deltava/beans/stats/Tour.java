@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -11,9 +11,9 @@ import org.deltava.beans.schedule.ScheduleEntry;
 import org.deltava.beans.system.AirlineInformation;
 
 /**
- * A bean to store Flight tour data.
+ * A bean to store Flight Tour data.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 10.0
  */
 
@@ -166,9 +166,13 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 * @return the leg number, or zero if not matched
 	 */
 	public int getLegIndex(FlightData f) {
-		Flight l = _flights.stream().filter(leg -> legMatches(f, leg)).findFirst().orElse(null);
-		if (l == null) return 0;
-		return _flights.indexOf(l) + 1;
+		for (int x = 0; x < _flights.size(); x++) {
+			Flight leg = _flights.get(x);
+			if (legMatches(f, leg))
+				return x + 1;
+		}
+		
+		return 0;
 	}
 	
 	/**
@@ -342,7 +346,8 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public boolean legMatches(FlightData f, Flight leg) {
 		boolean isOK = !_matchLeg || (FlightNumber.compare(f, leg) == 0); 
-		return  isOK && f.matches(leg);
+		boolean legOK = f.matches(leg);
+		return  isOK && legOK;
 	}
 	
 	@Override
