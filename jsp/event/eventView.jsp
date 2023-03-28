@@ -61,7 +61,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <tr class="title caps">
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" d="EEEE MMMM dd yyyy"  t="HH:mm" /></td>
 </tr>
-<c:if test="${event.hasBanner}">
+<c:if test="${event.hasImage}">
 <tr class="nophone">
  <td colspan="6" class="mid"><img alt="${event.name} Banner" src="/event/${event.hexID}" /></td>
 </tr>
