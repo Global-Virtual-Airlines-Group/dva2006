@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.sql.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
+import org.deltava.beans.ImageType;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
@@ -25,7 +25,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 1.0
  */
 
@@ -36,21 +36,6 @@ public class ImageServlet extends DownloadServlet {
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
-	private enum ImageType implements FileType {
-		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), PARTNER("partner");
-		
-		private final String _urlPart;
-		
-		ImageType(String urlPart) {
-			_urlPart = urlPart;
-		}
-		
-		@Override
-		public String getURLPart() {
-			return _urlPart;
-		}
-	}
-	
 	/**
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
@@ -195,6 +180,24 @@ public class ImageServlet extends DownloadServlet {
 					
 				case PARTNER:
 					imgBuffer = dao.getPartnerBanner(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 600);
+					break;
+					
+				case NEWS:
+					imgBuffer = dao.getNews(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 600);
+					break;
+					
+				case NOTAM:
+					imgBuffer = dao.getNOTAM(imgID);
 					if (imgBuffer == null)
 						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
 					
