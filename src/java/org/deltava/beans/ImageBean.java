@@ -8,7 +8,7 @@ import org.deltava.util.ImageInfo;
 /**
  * An abstract bean class to store common image code.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -17,25 +17,31 @@ public abstract class ImageBean extends DatabaseBlobBean {
 	/**
 	 * Supported image types.
 	 */
-	public enum Type {
+	public enum ImageFormat {
 		JPG, GIF, PNG, BMP
 	}
 
     private int _imgSize;
     private int _imgX;
     private int _imgY;
-    private Type _imgType;
+    private ImageFormat _fmt;
 
     /**
      * Returns the type of image. This uses constants found in ImageInfo.
      * @return the image type code
      * @see ImageInfo#getFormat()
-     * @see ImageBean#setType(Type)
+     * @see ImageBean#setFormat(ImageFormat)
      * @see ImageBean#load(InputStream)
      */
-    public Type getType() {
-        return _imgType;
+    public ImageFormat getFormat() {
+        return _fmt;
     }
+    
+    /**
+     * Returns the database image type.
+     * @return an ImageType
+     */
+    public abstract ImageType getImageType();
     
     /**
      * Returns the width of the image.
@@ -82,7 +88,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
            throw new UnsupportedOperationException("Unknown Image Format");
        }
 
-       _imgType = Type.values()[imgInfo.getFormat()];
+       _fmt = ImageFormat.values()[imgInfo.getFormat()];
        _imgX = imgInfo.getWidth();
        _imgY = imgInfo.getHeight();
     }
@@ -92,7 +98,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
 	 * @return TRUE if the bean has an image, otherwise FALSE
 	 */
 	public boolean getHasImage() {
-		return (_imgType != null);
+		return (_fmt != null);
 	}
     
     /**
@@ -171,16 +177,16 @@ public abstract class ImageBean extends DatabaseBlobBean {
     }
     
     /**
-     * Updates the image type. Note that this method does not change the image data (ie. convert formats).
-     * @param t the type of the image
+     * Updates the image format. Note that this method does not change the image data (ie. convert formats).
+     * @param t an ImageFormat
      * @throws IllegalStateException if the image type has already been set
-     * @see ImageBean#getType()
+     * @see ImageBean#getFormat()
      * @see ImageBean#load(InputStream)
      */
-    public void setType(Type t) {
-        if (_imgType != null)
+    public void setFormat(ImageFormat t) {
+        if (_fmt != null)
             throw new IllegalStateException("Image Type already set");
         
-        _imgType = t;
+        _fmt = t;
     }
 }

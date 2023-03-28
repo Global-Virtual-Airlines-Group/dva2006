@@ -1,4 +1,4 @@
-//Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -179,7 +179,7 @@ public class GetChart extends DAO {
 			
 				c.setID(rs.getInt(1));
 				c.setType(Chart.Type.values()[rs.getInt(3)]);
-				c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
+				c.setImgFormat(Chart.ImageFormat.values()[rs.getInt(4)]);
 				c.setSize(rs.getInt(6));
 				c.setUseCount(rs.getInt(7));
 				c.setLastModified(toInstant(rs.getTimestamp(8)));

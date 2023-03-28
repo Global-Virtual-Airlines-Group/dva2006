@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A bean to store virtual airline partner information.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 10.3
  */
 
@@ -32,6 +32,11 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	@Override
 	public String getAuditID() {
 		return getHexID();
+	}
+	
+	@Override
+	public ImageType getImageType() {
+		return ImageType.PARTNER;
 	}
 
 	/**

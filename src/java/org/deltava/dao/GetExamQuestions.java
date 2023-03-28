@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 2.1
  */
 
@@ -65,7 +65,7 @@ public class GetExamQuestions extends DAO {
 
 						// Load image data
 						if (rs.getInt(9) > 0) {
-							qp.setType(Question.Type.values()[rs.getInt(8)]);
+							qp.setFormat(Question.ImageFormat.values()[rs.getInt(8)]);
 							qp.setSize(rs.getInt(9));
 							qp.setWidth(rs.getInt(10));
 							qp.setHeight(rs.getInt(11));
@@ -331,7 +331,7 @@ public class GetExamQuestions extends DAO {
 
 				// Load image metadata
 				if (rs.getInt(9) > 0) {
-					qp.setType(Question.Type.values()[rs.getInt(8)]);
+					qp.setFormat(Question.ImageFormat.values()[rs.getInt(8)]);
 					qp.setSize(rs.getInt(9));
 					qp.setWidth(rs.getInt(10));
 					qp.setHeight(rs.getInt(11));
