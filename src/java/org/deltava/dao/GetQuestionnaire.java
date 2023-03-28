@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 9.0
+ * @version 10.5
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public class GetQuestionnaire extends DAO {
 						q.setAnswer(rs.getString(6));
 						q.setCorrect(rs.getBoolean(7));
 						if (rs.getInt(10) > 0) {
-							q.setType(rs.getInt(9));
+							q.setType(Question.Type.values()[rs.getInt(9)]);
 							q.setSize(rs.getInt(10));
 							q.setWidth(rs.getInt(11));
 							q.setHeight(rs.getInt(12));

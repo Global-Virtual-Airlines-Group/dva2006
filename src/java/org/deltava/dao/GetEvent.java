@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 10.0
+ * @version 10.5
  * @since 1.0
  */
 
@@ -335,7 +335,7 @@ public class GetEvent extends DAO {
 				e.setSignupURL(rs.getString(9));
 				e.setOwner(SystemData.getApp(rs.getString(10)));
 				if (hasBanner)
-					e.setBannerExtension(rs.getString(11));
+					e.setType(EnumUtils.parse(Event.Type.class, rs.getString(11), null));
 				if (hasBriefing && !rs.getBoolean(12))
 					e.setBriefing(new Briefing(rs.getBytes(13)));
 

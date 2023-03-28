@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 9.0
+ * @version 10.5
  * @since 1.0
  */
 
@@ -177,7 +177,7 @@ public class SetEvent extends DAO {
 			ps.setBinaryStream(2, e.getInputStream(), e.getSize());
 			ps.setInt(3, e.getWidth());
 			ps.setInt(4, e.getHeight());
-			ps.setString(5, e.getTypeName());
+			ps.setString(5, e.getType().name().toLowerCase());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

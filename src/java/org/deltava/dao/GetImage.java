@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.gvagroup.tile.TileAddress;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 1.0
  */
 
@@ -134,6 +134,26 @@ public class GetImage extends DAO {
      */
     public byte[] getChart(int id) throws DAOException {
         return execute(id, "SELECT IMG FROM common.CHARTIMGS WHERE (ID=?) LIMIT 1");
+    }
+    
+    /**
+     * Returns a System News banner image.
+     * @param id the News entry id
+     * @return the banner image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getNews(int id) throws DAOException {
+    	return execute(id, "SELECT IMG FROM NEWS_IMGS WHERE (ID=?) LIMIT 1");
+    }
+    
+    /**
+     * Returns a NOTAM banner image.
+     * @param id the NOTAM id
+     * @return the banner image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getNOTAM(int id) throws DAOException {
+    	return execute(id, "SELECT IMG FROM NOTAM_IMGS WHERE (ID=?) LIMIT 1");
     }
     
     /**
