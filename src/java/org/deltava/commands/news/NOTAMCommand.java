@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.News;
+import org.deltava.beans.Notice;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to display Notices to Airmen (NOTAMs).
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class NOTAMCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
         // Get/set start/count parameters
-        ViewContext<News> vc = initView(ctx, News.class);
+        ViewContext<Notice> vc = initView(ctx, Notice.class);
         boolean doActive = !"all".equals(ctx.getCmdParameter(OPERATION, null));
         try {
         	Connection con = ctx.getConnection();
@@ -41,10 +41,8 @@ public class NOTAMCommand extends AbstractViewCommand {
             dao.setQueryMax(vc.getCount());
             vc.setResults(doActive? dao.getActiveNOTAMs() : dao.getNOTAMs());
             
-            // Get the Pilot IDs
-            Collection<Integer> IDs = vc.getResults().stream().map(News::getAuthorID).collect(Collectors.toSet());
-            
             // Get the authors
+            Collection<Integer> IDs = vc.getResults().stream().map(Notice::getAuthorID).collect(Collectors.toSet());
             GetPilot pdao = new GetPilot(con);
             ctx.setAttribute("authors", pdao.getByID(IDs, "PILOTS"), REQUEST);
         } catch (DAOException de) {
@@ -55,7 +53,7 @@ public class NOTAMCommand extends AbstractViewCommand {
         
         // Calculate access rights
         Map<Integer, NewsAccessControl> accessMap = new HashMap<Integer, NewsAccessControl>();
-        for (News n : vc.getResults()) {
+        for (Notice n : vc.getResults()) {
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();
         	accessMap.put(Integer.valueOf(n.getID()), access);
