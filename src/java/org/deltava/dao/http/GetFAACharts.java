@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 5.0
  */
 
@@ -77,7 +77,7 @@ public class GetFAACharts extends DAO {
 
 				ExternalChart c = new ExternalChart(chartName, a);
 				c.setLastModified(Instant.now());
-				c.setImgType(Chart.ImageType.PDF);
+				c.setImgFormat(Chart.ImageFormat.PDF);
 				c.setExternalID(ce.getChildTextTrim("pdf_name"));
 				c.setSource("FAA");
 				String typeCode = ce.getChildTextTrim("chart_code");

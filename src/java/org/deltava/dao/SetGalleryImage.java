@@ -8,7 +8,7 @@ import org.deltava.beans.gallery.*;
 /**
  * A Data Access Object to write Picture Gallery images.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class SetGalleryImage extends DAO {
 				ps.setString(2, img.getName());
 				ps.setString(3, img.getDescription());
 				ps.setTimestamp(4, createTimestamp(img.getCreatedOn()));
-				ps.setInt(5, img.getType().ordinal());
+				ps.setInt(5, img.getFormat().ordinal());
 				ps.setInt(6, img.getWidth());
 				ps.setInt(7, img.getHeight());
 				ps.setInt(8, img.getSize());

@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public class GetQuestionnaire extends DAO {
 						q.setAnswer(rs.getString(6));
 						q.setCorrect(rs.getBoolean(7));
 						if (rs.getInt(10) > 0) {
-							q.setType(Question.Type.values()[rs.getInt(9)]);
+							q.setFormat(Question.ImageFormat.values()[rs.getInt(9)]);
 							q.setSize(rs.getInt(10));
 							q.setWidth(rs.getInt(11));
 							q.setHeight(rs.getInt(12));

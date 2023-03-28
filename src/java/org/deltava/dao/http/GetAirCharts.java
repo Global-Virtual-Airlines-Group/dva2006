@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -18,7 +18,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to fetch Air Charts data.
  * @author Luke
- * @version 8.6
+ * @version 10.5
  * @since 4.0
  */
 
@@ -69,7 +69,7 @@ public class GetAirCharts extends DAO {
 					
 					ExternalChart c = new ExternalChart(name, a);
 					c.setExternalID(co.optString("id"));
-					c.setImgType(Chart.ImageType.PDF);
+					c.setImgFormat(Chart.ImageFormat.PDF);
 					c.setSource("AirCharts");
 					c.setType(CAT_TYPE_MAP[type]);
 					c.setLastModified(Instant.now());

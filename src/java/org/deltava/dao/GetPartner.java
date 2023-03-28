@@ -10,7 +10,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Data Access Object to load virtual airline partner information. 
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 10.3
  */
 
@@ -68,7 +68,7 @@ public class GetPartner extends DAO {
 				pi.setLastRefer(toInstant(rs.getTimestamp(7)));
 				pi.setWidth(rs.getInt(8));
 				pi.setHeight(rs.getInt(9));
-				pi.setType(EnumUtils.parse(PartnerInfo.Type.class, rs.getString(10), null));
+				pi.setFormat(EnumUtils.parse(PartnerInfo.ImageFormat.class, rs.getString(10), null));
 				results.add(pi);
 			}
 		}

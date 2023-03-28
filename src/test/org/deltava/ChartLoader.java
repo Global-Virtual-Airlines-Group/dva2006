@@ -158,7 +158,7 @@ public class ChartLoader extends TestCase {
 					MD5Chart c = new MD5Chart(rs.getString(5), airports.get(rs.getString(2)));
 					c.setID(rs.getInt(1));
 					c.setType(Chart.Type.values()[rs.getInt(3)]);
-					c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
+					c.setImgFormat(Chart.ImageFormat.values()[rs.getInt(4)]);
 					c.setSize(rs.getInt(6));
 					c.setLastModified(java.time.Instant.now());
 					c.setHash(rs.getString(7));
@@ -226,7 +226,7 @@ public class ChartLoader extends TestCase {
 					MD5Chart c = new MD5Chart(chartName.replace("  ", " "), a);
 					c.setID(oc.getID());
 					c.load(new FileInputStream(f));
-					c.setImgType(Chart.ImageType.PDF);
+					c.setImgFormat(Chart.ImageFormat.PDF);
 					String typeCode = ce.getChildTextTrim("chart_code");
 					c.setType(Chart.Type.values()[StringUtils.arrayIndexOf(TYPES, typeCode, 0)]);
 					if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))
@@ -245,7 +245,7 @@ public class ChartLoader extends TestCase {
 				} else {
 					MD5Chart c = new MD5Chart(chartName, a);
 					c.load(new FileInputStream(f));
-					c.setImgType(Chart.ImageType.PDF);
+					c.setImgFormat(Chart.ImageFormat.PDF);
 					String typeCode = ce.getChildTextTrim("chart_code");
 					c.setType(Chart.Type.values()[StringUtils.arrayIndexOf(TYPES, typeCode, 0)]);
 					if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))

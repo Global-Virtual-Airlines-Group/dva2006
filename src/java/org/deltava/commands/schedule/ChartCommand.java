@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -80,9 +80,9 @@ public class ChartCommand extends AbstractFormCommand {
 				if (!PDFUtils.isPDF(buffer)) {
 					ImageInfo info = new ImageInfo(buffer);
 					info.check();
-					c.setImgType(Chart.ImageType.values()[info.getFormat()]);
+					c.setImgFormat(Chart.ImageFormat.values()[info.getFormat()]);
 				} else
-					c.setImgType(Chart.ImageType.PDF);
+					c.setImgFormat(Chart.ImageFormat.PDF);
 			
 				c.load(buffer);
 			}
@@ -181,7 +181,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);
-			ctx.setAttribute("isPDF", Boolean.valueOf(c.getImgType() == Chart.ImageType.PDF), REQUEST);
+			ctx.setAttribute("isPDF", Boolean.valueOf(c.getImgFormat() == Chart.ImageFormat.PDF), REQUEST);
 			ctx.setAttribute("charts", dao.getCharts(c.getAirport()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -192,9 +192,9 @@ public class ChartCommand extends AbstractFormCommand {
 		// Get comamnd result - if we're a PDF, just redirect there
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
-		if (c.getImgType() == Chart.ImageType.PDF) {
+		if (c.getImgFormat() == Chart.ImageFormat.PDF) {
 			result.setType(ResultType.REDIRECT);
-			result.setURL("/charts/" + c.getHexID() + ".pdf");
+			result.setURL("/dbimg/charts/" + c.getHexID() + ".pdf");
 		} else {
 			// Determine if we're displaying the printer-friendly page
 			boolean isPrintFriendly = "print".equals(ctx.getCmdParameter(Command.OPERATION, null));

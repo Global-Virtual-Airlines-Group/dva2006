@@ -1,12 +1,12 @@
-// Copyright 2005, 2006, 2008, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import org.deltava.beans.ImageBean;
+import org.deltava.beans.*;
 
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 8.6
+ * @version 10.6
  * @since 1.0
  */
 
@@ -32,6 +32,11 @@ public class Question extends ImageBean {
     public Question(String text) {
         super();
         _text = text.trim();
+    }
+    
+    @Override
+	public ImageType getImageType() {
+    	return ImageType.EXAM;
     }
     
     /**
@@ -85,8 +90,7 @@ public class Question extends ImageBean {
      */
     public boolean getExactMatch() {
     	return (_correctAnswer == null) ? false : _correctAnswer.equalsIgnoreCase(_userAnswer);
-    }
-    
+    }    
     /**
      * Returns if the question was answered correctly.
      * @return TRUE if the answer is correct, otherwise FALSE

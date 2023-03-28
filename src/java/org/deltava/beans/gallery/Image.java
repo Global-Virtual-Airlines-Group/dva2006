@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.gallery;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Image Gallery images.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -47,14 +47,14 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 		return _name;
 	}
 
-	/**
-	 * Returns the database ID of the Author of this Gallery Image.
-	 * @return the Database ID of the Person who created this Image
-	 * @see Image#setAuthorID(int)
-	 */
 	@Override
 	public int getAuthorID() {
 		return _authorID;
+	}
+	
+	@Override
+	public ImageType getImageType() {
+		return ImageType.GALLERY;
 	}
 	
 	/**

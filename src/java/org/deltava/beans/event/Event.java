@@ -14,7 +14,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -69,6 +69,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     @Override
     public String getComboAlias() {
         return getHexID();
+    }
+    
+    @Override
+	public ImageType getImageType() {
+    	return ImageType.EVENT;
     }
     
     /**
