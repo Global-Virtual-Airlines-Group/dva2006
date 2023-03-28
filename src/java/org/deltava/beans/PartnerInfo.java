@@ -1,14 +1,12 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.time.Instant;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A bean to store virtual airline partner information.
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 10.3
  */
 
@@ -21,8 +19,6 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	private Instant _lastRefer;
 	private int _referCount;
 	private int _priority;
-	
-	private String _bannerExt;
 	
 	/**
 	 * Creates the bean.
@@ -87,14 +83,6 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	}
 	
 	/**
-	 * Queries if the Partner has a banner image.
-	 * @return TRUE if the partner has an image, otherwise FALSE
-	 */
-	public boolean getHasBanner() {
-		return (_bannerExt != null);
-	}
-	
-	/**
 	 * Updates the partner name.
 	 * @param name the name
 	 */
@@ -140,13 +128,5 @@ public class PartnerInfo extends ImageBean implements Auditable {
 	 */
 	public void setPriority(int p) {
 		_priority = Math.max(0, p);
-	}
-	
-	/**
-	 * Sets if this Partner has a banner image available.
-	 * @param ext the banner extension, or null
-	 */
-	public void setBannerExtension(String ext) {
-		_bannerExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
 	}
 }
