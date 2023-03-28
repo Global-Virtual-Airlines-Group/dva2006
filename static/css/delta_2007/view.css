@@ -69,6 +69,12 @@ td.def {
 	color: #000000;
 }
 
+td.news div.hdr img, td.notam div.hdr img {
+	margin: auto;
+	width: 100%;
+	max-width: 100%;
+}
+
 /* Table row classes for view legends */
 table.view *.opt1 {
 	background-color: #efefbf;

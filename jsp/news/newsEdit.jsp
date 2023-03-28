@@ -18,6 +18,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'News Entry Title'});
 	golgotha.form.validate({f:f.body, l:15, t:'News Entry Text'});
+	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -31,7 +32,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="newssave.do" method="post" link="${entry}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="newssave.do" method="post" allowUpload="true" link="${entry}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> SYSTEM NEWS ENTRY</td>
@@ -47,12 +48,18 @@ golgotha.local.validate = function(f) {
 </tr>
 </c:if>
 <tr>
+ <td class="label">Banner Image</td>
+ <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><c:if test="${entry.hasImage}"><br />
+<el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
+</tr>
+<tr>
  <td class="label top">Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="4" className="req" resize="true">${entry.body}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHTML" value="true" label="News Entry is HTML" checked="${entry.isHTML}" /></td>
+ <td class="data"><el:box name="isHTML" value="true" label="News Entry is HTML" checked="${entry.isHTML}" /><c:if test="${empty entry}"><br />
+<el:box name="noNotify" value="true" label="Don't send e-mail notification" /></c:if></td>
 </tr>
 </el:table>
 

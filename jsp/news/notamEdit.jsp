@@ -13,11 +13,12 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'Notice Title'});
 	golgotha.form.validate({f:f.body, l:15, t:'NOTAM Text'});
+	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -31,7 +32,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="notamsave.do" method="post" link="${entry}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="notamsave.do" method="post" allowUpload="true" link="${entry}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> NOTICE TO AIRMEN</td>
@@ -47,9 +48,14 @@ golgotha.local.validate = function(f) {
 </tr>
 </c:if>
 <tr>
+ <td class="label">Banner Image</td>
+ <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><c:if test="${entry.hasImage}"><br />
+<el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" label="Notice is In Effect" checked="${entry.active}" /><br />
-<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" />
+<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" /><br />
 <el:box name="noNotify" value="true" label="Don't send e-mail notification" /></td>
 </tr>
 <tr>
@@ -62,12 +68,8 @@ golgotha.local.validate = function(f) {
 <el:table className="bar">
 <tr>
  <td>
-<c:if test="${access.canSave}">
-<el:button type="submit" label="SAVE NOTAM" />
-</c:if>
-<c:if test="${access.canDelete}">
-<el:cmdbutton url="newsdelete" op="notam" link="${entry}" label="DELETE NOTAM" />
-</c:if>
+<c:if test="${access.canSave}"><el:button type="submit" label="SAVE NOTAM" /></c:if>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="newsdelete" op="notam" link="${entry}" label="DELETE NOTAM" /></c:if>
  </td>
 </tr>
 </el:table>
