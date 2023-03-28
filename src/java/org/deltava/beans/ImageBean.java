@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2012, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -8,38 +8,33 @@ import org.deltava.util.ImageInfo;
 /**
  * An abstract bean class to store common image code.
  * @author Luke
- * @version 6.0
+ * @version 10.5
  * @since 1.0
  */
 
 public abstract class ImageBean extends DatabaseBlobBean {
+	
+	/**
+	 * Supported image types.
+	 */
+	public enum Type {
+		JPG, GIF, PNG, BMP
+	}
 
     private int _imgSize;
     private int _imgX;
     private int _imgY;
-    private int _imgType;
+    private Type _imgType;
 
     /**
      * Returns the type of image. This uses constants found in ImageInfo.
      * @return the image type code
      * @see ImageInfo#getFormat()
-     * @see ImageBean#getTypeName()
-     * @see ImageBean#setType(int)
+     * @see ImageBean#setType(Type)
      * @see ImageBean#load(InputStream)
      */
-    public int getType() {
+    public Type getType() {
         return _imgType;
-    }
-    
-    /**
-     * Returns the Image Type name.
-     * @return the image type name
-     * @see ImageBean#getType()
-     * @see ImageInfo#FORMAT_NAMES
-     * @see ImageBean#setType(int)
-     */
-    public String getTypeName() {
-    	return ImageInfo.FORMAT_NAMES[_imgType].toLowerCase();
     }
     
     /**
@@ -87,10 +82,18 @@ public abstract class ImageBean extends DatabaseBlobBean {
            throw new UnsupportedOperationException("Unknown Image Format");
        }
 
-       _imgType = imgInfo.getFormat();
+       _imgType = Type.values()[imgInfo.getFormat()];
        _imgX = imgInfo.getWidth();
        _imgY = imgInfo.getHeight();
     }
+    
+	/**
+	 * Queries if the bean has an associated Image.
+	 * @return TRUE if the bean has an image, otherwise FALSE
+	 */
+	public boolean getHasImage() {
+		return (_imgType != null);
+	}
     
     /**
      * Loads an image into the buffer. The image data should be available at the specified input stream, and the stream
@@ -168,21 +171,16 @@ public abstract class ImageBean extends DatabaseBlobBean {
     }
     
     /**
-     * Updates the image type. Note that this method does not change the image date (ie. convert formats)
-     * @param type the type of the image, as defined in ImageInfo
+     * Updates the image type. Note that this method does not change the image data (ie. convert formats).
+     * @param t the type of the image
      * @throws IllegalStateException if the image type has already been set
-     * @throws IllegalArgumentException if the image type is not contained within ImageInfo
-     * @see ImageInfo
      * @see ImageBean#getType()
      * @see ImageBean#load(InputStream)
      */
-    public void setType(int type) {
-        if (_imgType != 0)
+    public void setType(Type t) {
+        if (_imgType != null)
             throw new IllegalStateException("Image Type already set");
         
-        if ((type < 0) || (type >= ImageInfo.FORMAT_NAMES.length))
-            throw new IllegalArgumentException("Invalid Image Type - " + type);
-        
-        _imgType = type;
+        _imgType = t;
     }
 }
