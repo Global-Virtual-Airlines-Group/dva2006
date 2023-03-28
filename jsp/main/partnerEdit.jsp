@@ -52,7 +52,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Banner Image</td>
- <td class="data"><el:file name="img" idx="*" className="small"  size="80" max="144" /><c:if test="${partner.hasBanner}"><br />
+ <td class="data"><el:file name="img" idx="*" className="small"  size="80" max="144" /><c:if test="${partner.hasImage}"><br />
 <el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
 </tr>
 <c:if test="${partner.referCount > 0}">
