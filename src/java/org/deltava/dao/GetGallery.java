@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class GetGallery extends DAO {
 					if (rs.next()) {
 						img = new Image(rs.getString(1), rs.getString(2));
 						img.setID(id);
-						img.setType(Image.Type.values()[rs.getInt(3)]);
+						img.setFormat(Image.ImageFormat.values()[rs.getInt(3)]);
 						img.setWidth(rs.getInt(4));
 						img.setHeight(rs.getInt(5));
 						img.setSize(rs.getInt(6));
@@ -196,7 +196,7 @@ public class GetGallery extends DAO {
 				img.setAuthorID(rs.getInt(4));
 				img.setCreatedOn(rs.getTimestamp(5).toInstant());
 				img.setFleet(rs.getBoolean(6));
-				img.setType(Image.Type.values()[rs.getInt(7)]);
+				img.setFormat(Image.ImageFormat.values()[rs.getInt(7)]);
 				img.setWidth(rs.getInt(8));
 				img.setHeight(rs.getInt(9));
 				img.setSize(rs.getInt(10));

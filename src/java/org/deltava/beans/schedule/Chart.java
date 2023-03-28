@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, ViewEntry {
+public class Chart extends ImageBean implements ComboAlias, UseCount, ViewEntry {
 
 	/**
 	 * Chart type enumeration.
@@ -35,14 +35,13 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	/**
 	 * Chart Image type enumeration.
 	 */
-	public enum ImageType {
+	public enum ImageFormat {
 		GIF, JPG, PNG, PDF;
 	}
 	
-	private ImageType _imgType;
+	private ImageFormat _imgType;
 	private Type _type;
 	private String _name;
-	private int _size;
 	private int _useCount;
 
 	private Airport _airport;
@@ -81,10 +80,15 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	/**
 	 * Return the chart's image type.
 	 * @return the ImageType
-	 * @see Chart#setImgType(ImageType)
+	 * @see Chart#setImgFormat(ImageFormat)
 	 */
-	public ImageType getImgType() {
+	public ImageFormat getImgFormat() {
 		return _imgType;
+	}
+	
+	@Override
+	public ImageType getImageType() {
+		return ImageType.CHART;
 	}
 
 	/**
@@ -103,16 +107,6 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	@SuppressWarnings("static-method")
 	public boolean getIsExternal() {
 		return false;
-	}
-	
-	/**
-	 * Return the size of the chart image.
-	 * @return the size of the image in bytes
-	 * @see Chart#setSize(int)
-	 */
-	@Override
-	public int getSize() {
-		return (_buffer == null) ? _size : _buffer.length;
 	}
 	
 	/**
@@ -169,22 +163,14 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	}
 
 	/**
-	 * Set the chart image type
-	 * @param t the ImageType
-	 * @see Chart#getImgType()
+	 * Set the chart image format.
+	 * @param fmt the ImageFormat
+	 * @see Chart#getImgFormat()
 	 */
-	public void setImgType(ImageType t) {
-		_imgType = t;
+	public void setImgFormat(ImageFormat fmt) {
+		_imgType = fmt;
 	}
 
-	/**
-	 * Set the size of the chart image.
-	 * @param size the image size in bytes
-	 */
-	public void setSize(int size) {
-		_size = Math.max(0, size);
-	}
-	
 	/**
 	 * Updates the number of times this chart has been viewed.
 	 * @param cnt the number of views

@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -177,7 +177,7 @@ public class SetEvent extends DAO {
 			ps.setBinaryStream(2, e.getInputStream(), e.getSize());
 			ps.setInt(3, e.getWidth());
 			ps.setInt(4, e.getHeight());
-			ps.setString(5, e.getType().name().toLowerCase());
+			ps.setString(5, e.getFormat().name().toLowerCase());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

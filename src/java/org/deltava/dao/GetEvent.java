@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -335,7 +335,7 @@ public class GetEvent extends DAO {
 				e.setSignupURL(rs.getString(9));
 				e.setOwner(SystemData.getApp(rs.getString(10)));
 				if (hasBanner)
-					e.setType(EnumUtils.parse(Event.Type.class, rs.getString(11), null));
+					e.setFormat(EnumUtils.parse(Event.ImageFormat.class, rs.getString(11), null));
 				if (hasBriefing && !rs.getBoolean(12))
 					e.setBriefing(new Briefing(rs.getBytes(13)));
 

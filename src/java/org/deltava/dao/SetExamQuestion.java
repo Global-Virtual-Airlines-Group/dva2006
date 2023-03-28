@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 3.6
  */
 
@@ -188,7 +188,7 @@ public class SetExamQuestion extends DAO {
 
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.QUESTIONIMGS (ID, TYPE, X, Y, SIZE, IMG) VALUES (?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, qp.getID());
-			ps.setInt(2, qp.getType().ordinal());
+			ps.setInt(2, qp.getFormat().ordinal());
 			ps.setInt(3, qp.getWidth());
 			ps.setInt(4, qp.getHeight());
 			ps.setInt(5, qp.getSize());

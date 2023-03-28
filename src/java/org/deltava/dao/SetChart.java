@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.crypt.MessageDigester;
 /**
  * A Data Access Object to write Approach Charts.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class SetChart extends DAO {
 				+ "ICAO=N.ICAO, TYPE=N.TYPE, IMGFORMAT=N.IMGFORMAT, NAME=N.NAME, SIZE=N.SIZE, LASTMODIFIED=N.LASTMODIFIED, HASH=N.HASH")) {
 				ps.setString(1, c.getAirport().getICAO());
 				ps.setInt(2, c.getType().ordinal());
-				ps.setInt(3, c.getImgType().ordinal());
+				ps.setInt(3, c.getImgFormat().ordinal());
 				ps.setString(4, c.getName());
 				ps.setInt(5, c.getSize());
 				ps.setTimestamp(6, createTimestamp(c.getLastModified()));

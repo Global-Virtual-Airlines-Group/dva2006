@@ -64,11 +64,11 @@ public class TestImage extends AbstractBeanTestCase {
 
         // Set properties for state checking
         _img.setSize(10235);
-        _img.setType(Image.Type.GIF);
+        _img.setFormat(Image.ImageFormat.GIF);
 
         // Test state checking
         validateInput("size", Integer.valueOf(1235), IllegalStateException.class);
-        validateInput("type", Image.Type.GIF, IllegalStateException.class);
+        validateInput("type", Image.ImageFormat.GIF, IllegalStateException.class);
 
         // See what happens if we get the stream when the buffer is empty
         InputStream is = _img.getInputStream();
@@ -91,7 +91,7 @@ public class TestImage extends AbstractBeanTestCase {
         }
 
         // Validate the image data is correct
-        assertEquals(Image.Type.GIF, _img.getType());
+        assertEquals(Image.ImageFormat.GIF, _img.getFormat());
         assertEquals(f.length(), _img.getSize());
         assertEquals(320, _img.getWidth());
         assertEquals(160, _img.getHeight());
@@ -110,7 +110,7 @@ public class TestImage extends AbstractBeanTestCase {
         }
         
         // Validate the image data is correct
-        assertEquals(Image.Type.JPG, _img.getType());
+        assertEquals(Image.ImageFormat.JPG, _img.getFormat());
         assertEquals(f.length(), _img.getSize());
         assertEquals(320, _img.getWidth());
         assertEquals(160, _img.getHeight());
@@ -129,7 +129,7 @@ public class TestImage extends AbstractBeanTestCase {
        }
 
        // Validate the image data is correct
-       assertEquals(Image.Type.PNG, _img.getType());
+       assertEquals(Image.ImageFormat.PNG, _img.getFormat());
        assertEquals(f.length(), _img.getSize());
        assertEquals(320, _img.getWidth());
        assertEquals(160, _img.getHeight());
