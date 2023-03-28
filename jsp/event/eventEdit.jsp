@@ -117,7 +117,7 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:text name="closeDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" /> at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
 &nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
-<c:if test="${event.hasBanner}">
+<c:if test="${event.hasImage}">
 <tr>
  <td class="label top">Banner Image</td>
  <td class="data"><img alt="${event.name} Banner" src="/event/${event.hexID}" /><br />
