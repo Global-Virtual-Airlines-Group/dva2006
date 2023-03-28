@@ -1,15 +1,16 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.PartnerInfo;
+import org.deltava.util.EnumUtils;
 
 /**
  * A Data Access Object to load virtual airline partner information. 
  * @author Luke
- * @version 10.3
+ * @version 10.5
  * @since 10.3
  */
 
@@ -67,7 +68,7 @@ public class GetPartner extends DAO {
 				pi.setLastRefer(toInstant(rs.getTimestamp(7)));
 				pi.setWidth(rs.getInt(8));
 				pi.setHeight(rs.getInt(9));
-				pi.setBannerExtension(rs.getString(10));
+				pi.setType(EnumUtils.parse(PartnerInfo.Type.class, rs.getString(10), null));
 				results.add(pi);
 			}
 		}

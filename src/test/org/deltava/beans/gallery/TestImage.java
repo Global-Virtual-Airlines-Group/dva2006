@@ -8,7 +8,6 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
 import org.deltava.beans.Pilot;
-import org.deltava.util.ImageInfo;
 
 public class TestImage extends AbstractBeanTestCase {
 
@@ -39,7 +38,6 @@ public class TestImage extends AbstractBeanTestCase {
         checkProperty("size", Integer.valueOf(131246));
         checkProperty("width", Integer.valueOf(1280));
         checkProperty("height", Integer.valueOf(1024));
-        checkProperty("type", Integer.valueOf(1));
         checkProperty("ID", Integer.valueOf(116));
         checkProperty("authorID", Integer.valueOf(117));
         checkProperty("createdOn", Instant.now());
@@ -60,19 +58,17 @@ public class TestImage extends AbstractBeanTestCase {
         validateInput("width", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("height", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("type", Integer.valueOf(21), IllegalArgumentException.class);
         validateInput("voteCount", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("score", Double.valueOf(-1), IllegalArgumentException.class);
         validateInput("score", Double.valueOf(10.1), IllegalArgumentException.class);
 
         // Set properties for state checking
         _img.setSize(10235);
-        _img.setType(1);
+        _img.setType(Image.Type.GIF);
 
         // Test state checking
         validateInput("size", Integer.valueOf(1235), IllegalStateException.class);
-        validateInput("type", Integer.valueOf(0), IllegalStateException.class);
+        validateInput("type", Image.Type.GIF, IllegalStateException.class);
 
         // See what happens if we get the stream when the buffer is empty
         InputStream is = _img.getInputStream();
@@ -95,7 +91,7 @@ public class TestImage extends AbstractBeanTestCase {
         }
 
         // Validate the image data is correct
-        assertEquals(ImageInfo.FORMAT_GIF, _img.getType());
+        assertEquals(Image.Type.GIF, _img.getType());
         assertEquals(f.length(), _img.getSize());
         assertEquals(320, _img.getWidth());
         assertEquals(160, _img.getHeight());
@@ -114,7 +110,7 @@ public class TestImage extends AbstractBeanTestCase {
         }
         
         // Validate the image data is correct
-        assertEquals(ImageInfo.FORMAT_JPEG, _img.getType());
+        assertEquals(Image.Type.JPG, _img.getType());
         assertEquals(f.length(), _img.getSize());
         assertEquals(320, _img.getWidth());
         assertEquals(160, _img.getHeight());
@@ -133,7 +129,7 @@ public class TestImage extends AbstractBeanTestCase {
        }
 
        // Validate the image data is correct
-       assertEquals(ImageInfo.FORMAT_PNG, _img.getType());
+       assertEquals(Image.Type.PNG, _img.getType());
        assertEquals(f.length(), _img.getSize());
        assertEquals(320, _img.getWidth());
        assertEquals(160, _img.getHeight());

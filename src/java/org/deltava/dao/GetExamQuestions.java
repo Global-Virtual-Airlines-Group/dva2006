@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 9.2
+ * @version 10.5
  * @since 2.1
  */
 
@@ -65,7 +65,7 @@ public class GetExamQuestions extends DAO {
 
 						// Load image data
 						if (rs.getInt(9) > 0) {
-							qp.setType(rs.getInt(8));
+							qp.setType(Question.Type.values()[rs.getInt(8)]);
 							qp.setSize(rs.getInt(9));
 							qp.setWidth(rs.getInt(10));
 							qp.setHeight(rs.getInt(11));
@@ -331,7 +331,7 @@ public class GetExamQuestions extends DAO {
 
 				// Load image metadata
 				if (rs.getInt(9) > 0) {
-					qp.setType(rs.getInt(8));
+					qp.setType(Question.Type.values()[rs.getInt(8)]);
 					qp.setSize(rs.getInt(9));
 					qp.setWidth(rs.getInt(10));
 					qp.setHeight(rs.getInt(11));

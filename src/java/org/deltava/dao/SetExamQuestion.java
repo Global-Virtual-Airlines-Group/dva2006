@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 9.0
+ * @version 10.5
  * @since 3.6
  */
 
@@ -188,7 +188,7 @@ public class SetExamQuestion extends DAO {
 
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.QUESTIONIMGS (ID, TYPE, X, Y, SIZE, IMG) VALUES (?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, qp.getID());
-			ps.setInt(2, qp.getType());
+			ps.setInt(2, qp.getType().ordinal());
 			ps.setInt(3, qp.getWidth());
 			ps.setInt(4, qp.getHeight());
 			ps.setInt(5, qp.getSize());

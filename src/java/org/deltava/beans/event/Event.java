@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -11,12 +11,10 @@ import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.system.AirlineInformation;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 9.0
+ * @version 10.5
  * @since 1.0
  */
 
@@ -27,7 +25,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     private Instant _startTime;
     private Instant _endTime;
     private Instant _signupDeadline;
-    private String _bannerExt;
     
     private Status _status;
     private OnlineNetwork _network = OnlineNetwork.VATSIM;
@@ -299,15 +296,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
         return _assignments;
     }
     
-	/**
-	 * Queries if the Online Event has a banner image.
-	 * @return TRUE if the event has an image, otherwise FALSE
-	 * @see Event#setBannerExtension(String)
-	 */
-	public boolean getHasBanner() {
-		return (_bannerExt != null);
-	}
-    
     /**
      * Returns whether a Pilot is signed up for this Online Event.
      * @param pilotID the Pilot's database ID
@@ -451,15 +439,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     public void setSignupURL(String url) {
     	_signupURL = url;
     }
-    
-	/**
-	 * Sets if this Eventhas a banner image available.
-	 * @param ext the banner extension, or null
-	 * @see Event#getHasBanner()
-	 */
-	public void setBannerExtension(String ext) {
-		_bannerExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
-	}
 
 	/**
 	 * Sets the Airline that owns this Online Event.
