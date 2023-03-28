@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
@@ -58,8 +58,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
-				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
-				nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -69,8 +67,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
-				nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
-				nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -81,6 +77,18 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				pilots = pdao.getNotifications(Notification.NEWS);
 			}
+			
+			// Update fields
+			nws.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
+			nws.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
+			
+			// Update Banner Image
+			FileUpload fu = ctx.getFile("bannerImg", 524288);
+			if (fu != null) {
+				nws.load(fu.getBuffer());
+				nws.setIsHTML(true);
+			} else if (Boolean.parseBoolean(ctx.getParameter("deleteImg")))
+				nws.clear();
 			
 			// Get the write DAO and save the entry
 			SetNews wdao = new SetNews(con);

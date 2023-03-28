@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2011, 2015, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save System News entries.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
@@ -37,7 +37,8 @@ public class NewsSaveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		List<? extends EMailAddress> pilots = null;
+		List<EMailAddress> pilots = new ArrayList<EMailAddress>();
+		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
 		try {
 			Connection con = ctx.getConnection();
 
@@ -77,8 +78,16 @@ public class NewsSaveCommand extends AbstractCommand {
 				
 				// Get the pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				pilots = pdao.getNotifications(Notification.NEWS);
+				pilots.addAll(pdao.getNotifications(Notification.NEWS));
 			}
+			
+			// Update Banner Image
+			FileUpload fu = ctx.getFile("bannerImg", 524288);
+			if (fu != null) {
+				nws.load(fu.getBuffer());
+				nws.setIsHTML(true);
+			} else if (Boolean.parseBoolean(ctx.getParameter("deleteImg")))
+				nws.clear();
 
 			// Get the write DAO and save the entry
 			SetNews wdao = new SetNews(con);
@@ -90,7 +99,7 @@ public class NewsSaveCommand extends AbstractCommand {
 		}
 
 		// Send the message
-		if (isNew && (pilots != null)) {
+		if (!noNotify && (pilots.size() > 0)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
