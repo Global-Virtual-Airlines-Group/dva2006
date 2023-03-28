@@ -4,7 +4,7 @@ package org.deltava.beans;
 /**
  * A class for storing Notice to Airmen (NOTAM) entries.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
@@ -38,6 +38,11 @@ public class Notice extends News implements ViewEntry {
     */
    public void setActive(boolean active) {
       _active = active;
+   }
+   
+   @Override
+   public ImageType getImageType() {
+	   return ImageType.NOTAM;
    }
    
    @Override

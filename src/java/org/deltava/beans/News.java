@@ -6,11 +6,11 @@ import java.time.Instant;
 /**
  * A class for storing System News entries.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
-public class News extends DatabaseBean implements AuthoredBean {
+public class News extends ImageBean implements AuthoredBean {
 
     private Instant _date = Instant.now();
     private String _subject;
@@ -32,7 +32,7 @@ public class News extends DatabaseBean implements AuthoredBean {
     }
 
     /**
-     * Return the date/entry this entry was created
+     * Return the date/entry this entry was created.
      * @return The date/time this System News entry was created
      */
     public Instant getDate() {
@@ -40,7 +40,7 @@ public class News extends DatabaseBean implements AuthoredBean {
     }
 
     /**
-     * Return this entry's Title
+     * Return this entry's Title.
      * @return The Title of this System News entry
      * @see News#setSubject(String)
      */
@@ -51,6 +51,11 @@ public class News extends DatabaseBean implements AuthoredBean {
     @Override
     public int getAuthorID() {
         return _authorID;
+    }
+    
+    @Override
+	public ImageType getImageType() {
+    	return ImageType.NEWS;
     }
 
     /**
