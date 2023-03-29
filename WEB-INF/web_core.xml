@@ -238,6 +238,18 @@
 		<servlet-name>sigImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
     </servlet-mapping>
+   	<servlet-mapping>
+		<servlet-name>trackImage</servlet-name>
+		<url-pattern>/track/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>wxTile</servlet-name>
+    	<url-pattern>/wx/*</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>customTile</servlet-name>
+    	<url-pattern>/tile/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/fleet/*</url-pattern>
