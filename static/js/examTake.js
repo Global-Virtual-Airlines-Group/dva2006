@@ -109,7 +109,7 @@ xmlreq.onreadystatechange = function() {
 // Save the answer
 const answer = golgotha.exam.getAnswer(txtbox);
 if (answer != null) {
-	xmlreq.send('answer=' + escape(answer));
+	xmlreq.send('answer=' + encodeURI(answer));
 	golgotha.event.beacon('Examination', 'Submit Answer');
 }
 
@@ -117,7 +117,7 @@ return true;
 };
 
 golgotha.exam.viewImage = function(id, x, y) {
-	return window.open('/exam_rsrc/' + id, 'questionImage', 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes');
+	return window.open('/dbimg/exam_rsrc/' + id, 'questionImage', 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes');
 };
 
 golgotha.exam.updateMap = function(rpq)
@@ -163,7 +163,7 @@ xmlreq.onreadystatechange = function() {
 	return true;
 };
 
-xmlreq.send('route=' + escape(getAnswer(txtbox)));
+xmlreq.send('route=' + encodeURI(getAnswer(txtbox)));
 golgotha.event.beacon('Examination', 'Route Plot');
 return true;
 };

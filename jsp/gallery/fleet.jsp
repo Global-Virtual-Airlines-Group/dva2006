@@ -14,26 +14,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
-<script type="text/javascript">
-golgotha.local.selectAircraft = function(combo)
-{
-if (!golgotha.form.comboSet(combo)) {
-	golgotha.util.display('descRow', false);
-	golgotha.util.display('imgRow', false);
-	return false;
-}
+<script async>
+golgotha.local.selectAircraft = function(combo) {
+	if (!golgotha.form.comboSet(combo)) {
+		golgotha.util.display('descRow', false);
+		golgotha.util.display('imgRow', false);
+		return false;
+	}
 
-// Get the image object and its description object
-var img = document.getElementById('fleetPic');
-var desc = document.getElementById('fleetDesc');
+	// Get the image object and its description object
+	const img = document.getElementById('fleetPic');
+	const desc = document.getElementById('fleetDesc');
 
-// Load the picture in its place, save the description
-img.src = '/gallery/${imgDB}/0x' + escape(golgotha.form.getCombo(combo)) + '.jpg';
-desc.innerHTML = golgotha.local.dList[combo.selectedIndex - 1];
-golgotha.util.display('imgRow', true);
-golgotha.util.display('descRow', true);
-desc.focus(); 
-return true;
+	// Load the picture in its place, save the description
+	img.src = '/dbimg/gallery/${imgDB}/0x' + encodeURI(golgotha.form.getCombo(combo)) + '.jpg';
+	desc.innerHTML = golgotha.local.dList[combo.selectedIndex - 1];
+	golgotha.util.display('imgRow', true);
+	golgotha.util.display('descRow', true);
+	desc.focus(); 
+	return true;
 };
 
 <fmt:jsarray var="golgotha.local.dList" items="${fleetGalleryDesc}" />

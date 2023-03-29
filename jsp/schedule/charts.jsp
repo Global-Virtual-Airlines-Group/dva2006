@@ -18,29 +18,23 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.updateAirport = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) { return (f.id.selectedIndex > 0); };
+<fmt:jsarray var="golgotha.local.cTypes" items="${chartTypes}" />
 
 golgotha.local.updateVisibility = function()
 {
-var f = document.forms[0];
-var chartTypes = [];
-for (var x = 0; x < f.chartType.length; x++) {
-	if (f.chartType[x].checked)
-		chartTypes.push(f.chartType[x].value.toLowerCase());
-}
+const f = document.forms[0];
+const chartTypes = [];
+f.chartType.forEach(function(ct) { if (ct.checked) chartTypes.push(ct.value.toLowerCase()); });
 
 // Hide/select rows
-<fmt:jsarray var="cTypes" items="${chartTypes}" />
-for (var x = 0; x < cTypes.length; x++) {
-	var chartClass = cTypes[x].toLowerCase();
-	var isDisplayed = ((chartTypes.length == 0) || (chartTypes.indexOf(chartClass) > -1));
-	var rows = golgotha.util.getElementsByClass(chartClass);
-	for (var y = 0; y < rows.length; y++) {
-		var row = rows[y];
-		row.style.display = isDisplayed ? '' : 'none';
-	}
+for (var x = 0; x < golgotha.local.cTypes.length; x++) {
+	const chartClass = golgotha.local.cTypes[x].toLowerCase();
+	const isDisplayed = ((chartTypes.length == 0) || (chartTypes.indexOf(chartClass) > -1));
+	const rows = golgotha.util.getElementsByClass(chartClass);
+	rows.forEach(function(r) { r.style.display = isDisplayed ? '' : 'none'; });
 }
 
 return true;
@@ -87,13 +81,13 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 
 <!-- Table Chart Data -->
 <c:forEach var="chart" items="${charts}">
-<c:set var="hasPDF" value="${chart.imgType == 'PDF'}" scope="page" />
+<c:set var="hasPDF" value="${chart.imgFormat == 'PDF'}" scope="page" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
 <c:set var="anyExt" value="${anyExt || (chart.isExternal && (chart.source == 'AirCharts'))}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
- <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+ <td colspan="2"><el:link url="/dbimg/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td class="sec nophone">${chart.type.description}</td>
 <c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
@@ -107,7 +101,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
  <td class="small"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
- <td colspan="${cspan}">${chart.imgType} image, <fmt:fileSize fmt="#,##0" value="${chart.size}" /><c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
+ <td colspan="${cspan}">${chart.imgFormat} image, <fmt:fileSize fmt="#,##0" value="${chart.size}" /><c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
 </c:otherwise>
 </c:choose>
 </view:row>
@@ -116,15 +110,13 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <!-- Download Acrobat link -->
 <tr>
  <td><a href="https://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader</span> to be viewed. If you are having difficulties viewing our charts, please click on the link to the left
- to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
+ <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader</span> to be viewed. If you are having difficulties viewing our charts, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
 </c:if>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;
-<content:filter roles="Operations,Schedule,Developer"><c:if test="${anyExt}"><el:cmd url="extchartrefresh" linkID="${airport.IATA}">REFRESH EXTERNAL APPROACH CHARTS</el:cmd></c:if></content:filter></td>
+ <td colspan="7">&nbsp;<content:filter roles="Operations,Schedule,Developer"><c:if test="${anyExt}"><el:cmd url="extchartrefresh" linkID="${airport.IATA}">REFRESH EXTERNAL APPROACH CHARTS</el:cmd></c:if></content:filter></td>
 </tr>
 </view:table>
 </el:form>

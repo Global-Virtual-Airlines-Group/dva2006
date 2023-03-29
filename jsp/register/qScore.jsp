@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -25,7 +25,7 @@ return true;
 <c:if test="${hasQImages}">
 golgotha.local.viewImage = function(id, x, y) {
 	const flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-	return window.open('/exam_rsrc/' + id, 'questionImage', flags);
+	return window.open('/dbimg/exam_rsrc/' + id, 'questionImage', flags);
 };</c:if>
 </script>
 </head>
@@ -88,10 +88,7 @@ golgotha.local.viewImage = function(id, x, y) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canScore}">
- <td><el:button type="submit" label="SCORE QUESTIONNAIRE" /></td>
-</c:if>
+ <td>&nbsp;<c:if test="${access.canScore}"><el:button type="submit" label="SCORE QUESTIONNAIRE" /></c:if>
  </td>
 </tr>
 </el:table>

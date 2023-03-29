@@ -43,12 +43,12 @@
  <td class="data"><span class="small" id="imgLikeTotal"></span><span class="small" id="imgLike"> <a onclick="javascript:void golgotha.like.exec(${img.hexID})">Like this Image</a></span></td>
 </tr>
 <tr class="mid">
- <td colspan="2"><img class="gallery" height="${img.height}" style="max-width:98%; width:${img.width}px;" src="/gallery/${db}/${img.hexID}.${img.typeName}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:fileSize value="${img.size}" />)" /></td>
+ <td colspan="2"><el:dbimg className="gallery" style="max-width:98%;" img="${img}" airline="${db}" caption="${fn:escape(img.name)}, ${img.width}x${img.height} (${img.size / 1024}KB)" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="form">
+<el:table className="bar">
 <tr class="title mid">
  <td>&nbsp;
 <c:if test="${access.canEdit}"><el:cmdbutton url="image" link="${img}" op="edit" label="EDIT IMAGE" /></c:if>
