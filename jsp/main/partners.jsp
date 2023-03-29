@@ -31,7 +31,7 @@
 <c:forEach var="partner" items="${viewContext.results}">
 <c:set var="ac" value="${accessMap[partner.ID]}" scope="page" />
 <tr>
- <td><c:if test="${partner.hasImage}"><a href="/partner.ws?id=${partner.hexID}" rel="nofollow" target="_new"><img src="/partner/${partner.hexID}.${partner.typeName}" height="${partner.height}" width="${partner.width}" alt="${partner.name}" /></a><br /></c:if>
+ <td><c:if test="${partner.hasImage}"><a href="/partner.ws?id=${partner.hexID}" rel="nofollow" target="_new"><el:dbimg img="${partner}" caption="${partner.name}" /></a><br /></c:if>
 <c:if test="${ac.canEdit}"><el:cmd url="partner" link="${partner}" op="edit" className="sec bld">${partner.name}</el:cmd></c:if>
 <c:if test="${!ac.canEdit}"><a href="/partner.ws?id=${partner.hexID}" rel="nofollow" class="pri bld">${partner.name}</a></c:if></td>
  <td colspan="2" class="left">${partner.description}</td>
