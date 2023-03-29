@@ -17,9 +17,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.switchType = function(combo) {
-	self.location = '/logcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	self.location = '/logcalendar.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 </script>

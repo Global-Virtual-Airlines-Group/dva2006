@@ -91,7 +91,7 @@ golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {
 		if (o.hasOwnProperty(p))
-			params.push(p + '=' + escape(o[p]));
+			params.push(p + '=' + encodeURI(o[p]));
 	}
 
 	return params.join('&');

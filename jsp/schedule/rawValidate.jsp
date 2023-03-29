@@ -26,7 +26,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.setSrc = function(cb) {
-	self.location = '/rawvalidate.do?id=' + escape(golgotha.form.getCombo(cb));
+	self.location = '/rawvalidate.do?id=' + encodeURI(golgotha.form.getCombo(cb));
 	return true;
 };
 </script>

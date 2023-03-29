@@ -49,7 +49,7 @@ if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return f
 	
 // Create the AJAX request
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
+xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + encodeURI(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const dupes = (parseInt(xmlreq.responseText) > 0);
@@ -67,16 +67,15 @@ xmlreq.send(null);
 return true;
 };
 
-golgotha.local.resetUniqueCheck = function(isPermanent)
-{
-golgotha.local.uniqueCheck = isPermanent;
-const rows = golgotha.util.getElementsByClass('dupeFound');
-rows.forEach(function(r) { golgotha.util.display(r, false); });
-const f = document.forms[0];
-for (var x = 0; x < f.elements.length; x++)
-	f.elements[x].disabled = false;
+golgotha.local.resetUniqueCheck = function(isPermanent) {
+	golgotha.local.uniqueCheck = isPermanent;
+	const rows = golgotha.util.getElementsByClass('dupeFound');
+	rows.forEach(function(r) { golgotha.util.display(r, false); });
+	const f = document.forms[0];
+	for (var x = 0; x < f.elements.length; x++)
+		f.elements[x].disabled = false;
 
-return true;
+	return true;
 };
 
 golgotha.local.sendDupeInfo = function() {

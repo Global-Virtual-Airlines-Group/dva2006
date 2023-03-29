@@ -14,14 +14,14 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.sortBy = function(combo) {
-	self.location = '/selcals.do?sortType=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/selcals.do?sortType=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 
 golgotha.local.filterBy = function(combo) {
-	if (combo.selectedIndex > 0) self.location = '/selcals.do?eqType=' + escape(golgotha.form.getCombo(combo));
+	if (combo.selectedIndex > 0) self.location = '/selcals.do?eqType=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>
