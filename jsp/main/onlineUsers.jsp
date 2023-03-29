@@ -16,9 +16,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.sortBy = function(combo) {
-	self.location = '/users.do?sortOpt=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/users.do?sortOpt=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>

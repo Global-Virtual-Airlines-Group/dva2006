@@ -15,9 +15,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.setNetwork = function(combo) {
-	location.href = '/flightboard.do?id=' + escape(golgotha.form.getCombo(combo));
+	location.href = '/flightboard.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>
