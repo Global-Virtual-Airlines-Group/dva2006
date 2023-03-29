@@ -17,7 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.setCategory = function(combo) {
-	self.location = '/newsletters.do?category=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/newsletters.do?category=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>

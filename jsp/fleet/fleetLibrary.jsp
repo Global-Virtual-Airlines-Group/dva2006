@@ -25,7 +25,7 @@ if (!golgotha.form.comboSet(combo)) {
 
 // Get the code
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'fleetlib.ws?code=' + escape(golgotha.form.getCombo(combo)), true);
+xmlreq.open('GET', 'fleetlib.ws?code=' + encodeURI(golgotha.form.getCombo(combo)), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if (xmlreq.status != 200) {

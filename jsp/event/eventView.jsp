@@ -63,7 +63,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </tr>
 <c:if test="${event.hasImage}">
 <tr class="nophone">
- <td colspan="6" class="mid"><img alt="${event.name} Banner" src="/event/${event.hexID}" /></td>
+ <td colspan="6" class="mid"><el:dbimg caption="${event.name} Banner" img="${event}" /></td>
 </tr>
 </c:if>
 <tr>
