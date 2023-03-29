@@ -15,9 +15,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.update = function(combo) {
-	self.location = '/hdissuefilter.do?op=${param.op}&id=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/hdissuefilter.do?op=${param.op}&id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>

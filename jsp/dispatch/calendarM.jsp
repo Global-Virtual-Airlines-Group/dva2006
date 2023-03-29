@@ -16,9 +16,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script>
+<script async>
 golgotha.local.switchType = function(combo) {
-	self.location = '/dspcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	self.location = '/dspcalendar.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 

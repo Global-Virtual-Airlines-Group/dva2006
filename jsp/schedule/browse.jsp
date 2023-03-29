@@ -18,21 +18,20 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.setAirportD = function(combo) {
-	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/browse.do?airportD=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 
-golgotha.local.setAirportA = function(combo)
-{
-const f = document.forms[0];
-if (golgotha.form.comboSet(combo))
-	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD)) + '&airportA=' + escape(golgotha.form.getCombo(combo));
-else
-	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD));
+golgotha.local.setAirportA = function(combo) {
+	const f = document.forms[0];
+	if (golgotha.form.comboSet(combo))
+		self.location = '/browse.do?airportD=' + encodeURI(golgotha.form.getCombo(f.airportD)) + '&airportA=' + encodeURI(golgotha.form.getCombo(combo));
+	else
+		self.location = '/browse.do?airportD=' + encodeURI(golgotha.form.getCombo(f.airportD));
 
-return true;
+	return true;
 };
 
 golgotha.onDOMReady(function() {

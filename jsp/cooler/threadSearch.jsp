@@ -31,7 +31,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.setChannel = function(combo) {
-	self.location = '/channel.do?id=' + escape(golgotha.form.getValue(combo));
+	self.location = '/channel.do?id=' + encodeURI(golgotha.form.getValue(combo));
 	return true;
 };
 </script>

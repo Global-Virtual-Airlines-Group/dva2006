@@ -19,7 +19,7 @@
 <script async>
 golgotha.local.sort = function(combo) {
 	if (!golgotha.form.comboSet(combo)) return false;
-	self.location = '/applicants.do?' + combo.name + '=' + escape(golgotha.form.getCombo(combo));
+	self.location = '/applicants.do?' + combo.name + '=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
 };
 </script>
