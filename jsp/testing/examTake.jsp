@@ -80,7 +80,7 @@ golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
 </tr>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small">RESOURCE - <span class="pri bld">${q.imageFormat}</span> image, <fmt:fileSize value="${q.size}" /> <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.format}</span> image, <fmt:fileSize value="${q.size}" /> <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
