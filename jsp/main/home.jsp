@@ -64,7 +64,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td><el:cmd url="notamedit" link="${notam}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </tr>
 <c:if test="${notam.isHTML}">
- <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" caption="${notam.subject}"  /></div></c:if>
+ <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${notam.bannerWidth}%; max-width=${notam.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
  ${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">
@@ -220,7 +220,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </tr>
 <tr>
 <c:if test="${entry.isHTML}">
- <td class="left news" colspan="3"><c:if test="${entry.hasImage}"><div class="hdr"><el:dbimg img="${entry}" caption="${entry.subject}"  /></div></c:if>
+ <td class="left news" colspan="3"><c:if test="${entry.hasImage}"><div class="hdr"><el:dbimg img="${entry}" style="width:${entry.bannerWidth}%; max-width=${entry.bannerWidth}%" caption="${entry.subject}"  /></div></c:if>
 ${entry.body}</td>
 </c:if>
 <c:if test="${!entry.isHTML}">

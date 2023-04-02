@@ -48,11 +48,11 @@
 </tr>
 <tr>
 <c:if test="${news.isHTML}">
- <td colspan="3" class="left news"><c:if test="${news.hasImage}"><div class="hdr"><el:dbimg img="${news}" caption="${news.subject}"  /></div></c:if>
+ <td colspan="3" class="left news"><c:if test="${news.hasImage}"><div class="hdr"><el:dbimg img="${news}" style="width:${news.bannerWidth}%; max-width=${news.bannerWidth}%" caption="${news.subject}"  /></div></c:if>
 ${news.body}</td>
 </c:if>
 <c:if test="${!news.isHTML}">
- <td colspan="3" class="left"><fmt:text value="${news.body}" /></td>
+ <td colspan="3" class="left news"><fmt:text value="${news.body}" /></td>
 </c:if>
 </tr>
 </c:forEach>

@@ -31,7 +31,7 @@ public class GetNews extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public News getNews(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT N.*, NI.X, NI.Y, NI.TYPE FROM NEWS N LEFT JOIN NEWS_IMGS NI ON (N.ID=NI.ID) WHERE (N.ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT N.*, NI.X, NI.Y, NI.WIDTH, NI.TYPE FROM NEWS N LEFT JOIN NEWS_IMGS NI ON (N.ID=NI.ID) WHERE (N.ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
 			return executeNews(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
@@ -45,7 +45,7 @@ public class GetNews extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<News> getNews() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.TYPE FROM NEWS N LEFT JOIN NEWS_IMGS NI ON (N.ID=NI.ID) ORDER BY N.DATE DESC")) {
+		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.WIDTH, NI.TYPE FROM NEWS N LEFT JOIN NEWS_IMGS NI ON (N.ID=NI.ID) ORDER BY N.DATE DESC")) {
 			return executeNews(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -59,7 +59,7 @@ public class GetNews extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Notice getNOTAM(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT N.*, NI.X, NI.Y, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) WHERE (N.ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT N.*, NI.X, NI.Y, NI.WIDTH, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) WHERE (N.ID=?) LIMIT 1")) {
 			ps.setInt(1, id);
 			return executeNOTAM(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
@@ -73,7 +73,7 @@ public class GetNews extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Notice> getNOTAMs() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) ORDER BY N.EFFDATE DESC")) {
+		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.WIDTH, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) ORDER BY N.EFFDATE DESC")) {
 			return executeNOTAM(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -86,7 +86,7 @@ public class GetNews extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Notice> getActiveNOTAMs() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) WHERE (N.ACTIVE=?) ORDER BY N.EFFDATE DESC")) {
+		try (PreparedStatement ps = prepare("SELECT N.*, NI.X, NI.Y, NI.WIDTH, NI.TYPE FROM NOTAMS N LEFT JOIN NOTAM_IMGS NI ON (N.ID=NI.ID) WHERE (N.ACTIVE=?) ORDER BY N.EFFDATE DESC")) {
 			ps.setBoolean(1, true);
 			return executeNOTAM(ps);
 		} catch (SQLException se) {
@@ -109,7 +109,8 @@ public class GetNews extends DAO {
 				n.setWidth(rs.getInt(7));
 				if (n.getWidth() > 0) {
 					n.setHeight(rs.getInt(8));
-					n.setFormat(News.ImageFormat.values()[rs.getInt(9)]);
+					n.setFormat(News.ImageFormat.values()[rs.getInt(10)]);
+					n.setBannerWidth(rs.getInt(9));
 				}
 				
 				results.add(n);
@@ -132,7 +133,8 @@ public class GetNews extends DAO {
 				n.setWidth(rs.getInt(8));
 				if (n.getWidth() > 0) {
 					n.setHeight(rs.getInt(9));
-					n.setFormat(News.ImageFormat.values()[rs.getInt(10)]);
+					n.setFormat(News.ImageFormat.values()[rs.getInt(11)]);
+					n.setBannerWidth(rs.getInt(10)); // load after format is set
 				}
 				
 				results.add(n);
