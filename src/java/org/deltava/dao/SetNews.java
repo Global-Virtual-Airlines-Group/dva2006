@@ -48,12 +48,13 @@ public class SetNews extends DAO {
 
 			// Write the header image
 			if (n.isLoaded()) {
-				try (PreparedStatement ps = prepare("REPLACE INTO NEWS_IMGS (ID, IMG, X, Y, TYPE) VALUES (?, ?, ?, ?, ?)")) {
+				try (PreparedStatement ps = prepare("REPLACE INTO NEWS_IMGS (ID, IMG, X, Y, WIDTH, TYPE) VALUES (?, ?, ?, ?, ?, ?)")) {
 					ps.setInt(1, n.getID());
 					ps.setBlob(2, n.getInputStream());
 					ps.setInt(3, n.getWidth());
 					ps.setInt(4, n.getHeight());
-					ps.setInt(5, n.getFormat().ordinal());
+					ps.setInt(5, n.getBannerWidth());
+					ps.setInt(6, n.getFormat().ordinal());
 					executeUpdate(ps, 1);
 				}
 			} else if (!isNew) {
@@ -97,12 +98,13 @@ public class SetNews extends DAO {
 
 			// Write the header image
 			if (n.isLoaded()) {
-				try (PreparedStatement ps = prepare("REPLACE INTO NOTAM_IMGS (ID, IMG, X, Y, TYPE) VALUES (?, ?, ?, ?, ?)")) {
+				try (PreparedStatement ps = prepare("REPLACE INTO NOTAM_IMGS (ID, IMG, X, Y, WIDTH, TYPE) VALUES (?, ?, ?, ?, ?, ?)")) {
 					ps.setInt(1, n.getID());
 					ps.setBlob(2, n.getInputStream());
 					ps.setInt(3, n.getWidth());
 					ps.setInt(4, n.getHeight());
-					ps.setInt(5, n.getFormat().ordinal());
+					ps.setInt(5, n.getBannerWidth());
+					ps.setInt(6, n.getFormat().ordinal());
 					executeUpdate(ps, 1);
 				}
 			} else if (!isNew) {

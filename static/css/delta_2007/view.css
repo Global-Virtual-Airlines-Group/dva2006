@@ -71,8 +71,6 @@ td.def {
 
 td.news div.hdr img, td.notam div.hdr img {
 	margin: auto;
-	width: 100%;
-	max-width: 100%;
 }
 
 /* Table row classes for view legends */
