@@ -49,7 +49,8 @@ golgotha.local.validate = function(f) {
 </c:if>
 <tr>
  <td class="label">Banner Image</td>
- <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><c:if test="${entry.hasImage}"><br />
+ <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /> Width: <el:text name="width" idx="*" size="2" max="3" value="${entry.bannerWidth}" />%
+<c:if test="${entry.hasImage}"><br />
 <el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
 </tr>
 <tr>

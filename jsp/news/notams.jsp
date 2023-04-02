@@ -49,11 +49,11 @@
 </view:row>
 <view:row entry="${notam}">
 <c:if test="${notam.isHTML}">
- <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" caption="${notam.subject}"  /></div></c:if>
+ <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${news.bannerWidth}%; max-width=${news.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
 ${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">
- <td colspan="3" class="left"><fmt:msg value="${notam.body}" bbCode="true" /></td>
+ <td colspan="3" class="left notam"><fmt:msg value="${notam.body}" bbCode="true" /></td>
 </c:if>
 </view:row>
 </c:forEach>

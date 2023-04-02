@@ -16,6 +16,7 @@ public class News extends ImageBean implements AuthoredBean {
     private String _subject;
     private String _body;
     private boolean _isHTML;
+    private int _bannerWidth;
 
     private int _authorID;
 
@@ -56,6 +57,15 @@ public class News extends ImageBean implements AuthoredBean {
     @Override
 	public ImageType getImageType() {
     	return ImageType.NEWS;
+    }
+    
+    /**
+     * Returns the width of the banner image.
+     * @return the width as a percentage of its parent container
+     * @see News#setBannerWidth(int)
+     */
+    public int getBannerWidth() {
+    	return getHasImage() ? _bannerWidth : 0;
     }
 
     /**
@@ -108,6 +118,18 @@ public class News extends ImageBean implements AuthoredBean {
      */
     public void setBody(String body) {
        _body = body;
+    }
+    
+    /**
+     * Updates the width of the banner image.
+     * @param w the width as a percentage of the parent container
+     * @throws IllegalStateException if no banner image is present
+     */
+    public void setBannerWidth(int w) {
+    	if (!getHasImage())
+    		throw new IllegalStateException("No Banner Image");
+    	
+    	_bannerWidth = Math.max(0,  Math.min(100, w));
     }
     
     /**

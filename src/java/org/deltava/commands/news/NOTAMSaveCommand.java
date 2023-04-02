@@ -10,6 +10,7 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.NewsAccessControl;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to save NOTAM entries.
@@ -86,7 +87,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 			FileUpload fu = ctx.getFile("bannerImg", 524288);
 			if (fu != null) {
 				nws.load(fu.getBuffer());
-				nws.setIsHTML(true);
+				nws.setBannerWidth(StringUtils.parse(ctx.getParameter("width"), 100));
 			} else if (Boolean.parseBoolean(ctx.getParameter("deleteImg")))
 				nws.clear();
 			
