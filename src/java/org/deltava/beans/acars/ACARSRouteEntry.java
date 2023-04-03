@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -541,7 +541,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#getFlaps()
 	 */
 	public void setFlaps(int flapDetent) {
-		_flaps = Math.max(0, Math.min(100, flapDetent));
+		_flaps = Math.max(-20, Math.min(100, flapDetent));
 	}
 
 	/**
@@ -850,10 +850,12 @@ public class ACARSRouteEntry extends RouteEntry {
 		buf.append(" lbs/hr<br />");
 
 		// Add flaps logging if deployed
-		if (_flaps > 0) {
+		if (_flaps != 0) {
 			buf.append("Flaps: ");
-			buf.append(String.valueOf(_flaps));
-			buf.append("<sup>o</sup><br />");
+			if (_flaps > 0)
+				buf.append(_flaps).append("<sup>o</sup><br />");
+			else
+				buf.append(AirbusFlaps.fromCode(_flaps)).append("<br />");
 		}
 
 		// Add afterburner/gear if deployed
