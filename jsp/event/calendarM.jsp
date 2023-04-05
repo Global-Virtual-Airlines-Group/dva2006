@@ -54,7 +54,7 @@ golgotha.local.expandSection = function(id) {
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
 <c:if test="${event.briefing.isPDF}">
-<span class="small"><el:link url="/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br /></c:if>
+<span class="small"><el:link url="/attach/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br /></c:if>
 <c:if test="${eventLargeRoutes}">
 <a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br /></c:if>
 <div id="eRoute${event.hexID}" class="small"<c:if test="${eventLargeRoutes}"> style="display:none;"</c:if>>
