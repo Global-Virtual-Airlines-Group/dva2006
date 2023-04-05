@@ -55,7 +55,7 @@ public class SetPartner extends DAO {
 					ps.setString(5, pi.getFormat().name().toLowerCase());
 					executeUpdate(ps, 1);
 				}
-			} else if (!isNew) {
+			} else if (!isNew && !pi.getHasImage()) {
 				try (PreparedStatement ps = prepare("DELETE FROM PARTNER_IMGS WHERE (ID=?)")) {
 					ps.setInt(1, pi.getID());
 					executeUpdate(ps, 0);
