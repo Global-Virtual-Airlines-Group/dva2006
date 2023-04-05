@@ -140,11 +140,11 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 </content:page>
 <content:googleAnalytics />
 </body>
-<script>
+<script async>
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
 	const xmlreq = new XMLHttpRequest();
-	xmlreq.open('get', '/error_log/' + id, true);
+	xmlreq.open('get', '/attach/error_log/' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		const td = document.getElementById('logData');

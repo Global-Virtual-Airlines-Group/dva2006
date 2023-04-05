@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
 	if (!golgotha.form.check()) return false;
@@ -114,7 +114,7 @@ golgotha.local.toggleCheckbox = function() {
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
 <c:if test="${(!empty comment.name) && (!empty user)}">
 <hr />
-Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value="${comment.size}" />) <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>
+Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value="${comment.size}" />) <a href="/attach/issue/${issue.hexID}/${comment.hexID}">Click to Download</a></c:if></td>
 </tr>
 </c:forEach>
 </c:if>
