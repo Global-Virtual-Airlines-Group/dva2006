@@ -158,51 +158,51 @@
     <!-- Filter mappings to File Attachments/Upload -->
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/issue/*</url-pattern>
+        <url-pattern>/attach/issue/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/error_log/*</url-pattern>
+        <url-pattern>/attach/error_log/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/ebrief/*</url-pattern>
+        <url-pattern>/attach/ebrief/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/tbrief/*</url-pattern>
+        <url-pattern>/attach/tbrief/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityCookieFilter</filter-name>
+        <url-pattern>/attach/helpdesk/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
         <url-pattern>/upload/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>SecurityCookieFilter</filter-name>
-        <url-pattern>/helpdesk/*</url-pattern>
+        <filter-name>SecurityRequestWrapperFilter</filter-name>
+        <url-pattern>/attach/issue/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/issue/*</url-pattern>
+        <url-pattern>/attach/error_log/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/error_log/*</url-pattern>
+        <url-pattern>/attach/ebrief/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/ebrief/*</url-pattern>
+        <url-pattern>/attach/tbrief/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/tbrief/*</url-pattern>
+        <url-pattern>/attach/helpdesk/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/upload/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>SecurityRequestWrapperFilter</filter-name>
-        <url-pattern>/helpdesk/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
@@ -256,23 +256,7 @@
     </servlet-mapping>
     <servlet-mapping>
 		<servlet-name>attachments</servlet-name>    
-		<url-pattern>/issue/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>attachments</servlet-name>    
-        <url-pattern>/error_log/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>attachments</servlet-name>    
-        <url-pattern>/ebrief/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>attachments</servlet-name>    
-        <url-pattern>/tbrief/*</url-pattern>
-    </servlet-mapping>
-   	<servlet-mapping>
-    	<servlet-name>attachments</servlet-name>
-    	<url-pattern>/helpdesk/*</url-pattern>
+		<url-pattern>/attach/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>upload</servlet-name>
