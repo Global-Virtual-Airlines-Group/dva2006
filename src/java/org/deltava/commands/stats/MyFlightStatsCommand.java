@@ -24,7 +24,15 @@ import org.deltava.util.*;
 public class MyFlightStatsCommand extends AbstractViewCommand {
 	
 	private static final List<ComboAlias> GRAPH_OPTS = ComboUtils.fromArray(new String[] {"Flight Legs", "Flight Hours", "Flight Distance"}, new String[] {"LEGS", "HOURS", "DISTANCE"});
-
+	
+	private final class LandingStatsComparator implements Comparator<LandingStatistics> {
+		@Override
+		public int compare(LandingStatistics ls1, LandingStatistics ls2) {
+			int tmpResult = Double.compare(ls1.getAverageScore(), ls2.getAverageScore());
+			return (tmpResult == 0) ? ls1.getEquipmentType().compareTo(ls2.getEquipmentType()) : tmpResult;
+		}
+	}
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -63,7 +71,8 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 			vc.setResults(stdao.getPIREPStatistics(userID, srt, grp));
-			Collection<LandingStatistics> landingStats = stdao.getLandings(userID);
+			List<LandingStatistics> landingStats = stdao.getLandings(userID);
+			landingStats.sort(new LandingStatsComparator().reversed());
 			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
 			
 			// Get popular route pairs
