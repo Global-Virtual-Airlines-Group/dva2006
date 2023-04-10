@@ -1,14 +1,17 @@
 // Copyright 2007, 2009, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.flight.LandingScorer;
+
 /**
  * A bean used to track average landing speeds.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 2.1
  */
 
-public class LandingStatistics extends org.deltava.beans.DatabaseBean {
+public class LandingStatistics extends DatabaseBean {
 	
 	private final String _name;
 	private final String _eqType;
@@ -95,6 +98,14 @@ public class LandingStatistics extends org.deltava.beans.DatabaseBean {
 	 */
 	public double getDistanceStdDeviation() {
 		return _distStdDev;
+	}
+	
+	/**
+	 * Returns the average landing score.
+	 * @return the average score
+	 */
+	public double getAverageScore() {
+		return LandingScorer.score((int) _vSpeed, (int)_distance);
 	}
 	
 	/**

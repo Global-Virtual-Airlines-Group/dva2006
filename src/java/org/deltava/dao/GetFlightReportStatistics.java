@@ -312,10 +312,10 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Returns statistical information about a pilot's landing speeds and variations between them.
 	 * @param pilotID the Pilot's database ID
-	 * @return a Collection of LandingStatistics beans
+	 * @return a List of LandingStatistics beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<LandingStatistics> getLandings(int pilotID) throws DAOException {
+	public List<LandingStatistics> getLandings(int pilotID) throws DAOException {
 		
 		// Check the cache
 		StatsCacheKey key = new StatsCacheKey("$PILOT", pilotID);

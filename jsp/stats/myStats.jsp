@@ -77,20 +77,21 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
 
-<!-- Touchdown Speed statistics -->
+<!-- Touchdown statistics -->
 <el:table className="form">
 <tr class="title">
- <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS</td>
+ <td colspan="9" class="left caps">TOUCHDOWN STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tdStats')">COLLAPSE</span></td>
 </tr>
 <tr class="title mid caps tdStats">
  <td>#</td>
- <td style="width:15%">EQUIPMENT</td>
+ <td style="width:12%">EQUIPMENT</td>
  <td style="width:10%">FLIGHTS</td>
  <td class="nophone" style="width:10%">HOURS</td>
  <td style="width:18%">AVERAGE SPEED</td>
  <td style="width:12%" class="nophone">STD. DEVIATION</td>
- <td style="width:12%">AVERAGE DISTANCE</td>
+ <td style="width:10%">AVERAGE DISTANCE</td>
  <td class="nophone">STD. DEVIATION</td>
+ <td>SCORE</td>
 </tr>
 
 <!-- Touchdown Speed Analysis -->
@@ -113,12 +114,13 @@ golgotha.local.swapTimeGraphs = function(rb) {
  <td class="nophone"><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
 </c:otherwise>
 </c:choose>
+ <td class="bld"> <fmt:landscore value="${entry.averageScore}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Best Landings -->
 <tr class="title">
- <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /></td>
+ <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
 </tr>
 <tr class="title mid caps topLanding">
  <td>#</td>
@@ -151,9 +153,9 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <!-- Popular Routes -->
 <el:table className="form">
 <tr class="title">
- <td colspan="8" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)</span></td>
+ <td colspan="5" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
 </tr>
-<tr class="title mid caps">
+<tr class="title mid caps topRoute">
  <td>#</td>
  <td>FLIGHT ROUTE</td>
  <td style="width:12%">DISTANCE</td>
@@ -165,7 +167,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <c:forEach var="entry" items="${popularRoutes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <content:defaultMethod var="dst" object="${entry}" method="distance" />
-<tr class="mid">
+<tr class="mid topRoute">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) - ${entry.airportA.name}
  (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
