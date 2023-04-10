@@ -120,7 +120,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 
 <!-- Best Landings -->
 <tr class="title">
- <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
+ <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="topLandingToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
 </tr>
 <tr class="title mid caps topLanding">
  <td>#</td>
@@ -153,7 +153,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <!-- Popular Routes -->
 <el:table className="form">
 <tr class="title">
- <td colspan="5" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
+ <td colspan="5" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="topRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
 </tr>
 <tr class="title mid caps topRoute">
  <td>#</td>
