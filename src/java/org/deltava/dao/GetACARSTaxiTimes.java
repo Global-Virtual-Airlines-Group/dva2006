@@ -2,7 +2,6 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 import java.time.Duration;
 
 import org.deltava.beans.acars.TaxiTime;
@@ -13,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 8.6
  */
 
@@ -33,7 +32,7 @@ public class GetACARSTaxiTimes extends DAO {
 			_icao = icao;
 			_year = year;
 		}
-
+		
 		@Override
 		public int compareTo(TaxiTotal tt) {
 			int tmpResult = _icao.compareTo(tt._icao);
@@ -92,17 +91,15 @@ public class GetACARSTaxiTimes extends DAO {
 		if (tt != null)
 			return tt;
 		
-		Collection<TaxiTotal> rawResults = new ArrayList<TaxiTotal>(); 
+		TaxiTotal t = new TaxiTotal(a.getICAO(), 0);
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) GROUP BY ICAO, YEAR ORDER BY YEAR")) {
 			ps.setString(1, a.getICAO());
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					TaxiTotal ttl = new TaxiTotal(a.getICAO(), rs.getInt(1));
-					ttl._inTotal = rs.getLong(2);
-					ttl._outTotal = rs.getLong(3);
-					ttl._inCount = rs.getInt(4);
-					ttl._outCount = rs.getInt(5);
-					rawResults.add(ttl);
+					t._inTotal += rs.getLong(2);
+					t._outTotal += rs.getLong(3);
+					t._inCount += rs.getInt(4);
+					t._outCount += rs.getInt(5);
 				}
 			}
 		} catch (SQLException se) {
@@ -110,14 +107,6 @@ public class GetACARSTaxiTimes extends DAO {
 		}
 		
 		// Aggregate the totals
-		TaxiTotal t = new TaxiTotal(a.getICAO(), 0);
-		for (TaxiTotal ttl : rawResults) {
-			t._inCount += ttl._inCount;
-			t._inTotal += ttl._inTotal;
-			t._outCount += ttl._outCount;
-			t._outTotal += ttl._outTotal;
-		}
-		
 		tt = new TaxiTime(a.getICAO(), 0);
 		tt.setInboundTime((t._inCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._inTotal / t._inCount));
 		tt.setOutboundTime((t._outCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._outTotal / t._outCount));

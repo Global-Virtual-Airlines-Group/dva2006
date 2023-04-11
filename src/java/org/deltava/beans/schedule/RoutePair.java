@@ -1,4 +1,4 @@
-// Copyright 2009, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,11 +8,34 @@ import org.deltava.beans.flight.FlightType;
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 2.6
  */
 
 public interface RoutePair {
+	
+	/**
+	 * Helper class when all you need is a naked RoutePair.
+	 */
+	static class RoutePairImpl implements RoutePair {
+		private final Airport _aD;
+		private final Airport _aA;
+		
+		private RoutePairImpl(Airport aD, Airport aA) {
+			super();
+			_aD = aD;
+			_aA = aA;
+		}
+		
+		@Override
+		public Airport getAirportD() {
+			return _aD;
+		}
+		@Override
+		public Airport getAirportA() {
+			return _aA;
+		}
+	}
 
 	/**
 	 * Returns the departure Airport.
@@ -91,5 +114,15 @@ public interface RoutePair {
 		buf.append('-');
 		buf.append(getAirportA().getICAO());
 		return buf.toString();
+    }
+    
+    /**
+     * Creates a new naked RoutePair.
+     * @param aD the deprature Airport
+     * @param aA the arrival Airport
+     * @return a RoutePair
+     */
+    public static RoutePair of(Airport aD, Airport aA) {
+    	return new RoutePairImpl(aD, aA);
     }
 }
