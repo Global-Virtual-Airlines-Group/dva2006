@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2012, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 2.2
  */
 
@@ -52,7 +52,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				GetSchedule sdao = new GetSchedule(con);
 				sdao.setSources(rsdao.getSources(true, ctx.getDB()));
-				ctx.setAttribute("airlines", sdao.getAirlines(new ScheduleRoute(aD, aA)), REQUEST);
+				ctx.setAttribute("airlines", sdao.getAirlines(RoutePair.of(aD, aA)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
