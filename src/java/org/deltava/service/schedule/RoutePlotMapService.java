@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -228,12 +228,8 @@ public class RoutePlotMapService extends MapPlotService {
 		// Convert points to a JSON object
 		JSONObject jo = formatPoints(points);
 		jo.put("flightType", dr.getFlightType().name());
-		if (dr.getAirline() != null) {
-			JSONObject alo = new JSONObject();
-			alo.put("name", dr.getAirline().getName());
-			alo.put("code", dr.getAirline().getCode());
-			jo.put("airline", alo);
-		}
+		if (dr.getAirline() != null)
+			jo.put("airline", JSONUtils.format(dr.getAirline()));
 		
 		if (dr.getAirportD() != null)
 			jo.put("airportD", JSONUtils.format(dr.getAirportD()));

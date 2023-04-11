@@ -65,16 +65,7 @@ public class GateService extends WebService {
 		jo.put("icao", a.getICAO());
 		jo.put("airportD", JSONUtils.format(a));
 		jo.put("maxUse", gates.stream().mapToInt(Gate::getUseCount).max().orElse(0));
-		
-		// Write airlines
-		for (Airline al : airlines) {
-			JSONObject ao = new JSONObject();
-			ao.put("code", al.getCode());
-			ao.put("name", al.getName());
-			ao.put("historic", al.getHistoric());
-			ao.put("color", al.getColor());
-			jo.accumulate("airlines", ao);
-		}
+		airlines.forEach(al -> jo.accumulate("airlines", JSONUtils.format(al)));
 		
 		// Write gate zones
 		List<GateZone> zones = new ArrayList<GateZone>(Arrays.asList(GateZone.values()));
