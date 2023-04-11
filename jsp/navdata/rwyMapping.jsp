@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;	
 	f.json.value = JSON.stringify(golgotha.local.rwyData);
@@ -25,32 +25,27 @@ golgotha.local.addRunway = function(f)
 {
 golgotha.form.validate({f:f.oldCode, l:1, t:'Old Runway code'});
 golgotha.form.validate({f:f.newCode, l:1, t:'New Runway code'});
-var jo = {o:f.oldCode.value, n:f.newCode.value};
+const jo = {o:f.oldCode.value, n:f.newCode.value};
 f.oldCode.value = ''; f.newCode.value = '';
 
 // Check for duplicates
-var m = golgotha.local.rwyData.mappings;
+const m = golgotha.local.rwyData.mappings;
 for (var x = 0; x < m.length; x++) {
 	if (jo.o == m[x].o)
 		return false;
 }
 
 // Create the new row
-var r = document.createElement('tr');
+const r = document.createElement('tr');
 r.setAttribute('class', 'newMapRow');
 r.setAttribute('id', 'rwyMap-' + f.oldCode);
-var ld = document.createElement('td');
-ld.setAttribute('class', 'label');
-ld.appendChild(document.createTextNode('New Mapping'));
-var dd = document.createElement('td');
-dd.setAttribute('class', 'data');
+r.appendChild(golgotha.util.createElement('td', 'New Mapping', 'label'));
+const dd = golgotha.util.createElement('td', 'Runway ' + jo.o + ' is now ' + jo.n, 'data');
 dd.setAttribute('colspan', '2');
-dd.appendChild(document.createTextNode('Runway ' + jo.o + ' is now ' + jo.n));
-r.appendChild(ld);
 r.appendChild(dd);
 
 // Add to the table / data object
-var aRow = document.getElementById('addRow');
+const aRow = document.getElementById('addRow');
 aRow.parentElement.insertBefore(r, aRow);
 m.push(jo);
 return true;

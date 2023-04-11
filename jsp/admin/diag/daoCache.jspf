@@ -39,27 +39,27 @@ golgotha.local.cacheUpdate = function(updateInterval) {
         jsData.caches.forEach(function(c) {
 			const r = document.createElement('tr');
 			r.setAttribute('class', 'daoCacheEntry');
-			const ic = golgotha.local.createCell(c.id, 'pri bld'); ic.cacheID = c.id;
+			const ic = golgotha.util.createElement('td',c.id, 'pri bld'); ic.cacheID = c.id;
 			ic.addEventListener('dblclick', function() { golgotha.local.cacheClear(this.cacheID); });
 			r.appendChild(ic);
-			r.appendChild(golgotha.local.createCell(c.type));
-			r.appendChild(golgotha.local.createCell(c.size));
+			r.appendChild(golgotha.util.createElement('td', c.type));
+			r.appendChild(golgotha.util.createElement('td', c.size));
 			if (c.remote) {
 				let msg = c.latency + 'ms latency';
 				if (c.errors > 0)
 					msg += ' (' + c.errors + ' errors)';
 
-				const cc = r.appendChild(golgotha.local.createCell(msg));
+				const cc = r.appendChild(golgotha.util.createElement('td', msg));
 				cc.setAttribute('colspan', '2');
 				r.appendChild(cc);
 			} else {
-				r.appendChild(golgotha.local.createCell(c.maxSize));
-				r.appendChild(golgotha.local.createCell(c.fill, 'sec'));
+				r.appendChild(golgotha.util.createElement('td', c.maxSize));
+				r.appendChild(golgotha.util.createElement('td', c.fill, 'sec'));
 			}
 
-			r.appendChild(golgotha.local.createCell(c.reqs));
-			r.appendChild(golgotha.local.createCell(c.hits));
-			r.appendChild(golgotha.local.createCell((c.hitRate == null) ? 'N/A' : c.hitRate, 'bld'));
+			r.appendChild(golgotha.util.createElement('td', c.reqs));
+			r.appendChild(golgotha.util.createElement('td', c.hits));
+			r.appendChild(golgotha.util.createElement('td', (c.hitRate == null) ? 'N/A' : c.hitRate, 'bld'));
 			title.parentNode.insertBefore(r, null);
 		});
 
@@ -71,13 +71,6 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 
 	xmlreq.send(null);
 	return true;
-};
-
-golgotha.local.createCell = function(txt, className) {
-	const td = document.createElement('td');
-	if (className != null) td.setAttribute('class', className);
-	td.appendChild(document.createTextNode(txt));
-	return td;
 };
 
 golgotha.local.cacheClear = function(id) {
