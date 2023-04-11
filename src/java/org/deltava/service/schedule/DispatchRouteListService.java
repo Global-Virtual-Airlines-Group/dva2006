@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 10.1
+ * @version 10.6
  * @since 2.2
  */
 
@@ -63,7 +63,7 @@ public class DispatchRouteListService extends WebService {
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
 		try {
-			RouteLoadHelper helper = new RouteLoadHelper(ctx.getConnection(), new ScheduleRoute(aD, aA));
+			RouteLoadHelper helper = new RouteLoadHelper(ctx.getConnection(), RoutePair.of(aD, aA));
 			helper.setPreferredRunway(rwy);
 			helper.loadDispatchRoutes();
 			

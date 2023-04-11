@@ -74,7 +74,7 @@ public class TestGetFARoutes extends TestCase {
 		fadao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
 		fadao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
 		
-		RoutePair rp = new ScheduleRoute(SystemData.getAirport("KCVG"), SystemData.getAirport("KATL"));
+		RoutePair rp = RoutePair.of(SystemData.getAirport("KCVG"), SystemData.getAirport("KATL"));
 		Collection<ExternalRoute> routes = fadao.getRouteData(rp);
 		assertNotNull(routes);
 		assertFalse(routes.isEmpty());

@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 2.1
  */
 
@@ -118,10 +118,8 @@ public class GetFlightReportStatistics extends DAO {
 			
 			Collection<RoutePair> results = new ArrayList<RoutePair>();
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					RoutePair rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
-					results.add(rp);
-				}
+				while (rs.next())
+					results.add(RoutePair.of(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2))));
 			}
 			
 			return results;
