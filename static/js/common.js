@@ -147,6 +147,15 @@ golgotha.form.getCombo = function(combo) {
 	return combo.options[combo.selectedIndex].value;
 };
 
+golgotha.form.getCheck = function(cb) {
+	const v = [];
+	if ((!cb) || (!cb.length)) return v;
+	for (var x = 0; (x < cb.length); x++)
+		if (cb[x].checked) v.push(cb[x].value);
+
+	return v;
+};
+
 golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call && o.apply); };
 golgotha.util.createURLParams = function(o) {
 	let params = [];
@@ -184,6 +193,13 @@ else
 	document.body.appendChild(sc);
 
 return true;
+};
+
+golgotha.util.createElement = function(eName, txt, className) {
+	const td = document.createElement(eName);
+	if (className != null) td.setAttribute('class', className);
+	td.appendChild(document.createTextNode(txt));
+	return td;
 };
 
 golgotha.util.enable = function(n) {
