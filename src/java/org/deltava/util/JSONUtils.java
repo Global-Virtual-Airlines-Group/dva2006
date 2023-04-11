@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 7.3
  */
 
@@ -70,6 +70,20 @@ public class JSONUtils {
 		jo.put("alt", a.getAltitude());
 		jo.put("hasUSPFI", a.getHasPFI());
 		jo.put("isSchengen", a.getIsSchengen());
+		return jo;
+	}
+	
+	/**
+	 * Formats an Airline into a JSON object.
+	 * @param al an Airline
+	 * @return a JSONObject
+	 */
+	public static JSONObject format(Airline al) {
+		JSONObject jo = new JSONObject();
+		jo.put("code", al.getCode());
+		jo.put("name", al.getName());
+		jo.put("historic", al.getHistoric());
+		jo.put("color", al.getColor());
 		return jo;
 	}
 	
