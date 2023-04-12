@@ -150,8 +150,14 @@ golgotha.form.getCombo = function(combo) {
 golgotha.form.getCheck = function(cb) {
 	const v = [];
 	if ((!cb) || (!cb.length)) return v;
-	for (var x = 0; (x < cb.length); x++)
-		if (cb[x].checked) v.push(cb[x].value);
+	for (var x = 0; (x < cb.length); x++) {
+		if (cb[x].checked) {
+			if (cb[x].type == 'radio')
+				return cb[x];
+			else
+				v.push(cb[x].value);
+		}
+	}
 
 	return v;
 };
