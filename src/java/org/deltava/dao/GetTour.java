@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 10.0
  */
 
@@ -118,6 +118,44 @@ public class GetTour extends DAO {
 					TourProgress tp = new TourProgress(rs.getInt(1), tourID, rs.getInt(2));
 					tp.setFirstLeg(toInstant(rs.getTimestamp(3)));
 					tp.setLastLeg(toInstant(rs.getTimestamp(4)));
+					results.add(tp);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of Flights Legs in each Flight Tour completed by a particular Pilot. 
+	 * @param pilotID the Pilot's database ID
+	 * @param dbName the database name
+	 * @return a Collection of TourProgress beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TourProgress> getPilotProgress(int pilotID, String dbName) throws DAOException {
+
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, MIN(P.DATE) AS FD, MAX(P.DATE) AS LD, COUNT(P.ID) AS CNT FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".TOURS T LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS P ON ((T.ID=P.TOUR_ID) AND (P.PILOT_ID=?) AND ((P.STATUS=?) OR (P.STATUS=?))) WHERE (T.ACTIVE=?) GROUP BY T.ID");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
+			ps.setBoolean(4, true);
+			
+			Collection<TourProgress> results = new ArrayList<TourProgress>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TourProgress tp = new TourProgress(pilotID, rs.getInt(1), rs.getInt(4));
+					tp.setFirstLeg(toInstant(rs.getTimestamp(2)));
+					tp.setLastLeg(toInstant(rs.getTimestamp(3)));
 					results.add(tp);
 				}
 			}
