@@ -1,17 +1,19 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
+
+import org.deltava.beans.schedule.Airline;
 
 /**
  * A bean to store Gate usage by Airline. 
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 10.3
  */
 
 public class GateTotal implements java.io.Serializable, Comparable<GateTotal> {
 
 	private final String _gateName;
-	private final String _airlineCode;
+	private final Airline _a;
 	
 	private final int _total;
 	private final int _recent;
@@ -19,14 +21,14 @@ public class GateTotal implements java.io.Serializable, Comparable<GateTotal> {
 	/**
 	 * Creates the bean.
 	 * @param name the Gate name
-	 * @param code the Airline code
+	 * @param a the Airline
 	 * @param total the total number of uses
 	 * @param recent the recent number of uses
 	 */
-	GateTotal(String name, String code, int total, int recent) {
+	GateTotal(String name, Airline a, int total, int recent) {
 		super();
 		_gateName = name;
-		_airlineCode = code;
+		_a = a;
 		_total = total;
 		_recent = recent;
 	}
@@ -40,11 +42,11 @@ public class GateTotal implements java.io.Serializable, Comparable<GateTotal> {
 	}
 	
 	/**
-	 * Returns the Airline code.
-	 * @return the code
+	 * Returns the Airline.
+	 * @return the Airline
 	 */
-	public String getAirlineCode() {
-		return _airlineCode;
+	public Airline getAirline() {
+		return _a;
 	}
 	
 	/**
@@ -65,7 +67,7 @@ public class GateTotal implements java.io.Serializable, Comparable<GateTotal> {
 	
 	@Override
 	public String toString() {
-		return String.format("%s-%s", _gateName, _airlineCode);
+		return String.format("%s-%s", _gateName, _a.getCode());
 	}
 	
 	@Override
@@ -77,7 +79,7 @@ public class GateTotal implements java.io.Serializable, Comparable<GateTotal> {
 	public int compareTo(GateTotal gt) {
 		int tmpResult = Integer.compare(_recent, gt._recent);
 		if (tmpResult == 0) tmpResult = Integer.compare(_total, gt._total);
-		if (tmpResult == 0) tmpResult = _airlineCode.compareTo(gt._airlineCode); 
+		if (tmpResult == 0) tmpResult = _a.compareTo(gt._a); 
 		return (tmpResult == 0) ? _gateName.compareTo(gt._gateName) : tmpResult;
 	}
 }

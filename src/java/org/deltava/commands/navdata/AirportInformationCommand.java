@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.TaxiTime;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -16,17 +16,20 @@ import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 6.3
  */
 
 public class AirportInformationCommand extends AbstractCommand {
+	
+	private static final List<ComboAlias> GATE_AIRPORT_TYPES = ComboUtils.fromArray(new String[] {"Departing to", "Arriving from"}, new String[] {"true", "false"});
 
 	/**
 	 * Executes the command.
@@ -110,9 +113,16 @@ public class AirportInformationCommand extends AbstractCommand {
 			aadao.setQueryMax(5);
 			ctx.setAttribute("popularAlternates", aadao.getAlternates(a), REQUEST);
 			
+			// Load gate usage pairs
+			GetGates gdao = new GetGates(con);
+			List<Airport> gateDestinations = gdao.getUsagePairs(a, true);
+			gateDestinations.sort(new AirportComparator(AirportComparator.NAME));
+			ctx.setAttribute("dGateAirports", gateDestinations, REQUEST);
+			ctx.setAttribute("gaTypes", GATE_AIRPORT_TYPES, REQUEST);
+			
 			// Load ATIS
 			GetATIS atdao = new GetATIS();
-			atdao.setCompression(Compression.GZIP);
+			atdao.setCompression(org.deltava.dao.http.Compression.GZIP);
 			ATIS ad = atdao.get(a, ATISType.DEP);
 			ctx.setAttribute("atisD", ad, REQUEST);
 			if ((ad != null) && (ad.getType() == ATISType.DEP))

@@ -1,7 +1,8 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.schedule.*;
 
@@ -10,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store gate usage statistics.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 10.0
  */
 
@@ -45,6 +46,14 @@ public class GateUsage implements Cacheable, RoutePair {
 	@Override
 	public Airport getAirportA() {
 		return _aA;
+	}
+	
+	/**
+	 * Returns airlines with usage.
+	 * @return a Collection of Airline codes
+	 */
+	public Collection<Airline> getAirlines() {
+		return _usage.stream().map(GateTotal::getAirline).collect(Collectors.toSet());
 	}
 	
 	/**
@@ -85,19 +94,19 @@ public class GateUsage implements Cacheable, RoutePair {
 	 * @return TRUE if at least one Gate has been used with this Airline, otherwise FALSE
 	 */
 	public boolean hasAriline(String airlineCode) {
-		return _usage.stream().anyMatch(gt -> airlineCode.equals(gt.getAirlineCode()));
+		return _usage.stream().anyMatch(gt -> airlineCode.equals(gt.getAirline().getCode()));
 	}
 	
 	/**
-	 * Adds usage count for a particular Gate.
+	 * Adds usage count for a particular Gate and Airline.
 	 * @param gateName the Gate name
-	 * @param airlineCode the Airline code
+	 * @param a the Airline
 	 * @param totalUsage the total usage count
 	 * @param recentUsage the recent usage count
 	 */
-	public void addGate(String gateName, String airlineCode, int totalUsage, int recentUsage) {
+	public void addGate(String gateName, Airline a, int totalUsage, int recentUsage) {
 		if (totalUsage > 0)
-			_usage.add(new GateTotal(gateName, airlineCode, totalUsage, recentUsage));
+			_usage.add(new GateTotal(gateName, a, totalUsage, recentUsage));
 	}
 	
 	/**
@@ -141,18 +150,18 @@ public class GateUsage implements Cacheable, RoutePair {
 	@Override
 	public GateUsage clone() {
 		GateUsage gu = new GateUsage(this, _isDeparture, _dayRange);
-		_usage.stream().map(gt -> new GateTotal(gt.getGateName(), gt.getAirlineCode(), gt.getTotal(), gt.getRecent())).forEach(gu._usage::add);
+		_usage.stream().map(gt -> new GateTotal(gt.getGateName(), gt.getAirline(), gt.getTotal(), gt.getRecent())).forEach(gu._usage::add);
 		return gu;
 	}
 	
 	/**
-	 * Creates a GateUsage object for a single airline.
-	 * @param airlineCode the Airline code
+	 * Creates a GateUsage object for a single Airline.
+	 * @param a the Airline
 	 * @return a new GateUsage bean with statistics for that Airline
 	 */
-	public GateUsage filter(String airlineCode) {
+	public GateUsage filter(Airline a) {
 		GateUsage gu = new GateUsage(this, _isDeparture, _dayRange);
-		_usage.stream().filter(gt -> airlineCode.equals(gt.getAirlineCode())).forEach(gu._usage::add);
+		_usage.stream().filter(gt -> a.equals(gt.getAirline())).forEach(gu._usage::add);
 		return gu;
 	}
 	
