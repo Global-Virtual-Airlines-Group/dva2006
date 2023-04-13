@@ -3,7 +3,8 @@ package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.json.*;
 import org.deltava.beans.navdata.Gate;
@@ -47,21 +48,16 @@ public class GateUseService extends WebService {
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
 			List<Gate> gates = gdao.getGates(a);
+			Collection<Airline> assignedAirlines = gates.stream().flatMap(g -> g.getAirlines().stream()).collect(Collectors.toSet());
 			
 			// Get usage
-			GateUsage guse = null;
 			Airport a2 = SystemData.getAirport(ctx.getParameter("a2"));
-			if (a2 != null) {
-				RoutePair rp = isDeparture ? RoutePair.of(a, a2) : RoutePair.of(a2, a);
-				guse = gdao.getUsage(rp, isDeparture);
-			} else
-				guse = gdao.getUsage(RoutePair.of(a, null), isDeparture);
+			RoutePair rp = isDeparture ? RoutePair.of(a, a2) : RoutePair.of(a2, a);
+			GateUsage gu = gdao.getUsage(rp, isDeparture);
 				
 			// Combine usage and filter
-			final GateUsage gu = guse;
 			boolean hasRecent = (gu.getRecentSize() > 0);
 			gates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
-			gates.removeIf(g -> g.getAirlines().isEmpty());
 			gates.sort(new GateComparator(GateComparator.USAGE).reversed());
 			
 			// Build JSON object
@@ -72,11 +68,28 @@ public class GateUseService extends WebService {
 				JSONObject go = new JSONObject();
 				go.put("name", g.getName());
 				go.put("zone", g.getZone().getDescription());
-				go.put("useCount", g.getUseCount());
 				go.put("ll", JSONUtils.format(g));
-				g.getAirlines().forEach(al -> go.accumulate("airlines", JSONUtils.format(al)));
+				
+				Collection<Airline> gateAirlines = new LinkedHashSet<Airline>(g.getAirlines());
+				gu.getAirlines().stream().filter(al -> !al.getHistoric() && !assignedAirlines.contains(al)).forEach(gateAirlines::add);
+				
+				int totalUse = 0;
+				for (Airline al : gateAirlines) {
+					GateUsage au = gu.filter(al);
+					JSONObject ao = JSONUtils.format(al);
+					int useCount = hasRecent ? au.getRecentUsage(g.getName()) : au.getTotalUsage(g.getName());
+					if (useCount > 0) {
+						ao.put("useCount", useCount);
+						go.accumulate("airlines", ao);
+						totalUse += useCount;
+					}
+				}
+				
+				go.put("useCount", totalUse);
+				go.put("assignedAirlines", (gateAirlines.size() == g.getAirlines().size()));
 				JSONUtils.ensureArrayPresent(go, "airlines");
-				jo.accumulate("gates", go);
+				if (totalUse > 0)
+					jo.accumulate("gates", go);
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);

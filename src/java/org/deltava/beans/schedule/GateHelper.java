@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.comparators.GateComparator;
 /**
  * A helper class to handle gate assignments. 
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 10.3
  */
 
@@ -120,7 +120,7 @@ public class GateHelper {
 		if (filteredGates.isEmpty())
 			filteredGates.addAll(_dGates);
 
-		GateUsage gu =  (_a != null) && _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a.getCode()) : _dUsage;
+		GateUsage gu =  (_a != null) && _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a) : _dUsage;
 		boolean hasRecent = (gu.getRecentSize() > 0);
 		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
@@ -135,7 +135,7 @@ public class GateHelper {
 		if (filteredGates.isEmpty())
 			filteredGates.addAll(_aGates);
 		
-		GateUsage gu =  (_a != null) && _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a.getCode()) : _aUsage;
+		GateUsage gu =  (_a != null) && _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a) : _aUsage;
 		boolean hasRecent = (gu.getRecentSize() > 0);
 		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
