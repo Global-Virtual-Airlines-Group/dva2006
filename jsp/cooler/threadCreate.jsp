@@ -7,7 +7,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title>New <content:airline />&nbsp;${forumName}&nbsp;Disucssion Thread</title>
+<title>New <content:airline />&nbsp;${forumName}&nbsp;Discussion Thread</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -16,7 +16,7 @@
 <content:js name="datePicker" />
 <content:captcha action="threadCreate" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
 golgotha.local.imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
 golgotha.local.imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }
