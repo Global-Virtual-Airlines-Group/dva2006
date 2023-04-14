@@ -67,6 +67,7 @@ public class GateUseService extends WebService {
 			for (Gate g : gates) {
 				JSONObject go = new JSONObject();
 				go.put("name", g.getName());
+				go.put("id", g.getUniqueID());
 				go.put("zone", g.getZone().getDescription());
 				go.put("ll", JSONUtils.format(g));
 				

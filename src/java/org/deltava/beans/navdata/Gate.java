@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 5.1
  */
 
@@ -48,6 +48,14 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		_zone = g._zone;
 		_type = g._type;
 		_airlines.addAll(g._airlines);
+	}
+	
+	/**
+	 * Generates an ID for this Gate, unique <i>for a particular Airport</i>
+	 * @return a unique ID
+	 */
+	public String getUniqueID() {
+		return Integer.toHexString(getName().hashCode()).toLowerCase();
 	}
 	
 	/**
