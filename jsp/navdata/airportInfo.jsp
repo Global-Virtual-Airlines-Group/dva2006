@@ -23,17 +23,69 @@
 <script async>
 golgotha.local.update = function(cb) {
 	if (!golgotha.form.check()) return false;
-	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(cb);
+	self.location = '/airportinfo.do?id=' + encodeURI(golgotha.form.getCombo(cb));
 	golgotha.form.submit(cb.parentElement);
 	return true;
 };
+
+golgotha.local.selectGate = function(e) {
+	console.log(e.target.gateID);
+	const mrk = golgotha.gate.mrks[e.target.gateID];
+	if (mrk) google.maps.event.trigger(mrk, 'click' );
+	return (mrk);
+};
+
+golgotha.local.updateGateStats = function() {
+	const f = document.forms[0];
+	const xreq = new XMLHttpRequest();
+	xreq.open('get', '/gateuse.ws?a=${airport.ICAO}&a2=' + golgotha.form.getCombo(f.gateAP) + '&isDeparture=' + golgotha.form.getCheck(f.gateAirportType), true);
+	xreq.onreadystatechange = function() {
+		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
+		const jsData = JSON.parse(xreq.responseText);
+		const drSpan = document.getElementById('gateUsageDays');
+		drSpan.innerText = jsData.dayRange;
+		const oldRows = golgotha.util.getElementsByClass('gateStat', 'tr');
+		oldRows.forEach(function(r) { r.remove(); });
+
+		const t = document.getElementById('apInfoTable');
+		for (var x = 0; x < jsData.gates.length; x++) {
+			const g = jsData.gates[x];
+			const r = document.createElement('tr');
+			r.setAttribute('class', 'gateStat');
+			const c0 = golgotha.util.createElement('td', g.name, 'label');
+			c0.addEventListener('click', golgotha.local.selectGate, {passive:true});
+			c0.gateID = g.id;
+			r.appendChild(c0);
+			const c1 = document.createElement('td');
+			c1.appendChild(golgotha.util.createElement('span', g.zone, 'sec bld'));
+			const as = golgotha.util.createElement('span', ' Used by ', 'small ita');
+			g.airlines.forEach(function(al) {
+				as.innerText += al.name;
+				if (al.useCount > 0) as.innerText += (' (' + al.useCount + ')');
+				as.innerText += ', ';
+			});
+
+			as.innerText = as.innerText.substring(0, Math.max(1, as.innerText.length - 2));
+			c1.appendChild(as);
+			r.appendChild(c1);
+			r.appendChild(golgotha.util.createElement('td', g.useCount + ' Flights', 'pri bld'));
+			t.appendChild(r);
+		}
+
+		return true;
+	};
+
+	xreq.send(null);
+	return true;
+}
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
 	golgotha.airportLoad.setHelpers([f.id]);
-	golgotha.gate.load({id:'${airport.ICAO}'}); 
+	golgotha.gate.load({id:'${airport.ICAO}'});
+	golgotha.local.updateGateStats();
 	return true;
 });
 </script>
@@ -49,7 +101,7 @@ golgotha.onDOMReady(function() {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="airportinfo.do" method="get" validate="return false">
-<el:table className="form">
+<el:table className="form" ID="apInfoTable">
 <tr class="title caps">
  <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>AIRPORT INFORMATION -<span class="nophone"> ${airport.name}</span> (<fmt:airport airport="${airport}" />)</td>
  <td style="width:35%" class="nophone right">AIRPORT <el:combo name="id" size="1" idx="*" value="${airport}" options="${airports}"  onChange="void golgotha.local.update(this)" />
@@ -177,7 +229,10 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
  <td class="label top">Flight Time Distribution</td>
  <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
 </tr>
-<tr>
+<tr class="title caps">
+ <td colspan="3">AIRPORT MAP<span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'airportMap')">COLLAPSE</span></td>
+</tr>
+<tr class="airportMap">
  <td class="label">Gate Legend</td>
  <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic Gate
  | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;International Gate
@@ -186,8 +241,15 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
  | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gate
 <content:filter roles="Operations,Schedule"> | <el:cmd url="gateinfo" linkID="${airport.ICAO}" className="sec bld">EDIT GATE DATA</el:cmd></content:filter></td>
 </tr>
-<tr>
+<tr class="airportMap">
  <td colspan="3"><map:div ID="googleMap" height="570" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="3"><span id="gateType">DEPARTURE</span> GATE DATA<span class="nophone"> (<span id="gateUsageDays"><fmt:int value="${gateUsageDays}" /></span> DAYS)</span><span id="gateToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'gateInfo')">COLLAPSE</span>
+</tr>
+<tr class="gateInfo" id="gateInfoHdr">
+ <td class="label">Airports</td>
+ <td class="data" colspan="2"><el:check name="gateAirportType" type="radio" options="${gaTypes}" value="true" onChange="void golgotha.local.updateGateStats()"  /> <el:combo name="gateAP" options="${dGateAirports}" firstEntry="[ ALL AIRPORTS ]" onChange="void golgotha.local.updateGateStats()" /></td>
 </tr>
 </el:table>
 </el:form>
