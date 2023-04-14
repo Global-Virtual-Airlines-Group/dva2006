@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.comparators.AirlineComparator;
 /**
  * A bean to store airport Gate information and allow metadata editing on a map.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 10.2
  */
 
@@ -27,10 +27,6 @@ class SelectableGate extends Gate implements TabbedMapEntry {
 	 */
 	SelectableGate(Gate g) {
 		super(g, g.getUseCount());
-	}
-	
-	String getUniqueID() {
-		return Integer.toHexString(getName().hashCode()).toLowerCase();
 	}
 	
 	/**
