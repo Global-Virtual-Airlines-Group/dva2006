@@ -22,6 +22,7 @@
     <cache id="NavRoute" expires="12h" remote="true" />
 	<cache id="Airspace" expires="86400" remote="true" />
     <cache id="Gates" remote="true" expires="2d" />
+    <cache id="GatePairs" remote="true" expires="4d" />
     <cache id="GateUsage" remote="true" expires="86400" />
     <cache id="Alternates" remote="true" expires="86400" />
 	<cache id="FIRs" max="512" />
