@@ -12,9 +12,8 @@
 		<db>dva</db>
 		<birthdate>06/10/2001</birthdate>
 		<voice>
-			<url>rw.deltava.org/DAL</url>
 			<mvs>
-				<enabled type="Boolean">true</enabled>
+				<enabled type="Boolean">false</enabled>
 			</mvs>
 		</voice>
 		
