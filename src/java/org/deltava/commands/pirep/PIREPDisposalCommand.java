@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 1.0
  */
 
@@ -296,9 +296,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// If the assignment is complete, then mark it as such
 				if (assign.isComplete()) {
 					SetAssignment fawdao = new SetAssignment(con);
-					fawdao.complete(assign);
+					fawdao.complete(assign, false);
 					ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
-					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Flight Assignment Completed");
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Flight Assignment Completed (%d legs)", Integer.valueOf(assign.size())));
 				}
 			}
 

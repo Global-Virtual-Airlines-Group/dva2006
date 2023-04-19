@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2016, 2017, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.RoutePair;
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 8.1
+ * @version 10.6
  * @since 1.0
  */
 
@@ -150,6 +150,14 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     }
     
     /**
+     * Returns the number of flight legs in this Assignment.
+     * @return the number of legs
+     */
+    public int size() {
+    	return _assignments.size();
+    }
+    
+    /**
      * Adds an Assigned Flight to this Assignment.
      * @param a the assigned flight
      */
@@ -280,11 +288,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     			i.remove();
     	}
     }
-    
-    /**
-     * Returns the CSS class name for this assignment when displayed in a view.
-     * @return the CSS class name
-     */
+
     @Override
     public String getRowClassName() {
     	final String[] ROW_CLASSES = {null, "opt2", "opt3"};
