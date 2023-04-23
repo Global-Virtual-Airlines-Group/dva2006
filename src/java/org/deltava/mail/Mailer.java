@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -38,11 +38,8 @@ public class Mailer {
 	 */
 	public Mailer(EMailAddress from) {
 		super();
-		String domain = SystemData.get("airline.domain");
-		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(domain);
+		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(SystemData.get("airline.domain"));
 		_env = new SMTPEnvelope(isOurs, !isOurs ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
-		if (!isOurs)
-			_env.addHeader("Reply-To", MailUtils.makeAddress("no-reply", domain, "DO NOT REPLY").getEmail());
 	}
 
 	/**
@@ -113,8 +110,14 @@ public class Mailer {
 		_env.setSubject(_ctx.getSubject());
 		_env.setBody(_ctx.getBody()); // calculate body and subject
 		
-		// Determine the content type and queue it up
-		_env.setContentType((_ctx.getTemplate() != null) && _ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
+		// Determine content type and reply enabled
+		MessageTemplate mt = _ctx.getTemplate();
+		if (mt != null) {
+			_env.setContentType(_ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
+			if (mt.getNoReply() || !_env.isOurDomain())
+				_env.addHeader("Reply-To", MailUtils.makeAddress("no-reply", SystemData.get("airline.domain"), "DO NOT REPLY").getEmail());
+		}
+		
 		MailerDaemon.push((SMTPEnvelope) _env.clone());
 	}
 	
@@ -191,7 +194,7 @@ public class Mailer {
 		_msgTo.forEach(this::sendSMTP);
 		_msgTo.clear();
 		
-		// Loop through the Push recipeints
+		// Loop through the Push recipients
 		_pushTo.forEach(this::sendPush);
 		_pushTo.clear();
 	}

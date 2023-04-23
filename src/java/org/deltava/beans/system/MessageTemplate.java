@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing E-Mail message templates.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Auditable, 
     private String _desc;
     private String _msgBody;
     private boolean _isHTML;
+    private boolean _replyDisabled;
     
     private final Collection<NotifyActionType> _actionTypes = new LinkedHashSet<NotifyActionType>();
     private String _notifyCtxObj;
@@ -79,6 +80,15 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Auditable, 
      */
     public boolean getIsHTML() {
     	return _isHTML;
+    }
+    
+    /**
+     * Returns if replies to the message should be disabled.
+     * @return TRUE if replies disabled, otherwise FALSE
+     * @see MessageTemplate#setNoReply(boolean)
+     */
+    public boolean getNoReply() {
+    	return _replyDisabled;
     }
     
     /**
@@ -147,10 +157,19 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Auditable, 
     public void setIsHTML(boolean html) {
     	_isHTML = html;
     }
+    
+    /**
+     * Sets whether replies to this message should be disabled.
+     * @param noReply TRUE if replies are disabled, otherwise FALSE
+     * @see MessageTemplate#getNoReply()
+     */
+    public void setNoReply(boolean noReply) {
+    	_replyDisabled = noReply;
+    }
 
     /**
-     * Updates the actiont types appended to the push notification.
-     * @param types a Collection of NotifyActionType enums
+     * Updates the action types appended to the push notification.
+     * @param types a Collection of NotifyActionType enumerations
      */
     public void setActionTypes(Collection<NotifyActionType> types) {
     	_actionTypes.clear();

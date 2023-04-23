@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -128,6 +128,7 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			mt.setDescription(ctx.getParameter("desc"));
 			mt.setBody(ctx.getParameter("body"));
 			mt.setIsHTML(Boolean.parseBoolean(ctx.getParameter("isHTML")));
+			mt.setNoReply(Boolean.parseBoolean(ctx.getParameter("noReply")));
 			mt.setNotificationTTL(StringUtils.parse(ctx.getParameter("ttl"), 3600));
 			mt.setNotifyContext(StringUtils.isEmpty(ctx.getParameter("ctx")) ? null : ctx.getParameter("ctx"));
 			mt.setActionTypes(ctx.getParameters("actions", Collections.emptyList()).stream().map(at -> EnumUtils.parse(NotifyActionType.class, at, null)).filter(Objects::nonNull).collect(Collectors.toList()));
