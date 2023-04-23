@@ -1,4 +1,4 @@
-// Copyright 2005, 2012, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write e-mail Message Templates.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -32,14 +32,15 @@ public class SetMessageTemplate extends DAO {
 	public void write(MessageTemplate mt) throws DAOException {
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, PUSHCTX, BODY, ISHTML, TTL) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, PUSHCTX, BODY, ISHTML, NOREPLY, TTL) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 				ps.setString(1, mt.getName());
 				ps.setString(2, mt.getSubject());
 				ps.setString(3, mt.getDescription());
 				ps.setString(4, mt.getNotifyContext());
 				ps.setString(5, mt.getBody());
 				ps.setBoolean(6, mt.getIsHTML());
-				ps.setInt(7, mt.getNotificationTTL());
+				ps.setBoolean(7, mt.getNoReply());
+				ps.setInt(8, mt.getNotificationTTL());
 				executeUpdate(ps, 1);
 			}
 			
