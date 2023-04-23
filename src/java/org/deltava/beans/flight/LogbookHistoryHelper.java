@@ -2,14 +2,15 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.Helper;
-import org.deltava.beans.schedule.RoutePair;
+import org.deltava.beans.schedule.*;
 
 /**
- * 
+ * A utility class to identify log book consistency over recent flights. 
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 10.4
  */
 
@@ -51,6 +52,26 @@ public class LogbookHistoryHelper {
 	 */
 	private List<FlightReport> head(int cnt) {
 		return _flights.subList(0, Math.min(_flights.size(), cnt));
+	}
+	
+	/**
+	 * Returns an airline used consistently for the last number of flights.
+	 * @param flights the number of flights
+	 * @return TRUE if the Airline is consistent, otherwise FALSE
+	 */
+	public boolean isConsistentAirline(int flights) {
+		Collection<Airline> airlines = head(flights).stream().map(FlightReport::getAirline).collect(Collectors.toSet());
+		return (airlines.size() == 1); 
+	}
+	
+	/**
+	 * Returns an equipment type used consistently for the last number of flights.
+	 * @param flights the number of flights
+	 * @return TRUE if the equipment type is consistent, otherwise FALSE
+	 */
+	public boolean isConsistentEquipment(int flights) {
+		Collection<String> eqTypes = head(flights).stream().map(FlightReport::getEquipmentType).collect(Collectors.toSet());
+		return (eqTypes.size() == 1);
 	}
 	
 	/**
