@@ -69,7 +69,7 @@ public class FindFlightCommand extends AbstractCommand {
 			airports.sort(new AirportComparator(AirportComparator.NAME));
 			ctx.setAttribute("airports", airports, REQUEST);
 			
-			// Load recent PIREPs to see if we have a connected logbook
+			// Load recent PIREPs to see if we have a connected log book
 			if (!isSearch) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				frdao.setQueryMax(10);
@@ -83,6 +83,10 @@ public class FindFlightCommand extends AbstractCommand {
 						ctx.setAttribute("airportsA", adao.getConnectingAirports(ssc.getAirportD(), true, a), REQUEST);
 					}
 					
+					if (lh.isConsistentAirline(3))
+						ssc.setAirline(lh.getLastFlight().getAirline());
+					if (lh.isConsistentEquipment(3))
+						ssc.setEquipmentType(lh.getLastFlight().getEquipmentType());
 					if (lh.isCurent(5))
 						ssc.setExcludeHistoric(Inclusion.EXCLUDE);
 					else if (lh.isHistoric(5))
