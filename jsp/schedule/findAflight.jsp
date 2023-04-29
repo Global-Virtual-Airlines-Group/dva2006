@@ -127,7 +127,7 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" onRightClick="return golgotha.form.resetCombo()" />
  <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
  <td class="label">Equipment</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" /> - 
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${(param.myEQTypes || (!empty eqFamily)) ? '-' : fafCriteria.equipmentType}" onChange="void golgotha.ff.updateEQ(this)" onRightClick="return golgotha.form.resetCombo()" /> - 
  family <el:combo name="family" size="1" firstEntry="-" options="${allFamily}" value="${eqFamily}" onChange="void golgotha.ff.updateFamily(this)" /></td>
 </tr>
 <tr>
