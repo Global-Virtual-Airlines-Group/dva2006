@@ -44,7 +44,7 @@ golgotha.local.updateEQ = function(combo) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9,XP12" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
