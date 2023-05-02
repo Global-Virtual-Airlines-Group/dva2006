@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015, 2016, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 9.1
+ * @version 10.6
  * @since 2.4
  */
 
@@ -50,6 +50,11 @@ public abstract class FlightPlanGenerator {
 	 * The route waypoints as rendered in the flight plan for ACARS.
 	 */
 	protected String _route;
+	
+	/**
+	 * The AIRAC cycle used to generate the flight plan.
+	 */
+	protected String _navCycle;
 	
 	/**
 	 * Sets the Airline for the flight.
@@ -100,6 +105,14 @@ public abstract class FlightPlanGenerator {
 	public void setRoute(String route) {
 		_route = route;
 	}
+	
+	/**
+	 * Updates the AIRAC cycle used to generate this Flight Plan. 
+	 * @param cycle
+	 */
+	public void setNavCycle(String cycle) {
+		_navCycle = cycle;
+	}
 
 	/**
 	 * Generates a flight plan between two airports.
@@ -142,8 +155,11 @@ public abstract class FlightPlanGenerator {
 	 */
 	public static FlightPlanGenerator create(Simulator sim) {
 		switch (sim) {
-			case XP9, XP10, XP11:
+			case XP9, XP10:
 				return new XP9Generator();
+			
+			case XP11, XP12:
+				return new XP11Generator();
 			
 			case P3D, P3Dv4:
 				return new P3DGenerator();
