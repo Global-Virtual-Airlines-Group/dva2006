@@ -515,7 +515,7 @@
 		<userfiles>/home/www/userfiles</userfiles>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
-		<archive>/home/www/pos_archive</archive>
+		<archive>/home/www/archive/deltava.org</archive>
 		<video>/home/www/video</video>
 		<upload>/home/www/upload</upload>
 		<tile>/var/cache/tile</tile>
