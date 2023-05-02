@@ -1,15 +1,19 @@
-// Copyright 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.acars.ArchiveHelper;
+import org.deltava.beans.acars.ArchivedRoute;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetSerializedRoute;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -18,7 +22,7 @@ import org.deltava.util.flightplan.FlightPlanGenerator;
 /**
  * A Web Service to generate a Flight Plan from a draft Flight Report.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 8.0
  */
 
@@ -51,6 +55,21 @@ public class DraftFlightPlanService extends WebService {
 			gen = FlightPlanGenerator.create(fr.getSimulator());
 			gen.setAirline(fr.getAirline());
 			gen.setAirports(fr.getAirportD(), fr.getAirportA());
+			
+			// Get the AIRAC cycle for this flight report
+			if (ArchiveHelper.getRoute(fr.getID()).exists()) {
+				try (InputStream in = new BufferedInputStream(new FileInputStream(ArchiveHelper.getRoute(fr.getID())))) {
+					GetSerializedRoute rtdao = new GetSerializedRoute(in);
+					ArchivedRoute arcRt = rtdao.read();
+					if (arcRt.getAIRACVersion() > 0)
+						gen.setNavCycle(String.valueOf(arcRt.getAIRACVersion()));
+				} catch (IOException ie) {
+					// empty
+				}
+			} else {
+				GetMetadata mddao = new GetMetadata(con);
+				gen.setNavCycle(mddao.get("navdata.cycle"));
+			}
 			
 			// Calculate the approx cruise altitude
 			double rawHdg = GeoUtils.course(fr.getAirportD(), fr.getAirportA());

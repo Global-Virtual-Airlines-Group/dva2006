@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 2.2
  */
 
@@ -83,6 +83,10 @@ public class RoutePlanService extends WebService {
 				MSFSGenerator fsgen = (MSFSGenerator) fpgen;
 				fsgen.setGateD(gD);
 			}
+			
+			// Get the AIRAC cycle
+			GetMetadata mddao = new GetMetadata(con);
+			fpgen.setNavCycle(mddao.get("navdata.cycle"));
 
 			// Load the SID
 			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.Type.SID, ctx.getParameter("sid"));
