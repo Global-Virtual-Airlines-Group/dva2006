@@ -18,7 +18,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.updateSignups = function() {
 	const f = document.forms[0];
 	const tg = !f.canSignup.checked;
@@ -41,7 +41,6 @@ golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.name, l:5, t:'Event Name'});
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
 	golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
-	golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
 	golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
 	golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
 	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true, maxSize:512});
@@ -177,7 +176,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Flight Routing</td>
- <td class="data"><el:text name="route" idx="*" size="110" max="640" value="" className="req" /></td>
+ <td class="data"><el:text name="route" idx="*" size="110" max="640" value="" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Signups</td>
