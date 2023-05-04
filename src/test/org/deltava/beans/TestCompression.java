@@ -11,6 +11,7 @@ public class TestCompression extends TestCase {
 		assertEquals(Compression.BZIP2, Compression.get("foo.bz2"));
 		assertEquals(Compression.GZIP, Compression.get("foo.gz"));
 		assertEquals(Compression.BROTLI, Compression.get("foo.br"));
+		assertEquals(Compression.XZ, Compression.get("foo.xz"));
 		assertEquals(Compression.NONE, Compression.get("foo.txt"));
 		assertEquals(Compression.NONE, Compression.get("foo"));
 	}
@@ -29,5 +30,9 @@ public class TestCompression extends TestCase {
 		f = new File("data/file/filedata.txt.bz2");
 		assertTrue(f.exists());
 		assertEquals(Compression.BZIP2, Compression.detect(f));
+		
+		f = new File("data/file/filedata.txt.xz");
+		assertTrue(f.exists());
+		assertEquals(Compression.XZ, Compression.detect(f));
 	}
 }
