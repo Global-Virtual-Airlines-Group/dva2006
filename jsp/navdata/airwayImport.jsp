@@ -13,20 +13,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script async>
-golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-let isOK = false;
-const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
-	isOK |= (fName == golgotha.local.dataFiles[x]);
+golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2','pssawy.dat.xz'];
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	let isOK = false;
+	const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+	for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+		isOK |= (fName == golgotha.local.dataFiles[x]);
 	
-if (!isOK)
-	throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
+	if (!isOK)
+		throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>

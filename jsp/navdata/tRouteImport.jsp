@@ -12,20 +12,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script async>
-golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2'];
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-let isOK = false;
-const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
-	isOK |= (fName == golgotha.local.dataFiles[x]);
+golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2','pssstar.dat.xz','psssid.dat.xz'];
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	let isOK = false;
+	const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+	for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+		isOK |= (fName == golgotha.local.dataFiles[x]);
 
-if (!isOK)
-	throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
+	if (!isOK)
+		throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -44,8 +43,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Upload Data File</td>
- <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
-<span class="small">AIRAC data must be in PSS Format.</span></td>
+ <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;<span class="small">AIRAC data must be in PSS Format.</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
