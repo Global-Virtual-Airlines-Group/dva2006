@@ -14,19 +14,18 @@
 <content:js name="common" />
 <script async>
 golgotha.local.dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-let isOK = false;
-const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
-	isOK |= (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	let isOK = false;
+	const fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+	for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+		isOK |= (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2') + (fName == (golgotha.local.dataFiles[x] + '.xz'));
 
-if (!isOK)
-	throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
+	if (!isOK)
+		throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
