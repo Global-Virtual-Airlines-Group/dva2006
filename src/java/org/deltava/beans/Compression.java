@@ -5,18 +5,19 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 
 import org.deltava.util.BZip2MultiInputStream;
 
 /**
  * An enumeration of file compression types.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 10.3
  */
 
 public enum Compression {
-	NONE, GZIP, BZIP2, BROTLI;
+	NONE, GZIP, BZIP2, BROTLI, XZ;
 	
 	/**
 	 * Returns the compression type for a given file name.
@@ -31,6 +32,8 @@ public enum Compression {
 			return GZIP;
 		else if (fn.endsWith(".br"))
 			return BROTLI;
+		else if (fn.endsWith(".xz"))
+			return XZ;
 		
 		return NONE;
 	}
@@ -46,6 +49,7 @@ public enum Compression {
 			case GZIP -> new GZIPInputStream(is, 16384);
 			case BZIP2 -> new BZip2MultiInputStream(is);
 			case BROTLI -> new BrotliCompressorInputStream(is); 
+			case XZ -> new XZCompressorInputStream(is);
 			default -> is;
 		};
 	}
@@ -57,11 +61,13 @@ public enum Compression {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public static Compression detect(File f) throws IOException {
-		try (InputStream is = new FileInputStream(f)) {
-			int fw = is.read() + ((is.read() << 8) & 0xFF00);
+		try (DataInputStream dis = new DataInputStream(new FileInputStream(f))) {
+			int fw = dis.readShort() & 0xFFFF; // clear top 16 bits, need int since XZ header is negative
+			int ni = dis.readInt();
 			return switch (fw) {
-				case GZIPInputStream.GZIP_MAGIC -> GZIP;
-				case 0x5A42 -> BZIP2;
+				case 0x1F8B -> GZIP;
+				case 0x425A -> BZIP2;
+				case 0xFD37 -> (ni == 0x7A585A00) ? XZ : NONE;
 				default -> NONE;
 			};
 		}
