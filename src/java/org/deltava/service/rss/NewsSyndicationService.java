@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2015, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a System News RSS feed.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class NewsSyndicationService extends WebService {
 		// Convert the entries to RSS items
 		for (News n : entries) {
 			try {
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/news.do?id=" + StringUtils.formatHex(n.getID()));
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/news.do?id=" + StringUtils.formatHex(n.getID()));
 			
 				// Create the RSS item element
 				Element item = new Element("item");
@@ -73,14 +73,14 @@ public class NewsSyndicationService extends WebService {
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
 				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
 				ch.addContent(item);
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				// empty
 			}
 		}
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("text/xml", "utf-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
