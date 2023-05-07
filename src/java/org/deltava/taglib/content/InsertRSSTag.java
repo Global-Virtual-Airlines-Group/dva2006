@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2018, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to insert a link to an RSS data feed.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -55,9 +55,6 @@ public class InsertRSSTag extends InsertContentTag {
 		_path = path;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -95,10 +92,10 @@ public class InsertRSSTag extends InsertContentTag {
 		}
 
 		// Build the URL
-		URL url = null;
+		URI url = null;
 		JspWriter out = pageContext.getOut();
 		try {
-			url = new URL(_protocol, _host, _path);
+			url = new URI(_protocol, _host, _path);
 			out.print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"");
 			out.print(_title);
 			out.print("\" href=\"");

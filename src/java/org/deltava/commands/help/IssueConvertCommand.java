@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011, 2013, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2013, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -78,12 +78,12 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Add a dummy issue comment
 			try {
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
 				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url);
 				ic.setAuthorID(ctx.getUser().getID());
 				ic.setParentID(i.getID());
 				wdao.write(ic);
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				// empty
 			}
 			
@@ -91,9 +91,9 @@ public class IssueConvertCommand extends AbstractCommand {
 			org.deltava.beans.help.IssueComment hic = new org.deltava.beans.help.IssueComment(ctx.getUser().getID());
 			hic.setID(hi.getID());
 			try {
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
 				hic.setBody("Converted to Development Issue at " + url.toString());
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				hic.setBody("Converted to Development Issue");
 			}
 			

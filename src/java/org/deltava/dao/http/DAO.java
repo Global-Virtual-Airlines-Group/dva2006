@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 2.4
  */
 
@@ -102,10 +102,15 @@ abstract class DAO {
 	 * @throws IOException if an error occurs
 	 */
 	protected void init(String url) throws IOException {
-		URL u = new URL(url);
-		if (_urlcon != null) {
-			if (!_urlcon.getURL().equals(u))
-				throw new InterruptedIOException(String.format("Already connected to %s", _urlcon.getURL().toExternalForm()));
+		URL u;
+		try {
+			u = new URI(url).toURL();
+			if (_urlcon != null) {
+				if (!_urlcon.getURL().equals(u))
+					throw new InterruptedIOException(String.format("Already connected to %s", _urlcon.getURL().toExternalForm()));
+			}
+		} catch (URISyntaxException se) {
+			throw new IOException(String.format("Invalid URL - %s", url));
 		}
 		
 		// Set timeouts and other stuff

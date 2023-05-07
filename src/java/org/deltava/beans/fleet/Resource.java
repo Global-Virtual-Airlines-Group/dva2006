@@ -11,7 +11,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Web Resource link data.
  * @author Luke
- * @version 10.4
+ * @version 10.6
  * @since 1.0
  */
 
@@ -154,8 +154,8 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean, A
 	 */
 	public void setURL(String url) {
 		try {
-			URL urlData = new URL(url); 
-			_url = urlData.toExternalForm();
+			URI urlData = new URI(url); 
+			_url = urlData.toString();
 			String host = urlData.getHost();
 			if (host.startsWith("www."))
 				host = host.substring(4);

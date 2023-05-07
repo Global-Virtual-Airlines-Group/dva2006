@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class ImageLinkTestTask extends Task {
 
 	protected Collection<?> _mimeTypes;
 	
+	// TODO Convert to ThreadPool using virtual threads
 	private class ImageLinkWorker extends Thread {
 		private final Logger tLog;
 		private final Queue<LinkedImage> _work;
@@ -61,14 +62,14 @@ public class ImageLinkTestTask extends Task {
 			LinkedImage img = _work.poll();
 			while (img != null) {
 				boolean isOK = false;
-				URL url = null;
+				java.net.URI url = null;
 				try {
-					url = new URL(img.getURL());
+					url = new java.net.URI(img.getURL());
 					if (_invalidHosts.contains(url.getHost()))
 						throw new IllegalArgumentException("Bad Host!");
 					
 					// Open the connection
-					HeadMethod hm = new HeadMethod(url.toExternalForm());
+					HeadMethod hm = new HeadMethod(url.toString());
 					hm.setFollowRedirects(false);
 
 					// Validate the result code
@@ -82,16 +83,16 @@ public class ImageLinkTestTask extends Task {
 						if (!isOK)
 							tLog.warn("Invalid MIME type for " + img + " - " + cType);
 						else
-							tLog.info("Validated " + url.toExternalForm());
+							tLog.info("Validated " + url.toString());
 					}
 				} catch (IllegalArgumentException iae) {
 					if (url != null)
 						tLog.warn("Known bad host - " + url.getHost());
-				} catch (MalformedURLException mue) {
+				} catch (URISyntaxException se) {
 					tLog.warn("Invalid URL - " + img);
 				} catch (IOException ie) {
 					tLog.warn("Error validating " + img + " - " + ie.getMessage());
-					if ("Connection timed out".equals(ie.getMessage()) && (url != null))
+					if ("Connection timed out".equals(ie.getMessage()))
 						_invalidHosts.add(url.getHost());
 				}
 				
