@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 1.0
  */
 
@@ -48,10 +48,10 @@ public class LoginCommand extends AbstractCommand {
 		String referer = ctx.getRequest().getHeader("Referer");
 		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
 			try {
-				URL url = new URL(referer);
+				URI url = new URI(referer);
 				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
 					ctx.setAttribute("referTo", referer, REQUEST);
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				log.warn("Invalid HTTP referer - " + referer);
 				referer = null;
 			}

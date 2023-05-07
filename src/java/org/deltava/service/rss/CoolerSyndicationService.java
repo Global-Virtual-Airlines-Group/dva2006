@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -111,20 +111,20 @@ public class CoolerSyndicationService extends WebService {
 		for (MessageThread mt : threads) {
 			try {
 				// Create the RSS item element
-				URL url = new URL("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", mt.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
 				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
 				ch.addContent(item);
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				// empty
 			}
 		}
 
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("text/xml", "utf-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
