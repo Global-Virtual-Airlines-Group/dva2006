@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 10.3
  */
 
@@ -79,6 +79,17 @@ public class PackageRefreshService extends WebService {
 				if (!sbdata.getRoute().equals(fr.getRoute())) {
 					fr.setRoute(sbdata.getRoute());
 					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated flight route via SimBrief");
+				}
+			}
+			
+			// Get simulator if we can
+			if (fr.getSimulator() == Simulator.UNKNOWN) {
+				frdao.setQueryMax(10);
+				List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC, PR.SUBMITTED DESC, PR.ID DESC", ctx.getDB()));
+				LogbookHistoryHelper lh = new LogbookHistoryHelper(pireps);
+				if (lh.isConsistentSimulator(3)) {
+					fr.setSimulator(lh.getLastFlight().getSimulator());
+					fr.addStatusUpdate(0, HistoryType.UPDATE, String.format("Updated Simulator to", fr.getSimulator()));
 				}
 			}
 				

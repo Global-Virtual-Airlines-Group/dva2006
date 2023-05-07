@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.time.Instant;
+import java.util.List;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
@@ -13,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to save a Flight Assignment.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -42,6 +43,12 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Load logbook data
+			GetFlightReports frdao = new GetFlightReports(con);
+			List<FlightReport> pireps = frdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("DATE DESC, PR.SUBMITTED DESC, PR.ID DESC", ctx.getDB()));
+			LogbookHistoryHelper lh = new LogbookHistoryHelper(pireps);
+			boolean updateSim = lh.isConsistentSimulator(3);
 
 			// Start the transaction
 			ctx.startTX();
@@ -63,6 +70,9 @@ public class AssignmentSaveCommand extends AbstractCommand {
 					fr.setDate(now);
 					fr.setRank(ctx.getUser().getRank());
 					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Assigned from Schedule Search");
+					if (updateSim)
+						fr.setSimulator(lh.getLastFlight().getSimulator());
+					
 					pwdao.write(fr);
 				}
 			}
