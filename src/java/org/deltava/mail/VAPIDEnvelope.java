@@ -1,7 +1,7 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
-import java.net.URL;
+import java.net.*;
 import java.time.Instant;
 
 import org.deltava.beans.NotificationEnvelope;
@@ -10,7 +10,7 @@ import org.deltava.beans.PushEndpoint;
 /**
  * An envelope for VAPID messages.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 10.0
  */
 
@@ -37,7 +37,7 @@ public class VAPIDEnvelope implements NotificationEnvelope<PushEndpoint> {
 	 */
 	public String getAudience() {
 		try {
-			URL url = new URL(_ep.getURL());
+			URL url = new URI(_ep.getURL()).toURL();
 			StringBuilder buf = new StringBuilder(url.getProtocol());
 			buf.append("://").append(url.getHost());
 			return buf.toString();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.net.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -80,9 +80,6 @@ public class MessageFormatTag extends TagSupport {
 		return SKIP_BODY;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -107,7 +104,7 @@ public class MessageFormatTag extends TagSupport {
 					while (token.endsWith(".") || token.endsWith(","))
 						token = token.substring(0, token.length() - 1);
 					
-					URL url = new URL(token);
+					URI url = new URI(token);
 					buf.append("<a href=\"");
 					buf.append(token);
 					if (!SystemData.get("airline.url").equals(url.getHost()))
@@ -116,7 +113,7 @@ public class MessageFormatTag extends TagSupport {
 					buf.append("\">");
 					buf.append(StringUtils.stripInlineHTML(token));
 					buf.append("</a>");
-				} catch (MalformedURLException mue) {
+				} catch (URISyntaxException se) {
 					buf.append(token);
 				}
 			} else if ((token.charAt(0) == ':') && (token.length() > 2) && (token.indexOf(':', 2) > 0)) {

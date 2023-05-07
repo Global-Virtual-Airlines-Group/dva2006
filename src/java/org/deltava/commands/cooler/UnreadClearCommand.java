@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to clear a user's Water Cooler thread unread marks. 
  * @author Luke
- * @version 7.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class UnreadClearCommand extends AbstractCommand {
 		if (StringUtils.isEmpty(referer)) referer = "channels.do";
 		if (!referer.contains("login")) {
 			try {
-				URL url = new URL(referer);
+				URI url = new URI(referer);
 				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
 					long now = System.currentTimeMillis() / 1000;
 					if (referer.indexOf('?') > 0)
@@ -66,7 +66,7 @@ public class UnreadClearCommand extends AbstractCommand {
 					else
 						result.setURL(referer + "?noCache=" + now);
 				}
-			} catch (MalformedURLException mue) {
+			} catch (URISyntaxException se) {
 				// empty
 			}
 		}

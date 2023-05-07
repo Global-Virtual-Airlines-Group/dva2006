@@ -1,13 +1,13 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.net.URL;
+import java.net.URI;
 import java.time.Instant;
 
 /**
  * A bean to store push notification endpoint data. 
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 10.0
  */
 
@@ -43,7 +43,7 @@ public class PushEndpoint extends DatabaseBean {
 	 */
 	public String getHost() {
 		try {
-			URL url = new URL(_url);
+			URI url = new URI(_url);
 			return url.getHost();
 		} catch (Exception e) {
 			return "INVALID";
