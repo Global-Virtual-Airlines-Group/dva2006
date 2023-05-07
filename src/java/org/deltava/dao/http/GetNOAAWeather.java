@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 2.2
  */
 
@@ -28,14 +28,14 @@ public class GetNOAAWeather extends DAO {
 
 	private static String getURL(String base, int hour) throws DAOException {
 		try {
-			URL baseURL = new URL(base);
-			if (!"https".equalsIgnoreCase(baseURL.getProtocol()))
-				throw new DAOException(String.format("HTTPS expected - %s", baseURL.toExternalForm()));
+			URI baseURL = new URI(base);
+			if (!"https".equalsIgnoreCase(baseURL.getScheme()))
+				throw new DAOException(String.format("HTTPS expected - %s", baseURL));
 			
-			URL url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), baseURL.getPath() + "/" + StringUtils.format(hour, "00") + "Z.TXT");
-			return url.toExternalForm();
-		} catch (MalformedURLException mfe) {
-			throw new DAOException(mfe);
+			URI url = new URI(base + "/" + StringUtils.format(hour, "00") + "Z.TXT");
+			return url.toString();
+		} catch (URISyntaxException se) {
+			throw new DAOException(se);
 		}
 	}
 	

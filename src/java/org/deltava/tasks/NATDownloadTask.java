@@ -1,10 +1,8 @@
-// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -21,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -40,7 +38,7 @@ public class NATDownloadTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {
-			URL url = new URL(SystemData.get("config.nat.url"));
+			URI url = new URI(SystemData.get("config.nat.url"));
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, Instant.now());
@@ -48,7 +46,7 @@ public class NATDownloadTask extends Task {
 			
 			// Load waypoint data, retry up to 3 times
 			log.info("Loading NAT track data from " + url.toString());
-			GetNATs dao = new GetNATs(url.toExternalForm());
+			GetNATs dao = new GetNATs(url.toString());
 			int retryCount = 0; boolean isDownloaded = false;
 			while (!isDownloaded && (retryCount < 3)) {
 				try {
@@ -114,8 +112,8 @@ public class NATDownloadTask extends Task {
 				wdao.write(i.next());
 			
 			ctx.commitTX();
-		} catch (IOException ie) {
-			log.error("Error downloading NAT Tracks - " + ie.getMessage(), ie);
+		} catch (URISyntaxException se) {
+			log.error("Error downloading NAT Tracks - " + se.getMessage(), se);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			log.error("Error saving NAT Data - " + de.getMessage(), de);

@@ -1,21 +1,21 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.crypt;
 
-import java.util.*;
-
-import org.apache.log4j.Logger;
-import org.deltava.util.StringUtils;
-import org.json.JSONObject;
-
 import java.io.*;
-import java.net.URL;
+import java.net.*;
+import java.util.*;
 import java.security.Signature;
 import java.security.cert.*;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A utility class to verify Amazon SNS messages.
  * @author Luke
- * @version 8.5
+ * @version 10.6
  * @since 8.5
  */
 
@@ -26,18 +26,19 @@ public class SNSVerifier {
 	private static final Map<String, X509Certificate > _certs = new HashMap<String, X509Certificate>();
 	
 	/**
-	 * Loads an X.509 certificate from a URL
+	 * Loads an X.509 certificate from a URL.
 	 * @param url the URL
 	 * @return the Certificate
 	 * @throws IOException if the Certificate data cannot be retrieved
-	 * @throws CertificateException if the Certificate cannot be parsed
+	 * @throws CertificateException if the Certificate cannot be parse
+	 * @throws URISyntaxException if the URL cannot be parsed
 	 */
-	public static Certificate loadCertificate(String url) throws IOException, CertificateException {
+	public static Certificate loadCertificate(String url) throws IOException, CertificateException, URISyntaxException {
 		if (_certs.containsKey(url))
 			return _certs.get(url);
 		
-		URL u = new URL(url);
-		try (InputStream inStream = u.openStream()) {
+		URI u = new URI(url);
+		try (InputStream inStream = u.toURL().openStream()) {
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
 			_certs.put(url, cert);

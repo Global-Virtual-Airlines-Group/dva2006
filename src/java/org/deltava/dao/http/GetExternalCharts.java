@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.net.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to handle external chart redirects.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 4.0
  */
 
@@ -30,7 +30,7 @@ public class GetExternalCharts extends DAO {
 			return;
 		
 		try {
-			URL u = new URL(c.getURL());
+			URL u = new URI(c.getURL()).toURL();
 			HttpURLConnection urlCon = (HttpURLConnection) u.openConnection();
 			urlCon.setRequestMethod("HEAD");
 			urlCon.setInstanceFollowRedirects(true);
@@ -45,7 +45,7 @@ public class GetExternalCharts extends DAO {
 			int length = urlCon.getContentLength();
 			if (length > 0)
 				c.setSize(length);
-		} catch (IOException ie) {
+		} catch (IOException | URISyntaxException ie) {
 			throw new DAOException(ie);
 		} finally {
 			reset();

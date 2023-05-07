@@ -4,7 +4,7 @@ package org.deltava.beans.flight;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.Helper;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
 /**
@@ -55,7 +55,7 @@ public class LogbookHistoryHelper {
 	}
 	
 	/**
-	 * Returns an airline used consistently for the last number of flights.
+	 * Returns if an airline has been used consistently for the last number of flights.
 	 * @param flights the number of flights
 	 * @return TRUE if the Airline is consistent, otherwise FALSE
 	 */
@@ -65,13 +65,23 @@ public class LogbookHistoryHelper {
 	}
 	
 	/**
-	 * Returns an equipment type used consistently for the last number of flights.
+	 * Returns if an equipment type has been used consistently for the last number of flights.
 	 * @param flights the number of flights
 	 * @return TRUE if the equipment type is consistent, otherwise FALSE
 	 */
 	public boolean isConsistentEquipment(int flights) {
 		Collection<String> eqTypes = head(flights).stream().map(FlightReport::getEquipmentType).collect(Collectors.toSet());
 		return (eqTypes.size() == 1);
+	}
+	
+	/**
+	 * Returns if a simulator has been used consistently for the last number of flights.
+	 * @param flights the number of flights
+	 * @return TRUE if the simulator is consistent, otherwise FALSE
+	 */
+	public boolean isConsistentSimulator(int flights) {
+		Collection<Simulator> sims = head(flights).stream().map(FlightReport::getSimulator).collect(Collectors.toSet());
+		return (sims.size() == 1);
 	}
 	
 	/**

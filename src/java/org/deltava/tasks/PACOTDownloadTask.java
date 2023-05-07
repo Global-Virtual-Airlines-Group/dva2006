@@ -1,9 +1,8 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -39,7 +38,7 @@ public class PACOTDownloadTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {
-			URL url = new URL(SystemData.get("config.pacot.url"));
+			URI url = new URI(SystemData.get("config.pacot.url"));
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, Instant.now());
@@ -47,7 +46,7 @@ public class PACOTDownloadTask extends Task {
 			
 			// Load waypoint data, retry up to 3 times
 			log.info("Loading PACOT track data from " + url.toString());
-			GetPACOTs dao = new GetPACOTs(url.toExternalForm());
+			GetPACOTs dao = new GetPACOTs(url.toString());
 			int retryCount = 0; boolean isDownloaded = false;
 			while (!isDownloaded && (retryCount < 3)) {
 				try {
@@ -110,8 +109,9 @@ public class PACOTDownloadTask extends Task {
 				wdao.write(i.next());
 			
 			ctx.commitTX();
-		} catch (IOException ie) {
-			log.error("Error downloading PACOT Tracks - " + ie.getMessage(), ie);
+			
+		} catch (URISyntaxException se) {
+			log.error("Error downloading PACOT Tracks - " + se.getMessage(), se);
 		} catch (Exception e) {
 			ctx.rollbackTX();
 			log.error("Error saving PACOT Data - " + e.getMessage(), e);

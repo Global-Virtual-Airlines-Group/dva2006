@@ -1,9 +1,8 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2014, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download AUSOT data.
  * @author Luke
- * @version 7.0
+ * @version 10.6
  * @since 2.7
  */
 
@@ -41,7 +40,7 @@ public class AUSOTDownloadTask extends Task {
 		try {
 			
 			// Create the URL connection to the PACOT Download side
-			URL url = new URL(SystemData.get("config.ausot.url"));
+			URI url = new URI(SystemData.get("config.ausot.url"));
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.AUSOT, Instant.now());
@@ -49,7 +48,7 @@ public class AUSOTDownloadTask extends Task {
 			
 			// Get the DAO and the AUSOT data
 			log.info("Loading AUSOT track data from " + url.toString());
-			GetAUSOTs dao = new GetAUSOTs(url.toExternalForm());
+			GetAUSOTs dao = new GetAUSOTs(url.toString());
 			
 			// Load waypoint data, retry up to 3 times
 			int retryCount = 0; boolean isDownloaded = false;
@@ -115,8 +114,8 @@ public class AUSOTDownloadTask extends Task {
 				wdao.write(ot);
 			
 			ctx.commitTX();
-		} catch (IOException ie) {
-			log.error("Error downloading AUSOT Tracks - " + ie.getMessage(), ie);
+		} catch (URISyntaxException se) {
+			log.error("Error downloading AUSOT Tracks - " + se.getMessage(), se);
 		} catch (Exception e) {
 			ctx.rollbackTX();
 			log.error("Error saving AUSOT Data - " + e.getMessage(), e);

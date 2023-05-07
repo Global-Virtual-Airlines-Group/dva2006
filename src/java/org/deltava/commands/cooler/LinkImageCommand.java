@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 10.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -84,8 +84,8 @@ public class LinkImageCommand extends AbstractCommand {
 			// Validate the image
 			LinkedImage img = null;
 			try {
-				URL url = new URL(ctx.getParameter("imgURL"));
-				if (!(url.getProtocol().startsWith("http")))
+				java.net.URI url = new java.net.URI(ctx.getParameter("imgURL"));
+				if (!(url.getScheme().startsWith("http")))
 					throw new MalformedURLException();
 				else if (imgURLs.contains(url.toString()))
 					throw new MalformedURLException("Duplicate Image URL");
@@ -99,7 +99,7 @@ public class LinkImageCommand extends AbstractCommand {
 				hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(2000));
 				
 				// Open the connection
-				HeadMethod hm = new HeadMethod(url.toExternalForm());
+				HeadMethod hm = new HeadMethod(url.toString());
 				hm.setFollowRedirects(false);
 				
 				// Validate the result code
@@ -116,7 +116,7 @@ public class LinkImageCommand extends AbstractCommand {
 					}
 				} else
 					ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
-			} catch (MalformedURLException mue) {
+			} catch (MalformedURLException | URISyntaxException se) {
 				ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 			} catch (IOException ie) {
 				ctx.setMessage("I/O Error - " + ie.getMessage());
