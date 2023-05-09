@@ -709,6 +709,10 @@ pilot Certification.</td>
 </tr>
 <content:filter roles="HR,Operations">
 <tr>
+ <td class="mid"><el:cmd className="bld" url="staffstats">Staff Flight Statistics</el:cmd></td>
+ <td class="data">You can view Flight Statistics for equipment program Chief Pilots and Assistant Chief Pilots over a variety of date ranges.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="accomplishrecalc">Recalculate Pilot Accomplishments</el:cmd></td>
  <td class="data">You can recalculate which pilots are eligible for a specific Pilot Accomplishment.</td>
 </tr>

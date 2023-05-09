@@ -670,6 +670,39 @@ public class GetFlightReportStatistics extends DAO {
 	}
 	
 	/**
+	 * Retrieves flight statistics for Chief Pilots and Assistant Chief Pilots. 
+	 * @param days the number of days back to aggregate
+	 * @param s the statistics sorting option
+	 * @return a Collection of FlightStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<FlightStatsEntry> getStaffStatistics(int days, FlightStatsSort s) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(FlightStatsGroup.PILOT.getSQL());
+		sqlBuf.append(getPilotJoinSQL());
+		sqlBuf.append("AND ((P.RANKING=?) OR (P.RANKING=?)) AND (F.DATE>=DATE_SUB(CURDATE(), INTERVAL ? DAY))");
+		sqlBuf.append("GROUP BY LABEL ORDER BY ");
+		sqlBuf.append(s.getSQL());
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightReport.ATTR_ACARS);
+			ps.setInt(2, FlightReport.ATTR_HISTORIC);
+			ps.setInt(3, FlightReport.ATTR_DISPATCH);
+			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
+			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(6, FlightStatus.OK.ordinal());
+			ps.setInt(7, Rank.ACP.ordinal());
+			ps.setInt(8, Rank.CP.ordinal());
+			ps.setInt(9, days);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves aggregated approved Flight Report statistics.
 	 * @param pilotID the Pilot's database ID, or zero if airline-wide
 	 * @param s the statistics sorting option
