@@ -539,6 +539,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="staffstats">
+		<name>Staff Flight Statistics</name>
+		<class>org.deltava.commands.stats.StaffFlightStatsCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
+
 	<command id="econstats">
 		<name>Flight Load Statistics</name>
 		<class>org.deltava.commands.stats.EconomyStatsCommand</class>
