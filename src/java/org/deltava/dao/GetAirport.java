@@ -1,8 +1,9 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import java.sql.*;
 
 import org.deltava.beans.TZInfo;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -26,7 +27,7 @@ public class GetAirport extends DAO {
 
 	/**
 	 * Creates the DAO with a JDBC connection.
-	 * @param c the JDBC connection to use
+	 * @param c the JDBC connection to usea
 	 */
 	public GetAirport(Connection c) {
 		super(c);
@@ -59,25 +60,7 @@ public class GetAirport extends DAO {
 				ps.setInt(2, Navaid.RUNWAY.ordinal());
 				ps.setString(3, code.toUpperCase());
 				ps.setString(4, code.toUpperCase());
-
-				try (ResultSet rs = ps.executeQuery()) {
-					if (rs.next()) {
-						a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-						a.setCountry(Country.get(rs.getString(5)));
-						a.setTZ(TZInfo.get(rs.getString(3)));
-						a.setLocation(rs.getDouble(6), rs.getDouble(7));
-						a.setASDE(rs.getBoolean(8));
-						a.setHasPFI(rs.getBoolean(9));
-						a.setIsSchengen(rs.getBoolean(10));
-						a.setHasFictionalCode(rs.getBoolean(11));
-						a.setSupercededAirport(rs.getString(12));
-						a.setAltitude(rs.getInt(13));
-						a.setRegion(rs.getString(14));
-						a.setGateData(rs.getInt(16) > 0);
-						int maxRunway = rs.getInt(15);
-						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
-					}
-				}
+				a = execute(ps).stream().findFirst().orElse(null);
 			}
 
 			if (a == null) return null;
@@ -119,39 +102,13 @@ public class GetAirport extends DAO {
 			sqlBuf.append(sortBy);
 		}
 		
+		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, _appCode);
 			ps.setInt(2, Navaid.AIRPORT.ordinal());
 			ps.setInt(3, Navaid.RUNWAY.ordinal());
-			if (al != null)
-				ps.setString(4, al.getCode());
-
-			// Execute the query
-			List<Airport> results = new ArrayList<Airport>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-					a.setCountry(Country.get(rs.getString(5)));
-					a.setTZ(TZInfo.get(rs.getString(3)));
-					a.setLocation(rs.getDouble(6), rs.getDouble(7));
-					a.setASDE(rs.getBoolean(8));
-					a.setHasPFI(rs.getBoolean(9));
-					a.setIsSchengen(rs.getBoolean(10));
-					a.setHasFictionalCode(rs.getBoolean(11));
-					a.setSupercededAirport(rs.getString(12));
-					a.setAltitude(rs.getInt(13));
-					a.setRegion(rs.getString(14));
-					a.setGateData(rs.getInt(16) > 0);
-					int maxRunway = rs.getInt(15);
-					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
-					if (al != null)
-						a.addAirlineCode(al.getCode());
-					
-					results.add(a);
-				}
-			}
-
-			return results;
+			if (al != null) ps.setString(4, al.getCode());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -278,30 +235,7 @@ public class GetAirport extends DAO {
 					+ "LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) GROUP BY A.IATA")) {
 				ps.setInt(1, Navaid.AIRPORT.ordinal());
 				ps.setInt(2, Navaid.RUNWAY.ordinal());
-			
-				try (ResultSet rs = ps.executeQuery()) {
-					while (rs.next()) {
-						Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-						a.setTZ(TZInfo.get(rs.getString(3)));
-						a.setCountry(Country.get(rs.getString(5)));
-						a.setLocation(rs.getDouble(6), rs.getDouble(7));
-						a.setASDE(rs.getBoolean(8));
-						a.setHasPFI(rs.getBoolean(9));
-						a.setIsSchengen(rs.getBoolean(10));
-						a.setHasFictionalCode(rs.getBoolean(11));
-						a.setSupercededAirport(rs.getString(12));
-						a.setAltitude(rs.getInt(13));
-						a.setRegion(rs.getString(14));
-						a.setGateData(rs.getInt(15) > 0);
-						int maxRunway = rs.getInt(15);
-						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
-					
-						// Save in the map
-						results.put(a.getIATA(), a);
-						if (!results.containsKey(a.getICAO()))
-							results.put(a.getICAO(), a);
-					}
-				}
+				execute(ps).stream().map(a -> List.of(Map.entry(a.getIATA(), a), Map.entry(a.getICAO(), a))).flatMap(Collection::stream).forEach(e -> results.putIfAbsent(e.getKey(), e.getValue()));
 			}
 
 			// Load the airlines for each airport and execute the query
@@ -373,5 +307,33 @@ public class GetAirport extends DAO {
 	private static Airport cloneAirport(String code) {
 		Airport a = SystemData.getAirport(code);
 		return (a == null) ? null : (Airport) a.clone();
+	}
+	
+	/*
+	 * Helper method to parse Airport result sets.
+	 */
+	private static List<Airport> execute(PreparedStatement ps) throws SQLException {
+		List<Airport> results = new ArrayList<Airport>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+				a.setCountry(Country.get(rs.getString(5)));
+				a.setTZ(TZInfo.get(rs.getString(3)));
+				a.setLocation(rs.getDouble(6), rs.getDouble(7));
+				a.setASDE(rs.getBoolean(8));
+				a.setHasPFI(rs.getBoolean(9));
+				a.setIsSchengen(rs.getBoolean(10));
+				a.setHasFictionalCode(rs.getBoolean(11));
+				a.setSupercededAirport(rs.getString(12));
+				a.setAltitude(rs.getInt(13));
+				a.setRegion(rs.getString(14));
+				a.setGateData(rs.getInt(16) > 0);
+				int maxRunway = rs.getInt(15);
+				a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
+				results.add(a);
+			}
+		}
+		
+		return results;
 	}
 }
