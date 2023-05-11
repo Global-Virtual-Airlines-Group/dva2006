@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import java.time.format.TextStyle;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 8.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	private final ZoneId _tz;
 	private final String _displayName;
 	private final String _abbr;
+	private final boolean _hasDST;
 	
 	// Init default time zones
 	static {
@@ -36,6 +37,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		_tz = tz;
 		_displayName = dName;
 		_abbr = (abbr != null) ? abbr.toUpperCase().trim() : null;
+		_hasDST = (_tz.getRules().nextTransition(Instant.now()) != null);
 	}
 
 	/**
@@ -115,9 +117,17 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	public String getName() {
 		return (_displayName == null) ? _tz.getDisplayName(TextStyle.FULL_STANDALONE, Locale.US) : _displayName;
 	}
+	
+	/**
+	 * Returns if this time zone observers Daylight Savings time at some point in the future.
+	 * @return TRUE if DST starts or ends at some future date, otherwise FALSE
+	 */
+	public boolean hasDST() {
+		return _hasDST;
+	}
 
 	/**
-	 * Converts this time zone into a String
+	 * Converts this time zone into a String.
 	 * @return This displays name, UTC offset and DST usage in the following format: <br>
 	 * Name (ABBR) [GMT{+/-}hh:mm{/DST}]
 	 */
@@ -143,7 +153,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		msg.append(df.format(Math.abs(ofs % 60)));
 
 		// Display DST flag
-		if (!_tz.getRules().isFixedOffset())
+		if (_hasDST)
 			msg.append("/DST");
 
 		msg.append(']');
@@ -156,14 +166,11 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	@Override
 	public int compareTo(TZInfo tz2) {
-		Instant now = Instant.now();
+		final Instant now = Instant.now();
 		int tmpResult = _tz.getRules().getOffset(now).compareTo(tz2._tz.getRules().getOffset(now));
 		return (tmpResult == 0) ? _displayName.compareTo(tz2._displayName) : tmpResult;
 	}
 
-	/**
-	 * Compares this Time Zone to another TimeZone by comparing the JVM time zone ID.
-	 */
 	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof TZInfo) && (_tz.getId().equals(((TZInfo) o2)._tz.getId()));
@@ -181,12 +188,8 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		_timeZones.clear();
 	}
 	
-	/**
-	 * Returns the CSS class name when displayed in a view table.
-	 * @return the CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
-		return (_tz.getRules().nextTransition(Instant.now()) == null) ? null : "opt1";
+		return _hasDST ? "opt1" : null;
 	}
 }
