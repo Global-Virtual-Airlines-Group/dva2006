@@ -79,11 +79,11 @@ public class IssueConvertCommand extends AbstractCommand {
 			// Add a dummy issue comment
 			try {
 				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
-				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url);
+				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url.toURL());
 				ic.setAuthorID(ctx.getUser().getID());
 				ic.setParentID(i.getID());
 				wdao.write(ic);
-			} catch (URISyntaxException se) {
+			} catch (URISyntaxException | MalformedURLException se) {
 				// empty
 			}
 			
@@ -92,8 +92,8 @@ public class IssueConvertCommand extends AbstractCommand {
 			hic.setID(hi.getID());
 			try {
 				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
-				hic.setBody("Converted to Development Issue at " + url.toString());
-			} catch (URISyntaxException se) {
+				hic.setBody("Converted to Development Issue at " + url.toURL());
+			} catch (URISyntaxException | MalformedURLException se) {
 				hic.setBody("Converted to Development Issue");
 			}
 			
