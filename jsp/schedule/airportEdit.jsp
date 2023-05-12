@@ -18,7 +18,7 @@
 <c:if test="${googleMap}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -125,7 +125,8 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </c:if>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /></td>
+ <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /><c:if test="${!empty airportTZ}"><br />
+ <span class="warn">Airport in ${airportTZ.name}</span><c:if test="${tzOffsetWarn}"> <span class="error bld">Time Zone Offsets do not Match!</span></c:if></c:if></td>
 </tr>
 <tr>
  <td class="label top">Airlines</td>

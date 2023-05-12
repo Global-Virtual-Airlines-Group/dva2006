@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.Runway;
@@ -20,7 +21,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -201,8 +202,9 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			try {
 				Connection con = ctx.getConnection();
 
-				// Get the DAO and the Airport
+				// Get the DAOs and the Airport
 				GetAirport dao = new GetAirport(con);
+				GetTimeZone tzdao = new GetTimeZone(con);
 				a = dao.get(aCode);
 				readAuditLog(ctx, a);
 				if (a == null) {
@@ -216,12 +218,18 @@ public class AirportCommand extends AbstractAuditFormCommand {
 							a.setAltitude(al.getAltitude());
 							
 							// Look up the time zone
-							GetTimeZone tzdao = new GetTimeZone(con);
 							a.setTZ(tzdao.locate(a));
 						}
 					}
 
 					ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
+				} else {
+					TZInfo tz = tzdao.locate(a);
+					if ((tz != null) && !tz.equals(a.getTZ())) {
+						Instant now = Instant.now();
+						ctx.setAttribute("airportTZ", tz, REQUEST);
+						ctx.setAttribute("tzOffsetWarn", Boolean.valueOf(a.getTZ().getZone().getRules().getOffset(now).compareTo(tz.getZone().getRules().getOffset(now)) != 0), REQUEST);
+					}
 				}
 			} catch (DAOException de) {
 				throw new CommandException(de);

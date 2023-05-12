@@ -57,39 +57,33 @@ public class GetTimeZone extends DAO {
     	String pt = formatLocation(loc); 
     	try {
     		ZoneId tz = null;
-    		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))")) {
+    		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE (ST_Contains(DATA, ST_PointFromText(?,?)) OR ST_Intersects(DATA, ST_PointFromText(?,?)))")) {
     			ps.setString(1, pt);
     			ps.setInt(2, WGS84_SRID);
+    			ps.setString(3, pt);
+    			ps.setInt(4, WGS84_SRID);
     			try (ResultSet rs = ps.executeQuery()) {
     				if (rs.next()) tz = ZoneId.of(rs.getString(1));
     			}
     		}
     		
-    		if (tz == null) {
-    			try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Intersects(DATA, ST_PointFromText(?,?))")) {
-    				ps.setString(1, pt);
-    				ps.setInt(2, WGS84_SRID);
-    				try (ResultSet rs = ps.executeQuery()) {
-    					if (rs.next()) tz = ZoneId.of(rs.getString(1));
-    				}
-    			}
-    		}
-    		
-    		if (tz == null)
-    			return null;
+    		if (tz == null) return null;
     		
     		// Get zone info
-    		Instant now = Instant.now();
+    		final Instant now = Instant.now();
     		boolean hasDST = (tz.getRules().nextTransition(now) != null);
     		
     		// Converrt into our time zone
-    		Collection<TZInfo> allTZ = TZInfo.getAll();
+    		Collection<TZInfo> allTZ = TZInfo.getAll(); final ZoneId z = tz;
+    		TZInfo tzi = allTZ.stream().filter(zi -> zi.getZone().getId().equals(z.getId())).findFirst().orElse(null);
+    		if (tzi != null)
+    			return tzi;
+    		
     		for (TZInfo zoneInfo : allTZ) {
-    			ZoneId zi = zoneInfo.getZone();
-    			if (zi.getId().equals(tz.getId()) || zi.getRules().equals(tz.getRules()))
+    			ZoneId zi = zoneInfo.getZone(); ZoneRules zr = zi.getRules();
+    			if (zr.equals(tz.getRules()))
     				return zoneInfo;
     			
-    			ZoneRules zr = zi.getRules();
     			if ((zr.getOffset(now) == tz.getRules().getOffset(now)) && (hasDST == (zr.nextTransition(now) != null)))
     				return zoneInfo;
     		}
