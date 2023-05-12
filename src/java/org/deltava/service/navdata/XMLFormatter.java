@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to handle XML translation for the {@link XMLClientDataService}.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 10.0
  */
 
@@ -119,7 +119,8 @@ class XMLFormatter {
 			rwe.setAttribute("lat", df.format(r.getLatitude()));
 			rwe.setAttribute("lng", df.format(r.getLongitude()));			
 			rwe.setAttribute("width", String.valueOf(r.getWidth()));
-			rwe.setAttribute("hdg", String.valueOf(r.getHeading()));
+			rwe.setAttribute("hdg", String.valueOf(GeoUtils.normalize(r.getHeading() + r.getMagVar())));
+			rwe.setAttribute("trueHdg", String.valueOf(r.getHeading()));
 			rwe.setAttribute("length", String.valueOf(r.getLength()));
 			rwe.setAttribute("sim", r.getSimulator().name());
 			rwe.setAttribute("sfc", r.getSurface().name());
