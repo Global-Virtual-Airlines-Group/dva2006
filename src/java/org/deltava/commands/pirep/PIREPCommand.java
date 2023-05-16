@@ -482,8 +482,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("alternates", alts, REQUEST);
 				
 				// List possible tail codes, custom airframes and ETOPS options
-				if ((sbPkg == null) && (acInfo != null) && (acOpts != null))
-					ctx.setAttribute("etopsOV", List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= acOpts.getETOPS().ordinal()).map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
+				if ((sbPkg == null) && (acInfo != null) && (acOpts != null)) {
+					int maxETOPS = Math.min(acOpts.getETOPS().ordinal(), ETOPS.ETOPS330.ordinal());
+					List<ETOPS> etopsRange = List.of(ETOPS.values()).stream().filter(e -> e.ordinal() <= maxETOPS).collect(Collectors.toList());
+					Collections.reverse(etopsRange);
+					ctx.setAttribute("etopsOV", etopsRange.stream().map(e -> ComboUtils.fromString(e.name(), String.valueOf(e.getTime()))).collect(Collectors.toList()), REQUEST);
+				}
 				
 				// Determine if deprture time has already passed
 				DraftFlightReport dfr = (DraftFlightReport) fr;
@@ -835,7 +839,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Calculate ETOPS for route
 				ETOPSResult etopsInfo = ETOPSHelper.classify(route);
 				ctx.setAttribute("filedETOPS", etopsInfo, REQUEST);
-				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime())) {
+				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (acOpts.getETOPS() != ETOPS.INVALID) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime())) {
 					fr.setAttribute(FlightReport.ATTR_ETOPSWARN, true);
 					mapType = MapType.GOOGLEStatic;
 				}
