@@ -119,7 +119,7 @@ class XMLFormatter {
 			rwe.setAttribute("lat", df.format(r.getLatitude()));
 			rwe.setAttribute("lng", df.format(r.getLongitude()));			
 			rwe.setAttribute("width", String.valueOf(r.getWidth()));
-			rwe.setAttribute("hdg", String.valueOf(GeoUtils.normalize(r.getHeading() + r.getMagVar())));
+			rwe.setAttribute("hdg", String.valueOf((int)GeoUtils.normalize(r.getHeading() + r.getMagVar())));
 			rwe.setAttribute("trueHdg", String.valueOf(r.getHeading()));
 			rwe.setAttribute("length", String.valueOf(r.getLength()));
 			rwe.setAttribute("sim", r.getSimulator().name());
