@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 10.3
+ * @version 10.6
  * @since 1.0
  */
 
@@ -158,7 +158,7 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
 			+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?) ");
 		if (showPublic)
 			sqlBuf.append("OR (I.ISPUBLIC=?)");
@@ -166,17 +166,14 @@ public class GetHelp extends DAO {
 		if (activeOnly)
 			sqlBuf.append("AND (I.STATUS<>?) ");
 
-		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON DESC");
+		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, IFNULL(LCD, I.CREATED_ON) DESC");
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
 			ps.setInt(++pos, authorID);
 			ps.setInt(++pos, assigneeID);
-			if (showPublic)
-				ps.setBoolean(++pos, true);
-			if (activeOnly)
-				ps.setInt(++pos, IssueStatus.CLOSED.ordinal());
-
+			if (showPublic) ps.setBoolean(++pos, true);
+			if (activeOnly) ps.setInt(++pos, IssueStatus.CLOSED.ordinal());
 			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -189,8 +186,8 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Issue> getActive() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
+		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY IFNULL(LCD, I.CREATED_ON) DESC")) {
 			ps.setInt(1, IssueStatus.OPEN.ordinal());
 			ps.setInt(2, IssueStatus.ASSIGNED.ordinal());
 			return executeIssue(ps);
