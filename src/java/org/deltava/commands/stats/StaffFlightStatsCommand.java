@@ -1,9 +1,11 @@
 // Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.util.List;
+import java.util.*;
+import java.sql.Connection;
+import java.util.stream.Collectors;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
@@ -32,7 +34,7 @@ public class StaffFlightStatsCommand extends AbstractViewCommand {
 		// Get date range
 		int days = StringUtils.parse(ctx.getParameter("days"), 90);
 
-		// Get grouping / sorting
+		// Get sorting
 		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class); 
 		FlightStatsSort srt = EnumUtils.parse(FlightStatsSort.class, vc.getSortType(), FlightStatsSort.LEGS);
 		vc.setSortType(srt.name());
@@ -40,8 +42,25 @@ public class StaffFlightStatsCommand extends AbstractViewCommand {
 		ctx.setAttribute("dayOpts", DAY_OPTS, REQUEST);
 		
 		try {
-			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			vc.setResults(stdao.getStaffStatistics(days, srt));
+			Connection con = ctx.getConnection();
+			
+			// Load staff members
+			Collection<Pilot> pilots = new ArrayList<Pilot>();
+			GetPilot pdao = new GetPilot(con);
+			pilots.addAll(pdao.getPilotsByRank(Rank.CP));
+			pilots.addAll(pdao.getPilotsByRank(Rank.ACP));
+			
+			// Load stats
+			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
+			Collection<FlightStatsEntry> stats = stdao.getStaffStatistics(days, srt);
+			
+			// Find missing staff members
+			Collection<String> pilotNames = stats.stream().map(FlightStatsEntry::getLabel).collect(Collectors.toSet());
+			pilots.removeIf(p -> pilotNames.contains(p.getName()));
+
+			// Add stats for missing members
+			pilots.stream().map(p -> new FlightStatsEntry(p.getName(), 0, 0, 0)).forEach(stats::add);
+			vc.setResults(stats);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
