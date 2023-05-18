@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 10.2
+ * @version 10.6
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 
 		// Strip out .gz extension
 		String name = navData.getName();
-		if (name.endsWith(".gz") || name.endsWith(".bz2"))
+		if (name.endsWith(".gz") || name.endsWith(".bz2") || name.endsWith(".xz"))
 			name = name.substring(0, name.lastIndexOf('.'));
 
 		// Get the navaid type
