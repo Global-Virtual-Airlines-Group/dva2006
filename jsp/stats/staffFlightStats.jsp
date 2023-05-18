@@ -23,15 +23,14 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="sortExclude" value="${isCharter ? 'AVGHOURS,AVGMILES,OVLEGS,OILEGS' : 'OVLEGS,OILEGS,PIDS'}" scope="page" />
-<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="${sortExclude}" />
+<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="OVLEGS,OILEGS,PIDS,DATE" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="staffstats.do" method="post" validate="return true">
 <view:table cmd="staffstats">
 <tr class="title">
- <td colspan="${noTours ? 6 : 7}" class="left caps"><span class="nophone"><content:airline /> PROGRAM STAFF&nbsp;</span>FLIGHT STATISTICS</td>
+ <td colspan="7" class="left caps"><span class="nophone"><content:airline /> PROGRAM STAFF&nbsp;</span>FLIGHT STATISTICS</td>
  <td colspan="6" class="right">DATE RANGE <el:combo name="days" options="${dayOpts}" value="${daysBack}" onChange="void golgotha.local.updateSort()" /> 
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
