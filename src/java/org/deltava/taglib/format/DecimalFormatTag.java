@@ -1,10 +1,10 @@
-// Copyright 2005, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 /**
  * A JSP tag to support the rendering of formatted decimal values.
  * @author Luke
- * @version 8.6
+ * @version 10.6
  * @since 1.0
  */
 
@@ -19,11 +19,19 @@ public class DecimalFormatTag extends NumberFormatTag {
         super(DEFAULT_PATTERN);
     }
     
-    /**
-     * Resets this tag's data when its lifecycle is complete.
-     */
     @Override
 	public void release() {
         super.release(DEFAULT_PATTERN);
-    }    
+    }
+    
+    /**
+     * Prints the value, handling NaN values gracefully.
+     */
+    @Override
+    protected void printValue() throws Exception {
+    	if (Double.isNaN(_value.doubleValue()))
+    		pageContext.getOut().print('-');
+    	else
+    		super.printValue();
+    }
 }
