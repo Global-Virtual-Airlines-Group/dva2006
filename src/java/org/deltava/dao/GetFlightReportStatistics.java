@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.Tuple;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -412,7 +412,7 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	public Collection<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy) throws DAOException {
 		
-		// Build the SQL statemnet
+		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
@@ -670,20 +670,22 @@ public class GetFlightReportStatistics extends DAO {
 	}
 	
 	/**
-	 * Retrieves flight statistics for Chief Pilots and Assistant Chief Pilots. 
+	 * Retrieves flight statistics for an arbitrary set of Pilots.
+	 * @param IDs a Collection of database IDs 
 	 * @param days the number of days back to aggregate
 	 * @param s the statistics sorting option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getStaffStatistics(int days, FlightStatsSort s) throws DAOException {
+	public Collection<FlightStatsEntry> getStatistics(Collection<Integer> IDs, int days, FlightStatsSort s) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(FlightStatsGroup.PILOT.getSQL());
 		sqlBuf.append(getPilotJoinSQL());
-		sqlBuf.append("AND ((P.RANKING=?) OR (P.RANKING=?)) AND (F.DATE>=DATE_SUB(CURDATE(), INTERVAL ? DAY))");
-		sqlBuf.append("GROUP BY LABEL ORDER BY ");
+		sqlBuf.append("AND (P.ID IN (");
+		sqlBuf.append(StringUtils.listConcat(IDs, ","));
+		sqlBuf.append(")) AND (F.DATE>=DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
@@ -693,9 +695,7 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
 			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
 			ps.setInt(6, FlightStatus.OK.ordinal());
-			ps.setInt(7, Rank.ACP.ordinal());
-			ps.setInt(8, Rank.CP.ordinal());
-			ps.setInt(9, days);
+			ps.setInt(7, days);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);

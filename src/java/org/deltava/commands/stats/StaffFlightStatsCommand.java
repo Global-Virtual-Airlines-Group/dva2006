@@ -44,15 +44,21 @@ public class StaffFlightStatsCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Load staff members
-			Collection<Pilot> pilots = new ArrayList<Pilot>();
+			// Get staff profiles
+			GetStaff sdao = new GetStaff(con);
+			Collection<Integer> staffIDs = sdao.getStaff().stream().map(Staff::getID).collect(Collectors.toSet());
+			
+			// Load Chief Pilots and Assistants
+			Collection<Pilot> pilots = new HashSet<Pilot>();
 			GetPilot pdao = new GetPilot(con);
 			pilots.addAll(pdao.getPilotsByRank(Rank.CP));
 			pilots.addAll(pdao.getPilotsByRank(Rank.ACP));
+			pilots.addAll(pdao.getByID(staffIDs, "PILOTS").values());
+			Collection<Integer> IDs = pilots.stream().map(Pilot::getID).collect(Collectors.toSet());
 			
 			// Load stats
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			Collection<FlightStatsEntry> stats = stdao.getStaffStatistics(days, srt);
+			Collection<FlightStatsEntry> stats = stdao.getStatistics(IDs, days, srt);
 			
 			// Find missing staff members
 			Collection<String> pilotNames = stats.stream().map(FlightStatsEntry::getLabel).collect(Collectors.toSet());
