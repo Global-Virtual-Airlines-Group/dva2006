@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -179,13 +179,12 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(TZInfo tz) throws DAOException {
-		java.time.zone.ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.TZ (CODE, NAME, ABBR, GMT_OFFSET, DST) VALUES (?, ?, ?, ?, ?)")) {
 			ps.setString(1, tz.getID());
 			ps.setString(2, tz.getName());
 			ps.setString(3, tz.getAbbr());
-			ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
-			ps.setBoolean(5, (zr.nextTransition(now) != null));
+			ps.setInt(4, tz.getZone().getRules().getStandardOffset(Instant.now()).getTotalSeconds() / 60);
+			ps.setBoolean(5, tz.hasDST());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -199,13 +198,12 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(String oldID, TZInfo tz) throws DAOException {
-		java.time.zone.ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
 		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.TZ SET CODE=?, NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)")) {
 			ps.setString(1, tz.getID());
 			ps.setString(2, tz.getName());
 			ps.setString(3, tz.getAbbr());
-			ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
-			ps.setBoolean(5, (zr.nextTransition(now) != null));
+			ps.setInt(4, tz.getZone().getRules().getStandardOffset(Instant.now()).getTotalSeconds() / 60);
+			ps.setBoolean(5, tz.hasDST());
 			ps.setString(6, oldID);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
