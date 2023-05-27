@@ -7,11 +7,6 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.*;
-
-import com.vividsolutions.jts.io.*;
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
@@ -34,21 +29,10 @@ public class GetTimeZone extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public void initAll() throws DAOException {
-    	try (PreparedStatement ps = prepareWithoutLimits("SELECT Z.CODE, Z.NAME, Z.ABBR, ST_AsWKT(GTZ.DATA) FROM common.TZ Z LEFT JOIN geoip.TZ GTZ ON (Z.CODE=GTZ.NAME)")) {
-            try (ResultSet rs = ps.executeQuery()) {
-            	WKTReader wr = new WKTReader();
-            	while (rs.next()) {
-            		String geoWKT = rs.getString(4);
-            		if (!StringUtils.isEmpty(geoWKT)) {
-            			Collection<GeoLocation> brdr = new ArrayList<GeoLocation>();
-            			Geometry geo = wr.read(rs.getString(4));
-            			brdr.addAll(GeoUtils.fromGeometry(geo));
-            			TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3), brdr);
-            		} else
-            			TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
-            	}
-			}
-        } catch (SQLException | ParseException se) {
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ"); ResultSet rs = ps.executeQuery()) {
+           	while (rs.next())
+           		TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
+        } catch (SQLException se) {
             throw new DAOException(se);
         }
     }
