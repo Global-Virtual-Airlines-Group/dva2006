@@ -43,7 +43,8 @@ public class AccomplishmentLoader extends TestCase {
 
 		// Load Time Zones
 		GetTimeZone dao = new GetTimeZone(_c);
-		log.info("Loaded " + dao.initAll() + " Time Zones");
+		dao.initAll();
+		log.info("Loaded Time Zones");
 
 		// Load country codes
 		log.info("Loading Country codes");

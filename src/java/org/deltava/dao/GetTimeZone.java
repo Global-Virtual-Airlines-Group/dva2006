@@ -1,18 +1,21 @@
-// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.zone.ZoneRules;
+import java.time.*;
 import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.*;
+
+import com.vividsolutions.jts.io.*;
+import com.vividsolutions.jts.geom.Geometry;
+
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 9.0
+ * @version 10.6
  * @since 1.0
  */
 
@@ -28,21 +31,24 @@ public class GetTimeZone extends DAO {
 
     /**
      * Intiailizes all Time Zones from the database.
-     * @return the number of Time Zones loaded
      * @throws DAOException if a JDBC error occurs
      */
-    public int initAll() throws DAOException {
-    	try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ")) {
-            int rowsLoaded = 0;
+    public void initAll() throws DAOException {
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT Z.CODE, Z.NAME, Z.ABBR, ST_AsWKT(GTZ.DATA) FROM common.TZ Z LEFT JOIN geoip.TZ GTZ ON (Z.CODE=GTZ.NAME)")) {
             try (ResultSet rs = ps.executeQuery()) {
+            	WKTReader wr = new WKTReader();
             	while (rs.next()) {
-            		TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
-            		rowsLoaded++;
+            		String geoWKT = rs.getString(4);
+            		if (!StringUtils.isEmpty(geoWKT)) {
+            			Collection<GeoLocation> brdr = new ArrayList<GeoLocation>();
+            			Geometry geo = wr.read(rs.getString(4));
+            			brdr.addAll(GeoUtils.fromGeometry(geo));
+            			TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3), brdr);
+            		} else
+            			TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
             	}
-            }
-            
-            return rowsLoaded;
-        } catch (SQLException se) {
+			}
+        } catch (SQLException | ParseException se) {
             throw new DAOException(se);
         }
     }
@@ -80,7 +86,7 @@ public class GetTimeZone extends DAO {
     			return tzi;
     		
     		for (TZInfo zoneInfo : allTZ) {
-    			ZoneId zi = zoneInfo.getZone(); ZoneRules zr = zi.getRules();
+    			ZoneId zi = zoneInfo.getZone(); java.time.zone.ZoneRules zr = zi.getRules();
     			if (zr.equals(tz.getRules()))
     				return zoneInfo;
     			

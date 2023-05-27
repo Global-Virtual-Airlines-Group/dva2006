@@ -34,7 +34,7 @@ import org.gvagroup.tomcat.SharedWorker;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.5
+ * @version 10.6
  * @since 1.0
  */
 
@@ -150,7 +150,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			// Load time zones
 			log.info("Loading Time Zones");
 			GetTimeZone dao = new GetTimeZone(c);
-			log.info("Loaded " + dao.initAll() + " Time Zones");
+			dao.initAll();
+			log.info("Loaded Time Zones");
 			
 			// Load country codes
 			log.info("Loading Country codes");
