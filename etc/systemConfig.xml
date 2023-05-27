@@ -130,7 +130,7 @@
 
 	<!-- Default Date/Time data -->
 	<time>
-		<timezone>US/Eastern</timezone>
+		<timezone>America/New_York</timezone>
 		<date_format>MM/dd/yyyy</date_format>
 		<time_format>HH:mm</time_format>
 	</time>
