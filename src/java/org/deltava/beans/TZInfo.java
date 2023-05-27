@@ -18,7 +18,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	/**
 	 * Time Zone for GMT/UTC.
 	 */
-	public static final TZInfo UTC = new TZInfo(ZoneOffset.UTC, "Coordinated Universal Time", "UTC");
+	public static final TZInfo UTC = new TZInfo(ZoneOffset.UTC, "Coordinated Universal Time", "UTC", Collections.emptyList());
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
 
@@ -27,30 +27,47 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	private final String _abbr;
 	private final boolean _hasDST;
 	
+	private final List<GeoLocation> _border = new ArrayList<GeoLocation>();
+	
 	// Init default time zones
 	static {
 		_timeZones.put("UTC", UTC);
 	}
 	
-	private TZInfo(ZoneId tz, String dName, String abbr) {
+	private TZInfo(ZoneId tz, String dName, String abbr, Collection<GeoLocation> border) {
 		super();
 		_tz = tz;
 		_displayName = dName;
 		_abbr = (abbr != null) ? abbr.toUpperCase().trim() : null;
 		_hasDST = (_tz.getRules().nextTransition(Instant.now()) != null);
+		_border.addAll(border);
 	}
 
 	/**
 	 * Creates a Time Zone Wrapper with user-provided name and abbreviation.
 	 * @param tzName A standard Java Time Zone ID
-	 * @param dName If not null, the name to display instead of the JVM name
+	 * @param displayName If not null, the name to display instead of the JVM name
 	 * @param abbr An abbreviation for this time zone
 	 * @return the TZInfo instance created
 	 * @see TimeZone#getAvailableIDs()
 	 * @see TimeZone#getTimeZone(java.lang.String)
 	 */
-	public static TZInfo init(String tzName, String dName, String abbr) {
-		TZInfo tz = new TZInfo(ZoneId.of(tzName), dName, abbr);
+	public static TZInfo init(String tzName, String displayName, String abbr) {
+		return init(tzName, displayName, abbr, Collections.emptyList());
+	}
+
+	/**
+	 * Creates a Time Zone Wrapper with user-provided name and abbreviation.
+	 * @param tzName A standard Java Time Zone ID
+	 * @param displayName If not null, the name to display instead of the JVM name
+	 * @param abbr An abbreviation for this time zone
+	 * @param border a Collection of border GeoLocations
+	 * @return the TZInfo instance created
+	 * @see TimeZone#getAvailableIDs()
+	 * @see TimeZone#getTimeZone(java.lang.String)
+	 */
+	public static TZInfo init(String tzName, String displayName, String abbr, Collection<GeoLocation> border) {
+		TZInfo tz = new TZInfo(ZoneId.of(tzName), displayName, abbr, border);
 		_timeZones.put(tzName, tz);
 		return tz;
 	}
@@ -65,7 +82,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	public static TZInfo get(String tzName) {
 		return _timeZones.get(tzName);
 	}
-
+	
 	@Override
 	public String getComboAlias() {
 		return getID();
@@ -108,6 +125,14 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	public String getAbbr() {
 		return _abbr;
+	}
+	
+	/**
+	 * Returns the border of the Time Zone.
+	 * @return a Collection of GeoLocations
+	 */
+	public Collection<GeoLocation> getBorder() {
+		return Collections.unmodifiableCollection(_border);
 	}
 
 	/**
