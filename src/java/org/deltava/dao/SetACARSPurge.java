@@ -1,21 +1,21 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 3.2
  */
 
 public class SetACARSPurge extends SetACARSLog {
 	
-	private static final Logger log = Logger.getLogger(SetACARSPurge.class);
+	private static final Logger log = LogManager.getLogger(SetACARSPurge.class);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -53,8 +53,7 @@ public class SetACARSPurge extends SetACARSLog {
 			
 			// Get IDs to purge
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCHER FD ON (F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) "
-				+ "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCHER FD ON (F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)")) {
 				ps.setBoolean(1, false);
 				ps.setBoolean(2, false);
 				ps.setInt(3, hours);

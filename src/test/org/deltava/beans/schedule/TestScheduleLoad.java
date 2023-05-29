@@ -8,7 +8,7 @@ import java.time.format.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.TZInfo;
 
@@ -16,7 +16,7 @@ import org.deltava.comparators.AirportComparator;
 
 public class TestScheduleLoad extends TestCase {
 
-	private Logger log = Logger.getLogger(TestScheduleLoad.class);
+	private Logger log = LogManager.getLogger(TestScheduleLoad.class);
 
 	private static Map<String, Airport> _apMap = new HashMap<String, Airport>();
 	private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();
@@ -25,7 +25,7 @@ public class TestScheduleLoad extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 
 		// Load airports
 		if (_apMap.isEmpty()) {
@@ -33,8 +33,7 @@ public class TestScheduleLoad extends TestCase {
 				while (lr.ready()) {
 					StringTokenizer tkns = new StringTokenizer(lr.readLine(), ",");
 					if (tkns.countTokens() != 6) {
-						log.warn(
-								"Invalid Token Count on Line " + lr.getLineNumber() + ", count = " + tkns.countTokens() + ", expected = 6");
+						log.warn("Invalid Token Count on Line " + lr.getLineNumber() + ", count = " + tkns.countTokens() + ", expected = 6");
 					} else {
 						Airport a = new Airport(tkns.nextToken(), tkns.nextToken(), "");
 						String tzName = tkns.nextToken();

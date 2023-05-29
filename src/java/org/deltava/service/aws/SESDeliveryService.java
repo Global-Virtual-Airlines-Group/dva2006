@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.json.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.DeliveryType;
@@ -22,13 +22,13 @@ import org.deltava.service.ServiceException;
 /**
  * A Web Service to handle Amazon SES delivery reports.
  * @author Luke
- * @version 8.5
+ * @version 11.0
  * @since 8.5
  */
 
 public class SESDeliveryService extends SNSReceiverService {
 	
-	private static final Logger log = Logger.getLogger(SESDeliveryService.class);
+	private static final Logger log = LogManager.getLogger(SESDeliveryService.class);
 
 	/**
 	 * Executes the Web Service.

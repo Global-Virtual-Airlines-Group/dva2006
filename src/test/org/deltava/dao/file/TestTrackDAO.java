@@ -1,10 +1,9 @@
 package org.deltava.dao.file;
 
+import java.io.File;
 import java.util.*;
 
 import junit.framework.TestCase;
-
-import org.apache.log4j.*;
 
 import org.deltava.dao.http.*;
 
@@ -14,13 +13,7 @@ public class TestTrackDAO extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 	}
 	
 	public void testNAT() throws Exception {

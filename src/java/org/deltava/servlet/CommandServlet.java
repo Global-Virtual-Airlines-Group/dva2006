@@ -10,7 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.MultipartConfig;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
@@ -28,14 +28,14 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
 @MultipartConfig
 public class CommandServlet extends GenericServlet implements Thread.UncaughtExceptionHandler {
 
-	private static final Logger log = Logger.getLogger(CommandServlet.class);
+	private static final Logger log = LogManager.getLogger(CommandServlet.class);
 
 	private static final int MAX_EXEC_TIME = 20000;
 	private static final String ERR_PAGE = "/jsp/error/error.jsp";
@@ -56,7 +56,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 	private class CommandLogger implements Runnable {
 		
-		private final Logger tlog = Logger.getLogger(CommandLogger.class);
+		private final Logger tlog = LogManager.getLogger(CommandLogger.class);
 		private final int _maxSize;
 
 		CommandLogger(int maxSize) {

@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -23,13 +23,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 2.0
  */
 
 public class TerminalRouteImportCommand extends NavDataImportCommand {
 
-	private static final Logger log = Logger.getLogger(TerminalRouteImportCommand.class);
+	private static final Logger log = LogManager.getLogger(TerminalRouteImportCommand.class);
 	
 	private static final String[] UPLOAD_NAMES = {"psssid.dat", "pssstar.dat"};
 

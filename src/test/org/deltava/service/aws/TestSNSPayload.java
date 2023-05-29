@@ -1,27 +1,20 @@
 package org.deltava.service.aws;
 
-import java.io.InputStream;
+import java.io.*;
 
-import org.apache.log4j.*;
-import org.deltava.crypt.SNSVerifier;
-import org.deltava.util.ConfigLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.json.*;
 
 import junit.framework.TestCase;
+
+import org.deltava.crypt.SNSVerifier;
+import org.deltava.util.ConfigLoader;
 
 public class TestSNSPayload extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 	}
 
 	@SuppressWarnings("static-method")

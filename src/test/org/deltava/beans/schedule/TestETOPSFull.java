@@ -1,12 +1,11 @@
 // Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
 import junit.framework.TestCase;
-
-import org.apache.log4j.*;
 
 import org.deltava.beans.flight.*;
 
@@ -29,7 +28,7 @@ public class TestETOPSFull extends TestCase {
 		_c = DriverManager.getConnection(URL);
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		
 		SystemData.init();
 		GetTimeZone tzdao = new GetTimeZone(_c);

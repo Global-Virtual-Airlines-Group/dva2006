@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.net.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 import org.deltava.commands.HTTPContext;
@@ -17,13 +17,13 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class BrowserTypeFilter extends HttpFilter {
 
-	private static final Logger log = Logger.getLogger(BrowserTypeFilter.class);
+	private static final Logger log = LogManager.getLogger(BrowserTypeFilter.class);
 
 	private String _defaultCode;
 

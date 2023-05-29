@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
@@ -24,13 +24,13 @@ import org.deltava.util.*;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 1.0
  */
 
 public class GetServInfo extends OnlineNetworkDAO {
 
-	private static final Logger log = Logger.getLogger(GetServInfo.class);
+	private static final Logger log = LogManager.getLogger(GetServInfo.class);
 	
 	private final OnlineNetwork _net;
 

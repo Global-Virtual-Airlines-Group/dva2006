@@ -1,7 +1,7 @@
-// Copyright 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
@@ -12,13 +12,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
  * @author Luke
- * @version 8.6
+ * @version 11.0
  * @since 7.0
  */
 
 public class SetTrack extends RedisDAO {
 
-	private static final Logger log = Logger.getLogger(SetTrack.class);
+	private static final Logger log = LogManager.getLogger(SetTrack.class);
 	private static final Cache<CacheableList<GeoLocation>> _casCache = CacheManager.getCollection(GeoLocation.class, "ACARSTrackCAS");
 
 	/**

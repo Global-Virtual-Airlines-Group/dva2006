@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.*;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 
@@ -16,13 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class GetMessageTemplate extends DAO {
 
-	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
+	private static final Logger log = LogManager.getLogger(GetMessageTemplate.class);
 	private static final Cache<MessageTemplate> _cache = CacheManager.get(MessageTemplate.class, "MessageTemplate");
 
 	/**

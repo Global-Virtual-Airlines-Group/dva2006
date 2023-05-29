@@ -1,11 +1,11 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 
 import org.json.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
@@ -16,13 +16,13 @@ import org.deltava.util.EnumUtils;
 /**
  * A Data Access Object to parse a POSCON JSON servinfo feed. 
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 10.1
  */
 
 public class GetPOSCONInfo extends OnlineNetworkDAO {
 	
-	private static final Logger log = Logger.getLogger(GetPOSCONInfo.class);
+	private static final Logger log = LogManager.getLogger(GetPOSCONInfo.class);
 
 	/**
 	 * Creates the Data Access Object.

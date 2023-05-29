@@ -1,10 +1,10 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Helper;
 import org.deltava.beans.navdata.*;
@@ -21,14 +21,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 3.4
  */
 
 @Helper(FlightRoute.class)
 public final class RouteLoadHelper {
 	
-	private static final Logger log = Logger.getLogger(RouteLoadHelper.class);
+	private static final Logger log = LogManager.getLogger(RouteLoadHelper.class);
 	
 	private transient final Connection _c;
 	private final RoutePair _rp;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 import org.deltava.dao.*;
@@ -18,13 +18,13 @@ import org.gvagroup.jdbc.*;
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 2.6
  */
 
 public class SignatureServlet extends GenericServlet {
 
-	private static final Logger log = Logger.getLogger(SignatureServlet.class);
+	private static final Logger log = LogManager.getLogger(SignatureServlet.class);
 
 	/**
 	 * Returns the servlet description.

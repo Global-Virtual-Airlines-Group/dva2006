@@ -1,9 +1,9 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.Helper;
 
 import org.deltava.util.CollectionUtils;
@@ -11,14 +11,14 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class that uses Dijkstra's algorithm to calculate the shortest multi-airport leg.
  * @author Luke
- * @version 8.2
+ * @version 11.0
  * @since 7.5
  */
 
 @Helper(RoutePair.class)
 public final class RoutePathHelper {
 	
-	private static final Logger log = Logger.getLogger(RoutePathHelper.class);
+	private static final Logger log = LogManager.getLogger(RoutePathHelper.class);
 	
 	private final Map<Airport, Collection<ScheduleRoute>> _links = new HashMap<Airport, Collection<ScheduleRoute>>();
 	

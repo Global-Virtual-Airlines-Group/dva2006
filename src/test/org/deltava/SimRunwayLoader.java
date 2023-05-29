@@ -5,7 +5,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
@@ -28,7 +28,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		log = Logger.getLogger(SimRunwayLoader.class);
+		log = LogManager.getLogger(SimRunwayLoader.class);
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");

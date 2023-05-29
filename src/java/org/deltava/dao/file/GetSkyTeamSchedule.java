@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.time.*;
 import java.time.format.*;
 import java.time.temporal.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 10.3
+ * @version 11.-
  * @since 9.0
  */
 
@@ -28,7 +28,7 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd MMM").parseDefaulting(ChronoField.YEAR_OF_ERA, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
 	
-	private static final Logger log = Logger.getLogger(GetSkyTeamSchedule.class);
+	private static final Logger log = LogManager.getLogger(GetSkyTeamSchedule.class);
 	
 	/**
 	 * Initializes the Data Access Object.

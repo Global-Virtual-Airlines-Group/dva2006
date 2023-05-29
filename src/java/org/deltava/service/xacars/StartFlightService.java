@@ -7,7 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class StartFlightService extends XAService {
 	
-	private static final Logger log = Logger.getLogger(StartFlightService.class);
+	private static final Logger log = LogManager.getLogger(StartFlightService.class);
 
 	/**
 	 * Executes the Web Service.

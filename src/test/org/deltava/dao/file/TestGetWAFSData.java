@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.awt.image.*;
 import java.util.concurrent.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -89,16 +89,10 @@ public class TestGetWAFSData extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(GetWAFSData.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(GetWAFSData.class);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-	
 	public void testDownloadFile() throws Exception {
 		
 		File outF = new File("data", "gfs.grib");

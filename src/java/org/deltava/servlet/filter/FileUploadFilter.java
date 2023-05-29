@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import static org.deltava.commands.CommandContext.*;
 
@@ -18,13 +18,13 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class FileUploadFilter extends HttpFilter {
 
-	private static final Logger log = Logger.getLogger(FileUploadFilter.class);
+	private static final Logger log = LogManager.getLogger(FileUploadFilter.class);
 	private static final String CONTENT_TYPE = "multipart/form-data";
 
 	@Override

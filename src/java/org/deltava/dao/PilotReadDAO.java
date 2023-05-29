@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.Restriction;
@@ -22,13 +22,13 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
 abstract class PilotReadDAO extends DAO {
 
-	private static final Logger log = Logger.getLogger(PilotReadDAO.class);
+	private static final Logger log = LogManager.getLogger(PilotReadDAO.class);
 	protected static final Cache<Pilot> _cache = CacheManager.get(Pilot.class, "Pilots");
 
 	/**

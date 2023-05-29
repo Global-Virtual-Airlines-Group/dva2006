@@ -1,4 +1,4 @@
-// Copyright 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 
@@ -23,13 +23,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to receive Amazon SNS messages.
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 8.5
  */
 
 abstract class SNSReceiverService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(SNSReceiverService.class);
+	private static final Logger log = LogManager.getLogger(SNSReceiverService.class);
 	
 	private Pilot _usr;
 

@@ -7,7 +7,7 @@ import java.time.format.*;
 import java.io.StringReader;
 import java.time.temporal.ChronoField;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.input.*;
@@ -23,14 +23,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 2.4
  */
 
 @Helper(OfflineFlight.class)
 public final class OfflineFlightParser {
 	
-	private static final Logger log = Logger.getLogger(OfflineFlightParser.class);
+	private static final Logger log = LogManager.getLogger(OfflineFlightParser.class);
 	
 	// singleton
 	private OfflineFlightParser() {

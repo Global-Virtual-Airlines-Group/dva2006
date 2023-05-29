@@ -1,10 +1,11 @@
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
@@ -21,20 +22,14 @@ public class SimGateMapper extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(SimGateMapper.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(SimGateMapper.class);
 
 		// Load JDBC driver
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		DriverManager.setLoginTimeout(3);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-	
 	public void testMapGates() throws Exception {
 		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
 			c.setAutoCommit(false);

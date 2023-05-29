@@ -8,7 +8,7 @@ import java.time.*;
 import java.time.temporal.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Status;
@@ -41,13 +41,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class PIREPCommand extends AbstractFormCommand {
 	
-	private static final Logger log = Logger.getLogger(PIREPCommand.class);
+	private static final Logger log = LogManager.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
 

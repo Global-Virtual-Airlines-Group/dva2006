@@ -49,7 +49,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.util.ConfigLoader;
 
@@ -59,7 +59,7 @@ import org.deltava.util.ConfigLoader;
  */
 public class BBCodeHandler extends DefaultHandler
 {
-	private static final Logger log = Logger.getLogger(BBCodeHandler.class);
+	private static final Logger log = LogManager.getLogger(BBCodeHandler.class);
 	
 	private final Map<String, BBCode> bbMap = new LinkedHashMap<String, BBCode>();
 	private String tagName = "";

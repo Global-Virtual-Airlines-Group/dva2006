@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.time.Instant;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.VersionInfo;
 
@@ -18,13 +18,13 @@ import org.gvagroup.tile.PNGTile;
 /**
  * A servlet to fetch non-temporal quadtree tiles.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 5.2
  */
 
 public class CustomTileServlet extends TileServlet {
 
-	private static final Logger log = Logger.getLogger(CustomTileServlet.class);
+	private static final Logger log = LogManager.getLogger(CustomTileServlet.class);
 	
 	/**
 	 * Returns the servlet description.

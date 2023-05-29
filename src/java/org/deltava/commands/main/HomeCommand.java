@@ -6,7 +6,7 @@ import java.time.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -25,13 +25,13 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
 public class HomeCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(HomeCommand.class);
+	private static final Logger log = LogManager.getLogger(HomeCommand.class);
 	private final Random RND = new Random();
 	
 	private enum DynContent {

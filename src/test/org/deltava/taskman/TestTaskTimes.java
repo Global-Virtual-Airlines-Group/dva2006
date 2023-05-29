@@ -1,11 +1,10 @@
 package org.deltava.taskman;
 
+import java.io.File;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 import junit.framework.*;
-
-import org.apache.log4j.PropertyConfigurator;
 
 public class TestTaskTimes extends TestCase {
 
@@ -29,7 +28,7 @@ public class TestTaskTimes extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		_t = new MockTask("Test Task");
 		_t.setEnabled(true);
 	}

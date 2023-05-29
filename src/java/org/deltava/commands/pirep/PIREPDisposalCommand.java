@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -30,13 +30,13 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class PIREPDisposalCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(PIREPDisposalCommand.class);
+	private static final Logger log = LogManager.getLogger(PIREPDisposalCommand.class);
 
 	/**
 	 * Executes the command.

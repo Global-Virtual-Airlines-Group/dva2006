@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
@@ -24,13 +24,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for a generated SimBrief flight plan.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 10.3
  */
 
 public class URLCheckService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(URLCheckService.class);
+	private static final Logger log = LogManager.getLogger(URLCheckService.class);
 	
 	/**
 	 * Executes the Web Service.

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2015, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2015, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.*;
 
@@ -25,13 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to serve Terminal Route/Gate/Runway data to ACARS clients.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 10.0
  */
 
 public class XMLClientDataService extends DownloadService {
 	
-	private static final Logger log = Logger.getLogger(XMLClientDataService.class);
+	private static final Logger log = LogManager.getLogger(XMLClientDataService.class);
 	
 	private static final String XML_ZIP = "xmldata.zip";
 	private static final String XML_LEGACY_ZIP = "xmlsidstar.zip";

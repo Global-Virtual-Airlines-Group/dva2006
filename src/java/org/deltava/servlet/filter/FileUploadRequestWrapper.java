@@ -1,24 +1,24 @@
-// Copyright 2005, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.*;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 /**
  * A serlvet request wrapper for File Upload POST requests. This wrapper is created by parsing a multi-part form
  * request; file parts are stored within the request, and this wrapper is used to access the parameter parts by the
  * standard method calls contained within the Java Servlet API.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 
-	private static final Logger log = Logger.getLogger(FileUploadRequestWrapper.class);
+	private static final Logger log = LogManager.getLogger(FileUploadRequestWrapper.class);
 
 	private final Map<String, String[]> _params = new HashMap<String, String[]>();
 

@@ -1,9 +1,8 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import java.io.File;
 import java.util.List;
-
-import org.apache.log4j.*;
 
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -14,15 +13,9 @@ public class TestBeanUtils extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-
 	@SuppressWarnings("static-method")
 	public void testChangedBean() {
 		

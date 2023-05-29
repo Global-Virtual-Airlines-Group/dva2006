@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.json.*;
 
@@ -29,8 +29,8 @@ public class TZGeoJSONLoader extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TZGeoJSONLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TZGeoJSONLoader.class);
 		
 		// Connect to the database
 		Class<?> c = Class.forName("com.mysql.cj.jdbc.Driver");
@@ -38,12 +38,6 @@ public class TZGeoJSONLoader extends TestCase {
 		
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-	
 	public void testLoadZones() throws Exception {
 		
 		File f = new File(String.format("E:\\Temp\\tz\\%s.json", JSON_ROOT));
