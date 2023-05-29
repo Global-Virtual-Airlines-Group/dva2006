@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Person;
 
@@ -13,13 +13,13 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against a file repository. This should typically be used for testing or backup purposes only.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class FileAuthenticator implements Authenticator {
 
-	private static final Logger log = Logger.getLogger(FileAuthenticator.class);
+	private static final Logger log = LogManager.getLogger(FileAuthenticator.class);
 
 	private final Map<String, UserInfo> _users = new HashMap<String, UserInfo>();
 	private final Properties _props = new Properties();

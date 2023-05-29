@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.time.temporal.ChronoField;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
@@ -21,7 +21,7 @@ import com.newrelic.api.agent.*;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
 	static final Integer ANY = Integer.valueOf(-1);
 	private static final String ALL_TIMES = "*";
 
-    protected final Logger log;
+    protected final org.apache.logging.log4j.Logger log;
     
     private String _id;
     private final String _name;
@@ -60,7 +60,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     protected Task(String name, Class<?> loggerClass) {
         super();
         _name = name.trim();
-        log = Logger.getLogger(loggerClass);
+        log = LogManager.getLogger(loggerClass);
     }
     
     /**

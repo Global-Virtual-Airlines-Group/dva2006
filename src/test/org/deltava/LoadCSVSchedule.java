@@ -6,7 +6,7 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
@@ -44,8 +44,8 @@ public class LoadCSVSchedule extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(LoadCSVSchedule.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(LoadCSVSchedule.class);
 		
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		DriverManager.setLoginTimeout(3);
@@ -73,7 +73,6 @@ public class LoadCSVSchedule extends TestCase {
 	protected void tearDown() throws Exception {
 		_c.rollback();
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 	

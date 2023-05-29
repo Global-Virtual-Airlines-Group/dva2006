@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 
@@ -13,13 +13,13 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to switch credentials and impersonate a user.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class UserSwitchCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(UserSwitchCommand.class);
+	private static final Logger log = LogManager.getLogger(UserSwitchCommand.class);
 	
 	/**
 	 * Executes the command.

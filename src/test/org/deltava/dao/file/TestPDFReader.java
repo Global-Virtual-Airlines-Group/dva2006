@@ -2,8 +2,6 @@ package org.deltava.dao.file;
 
 import java.io.*;
 
-import org.apache.log4j.*;
-
 import junit.framework.TestCase;
 
 public class TestPDFReader extends TestCase {
@@ -11,15 +9,9 @@ public class TestPDFReader extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-
 	@SuppressWarnings("static-method")
 	public void testSkyTeamPDF() throws Exception {
 		

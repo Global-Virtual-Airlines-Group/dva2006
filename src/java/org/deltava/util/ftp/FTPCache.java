@@ -1,24 +1,24 @@
-// Copyright 2006, 2007, 2008, 2012, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
 import java.time.Instant;
 import java.util.zip.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.util.*;
 
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class FTPCache {
 
-	private static final Logger log = Logger.getLogger(FTPCache.class);
+	private static final Logger log = LogManager.getLogger(FTPCache.class);
 
 	private final String _cachePath;
 	private String _host;

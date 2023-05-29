@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -16,13 +16,13 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
 public final class SystemData implements Serializable {
 
-	private static final Logger log = Logger.getLogger(SystemData.class);
+	private static final Logger log = LogManager.getLogger(SystemData.class);
 
 	public static final String AUTHENTICATOR = "security.auth.obj";
 	public static final String JDBC_POOL = "jdbc.pool";

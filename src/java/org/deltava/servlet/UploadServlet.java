@@ -1,4 +1,4 @@
-// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.UploadInfo;
 import org.deltava.beans.system.VersionInfo;
@@ -20,14 +20,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to support file uploads.
  * @author Luke
- * @version 8.7
+ * @version 11.0
  * @since 7.5
  */
 
 @MultipartConfig
 public class UploadServlet extends BasicAuthServlet {
 
-	private static final Logger log = Logger.getLogger(UploadServlet.class);
+	private static final Logger log = LogManager.getLogger(UploadServlet.class);
 
 	private static final Cache<UploadInfo> _cache = CacheManager.get(UploadInfo.class, "UploadState");
 

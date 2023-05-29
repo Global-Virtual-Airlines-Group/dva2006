@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.deltava.beans.Person;
 
-import org.apache.log4j.PropertyConfigurator;
+import java.io.File;
 
 public class TestLDAPAuthenticator extends TestCase {
 
@@ -14,19 +14,12 @@ public class TestLDAPAuthenticator extends TestCase {
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
-        PropertyConfigurator.configure("data/log4j.test.properties");
+        System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
         _auth = new LDAPAuthenticator();
         _auth.init(Authenticator.DEFAULT_PROPS_FILE);
         _usr = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=dva,o=sce");
     }
 
-    @Override
-	protected void tearDown() throws Exception {
-        _auth = null;
-        _usr = null;
-        super.tearDown();
-    }
-    
     public void testAuthentication() {
     	_auth.authenticate(_usr, "maddog");
         try {

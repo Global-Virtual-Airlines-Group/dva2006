@@ -1,10 +1,9 @@
 // Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
-
-import org.apache.log4j.*;
 
 import org.deltava.beans.econ.*;
 import org.deltava.beans.schedule.Aircraft;
@@ -28,7 +27,7 @@ public class LoadPassengerCounts extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		SystemData.init();
 		
 		// Load economy data
@@ -60,7 +59,6 @@ public class LoadPassengerCounts extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

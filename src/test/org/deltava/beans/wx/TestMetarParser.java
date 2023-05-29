@@ -5,7 +5,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.flight.ILSCategory;
 
 import junit.framework.TestCase;
@@ -21,8 +21,8 @@ public class TestMetarParser extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestMetarParser.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestMetarParser.class);
 		
 		File f = new File("data/metars.txt");
 		assertTrue(f.exists());
@@ -35,7 +35,6 @@ public class TestMetarParser extends TestCase {
 	protected void tearDown() throws Exception {
 		log.info("Processed to Line #" + lr.getLineNumber());
 		lr.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

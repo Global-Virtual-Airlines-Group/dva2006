@@ -5,7 +5,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.filter.ElementFilter;
@@ -26,7 +26,7 @@ public class MagVarLoader extends BGLLoaderTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		log = Logger.getLogger(NavRegionLoader.class);
+		log = LogManager.getLogger(NavRegionLoader.class);
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");

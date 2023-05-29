@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.util.*;
@@ -6,18 +6,18 @@ import java.util.*;
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 /**
  * A utility class for registering JMX Objects.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 10.2
  */
 
 public class JMXUtils {
 	
-	private static final Logger log = Logger.getLogger(JMXUtils.class);
+	private static final Logger log = LogManager.getLogger(JMXUtils.class);
 	private static final Collection<String> _objNames = new HashSet<String>();
 	
 	// static class

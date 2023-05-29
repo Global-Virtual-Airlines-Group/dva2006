@@ -1,9 +1,9 @@
-// Copyright 2006, 2008, 2009, 2011, 2012, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2011, 2012, 2015, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
@@ -15,13 +15,13 @@ import static org.deltava.commands.HTTPContext.*;
 /**
  * An HTTP session listener to track serialization of User sessions.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class UserStartupListener implements java.io.Serializable, HttpSessionActivationListener {
 
-	private transient static final Logger log = Logger.getLogger(UserStartupListener.class);
+	private transient static final Logger log = LogManager.getLogger(UserStartupListener.class);
 	
 	static transient final UserStartupListener INSTANCE = new UserStartupListener();
 

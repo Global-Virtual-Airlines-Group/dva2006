@@ -1,10 +1,11 @@
 // Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.dao.*;
@@ -26,8 +27,8 @@ public class FuelBurnLoader extends TestCase {
 		super.setUp();
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(FuelBurnLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(FuelBurnLoader.class);
 
 		// Init SystemData
 		SystemData.init();
@@ -52,7 +53,6 @@ public class FuelBurnLoader extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

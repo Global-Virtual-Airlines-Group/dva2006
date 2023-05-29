@@ -1,11 +1,11 @@
-// Copyright 2005, 2007, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.testing.*;
 
@@ -19,13 +19,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to dynamically save examination answers.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class TextService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(TextService.class);
+	private static final Logger log = LogManager.getLogger(TextService.class);
 	
 	/**
 	 * Executes the Web Service.
@@ -95,7 +95,7 @@ public class TextService extends WebService {
 		// Return the number of seconds left
 		long timeRemaining = (ex.getExpiryDate().toEpochMilli() - System.currentTimeMillis()) / 1000;
 		try {
-			ctx.setContentType("text/plain", "UTF-8");
+			ctx.setContentType("text/plain", "utf-8");
 			ctx.print(String.valueOf(timeRemaining));
 			ctx.setExpiry(1);
 			ctx.commit();
@@ -106,19 +106,11 @@ public class TextService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns if the Web Service requires authentication.
-	 * @return TRUE
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;

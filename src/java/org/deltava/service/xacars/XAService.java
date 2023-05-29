@@ -3,7 +3,7 @@ package org.deltava.service.xacars;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.dao.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 
 abstract class XAService extends WebService {
 
-	private static final Logger log = Logger.getLogger(XAService.class);
+	private static final Logger log = LogManager.getLogger(XAService.class);
 
 	/**
 	 * Returns whether this web service's calls are logged.

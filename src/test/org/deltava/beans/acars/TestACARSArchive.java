@@ -4,7 +4,7 @@ package org.deltava.beans.acars;
 import java.io.*;
 import java.util.zip.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -21,8 +21,8 @@ public class TestACARSArchive extends TestCase {
 		super.setUp();
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TestACARSArchive.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestACARSArchive.class);
 
 		File f = new File("data/acars/ACARS Flight O-2006070220.xml");
 		assertTrue(f.exists());
@@ -44,12 +44,6 @@ public class TestACARSArchive extends TestCase {
 		try (InputStream is = new FileInputStream(f)) {
 			is.read(_zip);
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 
 	public void testSHA() throws Exception {

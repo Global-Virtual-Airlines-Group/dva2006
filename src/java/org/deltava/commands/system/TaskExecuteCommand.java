@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.commands.*;
 import org.deltava.taskman.*;
 
@@ -11,13 +11,13 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to manually execute Scheduled Tasks. Unlike the Task Scheduler, which spawns a new Thread to
  * execute a Scheduled Task, this Command will execute the Task using the same Thread.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class TaskExecuteCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(TaskExecuteCommand.class);
+	private static final Logger log = LogManager.getLogger(TaskExecuteCommand.class);
 
 	/**
 	 * Executes the command.

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.naming.*;
 import javax.naming.directory.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.util.*;
@@ -15,13 +15,13 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against an LDAP server.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class LDAPAuthenticator implements Authenticator {
 
-	protected static final Logger log = Logger.getLogger(LDAPAuthenticator.class);
+	protected static final Logger log = LogManager.getLogger(LDAPAuthenticator.class);
 
 	/**
 	 * JNDI environment.

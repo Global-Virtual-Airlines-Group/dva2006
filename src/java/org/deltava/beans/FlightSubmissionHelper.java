@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.acars.*;
@@ -30,14 +30,14 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 10.0
  */
 
 @Helper(FlightReport.class)
 public class FlightSubmissionHelper {
 	
-	private static final Logger log = Logger.getLogger(FlightSubmissionHelper.class);
+	private static final Logger log = LogManager.getLogger(FlightSubmissionHelper.class);
 	private static final int MAX_GATE_DISTANCE = SystemData.getInt("pirep.gate_max_distance", 500);
 	
 	private final FlightReport _fr;

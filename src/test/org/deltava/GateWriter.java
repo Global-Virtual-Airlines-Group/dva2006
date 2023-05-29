@@ -5,7 +5,8 @@ import java.sql.*;
 import java.text.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
+
 import org.jdom2.*;
 
 import org.deltava.beans.navdata.*;
@@ -30,8 +31,8 @@ public class GateWriter extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(GatePIREPLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(GatePIREPLoader.class);
 		
 		SystemData.init();
 		
@@ -52,7 +53,6 @@ public class GateWriter extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

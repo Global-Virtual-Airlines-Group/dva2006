@@ -7,7 +7,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.filter.*;
@@ -76,8 +76,8 @@ public class ChartLoader extends TestCase {
 		assertTrue(xml.exists());
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(ChartLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(ChartLoader.class);
 		
 		// Init SystemData
 		SystemData.init();
@@ -145,7 +145,6 @@ public class ChartLoader extends TestCase {
 	protected void tearDown() throws Exception {
 		_c.close();
 		_doc = null;
-		LogManager.shutdown();
 		super.tearDown();
 	}
 	

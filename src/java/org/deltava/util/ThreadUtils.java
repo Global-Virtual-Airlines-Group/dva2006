@@ -3,20 +3,20 @@ package org.deltava.util;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import java.util.concurrent.Future;
 
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
 public class ThreadUtils {
 	
-	private static final Logger log = Logger.getLogger(ThreadUtils.class);
+	private static final Logger log = LogManager.getLogger(ThreadUtils.class);
 
 	// Singleton
 	private ThreadUtils() {

@@ -1,6 +1,6 @@
 package org.deltava.mail;
 
-import org.apache.log4j.*;
+import java.io.File;
 
 import org.json.*;
 
@@ -21,7 +21,7 @@ public class TestMailerDaemon extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		
 		SystemData.init("org.deltava.util.system.EMailTestSystemDataLoader", true);
 		
@@ -38,7 +38,6 @@ public class TestMailerDaemon extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		ThreadUtils.kill(_pdt, 500);
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

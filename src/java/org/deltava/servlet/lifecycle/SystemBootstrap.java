@@ -7,7 +7,7 @@ import java.sql.*;
 
 import javax.servlet.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.econ.EconomyInfo;
 import org.deltava.beans.flight.ETOPSHelper;
@@ -34,13 +34,13 @@ import org.gvagroup.tomcat.SharedWorker;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class SystemBootstrap implements ServletContextListener, Thread.UncaughtExceptionHandler {
 
-	private static final Logger log = Logger.getLogger(SystemBootstrap.class);
+	private static final Logger log = LogManager.getLogger(SystemBootstrap.class);
 
 	private ConnectionPool _jdbcPool;
 	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();

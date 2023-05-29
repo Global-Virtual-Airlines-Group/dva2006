@@ -1,25 +1,24 @@
-// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in
- * that it checks whether a task should be executed once every 60 seconds.
+ * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in that it checks whether a task should be executed once every 60 seconds.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler {
 
-	private static final Logger log = Logger.getLogger(TaskScheduler.class);
+	private static final Logger log = LogManager.getLogger(TaskScheduler.class);
 
 	private final Map<String, Task> _tasks = new HashMap<String, Task>();
 
@@ -32,9 +31,6 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 		tasks.forEach(t -> addTask(t));
 	}
 	
-	/**
-	 * Returns the thread name.
-	 */
 	@Override
 	public String toString() {
 		return SystemData.get("airline.code") + " Task Scheduler";
@@ -57,9 +53,6 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 		return _tasks.get(id);
 	}
 
-	/**
-	 * Executes the Task Manager.
-	 */
 	@Override
 	public final void run() {
 		log.info("Starting");

@@ -6,7 +6,7 @@ import java.time.Instant;
 
 import javax.activation.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.json.*;
 
@@ -19,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class Mailer {
 
-	private static final Logger log = Logger.getLogger(Mailer.class);
+	private static final Logger log = LogManager.getLogger(Mailer.class);
 
 	private final SMTPEnvelope _env;
 	private final Collection<EMailAddress> _msgTo = new LinkedHashSet<EMailAddress>();

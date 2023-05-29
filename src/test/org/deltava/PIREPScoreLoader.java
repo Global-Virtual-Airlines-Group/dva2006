@@ -1,11 +1,12 @@
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.flight.*;
 import org.deltava.util.TaskTimer;
@@ -27,8 +28,8 @@ public class PIREPScoreLoader extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(SimGateLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(SimGateLoader.class);
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -40,7 +41,6 @@ public class PIREPScoreLoader extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

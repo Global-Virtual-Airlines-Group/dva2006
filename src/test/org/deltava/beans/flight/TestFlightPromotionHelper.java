@@ -1,7 +1,9 @@
 // Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import org.apache.log4j.*;
+import java.io.File;
+
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -26,8 +28,8 @@ public class TestFlightPromotionHelper extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TestFlightPromotionHelper.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestFlightPromotionHelper.class);
 		log.info("Starting");
 		
 		// Load airports

@@ -1,10 +1,10 @@
-// Copyright 2013, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.wx.*;
 import org.deltava.dao.DAOException;
@@ -17,7 +17,7 @@ import ucar.unidata.io.RandomAccessFile;
  * A Data Access Object to load WAFS GRIB2 winds aloft data. The field format for the GRIB file is located
  * at {@link "https://www.nco.ncep.noaa.gov/pmb/products/gfs/gfs.t00z.pgrb2.0p25.f000.shtml"}
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 5.2
  */
 
@@ -27,7 +27,7 @@ public class GetWAFSData extends DAO implements Closeable {
 	// LOW(850, 5000), MIDLOW(650, 12000), MID(500, 18000), LOJET(300, 30000), JET(250, 34000), HIGH(200, 38600);
 	private static final int[][] RECORDS = {{462, 468, 469}, {398, 404, 405}, {350, 356, 357}, {286, 292, 293}, {270, 276, 277}, {254, 260, 261}};
 	
-	private static final Logger log = Logger.getLogger(GetWAFSData.class);
+	private static final Logger log = LogManager.getLogger(GetWAFSData.class);
 
 	private final String _fileName;
 	private RandomAccessFile _raf;

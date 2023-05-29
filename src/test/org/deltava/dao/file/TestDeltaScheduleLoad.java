@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -32,8 +32,8 @@ public class TestDeltaScheduleLoad extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TestDeltaScheduleLoad.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestDeltaScheduleLoad.class);
 
 		SystemData.init();
 		
@@ -61,7 +61,6 @@ public class TestDeltaScheduleLoad extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 	

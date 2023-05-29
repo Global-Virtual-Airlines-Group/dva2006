@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.*;
@@ -27,13 +27,13 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 6.3
+ * @version 11.0
  * @since 1.0
  */
 
 public class LibraryServlet extends GenericServlet {
 
-	private static final Logger log = Logger.getLogger(LibraryServlet.class);
+	private static final Logger log = LogManager.getLogger(LibraryServlet.class);
 	private static final int BUFFER_SIZE = 102400;
 
 	/**

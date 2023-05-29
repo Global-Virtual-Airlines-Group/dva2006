@@ -1,12 +1,13 @@
 // Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -31,8 +32,8 @@ public class GatePIREPLoader extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(GatePIREPLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(GatePIREPLoader.class);
 		
 		SystemData.init();
 		
@@ -56,7 +57,6 @@ public class GatePIREPLoader extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

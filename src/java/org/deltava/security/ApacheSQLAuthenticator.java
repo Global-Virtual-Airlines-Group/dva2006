@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
 import java.util.Base64;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.crypt.MessageDigester;
@@ -13,13 +13,13 @@ import org.deltava.util.StringUtils;
 /**
  * An Authenticator to authenticate users against Apache2-style database tables.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class ApacheSQLAuthenticator extends SQLAuthenticator {
 
-	private static final Logger log = Logger.getLogger(ApacheSQLAuthenticator.class);
+	private static final Logger log = LogManager.getLogger(ApacheSQLAuthenticator.class);
 
 	/**
 	 * Authenticates a user by validating the password against the database.

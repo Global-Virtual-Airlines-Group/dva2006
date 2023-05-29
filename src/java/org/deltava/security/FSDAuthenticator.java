@@ -1,11 +1,11 @@
-// Copyright 2007, 2009, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.servinfo.Rating;
@@ -15,13 +15,13 @@ import org.deltava.util.*;
 /**
  * An Authenticator to read/write from FSD certificate files.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class FSDAuthenticator implements Authenticator {
 
-	private static final Logger log = Logger.getLogger(FSDAuthenticator.class);
+	private static final Logger log = LogManager.getLogger(FSDAuthenticator.class);
 
 	private final Properties _props = new Properties();
 	private File _certFile;

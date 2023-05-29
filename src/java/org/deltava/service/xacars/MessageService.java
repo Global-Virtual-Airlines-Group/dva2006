@@ -7,7 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.acars.XAFlightInfo.ClimbPhase;
@@ -25,7 +25,7 @@ import org.deltava.util.*;
 
 public class MessageService extends XAService {
 
-	private static final Logger log = Logger.getLogger(MessageService.class);
+	private static final Logger log = LogManager.getLogger(MessageService.class);
 	
 	/*
 	 * XACARS message types.

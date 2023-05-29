@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.deltava.beans.Person;
 
-import org.apache.log4j.PropertyConfigurator;
+import java.io.File;
 
 public class TestFileAuthenticator extends TestCase {
 
@@ -13,13 +13,7 @@ public class TestFileAuthenticator extends TestCase {
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
-        PropertyConfigurator.configure("etc/log4j.test.properties");
-    }
-    
-    @Override
-	protected void tearDown() throws Exception {
-        _auth = null;
-        super.tearDown();
+        System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
     }
     
     public void testAuthentication() {

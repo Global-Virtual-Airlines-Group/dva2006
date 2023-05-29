@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.MultipartConfig;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import com.newrelic.api.agent.NewRelic;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	// Web services realm
 	private static final String WS_REALM = "\"%A Web Services\"";
 
-	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
+	private static final Logger log = LogManager.getLogger(WebServiceServlet.class);
 	private final Map<String, WebService> _svcs = new HashMap<String, WebService>();
 
 	/**

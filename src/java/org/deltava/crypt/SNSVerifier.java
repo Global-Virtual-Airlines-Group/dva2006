@@ -7,7 +7,7 @@ import java.util.*;
 import java.security.Signature;
 import java.security.cert.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.json.JSONObject;
 
 import org.deltava.util.StringUtils;
@@ -15,13 +15,13 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to verify Amazon SNS messages.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 8.5
  */
 
 public class SNSVerifier {
 
-	private static final Logger log = Logger.getLogger(SNSVerifier.class);
+	private static final Logger log = LogManager.getLogger(SNSVerifier.class);
 	
 	private static final Map<String, X509Certificate > _certs = new HashMap<String, X509Certificate>();
 	

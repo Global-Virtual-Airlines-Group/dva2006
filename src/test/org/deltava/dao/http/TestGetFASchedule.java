@@ -8,7 +8,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -26,8 +26,8 @@ public class TestGetFASchedule extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestGetFASchedule.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestGetFASchedule.class);
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
