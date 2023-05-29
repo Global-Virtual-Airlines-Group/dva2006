@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
@@ -44,7 +43,9 @@
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20230227.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.23.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.51.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.60.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.20.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.20.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -324,7 +324,7 @@
 		<!-- Upload the config file to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="etc" includes="*.*">
-				<exclude name="log4j.test.properties" />
+				<exclude name="log4j2-test.xml" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
@@ -537,7 +537,7 @@
 			<!-- Sample configuration files with credentials -->
 			<tarfileset uid="500" group="gva" dir="${basedir}/etc/sample" prefix="etc/prod">
 				<include name="auth.properties" />
-				<include name="log4j.properties" />
+				<include name="log4j2.xml" />
 				<include name="systemConfig.xml" />
 			</tarfileset>
 		</tar>
@@ -584,7 +584,7 @@
 
 	    <!-- Compile the code -->
 	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
-	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.18" target="1.18" compiler="modern" fork="true">
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.20" target="1.20" compiler="modern" fork="true">
 	    	<include name="org/deltava/acars/*.java" />
 	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	        <classpath id="javac.classpath">
@@ -601,7 +601,7 @@
 		<manifest file="${java.io.tmpdir}/build/tracktile/META-INF/MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<attribute name="Main-Class" value="org.deltava.acars.PlotGlobalMap" />
-			<attribute name="Class-Path" value="log4j-1.2.17.jar jdom-2.0.6.1.jar mysql-connector-java-8.0.29-bin.jar golgotha.jar golgotha_ipc-2.33.jar" />
+			<attribute name="Class-Path" value="log4j-core-2.20.jar log4j-api-2.20.jar jdom-2.0.6.1.jar mysql-connector-java-8.0.32-bin.jar golgotha.jar golgotha_ipc-2.60.jar" />
 		</manifest>
 
 		<!-- Compress the base Java classes into a single JAR file -->
@@ -611,7 +611,7 @@
 		<mkdir dir="D:\Temp\etc" />
 		<copy file="${jar.tracks}" todir="D:/temp" />
 		<copy file="${jar.core}" todir="D:/temp" />
-		<copy file="etc/log4j.test.properties" tofile="D:/temp/etc/log4j.properties" />
+		<copy file="etc/log4j2-test.xml" tofile="D:/temp/etc/log4j2.xml" />
 		<copy file="etc/systemConfig.xml" todir="D:/temp/etc" />
 		<copy todir="D:/temp">
 			<fileset dir="lib/deploy">
