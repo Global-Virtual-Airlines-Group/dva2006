@@ -625,12 +625,6 @@
 		<roles>Schedule,Developer,Operations</roles>
 	</command>
 
-	<command id="extchartrefresh">
-		<name>AirCharts Chart Refresh</name>
-		<class>org.deltava.commands.schedule.ExternalChartRefreshCommand</class>
-		<roles>Operations,Schedule,Developer</roles>
-	</command>
-
 	<command id="routemap">
 		<name>Schedule Route Map</name>
 		<class>org.deltava.commands.schedule.RouteMapCommand</class>
@@ -2119,25 +2113,6 @@
 		<roles>Operations,Developer</roles>
 	</command>
 
-
-	<!-- MVS Administration Commmands -->
-	<command id="mvschannel">
-		<name>MVS Channel</name>
-		<class>org.deltava.commands.mvs.ChannelCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="mvschannels">
-		<name>MVS Channel List</name>
-		<class>org.deltava.commands.mvs.ChannelListCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="mvschanneldelete">
-		<name>MVS Channel Delete</name>
-		<class>org.deltava.commands.mvs.ChannelDeleteCommand</class>
-		<roles>Tech</roles>
-	</command>
 
 	<!-- Help Desk commands -->
 	<command id="helpdesk">
