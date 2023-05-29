@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.time.Instant;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.Compression;
 import org.deltava.beans.acars.*;
 
@@ -27,7 +27,7 @@ import org.deltava.util.StringUtils;
 
 public class TrackMetadataUpdateService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(ArchiveMetadata.class);
+	private static final Logger log = LogManager.getLogger(ArchiveMetadata.class);
 
 	/**
 	 * Executes the Web Service.

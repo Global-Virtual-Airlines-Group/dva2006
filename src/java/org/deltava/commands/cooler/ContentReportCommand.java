@@ -1,10 +1,10 @@
- // Copyright 2006, 2007, 2008, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007, 2008, 2011, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
@@ -21,13 +21,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 7.4
+ * @version 11.0
  * @since 1.0
  */
 
 public class ContentReportCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(ContentReportCommand.class);
+	private static final Logger log = LogManager.getLogger(ContentReportCommand.class);
 
 	/**
      * Executes the command.

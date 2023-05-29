@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.commands.*;
@@ -19,13 +19,13 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class SuspendUserCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(SuspendUserCommand.class);
+	private static final Logger log = LogManager.getLogger(SuspendUserCommand.class);
 
 	/**
 	 * Execute the command.

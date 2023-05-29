@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.time.Instant;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
@@ -32,13 +32,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
 public class RegisterCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(RegisterCommand.class);
+	private static final Logger log = LogManager.getLogger(RegisterCommand.class);
 
 	/**
 	 * Executes the command.

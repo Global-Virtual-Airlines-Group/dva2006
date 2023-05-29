@@ -1,12 +1,13 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
+import java.io.File;
 import java.sql.*;
 import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -23,8 +24,8 @@ public class TestGetFARoutes extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestGetFARoutes.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestGetFARoutes.class);
 		
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");

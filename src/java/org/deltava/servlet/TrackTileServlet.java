@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.VersionInfo;
 
@@ -18,13 +18,13 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 5.0
  */
 
 public class TrackTileServlet extends TileServlet {
 
-	private static final Logger log = Logger.getLogger(TrackTileServlet.class);
+	private static final Logger log = LogManager.getLogger(TrackTileServlet.class);
 	
 	/**
 	 * Returns the servlet description.

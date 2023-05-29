@@ -1,4 +1,4 @@
-// Copyright 2017, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021, 2023, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.time.Instant;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSError;
@@ -28,13 +28,13 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 7.3
  */
 
 public class AttachmentServlet extends DownloadServlet {
 	
-	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
+	private static final Logger log = LogManager.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
 		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs"), EVENT("ebrief", "Online Event Briefings"), HELPDESK("helpdesk", "Help Desk Issues"), TOUR("tbrief", "Flight Tour Briefings", false);

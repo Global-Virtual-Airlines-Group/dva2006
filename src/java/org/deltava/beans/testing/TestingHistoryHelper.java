@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -18,14 +18,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 @Helper(Test.class)
 public final class TestingHistoryHelper implements Cacheable {
 	
-	private transient static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
+	private transient static final Logger log = LogManager.getLogger(TestingHistoryHelper.class);
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private transient static final int CP_STAGE = 6;

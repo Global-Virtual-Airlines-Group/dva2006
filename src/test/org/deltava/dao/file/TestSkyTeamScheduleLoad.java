@@ -9,7 +9,7 @@ import java.util.stream.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 
 public class TestSkyTeamScheduleLoad extends TestCase {
 	
-	private static final Logger log = Logger.getLogger(TestSkyTeamScheduleLoad.class);
+	private static final Logger log = LogManager.getLogger(TestSkyTeamScheduleLoad.class);
 	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
 	
@@ -30,7 +30,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		SystemData.init();
 		
 		// Connect to the database

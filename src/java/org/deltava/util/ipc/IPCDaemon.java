@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.stats.*;
 
@@ -19,18 +19,14 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class IPCDaemon implements Runnable {
 
-	private static final Logger log = Logger.getLogger(IPCDaemon.class);
+	private static final Logger log = LogManager.getLogger(IPCDaemon.class);
 	
-	/**
-	 * Returns the thread name.
-	 * @return the tread name
-	 */
 	@Override
 	public String toString() {
 		return SystemData.get("airline.code") + " IPC Daemon";

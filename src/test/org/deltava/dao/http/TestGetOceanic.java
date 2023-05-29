@@ -1,9 +1,8 @@
 package org.deltava.dao.http;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
-
-import org.apache.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -14,13 +13,7 @@ public class TestGetOceanic extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 	}
 
 	@SuppressWarnings("static-method")

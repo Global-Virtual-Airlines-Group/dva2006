@@ -1,8 +1,9 @@
 package org.deltava.acars;
 
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.util.StringUtils;
 
@@ -16,8 +17,8 @@ public class PlotGlobalMap extends PlotMap {
 	
 	public static void main(String[] args) throws Exception {
 		// Init Log4j
-		PropertyConfigurator.configure("log4j.properties");
-		log = Logger.getLogger(PlotMap.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(PlotMap.class);
 		
 		setUp();
 		

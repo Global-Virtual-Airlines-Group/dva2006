@@ -10,7 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
@@ -29,7 +29,7 @@ import org.deltava.util.*;
 
 public class EarthMapPlanService extends GoogleEarthService {
 	
-	private static final Logger log = Logger.getLogger(EarthMapPlanService.class);
+	private static final Logger log = LogManager.getLogger(EarthMapPlanService.class);
 
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.

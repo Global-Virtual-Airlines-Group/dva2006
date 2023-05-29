@@ -1,5 +1,6 @@
 package org.deltava.taglib;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
@@ -12,7 +13,6 @@ import org.jdom2.input.*;
 import junit.framework.TestCase;
 import com.kizna.servletunit.*;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.deltava.beans.Person;
 import org.deltava.commands.HTTPContext;
 import org.deltava.servlet.filter.CustomRequestWrapper;
@@ -52,7 +52,7 @@ public class AbstractTagTestCase extends TestCase {
    @Override
    protected void setUp() throws Exception {
       super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
+      System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
       SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
       
       _rootReq = new HttpServletRequestSimulatorHelper();

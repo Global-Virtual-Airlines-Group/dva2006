@@ -9,7 +9,7 @@ import java.util.zip.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -32,13 +32,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 2.4
  */
 
 public class OfflineFlightCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(OfflineFlightCommand.class);
+	private static final Logger log = LogManager.getLogger(OfflineFlightCommand.class);
 
 	/**
 	 * Executes the command.

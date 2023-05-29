@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.deltava.beans.Person;
 
-import org.apache.log4j.PropertyConfigurator;
+import java.io.File;
 
 public class TestMigrationAuthenticator extends TestCase {
 
@@ -13,15 +13,9 @@ public class TestMigrationAuthenticator extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		_auth = new MigrationAuthenticator();
 		_auth.init(Authenticator.DEFAULT_PROPS_FILE);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		_auth = null;
-		super.tearDown();
 	}
 
 	public void testSrcAuthenticationAndCopy() {

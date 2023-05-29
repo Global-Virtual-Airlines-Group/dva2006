@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
@@ -22,13 +22,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 7.5
+ * @version 11.0
  * @since 2.3
  */
 
 public class RoutePlotService extends MapPlotService {
 	
-	private static final Logger log = Logger.getLogger(RoutePlotService.class);
+	private static final Logger log = LogManager.getLogger(RoutePlotService.class);
 
 	/**
 	 * Executes the Web Service.

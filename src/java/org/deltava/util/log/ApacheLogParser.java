@@ -1,28 +1,27 @@
-// Copyright 2005, 2009, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import java.io.*;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.stats.HTTPStatistics;
 
 /**
- * A Log Parser for Apache 2.0 common access logs. <i>This requires that the log be in the Apache 2.x 
- * format &quot;%h %u %t \"%r\" %>s %B %D&quot;.</i>
+ * A Log Parser for Apache 2.0 common access logs. <i>This requires that the log be in the Apache 2.x format &quot;%h %u %t \"%r\" %>s %B %D&quot;.</i>
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class ApacheLogParser implements LogParser {
    
-   private static final Logger log = Logger.getLogger(ApacheLogParser.class);
+   private static final Logger log = LogManager.getLogger(ApacheLogParser.class);
    
    private class LogTokenizer {
       
-      private String _entry;
+      private final String _entry;
       private int _pos;
       
       public LogTokenizer(String entry) {

@@ -1,10 +1,10 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -17,14 +17,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 1.0
  */
 
 @Helper(Course.class)
 public final class AcademyHistoryHelper {
 	
-	private static final Logger log = Logger.getLogger(AcademyHistoryHelper.class);
+	private static final Logger log = LogManager.getLogger(AcademyHistoryHelper.class);
 
 	private final Pilot _p; 
 	private boolean _debugLog;

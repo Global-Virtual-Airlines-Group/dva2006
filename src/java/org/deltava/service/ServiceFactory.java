@@ -1,10 +1,10 @@
-// Copyright 2005, 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
@@ -14,13 +14,13 @@ import org.deltava.util.ConfigLoader;
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 8.1
+ * @version 11.0
  * @since 1.0
  */
 
 public class ServiceFactory {
 
-	private static final Logger log = Logger.getLogger(ServiceFactory.class);
+	private static final Logger log = LogManager.getLogger(ServiceFactory.class);
 
 	// Private constructor
 	private ServiceFactory() {

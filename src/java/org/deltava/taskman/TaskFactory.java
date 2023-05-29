@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2009, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.input.*;
@@ -14,13 +14,13 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class TaskFactory {
    
-   private static final Logger log = Logger.getLogger(TaskFactory.class);
+   private static final Logger log = LogManager.getLogger(TaskFactory.class);
 
    // singleton
    private TaskFactory() {

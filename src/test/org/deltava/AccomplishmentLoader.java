@@ -1,9 +1,10 @@
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -28,8 +29,8 @@ public class AccomplishmentLoader extends TestCase {
 		super.setUp();
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(RunwayLoader.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(RunwayLoader.class);
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -70,7 +71,6 @@ public class AccomplishmentLoader extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

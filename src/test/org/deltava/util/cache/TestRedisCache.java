@@ -1,15 +1,16 @@
 package org.deltava.util.cache;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.*;
 
 import junit.framework.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.Airline;
-import org.deltava.util.RedisUtils;
-import org.deltava.util.TaskTimer;
+
+import org.deltava.util.*;
 
 public class TestRedisCache extends TestCase {
 	
@@ -35,8 +36,8 @@ public class TestRedisCache extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestRedisCache.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestRedisCache.class);
 		RedisUtils.init("192.168.0.2", 6379, 2, "JUnit");
 		_cache = new RedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);

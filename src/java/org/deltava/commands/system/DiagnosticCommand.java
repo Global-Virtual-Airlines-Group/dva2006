@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.time.*;
 import java.time.format.TextStyle;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.CommandStats;
 import org.deltava.beans.stats.HTTPCompressionInfo;
@@ -30,13 +30,13 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 1.0
  */
 
 public class DiagnosticCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(DiagnosticCommand.class);
+	private static final Logger log = LogManager.getLogger(DiagnosticCommand.class);
 
 	/**
 	 * Executes the command.

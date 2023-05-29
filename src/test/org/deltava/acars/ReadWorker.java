@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.acars.RouteEntry;
 
@@ -27,7 +27,7 @@ class ReadWorker implements Runnable, Comparable<ReadWorker> {
 		_work = work;
 		_gt = out;
 		_filter = f;
-		log = Logger.getLogger(ReadWorker.class.getPackage().getName() + "." + toString());
+		log = LogManager.getLogger(ReadWorker.class.getPackage().getName() + "." + toString());
 	}
 
 	@Override

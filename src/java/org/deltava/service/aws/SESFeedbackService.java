@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.json.*;
 
@@ -23,13 +23,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Amazone SES feedback SNS messages.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 8.5
  */
 
 public class SESFeedbackService extends SNSReceiverService {
 
-	private static final Logger log = Logger.getLogger(SESFeedbackService.class);
+	private static final Logger log = LogManager.getLogger(SESFeedbackService.class);
 
 	/**
 	 * Executes the Web Service.

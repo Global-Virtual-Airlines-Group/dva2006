@@ -10,7 +10,7 @@ import java.sql.Connection;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
@@ -25,13 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class LoginCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(LoginCommand.class);
+	private static final Logger log = LogManager.getLogger(LoginCommand.class);
 
 	/**
 	 * Execute the command.

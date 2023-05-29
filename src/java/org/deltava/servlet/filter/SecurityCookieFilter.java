@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
 import org.deltava.crypt.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 
 public class SecurityCookieFilter extends HttpFilter {
 
-	private static final Logger log = Logger.getLogger(SecurityCookieFilter.class);
+	private static final Logger log = LogManager.getLogger(SecurityCookieFilter.class);
 	
 	private static final String OTHERADDR_ATTR_NAME = "otherIPTypeAddr";
 	

@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.concurrent.*;
 
 import org.json.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 import org.deltava.beans.wx.*;
@@ -22,14 +22,14 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to display TWC weather tile data.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 8.0
  */
 
 @Deprecated
 public class SeriesListService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(SeriesListService.class);
+	private static final Logger log = LogManager.getLogger(SeriesListService.class);
 	
 	private static final Cache<SeriesList> _cache = CacheManager.get(SeriesList.class, "TWCSeriesList");
 	private static final String KEY = "$TWCSeriesList";

@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016, 2017, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2017, 2018, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 5.0
  */
 
@@ -34,7 +34,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14"});
 	
 	private class ChartLoader implements Runnable {
-		protected final Logger log = Logger.getLogger(ChartLoader.class);
+		protected final Logger log = LogManager.getLogger(ChartLoader.class);
 		private final ExternalChart _ec;
 		private final BlockingQueue<ExternalChart> _out;
 		
@@ -57,7 +57,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 	}
 	
 	private class ChartSizer implements Runnable {
-		protected final Logger log = Logger.getLogger(ChartSizer.class);
+		protected final Logger log = LogManager.getLogger(ChartSizer.class);
 		private final ExternalChart _ec;
 		private final BlockingQueue<ExternalChart> _out;
 		
@@ -267,6 +267,8 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
 			int poolSize = SystemData.getInt("schedule.chart.threads", 8);
 			int queueSize = 0; TaskTimer tt = new TaskTimer(); 
+			
+			// TODO: Use Virtual Threads
 			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
 				exec.allowCoreThreadTimeOut(true);
 			

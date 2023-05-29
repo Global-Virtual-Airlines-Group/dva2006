@@ -1,11 +1,11 @@
-// Copyright 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 
 import org.json.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
@@ -17,13 +17,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 9.0
  */
 
 public class GetVATSIMInfo extends OnlineNetworkDAO {
 
-	private static final Logger log = Logger.getLogger(GetVATSIMInfo.class);
+	private static final Logger log = LogManager.getLogger(GetVATSIMInfo.class);
 	
 	/**
 	 * Creates the Data Access Object.

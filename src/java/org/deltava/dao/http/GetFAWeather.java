@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.time.Instant;
 
 import org.json.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
@@ -20,13 +20,13 @@ import org.deltava.util.cache.*;
 /**
  * Loads weather data from FlightAware.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 2.2
  */
 
 public class GetFAWeather extends FlightAwareDAO {
 	
-	private static final Logger log = Logger.getLogger(GetFAWeather.class);
+	private static final Logger log = LogManager.getLogger(GetFAWeather.class);
 	
 	private static final Cache<METAR> _wxCache = CacheManager.get(METAR.class, "FlightAwareMETAR");
 	private static final Cache<TAF> _fCache = CacheManager.get(TAF.class, "FlightAwareTAF");

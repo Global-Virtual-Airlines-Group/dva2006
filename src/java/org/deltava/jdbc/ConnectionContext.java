@@ -1,9 +1,9 @@
-// Copyright 2007, 2009, 2010, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.util.system.SystemData;
@@ -13,13 +13,13 @@ import org.gvagroup.jdbc.*;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public abstract class ConnectionContext {
 
-	private static final Logger log = Logger.getLogger(ConnectionContext.class);
+	private static final Logger log = LogManager.getLogger(ConnectionContext.class);
 	
 	private final ConnectionPool _pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 	private Connection _con;

@@ -6,7 +6,7 @@ import java.net.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 2.2
  */
 
 public class GetNOAAWeather extends DAO {
 
-	private static final Logger log = Logger.getLogger(GetNOAAWeather.class);
+	private static final Logger log = LogManager.getLogger(GetNOAAWeather.class);
 
 	private static String getURL(String base, int hour) throws DAOException {
 		try {

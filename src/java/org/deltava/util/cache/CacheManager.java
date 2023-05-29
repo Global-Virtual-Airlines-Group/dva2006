@@ -4,20 +4,20 @@ package org.deltava.util.cache;
 import java.util.*;
 import java.util.concurrent.locks.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.gvagroup.common.*;
 
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 5.0
  */
 
 public class CacheManager {
 
-	private static final Logger log = Logger.getLogger(CacheManager.class);
+	private static final Logger log = LogManager.getLogger(CacheManager.class);
 	
 	private static final ReentrantReadWriteLock _rw = new ReentrantReadWriteLock(true);
 	private static final ReentrantReadWriteLock.ReadLock _r = _rw.readLock();

@@ -1,11 +1,11 @@
-// Copyright 2004, 2007, 2012, 2015, 2016, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012, 2015, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
 import java.time.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class MessageContext {
     
-    private static final Logger log = Logger.getLogger(MessageContext.class);
+    private static final Logger log = LogManager.getLogger(MessageContext.class);
 
     private final AirlineInformation _aInfo;
     

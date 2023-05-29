@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.commands.*;
@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class PasswordResetCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(PasswordResetCommand.class);
+	private static final Logger log = LogManager.getLogger(PasswordResetCommand.class);
 
 	/**
 	 * Executes the command.

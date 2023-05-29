@@ -8,7 +8,7 @@ import java.util.zip.GZIPInputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.RouteEntry;
@@ -101,8 +101,8 @@ public class CalculateStartEnd extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(CalculateStartEnd.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(CalculateStartEnd.class);
 		
 		SystemData.init();
 		
@@ -116,12 +116,6 @@ public class CalculateStartEnd extends TestCase {
 			GetAirline aldao = new GetAirline(c);
 			SystemData.add("airlines", aldao.getAll());
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 
 	public void testCalculateLocations() throws Exception {

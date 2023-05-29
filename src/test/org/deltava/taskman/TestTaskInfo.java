@@ -2,7 +2,7 @@ package org.deltava.taskman;
 
 import junit.framework.*;
 
-import org.apache.log4j.PropertyConfigurator;
+import java.io.File;
 
 import org.hansel.CoverageDecorator;
 
@@ -29,7 +29,7 @@ public class TestTaskInfo extends TestCase {
     @Override
 	protected void setUp() throws Exception {
     	super.setUp();
-    	PropertyConfigurator.configure("data/log4j.test.properties");
+    	System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
     	_task = new MockTask("Test Task");
     }
 

@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
@@ -25,13 +25,13 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public class TransferAirlineCommand extends AbstractCommand {
 
-	public static final Logger log = Logger.getLogger(TransferAirlineCommand.class);
+	public static final Logger log = LogManager.getLogger(TransferAirlineCommand.class);
 
 	/**
 	 * Execute the command.

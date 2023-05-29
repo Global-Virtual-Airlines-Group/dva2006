@@ -3,8 +3,6 @@ package org.deltava.service.simfdr;
 import java.io.*;
 import java.sql.*;
 
-import org.apache.log4j.*;
-
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.SimFDRFlightReport;
 
@@ -23,8 +21,7 @@ public class TestOfflineFlightParser extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		SystemData.init();
 		
 		// Connect to the database
@@ -37,12 +34,6 @@ public class TestOfflineFlightParser extends TestCase {
 			GetAirline aldao = new GetAirline(c);
 			SystemData.add("airlines", aldao.getAll());
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 
 	@SuppressWarnings("static-method")

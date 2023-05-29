@@ -1,9 +1,11 @@
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.navdata.Navaid;
 import org.deltava.util.*;
 
@@ -20,8 +22,8 @@ public class TestDBQuerySpeed extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestDBQuerySpeed.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestDBQuerySpeed.class);
 		
         Properties systemProperties = System.getProperties();
         systemProperties.put("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.Log4JLogger");
@@ -31,12 +33,6 @@ public class TestDBQuerySpeed extends TestCase {
 		assertNotNull(c);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
-	}
-	
 	private abstract class TimedWorker extends Thread {
 		protected final List<String> _codes = new ArrayList<String>();
 		protected long totalTime;

@@ -8,7 +8,7 @@ import java.time.*;
 import java.sql.Connection;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 
 public class XPIREPService extends XAService {
 	
-	private static final Logger log = Logger.getLogger(XPIREPService.class);
+	private static final Logger log = LogManager.getLogger(XPIREPService.class);
 
 	/**
 	 * Executes the Web Service.

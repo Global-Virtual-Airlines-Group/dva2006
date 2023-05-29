@@ -6,7 +6,7 @@ import java.sql.*;
 
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.ImageType;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
@@ -25,13 +25,13 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class ImageServlet extends DownloadServlet {
 
-	private static final Logger log = Logger.getLogger(ImageServlet.class);
+	private static final Logger log = LogManager.getLogger(ImageServlet.class);
 
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";

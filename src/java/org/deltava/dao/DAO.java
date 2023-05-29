@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,20 +6,20 @@ import java.util.*;
 import java.time.Instant;
 import java.util.concurrent.atomic.LongAdder;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
 public abstract class DAO {
 	
-	private static final Logger log = Logger.getLogger(DAO.class);
+	private static final Logger log = LogManager.getLogger(DAO.class);
 	private static final LongAdder _queryCount = new LongAdder();
 
 	/**

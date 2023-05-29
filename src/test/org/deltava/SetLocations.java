@@ -1,10 +1,11 @@
 // Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -32,8 +33,8 @@ public class SetLocations extends TestCase {
 		super.setUp();
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(SetLocations.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(SetLocations.class);
 
 		SystemData.init();
 
@@ -55,7 +56,6 @@ public class SetLocations extends TestCase {
 	protected void tearDown() throws Exception {
 		_c2.close();
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 

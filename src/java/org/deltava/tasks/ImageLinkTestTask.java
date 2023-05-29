@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.HeadMethod;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ImageLinkTestTask extends Task {
 		ImageLinkWorker(int id, Queue<LinkedImage> work, Collection<String> badHosts, Queue<LinkedImage> out) {
 			super("ImageLinkWorker-" + String.valueOf(id));
 			setDaemon(true);
-			tLog = Logger.getLogger(ImageLinkTestTask.class.getPackage().getName() + "." + getName());
+			tLog = LogManager.getLogger(ImageLinkTestTask.class.getPackage().getName() + "." + getName());
 			_work = work;
 			_invalidHosts = badHosts;
 			_output = out;

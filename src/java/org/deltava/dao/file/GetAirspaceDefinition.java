@@ -1,10 +1,10 @@
-// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
@@ -17,13 +17,13 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to load OpenAir airspace definition files.
  * @author Luke
- * @version 8.6
+ * @version 11.0
  * @since 7.3
  */
 
 public class GetAirspaceDefinition extends DAO {
 	
-	private static final Logger log = Logger.getLogger(GetAirspaceDefinition.class);
+	private static final Logger log = LogManager.getLogger(GetAirspaceDefinition.class);
 
 	/**
 	 * Initializes the Data Access Object.

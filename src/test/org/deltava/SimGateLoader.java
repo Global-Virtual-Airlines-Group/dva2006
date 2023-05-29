@@ -4,7 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
@@ -35,7 +35,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		log = Logger.getLogger(SimGateLoader.class);
+		log = LogManager.getLogger(SimGateLoader.class);
 
 		// Create the output directory
 		File xmlP = new File(XML_PATH);

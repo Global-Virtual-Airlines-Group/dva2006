@@ -2,11 +2,11 @@ package org.deltava.acars;
 
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 class TileData {
 	
-	private static final Logger log = Logger.getLogger(TileData.class);
+	private static final Logger log = LogManager.getLogger(TileData.class);
 	private static File _saveRoot; 
 	
 	private RawTile _img;

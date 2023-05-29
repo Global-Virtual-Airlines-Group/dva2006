@@ -1,22 +1,22 @@
-// Copyright 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 
 import org.apache.commons.beanutils.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 /**
  * A utility class to perform java bean operations.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 7.4
  */
 
 public class BeanUtils {
 	
-	private static final Logger log = Logger.getLogger(BeanUtils.class);
+	private static final Logger log = LogManager.getLogger(BeanUtils.class);
 	
 	private static final Collection<String> DEFAULT_IGNORE_FIELDS = List.of("rowClassName", "infoBox", "class", "inputStream");
 

@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
@@ -14,13 +14,13 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 8.1
+ * @version 11.0
  * @since 1.0
  */
 
 public class CommandFactory {
 
-	private static final Logger log = Logger.getLogger(CommandFactory.class);
+	private static final Logger log = LogManager.getLogger(CommandFactory.class);
 
 	private CommandFactory() {
 		super();

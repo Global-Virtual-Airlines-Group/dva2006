@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2012, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2012, 2016, 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import static javax.mail.Message.RecipientType.*;
@@ -13,7 +13,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.DataHandler;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -30,13 +30,13 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail and VAPID messages in the background. SMTP messages are not designed for critical information; they are
  * designed to fail silently on an error.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class MailerDaemon implements Runnable {
 
-	private static final Logger log = Logger.getLogger(MailerDaemon.class);
+	private static final Logger log = LogManager.getLogger(MailerDaemon.class);
 
 	private static final int OK = 201;
 	private static final Collection<Integer> INVALID_SUB_CODES = List.of(Integer.valueOf(404), Integer.valueOf(410));

@@ -1,6 +1,8 @@
 package org.deltava.beans.flight;
 
-import org.apache.log4j.*;
+import java.io.File;
+
+import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
@@ -13,14 +15,8 @@ public class TestLandingScorer extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(TestLandingScorer.class);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestLandingScorer.class);
 	}
 
 	public void testVSScoreProgression() {

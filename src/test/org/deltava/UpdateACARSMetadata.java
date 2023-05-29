@@ -1,12 +1,13 @@
 package org.deltava;
 
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetURL;
@@ -55,8 +56,8 @@ public class UpdateACARSMetadata extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(UpdateACARSMetadata.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(UpdateACARSMetadata.class);
 		
 		SystemData.init();
 		

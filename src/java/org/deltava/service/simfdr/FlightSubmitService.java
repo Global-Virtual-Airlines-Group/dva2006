@@ -9,7 +9,7 @@ import java.sql.Connection;
 
 import org.jdom2.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -28,13 +28,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 7.0
  */
 
 public class FlightSubmitService extends SimFDRService {
 	
-	private static final Logger log = Logger.getLogger(FlightSubmitService.class);
+	private static final Logger log = LogManager.getLogger(FlightSubmitService.class);
 	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 
 	/**

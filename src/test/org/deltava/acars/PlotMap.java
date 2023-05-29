@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.dao.*;
 import org.deltava.util.ThreadUtils;

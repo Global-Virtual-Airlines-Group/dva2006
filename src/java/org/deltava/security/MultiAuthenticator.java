@@ -1,11 +1,11 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016, 2017, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Person;
 import org.deltava.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 8.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	 */
 	protected MultiAuthenticator(Class<?> logClass) {
 		super();
-		log = Logger.getLogger(logClass);
+		log = LogManager.getLogger(logClass);
 	}
 
 	/**

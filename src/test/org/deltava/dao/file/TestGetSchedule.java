@@ -4,8 +4,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.*;
-
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
@@ -24,7 +22,7 @@ public class TestGetSchedule extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 
 		SystemData.init();
 
@@ -47,12 +45,6 @@ public class TestGetSchedule extends TestCase {
 			GetAircraft acdao = new GetAircraft(c);
 			_acTypes.addAll(acdao.getAll());
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 
 	public void testLoad() throws Exception {

@@ -8,7 +8,7 @@ import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
@@ -29,7 +29,7 @@ import org.deltava.util.*;
 
 public class ErrorLogService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(ErrorLogService.class);
+	private static final Logger log = LogManager.getLogger(ErrorLogService.class);
 
 	/**
 	 * Executes the Web Service.

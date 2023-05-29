@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.testing.*;
 import org.deltava.beans.hr.TransferRequest;
@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class ExamCreateCommand extends AbstractTestHistoryCommand {
 	
-	private static final Logger log = Logger.getLogger(ExamCreateCommand.class);
+	private static final Logger log = LogManager.getLogger(ExamCreateCommand.class);
 
 	/**
 	 * Executes the command.

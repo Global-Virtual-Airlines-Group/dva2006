@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -35,8 +35,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		PropertyConfigurator.configure("data/log4j.test.properties");
-		log = Logger.getLogger(TestInnovataGlobalLoad.class);
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		log = LogManager.getLogger(TestInnovataGlobalLoad.class);
 
 		// Set SystemData properties
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);

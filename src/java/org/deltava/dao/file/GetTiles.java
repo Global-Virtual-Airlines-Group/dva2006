@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.time.Instant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.dao.DAOException;
 
@@ -20,13 +20,13 @@ import org.gvagroup.tile.*;
 /**
  * A Data Access Object to read image tiles from the filesystem. 
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 10.0
  */
 
 public class GetTiles extends DAO implements SeriesReader {
 	
-	private static final Logger log = Logger.getLogger(GetTiles.class);
+	private static final Logger log = LogManager.getLogger(GetTiles.class);
 	
 	/**
 	 * Creates the Data Access Object.

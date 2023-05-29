@@ -6,16 +6,14 @@ import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.hansel.CoverageDecorator;
-
-import org.apache.log4j.PropertyConfigurator;
 
 import org.deltava.beans.stats.HTTPStatistics;
 
 public class TestApacheLogParser extends TestCase {
 
-	private static final Logger log = Logger.getLogger(TestApacheLogParser.class);
+	private static final Logger log = LogManager.getLogger(TestApacheLogParser.class);
 
 	private LogParser _parser;
 	private File _log;
@@ -27,17 +25,10 @@ public class TestApacheLogParser extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("data/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		_parser = new ApacheLogParser();
 		_log = new File("data/httpd-access.dva.log.1124409600");
 		assertTrue(_log.exists());
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		_parser = null;
-		_log = null;
-		super.tearDown();
 	}
 
 	public void testParser() {

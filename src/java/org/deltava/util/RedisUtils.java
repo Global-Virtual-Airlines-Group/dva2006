@@ -1,24 +1,24 @@
-// Copyright 2016, 2017, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
 import java.util.*;
 import java.time.Duration;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import redis.clients.jedis.*;
 
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 6.1
  */
 
 public class RedisUtils {
 	
-	private static final Logger log = Logger.getLogger(RedisUtils.class);
+	private static final Logger log = LogManager.getLogger(RedisUtils.class);
 	private static final List<String> INFO_KEYS = List.of("redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
 	/**

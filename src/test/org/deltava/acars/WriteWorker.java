@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.gvagroup.tile.TileAddress;
 
@@ -34,7 +34,7 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 		_work = work;
 		_in = in;
 		_out = out;
-		log = Logger.getLogger(WriteWorker.class.getPackage().getName() + "." + toString());
+		log = LogManager.getLogger(WriteWorker.class.getPackage().getName() + "." + toString());
 		try {
 			_ps = _c.prepareStatement("REPLACE INTO acars.TRACKS (X, Y, Z, SIZE, IMG) VALUES (?, ?, ?, ?, ?)");
 		} catch (SQLException se) {

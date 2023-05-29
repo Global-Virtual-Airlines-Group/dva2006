@@ -5,7 +5,7 @@ import java.util.*;
 import java.time.*;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.jdom2.*;
 import org.jdom2.input.*;
@@ -21,13 +21,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 7.0
  */
 
 final class OfflineFlightParser {
 	
-	private static final Logger log = Logger.getLogger(OfflineFlightParser.class);
+	private static final Logger log = LogManager.getLogger(OfflineFlightParser.class);
 
 	// singleton
 	private OfflineFlightParser() {

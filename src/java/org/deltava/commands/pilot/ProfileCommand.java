@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
@@ -33,13 +33,13 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
 public class ProfileCommand extends AbstractFormCommand {
 
-	private static final Logger log = Logger.getLogger(ProfileCommand.class);
+	private static final Logger log = LogManager.getLogger(ProfileCommand.class);
 
 	private static final String[] PRIVACY_ALIASES = { "0", "1", "2" };
 	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only", "Show address to Authenticated Users", "Show address to All Visitors" };

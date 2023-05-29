@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.time.*;
@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatterBuilder;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.CloudLayer.Amount;
@@ -19,13 +19,13 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 2.6
  */
 
 public class MetarParser {
 	
-	private static final Logger log = Logger.getLogger(MetarParser.class);
+	private static final Logger log = LogManager.getLogger(MetarParser.class);
 	
 	// Private
 	private MetarParser() {

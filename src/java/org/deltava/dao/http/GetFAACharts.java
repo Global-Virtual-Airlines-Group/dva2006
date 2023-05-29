@@ -9,7 +9,7 @@ import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.filter.ElementFilter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -21,13 +21,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 5.0
  */
 
 public class GetFAACharts extends DAO {
 
-	private static final Logger log = Logger.getLogger(GetFAACharts.class);
+	private static final Logger log = LogManager.getLogger(GetFAACharts.class);
 	private static final String[] TYPES = {"???", "IAP", "IAP", "STAR", "DP", "APD"};
 	
 	/**

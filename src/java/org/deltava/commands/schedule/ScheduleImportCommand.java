@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.deltava.beans.Compression;
 import org.deltava.beans.schedule.*;
 
@@ -26,13 +26,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 1.0
  */
 
 public class ScheduleImportCommand extends AbstractCommand {
 
-	protected static final Logger log = Logger.getLogger(ScheduleImportCommand.class);
+	protected static final Logger log = LogManager.getLogger(ScheduleImportCommand.class);
 	
 	private static class RawDupeChecker implements Comparator<RawScheduleEntry> {
 		

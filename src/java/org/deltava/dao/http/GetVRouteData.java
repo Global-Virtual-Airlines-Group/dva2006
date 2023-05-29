@@ -1,11 +1,11 @@
-// Copyright 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
 import java.net.SocketTimeoutException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
@@ -18,13 +18,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load VATSIM track data from VRoute.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 2.4
  */
 
 public class GetVRouteData extends DAO {
 
-	private static final Logger log = Logger.getLogger(GetVRouteData.class);
+	private static final Logger log = LogManager.getLogger(GetVRouteData.class);
 
 	/**
 	 * Initializes the Data Access Object.

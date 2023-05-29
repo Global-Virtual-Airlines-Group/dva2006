@@ -1,12 +1,11 @@
 // Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
+import java.io.File;
 import java.sql.*;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
-import org.apache.log4j.*;
 
 import org.deltava.beans.schedule.Airport;
 
@@ -31,7 +30,7 @@ public class TestFAAChartLoader extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 
 		// Init SystemData
 		SystemData.init();
@@ -64,12 +63,6 @@ public class TestFAAChartLoader extends TestCase {
 		SystemData.add("airports", airports);
 		
 		jdbcPool.release(c);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 
 	public void testLoadMetadata() {

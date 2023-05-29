@@ -1,6 +1,6 @@
 package org.deltava.dao.http;
 
-import org.apache.log4j.*;
+import java.io.File;
 
 import org.deltava.beans.servinfo.*;
 
@@ -16,7 +16,7 @@ public class TestVATSIMData extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.test.properties");
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		
 		SystemData.init();
 		assertNotNull(SystemData.get("online.vatsim.validation_url"));

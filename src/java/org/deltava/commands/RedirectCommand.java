@@ -1,20 +1,20 @@
-// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import org.deltava.util.redirect.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 /**
  * An internal Web Site Command to preserve request state across HTTP redirects.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
 public class RedirectCommand extends AbstractCommand {
 	
-	private static final Logger log = Logger.getLogger(RedirectCommand.class);
+	private static final Logger log = LogManager.getLogger(RedirectCommand.class);
 
    /**
     * Executes the command.
