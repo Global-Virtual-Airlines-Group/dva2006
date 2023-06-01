@@ -249,7 +249,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	/*
 	 * Helper method to spawn a system daemon.
 	 */
-	@SuppressWarnings("preview")
 	private void spawnDaemon(Runnable sd) {
 		Thread dt = Thread.ofVirtual().name(sd.toString()).unstarted(sd);
 		dt.setUncaughtExceptionHandler(this);

@@ -106,7 +106,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * @throws ServletException if an error occurs
 	 * @see CommandFactory#load(String)
 	 */
-	@SuppressWarnings("preview")
 	@Override
 	public void init() throws ServletException {
 		log.info("Initializing");
@@ -337,7 +336,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 	}
 	
-	@SuppressWarnings("preview")
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t != _logThread) {
