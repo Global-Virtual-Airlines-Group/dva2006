@@ -1,0 +1,65 @@
+// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao;
+
+import java.sql.*;
+import java.util.*;
+
+/**
+ * A Data Access Object to populate Content Filtering lists.
+ * @author Luke
+ * @version 11.0
+ * @since 11.0
+ */
+
+public class GetFilterData extends DAO {
+
+	/**
+	 * Initializes the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public GetFilterData(Connection c) {
+		super(c);
+	}
+
+	/**
+	 * Returns all keywords to trigger on.
+	 * @return a Collection of keywords
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getKeywords() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM common.CONTENT_FILTER WHERE (SAFE=?)")) {
+			ps.setBoolean(1, false);
+			
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all safe keywords words to ignore.
+	 * @return a Collection of keywords
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getSafewords() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM common.CONTENT_FILTER WHERE (SAFE=?)")) {
+			ps.setBoolean(1, true);
+			
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+}

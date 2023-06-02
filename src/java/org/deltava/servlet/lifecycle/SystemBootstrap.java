@@ -16,7 +16,7 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.AirlineTotals;
 
 import org.deltava.dao.*;
-
+import org.deltava.discord.Bot;
 import org.deltava.mail.MailerDaemon;
 import org.deltava.security.*;
 import org.deltava.taskman.*;
@@ -210,6 +210,16 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			SystemData.add(SystemData.ECON_DATA, econInfo);
 			SharedData.addData(SharedData.ECON_DATA + SystemData.get("airline.code"), econInfo);
 			log.info("Loaded Economic parameters");
+		}
+		
+		// Load discord bot
+		if (SystemData.getBoolean("discord.bot") && SystemData.has("security.key.discord")) {
+			try {
+				Bot.init();
+				log.info("Loaded Discord server bot");
+			} catch (Exception ex) {
+				log.error("Error initializing Discord bot - " + ex.getMessage(), ex);
+			}
 		}
 		
 		// Start the mailer/IPC daemons

@@ -722,6 +722,13 @@
 			<role>Operations</role>
 		</list>
 	</helpdesk>
+	
+	<!-- Discord data -->
+	<discord>
+		<bot type="Boolean">false</bot>
+		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
+	</discord>
+
 
 	<!-- Simulated economy data -->
 	<econ>

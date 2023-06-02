@@ -708,6 +708,12 @@
 		</list>
 	</helpdesk>
 	
+	<!-- Discord data -->
+	<discord>
+		<bot type="Boolean">true</bot>
+		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
+	</discord>
+	
 	<!-- Simulated economy data -->
 	<econ>
 		<targetLoad type="Double">0.875</targetLoad>
