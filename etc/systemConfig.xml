@@ -712,6 +712,20 @@
 	<discord>
 		<bot type="Boolean">true</bot>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
+
+		<!-- DVA roles required to join -->
+		<list name="requiredRoles" attr="role" unique="true">
+			<role>PIREP</role>		
+			<role>HR</role>
+			<role>Operations</role>
+		</list>
+
+		<!-- Discord Role names -->
+		<role>
+			<staff>Staff</staff>
+			<hr>Senior Staff</hr>
+			<default>Pilot</default>
+		</role>
 	</discord>
 	
 	<!-- Simulated economy data -->
