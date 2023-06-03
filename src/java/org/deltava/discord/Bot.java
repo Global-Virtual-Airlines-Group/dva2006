@@ -12,7 +12,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.*;
 
-import org.deltava.beans.discord.Channel;
+import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
 
@@ -72,10 +72,14 @@ public class Bot {
         api.addListener(new ModalListener());
         api.addListener(new MessageReplyListener());
 
-        _srv = api.getServersByName(SystemData.get("discord.serverAddr")).iterator().next();
+        Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
+        if (srvs.isEmpty())
+        	log.error("Cannot find Discord Server!");
+        else
+        	_srv = srvs.iterator().next();
     }
     
-    static ServerTextChannel findChannel(Channel c) {
+    static ServerTextChannel findChannel(ChannelName c) {
     	Long id = _channelIDs.get(c.getName());
     	if (id == null) {
     		ServerTextChannel ch = null;
@@ -92,13 +96,13 @@ public class Bot {
     	return _srv.getTextChannelById(id.longValue()).orElse(null);
     }
     
-    static void send(Channel c, String msg) {
+    static void send(ChannelName c, String msg) {
     	ServerTextChannel sc = findChannel(c);
     	if (sc == null) return;
     	sc.sendMessage(msg);
     }
     
-    static void send(Channel c, EmbedBuilder b) {
+    static void send(ChannelName c, EmbedBuilder b) {
     	ServerTextChannel sc = findChannel(c);
     	if (sc == null) return;
     	sc.sendMessage(b);
@@ -110,5 +114,9 @@ public class Bot {
     
     static ContentFilter getFilter() {
     	return _filter;
+    }
+    
+    static Server getServer() {
+    	return _srv;
     }
 }

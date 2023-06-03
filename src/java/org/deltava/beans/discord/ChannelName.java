@@ -8,12 +8,12 @@ package org.deltava.beans.discord;
  * @since 11.0
  */
 
-public enum Channel {
+public enum ChannelName {
 	WELCOME("waiting-room"), ALERTS("bot-alerts"), MOD_ALERTS("moderator-alerts"), MOD_ARCHIVE("moderator-archive"), INTERACTIONS("bot-interactions"), LOG("bot-log"), TESTING("bot-testing"), FLY_WITH_ME("fly-with-me"); 
 	
 	private final String _name;
 
-	Channel(String name) {
+	ChannelName(String name) {
 		_name = name;
 	}
 	

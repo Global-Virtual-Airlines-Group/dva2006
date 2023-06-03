@@ -6,7 +6,7 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.event.message.MessageReplyEvent;
 
-import org.deltava.beans.discord.Channel;
+import org.deltava.beans.discord.ChannelName;
 
 public class MessageReplyListener implements org.javacord.api.listener.message.MessageReplyListener {
 	
@@ -27,6 +27,6 @@ public class MessageReplyListener implements org.javacord.api.listener.message.M
 
     public static boolean isGoodChannel(MessageReplyEvent event) {
     	ServerChannel ch = event.getChannel().asServerChannel().orElse(null);
-        return (ch != null) && ch.getName().equals(Channel.MOD_ALERTS.getName());
+        return (ch != null) && ch.getName().equals(ChannelName.MOD_ALERTS.getName());
     }
 }

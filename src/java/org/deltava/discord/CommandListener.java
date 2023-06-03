@@ -55,7 +55,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).respond();
 
         //Log to bot-alerts
-        Bot.send(Channel.ALERTS, new EmbedBuilder()
+        Bot.send(ChannelName.ALERTS, new EmbedBuilder()
                 .setTitle(":new: Prohibited Keyword Added")
                 .setDescription("A new keyword was added to the list of prohibited words or phrases. The bot will now alert to any message which contains this phrase or a similar one.")
                 .setTimestampToNow()
@@ -86,7 +86,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).respond();
         
     	//Log to bot-alerts
-       	Bot.send(Channel.ALERTS, new EmbedBuilder()
+       	Bot.send(ChannelName.ALERTS, new EmbedBuilder()
        			.setTitle(":x: Safe Keyword Deleted")
                 .setDescription("A safe keyword was deleted from the list of safe words or phrases. The bot will no longer ignore this word/phrase.")
                 .setTimestampToNow()
