@@ -54,7 +54,7 @@ public class Bot {
         log.info("Initializing Content Filter");
         try (Connection con = _jdbcPool.getConnection()) {
         	GetFilterData dao = new GetFilterData(con);
-        	_filter.init(dao.getKeywords(), dao.getSafewords());
+        	_filter.init(dao.getKeywords(false), dao.getKeywords(true));
         } catch (ConnectionPoolException | DAOException | SQLException de) {
         	log.error("Error initializing Content Filter - " + de.getMessage(), de);
         }
