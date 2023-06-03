@@ -727,8 +727,12 @@
 	<discord>
 		<bot type="Boolean">false</bot>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
+		<list name="roles" attr="role" unique="true">
+			<role>PIREP</role>		
+			<role>HR</role>
+			<role>Operations</role>
+		</list>
 	</discord>
-
 
 	<!-- Simulated economy data -->
 	<econ>
