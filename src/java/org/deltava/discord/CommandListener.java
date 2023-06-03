@@ -91,7 +91,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
                 .setDescription("A safe keyword was deleted from the list of safe words or phrases. The bot will no longer ignore this word/phrase.")
                 .setTimestampToNow()
                 .setFooter("Safe Word Deleted")
-                .addInlineField("User", e.getSlashCommandInteraction().getUser().getDisplayName(e.getSlashCommandInteraction().getServer().get()))
+                .addInlineField("User", sci.getUser().getDisplayName(sci.getServer().get()))
                 .addInlineField("Safe Word Deleted", key)
                 .setColor(Color.GREEN));
     }
