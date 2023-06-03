@@ -23,33 +23,13 @@ public class GetFilterData extends DAO {
 
 	/**
 	 * Returns all keywords to trigger on.
+	 * @param isSafe TRUE for safe words, otherwise FALSE
 	 * @return a Collection of keywords
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<String> getKeywords() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM common.CONTENT_FILTER WHERE (SAFE=?)")) {
+	public Collection<String> getKeywords(boolean isSafe) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM CONTENT_FILTER WHERE (SAFE=?)")) {
 			ps.setBoolean(1, false);
-			
-			Collection<String> results = new LinkedHashSet<String>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					results.add(rs.getString(1));
-			}
-			
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns all safe keywords words to ignore.
-	 * @return a Collection of keywords
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<String> getSafewords() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM common.CONTENT_FILTER WHERE (SAFE=?)")) {
-			ps.setBoolean(1, true);
 			
 			Collection<String> results = new LinkedHashSet<String>();
 			try (ResultSet rs = ps.executeQuery()) {
