@@ -9,6 +9,7 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.*;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.*;
 
@@ -106,6 +107,11 @@ public class Bot {
     	ServerTextChannel sc = findChannel(c);
     	if (sc == null) return;
     	sc.sendMessage(b);
+    }
+    
+    static Role findRole(String roleName) {
+    	List<Role> roles = _srv.getRolesByName(roleName);
+    	return roles.isEmpty() ? null : roles.get(0);
     }
     
     static Connection getConnection() throws ConnectionPoolException {

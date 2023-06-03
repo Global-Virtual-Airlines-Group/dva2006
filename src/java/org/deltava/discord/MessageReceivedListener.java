@@ -6,7 +6,6 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
@@ -37,7 +36,6 @@ public class MessageReceivedListener implements MessageCreateListener {
     	String msg = e.getMessageContent();
     	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
     	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
-    	log.info(String.format("Received %s in %s", msg, channelName));
         if (msg.equalsIgnoreCase("done")) {
             e.getMessage().delete("Auto delete interaction message.");
             assignRoles(e);
@@ -54,7 +52,6 @@ public class MessageReceivedListener implements MessageCreateListener {
                 else
                     e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
         }
-
         
         // Check content
         FilterResults fr = Bot.getFilter().search(msg);
@@ -107,75 +104,66 @@ public class MessageReceivedListener implements MessageCreateListener {
         	return;
         }
         
-        Server s = Bot.getServer();
-        Role staffRole = s.getRolesByName("Staff").iterator().next();
-        Role seniorStaffRole = s.getRolesByName("Senior Staff").iterator().next();
-        
-        Role roleAssigned;
-
-        //Assign roles as appropriate
-        if (p.getRoles().contains("PIREP")) {
-            msgAuth.addRole(staffRole);
-            roleAssigned = staffRole;
-        } else if (p.getRoles().contains("HR")) {
-            msgAuth.addRole(seniorStaffRole);
-            roleAssigned = seniorStaffRole;
-        } else { //Something went wrong
-        	Bot.send(ChannelName.LOG,  String.format("Unable to determine User roles [ User = %s, UUID = %s ]", e.getMessageAuthor().getName(), Long.toHexString(e.getMessageAuthor().getId())));
-            return;
+        // Check that user meets base roles
+        Collection<?> reqRoles = (Collection<?>) SystemData.getObject("discord.requiredRoles");
+        boolean hasReqRoles = p.getRoles().stream().anyMatch(r -> reqRoles.contains(r));
+        if (!hasReqRoles) {
+        	log.warn(String.format("User %s (%s) not in required Roles %s [ roles = %s ]", p.getName(), p.getPilotCode(), reqRoles, p.getRoles()));
+        	return;
         }
+        
+        // Determine roles as appropriate
+        Role r;
+        if (p.getRoles().contains("HR"))
+        	r = Bot.findRole(SystemData.get("discord.role.hr"));
+        else if (p.getRoles().contains("PIREP"))
+        	r = Bot.findRole(SystemData.get("discord.role.pirep"));
+        else
+        	r = Bot.findRole(SystemData.get("discord.role.default"));
 
-        //Set the nickname
+        //Set the nickname and role
         String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
+        msgAuth.addRole(r);
 
         //Unable to do nicknames longer than 32 chars or less than 1
-        Role adminRole = s.getRolesByName("administrator").iterator().next();
         if (nickname.length() > 32) {
         	Bot.send(ChannelName.ALERTS, new EmbedBuilder()
                             .setColor(Color.RED)
                             .setTitle("Unable to Assign Nickname")
                             .setFooter("User Creation Error")
                             .setTimestampToNow()
-                            .setDescription(adminRole.getMentionTag() + " I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with DVA policy.")
+                            .setDescription(Bot.findRole("administrator").getMentionTag() + " I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with DVA policy.")
                             .addInlineField("User", e.getMessageAuthor().getDiscriminatedName())
                             .addInlineField("Name", p.getName())
                             .addInlineField("Pilot ID", p.getPilotCode())
-                            .addInlineField("Role", roleAssigned.getName()));
+                            .addInlineField("Role", r.getName()));
         } else { //Nickname is valid
-
-            msgAuth.updateNickname(s, nickname);
+            msgAuth.updateNickname(e.getServer().get(), nickname);
 
             //Temp staff nickname notification
             Bot.send(ChannelName.ALERTS, new EmbedBuilder().setColor(Color.BLUE)
                             .setFooter("Temporary Nickname Assignment")
                             .setTitle(":exclamation: Temporary Nickname Assigned")
-                            .setDescription(adminRole.getMentionTag() + " I've assigned a temporary nickname to the following staff member.")
+                            .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a temporary nickname to the following staff member.")
                             .addInlineField("Name", e.getMessageAuthor().getDisplayName())
-                            .addInlineField("Permissions Level", roleAssigned.getName())
+                            .addInlineField("Permissions Level", r.getName())
                             .setTimestampToNow());
         }
 
-        //Everything went well
+        // Everything went well
         msgAuth.sendMessage(String.format("Your DVA account (%s) has been located and linked to this Discord user profile", p.getPilotCode()));
         msgAuth.sendMessage("If you feel that a mistake has been made, submit a ticket here: https://www.deltava.org/helpdesk.do");
-
-        //Save the user's info
-        //Users.addUser(user);
-        log.info("Registered User [ Name = %s, UUID = %s ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId()));
+        log.info(String.format("Registered User [ Name = %s, UUID = %s ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId())));
     }
 
     public static EmbedBuilder createKeywordEmbed(MessageCreateEvent e, Collection<String> keywords) {
 
     	java.util.List<Role> roles = e.getMessageAuthor().asUser().get().getRoles(e.getServer().get());
-        Role hrRole = e.getApi().getRolesByName("HR").iterator().next();
-        boolean isStaff = false;
-        for (Role R: roles)
-            if (R.getName().equalsIgnoreCase("staff") || R.getName().equalsIgnoreCase("senior staff"))
-                isStaff = true;
+        boolean isStaff = roles.stream().anyMatch(r -> r.getName().toLowerCase().contains("staff"));
 
         return new EmbedBuilder()
                 .setTitle(":warning: Auto-Mod Keyword Detected")
-                .setDescription(hrRole.getMentionTag() + " A possible match for the following prohibited word(s) or phrase(s) was detected in the below message: " + StringUtils.listConcat(keywords, ", "))
+                .setDescription(Bot.findRole("HR").getMentionTag() + " A possible match for the following prohibited word(s) or phrase(s) was detected in the below message: " + StringUtils.listConcat(keywords, ", "))
                 .addField("Message Content", e.getMessageContent())
                 .addField("In channel", "#" + e.getChannel().asServerChannel().get().getName())
                 .addInlineField("User", e.getMessageAuthor().getDisplayName())
