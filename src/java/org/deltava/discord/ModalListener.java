@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.discord.Channel;
+import org.deltava.beans.discord.ChannelName;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.interaction.ModalSubmitEvent;
@@ -34,7 +34,7 @@ public class ModalListener implements ModalSubmitListener {
                 .setFooter("Fly-With-Me")
                 .setTimestamp(Instant.now());
         
-        Bot.send(Channel.FLY_WITH_ME, embed);
+        Bot.send(ChannelName.FLY_WITH_ME, embed);
         event.getModalInteraction().createImmediateResponder().setContent("Request submitted!").respond();
     }
 }
