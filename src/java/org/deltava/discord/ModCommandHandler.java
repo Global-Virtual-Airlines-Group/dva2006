@@ -3,14 +3,12 @@ package org.deltava.discord;
 
 import org.apache.logging.log4j.*;
 
-import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.message.embed.*;
 import org.javacord.api.event.message.MessageReplyEvent;
 
 import java.util.*;
 
-import org.deltava.beans.discord.Channel;
-import org.deltava.util.system.SystemData;
+import org.deltava.beans.discord.ChannelName;
 
 /**
  * A class to handle moderator commands.
@@ -62,15 +60,14 @@ public class ModCommandHandler {
         log.info(String.format("Mod alert handled by %s [ Content = %s ]", e.getMessageAuthor().getName(), msg));
 
         EmbedBuilder builder = embed.toBuilder();
-        Server s = (Server) SystemData.getObject("discord.server");
-        e.getMessageAuthor().asUser().flatMap(user -> user.getNickname(s)).ifPresent(usr -> builder.addField("Handled By", usr));
+        e.getMessageAuthor().asUser().flatMap(user -> user.getNickname(Bot.getServer())).ifPresent(usr -> builder.addField("Handled By", usr));
         
         builder.addField("Internal Comment", comment);
         builder.setTitle(":white_check_mark: Moderator alert handled");
         builder.setDescription("The following flagged message has been handled by a staff member and requires no further action.");
         builder.setFooter("Alert handled");
         builder.setColor(java.awt.Color.GREEN);
-        Bot.send(Channel.MOD_ARCHIVE, builder);
+        Bot.send(ChannelName.MOD_ARCHIVE, builder);
 
         // Delete original message
         e.getMessage().delete();

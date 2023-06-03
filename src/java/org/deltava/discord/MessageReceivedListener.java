@@ -3,6 +3,7 @@ package org.deltava.discord;
 
 import org.apache.logging.log4j.*;
 
+import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
@@ -17,7 +18,7 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.discord.Channel;
+import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
 
@@ -34,6 +35,9 @@ public class MessageReceivedListener implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent e) {
 
     	String msg = e.getMessageContent();
+    	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
+    	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
+    	log.info(String.format("Received %s in %s", msg, channelName));
         if (msg.equalsIgnoreCase("done")) {
             e.getMessage().delete("Auto delete interaction message.");
             assignRoles(e);
@@ -41,22 +45,21 @@ public class MessageReceivedListener implements MessageCreateListener {
         }
         
         // Ignore everything in #bot-interactions or sent by a bot
-        String channelName = e.getServerTextChannel().get().getName();
-        if (channelName.equals(org.deltava.beans.discord.Channel.INTERACTIONS.getName()) || e.getMessageAuthor().isBotUser()) return;
+        if (channelName.equals(ChannelName.INTERACTIONS.getName()) || e.getMessageAuthor().isBotUser()) return;
 
-        //Check if this is a message requesting roles
-        if (channelName.equals(Channel.WELCOME.getName())) {
+        // Check if this is a message requesting roles
+        if (channelName.equals(ChannelName.WELCOME.getName())) {
                 if (e.getMessageContent().equalsIgnoreCase("!roles"))
                     registerDVA(e);
                 else
-                    e.getMessage().delete("Message not allowed in " + Channel.WELCOME);
+                    e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
         }
 
         
         // Check content
         FilterResults fr = Bot.getFilter().search(msg);
         if (!fr.isOK())
-       		Bot.send(Channel.MOD_ALERTS, createKeywordEmbed(e, fr.getFlaggedResults()));
+       		Bot.send(ChannelName.MOD_ALERTS, createKeywordEmbed(e, fr.getFlaggedResults()));
     }
 
     public static void registerDVA(MessageCreateEvent e) {
@@ -78,14 +81,14 @@ public class MessageReceivedListener implements MessageCreateListener {
                 .setTimestampToNow()
                 .setColor(new Color(1, 0, 100))
                 .addField("Step 1: Link your Discord and DVA User Accounts", "To associate your discord account with your DVA pilot ID and receive access to the rest of the server, follow this personalized link and sign into your DVA account:\n\nhttps://www.deltava.org/discordreg.do?id=" + id)
-                .addField("Step 2: Request your Roles", "Return to the #" + Channel.WELCOME.getName() + " channel and send \"done\" when you've completed linking your accounts and your roles will be assigned.")
+                .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"done\" when you've completed linking your accounts and your roles will be assigned.")
                 .addField("Didn't work?", "If you follow the above process and are still not able to gain access, open a help desk ticket here: https://www.deltava.org/helpdesk.do");
     }
 
     public static void assignRoles(MessageCreateEvent e) {
 
     	// Make sure user is stil here
-    	if (e.getMessageAuthor().asUser().isPresent()) return;
+    	if (e.getMessageAuthor().asUser().isEmpty()) return;
         User msgAuth = e.getMessageAuthor().asUser().get();
         log.info(String.format("User requested roles. [Name = %s, UUID = %s ]", msgAuth.getName(), Long.toHexString(msgAuth.getId())));
         
@@ -99,10 +102,12 @@ public class MessageReceivedListener implements MessageCreateListener {
         	log.error(de.getMessage(), de);
         }
         
-        if (p == null) return;
-        Server s = (Server) SystemData.getObject("discord.server");
-
-        //Role pilotRole = server.getRolesByName("Pilot").iterator().next();
+        if (p == null) {
+        	log.warn(String.format("Cannot find Discord ID %s", msgAuth.getIdAsString()));
+        	return;
+        }
+        
+        Server s = Bot.getServer();
         Role staffRole = s.getRolesByName("Staff").iterator().next();
         Role seniorStaffRole = s.getRolesByName("Senior Staff").iterator().next();
         
@@ -116,7 +121,7 @@ public class MessageReceivedListener implements MessageCreateListener {
             msgAuth.addRole(seniorStaffRole);
             roleAssigned = seniorStaffRole;
         } else { //Something went wrong
-        	Bot.send(Channel.LOG,  String.format("Unable to determine User roles [ User = %s, UUID = %s ]", e.getMessageAuthor().getName(), Long.toHexString(e.getMessageAuthor().getId())));
+        	Bot.send(ChannelName.LOG,  String.format("Unable to determine User roles [ User = %s, UUID = %s ]", e.getMessageAuthor().getName(), Long.toHexString(e.getMessageAuthor().getId())));
             return;
         }
 
@@ -126,7 +131,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         //Unable to do nicknames longer than 32 chars or less than 1
         Role adminRole = s.getRolesByName("administrator").iterator().next();
         if (nickname.length() > 32) {
-        	Bot.send(Channel.ALERTS, new EmbedBuilder()
+        	Bot.send(ChannelName.ALERTS, new EmbedBuilder()
                             .setColor(Color.RED)
                             .setTitle("Unable to Assign Nickname")
                             .setFooter("User Creation Error")
@@ -141,7 +146,7 @@ public class MessageReceivedListener implements MessageCreateListener {
             msgAuth.updateNickname(s, nickname);
 
             //Temp staff nickname notification
-            Bot.send(Channel.ALERTS, new EmbedBuilder().setColor(Color.BLUE)
+            Bot.send(ChannelName.ALERTS, new EmbedBuilder().setColor(Color.BLUE)
                             .setFooter("Temporary Nickname Assignment")
                             .setTitle(":exclamation: Temporary Nickname Assigned")
                             .setDescription(adminRole.getMentionTag() + " I've assigned a temporary nickname to the following staff member.")
