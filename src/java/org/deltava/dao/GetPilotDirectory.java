@@ -7,15 +7,18 @@ import java.util.*;
 import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 1.0
  */
 
 public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
+	
+	private static final Cache<CacheableLong> _idCache = CacheManager.get(CacheableLong.class, "PilotExternalID");
 
 	/**
 	 * Initialize the Data Access Object.
@@ -130,10 +133,19 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Pilot getByIMAddress(String addr) throws DAOException {
+		
+		// Check the cache
+		CacheableLong id = _idCache.get(addr);
+		if (id != null)
+			return get(id.intValue());
+		
 		try (PreparedStatement ps = prepare("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)")) {
 			ps.setString(1, addr);
 			Collection<Integer> IDs = executeIDs(ps);
-			return IDs.isEmpty() ? null : get(IDs.stream().findFirst().get().intValue());
+			if (IDs.isEmpty()) return null;
+			int dbid = IDs.stream().findFirst().get().intValue();
+			_idCache.add(new CacheableLong(addr, dbid));
+			return get(dbid);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -175,9 +187,8 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	public List<Pilot> getByRole(String roleName, String dbName, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
-		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
-		sqlBuf.append(db);
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS P LEFT JOIN common.AUTH_ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) ");
 		if (activeOnly)
 			sqlBuf.append("AND (P.STATUS=?) ");
