@@ -60,7 +60,7 @@ public class ModCommandHandler {
         log.info(String.format("Mod alert handled by %s [ Content = %s ]", e.getMessageAuthor().getName(), msg));
 
         EmbedBuilder builder = embed.toBuilder();
-        e.getMessageAuthor().asUser().flatMap(user -> user.getNickname(Bot.getServer())).ifPresent(usr -> builder.addField("Handled By", usr));
+        e.getMessageAuthor().asUser().flatMap(user -> user.getNickname(e.getServer().get())).ifPresent(usr -> builder.addField("Handled By", usr));
         
         builder.addField("Internal Comment", comment);
         builder.setTitle(":white_check_mark: Moderator alert handled");
