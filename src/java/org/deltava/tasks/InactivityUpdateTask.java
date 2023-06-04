@@ -11,6 +11,7 @@ import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
+import org.deltava.discord.Bot;
 import org.deltava.mail.*;
 import org.deltava.taskman.*;
 import org.deltava.security.*;
@@ -156,6 +157,10 @@ public class InactivityUpdateTask extends Task {
 					p.setStatus(PilotStatus.INACTIVE);
 					pwdao.write(p, ctx.getDB());
 					pewdao.disable(p.getID());
+					
+					// Disable Discord access
+					if (SystemData.getBoolean("discord.bot"))
+						Bot.clearRoles(p);
 					
 					// Remove the user from any destination directories
 					if (auth instanceof MultiAuthenticator) {
