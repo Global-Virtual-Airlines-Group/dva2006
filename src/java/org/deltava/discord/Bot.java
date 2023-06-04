@@ -3,6 +3,7 @@ package org.deltava.discord;
 
 import java.util.*;
 import java.sql.*;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.*;
 
@@ -11,8 +12,10 @@ import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.*;
 
+import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
@@ -32,8 +35,6 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 
 public class Bot {
 
-    private static ConnectionPool _jdbcPool;
-    
     private static Server _srv;
     private static final ContentFilter _filter = new ContentFilter();
     private static final Map<String, Long> _channelIDs = new HashMap<String, Long>();
@@ -47,13 +48,11 @@ public class Bot {
 
     public static void init() {
 
-        _jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-        
         DiscordApi api = new DiscordApiBuilder().setToken(SystemData.get("security.key.discord")).setAllIntents().login().join();
         log.info("API Connected");
 
         log.info("Initializing Content Filter");
-        try (Connection con = _jdbcPool.getConnection()) {
+        try (Connection con = getConnection()) {
         	GetFilterData dao = new GetFilterData(con);
         	_filter.init(dao.getKeywords(false), dao.getKeywords(true));
         } catch (ConnectionPoolException | DAOException | SQLException de) {
@@ -78,6 +77,15 @@ public class Bot {
         	log.error("Cannot find Discord Server!");
         else
         	_srv = srvs.iterator().next();
+    }
+    
+    public static void disconnect() {
+    	if (_srv == null) {
+    		log.warn("Not initialized!");
+    		return;
+    	}
+    	
+    	_srv.getApi().disconnect();
     }
     
     static ServerTextChannel findChannel(ChannelName c) {
@@ -115,14 +123,37 @@ public class Bot {
     }
     
     static Connection getConnection() throws ConnectionPoolException {
-    	return _jdbcPool.getConnection();
+    	ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+    	return jdbcPool.getConnection();
     }
     
     static ContentFilter getFilter() {
     	return _filter;
     }
     
-    static Server getServer() {
-    	return _srv;
+    /**
+     * Removes a Pilot's Discord roles.
+     * @param p the Pilot
+     */
+    public static void clearRoles(Pilot p) {
+    	if (!p.hasID(ExternalID.DISCORD)) return;
+    	
+    	// Lookup user
+    	try {
+    		User usr = _srv.getApi().getUserById(p.getExternalID(ExternalID.DISCORD)).get();
+    		if (usr == null) {
+    			log.warn(String.format("User %s (%s) not found with ID %s", p.getName(), p.getPilotCode(), p.getExternalID(ExternalID.DISCORD)));
+    			return;
+    		}
+    	
+    		// Remove roles
+    		List<Role> roles = usr.getRoles(_srv);
+    		roles.forEach(usr::removeRole);
+    		log.info(String.format("Removed Discord roles %s from %s (%s)", roles, p.getName(), p.getPilotCode()));
+    	} catch (ExecutionException ee) {
+    		log.error(ee.getMessage(), ee);
+    	} catch (InterruptedException ie) {
+    		log.warn(String.format("Interrupted removing Discord roles from %s (%s)", p.getName(), p.getPilotCode()));
+    	}
     }
 }

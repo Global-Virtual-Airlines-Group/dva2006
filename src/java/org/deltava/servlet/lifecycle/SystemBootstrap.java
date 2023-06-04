@@ -213,7 +213,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 		
 		// Load discord bot
-		if (SystemData.getBoolean("discord.bot") && SystemData.has("security.key.discord")) {
+		if (SystemData.getBoolean("discord.bot")) {
 			try {
 				Bot.init();
 				log.info("Loaded Discord server bot");
@@ -250,6 +250,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			RedisUtils.shutdown();
 			_jdbcPool.close();
 		}
+		
+		if (SystemData.getBoolean("discord.bot"))
+			Bot.disconnect();
 		
 		// Clear shared data
 		SharedData.purge(code);

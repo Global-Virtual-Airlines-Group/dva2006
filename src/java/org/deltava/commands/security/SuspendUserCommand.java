@@ -8,7 +8,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.discord.Bot;
 import org.deltava.security.*;
 import org.deltava.security.command.PilotAccessControl;
 
@@ -82,6 +82,10 @@ public class SuspendUserCommand extends AbstractCommand {
 			pwdao.write(usr, ctx.getDB());
 			pewdao.disable(usr.getID());
 			sudao.write(upd, ctx.getDB());
+			
+			// Remove Discord access
+			if (SystemData.getBoolean("discord.bot"))
+				Bot.clearRoles(usr);
 			
 			// Get the authenticator and disable
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
