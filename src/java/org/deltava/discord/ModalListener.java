@@ -1,3 +1,4 @@
+// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.time.Instant;
@@ -24,17 +25,18 @@ public class ModalListener implements ModalSubmitListener {
         }
     }
 
-    public static void flyWithMeModalResponder(ModalSubmitEvent event) {
+    public static void flyWithMeModalResponder(ModalSubmitEvent e) {
+    	ModalInteraction mi = e.getModalInteraction();
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(":airplane: New Fly With Me Request")
-                .setDescription(event.getModalInteraction().getUser().getDisplayName(event.getModalInteraction().getServer().get()) + " is looking for someone to fly with them! Check out the details below.")
-                .addInlineField("Departure Field", event.getModalInteraction().getTextInputValueByCustomId("fwm_dep").get())
-                .addInlineField("Arrival Field", event.getModalInteraction().getTextInputValueByCustomId("fwm_arr").get())
-                .addInlineField("Requested Network", event.getModalInteraction().getTextInputValueByCustomId("fwm_net").get())
+                .setDescription(mi.getUser().getDisplayName(mi.getServer().get()) + " is looking for someone to fly with them! Check out the details below.")
+                .addInlineField("Departure Field", mi.getTextInputValueByCustomId("fwm_dep").get())
+                .addInlineField("Arrival Field", mi.getTextInputValueByCustomId("fwm_arr").get())
+                .addInlineField("Requested Network", mi.getTextInputValueByCustomId("fwm_net").get())
                 .setFooter("Fly-With-Me")
                 .setTimestamp(Instant.now());
         
         Bot.send(ChannelName.FLY_WITH_ME, embed);
-        event.getModalInteraction().createImmediateResponder().setContent("Request submitted!").respond();
+        mi.createImmediateResponder().setContent("Request submitted").respond();
     }
 }

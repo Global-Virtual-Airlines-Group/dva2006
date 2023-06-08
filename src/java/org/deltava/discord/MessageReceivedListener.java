@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.PilotStatus;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
@@ -101,6 +102,9 @@ public class MessageReceivedListener implements MessageCreateListener {
         
         if (p == null) {
         	log.warn(String.format("Cannot find Discord ID %s", msgAuth.getIdAsString()));
+        	return;
+        } else if (p.getStatus() != PilotStatus.ACTIVE) {
+        	log.warn(String.format("%s (%s) Status = %s", p.getName(), p.getPilotCode(), p.getStatus()));
         	return;
         }
         
