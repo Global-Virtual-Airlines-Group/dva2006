@@ -4,7 +4,7 @@ package org.deltava.discord;
 import java.util.*;
 
 /**
- * 
+ * A Content filter for Discord messages.
  * @author Luke
  * @author danielw
  * @version 11.0
@@ -45,7 +45,7 @@ class ContentFilter {
 	}
 	
 	/**
-	 * 
+	 * Searches a message for prohibited or accepted keywords.
 	 * @param msg the message
 	 * @return a FilterResults bean
 	 */

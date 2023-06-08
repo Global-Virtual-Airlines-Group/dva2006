@@ -56,11 +56,11 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
 
         //Log to bot-alerts
         Bot.send(ChannelName.ALERTS, new EmbedBuilder()
-                .setTitle(":new: Prohibited Keyword Added")
-                .setDescription("A new keyword was added to the list of prohibited words or phrases. The bot will now alert to any message which contains this phrase or a similar one.")
+                .setTitle(String.format(":new: %s keyword Added", isSafe? "Accepted" : "Prohibited"))
+                .setDescription(String.format("A new keyword was added to the list of %s words or phrases. The bot will now alert to any message which contains this phrase or a similar one.", isSafe ? "accepted" : "prohibited"))
                 .setTimestampToNow()
                 .setFooter("Keyword Added")
-                .addInlineField("User", e.getSlashCommandInteraction().getUser().getDisplayName(e.getSlashCommandInteraction().getServer().get()))
+                .addInlineField("User", sci.getUser().getDisplayName(sci.getServer().get()))
                 .addInlineField("Keyword Created", key)
                 .setColor(Color.GREEN));
     }
@@ -87,20 +87,18 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         
     	//Log to bot-alerts
        	Bot.send(ChannelName.ALERTS, new EmbedBuilder()
-       			.setTitle(":x: Safe Keyword Deleted")
-                .setDescription("A safe keyword was deleted from the list of safe words or phrases. The bot will no longer ignore this word/phrase.")
+       			.setTitle(String.format(":x: %s Keyword Deleted", isSafe ? "Safe" : "Prohibited"))
+                .setDescription(String.format("A keyword was deleted from the list of %s words or phrases. The bot will no longer ignore this word/phrase.", isSafe ? "accepted" : "prohibited"))
                 .setTimestampToNow()
-                .setFooter("Safe Word Deleted")
+                .setFooter("Keyword Deleted")
                 .addInlineField("User", sci.getUser().getDisplayName(sci.getServer().get()))
                 .addInlineField("Safe Word Deleted", key)
                 .setColor(Color.GREEN));
     }
 
-    public static void newFlyWithMeRequest(SlashCommandCreateEvent event) {
-        event.getSlashCommandInteraction().respondWithModal("fwm_modal", "Create Fly-With-Me Request",
-                ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
-                ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")),
-                ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
+    public static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
+        e.getSlashCommandInteraction().respondWithModal("fwm_modal", "Create Fly-With-Me Request",ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
+                ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")), ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
     }
     
     private static String getOption(SlashCommandInteraction ci, String name) {
