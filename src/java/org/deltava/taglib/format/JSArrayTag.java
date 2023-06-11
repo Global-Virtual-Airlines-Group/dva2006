@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript array.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 2.4
  */
 
@@ -44,6 +44,8 @@ public class JSArrayTag extends JSTag {
 					buf.append(obj.toString());
 				else if (obj == null)
 					buf.append("null");
+				else if (obj instanceof JSONObject jo)
+					buf.append(jo.toString());
 				else
 					buf.append(JSONObject.quote(String.valueOf(obj)));
 
