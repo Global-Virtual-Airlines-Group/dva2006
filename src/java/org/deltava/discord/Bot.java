@@ -3,7 +3,7 @@ package org.deltava.discord;
 
 import java.util.*;
 import java.sql.*;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 import org.apache.logging.log4j.*;
 
@@ -20,6 +20,7 @@ import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
 
+import org.deltava.util.TaskTimer;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.ConnectionPool;
@@ -48,9 +49,16 @@ public class Bot {
 
     public static void init() {
 
-        DiscordApi api = new DiscordApiBuilder().setToken(SystemData.get("security.key.discord")).setAllIntents().login().join();
-        log.info("API Connected");
-
+    	DiscordApi api;
+    	try {
+    		DiscordApiBuilder b = new DiscordApiBuilder().setToken(SystemData.get("security.key.discord")).setAllIntents().setShutdownHookRegistrationEnabled(true);
+    		api = b.login().orTimeout(3500, TimeUnit.MILLISECONDS).join();
+    		log.info("API Connected");
+    	} catch (CompletionException ce) {
+    		log.error("Error connecting to Discord API - " + ce.getMessage(), ce);
+    		return;
+    	}
+        
         log.info("Initializing Content Filter");
         try (Connection con = getConnection()) {
         	GetFilterData dao = new GetFilterData(con);
@@ -84,8 +92,16 @@ public class Bot {
     		log.warn("Not initialized!");
     		return;
     	}
-    	
-    	_srv.getApi().disconnect();
+
+    	// Wait for discord to shut down
+    	try {
+    		log.info("Disconnecting from Discord API"); TaskTimer tt = new TaskTimer();
+    		CompletableFuture<Void> f =_srv.getApi().disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
+    		f.join();
+    		log.info("Shutdown in " + tt.stop() + "ms");
+    	} catch (CompletionException ce) {
+    		log.error("Error disconnecting from Discord API - " + ce.getMessage(), ce);
+    	}
     }
     
     static ServerTextChannel findChannel(ChannelName c) {
