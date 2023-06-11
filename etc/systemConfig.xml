@@ -513,7 +513,7 @@
 		<upload>/home/www/upload</upload>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
-		<archive>/home/www/pos_archive</archive>
+		<archive>/home/www/deltava.org/archive</archive>
 		<tile>/var/cache/tile</tile>
 		<inc>/home/www/inc</inc>
 	</path>
