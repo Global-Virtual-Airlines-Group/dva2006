@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -247,7 +247,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public boolean isEngineOut() {
 		for (int x = 0; x < _engineCount; x++) {
-			if ((_n1[x] < 10) || (_n2[x] < 20))
+			if ((_n1[x] < 10) || (_n2[x] < 15))
 				return true;
 		}
 		
@@ -826,6 +826,18 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(" RPM, ");
 			buf.append(StringUtils.format(_avgN2, "##0.0"));
 			buf.append("% throttle");
+			if (showPerEngine) {
+				buf.append("<br />");
+				for (int x = 0; x < _engineCount; x++) {
+					buf.append("Engine ");
+					buf.append(x+1);
+					buf.append(": ");
+					buf.append((int)_n1[x]);
+					buf.append(" RPM, ");
+					buf.append(StringUtils.format(_n2[x], "##0.0"));
+					buf.append("% throttle<br />");
+				}
+			}
 		} else {
 			buf.append("N<sub>1</sub>: ");	
 			buf.append(StringUtils.format(_avgN1, "##0.0"));
