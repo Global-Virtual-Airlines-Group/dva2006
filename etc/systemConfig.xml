@@ -710,7 +710,7 @@
 	
 	<!-- Discord data -->
 	<discord>
-		<bot type="Boolean">true</bot>
+		<bot type="Boolean">false</bot>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
 
 		<!-- DVA roles required to join -->
