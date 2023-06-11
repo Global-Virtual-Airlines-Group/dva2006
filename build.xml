@@ -142,6 +142,7 @@
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.core}">
 			<exclude name="org/deltava/commands/**/*.class" />
 			<exclude name="org/deltava/security/command/*.class" />
+			<exclude name="org/deltava/discord/*.class" />
 			<exclude name="org/deltava/service/**/*.class" />
 			<exclude name="org/deltava/servlet/**/*.class" />
 			<exclude name="org/deltava/taglib/**/*.class" />
@@ -153,6 +154,7 @@
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.web}">
 			<include name="org/deltava/commands/**/*.class" />
 			<include name="org/deltava/security/command/*.class" />
+			<include name="org/deltava/discord/*.class" />
 			<include name="org/deltava/service/**/*.class" />
 			<include name="org/deltava/servlet/**/*.class" />
 			<include name="org/deltava/taglib/**/*.class" />
