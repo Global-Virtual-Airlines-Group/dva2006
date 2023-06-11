@@ -2,12 +2,14 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
+
+import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.RunwayDistance;
-import org.deltava.beans.flight.DatabaseID;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
@@ -17,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 2.1
  */
 
@@ -88,18 +90,25 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			
 			// Load PIREPs and runway data
 			GetACARSData acdao = new GetACARSData(con);
-			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
+			Collection<FlightReport> pireps = new ArrayList<FlightReport>(); Collection<JSONObject> jla = new ArrayList<JSONObject>();
 			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
 			for (Integer pirepID : landingIDs) {
 				FlightReport fr = frdao.get(pirepID.intValue(), ctx.getDB());
 				pireps.add(fr);
 				RunwayDistance rd = acdao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
-				if (rd != null) runways.put(pirepID, rd);
+				if ((rd != null) && (fr instanceof FDRFlightReport ffr)) {
+					runways.put(pirepID, rd);
+					jla.add(toJSON(ffr, rd));
+				}
 			}
 			
 			ctx.setAttribute("bestLandings", pireps, REQUEST);
 			ctx.setAttribute("rwyDistance", runways, REQUEST);
 			ctx.setAttribute("bestLandingSince", pireps.stream().map(FlightReport::getDate).min(Comparator.naturalOrder()).orElse(null), REQUEST);
+			
+			// Add sort data
+			ctx.setAttribute("landingSortData", jla, REQUEST);
+			ctx.setAttribute("statSortData", vc.getResults().stream().map(JSONUtils::format).collect(Collectors.toList()), REQUEST);
 
 			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -115,5 +124,20 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/stats/myStats.jsp");
 		result.setSuccess(true);
+	}
+	
+	/*
+	 * Helper method to convert landing data to JSON.
+	 */
+	private static JSONObject toJSON(FDRFlightReport fr, RunwayDistance rd) {
+		JSONObject jo = new JSONObject();
+		jo.put("id", fr.getID());
+		jo.put("date", fr.getDate().toEpochMilli());
+		jo.put("flight", fr.getFlightCode());
+		jo.put("eqType", fr.getEquipmentType());
+		jo.put("rwyDistance", rd.getDistance());
+		jo.put("vSpeed", fr.getLandingVSpeed());
+		jo.put("score", fr.getLandingScore());
+		return jo;
 	}
 }

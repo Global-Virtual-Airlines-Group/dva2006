@@ -1,20 +1,46 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<script async>
+<c:if test="${!empty statSortData}">
+golgotha.local.sortStat = function(t) {
+	golgotha.local.statSort = t;
+	golgotha.local.revStatSort = true;
+	const data = golgotha.local.sortData.clone();
+	const cmp = function(e1, e2) { return e2[t] - e1[t]; };
+	data.sort(cmp);
+
+	// Remove the rows
+	const rowIDs = {};
+	const rows = golgotha.util.getElementsByClass('pirepStat', 'tr');
+	rows.forEach(function(r) { r.parentNode.removeChild(r); rowIDs[r.id] = r; });
+
+	// Iterate through the table and add rows
+	const pr = document.getElementById('pirepStatsLabel');
+	data.forEach(function(d) { pr.parentNode.insertBefore(rowIDs['pirepStats-' + d.id], null); });
+	return true;
+};
+
+<fmt:jsarray var="golgotha.local.sortData" items="${statSortData}" />
+</c:if>
+<c:if test="${empty statSortData}">
+golgotha.local.sortStat = function() { console.log('Sorting disabled'); return false };
+</c:if>
+</script>
 <!-- Table Header Bar-->
-<tr class="title caps">
+<tr class="title caps" id="pirepStatsLabel">
  <td style="max-width:5%">#</td>
- <td style="max-width:25%">ENTRY</td>
- <td style="width:7%">HOURS</td>
- <td style="width:6%">LEGS</td>
- <td class="nophone">PAX</td>
- <td>ACARS</td>
- <td>ONLINE</td>
- <td class="nophone">HISTORIC</td>
- <td class="nophone">DISPATCH</td>
- <td class="nophone">SIMBRIEF</td>
+ <td style="max-width:25%"><a href="javascript:void golgotha.local.sortStat('label')">ENTRY</a></td>
+ <td style="width:7%"><a href="javascript:void golgotha.local.sortStat('hours')">HOURS</a></td>
+ <td style="width:6%"><a href="javascript:void golgotha.local.sortStat('legs')">LEGS</a></td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortStat('pax')">PAX</a></td>
+ <td><a href="javascript:void golgotha.local.sortStat('acars')">ACARS</a></td>
+ <td><a href="javascript:void golgotha.local.sortStat('online')">ONLINE</a></td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortStat('historic')">HISTORIC</a></td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortStat('dispatch')">DISPATCH</a></td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortStat('simbrief')">SIMBRIEF</a></td>
 <c:if test="${!noTours}">
- <td class="nophone">TOUR</td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortStat('tour')">TOUR</a></td>
 </c:if>
  <td class="nophone">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
@@ -23,8 +49,8 @@
 <!-- Table Statistics Data -->
 <c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
-<view:row entry="${stat}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
+<view:row entry="${stat}" className="pirepStat" ID="pirepStats-${stat.hexID}">
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld" title="<fmt:distance value="${stat.distance}" longUnits="true" />"><fmt:dec value="${stat.hours}" /></td>
