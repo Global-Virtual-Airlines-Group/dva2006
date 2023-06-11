@@ -52,6 +52,26 @@ golgotha.local.swapTimeGraphs = function(rb) {
 	const data = golgotha.local.dataMap[rb.value];
 	return golgotha.local.drawGraphs(data[0], data[1], data[2]);
 };
+
+golgotha.local.sortLandings = function(t) {
+	golgotha.local.landingSort = t;
+	golgotha.local.revLandingSort = true;
+	const data = golgotha.local.landingSortData.clone();
+	const cmp = function(e1, e2) { return e2[t] - e1[t]; };
+	data.sort(cmp);
+
+	// Remove the rows
+	const rowIDs = {};
+	const rows = golgotha.util.getElementsByClass('topLandingData', 'tr');
+	rows.forEach(function(r) { r.parentNode.removeChild(r); rowIDs[r.id] = r; });
+
+	// Iterate through the table and add rows
+	const pr = document.getElementById('topLandingLabel');
+	data.forEach(function(d) { pr.parentNode.insertBefore(rowIDs['topLanding-' + d.id], null); });
+	return true;
+};
+
+<fmt:jsarray var="golgotha.local.landingSortData" items="${landingSortData}" />
 </script>
 </head>
 <content:copyright visible="false" />
@@ -78,7 +98,7 @@ golgotha.local.swapTimeGraphs = function(rb) {
 </view:table>
 
 <!-- Touchdown statistics -->
-<el:table className="form">
+<el:table className="view">
 <tr class="title">
  <td colspan="9" class="left caps">TOUCHDOWN STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tdStats')">COLLAPSE</span></td>
 </tr>
@@ -122,22 +142,22 @@ golgotha.local.swapTimeGraphs = function(rb) {
 <tr class="title">
  <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="topLandingToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
 </tr>
-<tr class="title mid caps topLanding">
+<tr id="topLandingLabel" class="title mid caps topLanding">
  <td>#</td>
- <td>FLIGHT</td>
- <td>DATE</td>
- <td>EQUIPMENT</td>
- <td><span class="nophone">RUNWAY / </span>DISTANCE</td>
- <td>SPEED</td>
- <td>SCORE</td>
-<td class="nophone" colspan="2">FLIGHT ROUTE</td>
+ <td><a href="javascript:void golgotha.local.sortLandings('flight')">FLIGHT</a></td>
+ <td><a href="javascript:void golgotha.local.sortLandings('date')">DATE</a></td>
+ <td><a href="javascript:void golgotha.local.sortLandings('eqType')">EQUIPMENT</a></td>
+ <td><span class="nophone">RUNWAY / </span><a href="javascript:void golgotha.local.sortLandings('rwyDistance')">DISTANCE</a></td>
+ <td><a href="javascript:void golgotha.local.sortLandings('vSpeed')">SPEED</a></td>
+ <td><a href="javascript:void golgotha.local.sortLandings('score')">SCORE</a></td>
+ <td class="nophone" colspan="2">FLIGHT ROUTE</td>
 </tr>
 
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="fr"  items="${bestLandings}">
 <c:set var="rw" value="${rwyDistance[fr.ID]}" scope="page" />
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<tr class="mid topLanding">
+<tr class="mid topLanding topLandingData" id="topLanding-${fr.ID}">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td><el:cmd url="pirep" link="${fr}" className="bld plain">${fr.flightCode}</el:cmd></td>
  <td><fmt:date date="${fr.date}" fmt ="d" /></td>

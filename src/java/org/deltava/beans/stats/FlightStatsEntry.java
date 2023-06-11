@@ -295,6 +295,10 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable<Flight
 		_loadFactor = Math.max(0, Math.min(1, lf));
 	}
 	
+	public String getHexID() {
+		return Integer.toHexString(hashCode());
+	}
+	
 	@Override
 	public String toString() {
 		return _label;
