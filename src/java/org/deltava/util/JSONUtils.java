@@ -10,6 +10,7 @@ import java.time.temporal.ChronoField;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.FlightStatsEntry;
 
 /**
  * A utility class for dealing with JSON objects. 
@@ -136,6 +137,30 @@ public class JSONUtils {
 		if (fmtPattern != null)
 			jo.put("text", DateTimeFormatter.ofPattern(fmtPattern).format(zdt));
 		
+		return jo;
+	}
+	
+	/**
+	 * Converts a FlightStatsEntry to JSON.
+	 * @param fse a FlightStatsEntry
+	 * @return a JSONOebject
+	 */
+	public static JSONObject format(FlightStatsEntry fse) {
+		JSONObject jo = new JSONObject();
+		jo.put("id", fse.getHexID());
+		jo.put("label", fse.getLabel());
+		jo.put("legs", fse.getLegs());
+		jo.put("distance", fse.getDistance());
+		jo.put("acarsLegs", fse.getACARSLegs());
+		jo.put("hours", fse.getHours());
+		jo.put("pax", fse.getPax());
+		jo.put("online", fse.getOnlineLegs());
+		jo.put("historic", fse.getHistoricLegs());
+		jo.put("dispatch", fse.getDispatchLegs());
+		jo.put("simbrief", fse.getSimBriefLegs());
+		jo.put("tour", fse.getTourLegs());
+		jo.put("avgHours", fse.getAvgHours());
+		jo.put("avgDistance", fse.getAvgDistance());
 		return jo;
 	}
 }
