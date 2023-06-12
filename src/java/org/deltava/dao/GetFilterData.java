@@ -27,11 +27,10 @@ public class GetFilterData extends DAO {
 	 * @return a Collection of keywords
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<String> getKeywords(boolean isSafe) throws DAOException {
+	public List<String> getKeywords(boolean isSafe) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT KEYWORD FROM CONTENT_FILTER WHERE (SAFE=?)")) {
-			ps.setBoolean(1, false);
-			
-			Collection<String> results = new LinkedHashSet<String>();
+			ps.setBoolean(1, isSafe);
+			List<String> results = new ArrayList<String>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
