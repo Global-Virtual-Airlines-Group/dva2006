@@ -47,6 +47,9 @@ public class Bot {
     	super();
     }
 
+    /**
+     * Initializes the Discord bot.
+     */
     public static void init() {
 
     	DiscordApi api;
@@ -87,6 +90,9 @@ public class Bot {
         	_srv = srvs.iterator().next();
     }
     
+    /**
+     * Disconnects the Bot from the Discord API.
+     */
     public static void disconnect() {
     	if (_srv == null) {
     		log.warn("Not initialized!");
@@ -99,8 +105,13 @@ public class Bot {
     		CompletableFuture<Void> f =_srv.getApi().disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
     		f.join();
     		log.info("Shutdown in " + tt.stop() + "ms");
+    		
+    		// Wait for threads to shut down
+    		Thread.sleep(58000);
     	} catch (CompletionException ce) {
     		log.error("Error disconnecting from Discord API - " + ce.getMessage(), ce);
+    	} catch (InterruptedException ie) {
+    		log.warn("Interrupted waiting for threads to terminate");
     	}
     }
     
