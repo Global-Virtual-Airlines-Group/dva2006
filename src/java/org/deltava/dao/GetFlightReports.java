@@ -591,31 +591,27 @@ public class GetFlightReports extends DAO {
 	public Collection<RouteStats> getRoutePairs(int pilotID, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) ");
-		if (days > 0)
-			sqlBuf.append("AND (DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
-		sqlBuf.append("GROUP BY AIRPORT_D, AIRPORT_A");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT, MAX(DATE) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) ");
+		if (days > 0) sqlBuf.append("AND (DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
+		sqlBuf.append("GROUP BY AIRPORT_D, AIRPORT_A ORDER BY CNT DESC");
 		
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
 			ps.setInt(2, FlightStatus.OK.ordinal());
 			if (days > 0)
 				ps.setInt(3, days);
 			
 			// Execute the query
-			Map<String, RouteStats> results = new HashMap<String, RouteStats>();
+			Collection<RouteStats> results = new ArrayList<RouteStats>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RouteStats rp = new RouteStats(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)), rs.getInt(3));
-					RouteStats rp2 = results.get(rp.toString());
-					if (rp2 != null)
-						rp.add(rp.getFlights(), 0);
-					else
-						results.put(rp.toString(), rp);
+					rp.setLastFlight(toInstant(rs.getTimestamp(4)));
+					results.add(rp);
 				}
 			}
 			
-			return results.values();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
