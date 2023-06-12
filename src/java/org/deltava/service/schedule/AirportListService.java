@@ -1,11 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
-import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -25,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -93,7 +92,7 @@ public class AirportListService extends WebService {
 
 				// Get the airports from the schedule database
 				GetScheduleAirport dao = new GetScheduleAirport(con);
-				filter.add(new IATAFilter(dao.getConnectingAirports(a, !isDest, SystemData.getAirline(al))));
+				filter.add(new IATAFilter(dao.getConnectingAirports(a, isDest, SystemData.getAirline(al))));
 			} else if (useSched) {
 				GetAirport adao = new GetAirport(con);
 				GetScheduleAirport dao = new GetScheduleAirport(con);
@@ -159,17 +158,8 @@ public class AirportListService extends WebService {
 		}
 
 		// Generate the JSON document
-		JSONArray ja = new JSONArray(); Instant now = Instant.now();
-		for (Airport a : airports) {
-			JSONObject ao = new JSONObject();
-			ao.put("iata", a.getIATA());
-			ao.put("icao", a.getICAO());
-			ao.put("lat", a.getLatitude());
-			ao.put("lng", a.getLongitude());
-			ao.put("name", a.getName());
-			ao.put("utcOffset", a.getTZ().getZone().getRules().getOffset(now).getTotalSeconds());
-			ja.put(ao);
-		}
+		JSONArray ja = new JSONArray();
+		airports.stream().map(JSONUtils::format).forEach(ja::put);
 		
 		// Dump the JSON to the output stream
 		try {
