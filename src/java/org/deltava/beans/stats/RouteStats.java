@@ -1,18 +1,21 @@
-// Copyright 2012, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
+
+import java.time.Instant;
 
 import org.deltava.beans.schedule.*;
 
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 4.1
  */
 
 public class RouteStats extends AbstractRoute implements Comparable<RouteStats> {
 	
 	private int _acarsFlights;
+	private Instant _lastFlight;
 
 	/**
 	 * Creates the bean.
@@ -36,11 +39,27 @@ public class RouteStats extends AbstractRoute implements Comparable<RouteStats> 
 	}
 	
 	/**
+	 * Updates the date/time of the last flight.
+	 * @param dt the date/time of the latest flight, or null if none
+	 */
+	public void setLastFlight(Instant dt) {
+		_lastFlight = dt; 
+	}
+	
+	/**
 	 * Returns the number of ACARS flight legs. 
 	 * @return the number of ACARS legs
 	 */
 	public int getACARSFlights() {
 		return _acarsFlights;
+	}
+	
+	/**
+	 * Returns the last flight date for this route pair.
+	 * @return the last flight date/time, or null if none
+	 */
+	public Instant getLastFlight() {
+		return _lastFlight;
 	}
 	
 	@Override
