@@ -33,7 +33,7 @@ golgotha.local.sortStat = function() { console.log('Sorting disabled'); return f
 <c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<view:row entry="${stat}" className="pirepStats" ID="pirepStats-${stat.hexID}">
+<view:row entry="${stat}" className="pirepStatsData" ID="pirepStats-${stat.hexID}">
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld" title="<fmt:distance value="${stat.distance}" longUnits="true" />"><fmt:dec value="${stat.hours}" /></td>

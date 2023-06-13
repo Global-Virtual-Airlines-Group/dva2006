@@ -76,6 +76,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			List<LandingStatistics> landingStats = stdao.getLandings(userID);
 			landingStats.sort(new LandingStatsComparator().reversed());
 			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
+			ctx.setAttribute("eqLandingSortData", landingStats.stream().map(MyFlightStatsCommand::toJSON).collect(Collectors.toList()), REQUEST);
 			
 			// Get popular route pairs
 			stdao.setQueryMax(30);
@@ -143,7 +144,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 	}
 	
 	/*
-	 * Helper method to conver route statistics to JSON.
+	 * Helper method to convert route statistics to JSON.
 	 */
 	private static JSONObject toJSON(RouteStats st) {
 		JSONObject jo = new JSONObject();
@@ -152,6 +153,19 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 		jo.put("legs", st.getFlights());
 		jo.put("acars", st.getACARSFlights());
 		jo.put("lastFlight", st.getLastFlight().toEpochMilli());
+		return jo;
+	}
+	
+	public static JSONObject toJSON(LandingStatistics ls) {
+		JSONObject jo = new JSONObject();
+		jo.put("id", ls.getEquipmentType());
+		jo.put("legs", ls.getLegs());
+		jo.put("hours", ls.getHours());
+		jo.put("vSpeed", ls.getAverageSpeed());
+		jo.put("vSpeedSD", ls.getStdDeviation());
+		jo.put("distance", ls.getAverageDistance());
+		jo.put("distanceSD", ls.getDistanceStdDeviation());
+		jo.put("score", ls.getAverageScore());
 		return jo;
 	}
 }
