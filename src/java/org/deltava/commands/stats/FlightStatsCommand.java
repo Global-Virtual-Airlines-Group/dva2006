@@ -1,17 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
+
+import java.util.stream.Collectors;
 
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.EnumUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -47,6 +48,9 @@ public class FlightStatsCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save sort data
+		ctx.setAttribute("statSortData", vc.getResults().stream().map(JSONUtils::format).collect(Collectors.toList()), REQUEST);
 
 		// Set the result page and return
 		CommandResult result = ctx.getResult();
