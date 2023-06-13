@@ -3,6 +3,7 @@ package org.deltava.discord;
 
 import java.util.*;
 import java.sql.*;
+import java.lang.reflect.*;
 import java.util.concurrent.*;
 
 import org.apache.logging.log4j.*;
@@ -14,6 +15,8 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.*;
+
+import okhttp3.OkHttpClient;
 
 import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
@@ -101,9 +104,24 @@ public class Bot {
 
     	// Wait for discord to shut down
     	try {
-    		log.info("Disconnecting from Discord API"); TaskTimer tt = new TaskTimer();
-    		CompletableFuture<Void> f =_srv.getApi().disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
-    		f.join();
+    		TaskTimer tt = new TaskTimer();
+    		DiscordApi api = _srv.getApi();
+    		try {
+    			Field f = api.getClass().getDeclaredField("httpClient");
+    			f.setAccessible(true);
+    			OkHttpClient httpClient = (OkHttpClient) f.get(api);
+    			if (httpClient != null) {
+    				log.info("Shutting down HTTP Client");
+    				httpClient.dispatcher().executorService().shutdownNow();
+    				httpClient.connectionPool().evictAll();
+    			}
+    		} catch (NoSuchFieldException | IllegalAccessException nfe) {
+    			log.error(nfe.getClass().getSimpleName() + " obtaining Discord HTTP Client - " + nfe.getMessage());	
+    		}
+    		
+    		log.info("Disconnecting from Discord API");
+    		CompletableFuture<Void> cf = api.disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
+    		cf.join();
     		log.info("Shutdown in " + tt.stop() + "ms");
     		
     		// Wait for threads to shut down
