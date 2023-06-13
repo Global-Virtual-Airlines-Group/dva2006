@@ -11,7 +11,6 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:js name="common" />
-<content:js name="tableSort" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

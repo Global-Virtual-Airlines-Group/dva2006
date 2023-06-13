@@ -148,10 +148,12 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 	 */
 	private static JSONObject toJSON(RouteStats st) {
 		JSONObject jo = new JSONObject();
+		jo.put("id", st.createKey());
 		jo.put("airportD", st.getAirportD().getIATA());
 		jo.put("airportA", st.getAirportA().getIATA());
 		jo.put("legs", st.getFlights());
 		jo.put("acars", st.getACARSFlights());
+		jo.put("distance", st.getDistance());
 		jo.put("lastFlight", st.getLastFlight().toEpochMilli());
 		return jo;
 	}
