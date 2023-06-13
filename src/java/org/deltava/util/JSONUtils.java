@@ -148,10 +148,9 @@ public class JSONUtils {
 	public static JSONObject format(FlightStatsEntry fse) {
 		JSONObject jo = new JSONObject();
 		jo.put("id", fse.getHexID());
-		jo.put("label", fse.getLabel());
 		jo.put("legs", fse.getLegs());
 		jo.put("distance", fse.getDistance());
-		jo.put("acarsLegs", fse.getACARSLegs());
+		jo.put("acars", fse.getACARSLegs());
 		jo.put("hours", fse.getHours());
 		jo.put("pax", fse.getPax());
 		jo.put("online", fse.getOnlineLegs());
