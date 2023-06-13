@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:js name="tableSort" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
@@ -53,25 +54,11 @@ golgotha.local.swapTimeGraphs = function(rb) {
 	return golgotha.local.drawGraphs(data[0], data[1], data[2]);
 };
 
-golgotha.local.sortLandings = function(t) {
-	golgotha.local.landingSort = t;
-	golgotha.local.revLandingSort = true;
-	const data = golgotha.local.landingSortData.clone();
-	const cmp = function(e1, e2) { return e2[t] - e1[t]; };
-	data.sort(cmp);
+golgotha.local.sortLandings = function(t) { return golgotha.sort.exec('topLanding', t); };
+golgotha.local.sortPopRoute = function(t) { return golgotha.sort.exec('popRoute', t); };
 
-	// Remove the rows
-	const rowIDs = {};
-	const rows = golgotha.util.getElementsByClass('topLandingData', 'tr');
-	rows.forEach(function(r) { r.parentNode.removeChild(r); rowIDs[r.id] = r; });
-
-	// Iterate through the table and add rows
-	const pr = document.getElementById('topLandingLabel');
-	data.forEach(function(d) { pr.parentNode.insertBefore(rowIDs['topLanding-' + d.id], null); });
-	return true;
-};
-
-<fmt:jsarray var="golgotha.local.landingSortData" items="${landingSortData}" />
+<fmt:jsarray var="golgotha.sort.data.topLanding" items="${landingSortData}" />
+<fmt:jsarray var="golgotha.sort.data.popRoute" items="${popRouteSortData}" />
 </script>
 </head>
 <content:copyright visible="false" />
@@ -144,9 +131,9 @@ golgotha.local.sortLandings = function(t) {
 </tr>
 <tr id="topLandingLabel" class="title mid caps topLanding">
  <td>#</td>
- <td><a href="javascript:void golgotha.local.sortLandings('flight')">FLIGHT</a></td>
+ <td>FLIGHT</td>
  <td><a href="javascript:void golgotha.local.sortLandings('date')">DATE</a></td>
- <td><a href="javascript:void golgotha.local.sortLandings('eqType')">EQUIPMENT</a></td>
+ <td>EQUIPMENT</td>
  <td><span class="nophone">RUNWAY / </span><a href="javascript:void golgotha.local.sortLandings('rwyDistance')">DISTANCE</a></td>
  <td><a href="javascript:void golgotha.local.sortLandings('vSpeed')">SPEED</a></td>
  <td><a href="javascript:void golgotha.local.sortLandings('score')">SCORE</a></td>
@@ -173,7 +160,7 @@ golgotha.local.sortLandings = function(t) {
 <!-- Popular Routes -->
 <el:table className="form">
 <tr class="title">
- <td colspan="5" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="topRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
+ <td colspan="6" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="topRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
 </tr>
 <tr class="title mid caps topRoute">
  <td>#</td>
@@ -181,6 +168,7 @@ golgotha.local.sortLandings = function(t) {
  <td style="width:12%">DISTANCE</td>
  <td style="width:15%">FLIGHTS</td>
  <td style="width:15%">ACARS</td>
+ <td style="width:10%" class="nophone">LAST FLIGHT</td>
 </tr>
 
 <c:set var="entryNumber" value="0" scope="page" />
@@ -194,6 +182,7 @@ golgotha.local.sortLandings = function(t) {
  <td><fmt:distance value="${dst}" /></td>
  <td class="pri bld"><fmt:int value="${entry.flights}" /> (<fmt:dec value="${entry.flights * 100.0 / totalLegs}" />%)</td>
  <td class="bld"><fmt:int value="${entry.ACARSFlights}" /> (<fmt:dec value="${entry.ACARSFlights * 100.0 / entry.flights}" /> %)</td>
+ <td class="nophone"><fmt:date date="${entry.lastFlight}"  fmt="d" /></td>
 </tr>
 </c:forEach>
 </el:table>
