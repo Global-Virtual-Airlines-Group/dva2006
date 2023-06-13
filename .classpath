@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.20.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javacord-api-3.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/okhttp-4.11.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
