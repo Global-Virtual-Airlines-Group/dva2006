@@ -81,6 +81,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			stdao.setQueryMax(30);
 			Collection<RouteStats> popRoutes = stdao.getPopularRoutes(userID);
 			ctx.setAttribute("popularRoutes", popRoutes, REQUEST);
+			ctx.setAttribute("popRouteSortData", popRoutes.stream().map(MyFlightStatsCommand::toJSON).collect(Collectors.toList()), REQUEST);
 			ctx.setAttribute("popularTotal", Integer.valueOf(popRoutes.stream().mapToInt(RouteStats::getFlights).sum()), REQUEST);
 			
 			// Get my best landings
@@ -138,6 +139,19 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 		jo.put("rwyDistance", rd.getDistance());
 		jo.put("vSpeed", fr.getLandingVSpeed());
 		jo.put("score", fr.getLandingScore());
+		return jo;
+	}
+	
+	/*
+	 * Helper method to conver route statistics to JSON.
+	 */
+	private static JSONObject toJSON(RouteStats st) {
+		JSONObject jo = new JSONObject();
+		jo.put("airportD", st.getAirportD().getIATA());
+		jo.put("airportA", st.getAirportA().getIATA());
+		jo.put("legs", st.getFlights());
+		jo.put("acars", st.getACARSFlights());
+		jo.put("lastFlight", st.getLastFlight().toEpochMilli());
 		return jo;
 	}
 }

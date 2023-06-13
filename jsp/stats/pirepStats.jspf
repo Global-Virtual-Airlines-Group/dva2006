@@ -3,25 +3,8 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <script async>
 <c:if test="${!empty statSortData}">
-golgotha.local.sortStat = function(t) {
-	golgotha.local.statSort = t;
-	golgotha.local.revStatSort = true;
-	const data = golgotha.local.sortData.clone();
-	const cmp = function(e1, e2) { return e2[t] - e1[t]; };
-	data.sort(cmp);
-
-	// Remove the rows
-	const rowIDs = {};
-	const rows = golgotha.util.getElementsByClass('pirepStat', 'tr');
-	rows.forEach(function(r) { r.parentNode.removeChild(r); rowIDs[r.id] = r; });
-
-	// Iterate through the table and add rows
-	const pr = document.getElementById('pirepStatsLabel');
-	data.forEach(function(d) { pr.parentNode.insertBefore(rowIDs['pirepStats-' + d.id], null); });
-	return true;
-};
-
-<fmt:jsarray var="golgotha.local.sortData" items="${statSortData}" />
+golgotha.local.sortStat = function(t) { return golgotha.sort.exec('pirepStats', t); };
+<fmt:jsarray var="golgotha.sort.data.pirepStats" items="${statSortData}" />
 </c:if>
 <c:if test="${empty statSortData}">
 golgotha.local.sortStat = function() { console.log('Sorting disabled'); return false };
@@ -50,7 +33,7 @@ golgotha.local.sortStat = function() { console.log('Sorting disabled'); return f
 <c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<view:row entry="${stat}" className="pirepStat" ID="pirepStats-${stat.hexID}">
+<view:row entry="${stat}" className="pirepStats" ID="pirepStats-${stat.hexID}">
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld" title="<fmt:distance value="${stat.distance}" longUnits="true" />"><fmt:dec value="${stat.hours}" /></td>
