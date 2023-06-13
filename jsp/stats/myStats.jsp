@@ -13,7 +13,6 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<content:js name="tableSort" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
@@ -107,7 +106,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${eqLandingStats}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<tr class="mid tdStats eqLandingData">
+<tr class="mid tdStats eqLandingData" id="eqLanding-${entry.equipmentType}">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${entry.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
@@ -167,17 +166,17 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <tr id="popRouteLabel" class="title mid caps popRoute">
  <td>#</td>
  <td>FLIGHT ROUTE</td>
- <td style="width:12%">DISTANCE</td>
- <td style="width:15%">FLIGHTS</td>
- <td style="width:15%">ACARS</td>
- <td style="width:10%" class="nophone">LAST FLIGHT</td>
+ <td style="width:12%"><a href="javascript:void golgotha.local.sortPopRoute('distance')">DISTANCE</a></td>
+ <td style="width:15%"><a href="javascript:void golgotha.local.sortPopRoute('legs')">FLIGHTS</a></td>
+ <td style="width:15%"><a href="javascript:void golgotha.local.sortPopRoute('acars')">ACARS</a></td>
+ <td style="width:10%" class="nophone"><a href="javascript:void golgotha.local.sortPopRoute('lastFlight')">LAST FLIGHT</a></td>
 </tr>
 
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${popularRoutes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <content:defaultMethod var="dst" object="${entry}" method="distance" />
-<tr class="mid popRoute popRouteData">
+<tr class="mid popRoute popRouteData" id="popRoute-${entry.createKey()}">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) - ${entry.airportA.name}
  (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>

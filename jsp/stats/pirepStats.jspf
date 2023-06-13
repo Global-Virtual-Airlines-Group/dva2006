@@ -13,7 +13,7 @@ golgotha.local.sortStat = function() { console.log('Sorting disabled'); return f
 <!-- Table Header Bar-->
 <tr class="title caps" id="pirepStatsLabel">
  <td style="max-width:5%">#</td>
- <td style="max-width:25%"><a href="javascript:void golgotha.local.sortStat('label')">ENTRY</a></td>
+ <td style="max-width:25%">ENTRY</td>
  <td style="width:7%"><a href="javascript:void golgotha.local.sortStat('hours')">HOURS</a></td>
  <td style="width:6%"><a href="javascript:void golgotha.local.sortStat('legs')">LEGS</a></td>
  <td class="nophone"><a href="javascript:void golgotha.local.sortStat('pax')">PAX</a></td>
