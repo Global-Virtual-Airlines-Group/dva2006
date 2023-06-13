@@ -56,9 +56,11 @@ golgotha.local.swapTimeGraphs = function(rb) {
 
 golgotha.local.sortLandings = function(t) { return golgotha.sort.exec('topLanding', t); };
 golgotha.local.sortPopRoute = function(t) { return golgotha.sort.exec('popRoute', t); };
+golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLanding', t); };
 
 <fmt:jsarray var="golgotha.sort.data.topLanding" items="${landingSortData}" />
 <fmt:jsarray var="golgotha.sort.data.popRoute" items="${popRouteSortData}" />
+<fmt:jsarray var="golgotha.sort.data.eqLanding" items="${eqLandingSortData}" />
 </script>
 </head>
 <content:copyright visible="false" />
@@ -89,23 +91,23 @@ golgotha.local.sortPopRoute = function(t) { return golgotha.sort.exec('popRoute'
 <tr class="title">
  <td colspan="9" class="left caps">TOUCHDOWN STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tdStats')">COLLAPSE</span></td>
 </tr>
-<tr class="title mid caps tdStats">
+<tr id="eqLandingLabel" class="title mid caps tdStats">
  <td>#</td>
  <td style="width:12%">EQUIPMENT</td>
- <td style="width:10%">FLIGHTS</td>
- <td class="nophone" style="width:10%">HOURS</td>
- <td style="width:18%">AVERAGE SPEED</td>
- <td style="width:12%" class="nophone">STD. DEVIATION</td>
- <td style="width:10%">AVERAGE DISTANCE</td>
- <td class="nophone">STD. DEVIATION</td>
- <td>SCORE</td>
+ <td style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('flights')">FLIGHTS</a></td>
+ <td class="nophone" style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('hours')">HOURS</a></td>
+ <td style="width:18%"><a href="javascript:void golgotha.local.sortEQLanding('vSpeed')">AVERAGE SPEED</a></td>
+ <td style="width:12%" class="nophone"><a href="javascript:void golgotha.local.sortEQLanding('vSpeedSD')">STD. DEVIATION</a></td>
+ <td style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('distance')">AVERAGE DISTANCE</a></td>
+ <td class="nophone"><a href="javascript:void golgotha.local.sortEQLanding('distanceSD')">STD. DEVIATION</a></td>
+ <td><a href="javascript:void golgotha.local.sortEQLanding('score')">SCORE</a></td>
 </tr>
 
 <!-- Touchdown Speed Analysis -->
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${eqLandingStats}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<tr class="mid tdStats">
+<tr class="mid tdStats eqLandingData">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${entry.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
@@ -158,11 +160,11 @@ golgotha.local.sortPopRoute = function(t) { return golgotha.sort.exec('popRoute'
 </el:table>
 
 <!-- Popular Routes -->
-<el:table className="form">
+<el:table className="view">
 <tr class="title">
- <td colspan="6" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="topRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topRoute')">COLLAPSE</span></span></td>
+ <td colspan="6" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="popRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'popRoute')">COLLAPSE</span></span></td>
 </tr>
-<tr class="title mid caps topRoute">
+<tr id="popRouteLabel" class="title mid caps popRoute">
  <td>#</td>
  <td>FLIGHT ROUTE</td>
  <td style="width:12%">DISTANCE</td>
@@ -175,7 +177,7 @@ golgotha.local.sortPopRoute = function(t) { return golgotha.sort.exec('popRoute'
 <c:forEach var="entry" items="${popularRoutes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <content:defaultMethod var="dst" object="${entry}" method="distance" />
-<tr class="mid topRoute">
+<tr class="mid popRoute popRouteData">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) - ${entry.airportA.name}
  (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
