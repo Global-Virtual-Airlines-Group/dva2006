@@ -42,6 +42,8 @@ public class Bot {
     private static Server _srv;
     private static final ContentFilter _filter = new ContentFilter();
     private static final Map<String, Long> _channelIDs = new HashMap<String, Long>();
+    
+    private static final Semaphore _disconnectLock = new Semaphore(1);
 
     private static final Logger log = LogManager.getLogger(Bot.class);
     
@@ -100,6 +102,9 @@ public class Bot {
     	if (_srv == null) {
     		log.warn("Not initialized!");
     		return;
+    	} else if (!_disconnectLock.tryAcquire()) {
+    		log.warn("Already shutting down");
+    		return;
     	}
 
     	// Wait for discord to shut down
@@ -130,6 +135,8 @@ public class Bot {
     		log.error("Error disconnecting from Discord API - " + ce.getMessage(), ce);
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted waiting for threads to terminate");
+    	} finally {
+    		_disconnectLock.release();
     	}
     }
     
