@@ -4,11 +4,11 @@ package org.deltava.beans.flight;
 /**
  * An enumeration of landing score ratings.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 10.4
  */
 
-public enum LandingRating {
+public enum LandingRating implements org.deltava.beans.EnumDescription {
 	UNKNOWN(0), DANGEROUS(60), POOR(75), ACCEPTABLE(95), GOOD(101);
 	
 	private final int _maxScore;

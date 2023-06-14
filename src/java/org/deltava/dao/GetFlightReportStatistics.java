@@ -392,15 +392,38 @@ public class GetFlightReportStatistics extends DAO {
 		}
 		
 		// Trim out any without a value
-		for (Iterator<Map.Entry<Integer, Integer>> i = results.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry<Integer, Integer> me = i.next();
-			if (me.getValue().intValue() == 0)
-				i.remove();
-			else
-				return results;
-		}
-		
+		results.entrySet().removeIf(me -> (me.getValue().intValue() == 0));
 		return results;
+	}
+
+	/**
+	 * Calculcates landing scores over time.
+	 * @param pilotID the Pilot's database ID
+	 * @return a Collection of LandingStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<LandingStatsEntry> getLandingScores(int pilotID) throws DAOException {
+		
+		Collection<LandingStatsEntry> results = new ArrayList<LandingStatsEntry>(); 
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DATE_SUB(S.DATE, INTERVAL (DAYOFMONTH(S.DATE)-1) DAY) AS DT, S.SCORE, P.DISTANCE, P.FLIGHT_TIME FROM FLIGHTSTATS_LANDING S, PIREPS P WHERE (P.ID=S.ID) AND (S.PILOT_ID=?) ORDER BY DT")) {
+			ps.setInt(1, pilotID);
+			try (ResultSet rs = ps.executeQuery()) {
+				LandingStatsEntry lse = null;
+				while (rs.next()) {
+					Instant dt = toInstant(rs.getTimestamp(1));
+					if ((lse == null) || dt.isAfter(lse.getDate())) {
+						lse = new LandingStatsEntry(dt);
+						results.add(lse);
+					}
+					
+					lse.add(rs.getInt(2) / 100, rs.getInt(3), rs.getDouble(4));
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**

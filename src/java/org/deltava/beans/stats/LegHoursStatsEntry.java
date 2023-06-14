@@ -70,4 +70,16 @@ abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Se
 	protected void set(K key, int legs, int distance, double hours) {
 		_legs.put(key, new LegHoursStats(legs, distance, hours));
 	}
+	
+	/**
+	 * Adds to an existing statistics entry.
+	 * @param key the key
+	 * @param distance the flight distance in miles
+	 * @param hours the number of flight hours
+	 */
+	protected void inc(K key, int distance, double hours) {
+		LegHoursStats st = _legs.getOrDefault(key, ZERO);
+		LegHoursStats st2 = new LegHoursStats(st.getLegs() + 1, st.getDistance() + distance, st.getHours() + hours);
+		_legs.put(key, st2);
+	}
 }
