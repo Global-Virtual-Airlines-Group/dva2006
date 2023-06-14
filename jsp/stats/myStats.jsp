@@ -25,32 +25,41 @@ golgotha.local.validate = function(f) {
     return true;
 };
 
-golgotha.local.drawGraphs = function(stData, clData, label) {
+golgotha.local.drawGraphs = function(d) {
 	let data = new google.visualization.DataTable();
 	data.addColumn('date', 'Month');
 	for (var st = 1; st <= golgotha.local.data.maxStage; st++)
 		data.addColumn('number', 'Stage ' + st);
 
-	data.addRows(stData);	
+	data.addRows(d[0]);	
 	const o1 = golgotha.charts.buildOptions({isStacked:true,width:'100%'});
-	o1.title = label + ' by Date/Stage';
-	o1.vAxis.title= 'Flight ' + label;
+	o1.title = d[3] + ' by Date/Stage';
+	o1.vAxis.title= 'Flight ' + d[3];
 	golgotha.local.charts.stage.draw(data,o1);
 
 	data = new google.visualization.DataTable();
 	data.addColumn('date', 'Month');
 	golgotha.local.data.sims.forEach(function(s) { data.addColumn('number', s); });
-	data.addRows(clData);
+	data.addRows(d[1]);
 	const o2 = golgotha.charts.buildOptions({isStacked:true,width:'100%'});
-	o2.title = label +  ' by Date/Simulator';
-	o2.vAxis.title= 'Flight ' + label;
+	o2.title = d[3] +  ' by Date/Simulator';
+	o2.vAxis.title= 'Flight ' + d[3];
 	golgotha.local.charts.sim.draw(data,o2);
+	
+	data = new google.visualization.DataTable();
+	data.addColumn('date', 'Month');
+	golgotha.local.data.ratings.forEach(function(s) { data.addColumn('number', s); });
+	data.addRows(d[2]);
+	const o3 = golgotha.charts.buildOptions({isStacked:true,width:'100%'});
+	o3.title = d[3] +  ' by Date/Rating';
+	o3.vAxis.title= 'Flight ' + d[3];
+	golgotha.local.charts.landRating.draw(data,o3);
 	return true;
 };
 
 golgotha.local.swapTimeGraphs = function(rb) {
 	const data = golgotha.local.dataMap[rb.value];
-	return golgotha.local.drawGraphs(data[0], data[1], data[2]);
+	return golgotha.local.drawGraphs(data);
 };
 
 golgotha.local.sortLandings = function(t) { return golgotha.sort.exec('topLanding', t); };
@@ -207,10 +216,13 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
  <td class="right"><el:check type="radio" name="timeGraphOpts" options="${graphOpts}" value="LEGS" onChange="void golgotha.local.swapTimeGraphs(this)" /></td>
 </tr>
 <tr>
- <td colspan="2"><div id="stageStats" style="width:100%; height:340px;"></div></td>
+ <td colspan="2"><div id="stageStats" style="width:100%; height:360px;"></div></td>
 </tr>
 <tr>
- <td colspan="2"><div id="simStats" style="width:100%; height:340px;"></div></td>
+ <td colspan="2"><div id="simStats" style="width:100%; height:360px;"></div></td>
+</tr>
+<tr>
+ <td colspan="2"><div id="landingRatingStats" style="width:100%; height:360px;"></div></td>
 </tr>
 
 <!-- Bottom Bar -->
@@ -279,12 +291,14 @@ xmlreq.onreadystatechange = function() {
 	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'}));
 
 	// Massage data and init charts
-	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours, golgotha.local.data.simCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance, golgotha.local.data.simCalendarDistance,"Distance"]};
+	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};
 	const dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
 	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX); golgotha.local.data.calendarDistance.forEach(dateTX);
 	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX); golgotha.local.data.simCalendarDistance.forEach(dateTX);
+	golgotha.local.data.landingCalendar.forEach(dateTX); golgotha.local.data.landingCalendarHours.forEach(dateTX); golgotha.local.data.landingCalendarDistance.forEach(dateTX);
 	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
 	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
+	golgotha.local.charts.landRating = new google.visualization.ColumnChart(document.getElementById('landingRatingStats'));
 	return golgotha.local.swapTimeGraphs(document.forms[0].timeGraphOpts);
 };
 

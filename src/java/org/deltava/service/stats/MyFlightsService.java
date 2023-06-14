@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 2.1
  */
 
@@ -48,6 +48,7 @@ public class MyFlightsService extends WebService {
 		Collection<StageStatsEntry> stageStats = null;
 		Collection<SimStatsEntry> simStats = null;
 		Collection<LandingStatistics> landings = null;
+		Collection<LandingStatsEntry> landingScores = null;
 		Map<Integer, Integer> vsStats = null; Map<OnTime, Integer> otStats = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -59,6 +60,7 @@ public class MyFlightsService extends WebService {
 			simStats = stdao.getSimulatorStatistics(userID);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
+			landingScores = stdao.getLandingScores(userID);
 			
 			// Load ontime statistics
 			GetACARSOnTime otdao = new GetACARSOnTime(con);
@@ -172,9 +174,22 @@ public class MyFlightsService extends WebService {
 			jso.put(da); jsh.put(dh); jsd.put(dd);
 		}
 		
+		// Create landing scores by Month
+		Collection<LandingRating> ratings = landingScores.stream().flatMap(ls -> ls.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
+		ratings.forEach(lr -> jo.append("ratings", lr.getDescription()));
+		JSONArray lso = new JSONArray(); JSONArray lsh = new JSONArray(); JSONArray lsd = new JSONArray();
+		for (LandingStatsEntry entry : landingScores) {
+			JSONObject jd = JSONUtils.formatDate(entry.getDate());
+			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray(); JSONArray dd = new JSONArray();
+			da.put(jd); dh.put(jd); dd.put(jd);
+			ratings.forEach(lr -> { da.put(entry.getLegs(lr)); dh.put(entry.getHours(lr)); dd.put(entry.getDistance(lr)); });
+			lso.put(da); lsh.put(dh); lsd.put(dd);
+		}
+		
 		// Dump the JSON to the output stream
 		jo.put("calendar", jdo); jo.put("calendarHours", jdh); jo.put("calendarDistance", jdd);
 		jo.put("simCalendar", jso); jo.put("simCalendarHours", jsh); jo.put("simCalendarDistance", jsd);
+		jo.put("landingCalendar", lso); jo.put("landingCalendarHours", lsh); jo.put("landingCalendarDistance", lsd);
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(600);
