@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Help Desk Issues.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -20,6 +20,7 @@ public class Issue extends DatabaseBean implements Auditable, AuthoredBean, View
 	private IssueStatus _status;
 	private int _commentCount;
 	private int _lastCommentID;
+	private int _linkedIssueID;
 	
 	private boolean _public;
 	private boolean _faq;
@@ -65,6 +66,15 @@ public class Issue extends DatabaseBean implements Auditable, AuthoredBean, View
 	 */
 	public int getLastCommentAuthorID() {
 		return _lastCommentID;
+	}
+	
+	/**
+	 * Returns the database ID of a linked Development Issue.
+	 * @return the database ID
+	 * @see Issue#setLinkedIssueID(int)
+	 */
+	public int getLinkedIssueID() {
+		return _linkedIssueID;
 	}
 	
 	/**
@@ -217,10 +227,19 @@ public class Issue extends DatabaseBean implements Auditable, AuthoredBean, View
 	 * @see Issue#setAuthorID(int)
 	 */
 	public void setLastCommentAuthorID(int id) {
-		if (id != 0)
-			validateID(_lastCommentID, id);
-		
+		if (id != 0) validateID(_lastCommentID, id);
 		_lastCommentID = id;
+	}
+	
+	/**
+	 * Updates the database ID of a linked Development issue.
+	 * @param id the Development Issue database ID
+	 * @throws IllegalArgumentException if id is negative
+	 * @see Issue#getLinkedIssueID()
+	 */
+	public void setLinkedIssueID(int id) {
+		if (id != 0) validateID(_linkedIssueID, id);
+		_linkedIssueID = id;
 	}
 	
 	/**

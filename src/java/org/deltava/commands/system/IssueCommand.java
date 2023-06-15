@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.IssueAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -219,12 +219,9 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			// Get developers
 			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Collection<Pilot> devs = new HashSet<Pilot>();
-			Collection<?> apps = ((Map<?, ?>) SystemData.getObject("apps")).values();
-			for (Iterator<?> it = apps.iterator(); it.hasNext();) {
-				AirlineInformation aInfo = (AirlineInformation) it.next();
+			Collection<Pilot> devs = new LinkedHashSet<Pilot>();
+			for (AirlineInformation aInfo : SystemData.getApps())
 				devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
-			}
 			
 			// Get assignee (it may not be a dev)
 			if (i != null) {
@@ -233,7 +230,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			}
 
 			// Save developers in request
-			ctx.setAttribute("allApps", apps, REQUEST);
+			ctx.setAttribute("allApps", SystemData.getApps(), REQUEST);
 			ctx.setAttribute("devs", devs, REQUEST);
 
 			// Get the Pilots posting in this issue
@@ -279,6 +276,18 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			access.validate();
 			if (!access.getCanRead())
 				throw securityException("Cannot view Issue - " + ctx.getID());
+			
+			// Get linked Help Desk issue if present
+			if ((i.getLinkedIssueID() != 0) && ctx.isAuthenticated()) {
+				GetHelp hdao = new GetHelp(con);
+				org.deltava.beans.help.Issue hi = hdao.getIssue(i.getLinkedIssueID());
+				if (hi != null) {
+					HelpDeskAccessControl hac = new HelpDeskAccessControl(ctx, hi);
+					hac.validate();
+					if (hac.getCanComment())
+						ctx.setAttribute("hdIssue", hi, REQUEST);
+				}
+			}
 
 			// Get the userData DAO
 			GetUserData uddao = new GetUserData(con);

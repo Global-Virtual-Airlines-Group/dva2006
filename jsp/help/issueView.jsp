@@ -106,6 +106,12 @@ return true;
  <td class="label top">Issue Description</td>
  <td class="data"><fmt:msg value="${issue.body}" bbCode="true" /></td>
 </tr>
+<c:if test="${!empty devIssue}">
+<tr>
+ <td class="label">Development Issue</td>
+ <td class="data">Linked to<span class="nophone"> <content:airline /> Development Issue #<fmt:int className="sec bld" value="${devIssue.ID}" /></span> <el:cmd url="issue" link="${devIssue}" className="pri bld">${devIssue.subject}</el:cmd></td>
+</tr>
+</c:if>
 
 <!-- Issue Comments -->
 <tr class="title caps left">
