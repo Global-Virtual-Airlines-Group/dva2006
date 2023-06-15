@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -78,8 +78,8 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Add a dummy issue comment
 			try {
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
-				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url.toURL());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID(), null);
+				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment(0, "Converted Help Desk Issue at " + url.toURL().toExternalForm());
 				ic.setAuthorID(ctx.getUser().getID());
 				ic.setParentID(i.getID());
 				wdao.write(ic);
@@ -91,8 +91,8 @@ public class IssueConvertCommand extends AbstractCommand {
 			org.deltava.beans.help.IssueComment hic = new org.deltava.beans.help.IssueComment(ctx.getUser().getID());
 			hic.setID(hi.getID());
 			try {
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
-				hic.setBody("Converted to Development Issue at " + url.toURL());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID(), null);
+				hic.setBody("Converted to Development Issue at " + url.toURL().toExternalForm());
 			} catch (URISyntaxException | MalformedURLException se) {
 				hic.setBody("Converted to Development Issue");
 			}
@@ -101,6 +101,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			SetHelp hwdao = new SetHelp(con);
 			hwdao.write(hi);
 			hwdao.write(hic);
+			hwdao.link(hi, i.getID());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

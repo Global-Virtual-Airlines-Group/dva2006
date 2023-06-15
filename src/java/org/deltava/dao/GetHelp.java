@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class GetHelp extends DAO {
 	public Issue getIssue(int id) throws DAOException {
 		Issue i = null;
 		try {
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM HELPDESK WHERE (ID=?) LIMIT 1")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT H.*, HL.ISSUE_ID FROM HELPDESK H LEFT JOIN HELPDESK_LINKS HL ON (H.ID=HL.ID) WHERE (H.ID=?) LIMIT 1")) {
 				ps.setInt(1, id);
 				i = executeIssue(ps).stream().findFirst().orElse(null);
 				if (i == null) return null;
@@ -69,8 +69,8 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Issue> getAll() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON DESC")) {
+		try (PreparedStatement ps = prepare("SELECT I.*, HL.ISSUE_ID, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) LEFT JOIN HELPDESK_LINKS HL ON (I.ID=HL.ID) GROUP BY I.ID ORDER BY I.CREATED_ON DESC")) {
 			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -158,8 +158,8 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
-			+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, HL.ISSUE_ID, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+			+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) LEFT JOIN HELPDESK_LINKS HL ON (I.ID=HL.ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?) ");
 		if (showPublic)
 			sqlBuf.append("OR (I.ISPUBLIC=?)");
 		sqlBuf.append(") ");
@@ -186,8 +186,8 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Issue> getActive() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY IFNULL(LCD, I.CREATED_ON) DESC")) {
+		try (PreparedStatement ps = prepare("SELECT I.*, HL.ISSUE_ID, COUNT(IC.ID), MAX(IC.CREATED_ON) AS LCD, (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) LEFT JOIN HELPDESK_LINKS HL ON (I.ID=HL.ID) WHERE ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY IFNULL(LCD, I.CREATED_ON) DESC")) {
 			ps.setInt(1, IssueStatus.OPEN.ordinal());
 			ps.setInt(2, IssueStatus.ASSIGNED.ordinal());
 			return executeIssue(ps);
@@ -204,7 +204,7 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getFAQ() throws DAOException {
 		try {
 			Map<Integer, Issue> results = new HashMap<Integer, Issue>();
-			try (PreparedStatement ps = prepare("SELECT * FROM HELPDESK WHERE (ISFAQ=?)")) {
+			try (PreparedStatement ps = prepare("SELECT I.*, HL.ISSUE_ID FROM HELPDESK I LEFT JOIN HELPDESK_LINKS HL ON (I.ID=HL.ID) WHERE (I.ISFAQ=?)")) {
 				ps.setBoolean(1, true);
 				results.putAll(CollectionUtils.createMap(executeIssue(ps), Issue::getID));
 			}
@@ -250,7 +250,8 @@ public class GetHelp extends DAO {
 	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) OR (LOCATE(?, I.BODY) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, HL.ISSUE_ID, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) LEFT JOIN HELPDESK_LINKS HL ON (I.ID=HL.ID) "
+			+ "WHERE ((LOCATE(?, I.SUBJECT) > 0) OR (LOCATE(?, I.BODY) > 0)");
 		if (includeComments)
 			sqlBuf.append(" OR (LOCATE(?, IC.BODY) > 0)");
 		sqlBuf.append(") GROUP BY I.ID ORDER BY I.ISFAQ DESC, I.STATUS DESC, I.CREATED_ON");
@@ -273,7 +274,7 @@ public class GetHelp extends DAO {
 	private static List<Issue> executeIssue(PreparedStatement ps) throws SQLException {
 		List<Issue> results = new ArrayList<Issue>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasCount = (rs.getMetaData().getColumnCount() > 12);
+			boolean hasCount = (rs.getMetaData().getColumnCount() > 13);
 			while (rs.next()) {
 				Issue i = new Issue(rs.getString(9));
 				i.setID(rs.getInt(1));
@@ -285,10 +286,11 @@ public class GetHelp extends DAO {
 				i.setPublic(rs.getBoolean(7));
 				i.setFAQ(rs.getBoolean(8));
 				i.setBody(rs.getString(10));
+				i.setLinkedIssueID(rs.getInt(11));
 				if (hasCount) {
-					i.setCommentCount(rs.getInt(11));
-					i.setLastComment(toInstant(rs.getTimestamp(12)));
-					i.setLastCommentAuthorID(rs.getInt(13));
+					i.setCommentCount(rs.getInt(12));
+					i.setLastComment(toInstant(rs.getTimestamp(13)));
+					i.setLastCommentAuthorID(rs.getInt(14));
 				}
 
 				results.add(i);

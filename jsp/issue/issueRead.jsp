@@ -65,6 +65,12 @@ golgotha.local.toggleCheckbox = function() {
  <td class="label">Issue Status</td>
  <td class="data"><span class="sec bld"><fmt:defaultMethod object="${issue.status}" method="description" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
+<c:if test="${!empty hdIssue}">
+<tr>
+ <td class="label">Help Desk Issue</td>
+ <td class="data">Linked to<span class="nophone"> <content:airline /> Help Desk Issue #<fmt:int className="sec bld" value="${hdIssue.ID}" /></span> <el:cmd url="hdissue" link="${hdIssue}" className="pri bld">${hdIssue.subject}</el:cmd></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Issue Priority</td>
  <td class="data pri bld"><fmt:defaultMethod object="${issue.priority}" method="description" /></td>
@@ -144,7 +150,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value
  <td>&nbsp;
 <c:if test="${access.canEdit}"><el:cmdbutton label="EDIT ISSUE" url="issue" op="edit" link="${issue}" /></c:if>
 <c:if test="${access.canComment}">&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
-<c:if test="${access.canResolve}">&nbsp;<el:cmdbutton label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" /></c:if>
+<c:if test="${access.canResolve && (issue.linkedIssueID == 0)}">&nbsp;<el:cmdbutton label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" /></c:if>
  </td>
 </tr>
 </el:table>
