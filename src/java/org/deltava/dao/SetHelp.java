@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2012, 2016, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -181,6 +181,22 @@ public class SetHelp extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM HELPDESK_RSPTMP WHERE (TITLE=?)")) {
 			ps.setString(1, title);
 			executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Links a Help Desk Issue to a Development Issue.
+	 * @param i the Issue
+	 * @param devIssueID the Development Issue ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void link(Issue i, int devIssueID) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO HELPDESK_LINKS (ID, ISSUE_ID) VALUES (?, ?)")) {
+			ps.setInt(1, i.getID());
+			ps.setInt(2, devIssueID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

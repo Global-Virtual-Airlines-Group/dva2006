@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 3.6
  */
 
@@ -74,6 +74,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			// Write new Issue
 			SetHelp hwdao = new SetHelp(con);
 			hwdao.write(hi);
+			hwdao.link(hi, i.getID());
 
 			// Convert the comments
 			for (IssueComment ic : i.getComments()) {
@@ -86,7 +87,7 @@ public class IssueConvertCommand extends AbstractCommand {
 
 			// Add a dummy issue comment
 			try {
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID(), null);
 				org.deltava.beans.help.IssueComment hic = new org.deltava.beans.help.IssueComment(ctx.getUser().getID());
 				hic.setBody("Converted from Development Issue at " + url.toString());
 				hic.setID(hi.getID());
@@ -101,7 +102,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			
 			// Add a dummy issue comment
 			try {
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
+				URI url = new URI("https", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID(), null);
 				IssueComment ic = new IssueComment(0, "Converted to Help Desk Issue at " + url.toString());
 				ic.setParentID(i.getID());
 				ic.setAuthorID(ctx.getUser().getID());

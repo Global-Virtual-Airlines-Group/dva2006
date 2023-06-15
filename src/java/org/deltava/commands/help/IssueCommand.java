@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.HelpDeskAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -263,8 +263,8 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the Issue
-			GetHelp idao = new GetHelp(con);
-			Issue i = idao.getIssue(ctx.getID());
+			GetHelp hdao = new GetHelp(con);
+			Issue i = hdao.getIssue(ctx.getID());
 			if (i == null)
 				throw notFoundException("Invalid Issue - " + ctx.getID());
 			
@@ -276,6 +276,18 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			if (ac.getCanUseTemplate()) {
 				GetHelpTemplate tmpdao = new GetHelpTemplate(con);
 				ctx.setAttribute("rspTemplates", tmpdao.getAll(), REQUEST);
+			}
+			
+			// Get linked Development Issue
+			if (i.getLinkedIssueID() != 0) {
+				GetIssue idao = new GetIssue(con);
+				org.deltava.beans.system.Issue di = idao.get(i.getLinkedIssueID());
+				if (di != null) {
+					IssueAccessControl iac = new IssueAccessControl(ctx, di);
+					iac.validate();
+					if (iac.getCanRead())
+						ctx.setAttribute("devIssue", di, REQUEST);
+				}
 			}
 			
 			// Get audit log

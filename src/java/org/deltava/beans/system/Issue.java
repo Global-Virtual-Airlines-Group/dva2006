@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2020, 2021 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2020, 2021, 2023 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A bean for tracking development issues.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -37,6 +37,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 	
 	private int _createdBy;
 	private int _assignedTo;
+	private int _linkedIssueID;
 	
 	private int _majorVersion;
 	private int _minorVersion;
@@ -202,6 +203,16 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 		return _assignedTo;
 	}
 	
+	
+	/**
+	 * Returns the database ID of a linked Help Desk Issue.
+	 * @return the database ID
+	 * @see Issue#setLinkedIssueID(int)
+	 */
+	public int getLinkedIssueID() {
+		return _linkedIssueID;
+	}
+	
 	/**
 	 * Returns the major version number this Issue applies to.
 	 * @return the major version
@@ -328,7 +339,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 	 */
 	public void setAirlines(Collection<String> airlineCodes) {
 		_airlines.clear();
-		airlineCodes.stream().map(ac -> SystemData.getApp(ac)).filter(Objects::nonNull).forEach(this::addAirline);
+		airlineCodes.stream().map(SystemData::getApp).filter(Objects::nonNull).forEach(this::addAirline);
 	}
 
 	@Override
@@ -346,6 +357,17 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 	public void setAssignedTo(int id) {
 		validateID(0, id);
 		_assignedTo = id;
+	}
+	
+	/**
+	 * Updates the database ID of a linked Help Desk issue.
+	 * @param id the Help Desk Issue database ID
+	 * @throws IllegalArgumentException if id is negative
+	 * @see Issue#getLinkedIssueID()
+	 */
+	public void setLinkedIssueID(int id) {
+		if (id != 0) validateID(_linkedIssueID, id);
+		_linkedIssueID = id;
 	}
 	
 	/**

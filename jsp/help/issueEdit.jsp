@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -105,6 +105,7 @@ golgotha.local.checkAssignee = function(combo) {
  <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br />
 <el:box name="sendIssue" idx="*" value="true" checked="true" label="Send Notification to Assignee" /></td>
 </tr>
+<c:if test="${issue.linkedIssueID == 0}">
 <tr class="title">
  <td colspan="2" class="left caps">CONVERT TO DEVELOPMENT ISSUE</td>
 </tr>
@@ -124,6 +125,7 @@ golgotha.local.checkAssignee = function(combo) {
  <td class="label">Issue Type</td>
  <td class="data"><el:combo name="type" idx="*" size="1" options="${typeOpts}" firstEntry="-" /></td>
 </tr>
+</c:if>
 </c:if>
 
 <c:if test="${!empty issue}">
@@ -155,7 +157,7 @@ golgotha.local.checkAssignee = function(combo) {
 <el:table className="bar">
 <tr>
  <td><el:button type="submit" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
-<c:if test="${access.canUpdateStatus}">&nbsp;<el:cmdbutton post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
+<c:if test="${access.canUpdateStatus && (issue.linkedIssueID == 0)}">&nbsp;<el:cmdbutton post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
 </c:if></td>
 </tr>
 </el:table>
