@@ -120,26 +120,10 @@ public class MessageContext {
        
        // If we have bbCode, evaluate it
        boolean hasBBCode = (_mt != null) && (body.indexOf('[') > -1) && (body.indexOf(']', body.indexOf('[')) > -1);
-       boolean isHTML = (_mt != null) && _mt.getIsHTML();
        if (hasBBCode) {
     	   _bbHandler.init();
     	   for (BBCode bb : _bbHandler.getAll())
 				body = body.replaceAll(bb.getRegex(), bb.getReplace());    	   
-       }
-       
-       // Convert line breaks to HTML
-       if (isHTML) {
-    	   StringBuilder buf = new StringBuilder();
-    	   StringTokenizer tkns = new StringTokenizer(body, " \n\r", true);
-    	   while (tkns.hasMoreTokens()) {
-    		   String token = tkns.nextToken();
-				if (token.equals("\n"))
-					buf.append("<br />\n");
-				else
-					buf.append(token);
-    	   }
-    	   
-    	   body = buf.toString();
        }
        
        return body;
