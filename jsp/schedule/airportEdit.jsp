@@ -19,22 +19,21 @@
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <script async>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.name, l:6, t:'Airport Name'});
-golgotha.form.validate({f:f.country, t:'Country'});
-golgotha.form.validate({f:f.iata, l:3, t:'IATA Code'});
-golgotha.form.validate({f:f.icao, l:4, t:'ICAO Code'});
-golgotha.form.validate({f:f.tz, t:'Time Zone'});
-golgotha.form.validate({f:f.latD, min:0, t:'Latitude Degrees'});
-golgotha.form.validate({f:f.latM, min:0, t:'Latitude Minutes'});
-golgotha.form.validate({f:f.latS, min:0, t:'Latitude Seconds'});
-golgotha.form.validate({f:f.lonD, min:0, t:'Longitude Degrees'});
-golgotha.form.validate({f:f.lonM, min:0, t:'Longitude Minutes'});
-golgotha.form.validate({f:f.lonS, min:0, t:'Longitude Seconds'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.name, l:6, t:'Airport Name'});
+	golgotha.form.validate({f:f.country, t:'Country'});
+	golgotha.form.validate({f:f.iata, l:3, t:'IATA Code'});
+	golgotha.form.validate({f:f.icao, l:4, t:'ICAO Code'});
+	golgotha.form.validate({f:f.tz, t:'Time Zone'});
+	golgotha.form.validate({f:f.latD, min:0, t:'Latitude Degrees'});
+	golgotha.form.validate({f:f.latM, min:0, t:'Latitude Minutes'});
+	golgotha.form.validate({f:f.latS, min:0, t:'Latitude Seconds'});
+	golgotha.form.validate({f:f.lonD, min:0, t:'Longitude Degrees'});
+	golgotha.form.validate({f:f.lonM, min:0, t:'Longitude Minutes'});
+	golgotha.form.validate({f:f.lonS, min:0, t:'Longitude Seconds'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.onDOMReady(function() {
@@ -134,7 +133,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label top">Prior Airport</td>
- <td class="data"><el:combo name="oldAirport" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />&nbsp;
+ <td class="data"><el:combo name="oldAirport" idx="*" size="1" options="${oldAirports}" firstEntry="-" value="${airport.supercededAirport}" onChange="void changeAirport(this)" />&nbsp;
 <el:text ID="oldAirportCode" name="oldAirportCode" size="4" max="4" value="${airport.supercededAirport}" onBlur="void setAirport(document.forms[0].oldAirport, this.value, true)" /><br />
 <span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
 <tr>
