@@ -10,7 +10,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -47,11 +47,9 @@ public class GetTimeZone extends DAO {
     	String pt = formatLocation(loc); 
     	try {
     		ZoneId tz = null;
-    		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE (ST_Contains(DATA, ST_PointFromText(?,?)) OR ST_Intersects(DATA, ST_PointFromText(?,?)))")) {
+    		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))")) {
     			ps.setString(1, pt);
     			ps.setInt(2, WGS84_SRID);
-    			ps.setString(3, pt);
-    			ps.setInt(4, WGS84_SRID);
     			try (ResultSet rs = ps.executeQuery()) {
     				if (rs.next()) tz = ZoneId.of(rs.getString(1));
     			}
