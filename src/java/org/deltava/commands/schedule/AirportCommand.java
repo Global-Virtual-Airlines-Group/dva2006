@@ -21,7 +21,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -240,6 +240,9 @@ public class AirportCommand extends AbstractAuditFormCommand {
 			// If we have an airport, save it in the request
 			if (a != null) {
 				ctx.setAttribute("airport", a, REQUEST);
+				Airport sa = SystemData.getAirport(a.getSupercededAirport());
+				if (sa != null)
+					ctx.setAttribute("oldAirports", List.of(sa), REQUEST);
 
 				// Convert the geoPosition into degrees, minutes, seconds
 				GeoPosition gp = a.getPosition();
