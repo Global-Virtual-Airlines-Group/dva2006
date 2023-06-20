@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Flight Statistics - ${pilot.name}</title>
@@ -50,7 +49,7 @@ golgotha.local.drawGraphs = function(d) {
 	data.addColumn('date', 'Month');
 	golgotha.local.data.ratings.forEach(function(s) { data.addColumn('number', s); });
 	data.addRows(d[2]);
-	const o3 = golgotha.charts.buildOptions({isStacked:true,width:'100%'});
+	const o3 = golgotha.charts.buildOptions({isStacked:true,width:'100%',colors:['red','orange','green','blue','purple']});
 	o3.title = d[3] +  ' by Date/Rating';
 	o3.vAxis.title= 'Flight ' + d[3];
 	golgotha.local.charts.landRating.draw(data,o3);
