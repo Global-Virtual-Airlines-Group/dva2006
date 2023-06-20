@@ -4,16 +4,16 @@ package org.deltava.beans.system;
 /**
  * A class to store version info constants.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
 public class VersionInfo {
 
-    public static final int MAJOR = 10;
-    public static final int MINOR = 6;
+    public static final int MAJOR = 11;
+    public static final int MINOR = 0;
     
-    private static final int BUILD = 867;
+    private static final int BUILD = 870;
     private static final int HOTFIX = 1;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2023 Global Virtual Airlines Group. All Rights Reserved.";
