@@ -64,8 +64,8 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
  <td class="label">Pilot Status</td>
  <td colspan="${cspan}" class="data sec bld">${pilot.status.description}
 <c:if test="${access.canChangeStatus}">
-<c:if test="${pilot.noVoice}"> <span class="warn bld">VOICE ACCESS DISABLED</span></c:if>
-<c:if test="${pilot.noExams}"> <span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
+<c:if test="${pilot.noVoice}">&nbsp;<span class="warn bld">VOICE ACCESS DISABLED</span></c:if>
+<c:if test="${pilot.noExams}">&nbsp;<span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
 </c:if></td>
 </tr>
 <c:if test="${acarsEnabled}">
