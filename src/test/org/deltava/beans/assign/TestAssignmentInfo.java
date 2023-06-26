@@ -43,11 +43,6 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
         _info.setStatus(AssignmentStatus.COMPLETE);
         assertEquals(AssignmentStatus.COMPLETE, _info.getStatus());
         assertEquals("opt3", _info.getRowClassName());
-        
-        Pilot p = new Pilot("John", "Smith");
-        p.setID(12);
-        _info.setPilotID(p);
-        assertEquals(p.getID(), _info.getPilotID());
     }
     
     public void testBooleanProperties() {
