@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
  * A bean to track Flight Academy Course requirements. Each Certification has a number of
  * requirements that need to be completed before the Course is done.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -70,17 +70,13 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	 * @see CourseProgress#getCourseID()
 	 */
 	public void setCourseID(int id) {
-		if (id > 0)
-			DatabaseBean.validateID(_courseID, id);
-		
+		validateID(_courseID, id, true);
 		_courseID = id;
 	}
 
 	@Override
 	public void setAuthorID(int id) {
-		if (id < 0)
-			throw new IllegalArgumentException("Invalid Author ID - " + id);
-		
+		validateID(_authorID, id);
 		_authorID = id;
 	}
 

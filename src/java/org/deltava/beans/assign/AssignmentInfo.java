@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.RoutePair;
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -81,7 +81,6 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * Returns the Pilot Database ID for this Flight Assignment.
      * @return the Database ID of the Assigned Pilot, or zero if unassigned
      * @see AssignmentInfo#setPilotID(int)
-     * @see AssignmentInfo#setPilotID(Person)
      */
     public int getPilotID() {
         return _pilotID;
@@ -183,34 +182,17 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @throws IllegalArgumentException if id is negative
      */
     public void setEventID(int id) {
-       if (id != 0) {
-          validateID(_eventID, id);
-          _eventID = id;
-       }
-    }
-    
-    /**
-     * Updates the associated Pilot for this Assignment.
-     * @param p the Pilot bean
-     * @see AssignmentInfo#setPilotID(int)
-     * @see AssignmentInfo#getPilotID()
-     */
-    public void setPilotID(Person p) {
-        _pilotID = p.getID();
+    	validateID(_eventID, id, true);
     }
     
     /**
      * Updates the associated Pilot for this Assignment.
      * @param id the Pilot Database ID
      * @throws IllegalArgumentException if id is negative
-     * @see AssignmentInfo#setPilotID(Person)
      * @see AssignmentInfo#getPilotID()
      */
     public void setPilotID(int id) {
-       if (id != 0) {
-          validateID(_pilotID, id);
-          _pilotID = id;
-       }
+    	validateID(_pilotID, id, true);
     }
     
     /**

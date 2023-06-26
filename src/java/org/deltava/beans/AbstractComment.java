@@ -144,7 +144,7 @@ public abstract class AbstractComment extends DatabaseBlobBean implements Author
 	 * @see AbstractComment#getParentID()
 	 */
 	public void setParentID(int id) {
-		if (id != 0) validateID(_parentID, id);
+		validateID(_parentID, id, true);
 		_parentID = id;
 	}
 	

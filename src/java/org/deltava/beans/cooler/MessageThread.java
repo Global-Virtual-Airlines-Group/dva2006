@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 7.4
+ * @version 11.0
  * @since 1.0
  */
 
@@ -282,7 +282,6 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @throws IllegalArgumentException if the ID is invalid
 	 * @see MessageThread#getAuthorID()
 	 * @see MessageThread#setLastUpdateID(int)
-	 * @see DatabaseBean#validateID(int, int)
 	 */
 	@Override
 	public void setAuthorID(int id) {
@@ -295,7 +294,6 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @throws IllegalArgumentException if the ID is invalid
 	 * @see MessageThread#getLastUpdateID()
 	 * @see MessageThread#setAuthorID(int)
-	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setLastUpdateID(int id) {
 		_lastUpdateID = id;
@@ -372,9 +370,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#getImage()
 	 */
 	public void setImage(int id) {
-		if (id != 0)
-			validateID(_imgID, id);
-
+		validateID(_imgID, id, true);
 		_imgID = id;
 	}
 

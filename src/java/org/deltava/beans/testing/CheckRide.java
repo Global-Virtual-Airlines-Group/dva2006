@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2014, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -126,9 +126,7 @@ public class CheckRide extends Test {
      * @see CheckRide#getFlightID()
      */
     public void setFlightID(int id) {
-       if (id != 0)
-          validateID(_acarsID, id);
-       
+    	validateID(_acarsID, id, true);
        _acarsID = id;
     }
 
@@ -143,9 +141,8 @@ public class CheckRide extends Test {
     public void setCourseID(int id) {
     	if (!getAcademy() && (id != 0))
     		throw new IllegalStateException("Not a Flight Academy Check Ride");
-    	else if (id != 0)
-    		validateID(_courseID, id);
     	
+    	validateID(_courseID, id, true);
     	_courseID = id;
     }
     

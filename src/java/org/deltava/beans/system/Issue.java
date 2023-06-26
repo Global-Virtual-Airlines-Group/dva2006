@@ -53,7 +53,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 	 * @throws IllegalArgumentException if id is zero or negative
 	 * @see Issue#Issue(String)
 	 * @see Issue#getSubject()
-	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public Issue(int id, String subj) {
 		this(subj);
@@ -366,7 +365,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, Auditable, View
 	 * @see Issue#getLinkedIssueID()
 	 */
 	public void setLinkedIssueID(int id) {
-		if (id != 0) validateID(_linkedIssueID, id);
+		validateID(_linkedIssueID, id, true);
 		_linkedIssueID = id;
 	}
 	
