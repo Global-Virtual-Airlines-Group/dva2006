@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to build multi-leg flight assignments.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 4.1
  */
 
@@ -32,7 +32,7 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 		
 		// Create the bean
 		AssignmentInfo info = new AssignmentInfo(ctx.getUser().getEquipmentType());
-		info.setPilotID(ctx.getUser());
+		info.setPilotID(ctx.getUser().getID());
 		info.setAssignDate(Instant.now());
 		info.setRandom(true);
 		info.setPurgeable(true);
