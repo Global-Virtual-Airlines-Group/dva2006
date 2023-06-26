@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 7.5
+ * @version 11.0
  * @since 1.0
  */
 
@@ -363,12 +363,9 @@ public class Channel implements Comparable<Channel>, Auditable, Cacheable, Combo
      * @param id the database ID
      * @throws IllegalArgumentException if id is negative
      * @see Channel#getLastThreadID()
-     * @see DatabaseBean#validateID(int, int)
      */
     public void setLastThreadID(int id) {
-        if (id != 0)
-            DatabaseBean.validateID(_lastThreadID, id);
-        
+    	DatabaseBean.validateID(_lastThreadID, id, true);
         _lastThreadID = id;
     }
     

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.StringUtils;
@@ -7,7 +7,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A common abstract class for beans stored in the database with a numeric primary key.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -33,29 +33,39 @@ public abstract class DatabaseBean implements IDBean, Cacheable, Comparable<Obje
 	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setID(int id) {
-		validateID(_id, id);
+		validateID(_id, id, false);
 		_id = id;
+	}
+	
+	/**
+	 * Validates a database ID. Used to enforce database ID behavior - that the ID cannot be zero or negative, and it cannot be updated once set.
+	 * @param oldID the old database ID
+	 * @param newID the new database ID
+	 * @throws IllegalArgumentException if the database ID is negative or zero
+	 * @throws IllegalStateException if we are attempting to change the database ID
+	 */
+	public static void validateID(int oldID, int newID) throws IllegalArgumentException, IllegalStateException {
+		validateID(oldID, newID, false);
 	}
 
 	/**
 	 * Validates a database ID. Used to enforce database ID behavior - that the ID cannot be zero or negative, and it cannot be updated once set.
 	 * @param oldID the old database ID
 	 * @param newID the new database ID
-	 * @throws IllegalArgumentException if the database ID is negative
+	 * @param allowZero TRUE to allow setting the ID to zero, otherwise FALSE
+	 * @throws IllegalArgumentException if the database ID is negative (or zero if allowZero is FALSE)
 	 * @throws IllegalStateException if we are attempting to change the database ID
 	 */
-	public static void validateID(int oldID, int newID) throws IllegalArgumentException, IllegalStateException {
-		if (newID < 1)
-			throw new IllegalArgumentException("Database ID cannot be zero or negative");
-
+	public static void validateID(int oldID, int newID, boolean allowZero) throws IllegalArgumentException, IllegalStateException {
+		if (newID < (allowZero ? 0 : 1))
+			throw new IllegalArgumentException("Invalid Database ID");
 		if ((oldID != 0) && (oldID != newID))
 			throw new IllegalStateException("Cannot change Datbase ID from " + oldID + " to " + newID);
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
+		if (this == o) return true;
 		return (o instanceof DatabaseBean) && (compareTo(o) == 0) && (getClass() == o.getClass());
 	}
 

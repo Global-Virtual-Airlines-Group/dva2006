@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Aircraft SELCAL data and reservations.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -134,9 +134,7 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	 * @see SelectCall#getReservedBy()
 	 */
 	public void setReservedBy(int id) {
-		if (id != 0)
-			DatabaseBean.validateID(_reservedBy, id);
-		
+		DatabaseBean.validateID(_reservedBy, id, true);
 		_reservedBy = id;
 	}
 	

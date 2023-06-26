@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Flight Schedule filter history. 
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 10.1
  */
 
@@ -63,7 +63,7 @@ public class ScheduleSourceHistory extends ScheduleSourceInfo implements Authore
 	
 	@Override
 	public void setAuthorID(int id) {
-		if (id != 0) DatabaseBean.validateID(_userID, id);
+		DatabaseBean.validateID(_userID, id, true);
 		_userID = id;
 		setAutoImport(id == 0);
 	}
