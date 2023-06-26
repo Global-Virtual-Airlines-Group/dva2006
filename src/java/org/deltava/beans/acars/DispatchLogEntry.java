@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store ACARS Dispatch flight data log entries. 
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 9.0
  */
 
@@ -148,9 +148,7 @@ public class DispatchLogEntry extends DatabaseBean implements RoutePair {
 	}
 	
 	public void setFlightID(int id) {
-		if (id > 0)
-			validateID(_flightID, id);
-		
+		validateID(_flightID, id, true);
 		_flightID = id;
 	}
 	

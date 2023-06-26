@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A bean to combine an Accomplishment with an Achievement date. 
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 3.2
  */
 
@@ -30,7 +30,7 @@ public class DatedAccomplishment extends Accomplishment {
 		setPilots(a.getPilots());
 		setColor(a.getColor());
 		setOwner(a.getOwner());
-		if(pilotID > 0) validateID(0, pilotID);
+		validateID(0, pilotID, true);
 		_pilotID = pilotID;
 		_dt = dt;
 	}

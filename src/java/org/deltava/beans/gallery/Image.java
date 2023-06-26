@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Image Gallery images.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -127,13 +127,11 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	/**
 	 * Updates the Water Cooler discussion thread associated with this Image.
 	 * @param id the Database ID of the discussion thread
-	 * @throws IllegalArgumentException if id is zero or negative
+	 * @throws IllegalArgumentException if id is negative
 	 * @see Image#getThreadID()
 	 */
 	public void setThreadID(int id) {
-		if (id != 0)
-			validateID(_threadID, id);
-		
+		validateID(_threadID, id, true);
 		_threadID = id;
 	}
 

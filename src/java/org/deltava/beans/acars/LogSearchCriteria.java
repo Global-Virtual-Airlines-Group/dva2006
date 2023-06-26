@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS log search criteria.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -70,9 +70,7 @@ public class LogSearchCriteria implements java.io.Serializable {
 	 * @see LogSearchCriteria#getPilotID()
 	 */
 	public void setPilotID(int id) {
-		if (id != 0)
-			DatabaseBean.validateID(_pilotID, id);
-		
+		DatabaseBean.validateID(_pilotID, id, true);
 		_pilotID = id;
 	}
 }

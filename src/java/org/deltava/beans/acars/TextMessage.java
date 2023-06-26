@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store saved ACARS text messages.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -75,9 +75,7 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
     * @see TextMessage#setAuthorID(int)
     */
    public void setRecipientID(int id) {
-      if (id > 0)
-         DatabaseBean.validateID(_recipientID, id);
-      
+	   DatabaseBean.validateID(_recipientID, id, true);
       _recipientID = id;
    }
 

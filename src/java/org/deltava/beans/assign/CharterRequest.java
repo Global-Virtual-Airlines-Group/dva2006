@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store Charter flight requests.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 10.0
  */
 
@@ -119,7 +119,7 @@ public class CharterRequest extends DatabaseBean implements AuthoredBean, RouteP
 	 * @param id the database ID of the user disposing the request, or zero
 	 */
 	public void setDisposalID(int id) {
-		if (id != 0) validateID(_disposalID, id);
+		validateID(_disposalID, id, true);
 		_disposalID = id;
 	}
 	

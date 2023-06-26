@@ -227,7 +227,7 @@ public class Issue extends DatabaseBean implements Auditable, AuthoredBean, View
 	 * @see Issue#setAuthorID(int)
 	 */
 	public void setLastCommentAuthorID(int id) {
-		if (id != 0) validateID(_lastCommentID, id);
+		validateID(_lastCommentID, id, true);
 		_lastCommentID = id;
 	}
 	
@@ -238,7 +238,7 @@ public class Issue extends DatabaseBean implements Auditable, AuthoredBean, View
 	 * @see Issue#getLinkedIssueID()
 	 */
 	public void setLinkedIssueID(int id) {
-		if (id != 0) validateID(_linkedIssueID, id);
+		validateID(_linkedIssueID, id, true);
 		_linkedIssueID = id;
 	}
 	
