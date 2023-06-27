@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -68,13 +68,13 @@ public class SetApplicant extends PilotWriteDAO {
 				}
 			}
 
-			try (PreparedStatement ps = prepare("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, POSCON_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, "
-				+ "NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, CAPTCHA_OK, COMMENTS, HR_COMMENTS, EQTYPE, ID) VALUES "
+			try (PreparedStatement ps = prepare("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, POSCON_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, NOTIFY, "
+				+ "SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, CAPTCHA_OK, AUTO_REJECT, COMMENTS, HR_COMMENTS, EQTYPE, ID) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE STATUS=VALUES(STATUS), FIRSTNAME=VALUES(FIRSTNAME), LASTNAME=VALUES(LASTNAME), "
 				+ "EMAIL=VALUES(EMAIL), LOCATION=VALUES(LOCATION), VATSIM_ID=VALUES(VATSIM_ID), IVAO_ID=VALUES(IVAO_ID), PE_ID=VALUES(PE_ID), POSCON_ID=VALUES(POSCON_ID), LEGACY_HOURS=VALUES(LEGACY_HOURS), "
 				+ "LEGACY_URL=VALUES(LEGACY_URL), LEGACY_OK=VALUES(LEGACY_OK), HOME_AIRPORT=VALUES(HOME_AIRPORT), NOTIFY=VALUES(NOTIFY), SHOW_EMAIL=VALUES(SHOW_EMAIL), DFORMAT=VALUES(DFORMAT), "
 				+ "TFORMAT=VALUES(TFORMAT), NFORMAT=VALUES(NFORMAT), AIRPORTCODE=VALUES(AIRPORTCODE), DISTANCEUNITS=VALUES(DISTANCEUNITS), SIM_VERSION=VALUES(SIM_VERSION), TZ=VALUES(TZ), "
-				+ "UISCHEME=VALUES(UISCHEME), EQTYPE=VALUES(EQTYPE), RANKING=?, CAPTCHA_OK=VALUES(CAPTCHA_OK), HR_COMMENTS=VALUES(HR_COMMENTS)")) {
+				+ "UISCHEME=VALUES(UISCHEME), EQTYPE=VALUES(EQTYPE), RANKING=?, CAPTCHA_OK=VALUES(CAPTCHA_OK), AUTO_REJECT=VALUES(AUTO_REJECT), HR_COMMENTS=VALUES(HR_COMMENTS)")) {
 				ps.setInt(1, a.getStatus().ordinal());
 				ps.setString(2, a.getFirstName());
 				ps.setString(3, a.getLastName());
@@ -102,11 +102,12 @@ public class SetApplicant extends PilotWriteDAO {
 				ps.setString(25, a.getTZ().getID());
 				ps.setString(26, a.getUIScheme());
 				ps.setBoolean(27, a.getHasCAPTCHA());
-				ps.setString(28, a.getComments());
-				ps.setString(29, a.getHRComments());
-				ps.setString(30, a.getEquipmentType());
-				ps.setInt(31, a.getID());
-				ps.setString(32, (a.getRank() == null) ? null : a.getRank().getName());
+				ps.setBoolean(28, a.getAutoReject());
+				ps.setString(29, a.getComments());
+				ps.setString(30, a.getHRComments());
+				ps.setString(31, a.getEquipmentType());
+				ps.setInt(32, a.getID());
+				ps.setString(33, (a.getRank() == null) ? null : a.getRank().getName());
 				executeUpdate(ps, 1);
 			}
 			

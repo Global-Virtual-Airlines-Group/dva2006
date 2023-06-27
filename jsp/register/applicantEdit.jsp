@@ -74,14 +74,18 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${homeAirport}" onChange="void this.updateAirportCode()" />&nbsp;<el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
+<c:if test="${applicant.autoReject}">
+<tr>
+ <td class="label">Automatic Purge</td>
+ <td class="data"><el:box name="autoPurge" value="true" checked="${applicant.autoReject}" label="Applicant scheduled for Automatic Purge" />&nbsp;<span class="warn bld">TO BE PURGED AFTER <fmt:date date="${purgeDate}" t="HH:mm" /></span></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Location</td>
  <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" required="true" value="${applicant.location}" /></td>
