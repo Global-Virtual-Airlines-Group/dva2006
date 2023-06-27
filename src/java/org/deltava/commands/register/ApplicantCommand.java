@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -70,6 +71,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setDateFormat(ctx.getParameter("df"));
 			a.setTimeFormat(ctx.getParameter("tf"));
 			a.setNumberFormat(ctx.getParameter("nf"));
+			a.setAutoReject(Boolean.parseBoolean(ctx.getParameter("autoPurge")));
 			a.setSimVersion(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.FSX));
 			a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
@@ -139,6 +141,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 			// Do a soundex check on the user
 			soundexCheck(a, con, ctx);
+			
+			// Calculate auto-purge date if applicable
+			if (a.getAutoReject())
+				ctx.setAttribute("purgeDate", a.getCreatedOn().plus(SystemData.getInt("registration.captcha_timeout", 72) + SystemData.getInt("registration.purge_timeout", 72), ChronoUnit.HOURS), REQUEST);
 
 			// Get Active Equipment programs
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -195,11 +201,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Validate that the name is not a duplicate
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Map<Integer, Pilot> matches = pdao.getByID(pdao.checkUnique(a, ctx.getDB()), "PILOTS");
-			for (Iterator<Integer> i = matches.keySet().iterator(); i.hasNext(); ) {
-				int id = i.next().intValue();
-				if (id == a.getPilotID())
-					i.remove();
-			}
+			matches.keySet().removeIf(id -> (id.intValue() == a.getPilotID()));
 			
 			// Save duplicates
 			ctx.setAttribute("nameMatches", matches.values(), REQUEST);
@@ -207,6 +209,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Do a soundex and netmask check on the applicant
 			soundexCheck(a, con, ctx);
 			netmaskCheck(a, con, ctx);
+			
+			// Calculate auto-purge date if applicable
+			if (a.getAutoReject())
+				ctx.setAttribute("purgeDate", a.getCreatedOn().plus(SystemData.getInt("registration.captcha_timeout", 72) + SystemData.getInt("registration.purge_timeout", 72), ChronoUnit.HOURS), REQUEST);
 
 			// Get the questionnaire
 			GetQuestionnaire exdao = new GetQuestionnaire(con);
@@ -249,11 +255,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 		// Do a netmask check on the applicant against each database
 		Collection<Integer> netmaskIDs = new HashSet<Integer>();
-		Collection<?> airlines = ((Map<?, ?>) SystemData.getObject("apps")).values();
-		for (Iterator<?> i = airlines.iterator(); i.hasNext() && (addrInfo != null); ) {
-			AirlineInformation info = (AirlineInformation) i.next();
+		for (AirlineInformation info : SystemData.getApps())
 			netmaskIDs.addAll(dao.checkAddress(addrInfo, info.getDB()));
-		}
 		
 		// Load the locations of all these matches
 		GetUserData uddao = new GetUserData(c);

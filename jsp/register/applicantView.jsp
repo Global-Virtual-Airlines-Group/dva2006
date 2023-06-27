@@ -71,6 +71,12 @@ return true;
  <td class="label">Applicant Status</td>
  <td class="data caps"><span class="sec bld"><fmt:defaultMethod object="${applicant.status}" method="description" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
 </tr>
+<c:if test="${!applicant.hasCAPTCHA || applicant.autoReject}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data caps"><c:if test="${!applicant.hasCAPTCHA}"><span class="warn bld">CAPTCHA VERIFICATION FAILED</span>&nbsp;</c:if><c:if test="${applicant.autoReject}"><span class="error bld">SCHEDULED FOR PURGE AFTER <fmt:date date="${purgeDate}" t="HH:mm" /></span></c:if></td>
+</tr>
+</c:if>
 <c:if test="${!empty nameMatches}">
 <tr>
  <td class="label top" rowspan="2">Duplicate Users</td>

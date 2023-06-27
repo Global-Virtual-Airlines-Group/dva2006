@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2015, 2016, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2015, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class Applicant extends Person {
     private String _legacyURL;
     private boolean _legacyVerified;
     private boolean _hasCaptcha;
+    private boolean _autoReject;
     
     private ApplicantStatus _status;
     private Simulator _simVersion;
@@ -64,6 +65,15 @@ public class Applicant extends Person {
      */
     public boolean getLegacyVerified() {
         return _legacyVerified;
+    }
+    
+    /**
+     * Returns if this Applicant was automatically rejected due to CAPTCHA issues.
+     * @return TRUE if automatically rejected, otherwise FALSE
+     * @see Applicant#setAutoReject(boolean)
+     */
+    public boolean getAutoReject() {
+    	return _autoReject;
     }
     
     /**
@@ -162,6 +172,15 @@ public class Applicant extends Person {
      */
     public void setLegacyVerified(boolean verified) {
         _legacyVerified = verified;
+    }
+    
+    /**
+     * Updates whether this Applicant was automatically rejected due to CAPTCHA issues.
+     * @param isAutoReject TRUE if automatically rejected, otherwise FALSE
+     * @see Applicant#getAutoReject()
+     */
+    public void setAutoReject(boolean isAutoReject) {
+    	_autoReject = isAutoReject;
     }
     
     /**
