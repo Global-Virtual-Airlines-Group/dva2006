@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Applicants with invalid CAPTCHAs
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 10.3
  */
 
@@ -33,13 +33,26 @@ public class ApplicantPurgeTask extends Task {
 	protected void execute(TaskContext ctx) {
 		log.info("Executing");
 		
-		int registerTimeout = SystemData.getInt("registration.captcha_timeout", 72); Instant now = Instant.now();
+		int registerTimeout = SystemData.getInt("registration.captcha_timeout", 72);
+		int purgeTimeout = SystemData.getInt("registration.purge_timeout", 72);
+		Instant now = Instant.now();
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get pending connections
+			// Purge auto-rejected junk
 			GetApplicant adao = new GetApplicant(con);
-			Collection<Applicant> apps = adao.getByStatus(ApplicantStatus.PENDING, "CREATED");
+			SetApplicant awdao = new SetApplicant(con);
+			Collection<Applicant> apps = adao.getAutoRejected(registerTimeout + purgeTimeout);
+			for (Applicant a : apps) {
+				ctx.startTX();
+				Duration d = Duration.between(a.getCreatedOn(), now);
+				log.warn(String.format("Automatically deleting %s for CAPTCHA failure after %d hours", a.getName(), Long.valueOf(d.toHours())));
+				awdao.delete(a.getID());
+				ctx.commitTX();
+			}
+			
+			// Get pending connections
+			apps = adao.getByStatus(ApplicantStatus.PENDING, "CREATED");
 			for (Applicant a : apps) {
 				Duration d = Duration.between(a.getCreatedOn(), now);
 				if (a.getHasCAPTCHA() || (d.toHours() < registerTimeout)) continue;
@@ -47,10 +60,10 @@ public class ApplicantPurgeTask extends Task {
 				// Reject the applicant
 				log.warn(String.format("Automatically rejecting %s for CAPTCHA failure after %d hours", a.getName(), Long.valueOf(d.toHours())));
 				a.setStatus(ApplicantStatus.REJECTED);
+				a.setAutoReject(true);
 				ctx.startTX();
 				
 				// Update status
-				SetApplicant awdao = new SetApplicant(con);
 				awdao.write(a);
 				
 				// Delete questionnaire if it exists

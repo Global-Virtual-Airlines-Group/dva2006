@@ -366,11 +366,27 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		}
 	}
 	
+	/**
+	 * Retrieves Applicants automatically rejected more than a particular number of hours ago.
+	 * @param hours the number of hours ago
+	 * @return a Collection of Applicants
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Applicant> getAutoRejected(int hours) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (AUTO_REJECT=?) AND (CREATED<DATE_SUB(NOW(), INTERVAL ? HOUR))")) {
+			ps.setInt(1, ApplicantStatus.REJECTED.ordinal());
+			ps.setBoolean(2, true);
+			ps.setInt(3, hours);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/*
 	 * Helper method to populate stage program choices.
 	 */
 	private void loadStageChoices(Applicant a) throws SQLException {
-
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)")) {
 			ps.setInt(1, a.getID());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -403,26 +419,27 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setLegacyURL(rs.getString(15));
 				a.setLegacyVerified(rs.getBoolean(16));
 				a.setHasCAPTCHA(rs.getBoolean(17));
-				a.setHomeAirport(rs.getString(18));
-				a.setEquipmentType(rs.getString(19));
-				a.setRank(Rank.fromName(rs.getString(20)));
-				a.setNotificationCode(rs.getInt(21));
-				a.setEmailAccess(rs.getInt(22));
-				a.setCreatedOn(toInstant(rs.getTimestamp(23)));
-				// skip 24
-				a.setRegisterHostName(rs.getString(25));
-				a.setDateFormat(rs.getString(26));
-				a.setTimeFormat(rs.getString(27));
-				a.setNumberFormat(rs.getString(28));
-				a.setAirportCodeType(Airport.Code.values()[rs.getInt(29)]);
-				a.setDistanceType(DistanceUnit.values()[rs.getInt(30)]);
-				a.setWeightType(WeightUnit.values()[rs.getInt(31)]);
-				a.setSimVersion(Simulator.values()[rs.getInt(32)]);
-				a.setTZ(TZInfo.get(rs.getString(33)));
-				a.setUIScheme(rs.getString(34));
-				a.setComments(rs.getString(35));
-				a.setHRComments(rs.getString(36));
-				a.setRegisterAddress(rs.getString(37));
+				a.setAutoReject(rs.getBoolean(18));
+				a.setHomeAirport(rs.getString(19));
+				a.setEquipmentType(rs.getString(20));
+				a.setRank(Rank.fromName(rs.getString(21)));
+				a.setNotificationCode(rs.getInt(22));
+				a.setEmailAccess(rs.getInt(23));
+				a.setCreatedOn(toInstant(rs.getTimestamp(24)));
+				// skip 25
+				a.setRegisterHostName(rs.getString(26));
+				a.setDateFormat(rs.getString(27));
+				a.setTimeFormat(rs.getString(28));
+				a.setNumberFormat(rs.getString(29));
+				a.setAirportCodeType(Airport.Code.values()[rs.getInt(30)]);
+				a.setDistanceType(DistanceUnit.values()[rs.getInt(31)]);
+				a.setWeightType(WeightUnit.values()[rs.getInt(32)]);
+				a.setSimVersion(Simulator.values()[rs.getInt(33)]);
+				a.setTZ(TZInfo.get(rs.getString(34)));
+				a.setUIScheme(rs.getString(35));
+				a.setComments(rs.getString(36));
+				a.setHRComments(rs.getString(37));
+				a.setRegisterAddress(rs.getString(38));
 				results.add(a);
 			}
 		}
