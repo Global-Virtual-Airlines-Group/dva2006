@@ -1,4 +1,4 @@
-// Copyright 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize route data.
  * @author Luke
- * @version 8.6
+ * @version 11.0
  * @since 7.0
  */
 
@@ -47,8 +47,8 @@ public class SetSerializedRoute extends WriteableDAO {
 				if (nd.getType() != Navaid.INT)
 					out.writeUTF((nd.getName() == null) ? "" : nd.getName());
 				out.writeUTF((nd.getAirway() == null) ? "" : nd.getAirway());
-				if (nd instanceof NavigationFrequencyBean)
-					out.writeUTF(((NavigationFrequencyBean) nd).getFrequency()); 
+				if (nd instanceof NavigationFrequencyBean nfb)
+					out.writeUTF(nfb.getFrequency()); 
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);

@@ -1,10 +1,10 @@
-// Copyright 2011, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * A bean to store ACARS client versions.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 4.1
  */
 
@@ -104,7 +104,7 @@ public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, jav
 	
 	@Override
 	public boolean equals(Object o) {
-		return ((o instanceof ClientInfo) && (compareTo((ClientInfo) o) == 0));
+		return ((o instanceof ClientInfo ci2) && (compareTo(ci2) == 0));
 	}
 	
 	@Override

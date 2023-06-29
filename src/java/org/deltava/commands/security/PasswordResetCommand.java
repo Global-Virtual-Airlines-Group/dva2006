@@ -131,7 +131,7 @@ public class PasswordResetCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator)auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				if (auth.contains(usr))
 					auth.updatePassword(usr, newPwd);
 				else {

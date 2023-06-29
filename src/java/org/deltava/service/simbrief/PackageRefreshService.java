@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 10.3
  */
 
@@ -123,10 +123,8 @@ public class PackageRefreshService extends WebService {
 			}
 		} catch (Exception de) {
 			ctx.rollbackTX();
-			if (de instanceof HTTPDAOException) {
-				HTTPDAOException hde = (HTTPDAOException) de;
+			if (de instanceof HTTPDAOException hde)
 				throw error (hde.getStatusCode(), hde.getMessage(), false);
-			}
 
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {

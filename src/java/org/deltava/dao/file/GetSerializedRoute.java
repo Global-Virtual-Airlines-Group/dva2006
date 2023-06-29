@@ -1,4 +1,4 @@
-// Copyright 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to read serialized route data.
  * @author Luke
- * @version 8.6
+ * @version 11.0
  * @since 7.0
  */
 
@@ -36,8 +36,7 @@ public class GetSerializedRoute extends DAO {
 			int flightID = in.readInt(); // flight ID
 			int airacVersion = (ver > 2) ? in.readInt() : -1;
 			ArchivedRoute rt = new ArchivedRoute(flightID, airacVersion);
-			if (ver == 0)
-				return rt;
+			if (ver == 0) return rt;
 
 			int size = in.readInt();
 			for (int x = 0; x < size; x++) {
@@ -47,8 +46,8 @@ public class GetSerializedRoute extends DAO {
 				if (nt != Navaid.INT)
 					ndb.setName(in.readUTF());
 				ndb.setAirway(in.readUTF());
-				if (ndb instanceof NavigationFrequencyBean)
-					((NavigationFrequencyBean) ndb).setFrequency(in.readUTF());
+				if (ndb instanceof NavigationFrequencyBean nfb)
+					nfb.setFrequency(in.readUTF());
 				
 				rt.addWaypoint(ndb);
 			}

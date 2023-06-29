@@ -1,4 +1,4 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store a Dispatch Route that has an external source. 
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 2.6
  */
 
@@ -27,10 +27,7 @@ public class ExternalDispatchRoute extends DispatchRoute implements ExternalFlig
 	 */
 	public ExternalDispatchRoute(PopulatedRoute pr) {
 		super(pr);
-		
-		// Copy source
-		if (pr instanceof ExternalFlightRoute)
-			_source = ((ExternalFlightRoute) pr).getSource();
+		if (pr instanceof ExternalFlightRoute efr) _source = efr.getSource();
 	}
 	
 	@Override

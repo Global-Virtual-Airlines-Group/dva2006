@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2010, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2010, 2016, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Helper;
 /**
  * A utility class to generate combobox lists.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  * @see ComboAlias
  */
@@ -55,7 +55,7 @@ public class ComboUtils {
         
         @Override
 		public boolean equals(Object o2) {
-        	return (o2 instanceof ComboAlias) ? (compareTo((ComboAlias) o2) == 0) : false;
+        	return (o2 instanceof ComboAlias ca2) ? (compareTo(ca2) == 0) : false;
         }
         
         @Override

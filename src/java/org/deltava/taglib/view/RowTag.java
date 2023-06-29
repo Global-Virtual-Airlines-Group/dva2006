@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.html.ElementTag;
 /**
  * A JSP Tag to render view table rows with a specified CSS class.
  * @author Luke
- * @version 6.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -45,8 +45,8 @@ public class RowTag extends ElementTag {
 	public int doStartTag() throws JspException {
 
 		// Determine the CSS class name
-		if (_classes.isEmpty() && (_entry instanceof ViewEntry))
-			setClassName(((ViewEntry) _entry).getRowClassName());
+		if (_classes.isEmpty() && (_entry instanceof ViewEntry ve))
+			setClassName(ve.getRowClassName());
 		
 		super.doStartTag();
 		try {

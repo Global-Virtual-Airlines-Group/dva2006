@@ -79,10 +79,8 @@ public class RoutePlanService extends WebService {
 			Gate gA = gdao.getGate(aA, ctx.getParameter("gateA"));
 			
 			// Load the departure gate
-			if (fpgen instanceof MSFSGenerator) {
-				MSFSGenerator fsgen = (MSFSGenerator) fpgen;
+			if (fpgen instanceof MSFSGenerator fsgen)
 				fsgen.setGateD(gD);
-			}
 			
 			// Get the AIRAC cycle
 			GetMetadata mddao = new GetMetadata(con);

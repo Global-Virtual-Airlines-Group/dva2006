@@ -62,7 +62,7 @@ abstract class BasicAuthServlet extends GenericServlet {
 			
 			// Authenticate the user
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				auth.authenticate(usr, tkns.nextToken());
 			}
 			

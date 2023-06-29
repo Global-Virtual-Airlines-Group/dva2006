@@ -1,4 +1,4 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * An HTML 5 JSP tag for date input elements. 
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 5.0
  */
 
@@ -30,12 +30,12 @@ public class DateInputTag extends HTML5InputTag {
 		// Check for HTML5 browser
 		if (!isHTML5()) {
 			removeHTML5Attributes();
-			if (_value instanceof Instant)
-				_value = StringUtils.format((Instant) _value, _dateFmt);
+			if (_value instanceof Instant i)
+				_value = StringUtils.format(i, _dateFmt);
 		} else {
 			_data.setAttribute("type", "date");
-			if (_value instanceof Instant)
-				_value = StringUtils.format((Instant) _value, HTML5_DATE_FMT);
+			if (_value instanceof Instant i)
+				_value = StringUtils.format(i, HTML5_DATE_FMT);
 		}
 		
 		return SKIP_BODY;

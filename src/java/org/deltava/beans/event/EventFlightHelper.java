@@ -1,4 +1,4 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to determine what Online Events a flight may have participated in. 
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 9.0
  */
 
@@ -56,11 +56,10 @@ public class EventFlightHelper {
 		try {
 			// Check that the network/route match
 			if (e.getNetwork() != _fr.getNetwork()) throw new IllegalArgumentException("Flight not flown on " + e.getNetwork());
-			if (!(_fr instanceof FDRFlightReport)) throw new IllegalArgumentException("Flight not flown using ACARS/XACARS/simFDR");
+			if (!(_fr instanceof FDRFlightReport ffr)) throw new IllegalArgumentException("Flight not flown using ACARS/XACARS/simFDR");
 			if (e.getRoutes().stream().filter(_fr::matches).findAny().isEmpty()) throw new IllegalArgumentException("Flight not valid Event route");
 		
 			// Calculate takeoff/landing times
-			FDRFlightReport ffr = (FDRFlightReport) _fr;
 			if (ffr.getTakeoffTime() == null) throw new IllegalArgumentException("No takeoff time recorded");
 			if (ffr.getLandingTime() == null) throw new IllegalArgumentException("No landing time recorded");
 		

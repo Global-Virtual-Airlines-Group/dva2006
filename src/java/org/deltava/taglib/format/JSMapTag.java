@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript associative array. 
  * @author Luke
- * @version 7.5
+ * @version 11.0
  * @since 7.5
  */
 
@@ -44,27 +44,27 @@ public class JSMapTag extends JSTag {
 				@SuppressWarnings("unchecked")
 				Collection<Object> co = (Collection<Object>) me.getValue();
 				for (Object o : co) {
-					if (o instanceof Double)
-						ja.put(((Double) o).doubleValue());
-					else if (o instanceof Integer)
-						ja.put(((Integer) o).intValue());
-					else if (o instanceof Long)
-						ja.put(((Long) o).longValue());
-					else if (o instanceof Boolean)
-						ja.put(((Boolean) o).booleanValue());
+					if (o instanceof Double d)
+						ja.put(d.doubleValue());
+					else if (o instanceof Integer i)
+						ja.put(i.intValue());
+					else if (o instanceof Long l)
+						ja.put(l.longValue());
+					else if (o instanceof Boolean b)
+						ja.put(b.booleanValue());
 					else
 						ja.put(String.valueOf(o));
 				}
 				
 				jo.put(me.getKey(), ja);
-			} else if (me.getValue() instanceof Double)
-				jo.put(me.getKey(), ((Double)me.getValue()).doubleValue());
-			else if (me.getValue() instanceof Long)
-				jo.put(me.getKey(), ((Long)me.getValue()).longValue());
-			else if (me.getValue() instanceof Integer)
-				jo.put(me.getKey(), ((Integer)me.getValue()).intValue());
-			else if (me.getValue() instanceof Boolean)
-				jo.put(me.getKey(), ((Boolean)me.getValue()).booleanValue());
+			} else if (me.getValue() instanceof Double d)
+				jo.put(me.getKey(), d.doubleValue());
+			else if (me.getValue() instanceof Long l)
+				jo.put(me.getKey(), l.longValue());
+			else if (me.getValue() instanceof Integer i)
+				jo.put(me.getKey(), i.intValue());
+			else if (me.getValue() instanceof Boolean b)
+				jo.put(me.getKey(), b.booleanValue());
 			else
 				jo.put(me.getKey(), String.valueOf(me.getValue()));
 		}

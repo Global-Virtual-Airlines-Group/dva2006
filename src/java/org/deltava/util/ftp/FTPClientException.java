@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import com.enterprisedt.net.ftp.FTPException;
@@ -8,7 +8,7 @@ import org.deltava.dao.DAOException;
 /**
  * A class to treat FTP exceptions as a DAO exception.
  * @author Luke
- * @version 2.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -22,8 +22,7 @@ public class FTPClientException extends DAOException {
 	 */
 	FTPClientException(Throwable t) {
 		super(t);
-		if (t instanceof FTPException)
-			_resultCode = ((FTPException) t).getReplyCode();
+		if (t instanceof FTPException fe) _resultCode = fe.getReplyCode();
 	}
 	
 	/**

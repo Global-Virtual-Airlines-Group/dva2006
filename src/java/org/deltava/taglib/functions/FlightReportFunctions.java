@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
@@ -190,7 +190,7 @@ public class FlightReportFunctions {
 	 * @return TRUE if OnTime data is present, otherwise FALSE
 	 */
 	public static boolean hasOnTime(FlightReport fr) {
-		return (fr != null) && (fr instanceof ACARSFlightReport) && (((ACARSFlightReport) fr).getOnTime() != OnTime.UNKNOWN);
+		return (fr != null) && (fr instanceof ACARSFlightReport afr) && (afr.getOnTime() != OnTime.UNKNOWN);
 	}
 	
 	/**
@@ -199,7 +199,7 @@ public class FlightReportFunctions {
 	 * @return TRUE if a valid FDE file name is present, otherwise FALSE
 	 */
 	public static boolean hasFDE(FlightReport fr) {
-		return (fr != null) && (fr instanceof ACARSFlightReport) && (fr.getSimulator() != Simulator.FS2020) && !StringUtils.isEmpty(((ACARSFlightReport) fr).getFDE());
+		return (fr != null) && (fr instanceof ACARSFlightReport afr) && (fr.getSimulator() != Simulator.FS2020) && !StringUtils.isEmpty(afr.getFDE());
 	}
 
 	/**

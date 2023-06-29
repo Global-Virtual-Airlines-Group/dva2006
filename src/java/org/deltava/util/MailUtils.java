@@ -1,18 +1,18 @@
-// Copyright 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.deltava.beans.*;
 
 /**
- * A utility class for e-mail.
+ * A utility class for e-mail and push notifications.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 8.5
  */
 
 public class MailUtils {
 	
-	private static class EMailSender implements EMailAddress {
+	private static class EMailSender implements EMailAddress, java.io.Serializable {
 
 		private final String _name;
 		private final String _addr;
@@ -61,8 +61,7 @@ public class MailUtils {
 	 */
 	public static String format(EMailAddress addr) {
 		StringBuilder buf = new StringBuilder(addr.getEmail());
-		if (addr instanceof PushAddress) {
-			PushAddress pa = (PushAddress) addr;
+		if (addr instanceof PushAddress pa) {
 			buf.append(" [");
 			buf.append(pa.getPushEndpoints().size());
 			buf.append(" ep]");

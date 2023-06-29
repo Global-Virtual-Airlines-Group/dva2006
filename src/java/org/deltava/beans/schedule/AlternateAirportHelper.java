@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,10 +10,9 @@ import org.deltava.comparators.GeoComparator;
 import org.deltava.util.system.SystemData;
 
 /**
- * A helper class to calculate diversion airports. Airports are given a score based on maximum
- * runway length in excess of minimums and distance from the destination.
+ * A helper class to calculate diversion airports. Airports are given a score based on maximum runway length in excess of minimums and distance from the destination.
  * @author Luke
- * @version 8.7
+ * @version 11.0
  * @since 4.2
  */
 
@@ -73,7 +72,7 @@ public class AlternateAirportHelper {
 		int maxDistance = ac.getCruiseSpeed() * 3 / 4;
 		TreeSet<Airport> airports = new TreeSet<Airport>(new GeoComparator(dst));
 		airports.addAll(SystemData.getAirports().values());
-		String dstCode = (dst instanceof ICAOAirport) ? ((ICAOAirport) dst).getICAO() : null;
+		String dstCode = (dst instanceof ICAOAirport ia) ? ia.getICAO() : null;
 		
 		// Filter airports
 		AircraftPolicyOptions opts = ac.getOptions(_appCode);

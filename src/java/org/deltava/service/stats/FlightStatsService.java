@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 5.0
  */
 
@@ -64,8 +64,7 @@ public class FlightStatsService extends WebService {
 		boolean fwdTime = true; Instant lt = Instant.EPOCH, ft = null;
 		for (Iterator<? extends GeoLocation> i = routePoints.iterator(); i.hasNext() && fwdTime; ) {
 			GeoLocation loc = i.next();
-			if (loc instanceof ACARSRouteEntry) {
-				ACARSRouteEntry ae = (ACARSRouteEntry) loc;
+			if (loc instanceof ACARSRouteEntry ae) {
 				ft = (ft == null) ? ae.getSimUTC() : ft;
 				fwdTime &= (ae.getSimUTC() != null) && !ae.getSimUTC().isBefore(lt); // equal or after
 				lt = ae.getSimUTC();
@@ -82,11 +81,9 @@ public class FlightStatsService extends WebService {
 		JSONObject jo = new JSONObject();
 		int maxSpeed = 0; int maxAlt = 0;
 		for (GeoLocation loc : routePoints) {
-			if (loc instanceof RouteEntry) {
-				RouteEntry re = (RouteEntry) loc;
+			if (loc instanceof RouteEntry re) {
 				JSONArray je = new JSONArray();
-				if (re instanceof ACARSRouteEntry) {
-					ACARSRouteEntry ae = (ACARSRouteEntry) re;
+				if (re instanceof ACARSRouteEntry ae) {
 					je.put(fwdTime ? ae.getSimUTC().toEpochMilli() : ae.getDate().toEpochMilli());
 					je.put(re.getGroundSpeed());
 					je.put(re.getAltitude());	

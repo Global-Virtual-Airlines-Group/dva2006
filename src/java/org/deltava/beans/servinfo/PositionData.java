@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 8.0
+ * @version 11.0
  * @since 2.4
  */
 
@@ -178,6 +178,6 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	
 	@Override
 	public boolean equals(Object o) {
-		return ((o instanceof PositionData) && (compareTo((PositionData) o) == 0));
+		return (o instanceof PositionData pd2) && (compareTo(pd2) == 0);
 	}
 }

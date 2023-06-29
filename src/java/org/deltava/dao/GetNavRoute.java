@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 2.6
  */
 
@@ -76,10 +76,9 @@ public class GetNavRoute extends GetOceanicRoute {
 
 		// Check the cache
 		Route obj = _rCache.get(Integer.valueOf(route.hashCode()));
-		if (obj instanceof CacheableRoute) {
-			CacheableRoute cr = (CacheableRoute) obj;
+		if (obj instanceof CacheableRoute cr)
 			return cr.getWaypoints();
-		} else if (obj != null)
+		else if (obj != null)
 			obj = null;
 		
 		// Get the route text, remove double spaces
@@ -184,12 +183,10 @@ public class GetNavRoute extends GetOceanicRoute {
 	public PopulatedRoute populate(FlightRoute rt) throws DAOException {
 
 		PopulatedRoute pr = null; 
-		if (rt instanceof ExternalFlightRoute) {
+		if (rt instanceof ExternalFlightRoute efr) {
 			pr = new ExternalPopulatedRoute();
-			ExternalFlightRoute efr = (ExternalFlightRoute) pr;
-			efr.setSource(((ExternalFlightRoute) rt).getSource());
-		} else if (rt instanceof DispatchRoute) {
-			DispatchRoute dr = (DispatchRoute) rt;
+			efr.setSource(efr.getSource());
+		} else if (rt instanceof DispatchRoute dr) {
 			DispatchRoute pdr = new DispatchRoute();
 			pdr.setUseCount(dr.getUseCount());
 			pdr.setDispatchBuild(dr.getDispatchBuild());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -50,11 +50,9 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 				// Update question text / answer
 				oqp = BeanUtils.clone(qp);
 				qp.setQuestion(ctx.getParameter("question"));
-				if (qp instanceof MultipleChoice) {
-					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
+				if (qp instanceof MultiChoiceQuestionProfile mqp)  {
 					mqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
-					if (qp instanceof RoutePlot) {
-						RoutePlotQuestionProfile rqp = (RoutePlotQuestionProfile) qp;
+					if (qp instanceof RoutePlotQuestionProfile rqp) {
 						rqp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 						rqp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 						rqp.setChoices(new HashSet<String>());
@@ -214,10 +212,8 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);
-			if (qp instanceof MultipleChoice) {
-				MultipleChoice mqp = (MultipleChoice) qp;
+			if (qp instanceof MultipleChoice mqp)
 				ctx.setAttribute("qChoices", StringUtils.listConcat(mqp.getChoices(), "\n"), REQUEST);
-			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -265,8 +261,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			ctx.setAttribute("academyStats", dao.getDiscreteStatistics(qp.getID(), true), REQUEST);
 
 			// Display route
-			if (qp instanceof RoutePlot) {
-				RoutePlotQuestionProfile rp = (RoutePlotQuestionProfile) qp;
+			if (qp instanceof RoutePlotQuestionProfile rp) {
 				List<String> wps = StringUtils.split(rp.getCorrectAnswer(), " ");
 				
 				GetNavRoute rtdao = new GetNavRoute(con);
