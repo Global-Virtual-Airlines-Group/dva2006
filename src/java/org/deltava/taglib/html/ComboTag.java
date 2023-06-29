@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2013, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2013, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.security.Principal;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to support generating HTML combo/list boxes.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -36,14 +36,12 @@ public class ComboTag extends FormElementTag {
 	 * Helper method to check if an option value is selected.
 	 */
 	private static boolean checkOption(Object optValue, Object setValue) {
-		if ((optValue instanceof ComboAlias) && (setValue instanceof ComboAlias)) {
-			String vAlias = ((ComboAlias) setValue).getComboAlias();
-			ComboAlias ca = (ComboAlias) optValue;
+		if ((optValue instanceof ComboAlias ca) && (setValue instanceof ComboAlias sca)) {
+			String vAlias = sca.getComboAlias();
 			return ca.getComboAlias().equals(vAlias) || ca.getComboName().equals(vAlias);
-		} else if (optValue instanceof ComboAlias) {
-			ComboAlias ca = (ComboAlias) optValue;
+		} else if (optValue instanceof ComboAlias ca)
 			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(String.valueOf(setValue)));
-		} else
+		else
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
 	}
 
@@ -61,14 +59,12 @@ public class ComboTag extends FormElementTag {
 			isSelected = checkOption(optValue, _value);
 
 		// Figure out how to render the choice
-		if (optValue instanceof ComboAlias) {
-			ComboAlias alias = (ComboAlias) optValue;
+		if (optValue instanceof ComboAlias alias) {
 			_out.print(" <option ");
 			
 			// Special airport attributes
 			String txt = null;
-			if (optValue instanceof Airport) {
-				Airport a = (Airport) optValue;
+			if (optValue instanceof Airport a) {
 				_out.print("class=\"airport\" iata=\"");
 				_out.print(a.getIATA());
 				_out.print("\" icao=\"");
@@ -109,10 +105,8 @@ public class ComboTag extends FormElementTag {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
 		Principal user = req.getUserPrincipal();
-		if (user instanceof Person) {
-			Person p = (Person) user;
+		if (user instanceof Person p)
 			_airportCode = p.getAirportCodeType();
-		}
 	}
 
 	/**

@@ -146,7 +146,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Get the ID
-		int id = (usr instanceof Applicant) ? ((Applicant) usr).getPilotID() : usr.getID();
+		int id = (usr instanceof Applicant a) ? a.getPilotID() : usr.getID();
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
@@ -159,10 +159,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 		
 		boolean hasAlias = false;
-		if (usr instanceof Pilot) {
-			Pilot p = (Pilot) usr;
+		if (usr instanceof Pilot p)
 			hasAlias = !StringUtils.isEmpty(p.getLDAPName()) || !StringUtils.isEmpty(p.getPilotCode());
-		}
 
 		try {
 			Connection con = getConnection();

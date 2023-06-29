@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 8.7
+ * @version 11.0
  * @since 3.2
  */
 
@@ -123,7 +123,7 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof Country) && ((Country) o).getCode().equals(_code);
+		return (o instanceof Country c2) && c2.getCode().equals(_code);
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to view/take/score Pilot Examinations.
  * @author Luke
- * @version 8.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -99,8 +99,7 @@ public class ExamCommand extends AbstractCommand {
 				Map<Integer, Collection<NavigationDataBean>> aRoutes = new HashMap<Integer, Collection<NavigationDataBean>>();
 				for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext();) {
 					Question q = i.next();
-					if (q instanceof RoutePlot) {
-						RoutePlotQuestion rpq = (RoutePlotQuestion) q;
+					if (q instanceof RoutePlotQuestion rpq) {
 						List<NavigationDataBean> cR = navdao.getRouteWaypoints(q.getCorrectAnswer(), rpq.getAirportD());
 						cR.add(0, new AirportLocation(rpq.getAirportD()));
 						cR.add(new AirportLocation(rpq.getAirportA()));

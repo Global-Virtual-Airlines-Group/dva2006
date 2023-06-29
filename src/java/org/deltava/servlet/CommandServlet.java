@@ -276,8 +276,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		} catch (Exception e) {
 			String errPage = ERR_PAGE;
 			Level logLevel = Level.ERROR; boolean logStackDump = true;
-			if (e instanceof CommandException) {
-				CommandException ce = (CommandException) e;
+			if (e instanceof CommandException ce) {
 				rsp.setStatus(ce.getStatusCode());
 				if (ce.getForwardURL() != null)
 					errPage = ce.getForwardURL();

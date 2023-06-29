@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2011, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011, 2012, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicant Questionnaires.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -85,9 +85,8 @@ public class SetQuestionnaire extends DAO {
 				try (PreparedStatement ps = prepare("INSERT INTO APPQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)")) {
 					ps.setInt(1, e.getID());
 					for (Question q : e.getQuestions()) {
-						if (q instanceof MultiChoiceQuestion) {
+						if (q instanceof MultiChoiceQuestion mq) {
 							ps.setInt(2, q.getID());
-							MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
 							
 							// Save the choices
 							int seq = 0;
@@ -192,8 +191,7 @@ public class SetQuestionnaire extends DAO {
 
 					// Batch the questions
 					for (Question q : e.getQuestions()) {
-						if (q instanceof MultiChoiceQuestion) {
-							MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+						if (q instanceof MultiChoiceQuestion mq) {
 							ps.setInt(2, mq.getID());
 
 							// Save the questions

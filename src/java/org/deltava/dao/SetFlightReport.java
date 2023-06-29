@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
@@ -553,8 +553,7 @@ public class SetFlightReport extends DAO {
 					ps.setLong(52, afr.getDeboardTime().toSeconds());
 					ps.setLong(53, afr.getOnlineTime().toSeconds());
 					ps.setString(54,  afr.getTailCode());
-				} else if (fr instanceof XACARSFlightReport) {
-					XACARSFlightReport xfr = (XACARSFlightReport) fr;
+				} else if (fr instanceof XACARSFlightReport xfr) {
 					ps.setInt(30, -1);
 					ps.setInt(37, 0);
 					ps.setInt(38, 0);

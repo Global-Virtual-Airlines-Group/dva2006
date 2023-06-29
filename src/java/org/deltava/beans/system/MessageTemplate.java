@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing E-Mail message templates.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -194,7 +194,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Auditable, 
     
     @Override
     public boolean equals(Object o) {
-    	return (o instanceof MessageTemplate) && (compareTo((MessageTemplate) o) == 0);
+    	return (o instanceof MessageTemplate mt2) && (compareTo(mt2) == 0);
     }
     
     @Override

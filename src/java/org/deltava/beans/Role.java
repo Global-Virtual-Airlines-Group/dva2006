@@ -1,10 +1,10 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * A bean to store an access role. 
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 9.0
  */
 
@@ -62,6 +62,6 @@ public class Role implements java.io.Serializable, Comparable<Role> {
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof Role) && (compareTo((Role) o) == 0);
+		return (o instanceof Role r2) && (compareTo(r2) == 0);
 	}
 }

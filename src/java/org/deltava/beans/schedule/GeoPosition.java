@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A class for working with latitude/longitude pairs.
  * @author Luke
- * @version 8.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -59,8 +59,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public GeoPosition(GeoLocation gl) {
 		this(gl.getLatitude(), gl.getLongitude());
-		if (gl instanceof GeospaceLocation)
-			_alt = ((GeospaceLocation) gl).getAltitude();
+		if (gl instanceof GeospaceLocation gsl) _alt = gsl.getAltitude();
 	}
 
 	/**

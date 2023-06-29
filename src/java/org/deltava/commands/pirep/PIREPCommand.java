@@ -160,8 +160,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > opts.getRange()));
 				
 				// Check for excessive weight
-				if (fr instanceof ACARSFlightReport) {
-					ACARSFlightReport afr = (ACARSFlightReport) fr;
+				if (fr instanceof ACARSFlightReport afr) {
 					if ((aInfo.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > aInfo.getMaxTakeoffWeight()))
 						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 					else if ((aInfo.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > aInfo.getMaxLandingWeight()))

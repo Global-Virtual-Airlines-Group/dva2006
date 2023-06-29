@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 8.4
  */
 
@@ -67,8 +67,7 @@ public class OnTimeHelper {
 		_flights.forEach(se -> { se.setTimeD(LocalDateTime.of(dld, se.getTimeD().toLocalTime())); se.setTimeA(LocalDateTime.of(ald, se.getTimeA().toLocalTime())); });
 		
 		// Filter for matching flight # and close range
-		if (ft instanceof FlightNumber) {
-			FlightNumber fn = (FlightNumber) ft;
+		if (ft instanceof FlightNumber fn) {
 			Optional<ScheduleEntry> ose = _flights.stream().filter(se -> (FlightNumber.compare(se, fn, false) == 0) && matchDeparture(se.getTimeD(), ft.getTimeD())).findFirst();
 			if (ose.isPresent())
 				return ose.get();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -153,12 +153,7 @@ public class GetNavData extends DAO {
 		
 		// Get all entries with the code
 		NavigationDataMap results = get(code);
-		for (NavigationDataBean nd : results.getAll()) {
-			if (nd instanceof AirportLocation)
-				return (AirportLocation) nd;
-		}
-		
-		return null;
+		return results.getAll().stream().filter(AirportLocation.class::isInstance).map(AirportLocation.class::cast).findFirst().orElse(null);
 	}
 	
 	/**

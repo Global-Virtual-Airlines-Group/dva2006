@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.time.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 7.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -107,14 +107,14 @@ public class DateFormatTag extends UserSettingsTag {
 	 * @param i the date/time
 	 */
 	public void setDate(Temporal i) {
-		if (i instanceof Instant)
-			_dt = (Instant) i;
-		else if (i instanceof ZonedDateTime)
-			_dt = ((ZonedDateTime) i).toInstant();
-		else if (i instanceof LocalDate) {
-			_dt = Instant.ofEpochSecond(((LocalDate) i).toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
-		} else if (i instanceof LocalDateTime)
-			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
+		if (i instanceof Instant in)
+			_dt = in;
+		else if (i instanceof ZonedDateTime zdt)
+			_dt = zdt.toInstant();
+		else if (i instanceof LocalDate ld) {
+			_dt = Instant.ofEpochSecond(ld.toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
+		} else if (i instanceof LocalDateTime ldt)
+			_dt = ldt.toInstant(ZoneOffset.UTC);
 		else if (i != null)
 			throw new IllegalArgumentException("Invalid temporal type - " + i.getClass().getSimpleName());
 	}

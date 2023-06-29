@@ -104,10 +104,10 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	protected void setConnection(Authenticator... auths) {
 		for (int x = 0; x < auths.length; x++) {
 			Authenticator auth = auths[x];
-			if (auth instanceof SQLAuthenticator) {
+			if (auth instanceof SQLAuthenticator sa) {
 				Connection con = getConnection();
 				if (con != null)
-					((SQLAuthenticator) auth).setConnection(con);
+					sa.setConnection(con);
 			}
 		}
 	}
@@ -118,9 +118,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	 */
 	protected static void clearConnection(Authenticator... auths) {
 		for (int x = 0; x < auths.length; x++) {
-			Authenticator auth = auths[x];
-			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator) auth).close();
+			auths[x].close();
 		}
 	}
 

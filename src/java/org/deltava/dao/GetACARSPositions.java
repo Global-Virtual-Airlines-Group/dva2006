@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 4.1
  */
 
@@ -131,8 +131,7 @@ public class GetACARSPositions extends GetACARSData {
 					while (rs.next()) {
 						Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
 						GeoLocation loc = results.get(ts);
-						if ((loc != null) && (loc instanceof ACARSRouteEntry)) {
-							ACARSRouteEntry entry = (ACARSRouteEntry) loc;
+						if ((loc != null) && (loc instanceof ACARSRouteEntry entry)) {
 							int idx = rs.getInt(2);
 							if (idx == 2)
 								entry.setCOM2(rs.getString(3));

@@ -9,7 +9,7 @@ import java.time.format.TextStyle;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -173,7 +173,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 
 	@Override
 	public boolean equals(Object o2) {
-		return (o2 instanceof TZInfo) && (_tz.getId().equals(((TZInfo) o2)._tz.getId()));
+		return (o2 instanceof TZInfo tz2) && (_tz.getId().equals(tz2._tz.getId()));
 	}
 	
 	@Override

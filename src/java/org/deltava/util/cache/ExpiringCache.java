@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 1.0
  * @param <T> the Cacheable object type
  */
@@ -25,8 +25,8 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
-			if (entryData instanceof ExpiringCacheable)
-				_createExpire = ((ExpiringCacheable) entryData).getExpiryDate().toEpochMilli();
+			if (entryData instanceof ExpiringCacheable ecd)
+				_createExpire = ecd.getExpiryDate().toEpochMilli();
 			else
 				_createExpire = createdOn + _expiry;
 		}

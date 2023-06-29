@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary, secondary
  * and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank types.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -544,7 +544,7 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof Aircraft) ? (compareTo((Aircraft) o) == 0) : false;
+		return (o instanceof Aircraft a2) ? (compareTo(a2) == 0) : false;
 	}
 
 	@Override

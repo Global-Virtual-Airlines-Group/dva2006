@@ -88,11 +88,8 @@ public abstract class DAO {
 	 * @return an Integer
 	 */
 	protected static Integer toID(Object o) {
-		if (o instanceof Integer)
-			return (Integer) o;
-		else if (o instanceof IDBean)
-			return Integer.valueOf(((IDBean) o).getID());
-		
+		if (o instanceof Integer i) return i;
+		if (o instanceof IDBean idb) return Integer.valueOf(idb.getID());
 		return null;
 	}
 

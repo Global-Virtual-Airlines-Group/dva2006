@@ -224,8 +224,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 
 		// If we're checking for an applicant, remove its PilotID
 		int appPilotID = 0;
-		if (usr instanceof Applicant) {
-			Applicant a = (Applicant) usr;
+		if (usr instanceof Applicant a) {
 			appPilotID = a.getPilotID();
 			if (appPilotID > 0)
 				sqlBuf.append(" AND (ID<>?)");

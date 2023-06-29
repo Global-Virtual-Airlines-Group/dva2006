@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 2.4
  */
 
@@ -119,8 +119,7 @@ abstract class DAO {
 		_urlcon.setConnectTimeout(_connectTimeout);
 		_urlcon.setReadTimeout(_readTimeout);
 		_urlcon.setDefaultUseCaches(false);
-		if (_urlcon instanceof HttpURLConnection) {
-			HttpURLConnection urlcon = (HttpURLConnection) _urlcon;
+		if (_urlcon instanceof HttpURLConnection urlcon) {
 			urlcon.setRequestMethod(_method);
 			urlcon.setInstanceFollowRedirects(true);
 		}
@@ -160,7 +159,7 @@ abstract class DAO {
 	 */
 	protected int getResponseCode() throws IOException {
 		checkConnected();
-		return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection) _urlcon).getResponseCode() : 0;
+		return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getResponseCode() : 0;
 	}
 
 	/**
@@ -201,7 +200,7 @@ abstract class DAO {
 			return new CountingInputStream(is, _stats::updateTotal);
 		} catch (IOException ie) {
 			if (_getErrorStream)
-				return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection) _urlcon).getErrorStream() : null;
+				return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getErrorStream() : null;
 
 			throw ie;
 		}
@@ -225,12 +224,8 @@ abstract class DAO {
 	 * Resets the connection for subsequent reuse.
 	 */
 	public void reset() {
-		if (_urlcon == null)
-			return;
-
-		if (_urlcon instanceof HttpURLConnection)
-			((HttpURLConnection) _urlcon).disconnect();
-
+		if (_urlcon == null) return;
+		if (_urlcon instanceof HttpURLConnection urlcon) urlcon.disconnect();
 		_compression.clear();
 		_urlcon = null;
 		_rawStream = null;

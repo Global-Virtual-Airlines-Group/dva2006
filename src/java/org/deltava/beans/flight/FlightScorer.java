@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Helper;
@@ -9,7 +9,7 @@ import org.deltava.beans.stats.LandingStatistics;
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 8.7
+ * @version 11.0
  * @since 5.1
  */
 
@@ -54,13 +54,12 @@ public class FlightScorer {
 	 * @return a FlightScore
 	 */
 	public static FlightScore score(FDRFlightReport fr, Runway rD, Runway rA) {
-		if (!(rA instanceof RunwayDistance))
+		if (!(rA instanceof RunwayDistance ad))
 			return FlightScore.INCOMPLETE;
 		
 		// If we use too much of the takeoff runway, uh oh
 		FlightScore score = FlightScore.ACCEPTABLE;
-		if (rD instanceof RunwayDistance) {
-			RunwayDistance dd = (RunwayDistance) rD;
+		if (rD instanceof RunwayDistance dd) {
 			if ((dd.getLength() - dd.getDistance()) < 500)
 				return FlightScore.DANGEROUS;
 			else if (dd.getLength() - dd.getDistance() > 1500)
@@ -68,7 +67,6 @@ public class FlightScorer {
 		}
 		
 		// Calculate landing data
-		RunwayDistance ad = (RunwayDistance) rA;
 		double rwyPct = (double)ad.getDistance() / ad.getLength();
 		FlightScore ls = score(fr.getLandingVSpeed(), rwyPct);
 		return (ls.compareTo(score) < 0) ? score : ls;

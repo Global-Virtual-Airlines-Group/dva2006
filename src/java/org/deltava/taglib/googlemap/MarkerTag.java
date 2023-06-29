@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2013, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps Marker.
  * @author Luke
- * @version 6.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -108,12 +108,11 @@ public class MarkerTag extends GoogleMapEntryTag {
 	public int doEndTag() throws JspException {
 
 		// Calculate if color or label need to be overridden
-		if (_entry instanceof MapEntry) {
-			MapEntry mapInfo = (MapEntry) _entry;
+		if (_entry instanceof MapEntry mapInfo) {
 			if (_label == null)
 				_label = mapInfo.getInfoBox();
-			if ((_color == null) && (_entry instanceof MarkerMapEntry))
-				_color = ((MarkerMapEntry) mapInfo).getIconColor();
+			if ((_color == null) && (_entry instanceof MarkerMapEntry mme))
+				_color = mme.getIconColor();
 		}
 
 		try {
@@ -121,9 +120,8 @@ public class MarkerTag extends GoogleMapEntryTag {
 			writeVariableName();
 
 			// Call the googleMarker function
-			if ((_entry instanceof IconMapEntry) && !_useMarker) {
-				IconMapEntry mapInfo = (IconMapEntry) _entry;
-				out.print(generateIconMarker(_entry, (_palCode == -1) ? mapInfo.getPaletteCode() : _palCode, (_iconCode == -1) ? mapInfo.getIconCode() : _iconCode, _label));
+			if ((_entry instanceof IconMapEntry ime) && !_useMarker) {
+				out.print(generateIconMarker(_entry, (_palCode == -1) ? ime.getPaletteCode() : _palCode, (_iconCode == -1) ? ime.getIconCode() : _iconCode, _label));
 			} else
 				out.print(generateMarker(_entry, _color, _label));
 

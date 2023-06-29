@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store information about written examinations.
  * @author Luke
- * @version 8.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -89,12 +89,7 @@ public class Examination extends Test {
 	 * @see RoutePlot
 	 */
 	public boolean getRoutePlot() {
-		for (Question q : _questions.values()) {
-			if (q instanceof RoutePlot)
-				return true;
-		}
-		
-		return false;
+		return _questions.values().stream().anyMatch(RoutePlot.class::isInstance);
 	}
 
 	/**
@@ -120,13 +115,7 @@ public class Examination extends Test {
 	 * @return TRUE if there is at least one multiple-choice question, otherwise FALSE
 	 */
 	public boolean hasMultipleChoice() {
-		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
-			Question q = i.next();
-			if (q instanceof MultipleChoice)
-				return true;
-		}
-		
-		return false;
+		return _questions.values().stream().anyMatch(MultipleChoice.class::isInstance);
 	}
 	
 	/**
@@ -134,13 +123,7 @@ public class Examination extends Test {
 	 * @return TRUE if there is at least one question with an image, otherwise false
 	 */
 	public boolean hasImage() {
-		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
-			Question q = i.next();
-			if (q.getSize() > 0)
-				return true;
-		}
-		
-		return false;
+		return _questions.values().stream().anyMatch(q -> (q.getSize() > 0));
 	}
 
 	/**

@@ -101,7 +101,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static boolean getBoolean(String propertyName) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Boolean) ? ((Boolean) obj).booleanValue() : false;
+		return (obj instanceof Boolean b) ? b.booleanValue() : false;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static int getInt(String propertyName, int defValue) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Number) ? ((Number) obj).intValue() : defValue;
+		return (obj instanceof Number n) ? n.intValue() : defValue;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static long getLong(String propertyName, long defValue) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Long) ? ((Long) obj).longValue() : defValue;
+		return (obj instanceof Long l) ? l.longValue() : defValue;
 	}
 
 	/**
@@ -143,7 +143,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static double getDouble(String propertyName, double defValue) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Double) ? ((Double) obj).doubleValue() : defValue;
+		return (obj instanceof Double d) ? d.doubleValue() : defValue;
 	}
 
 	/**

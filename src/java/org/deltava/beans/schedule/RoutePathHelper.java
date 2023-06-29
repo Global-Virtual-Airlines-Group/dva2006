@@ -66,7 +66,7 @@ public final class RoutePathHelper {
 		
 		@Override
 		public boolean equals(Object o) {
-			return ((o instanceof Vertex) && (_a.equals(((Vertex) o)._a)));
+			return ((o instanceof Vertex v) && _a.equals(v._a));
 		}
 
 		@Override

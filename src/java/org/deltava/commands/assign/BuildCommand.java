@@ -90,8 +90,7 @@ public class BuildCommand extends AbstractCommand {
 				}
 				
 				// Copy arrival/departure times
-				if (f instanceof ScheduleEntry) {
-					ScheduleEntry se = (ScheduleEntry) f;
+				if (f instanceof ScheduleEntry se) {
 					fr.setTimeD(se.getTimeD().toLocalDateTime());
 					fr.setTimeA(se.getTimeA().toLocalDateTime());
 					fr.setAttribute(FlightReport.ATTR_HISTORIC, se.getHistoric());

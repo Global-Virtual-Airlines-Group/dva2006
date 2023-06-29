@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -141,12 +141,12 @@ public class MiscFunctions {
 	 */
 	public static String format(Temporal dt, String fmt) {
 		ZonedDateTime zdt = null;
-		if (dt instanceof Instant)
-			zdt = ZonedDateTime.ofInstant((Instant) dt, ZoneOffset.UTC);
+		if (dt instanceof Instant i)
+			zdt = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
 		else if (dt instanceof ZonedDateTime)
 			zdt = (ZonedDateTime) dt;
-		else if (dt instanceof LocalDate)
-			zdt = ZonedDateTime.of((LocalDate) dt, LocalTime.of(0, 0), ZoneOffset.UTC);
+		else if (dt instanceof LocalDate ld)
+			zdt = ZonedDateTime.of(ld, LocalTime.of(0, 0), ZoneOffset.UTC);
 		else if (dt != null)
 			throw new IllegalArgumentException("Unknown temporal type - " + dt.getClass().getName());
 			

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -85,8 +85,7 @@ public class SetExam extends DAO {
 		}
 		
 		// Write child tables
-		if (q instanceof MultiChoiceQuestion) {
-			MultiChoiceQuestion mcq = (MultiChoiceQuestion) q;
+		if (q instanceof MultiChoiceQuestion mcq) {
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)")) {
 				ps.setInt(1, id);
 				ps.setInt(2, q.getID());
@@ -103,8 +102,7 @@ public class SetExam extends DAO {
 			}
 		} 
 		
-		if (q instanceof RoutePlotQuestion) {
-			RoutePlotQuestion rpq = (RoutePlotQuestion) q;
+		if (q instanceof RoutePlotQuestion rpq) {
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.EXAMQUESTIONSRP (EXAM_ID, QUESTION_ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?)")) {
 				ps.setInt(1, id);
 				ps.setInt(2, q.getID());

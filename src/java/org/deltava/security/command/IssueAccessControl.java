@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2016, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public final class IssueAccessControl extends AccessControl {
 		boolean isDev = _ctx.getRoles().contains("Developer");
 		boolean isOurAirline = (_i != null) && _i.getAirlines().contains(SystemData.getApp(null));
 		boolean isStaff = isDev || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
-		boolean hasLegs = (p instanceof Pilot) && (((Pilot) p).getLegs() > 5);
+		boolean hasLegs = (p instanceof Pilot pl) && (pl.getLegs() > 5);
 		
 		_canCreate = isStaff || hasLegs;
 		if (!_ctx.isAuthenticated()) {

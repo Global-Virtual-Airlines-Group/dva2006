@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.BusyTimeAccessControl;
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -68,11 +68,10 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<? extends InstructorBean> i = entries.iterator(); i.hasNext(); ) {
-				InstructorBean s = i.next();
+			for (InstructorBean s : entries) {
 				pilotIDs.add(Integer.valueOf(s.getInstructorID()));
-				if (s instanceof InstructionSession)
-					pilotIDs.add(Integer.valueOf(((InstructionSession) s).getPilotID()));
+				if (s instanceof InstructionSession ses)
+					pilotIDs.add(Integer.valueOf(ses.getPilotID()));
 			}
 			
 			// Load the Pilots

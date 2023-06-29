@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A flight plan generator for ACARS dispatch sheets. 
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 10.0
  */
 
@@ -166,8 +166,8 @@ public class ACARSGenerator extends MSFSGenerator {
 		e.setAttribute("length", String.valueOf(r.getLength()));
 		e.setAttribute("sfc", r.getSurface().name());
 		e.setAttribute("isHardSfc", String.valueOf(r.getSurface().isHard()));
-		if (r instanceof UseCount)
-			e.setAttribute("useCount", String.valueOf(((UseCount) r).getUseCount()));
+		if (r instanceof UseCount uc)
+			e.setAttribute("useCount", String.valueOf(uc.getUseCount()));
 			
 		return e;
 	}

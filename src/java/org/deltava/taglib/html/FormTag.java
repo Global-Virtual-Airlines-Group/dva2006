@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.net.URLEncoder;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 7.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -54,10 +54,8 @@ public class FormTag extends ElementTag {
     	super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
 		Principal user = req.getUserPrincipal();
-		if (user instanceof Person) {
-			Person p = (Person) user;
+		if (user instanceof Person p)
 			_scheme = (p.getUIScheme() == null) ? null : p.getUIScheme().toLowerCase().replace(' ', '_');
-		}
     }
     
     @Override

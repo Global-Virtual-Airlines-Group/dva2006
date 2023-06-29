@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -149,9 +149,7 @@ public class Controller extends ConnectedUser {
     
     @Override
     public final boolean equals(Object o2) {
-    	if (o2 instanceof Controller)
-    		return (compareTo((Controller) o2) == 0);
-    	
+    	if (o2 instanceof Controller c2) return (compareTo(c2) == 0);
    		return super.equals(o2);
     }
     

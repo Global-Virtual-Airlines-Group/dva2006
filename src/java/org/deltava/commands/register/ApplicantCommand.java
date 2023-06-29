@@ -325,8 +325,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		Collection<UserData> addUsers = new HashSet<UserData>();
 		for (Iterator<Person> i = persons.values().iterator(); i.hasNext();) {
 			Person p = i.next();
-			if (p instanceof Applicant) {
-				Applicant ap = (Applicant) p;
+			if (p instanceof Applicant ap) {
 				if (persons.containsKey(Integer.valueOf(ap.getPilotID())))
 					i.remove();
 				else if ((ap.getStatus() == ApplicantStatus.APPROVED) && (ap.getPilotID() != 0)) {

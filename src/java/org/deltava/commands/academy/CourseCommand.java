@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2012, 2014, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2012, 2014, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -84,8 +84,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 				for (Test t : helper.getExams()) {
 					if ((t instanceof Examination) && (cert.getExamNames().contains(t.getName())))
 						exams.add(t);
-					else if (t instanceof CheckRide) {
-						CheckRide cr = (CheckRide) t;
+					else if (t instanceof CheckRide cr) {
 						if (cr.getCourseID() == c.getID())
 							exams.add(t);
 					}

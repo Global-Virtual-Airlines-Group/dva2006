@@ -502,7 +502,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
 					try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-						if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+						if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 						auth.rename(p, newDN);
 					}
 
@@ -540,9 +540,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				if (auth instanceof MultiAuthenticator) {
 					try (MultiAuthenticator mAuth = (MultiAuthenticator) auth) {
-						if (auth instanceof SQLAuthenticator)
-							((SQLAuthenticator) auth).setConnection(con);
-					
+						if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 						mAuth.removeDestination(p);
 					}
 				}
@@ -563,8 +561,8 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				if (auth instanceof SQLAuthenticator) {
-					try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+				if (auth instanceof SQLAuthenticator sa) {
+					try (SQLAuthenticator sqlAuth = sa) {
 						sqlAuth.setConnection(con);
 						sqlAuth.updatePassword(p, p.getPassword());
 					}
