@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2014, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010, 2014, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -52,8 +52,7 @@ public class PersonFunctions {
 	 * @return TRUE if a Supended Pilot, otherwise FALSE
 	 */
 	public static boolean isSuspended(Person usr) {
-		PilotStatus ps = (usr instanceof Pilot) ? ((Pilot) usr).getStatus() : null;
-		return (ps == PilotStatus.SUSPENDED);
+		return (usr instanceof Pilot p) && (p.getStatus() == PilotStatus.SUSPENDED);
 	}
 
 	/**
@@ -62,8 +61,7 @@ public class PersonFunctions {
 	 * @return TRUE if an Active or On Leave Pilot, otherwise FALSE
 	 */
 	public static boolean isActive(Person usr) {
-		PilotStatus ps = (usr instanceof Pilot) ? ((Pilot) usr).getStatus() : null;
-		return (ps == PilotStatus.ACTIVE) || (ps == PilotStatus.ONLEAVE);
+		return (usr instanceof Pilot p) && ((p.getStatus() == PilotStatus.ACTIVE) || (p.getStatus() == PilotStatus.ONLEAVE));
 	}
 	
 	/**

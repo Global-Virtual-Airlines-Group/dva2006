@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2023 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -479,10 +479,9 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 
 	@Override
 	public boolean equals(Object o2) {
-		if (o2 instanceof Airport) {
-			Airport a2 = (Airport) o2;
+		if (o2 instanceof Airport a2)
 			return (_iata.equals(a2._iata) && _icao.equals(a2._icao));
-		} else if (o2 instanceof String)
+		else if (o2 instanceof String)
 			return _iata.equals(o2) || _icao.equals(o2);
 		else
 			return false;

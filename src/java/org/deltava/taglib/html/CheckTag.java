@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 6.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -110,14 +110,12 @@ public class CheckTag extends FormElementTag {
 	 * Helper method to check if an option value is selected.
 	 */
 	private static boolean checkOption(Object optValue, Object setValue) {
-		if ((optValue instanceof ComboAlias) && (setValue instanceof ComboAlias)) {
-			String vAlias = ((ComboAlias) setValue).getComboAlias();
-			ComboAlias ca = (ComboAlias) optValue;
+		if ((optValue instanceof ComboAlias ca) && (setValue instanceof ComboAlias sva)) {
+			String vAlias = sva.getComboAlias();
 			return ca.getComboAlias().equals(vAlias) || ca.getComboName().equals(vAlias);
-		} else if (optValue instanceof ComboAlias) {
-			ComboAlias ca = (ComboAlias) optValue;
+		} else if (optValue instanceof ComboAlias ca)
 			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(String.valueOf(setValue)));
-		} else
+		else
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
 	}
 
@@ -129,8 +127,8 @@ public class CheckTag extends FormElementTag {
 
 		// Determine if the option is selected
 		boolean isSelected = false;
-		if (_value instanceof Collection<?>) {
-			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
+		if (_value instanceof Collection<?> vc) {
+			for (Iterator<?> i = vc.iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(opt, i.next());
 		} else
 			isSelected = checkOption(opt, _value);
@@ -144,8 +142,7 @@ public class CheckTag extends FormElementTag {
 
 		// Figure out how to render the choice
 		_out.print(" value=\"");
-		if (opt instanceof ComboAlias) {
-			ComboAlias alias = (ComboAlias) opt;
+		if (opt instanceof ComboAlias alias) {
 			_out.print(alias.getComboAlias());
 			_out.print("\" />");
 			_out.print(alias.getComboName());

@@ -118,8 +118,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 			rsp.setStatus(svc.execute(ctx));
 		} catch (Exception e) {
 			int resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-			if (e instanceof ServiceException) {
-				ServiceException se = (ServiceException) e;
+			if (e instanceof ServiceException se) {
 				resultCode = se.getCode();
 				if (se.isWarning())
 					log.warn("Error executing Web Service - " + e.getMessage());

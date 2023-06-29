@@ -335,8 +335,7 @@ public class FlightSubmissionHelper {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void calculateGates() throws DAOException {
-		if (!(_fr instanceof FDRFlightReport) ||  (_rte.size() < 2)) return;
-		FDRFlightReport ffr = (FDRFlightReport) _fr;
+		if (!(_fr instanceof FDRFlightReport ffr) ||  (_rte.size() < 2)) return;
 		if (!GeoUtils.isValid(ffr.getStartLocation()))
 			ffr.setStartLocation(_rte.get(0));
 		if (!GeoUtils.isValid(ffr.getEndLocation()))

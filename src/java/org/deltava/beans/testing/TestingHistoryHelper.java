@@ -380,10 +380,8 @@ public final class TestingHistoryHelper implements Cacheable {
 		
 		// Check if we have a pending check ride somewhere else
 		for (Test t : _tests) {
-			if ((t instanceof CheckRide) && (t.getStatus() != TestStatus.SCORED)) {
-				CheckRide cr = (CheckRide) t;
+			if ((t instanceof CheckRide cr) && (t.getStatus() != TestStatus.SCORED))
 				throw new PromotionIneligibilityException("Has unscored " + cr.getEquipmentType() + " Check Ride");
-			}
 		}
 		
 		if (_usr.getProficiencyCheckRides() && hasCheckRide(eq, RideType.CHECKRIDE))
@@ -484,8 +482,7 @@ public final class TestingHistoryHelper implements Cacheable {
 	public boolean hasCheckRide(EquipmentType eq, RideType rt) {
 		Instant now = Instant.now();
 		for (Test t : _tests) {
-			if ((t instanceof CheckRide) && t.getPassFail() && !t.getAcademy()) {
-				CheckRide cr = (CheckRide) t;
+			if ((t instanceof CheckRide cr) && t.getPassFail() && !t.getAcademy()) {
 				if (!cr.getEquipmentType().equals(eq.getName()))
 					continue;
 				if ((cr.getExpirationDate() == null) || (now.isBefore(cr.getExpirationDate())))

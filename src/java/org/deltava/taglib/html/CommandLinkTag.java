@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 1.0
  */
 
@@ -48,8 +48,7 @@ public class CommandLinkTag extends LinkTag {
 	 */
 	public void setLink(DatabaseBean db) {
 		if (db != null) {
-			if (db instanceof Pilot) {
-				Pilot p = (Pilot) db;
+			if (db instanceof Pilot p) {
 				HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 				_disableLink |= (p.getIsForgotten() && !req.isUserInRole("HR"));
 			}

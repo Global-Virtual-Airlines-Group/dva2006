@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Fleet Academy Instruction sessions.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -50,8 +50,7 @@ public class InstructionAccessControl extends AccessControl {
 		// Set access rights
 		_canDelete = isHR;
 		boolean isOurs = (_ctx.getUser().getID() == _i.getPilotID()) || (_ctx.getUser().getID() == _i.getInstructorID());
-		if (_i instanceof InstructionSession) {
-			InstructionSession is = (InstructionSession) _i;
+		if (_i instanceof InstructionSession is) {
 			_canEdit |= _canCreate;
 			_canCancel = (isOurs || isHR) && (is.getStatus() == InstructionSession.SCHEDULED);
 		} else

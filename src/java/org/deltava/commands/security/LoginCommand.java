@@ -157,7 +157,7 @@ public class LoginCommand extends AbstractCommand {
 			
 			// Get the authenticator and try to authenticate
 			try (org.deltava.security.Authenticator auth = (org.deltava.security.Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				auth.authenticate(p, ctx.getParameter("pwd"));
 			}
 

@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to write ACARS Runway and Gate data.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 5.1
  */
 
@@ -34,7 +34,7 @@ public class SetACARSRunway extends SetACARSData {
 		try (PreparedStatement ps = prepare("REPLACE INTO acars.RWYDATA (ID, ICAO, RUNWAY, LATITUDE, LONGITUDE, LENGTH, DISTANCE, ISTAKEOFF) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, flightID);
 			if (rwyD != null) {
-				int dist = (rwyD instanceof RunwayDistance) ? ((RunwayDistance) rwyD).getDistance() : 0;
+				int dist = (rwyD instanceof RunwayDistance rd) ? rd.getDistance() : 0;
 				ps.setString(2, rwyD.getCode());
 				ps.setString(3, rwyD.getName());
 				ps.setDouble(4, rwyD.getLatitude());
@@ -47,7 +47,7 @@ public class SetACARSRunway extends SetACARSData {
 			}
 			
 			if (rwyA != null) {
-				int dist = (rwyA instanceof RunwayDistance) ? ((RunwayDistance) rwyA).getDistance() : 0;
+				int dist = (rwyA instanceof RunwayDistance ra) ? ra.getDistance() : 0;
 				ps.setString(2, rwyA.getCode());
 				ps.setString(3, rwyA.getName());
 				ps.setDouble(4, rwyA.getLatitude());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -376,8 +376,8 @@ public class GetNavAirway extends GetNavData {
 					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
 					nd.setCode(rs.getString(2));
 					nd.setRegion(rs.getString(6));
-					if ((nd instanceof NavigationFrequencyBean) && (freq != null))
-						((NavigationFrequencyBean) nd).setFrequency(freq);
+					if ((nd instanceof NavigationFrequencyBean nfb) && (freq != null))
+						nfb.setFrequency(freq);
 						
 					a.addWaypoint(nd);
 				}

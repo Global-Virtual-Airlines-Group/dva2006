@@ -73,9 +73,9 @@ public class Mailer {
 		int cnt = 0;
 		if (EMailAddress.isValid(addr))
 			cnt += _msgTo.add(addr) ? 1 : 0;
-		if (addr instanceof PushAddress) {
+		if (addr instanceof PushAddress pa) {
 			int oldCnt = _pushTo.size();
-			if (_pushTo.addAll(((PushAddress)addr).getPushEndpoints()))
+			if (_pushTo.addAll(pa.getPushEndpoints()))
 				cnt += (_pushTo.size() - oldCnt);
 		}
 		
@@ -135,8 +135,8 @@ public class Mailer {
 		MessageTemplate mt = _ctx.getTemplate();
 		if (!StringUtils.isEmpty(mt.getNotifyContext())) {
 			Object ctx = _ctx.evaluate(mt.getNotifyContext()); 
-			if (ctx instanceof IDBean)
-				ID = Integer.valueOf(((IDBean) ctx).getID());
+			if (ctx instanceof IDBean idb)
+				ID = Integer.valueOf(idb.getID());
 			else
 				log.warn(String.format("Context object %s not a DatabaseBean - %s", mt.getNotifyContext(), ctx.getClass().getName()));
 		}

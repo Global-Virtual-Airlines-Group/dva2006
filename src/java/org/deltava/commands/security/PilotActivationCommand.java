@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			
 			// Get the authenticator and update the password
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				if (auth.contains(p))
 					auth.updatePassword(p, p.getPassword());
 				else

@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.security.Principal;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract utility class for HTML5 form input elements. 
  * @author Luke
- * @version 5.0
+ * @version 11.0
  * @since 5.0
  */
 
@@ -60,8 +60,7 @@ abstract class HTML5InputTag extends InputTag {
 		if (!isHTML5()) return;
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
 		Principal p = req.getUserPrincipal();
-		if (p instanceof Pilot) {
-			Pilot usr = (Pilot) p;
+		if (p instanceof Pilot usr) {
 			_dateFmt = usr.getDateFormat();
 			_timeFmt = usr.getTimeFormat();
 		}

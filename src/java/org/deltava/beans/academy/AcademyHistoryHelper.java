@@ -116,8 +116,7 @@ public final class AcademyHistoryHelper {
 		for (Test t : tests) {
 			if (!t.getAcademy()) continue;
 			_tests.add(t);
-			if (t instanceof CheckRide) {
-				CheckRide cr = (CheckRide) t;
+			if (t instanceof CheckRide cr) {
 				Course c = getCourse(cr.getCourseID());
 				if (c != null)
 					c.addCheckRide(cr);
@@ -421,9 +420,7 @@ public final class AcademyHistoryHelper {
 	 * Static function to adjust time-accelerated hours.
 	 */
 	private static int getAdjustedHours(FlightReport fr) {
-		if (!(fr instanceof ACARSFlightReport)) return fr.getLength();
-			
-		ACARSFlightReport afr = (ACARSFlightReport) fr;
+		if (!(fr instanceof ACARSFlightReport afr)) return fr.getLength();
 		return (afr.getTime(1) + (afr.getTime(2) / 2) + (afr.getTime(4) / 4)) / 360;
 	}
 	

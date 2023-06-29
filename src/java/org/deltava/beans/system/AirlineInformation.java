@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -195,7 +195,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    
    @Override
    public boolean equals(Object o) {
-	   return (o instanceof AirlineInformation) && (compareTo((AirlineInformation) o) == 0);
+	   return (o instanceof AirlineInformation ai2) && (compareTo(ai2) == 0);
    }
    
    @Override

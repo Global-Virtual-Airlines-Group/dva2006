@@ -136,8 +136,7 @@ public class LDAPAuthenticator implements Authenticator {
 			Attributes attrs = new BasicAttributes("userPassword", pwd);
 			attrs.put("objectClass", "person");
 			attrs.put("sn", usr.getLastName());
-			if (usr instanceof Pilot) {
-				Pilot p = (Pilot) usr;
+			if (usr instanceof Pilot p) {
 				if (p.getLDAPName() != null)
 					attrs.put("uid", p.getLDAPName());
 			}

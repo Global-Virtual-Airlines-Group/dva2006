@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import redis.clients.jedis.Pipeline;
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -51,10 +51,8 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	 */
 	protected long getExpiryTime(T entry) {
 		long expTime = _expiryTime;
-		if (entry instanceof ExpiringCacheable) {
-			ExpiringCacheable ec = (ExpiringCacheable) entry;
+		if (entry instanceof ExpiringCacheable ec)
 			expTime = ec.getExpiryDate().toEpochMilli();
-		}
 		
 		return expTime;
 	}

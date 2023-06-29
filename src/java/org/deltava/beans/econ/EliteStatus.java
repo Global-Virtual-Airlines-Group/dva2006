@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Pilots' Elite status level data. 
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -96,8 +96,7 @@ public class EliteStatus extends DatabaseBean implements EliteLevelBean {
 	@Override
 	public int compareTo(Object o2) {
 		int tmpResult = super.compareTo(o2);
-		if ((tmpResult == 0) && (o2 instanceof EliteStatus)) {
-			EliteStatus es2 = (EliteStatus) o2;
+		if ((tmpResult == 0) && (o2 instanceof EliteStatus es2)) {
 			tmpResult = Integer.compare(_lvl.getYear(), es2.getLevel().getYear());
 			if (tmpResult == 0)
 				tmpResult = _lvl.compareTo(es2._lvl);

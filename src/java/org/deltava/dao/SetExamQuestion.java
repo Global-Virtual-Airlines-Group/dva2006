@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 3.6
  */
 
@@ -105,8 +105,7 @@ public class SetExamQuestion extends DAO {
 			}
 
 			// Write the multiple choice entries
-			if (qp instanceof MultipleChoice) {
-				MultipleChoice mq = (MultipleChoice) qp;
+			if (qp instanceof MultipleChoice mq) {
 				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QUESTIONMINFO (ID, SEQ, ANSWER) VALUES (?, ?, ?)")) {
 					ps.setInt(1, qp.getID());
 
@@ -123,8 +122,7 @@ public class SetExamQuestion extends DAO {
 			}
 			
 			// Write the route plot entries
-			if (qp instanceof RoutePlot) {
-				RoutePlot rp = (RoutePlot) qp;
+			if (qp instanceof RoutePlot rp) {
 				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.QUESTIONRPINFO (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)")) {
 					ps.setInt(1, qp.getID());
 					ps.setString(2, rp.getAirportD().getIATA());

@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 1.0
  */
 
@@ -66,10 +66,8 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
 		Principal user = req.getUserPrincipal();
-		if (user instanceof Person) {
-			Person p = (Person) user;
+		if (user instanceof Person p)
 			setScheme(p.getUIScheme());
-		}
 	}
 
 	/**

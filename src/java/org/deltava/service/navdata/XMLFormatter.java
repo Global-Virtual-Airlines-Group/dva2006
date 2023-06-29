@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to handle XML translation for the {@link XMLClientDataService}.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 10.0
  */
 
@@ -128,8 +128,8 @@ class XMLFormatter {
 			XMLUtils.addIfPresent(rwe, XMLUtils.createIfPresent("oldCode", r.getOldCode()));
 			if ((r.getFrequency() != null) && (!"-".equals(r.getFrequency())))
 				rwe.addContent(XMLUtils.createElement("freq", r.getFrequency()));
-			if (r instanceof UseCount)
-				rwe.addContent(XMLUtils.createElement("useCount", String.valueOf(((UseCount) r).getUseCount())));
+			if (r instanceof UseCount uc)
+				rwe.addContent(XMLUtils.createElement("useCount", String.valueOf(uc.getUseCount())));
 				
 			re.addContent(rwe);
 		}

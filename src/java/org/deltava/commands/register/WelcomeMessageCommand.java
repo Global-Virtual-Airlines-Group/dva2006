@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2018, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to resent the Applicant welcome message.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -92,7 +92,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 				
 				// Update the user's password
 				try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-					if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+					if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 					auth.updatePassword(usr, usr.getPassword());
 				}
 			}

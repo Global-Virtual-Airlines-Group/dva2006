@@ -109,8 +109,7 @@ public class SeriesListService extends WebService {
 			for (Instant dt : l.getDates()) {
 				JSONObject dto = new JSONObject();
 				dto.put("unixDate", dt.toEpochMilli());
-				if (l instanceof WeatherFutureTileLayer) {
-					WeatherFutureTileLayer fl = (WeatherFutureTileLayer) l;
+				if (l instanceof WeatherFutureTileLayer fl) {
 					for (Instant fdt : fl.getSliceDates(dt)) {
 						JSONObject ffo = new JSONObject();
 						ffo.put("unixDate", fdt.toEpochMilli());

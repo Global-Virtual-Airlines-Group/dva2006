@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.math.*;
@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -405,10 +405,8 @@ public class GeoUtils {
 	public static boolean isValid(GeoLocation loc) {
 		if (loc == null) return false;
 		boolean isOK = ((loc.getLatitude() != 0.00) || (loc.getLongitude() != 0.00));
-		if (loc instanceof GeospaceLocation) {
-			GeospaceLocation gsl = (GeospaceLocation) loc;
+		if (loc instanceof GeospaceLocation gsl)
 			isOK |= (gsl.getAltitude() != 0);
-		}
 		
 		return isOK;
 	}

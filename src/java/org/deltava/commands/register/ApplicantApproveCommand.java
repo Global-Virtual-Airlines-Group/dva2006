@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 10.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -168,7 +168,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Get the authenticator and add the user
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				auth.add(a, a.getPassword());
 
 				// Commit the transactions

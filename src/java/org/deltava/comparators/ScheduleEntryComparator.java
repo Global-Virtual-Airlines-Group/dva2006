@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A comparator for Schedule entries.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 4.1
  */
 
@@ -70,11 +70,8 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case FLCOUNT:
-				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
-					ScheduleSearchEntry sse1 = (ScheduleSearchEntry) se1;
-					ScheduleSearchEntry sse2 = (ScheduleSearchEntry) se2;
+				if ((se1 instanceof ScheduleSearchEntry sse1) && (se2 instanceof ScheduleSearchEntry sse2))
 					return Integer.compare(sse1.getFlightCount(), sse2.getFlightCount());
-				}
 				
 				return se1.compareTo(se2);
 				
@@ -83,9 +80,7 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				return (tmpResult == 0) ? se1.getTimeD().toInstant().compareTo(se2.getTimeD().toInstant()) : tmpResult;
 				
 			case LASTFLT:
-				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
-					ScheduleSearchEntry sse1 = (ScheduleSearchEntry) se1;
-					ScheduleSearchEntry sse2 = (ScheduleSearchEntry) se2;
+				if ((se1 instanceof ScheduleSearchEntry sse1) && (se2 instanceof ScheduleSearchEntry sse2)) {
 					if (sse2.getLastFlownOn() == null)
 						return (sse1.getLastFlownOn() == null) ? 0 : -1;
 					

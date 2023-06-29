@@ -1,4 +1,4 @@
-// Copyright 2010, 2013, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2013, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.time.Instant;
 /**
  * A bean to store a daily collection of Oceanic Tracks. 
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 3.4
  */
 
@@ -118,7 +118,7 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof DailyOceanicTracks) ? (compareTo((DailyOceanicTracks) o) == 0) : false;
+		return (o instanceof DailyOceanicTracks ot2) ? (compareTo(ot2) == 0) : false;
 	}
 	
 	@Override

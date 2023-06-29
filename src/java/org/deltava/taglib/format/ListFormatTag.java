@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to format Collection values.
  * @author Luke
- * @version 7.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -70,8 +70,8 @@ public class ListFormatTag extends TagSupport {
         if (!CollectionUtils.isEmpty(_values)) {
         	for (Iterator<?> i = _values.iterator(); i.hasNext(); ) {
         		Object obj = i.next();
-        		if (obj instanceof ComboAlias)
-        			buf.append(((ComboAlias) obj).getComboName());
+        		if (obj instanceof ComboAlias ca)
+        			buf.append(ca.getComboName());
         		else
         			buf.append(String.valueOf(obj));
             

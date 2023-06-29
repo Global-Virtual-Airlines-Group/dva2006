@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A bean to define arbitrary airspace boundaries.
  * @author Luke
- * @version 7.3
+ * @version 11.0
  * @since 7.3
  */
 
@@ -282,7 +282,7 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof Airspace) ? (compareTo((Airspace) o) == 0) : false;
+		return (o instanceof Airspace a2) ? (compareTo(a2) == 0) : false;
 	}
 	
 	@Override

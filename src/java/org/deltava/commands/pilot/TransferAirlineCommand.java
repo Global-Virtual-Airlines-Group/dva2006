@@ -222,7 +222,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
-				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth instanceof SQLAuthenticator sa) sa.setConnection(con);
 				if (auth.contains(newUser))
 					auth.updatePassword(newUser, newUser.getPassword());
 				else

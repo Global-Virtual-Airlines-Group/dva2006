@@ -1,4 +1,4 @@
-// Copyright 2010, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class to filter Accomplishments.
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 3.2
  */
 
@@ -62,22 +62,16 @@ class AccomplishmentFilter {
 	 * Helper method to determine whether an object is included in an Accomplishment. 
 	 */
 	private static <T> boolean matches(T entry, Accomplishment a) {
-		if (entry instanceof Airport) {
-			Airport ap = (Airport) entry;
+		if (entry instanceof Airport ap)
 			return a.getChoices().contains(ap.getIATA()) || a.getChoices().contains(ap.getICAO());
-		} else if (entry instanceof State) {
-			State st = (State) entry;
+		else if (entry instanceof State st)
 			return a.getChoices().contains(st.name());
-		} else if (entry instanceof Country) {
-			Country c = (Country) entry;
+		else if (entry instanceof Country c)
 			return a.getChoices().contains(c.getCode());
-		} else if (entry instanceof Airline) {
-			Airline al = (Airline) entry;
+		else if (entry instanceof Airline al)
 			return a.getChoices().contains(al.getCode());
-		} else if (entry instanceof Continent) {
-			Continent c = (Continent) entry;
+		else if (entry instanceof Continent c)
 			return a.getChoices().contains(c.name());
-		}
 
 		return (a.getChoices().contains(String.valueOf(entry)));
 	}
@@ -110,16 +104,16 @@ class AccomplishmentFilter {
 		Collection<String> results = new ArrayList<String>();
 		for (T entry : values) {
 			if (matches(entry, a)) {
-				if (entry instanceof Country)
-					results.add(((Country) entry).getCode());
-				else if (entry instanceof Airport)
-					results.add(((Airport) entry).getIATA());
-				else if (entry instanceof State)
-					results.add(((State) entry).toString());
-				else if (entry instanceof Airline)
-					results.add(((Airline) entry).getCode());
-				else if (entry instanceof Continent)
-					results.add(((Continent) entry).name());
+				if (entry instanceof Country c)
+					results.add(c.getCode());
+				else if (entry instanceof Airport ap)
+					results.add(ap.getIATA());
+				else if (entry instanceof State s)
+					results.add(s.toString());
+				else if (entry instanceof Airline al)
+					results.add(al.getCode());
+				else if (entry instanceof Continent c)
+					results.add(c.name());
 				else
 					results.add(String.valueOf(entry));
 			}

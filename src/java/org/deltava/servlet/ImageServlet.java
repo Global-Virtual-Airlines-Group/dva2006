@@ -118,8 +118,7 @@ public class ImageServlet extends DownloadServlet {
 					swdao.logUse(cht);
 					
 					// Redirect and exit if external
-					if (cht instanceof ExternalChart) {
-						ExternalChart ec = (ExternalChart) cht;
+					if (cht instanceof ExternalChart ec) {
 						rsp.setHeader("Cache-Control", "private");
 						rsp.sendRedirect(ec.getURL());
 						return;

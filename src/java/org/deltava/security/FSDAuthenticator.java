@@ -175,7 +175,7 @@ public class FSDAuthenticator implements Authenticator {
 	 */
 	@Override
 	public boolean accepts(Person usr) {
-		return (usr instanceof Pilot) && (getUserLevel(usr) != Rating.DISABLED) && (((Pilot)usr).getStatus() == PilotStatus.ACTIVE);
+		return (usr instanceof Pilot p) && (getUserLevel(usr) != Rating.DISABLED) && (p.getStatus() == PilotStatus.ACTIVE);
 	}
 
 	/**

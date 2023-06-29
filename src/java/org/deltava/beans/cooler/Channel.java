@@ -412,7 +412,7 @@ public class Channel implements Comparable<Channel>, Auditable, Cacheable, Combo
      */
     @Override
     public boolean equals(Object o2) {
-        return (o2 instanceof Channel) && _name.equals(((Channel) o2)._name);
+        return (o2 instanceof Channel ch2) && _name.equals(ch2._name);
     }
     
     @Override

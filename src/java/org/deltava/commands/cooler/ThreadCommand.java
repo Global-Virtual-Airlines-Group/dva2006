@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -169,23 +169,21 @@ public class ThreadCommand extends AbstractCommand {
 			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs(), !showAll);
 			for (Map.Entry<Integer, Collection<String>> cme : certs.entrySet()) {
 				Person cp = users.get(cme.getKey());
-				if ((cp != null) && (cp instanceof Pilot))
-					((Pilot) cp).addCertifications(cme.getValue());
+				if ((cp != null) && (cp instanceof Pilot p))
+					p.addCertifications(cme.getValue());
 			}
 			
 			// Aggregate totals for pilots
 			for (Person p : users.values()) {
-				if (p instanceof Pilot) {
+				if (p instanceof Pilot usr) {
 					Collection<Integer> ids = udm.get(p.getID()).getIDs();
-					Pilot usr = (Pilot) p;
 				
 					// Add the totals
 					int totalLegs = 0;
 					double totalHours = 0;
 					for (Integer userID : ids) {
 						Person p2 = users.get(userID);
-						if (p2 instanceof Pilot) {
-							Pilot usr2 = (Pilot) p2;
+						if (p2 instanceof Pilot usr2) {
 							totalLegs += usr2.getLegs();
 							totalHours += usr2.getHours();
 							usr.addCertifications(usr2.getCertifications());

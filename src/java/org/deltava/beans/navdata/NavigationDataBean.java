@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 1.0
  */
 
@@ -219,7 +219,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 
 	@Override
 	public boolean equals(Object o2) {
-		return (o2 instanceof NavigationDataBean) ? (compareTo((NavigationDataBean) o2) == 0) : false;
+		return (o2 instanceof NavigationDataBean nd2) ? (compareTo(nd2) == 0) : false;
 	}
 
 	@Override

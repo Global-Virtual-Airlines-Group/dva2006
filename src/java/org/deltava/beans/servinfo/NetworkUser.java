@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Online Network user information.
  * @author Luke
- * @version 9.1
+ * @version 11.0
  * @since 1.0
  */
 
@@ -193,7 +193,7 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
 
 	@Override
 	public boolean equals(Object o2) {
-		return (o2 instanceof NetworkUser) ? (compareTo((NetworkUser) o2) == 0) : false;
+		return (o2 instanceof NetworkUser u2) ? (compareTo(u2) == 0) : false;
 	}
 
 	@Override

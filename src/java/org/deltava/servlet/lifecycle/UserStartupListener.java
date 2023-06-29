@@ -68,8 +68,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 				return;
 
 			// Add the user to the User pool
-			if (p instanceof Pilot)
-				UserPool.add((Pilot) p, s.getId(), addrInfo, (userAgent == null) ?  "Unknown" : userAgent);
+			if (p instanceof Pilot pl) UserPool.add(pl, s.getId(), addrInfo, (userAgent == null) ?  "Unknown" : userAgent);
 		} catch (IllegalStateException ise) {
 			log.error("Attempting to restore invalid Session");
 		}

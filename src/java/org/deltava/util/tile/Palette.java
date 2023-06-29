@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.awt.image.*;
 /**
  * A class to store color palette data.
  * @author Luke
- * @version 5.2
+ * @version 11.0
  * @since 5.0
  */
 
@@ -42,8 +42,7 @@ public class Palette {
 		this(maxColors);
 		
 		// If this already uses a palette, read it
-		if (img.getColorModel() instanceof IndexColorModel) {
-			IndexColorModel icm = (IndexColorModel) img.getColorModel();
+		if (img.getColorModel() instanceof IndexColorModel icm) {
 			_transparent = new Color(icm.getRGB(icm.getTransparentPixel()));
 			
 			// Load the colors

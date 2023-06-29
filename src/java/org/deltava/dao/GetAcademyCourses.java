@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -226,8 +226,7 @@ public class GetAcademyCourses extends DAO {
 			Object rawID = i.next();
 			if (rawID instanceof Integer)
 				sqlBuf.append(rawID.toString());
-			else if (rawID instanceof UserData) {
-				UserData ud = (UserData) rawID;
+			else if (rawID instanceof UserData ud) {
 				sqlBuf.append(ud.getID());
 				for (Integer id : ud.getIDs()) {
 					xdbIDs.put(id, Integer.valueOf(ud.getID()));

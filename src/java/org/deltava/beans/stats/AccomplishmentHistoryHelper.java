@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 3.2
  */
 
@@ -99,8 +99,7 @@ public class AccomplishmentHistoryHelper {
 				_intlLegs++;
 			if (fr.getSubmittedOn() == null)
 				fr.setSubmittedOn(fr.getDate());
-			if (fr instanceof ACARSFlightReport) {
-				ACARSFlightReport afr = (ACARSFlightReport) fr;
+			if (fr instanceof ACARSFlightReport afr) {
 				if ((afr.getOnTime() == OnTime.ONTIME) || (afr.getOnTime() == OnTime.EARLY))
 					_onTimeLegs++;
 			}

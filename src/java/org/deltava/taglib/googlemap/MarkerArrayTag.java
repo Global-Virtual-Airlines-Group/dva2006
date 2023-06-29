@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps v2 GMarkers.
  * @author Luke
- * @version 6.3
+ * @version 11.0
  * @since 1.0
  */
 
@@ -101,10 +101,9 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 					buf.append(_jsVarName);
 					buf.append(".push(");
 					
-					if ((entry instanceof IconMapEntry) && !_useMarker) {
-						IconMapEntry me = (IconMapEntry) entry;
+					if ((entry instanceof IconMapEntry me) && !_useMarker)
 						buf.append(generateIconMarker(entry, (_palCode == -1) ? me.getPaletteCode() : _palCode, (_iconCode == -1) ? me.getIconCode() : _iconCode, me.getInfoBox()));
-					} else {
+					else {
 						MarkerMapEntry me = (MarkerMapEntry) entry;
 						String entryColor = (_color == null) ? me.getIconColor() : _color; 
 						buf.append(generateMarker(entry, entryColor, me.getInfoBox()));

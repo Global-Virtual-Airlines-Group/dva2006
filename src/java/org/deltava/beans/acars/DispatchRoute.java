@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store saved ACARS dispatch routes.
  * @author Luke
- * @version 6.3
+ * @version 11.0
  * @since 2.0
  */
 
@@ -50,8 +50,7 @@ public class DispatchRoute extends PopulatedRoute implements AuthoredBean, UseCo
 		load(pr);
 		
 		// Copy dispatch fields
-		if (pr instanceof DispatchRoute) {
-			DispatchRoute dr = (DispatchRoute) pr;
+		if (pr instanceof DispatchRoute dr) {
 			_authorID = dr._authorID;
 			_lastUsed = dr._lastUsed;
 			_a = dr._a;

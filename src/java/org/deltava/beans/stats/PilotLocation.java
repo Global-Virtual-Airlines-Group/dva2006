@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 6.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -29,8 +29,7 @@ public class PilotLocation implements MarkerMapEntry {
 		super();
 		_usr = usr;
 		_position = loc;
-		if (loc instanceof IPBlock)
-			_addrInfo = (IPBlock) loc;
+		if (loc instanceof IPBlock ipb) _addrInfo = ipb;
 	}
 	
 	/**
