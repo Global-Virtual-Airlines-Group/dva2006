@@ -43,11 +43,11 @@
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20230227.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.23.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.60.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.20.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.20.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javacord-api-3.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/okhttp-4.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.61.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
