@@ -183,6 +183,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      */
     public void setEventID(int id) {
     	validateID(_eventID, id, true);
+    	_eventID = id;
     }
     
     /**
@@ -193,6 +194,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      */
     public void setPilotID(int id) {
     	validateID(_pilotID, id, true);
+    	_pilotID = id;
     }
     
     /**
