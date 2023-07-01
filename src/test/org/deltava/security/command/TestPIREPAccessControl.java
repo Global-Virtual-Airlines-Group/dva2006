@@ -19,7 +19,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
    @Override
 protected void setUp() throws Exception {
       super.setUp();
-      _fr = new FlightReport(new Airline("DVA"), 123, 1);
+      _fr = new FlightReport(new Airline("DVA", "Delta Virtual"), 123, 1);
       _fr.setLength(10);
       _ac = new PIREPAccessControl(_ctxt, _fr);
    }

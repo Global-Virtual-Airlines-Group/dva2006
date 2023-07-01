@@ -31,7 +31,7 @@ public class TestAirline extends TestCase {
 		_a.setActive(false);
 		assertFalse(_a.getActive());
 		
-	    Airline a2  = new Airline("DAL");
+	    Airline a2  = new Airline("DAL", "Delta Air Lines");
 	    assertEquals("", a2.getName());
 	    a2.setName("Delta");
 	    assertEquals("Delta", a2.getName());
