@@ -32,16 +32,6 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	private final Collection<String> _codes = new HashSet<String>();
 	
 	/**
-	 * Create a new Airline using a code.
-	 * @param code the Airline code
-	 * @throws NullPointerException if the name is null
-	 * @see Airline#getCode()
-	 */
-	public Airline(String code) {
-	    this(code, "");
-	}
-	
-	/**
 	 * Create a new Airline using a code and a name.
 	 * @param code the Airline code
 	 * @param name the Airline name

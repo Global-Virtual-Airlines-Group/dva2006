@@ -170,7 +170,7 @@ public class TestPilot extends AbstractBeanTestCase {
     }
     
     public void testFlights() {
-    	FlightReport fr = new FlightReport(new Airline("DVA"), 123, 1);
+    	FlightReport fr = new FlightReport(new Airline("DVA", "Delta Virtual"), 123, 1);
     	fr.setDate(Instant.now());
     	fr.setLength(11);
     	

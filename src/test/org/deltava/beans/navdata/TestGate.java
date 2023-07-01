@@ -67,7 +67,7 @@ protected void tearDown() throws Exception {
 	   _g.setUseCount(11);
 	   _g.setCode("KATL");
 	   _g.setName("GATE 15");
-	   _g.addAirline(new Airline("DL"));
+	   _g.addAirline(new Airline("DL", "Delta Virtual"));
 	   
 	   Gate g2 = (Gate) _g.clone();
 	   assertNotNull(g2);
