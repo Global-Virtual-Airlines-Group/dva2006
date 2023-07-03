@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2011, 2013, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2013, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to load Login IP address data.
  * @author Luke
- * @version 9.0
+ * @version 11.0
  * @since 1.0
  */
 
@@ -32,6 +32,21 @@ public class GetLoginData extends DAO {
 	public Collection<LoginAddress> getAddresses(int id) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS WHERE (ID=?)")) {
 			ps.setInt(1, id);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all login addresses for a particular host name. Wilcard search is supported.
+	 * @param hostName the host name
+	 * @return a Collection of LoginAddress beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<LoginAddress> getAddresses(String hostName) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS WHERE (REMOTE_HOST LIKE ?)")) {
+			ps.setString(1, hostName);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);

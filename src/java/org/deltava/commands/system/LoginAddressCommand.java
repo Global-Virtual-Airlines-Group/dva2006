@@ -1,7 +1,6 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
-import java.net.*;
 import java.util.Collection;
 import java.sql.Connection;
 
@@ -9,15 +8,16 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display all the users logging in via a particular IP address or host name.
  * @author Luke
- * @version 5.0
+ * @version 11.0
  * @since 1.0
  */
 
-public class LoginAddressCommand extends AbstractCommand {
+public class LoginAddressCommand extends AbstractViewCommand {
 
 	/**
 	 * Executes the command.
@@ -27,7 +27,8 @@ public class LoginAddressCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the command result
+		// Get the context and command result
+		ViewContext<LoginAddress> vctx = initView(ctx, LoginAddress.class);
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/admin/loginAddresses.jsp");
 
@@ -38,21 +39,24 @@ public class LoginAddressCommand extends AbstractCommand {
 			return;
 		}
 
-		// Get the address
-		boolean searchNet = Boolean.valueOf(ctx.getParameter("searchNet")).booleanValue();
-		if (searchNet) {
-			try {
-				InetAddress ipAddr = InetAddress.getByName(addr);
-				addr = ipAddr.getHostAddress();
-			} catch (UnknownHostException uhe) {
-				ctx.setMessage("Unknown Host - " + addr);
-				result.setSuccess(true);
-				return;
-			}
-		}
-		
+		// Get the address and search type
+		boolean searchNet = Boolean.parseBoolean(ctx.getParameter("searchNet"));
+		String resolvedAddr = NetworkUtils.getByName(addr);
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Find the address via previous logins
+			if (StringUtils.isEmpty(resolvedAddr)) {
+				GetLoginData lddao = new GetLoginData(con);
+				LoginAddress laddr = lddao.getAddresses(addr).stream().findFirst().orElse(null);
+				if (laddr == null) {
+					ctx.setMessage("Unknown Host - " + addr);
+					result.setSuccess(true);
+					return;
+				}
+				
+				addr = laddr.getRemoteAddr();
+			}
 			
 			// Get the network block
 			GetIPLocation ipdao = new GetIPLocation(con);
@@ -62,8 +66,10 @@ public class LoginAddressCommand extends AbstractCommand {
 			
 			// Get the Addresses
 			GetLoginData sysdao = new GetLoginData(con);
+			sysdao.setQueryStart(vctx.getStart());
+			sysdao.setQueryMax(vctx.getCount());
 			Collection<LoginAddress> addrs = searchNet ? sysdao.getLoginUsers(addr, addrInfo) : sysdao.getLoginUsers(addr);
-			ctx.setAttribute("addrs", addrs, REQUEST);
+			vctx.setResults(addrs);
 			
 			// Load the users
 			GetPilot pdao = new GetPilot(con);
@@ -74,10 +80,8 @@ public class LoginAddressCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Set search attribute
+		// Set search attribute and forward to the JSP
 		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
-		
-		// Forward to the JSP
 		result.setSuccess(true);
 	}
 }
