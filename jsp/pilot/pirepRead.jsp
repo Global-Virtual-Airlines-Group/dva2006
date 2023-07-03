@@ -378,7 +378,7 @@ golgotha.local.showRunwayChoices = function() {
 <tr class="sbData">
  <td class="label">SimBrief Package</td>
  <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
- | <a href="javascript:void golgotha.simbrief.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
+<c:if test="${fn:isDraft(pirep)}"> | <a href="javascript:void golgotha.simbrief.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a></c:if></span><span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
  </tr>
  <c:if test="${!empty sbPackage.tailCode}">
  <tr class="sbData">
