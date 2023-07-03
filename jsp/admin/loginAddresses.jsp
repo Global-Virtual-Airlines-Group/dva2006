@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.id, l:4, t:'Host name or IP Address'});
@@ -71,14 +71,14 @@ golgotha.local.validate = function(f) {
 <c:if test="${doSearch}">
 <view:table cmd="loginaddrs">
 <tr class="title caps">
- <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${addrs.size()}" /> RESULTS</c:if></td>
+ <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${viewContext.results.size()}" /> RESULTS</c:if></td>
 </tr>
-<c:if test="${empty addrs}">
+<c:if test="${empty viewContext.results}">
 <tr>
  <td colspan="6" class="pri bld caps">NO MATCHING <content:airline /> PILOTS WERE FOUND.</td>
 </tr>
 </c:if>
-<c:if test="${!empty addrs}">
+<c:if test="${!empty viewContext.results}">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:10%">CODE</td>
@@ -90,7 +90,7 @@ golgotha.local.validate = function(f) {
 </tr>
 
 <!-- Table Log Data -->
-<c:forEach var="addr" items="${addrs}">
+<c:forEach var="addr" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[addr.ID]}" scope="page" />
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
@@ -102,7 +102,7 @@ golgotha.local.validate = function(f) {
 </view:row>
 </c:forEach>
 <tr class="title">
- <td colspan="6"><view:legend width="110" labels="Active,Inactive,Retired,On Leave,Suspended" classes=" ,opt2,opt3,warn,error" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar><br /><view:legend width="110" labels="Active,Inactive,Retired,On Leave,Suspended" classes=" ,opt2,opt3,warn,error" /></td>
 </tr>
 </c:if>
 </view:table>

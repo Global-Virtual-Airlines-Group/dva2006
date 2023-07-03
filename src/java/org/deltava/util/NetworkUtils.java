@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2011, 2013, 2014, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2013, 2014, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.net.*;
@@ -6,7 +6,7 @@ import java.net.*;
 /**
  * A utility class to handle TCP/IP network operations.
  * @author Luke
- * @version 5.4
+ * @version 11.0
  * @since 1.0
  */
 
@@ -35,6 +35,20 @@ public class NetworkUtils {
 			return (ia instanceof Inet6Address) ? AddressType.IPv6 : AddressType.IPv4;
 		} catch (Exception e) {
 			return AddressType.UNKNOWN;
+		}
+	}
+	
+	/**
+	 * Exception-safe mechanism to resolve a host name to an IP address.
+	 * @param hostName the host name
+	 * @return the IP address, or null if unable to resolve
+	 */
+	public static String getByName(String hostName) {
+		try {
+			InetAddress addr = InetAddress.getByName(hostName);
+			return addr.getHostAddress();
+		} catch (Exception e) {
+			return null;
 		}
 	}
 	
