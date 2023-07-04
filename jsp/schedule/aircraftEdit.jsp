@@ -13,22 +13,18 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const isUsed = f.useAircraft.checked;
 	golgotha.form.validate({f:f.name, l:3, t:'Aircraft Name'});
 	golgotha.form.validate({f:f.fullName, l:5, t:'Aircraft Full Name'});
 	golgotha.form.validate({f:f.family, l:2, t:'Aircraft Family Code'});
-	golgotha.form.validate({f:f.range, min:1, t:'Aircraft Range'});
 	golgotha.form.validate({f:f.icao, min:3, t:'ICAO Equipment Code'});
-	golgotha.form.validate({f:f.seats, min:0, t:'Passenger Capacity'});
 	golgotha.form.validate({f:f.maxWeight, min:1, t:'Maximum Weight'});
 	golgotha.form.validate({f:f.maxZFW, min:1, t:'Maximum Zero Fuel Weight'});
 	golgotha.form.validate({f:f.maxTWeight, min:1, t:'Maximum Takeoff Weight'});
 	golgotha.form.validate({f:f.maxLWeight, min:1, t:'Maximum Landing Weight'});
-	golgotha.form.validate({f:f.toRunwayLength, min:0, t:'Minimum Takeoff Runway Length'});
-	golgotha.form.validate({f:f.lndRunwayLength, min:0, t:'Minimum Landing Runway Length'});
 	golgotha.form.validate({f:f.engineCount, min:1, t:'Engine Count'});
 	golgotha.form.validate({f:f.engineType, l:4, t:'Engine Type'});
 	golgotha.form.validate({f:f.cruiseSpeed, min:50, t:'Cruise Speed'});
@@ -36,6 +32,13 @@ golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.baseFuel, min:0, t:'Base Fuel Amount'});
 	golgotha.form.validate({f:f.taxiFuel, min:0, t:'Taxi Fuel Amount'});
 	golgotha.form.validate({f:f.pTanks, min:1, t:'Primary Fuel Tanks'});
+	if (isUsed) {
+		golgotha.form.validate({f:f.seats, min:0, t:'Passenger Capacity'});
+		golgotha.form.validate({f:f.range, min:1, t:'Aircraft Range'});
+		golgotha.form.validate({f:f.toRunwayLength, min:0, t:'Minimum Takeoff Runway Length'});
+		golgotha.form.validate({f:f.lndRunwayLength, min:0, t:'Minimum Landing Runway Length'});
+	}
+
 	golgotha.form.submit(f);
 	return true;
 };
