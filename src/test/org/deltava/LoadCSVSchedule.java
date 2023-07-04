@@ -65,7 +65,7 @@ public class LoadCSVSchedule extends TestCase {
 		
 		// Load aircraft
 		GetAircraft acdao = new GetAircraft(_c);
-		_allAC.addAll(acdao.getAll());
+		_allAC.addAll(acdao.getAircraftTypes());
 		_c.setAutoCommit(false);
 	}
 
