@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import org.deltava.beans.flight.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A log book export class to generate Volanta-formatted CSV logbooks.  
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 10.3
  */
 
@@ -47,7 +47,6 @@ class VolantaCSVExport extends CSVExport {
 		buf.append(ac.getICAO());
 		buf.append(',');
 		buf.append(String.valueOf(fr.getDistance()));
-		buf.append(',');
 		writeln(buf);
 	}
 }
