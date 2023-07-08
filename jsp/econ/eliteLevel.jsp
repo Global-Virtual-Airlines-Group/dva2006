@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="jsColor" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:3, t:'Level Name'});
@@ -58,7 +58,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Point Bonus</td>
- <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${Math.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any score calculates for Pilots at this level.</span></td>
+ <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${java.lan.Math.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any score calculates for Pilots at this level.</span></td>
 </tr>
 <tr>
  <td class="label">Target Percentile</td>
