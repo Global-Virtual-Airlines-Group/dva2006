@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A parser for SimBrief XML dispatch packages.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 10.3
  */
 
@@ -96,23 +96,30 @@ public class SimBriefParser {
 		if (ee != null) {
 			sb.setETOPS(EnumUtils.parse(ETOPS.class, "ETOPS" + ee.getChildTextTrim("rule"), sb.getETOPS()));
 			sb.setETOPSMidpoint(new GeoPosition(StringUtils.parse(XMLUtils.getChildText(ee, "equal_time_point", "pos_lat"), 0d), StringUtils.parse(XMLUtils.getChildText(ee, "equal_time_point", "pos_long"), 0d)));
-			for (Element ae : ee.getChildren("suitable_airport")) {
-				Airport ea = SystemData.getAirport(ae.getChildTextTrim("icao_code"));
-				if (ea != null)
-					sb.addETOPSAlternate(ea);
-			}
+			ee.getChildren("suitable_airport").stream().map(ae -> SystemData.getAirport(ae.getChildTextTrim("icao_code"))).filter(Objects::nonNull).forEach(sb::addETOPSAlternate);
 		}
 		
 		// Parse flight plans
 		Element fe = re.getChild("files");
 		sb.setBasePlanURL(fe.getChildTextTrim("directory"));
 		Collection<Element> plans = CollectionUtils.join(fe.getChildren("file"), fe.getChildren("pdf"));
-		for (Element fpe : plans) {
-			FlightPlan fp = new FlightPlan(fpe.getChildTextTrim("name"), fpe.getChildTextTrim("link"));
-			sb.addPlan(fp);
-		}
-		
+		plans.stream().map(fpe -> new FlightPlan(fpe.getChildTextTrim("name"), fpe.getChildTextTrim("link"))).forEach(sb::addPlan);
 		return sb;
+	}
+
+	/**
+	 * Parses a SimBrief error message.
+	 * @param xml the XML error message
+	 * @return the error message
+	 */
+	public static String parseError(String xml) {
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			Document doc = builder.build(new StringReader(xml));
+			return XMLUtils.getChildText(doc.getRootElement(), "fetch", "status");
+		} catch (IOException | JDOMException ie) {
+			return null;
+		}
 	}
 	
 	private static int parseWeight(int wt, WeightUnit dstUnit) {

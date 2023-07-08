@@ -1,10 +1,10 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.simbrief.*;
 
@@ -13,11 +13,29 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 10.3
  */
 
 public class GetSimBrief extends DAO {
+	
+	/**
+	 * SimBrief error data encapsulation class.
+	 */
+	public class SimBriefException extends HTTPDAOException {
+		
+		private final String _errorData;
+
+		SimBriefException(String url, String errorData) {
+			super(url, SC_BAD_REQUEST);
+			_errorData = errorData;
+		}
+		
+		@Override
+		public String getMessage() {
+			return _errorData;
+		}
+	}
 	
 	/*
 	 * Downloads the content in the URL.
@@ -31,7 +49,7 @@ public class GetSimBrief extends DAO {
 				bytesRead = in.read(buffer);
 			}
 			
-			return new String(out.toByteArray(), StandardCharsets.UTF_8);
+			return new String(out.toByteArray(), UTF_8);
 		}
 	}
 
@@ -75,9 +93,11 @@ public class GetSimBrief extends DAO {
 		try {
 			init(url);
 			
-			// If we're an error, throw a status code exception
+			// If we're an error, throw a status code exception, except a 400 in which case we parse the error
 			int statusCode = getResponseCode();
-			if (statusCode >= SC_BAD_REQUEST)
+			if (statusCode == SC_BAD_REQUEST)
+				throw new SimBriefException(url, download());
+			else if (statusCode > SC_BAD_REQUEST)
 				throw new HTTPDAOException(url, statusCode);
 			
 			return download();
