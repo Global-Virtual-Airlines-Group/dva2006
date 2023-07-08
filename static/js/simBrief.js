@@ -40,6 +40,7 @@ golgotha.simbrief.loadPax = function(f) {
 
 golgotha.simbrief.loadAirframes = function() {
 	const xreq = new XMLHttpRequest();
+	xreq.timeout = 2500;
 	xreq.open('get', 'sbairframes.ws?id=' + golgotha.simbrief.id, true);
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
@@ -112,6 +113,7 @@ golgotha.simbrief.sbRefresh = function() {
 	golgotha.form.submit(f);
 	golgotha.util.display('sbMessageBox', false);
 	const xreq = new XMLHttpRequest();
+	xreq.timeout = 7500;
 	xreq.open('get', 'sbrefresh.ws?id=' + golgotha.simbrief.id, true);
 	xreq.onreadystatechange = function() {
 		if (xreq.readyState != 4) return false;
@@ -121,6 +123,8 @@ golgotha.simbrief.sbRefresh = function() {
 			window.setTimeout(function() { location.reload(); }, 950);
 		} else if (xreq.status == 304)
 			golgotha.simbrief.showSBMessage('SimBrief package not modified', 'warn');
+		else if (xreq.status == 503)
+			golgotha.simbrief.showSBMessage(xreq.getResponseHeader('X-SB-Error-Message') + ' (' + xreq.getResponseHeader('X-SB-Error-Code') + ')');
 		else if (xreq.status >= 500)
 			golgotha.simbrief.showSBMessage('Error ' + xreq.status + ' updating package', 'error');
 

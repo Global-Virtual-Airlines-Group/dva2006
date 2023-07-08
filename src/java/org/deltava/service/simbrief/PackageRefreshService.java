@@ -65,6 +65,7 @@ public class PackageRefreshService extends WebService {
 			sbdao.setCompression(Compression.GZIP, Compression.BROTLI);
 			sbdao.setConnectTimeout(3500);
 			sbdao.setReadTimeout(4500);
+			sbdao.setReturnErrorStream(true);
 			String data = sbdao.refresh(pkg.getSimBriefUserID(), fr.getHexID());
 			
 			// Parse the data
@@ -123,8 +124,12 @@ public class PackageRefreshService extends WebService {
 			}
 		} catch (Exception de) {
 			ctx.rollbackTX();
-			if (de instanceof HTTPDAOException hde)
-				throw error (hde.getStatusCode(), hde.getMessage(), false);
+			if (de instanceof HTTPDAOException hde) {
+				String errorMsg = SimBriefParser.parseError(hde.getMessage());
+				ctx.setHeader("X-SB-Error-Code", hde.getStatusCode());
+				ctx.setHeader("X-SB-Error-Message", errorMsg);
+				throw error (SC_SERVICE_UNAVAILABLE, errorMsg, false);
+			}
 
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
