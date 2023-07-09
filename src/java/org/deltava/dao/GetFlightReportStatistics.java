@@ -526,7 +526,7 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, boolean isAvg) throws DAOException {
 		LocalDateTime sd = startDate.atStartOfDay();
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY LEGS, DST")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY LEGS, DST")) {
 			ps.setTimestamp(1, createTimestamp(sd.toInstant(ZoneOffset.UTC)));
 			ps.setTimestamp(2, createTimestamp(sd.plusYears(1).minusSeconds(1).toInstant(ZoneOffset.UTC)));
 			ps.setInt(3, FlightStatus.OK.ordinal());
