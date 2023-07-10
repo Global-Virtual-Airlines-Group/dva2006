@@ -1,5 +1,7 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
+
+import static org.deltava.beans.stats.GateUsage.GATE_USAGE_YEARS;
 
 import java.sql.*;
 
@@ -10,12 +12,12 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 6.2
  */
 
 public class SetAggregateStatistics extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -40,8 +42,10 @@ public class SetAggregateStatistics extends DAO {
 			updateDate(fr.getDate());
 			updatePilotDay(fr);
 			updateNetwork(fr);
-			if (fr.hasAttribute(FlightReport.ATTR_ACARS))
+			if (fr.hasAttribute(FlightReport.ATTR_ACARS)) {
+				updateGates(fr);
 				updateLanding(fr);
+			}
 			
 			commitTransaction();
 		} catch (SQLException se) {
@@ -52,9 +56,12 @@ public class SetAggregateStatistics extends DAO {
 	
 	/*
 	 * Updates ACARS landing statistics for a particular flight.
+	 * @param fr the FlightReport
+	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updateLanding(FlightReport fr) throws DAOException {
 		try {
+			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM FLIGHTSTATS_LANDING WHERE (ID=?)")) {
 				ps.setInt(1, fr.getID());
 				executeUpdate(ps, 0);
@@ -69,8 +76,31 @@ public class SetAggregateStatistics extends DAO {
 				ps.setInt(3, fr.getID());
 				executeUpdate(ps, 0);
 			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Updates Gate statistics for a particular flight. 
+	 */
+	private void updateGates(FlightReport fr) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM FLIGHTSTATS_GATE WHERE (F.AIRPORT_D=?) AND (F.AIRPORT_A=?)")) {
+			ps.setString(1, fr.getAirportD().getIATA());
+			ps.setString(2, fr.getAirportA().getIATA());
+			executeUpdate(ps, 0);
+		}
+			
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_GATE (SELECT G.ICAO, G.NAME, F.AIRLINE, F.AIRPORT_D, F.AIRPORT_A, GD.ISDEPARTURE, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS , "
+			+ "acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (F.AIRPORT_D=?) AND (F.AIRPORT_A=?) AND (F.CREATED>DATE_SUB(NOW, INTERVAL ? YEAR)) "
+			+ "GROUYP BY G.ICAO, G.NAME, F.AIRLINE, F.AIRPORT_D, F.AIRPORT_A, GD.ISDEPARTURE")) {
+			ps.setString(1, fr.getAirportD().getIATA());
+			ps.setString(2, fr.getAirportA().getIATA());
+			ps.setInt(3, GATE_USAGE_YEARS);
+			executeUpdate(ps, 0);
 		}
 	}
 	

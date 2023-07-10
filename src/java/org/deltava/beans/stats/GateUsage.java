@@ -11,16 +11,20 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store gate usage statistics.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 10.0
  */
 
 public class GateUsage implements Cacheable, RoutePair {
 	
+	/**
+	 * Number of years back to aggregate gate/airline usage.
+	 */
+	public static final int GATE_USAGE_YEARS = 6;
+	
 	private final Airport _aD;
 	private final Airport _aA;
 	private final boolean _isDeparture;
-	private final int _dayRange;
 	
 	private final Collection<GateTotal> _usage = new TreeSet<GateTotal>();
 
@@ -28,14 +32,12 @@ public class GateUsage implements Cacheable, RoutePair {
 	 * Creates the bean.
 	 *  @param rp the RoutePair
 	 *  @param isDeparture TRUE if departure gates, otherwise FALSE
-	 *  @param daysBack the number of days usage depicted, or zero for all
 	 */
-	public GateUsage(RoutePair rp, boolean isDeparture, int daysBack) {
+	public GateUsage(RoutePair rp, boolean isDeparture) {
 		super();
 		_aD = rp.getAirportD();
 		_aA = rp.getAirportA();
 		_isDeparture = isDeparture;
-		_dayRange = daysBack;
 	}
 	
 	@Override
@@ -65,22 +67,6 @@ public class GateUsage implements Cacheable, RoutePair {
 	}
 	
 	/**
-	 * Returns the number of Gates with recent usage data.
-	 * @return the number of Gates
-	 */
-	public int getRecentSize() {
-		return _usage.stream().filter(gt -> (gt.getRecent() > 0)).mapToInt(e -> 1).sum(); // count that returns an int instead of a long
-	}
-	
-	/**
-	 * Returns the number of days usage depicted.
-	 * @return the number of days, or zero for all
-	 */
-	public int getDayRange() {
-		return _dayRange;
-	}
-	
-	/**
 	 * Returns whether these are departure gate statistics.
 	 * @return TRUE if departure statistics, otherwise FALSE
 	 */
@@ -102,11 +88,10 @@ public class GateUsage implements Cacheable, RoutePair {
 	 * @param gateName the Gate name
 	 * @param a the Airline
 	 * @param totalUsage the total usage count
-	 * @param recentUsage the recent usage count
 	 */
-	public void addGate(String gateName, Airline a, int totalUsage, int recentUsage) {
+	public void addGate(String gateName, Airline a, int totalUsage) {
 		if (totalUsage > 0)
-			_usage.add(new GateTotal(gateName, a, totalUsage, recentUsage));
+			_usage.add(new GateTotal(gateName, a, totalUsage));
 	}
 	
 	/**
@@ -119,15 +104,6 @@ public class GateUsage implements Cacheable, RoutePair {
 	}
 	
 	/**
-	 * Returns the usage count for a particular Gate.
-	 * @param gateName the Gate name
-	 * @return the usage count, or zero if unknown
-	 */
-	public int getRecentUsage(String gateName) {
-		return _usage.stream().filter(gt -> gt.getGateName().equals(gateName)).mapToInt(GateTotal::getRecent).sum();
-	}
-	
-	/**
 	 * Returns the total usage across all gates.
 	 * @return the total usage count
 	 */
@@ -136,21 +112,13 @@ public class GateUsage implements Cacheable, RoutePair {
 	}
 	
 	/**
-	 * Returns the total recent usage across all gates.
-	 * @return the total recent usage count
-	 */
-	public int getTotalRecent() {
-		return _usage.stream().mapToInt(GateTotal::getRecent).sum();
-	}
-	
-	/**
 	 * Deep clones the object.
 	 * @return a cloned GateUsage
 	 */
 	@Override
 	public GateUsage clone() {
-		GateUsage gu = new GateUsage(this, _isDeparture, _dayRange);
-		_usage.stream().map(gt -> new GateTotal(gt.getGateName(), gt.getAirline(), gt.getTotal(), gt.getRecent())).forEach(gu._usage::add);
+		GateUsage gu = new GateUsage(this, _isDeparture);
+		_usage.stream().map(gt -> new GateTotal(gt.getGateName(), gt.getAirline(), gt.getTotal())).forEach(gu._usage::add);
 		return gu;
 	}
 	
@@ -160,7 +128,7 @@ public class GateUsage implements Cacheable, RoutePair {
 	 * @return a new GateUsage bean with statistics for that Airline
 	 */
 	public GateUsage filter(Airline a) {
-		GateUsage gu = new GateUsage(this, _isDeparture, _dayRange);
+		GateUsage gu = new GateUsage(this, _isDeparture);
 		_usage.stream().filter(gt -> a.equals(gt.getAirline())).forEach(gu._usage::add);
 		return gu;
 	}

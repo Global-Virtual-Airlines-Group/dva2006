@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 5.1
  */
 
@@ -26,8 +26,6 @@ public class GetGates extends DAO {
 	private static final Cache<GateUsage> _useCache = CacheManager.get(GateUsage.class, "GateUsage");
 	private static final Cache<CacheableList<Airport>> _pairCache = CacheManager.getCollection(Airport.class, "GatePairs");
 	
-	private static final int DAY_RANGE = 1095;
-
 	private static void populateFlight(FlightInfo fi, Gate g) {
 		if (g.getCode().equals(fi.getAirportD().getICAO()))
 			fi.setGateD(g);
@@ -116,24 +114,22 @@ public class GetGates extends DAO {
 	public GateUsage getUsage(RoutePair rp, boolean isDeparture) throws DAOException {
 		
 		// Check the cache
-		GateUsage gu = new GateUsage(rp, isDeparture, DAY_RANGE);
+		GateUsage gu = new GateUsage(rp, isDeparture);
 		GateUsage gateUse = _useCache.get(gu.cacheKey());
 		if (gateUse != null)
 			return gateUse.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, F.AIRLINE, COUNT(GD.ID) AS TCNT, SUM(IF(F.CREATED>DATE_SUB(NOW(), INTERVAL ? DAY),1,0)) AS CNT FROM acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) "
-			+ "AND (GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT GATE, AIRLINE, SUM(USECOUNT) AS CNT FROM FLIGHTSTATS_GATE WHERE (ISDEPARTURE=?) ");
 		if (rp.getAirportD() != null)
-			sqlBuf.append("AND (F.AIRPORT_D=?) ");
+			sqlBuf.append("AND (AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
-			sqlBuf.append("AND (F.AIRPORT_A=?) ");
-		sqlBuf.append("GROUP BY G.NAME, F.AIRLINE");
+			sqlBuf.append("AND (AIRPORT_A=?) ");
+		sqlBuf.append("GROUP BY GATE, AIRLINE ORDER BY CNT DESC");
 
-		gu = new GateUsage(rp, isDeparture, DAY_RANGE);
+		gu = new GateUsage(rp, isDeparture);
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) { 
 			int pos = 0;
-			ps.setInt(++pos, DAY_RANGE);
 			ps.setBoolean(++pos, isDeparture);
 			if (rp.getAirportD() != null)
 				ps.setString(++pos, rp.getAirportD().getIATA());
@@ -143,7 +139,7 @@ public class GetGates extends DAO {
 			// Load gate usage
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					gu.addGate(rs.getString(1), SystemData.getAirline(rs.getString(2)), rs.getInt(3), rs.getInt(4));
+					gu.addGate(rs.getString(1), SystemData.getAirline(rs.getString(2)), rs.getInt(3));
 			}
 			
 			_useCache.add(gu);
@@ -171,12 +167,12 @@ public class GetGates extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT GD.ICAO FROM acars.FLIGHTS F, acars.GATEDATA GD WHERE (F.ID=GD.ID) AND (GD.ISDEPARTURE=?) AND ");
 		sqlBuf.append(isDeparture ? "(F.AIRPORT_D=?)" : "(F.AIRPORT_A=?)");
-		sqlBuf.append(" AND (F.CREATED>DATE_SUB(NOW(), INTERVAL ? DAY))");
+		sqlBuf.append(" AND (F.CREATED>DATE_SUB(NOW(), INTERVAL ? YEAR))");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setBoolean(1, !isDeparture);
 			ps.setString(2, a.getIATA());
-			ps.setInt(3, DAY_RANGE);
+			ps.setInt(3, GateUsage.GATE_USAGE_YEARS);
 			
 			results = new CacheableList<Airport>(cacheKey);
 			try (ResultSet rs = ps.executeQuery()) {

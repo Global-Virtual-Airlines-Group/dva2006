@@ -14,7 +14,7 @@ import org.deltava.comparators.GateComparator;
 /**
  * A helper class to handle gate assignments. 
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 10.3
  */
 
@@ -47,8 +47,8 @@ public class GateHelper {
 		_a = a;
 		_maxGates = Math.max(1, max);
 		_doShuffle = doShuffle;
-		_dUsage = new GateUsage(rp, true, 0);
-		_aUsage = new GateUsage(rp, false, 0);
+		_dUsage = new GateUsage(rp, true);
+		_aUsage = new GateUsage(rp, false);
 	}
 	
 	/**
@@ -121,8 +121,7 @@ public class GateHelper {
 			filteredGates.addAll(_dGates);
 
 		GateUsage gu =  (_a != null) && _dUsage.hasAriline(_a.getCode()) ? _dUsage.filter(_a) : _dUsage;
-		boolean hasRecent = (gu.getRecentSize() > 0);
-		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
+		filteredGates.forEach(g -> g.setUseCount(gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
 	}
 	
@@ -136,8 +135,7 @@ public class GateHelper {
 			filteredGates.addAll(_aGates);
 		
 		GateUsage gu =  (_a != null) && _aUsage.hasAriline(_a.getCode()) ? _aUsage.filter(_a) : _aUsage;
-		boolean hasRecent = (gu.getRecentSize() > 0);
-		filteredGates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
+		filteredGates.forEach(g -> g.setUseCount(gu.getTotalUsage(g.getName())));
 		return sortSliceShuffle(filteredGates);
 	}
 	
