@@ -108,10 +108,11 @@ public class GetGates extends DAO {
 	 * Returns popular Gates for a particular Route.
 	 * @param rp the RoutePair
 	 * @param isDeparture TRUE if returning preferred departure Gate, otherwise FALSE
+	 * @param dbName the database name
 	 * @return a List of Gates, ordered by popularity
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public GateUsage getUsage(RoutePair rp, boolean isDeparture) throws DAOException {
+	public GateUsage getUsage(RoutePair rp, boolean isDeparture, String dbName) throws DAOException {
 		
 		// Check the cache
 		GateUsage gu = new GateUsage(rp, isDeparture);
@@ -120,7 +121,9 @@ public class GetGates extends DAO {
 			return gateUse.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT GATE, AIRLINE, SUM(USECOUNT) AS CNT FROM FLIGHTSTATS_GATE WHERE (ISDEPARTURE=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT GATE, AIRLINE, SUM(USECOUNT) AS CNT FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".FLIGHTSTATS_GATE WHERE (ISDEPARTURE=?) ");
 		if (rp.getAirportD() != null)
 			sqlBuf.append("AND (AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)

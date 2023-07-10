@@ -53,7 +53,7 @@ public class GateUseService extends WebService {
 			// Get usage
 			Airport a2 = SystemData.getAirport(ctx.getParameter("a2"));
 			RoutePair rp = isDeparture ? RoutePair.of(a, a2) : RoutePair.of(a2, a);
-			GateUsage gu = gdao.getUsage(rp, isDeparture);
+			GateUsage gu = gdao.getUsage(rp, isDeparture, ctx.getDB());
 				
 			// Combine usage and filter
 			gates.forEach(g -> g.setUseCount(gu.getTotalUsage(g.getName())));
