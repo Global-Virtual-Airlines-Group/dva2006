@@ -94,7 +94,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				FlightEliteScore sc = null;
 				st = myStatus.getOrDefault(myStatus.headMap(fr.getSubmittedOn()).lastKey(), myStatus.get(myStatus.firstKey()));
 				
-				if (fr instanceof FDRFlightReport) {
+				if (fr instanceof FDRFlightReport ffr) {
 					Aircraft a = acdao.get(fr.getEquipmentType());
 					AircraftPolicyOptions opts = a.getOptions(ai.getCode());
 					FlightInfo fi = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
@@ -111,14 +111,13 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 						}
 						
 						// Create the package
-						ScorePackage pkg = new ScorePackage(a, (FDRFlightReport) fr, fi.getRunwayD(), fi.getRunwayA(), opts);
+						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
 						entries.forEach(pkg::add);
 						sc = es.score(pkg, st.getLevel());
-					} else if (fi != null) {
-						ScorePackage pkg = new ScorePackage(a, (FDRFlightReport) fr, fi.getRunwayD(), fi.getRunwayA(), opts);
-						sc = es.score(pkg, st.getLevel());
-					} else
-						sc  = es.score(fr, st.getLevel());
+					} else if (fi != null)
+						sc = es.score(new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts), st.getLevel());
+					else
+						sc  = es.score(new ScorePackage(a, ffr, null, null, opts), st.getLevel());
 				} else
 					sc  = es.score(fr, st.getLevel());
 				

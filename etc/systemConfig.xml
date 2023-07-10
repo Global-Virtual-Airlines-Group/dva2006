@@ -746,11 +746,13 @@
 			<name>SkyMiles Medallion</name>
 			<points>SkyMiles</points>
 			<distance>Medallion Miles</distance>
-			<scorer>org.deltava.beans.flight.EliteScorer</scorer>
+			<scorer>org.deltava.beans.econ.EliteScorer</scorer>
 			<round>
 				<leg type="Integer">5</leg>
-				<distance type="Integer">1000</distance>
+				<distance type="Integer">5000</distance>
 			</round>
+			
+			<maxNonACARS type="Integer">2</maxNonACARS>
 		</elite>
 	</econ>
 </config>

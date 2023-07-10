@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 9.2
  */
 
@@ -53,6 +53,7 @@ public class EliteScoringTask extends Task {
 			GetElite eldao = new GetElite(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFlightReports frdao = new GetFlightReports(con);
+			GetACARSData fidao = new GetACARSData(con);
 			
 			SetElite elwdao = new SetElite(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
@@ -90,7 +91,7 @@ public class EliteScoringTask extends Task {
 				
 				// Calculate the sore
 				FlightEliteScore sc = null;
-				if (fr instanceof FDRFlightReport) {
+				if (fr instanceof FDRFlightReport ffr) {
 					Aircraft ac = acdao.get(fr.getEquipmentType());
 					AircraftPolicyOptions opts = ac.getOptions(ai.getCode());
 					
@@ -107,8 +108,11 @@ public class EliteScoringTask extends Task {
 						log.error("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
 					}
 					
+					// Get the landing runway
+					RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+					
 					// Create the package
-					ScorePackage pkg = new ScorePackage(ac, (FDRFlightReport) fr, null, null, opts);
+					ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
 					entries.forEach(pkg::add);
 					sc = es.score(pkg, st.getLevel());
 				} else
