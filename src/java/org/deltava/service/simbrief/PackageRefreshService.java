@@ -98,8 +98,8 @@ public class PackageRefreshService extends WebService {
 			if (!fr.hasGates() && (fr.getSimulator() != Simulator.UNKNOWN)) {
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(fr, 5, true);
-				gh.addDepartureGates(gdao.getGates(fr.getAirportD()), gdao.getUsage(fr, true));
-				gh.addArrivalGates(gdao.getGates(fr.getAirportA()), gdao.getUsage(fr, false));
+				gh.addDepartureGates(gdao.getGates(fr.getAirportD()), gdao.getUsage(fr, true, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(fr.getAirportA()), gdao.getUsage(fr, false, ctx.getDB()));
 					
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();

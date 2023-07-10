@@ -73,8 +73,8 @@ public class URLCheckService extends WebService {
 			if (!dfr.hasGates()) {
 				GetGates gdao = new GetGates(con);
 				GateHelper gh = new GateHelper(dfr, 5, true);
-				gh.addDepartureGates(gdao.getGates(dfr.getAirportD()), gdao.getUsage(dfr, true));
-				gh.addArrivalGates(gdao.getGates(dfr.getAirportA()), gdao.getUsage(dfr, false));
+				gh.addDepartureGates(gdao.getGates(dfr.getAirportD()), gdao.getUsage(dfr, true, ctx.getDB()));
+				gh.addArrivalGates(gdao.getGates(dfr.getAirportA()), gdao.getUsage(dfr, false, ctx.getDB()));
 				
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();
