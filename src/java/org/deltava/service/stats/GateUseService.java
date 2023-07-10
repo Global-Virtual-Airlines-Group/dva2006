@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Gate usage statistics.
  * @author Luke
- * @version 10.6
+ * @version 11.0
  * @since 10.6
  */
 
@@ -56,12 +56,11 @@ public class GateUseService extends WebService {
 			GateUsage gu = gdao.getUsage(rp, isDeparture);
 				
 			// Combine usage and filter
-			boolean hasRecent = (gu.getRecentSize() > 0);
-			gates.forEach(g -> g.setUseCount(hasRecent ? gu.getRecentUsage(g.getName()) : gu.getTotalUsage(g.getName())));
+			gates.forEach(g -> g.setUseCount(gu.getTotalUsage(g.getName())));
 			gates.sort(new GateComparator(GateComparator.USAGE).reversed());
 			
 			// Build JSON object
-			jo.put("dayRange", gu.getDayRange());
+			jo.put("dayRange", GateUsage.GATE_USAGE_YEARS * 365);
 			jo.put("airport", JSONUtils.format(a));
 			jo.put("isDeparture", isDeparture);
 			for (Gate g : gates) {
@@ -78,7 +77,7 @@ public class GateUseService extends WebService {
 				for (Airline al : gateAirlines) {
 					GateUsage au = gu.filter(al);
 					JSONObject ao = JSONUtils.format(al);
-					int useCount = hasRecent ? au.getRecentUsage(g.getName()) : au.getTotalUsage(g.getName());
+					int useCount = au.getTotalUsage(g.getName());
 					if (useCount > 0) {
 						ao.put("useCount", useCount);
 						go.accumulate("airlines", ao);
