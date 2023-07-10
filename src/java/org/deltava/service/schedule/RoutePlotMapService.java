@@ -98,7 +98,7 @@ public class RoutePlotMapService extends MapPlotService {
 			GateHelper gh = new GateHelper(dr, dr.getAirline(), req.optBoolean("allGates") ? Integer.MAX_VALUE : 8, false);
 			List<String> wps = StringUtils.split(route, " ");
 			if (dr.getAirportD() != null) {
-				gh.addDepartureGates(gdao.getGates(dr.getAirportD()), gdao.getUsage(dr, true));
+				gh.addDepartureGates(gdao.getGates(dr.getAirportD()), gdao.getUsage(dr, true, ctx.getDB()));
 				gates.addAll(gh.getDepartureGates());
 				String rwy = req.optString("runway", "");
 				if (rwy.indexOf(' ') > 0)
@@ -184,7 +184,7 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				gh.addArrivalGates(gdao.getGates(dr.getAirportA()), gdao.getUsage(dr, false));
+				gh.addArrivalGates(gdao.getGates(dr.getAirportA()), gdao.getUsage(dr, false, ctx.getDB()));
 				gates.addAll(gh.getArrivalGates());
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
