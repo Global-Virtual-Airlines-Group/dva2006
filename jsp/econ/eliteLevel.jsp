@@ -34,8 +34,9 @@ golgotha.local.validate = function(f) {
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/schedule/header.jspf" %> 
+<%@ include file="/jsp/schedule/header.jspf" %>
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata var="pointUnit" name="econ.elite.points" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -57,8 +58,8 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${lvl.hexColor}" />&nbsp;<span class="small">Click on the text box for a color picker.</span></td>
 </tr>
 <tr>
- <td class="label">Point Bonus</td>
- <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${java.lan.Math.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any score calculates for Pilots at this level.</span></td>
+ <td class="label">${pointUnit} Bonus</td>
+ <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${java.lan.Math.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any ${pointUnit} calculated for Pilots at this level.</span></td>
 </tr>
 <tr>
  <td class="label">Target Percentile</td>
@@ -80,7 +81,7 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:text name="distance" idx="*" size="6" max="7" required="true" value="${lvl.distance}" /> miles</td>
 </tr>
 <tr>
- <td class="label">Minimum Points</td>
+ <td class="label">Minimum ${pointUnit}</td>
  <td class="data"><el:text name="pts" idx="*" size="6" max="7" required="true" value="${lvl.points}" /></td>
 </tr>
 </el:table>
