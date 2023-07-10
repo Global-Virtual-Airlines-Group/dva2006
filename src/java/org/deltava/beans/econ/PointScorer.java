@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * An interface for classes that calculate elite level point scores to Flight Reports.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -21,7 +21,10 @@ public abstract class PointScorer {
 	private final Map<String, Instant> _firstAP = new HashMap<String, Instant>();
 	private final Map<String, Instant> _firstCountry = new HashMap<String, Instant>();
 	
-	private FlightEliteScore _score;
+	/**
+	 * The elite score.
+	 */
+	protected FlightEliteScore _score;
 	
 	/**
 	 * Creates a PointScorer implementation.
@@ -63,23 +66,7 @@ public abstract class PointScorer {
 	 * @param lvl the Pilot's current EliteLevel
 	 * @return the number of status points earned
 	 */
-	public FlightEliteScore score(FlightReport fr, EliteLevel lvl) {
-		reset(fr.getID(), lvl);
-		if (!canScore(fr))
-			return null;
-		
-		_score.setDistance(fr.getDistance());
-		_score.setAuthorID(fr.getAuthorID());
-		
-		scoreIf(Math.max(100, fr.getDistance() / 4), "Base Miles", true, false);
-		scoreIf(50, "Promotion Leg", !fr.getCaptEQType().isEmpty());
-		scoreIf(500, "New Aircraft - " + fr.getEquipmentType(), isNewEquipment(fr.getEquipmentType(), fr.getDate()));
-		scoreIf(200, "New Airport - " + fr.getAirportD().getIATA(), isNewAirport(fr.getAirportD().getIATA(), fr.getDate()));
-		scoreIf(200, "New Airport - " + fr.getAirportA().getIATA(), isNewAirport(fr.getAirportA().getIATA(), fr.getDate()));
-		scoreIf(25, "Online Event", (fr.getDatabaseID(DatabaseID.EVENT) > 0));
-		scoreIf(Math.round(_score.getPoints() * lvl.getBonusFactor()), lvl.getName() + " Supplement", lvl.getBonusFactor() > 0f);
-		return _score;
-	}
+	public abstract FlightEliteScore score(FlightReport fr, EliteLevel lvl);
 
 	/**
 	 * Returns the score bundle.
@@ -93,10 +80,9 @@ public abstract class PointScorer {
 	 * Adds a conditional bonus entry to the flight score.
 	 * @param pts the number of points
 	 * @param msg the entry message
-	 * @param condition the condition
 	 */
-	protected void scoreIf(int pts, String msg, boolean condition) {
-		scoreIf(pts, msg, condition, true);
+	protected void setBase(int pts, String msg) {
+		_score.add(pts, msg, false);
 	}
 	
 	/**
@@ -104,11 +90,10 @@ public abstract class PointScorer {
 	 * @param pts the number of points
 	 * @param msg the entry message
 	 * @param condition the condition
-	 * @param isBonus TRUE if a bonus entry, otherwise FALSE
 	 */
-	protected void scoreIf(int pts, String msg, boolean condition, boolean isBonus) {
-		if ((condition) && (pts > 0))
-			_score.add(pts, msg, isBonus);
+	protected void addBonus(int pts, String msg, boolean condition) {
+		if (condition && (pts > 0))
+			_score.add(pts, msg, true);
 	}
 	
 	/**
@@ -138,7 +123,7 @@ public abstract class PointScorer {
 	 */
 	protected boolean isNewEquipment(String eqType, Instant dt) {
 		Instant fdt = _firstEQ.get(eqType);
-		return ((fdt == null) || dt.isBefore(fdt));
+		return (fdt == null) || dt.isBefore(fdt);
 	}
 	
 	/**
@@ -149,7 +134,7 @@ public abstract class PointScorer {
 	 */
 	protected boolean isNewAirport(String iata, Instant dt) {
 		Instant fdt = _firstAP.get(iata);
-		return ((fdt == null) || dt.isBefore(fdt));
+		return (fdt == null) || dt.isBefore(fdt);
 	}
 	
 	/**
@@ -160,6 +145,6 @@ public abstract class PointScorer {
 	 */
 	protected boolean isNewCountry(String code, Instant dt) {
 		Instant fdt = _firstCountry.get(code);
-		return ((fdt == null) || dt.isBefore(fdt));
+		return (fdt == null) || dt.isBefore(fdt);
 	}
 }
