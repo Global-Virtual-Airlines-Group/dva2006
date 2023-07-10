@@ -21,6 +21,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata var="pointUnit" name="econ.elite.points" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -32,13 +33,13 @@
  <td colspan="4" class="right"><el:cmd url="elitelevel">NEW STATUS LEVEL</el:cmd></td>
 </tr>
 
-<tr class="title">
+<tr class="title caps">
  <td>NAME</td>
  <td style="width:10%">YEAR</td>
  <td style="width:10%">LEGS</td>
  <td style="width:15%">DISTANCE</td>
- <td style="width:15%">POINTS</td>
- <td style="width:10%">POINT BONUS</td>
+ <td style="width:15%">${pointUnit}</td>
+ <td style="width:10%">BONUS</td>
  <td style="width:10%">TARGET %ILE</td>
  <td style="width:10%">&nbsp;</td>
 </tr>
