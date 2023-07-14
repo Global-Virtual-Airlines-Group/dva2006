@@ -10,6 +10,7 @@ import org.deltava.beans.flight.FlightStatus;
 import org.deltava.beans.stats.ElitePercentile;
 import org.deltava.beans.stats.EliteStats;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Elite program-related statistics.
@@ -111,7 +112,7 @@ public class GetEliteStatistics extends EliteDAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Loads Elite program statistics for a given year. 
 	 * @param year the program year
@@ -129,12 +130,12 @@ public class GetEliteStatistics extends EliteDAO {
 			EliteStats lastStats = new EliteStats(EliteLevel.EMPTY);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					EliteLevel lvl = new EliteLevel(year, rs.getString(1));
+					EliteLevel lvl = new EliteLevel(year, rs.getString(1), SystemData.get("airline.code"));
 					if (!lvl.getName().equals(lastStats.getLevel().getName())) {
 						lastStats = new EliteStats(lvl);
 						results.add(lastStats);
-						lastStats.setMaxLegs(8);
-						lastStats.setMaxDistance(6);
+						lastStats.setMaxLegs(rs.getInt(8));
+						lastStats.setMaxDistance(rs.getInt(6));
 						lastStats.setStandardDeviation(rs.getDouble(9), rs.getDouble(7));
 					}
 				
