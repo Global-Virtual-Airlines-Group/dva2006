@@ -1,103 +1,150 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
 import java.time.Instant;
-import java.time.temporal.ChronoField;
 
-import org.deltava.beans.acars.RunwayDistance;
+import org.deltava.beans.Helper;
 import org.deltava.beans.flight.*;
 
-import org.deltava.util.MutableInteger;
-import org.deltava.util.system.SystemData;
-
 /**
- * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
+ * An interface for classes that calculate elite level point scores to Flight Reports.
  * @author Luke
  * @version 11.0
- * @since 11.0
+ * @since 9.2
  */
 
-public class EliteScorer extends PointScorer {
+@Helper(FlightEliteScore.class)
+public abstract class EliteScorer {
 	
-	private static final int MAX_NON_ACARS = SystemData.getInt("econ.elite.maxNonACARS", 5);
-	
-	private final Map<Integer, MutableInteger> _nonACARSCounts = new HashMap<Integer, MutableInteger>();
-	
-	private static Integer getNonACARSKey(Instant dt) {
-		return Integer.valueOf(dt.get(ChronoField.MONTH_OF_YEAR) * 100 + dt.get(ChronoField.DAY_OF_MONTH));
-	}
+	private final Map<String, Instant> _firstEQ = new HashMap<String, Instant>();
+	private final Map<String, Instant> _firstAP = new HashMap<String, Instant>();
+	private final Map<String, Instant> _firstCountry = new HashMap<String, Instant>();
 	
 	/**
-	 * Adds a Flight Report. This will calculate number of non-ACARS flights per month.
+	 * The elite score.
 	 */
-	@Override
-	public void add(FlightReport fr) {
-		super.add(fr);
-		Integer k = getNonACARSKey(fr.getDate());
-		MutableInteger i = _nonACARSCounts.getOrDefault(k, new MutableInteger(0));
-		i.inc();
-		_nonACARSCounts.put(k, i);
-	}
+	protected FlightEliteScore _score;
 	
 	/**
-	 * Scores an ACARS Flight Report.
-	 * @param pkg the ScorePackage
-	 * @param lvl the Pilot's Elite status level
-	 * @return a FlightScoreEntry
+	 * Creates a PointScorer implementation.
+	 * @param className the class name
+	 * @return a PointScorer impl
 	 */
-	@Override
-	public FlightEliteScore score(ScorePackage pkg, EliteLevel lvl) {
-		FDRFlightReport ffr = pkg.getFlightReport();
-
-		// Calculate base miles, break out if needed
-		if (score(ffr, lvl) == null) return null;
-		
-		// Calculate landing score bonus
-		if (pkg.getRunwayA() instanceof RunwayDistance ra) {
-			double ls = LandingScorer.score(ffr.getLandingVSpeed(), ra.getDistance());
-			LandingRating lr = LandingRating.rate((int)ls);
-			addBonus(20, "Acceptable Landing", (lr == LandingRating.ACCEPTABLE));
-			addBonus(50, "Good Landing", (lr == LandingRating.GOOD));
+	public static EliteScorer init(String className) {
+		try {
+			Class<?> c = Class.forName(className);
+			return (EliteScorer) c.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		
-		// Calculate no acceleration bonus
-		
-		return _score;
 	}
-
+	
 	/**
-	 * Scores a Flight Report.
+	 * Adds a Flight Report to the Pilot's flight history for first equipment/airport types.
 	 * @param fr the FlightReport
-	 * @param lvl the Pilot's Elite status level
-	 * @return a FlightScoreEntry
 	 */
-	@Override
-	public FlightEliteScore score(FlightReport fr, EliteLevel lvl) {
-		if (!canScore(fr)) return null;
-		reset(fr.getID(), lvl);
+	public void add(FlightReport fr) {
+		_firstEQ.putIfAbsent(fr.getEquipmentType(), fr.getDate());
+		_firstAP.putIfAbsent(fr.getAirportD().getIATA(), fr.getDate());
+		_firstAP.putIfAbsent(fr.getAirportA().getIATA(), fr.getDate());
+		_firstCountry.putIfAbsent(fr.getAirportD().getCountry().getCode(), fr.getDate());
+		_firstCountry.putIfAbsent(fr.getAirportA().getCountry().getCode(), fr.getDate());
+	}
 
-		// Set base information
-		_score.setDistance(fr.getDistance());
-		_score.setAuthorID(fr.getAuthorID());
+	/**
+	 * Scores a Flight Report. 
+	 * @param pkg the ScorePackage
+	 * @param lvl the Pilot's current EliteLevel
+	 * @return the number of status points earned
+	 */
+	public abstract FlightEliteScore score(ScorePackage pkg, EliteLevel lvl);
+	
+	/**
+	 * Scores a non-ACARS Flight Report. 
+	 * @param fr the FlightReport
+	 * @param lvl the Pilot's current EliteLevel
+	 * @return the number of status points earned
+	 */
+	public abstract FlightEliteScore score(FlightReport fr, EliteLevel lvl);
 
-		// Check for non-ACARS flights this month
-		if (!fr.hasAttribute(FlightReport.ATTR_ACARS)) {
-			int nonACARSCount = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).getValue().intValue();
-			if (nonACARSCount > MAX_NON_ACARS) {
-				setBase(Math.max(500, fr.getDistance() / 5), "Non-ACARS Base Miles");
-				return _score;
-			}
-		}
-		
-		setBase(Math.max(500, fr.getDistance() / 4), "ACARS/XACARS/simFDR Base Miles");
-		addBonus(50, "Promotion Leg", !fr.getCaptEQType().isEmpty());
-		addBonus(500, "New Aircraft - " + fr.getEquipmentType(), isNewEquipment(fr.getEquipmentType(), fr.getDate()));
-		addBonus(200, "New Airport - " + fr.getAirportD().getIATA(), isNewAirport(fr.getAirportD().getIATA(), fr.getDate()));
-		addBonus(200, "New Airport - " + fr.getAirportA().getIATA(), isNewAirport(fr.getAirportA().getIATA(), fr.getDate()));
-		addBonus(25, fr.getNetwork() + " Online Flight", (fr.getNetwork() != null));
-		addBonus(50, "Online Event", (fr.getDatabaseID(DatabaseID.EVENT) > 0));
-		addBonus(Math.round(_score.getPoints() * lvl.getBonusFactor()), lvl.getName() + " Supplement", lvl.getBonusFactor() > 0f);
+	/**
+	 * Returns the score bundle.
+	 * @return a FlightEliteScore, or null
+	 */
+	public FlightEliteScore getScore() {
 		return _score;
+	}
+	
+	/**
+	 * Adds a conditional bonus entry to the flight score.
+	 * @param pts the number of points
+	 * @param msg the entry message
+	 */
+	protected void setBase(int pts, String msg) {
+		_score.add(pts, msg, false);
+	}
+	
+	/**
+	 * Adds a conditional entry to the flight score.
+	 * @param pts the number of points
+	 * @param msg the entry message
+	 * @param condition the condition
+	 */
+	protected void addBonus(int pts, String msg, boolean condition) {
+		if (condition && (pts > 0))
+			_score.add(pts, msg, true);
+	}
+	
+	/**
+	 * Resets the flight score. The list of previous Airports, Countries and equipment types are unchanged.
+	 * @param id the Flight Report database ID
+	 * @param lvl the Pilot's current EliteLevel
+	 */
+	protected void reset(int id, EliteLevel lvl) {
+		_score = new FlightEliteScore(id);
+		_score.setEliteLevel(lvl.getName(), lvl.getYear());
+	}
+	
+	/**
+	 * Checks whether a flight report can be scored.
+	 * @param fr the FlightReport
+	 * @return TRUE if the flight report is non-null and neither draft nor rejected, otherwise FALSE
+	 */
+	protected static boolean canScore(FlightReport fr) {
+		return ((fr != null) && (fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED));
+	}
+
+	/**
+	 * Returns if an equipment type has been used before a particular date.
+	 * @param eqType the equipment type
+	 * @param dt the date/time
+	 * @return TRUE if the equipment type has not been used before this date, otherwise FALSE
+	 */
+	protected boolean isNewEquipment(String eqType, Instant dt) {
+		Instant fdt = _firstEQ.get(eqType);
+		return (fdt == null) || dt.isBefore(fdt);
+	}
+	
+	/**
+	 * Returns if an Airport has been visited before a particular date.
+	 * @param iata the Airport's IATA code
+	 * @param dt the date/time
+	 * @return TRUE if the Airport has not been visited before this date, otherwise FALSE
+	 */
+	protected boolean isNewAirport(String iata, Instant dt) {
+		Instant fdt = _firstAP.get(iata);
+		return (fdt == null) || dt.isBefore(fdt);
+	}
+	
+	/**
+	 * Returns if a Country has been visited before a particular date.
+	 * @param code the ISO-3166 country code
+	 * @param dt the date/time
+	 * @return TRUE if the Country has not been visited before this date, otherwise FALSE
+	 */
+	protected boolean isNewCountry(String code, Instant dt) {
+		Instant fdt = _firstCountry.get(code);
+		return (fdt == null) || dt.isBefore(fdt);
 	}
 }

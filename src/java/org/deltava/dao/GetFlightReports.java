@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 10.5
+ * @version 11.0
  * @since 1.0
  */
 
@@ -814,19 +814,19 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FlightEliteScore getElite(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PE.*, PEE.SCORE, PEE.BONUS, PEE.REMARKS, P.PILOT_ID FROM PIREP_ELITE PE, PIREP_ELITE_ENTRIES PEE, PIREPS P WHERE (P.ID=PE.ID) AND (PE.ID=PEE.ID) AND (PE.ID=?) ORDER BY PEE.SEQ")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PE.*, PEE.SCORE, PEE.BONUS, PEE.REMARKS FROM PIREP_ELITE PE, PIREP_ELITE_ENTRIES PEE WHERE (PE.ID=PEE.ID) AND (PE.ID=?) ORDER BY PEE.SEQ")) {
 			ps.setInt(1, id);
 			FlightEliteScore sc = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					if (sc == null) {
 						sc = new FlightEliteScore(id);
-						sc.setAuthorID(rs.getInt(8));
-						sc.setEliteLevel(rs.getString(2), rs.getInt(3));
+						sc.setEliteLevel(rs.getString(3), rs.getInt(2));
 						sc.setDistance(rs.getInt(4));
+						sc.setScoreOnly(rs.getBoolean(6));
 					}
 					
-					sc.add(rs.getInt(5), rs.getString(7), rs.getBoolean(6));
+					sc.add(rs.getInt(7), rs.getString(9), rs.getBoolean(8));
 				}
 			}
 			

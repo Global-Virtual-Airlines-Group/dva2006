@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.econ.*;
 /**
  * A Data Access Object to update Elite status level definitions.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -28,16 +28,17 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EliteLevel lvl) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_LEVELS (NAME, YR, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_LEVELS (NAME, YR, STAT_START, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setString(1, lvl.getName());
 			ps.setInt(2, lvl.getYear());
-			ps.setInt(3, lvl.getLegs());
-			ps.setInt(4, lvl.getDistance());
-			ps.setInt(5, lvl.getPoints());
-			ps.setInt(6, Math.round(lvl.getBonusFactor() * 100));
-			ps.setInt(7, lvl.getColor());
-			ps.setInt(8, lvl.getTargetPercentile());
-			ps.setBoolean(9, lvl.getIsVisible());
+			ps.setTimestamp(3, createTimestamp(lvl.getStatisticsStartDate()));
+			ps.setInt(4, lvl.getLegs());
+			ps.setInt(5, lvl.getDistance());
+			ps.setInt(6, lvl.getPoints());
+			ps.setInt(7, Math.round(lvl.getBonusFactor() * 100));
+			ps.setInt(8, lvl.getColor());
+			ps.setInt(9, lvl.getTargetPercentile());
+			ps.setBoolean(10, lvl.getIsVisible());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

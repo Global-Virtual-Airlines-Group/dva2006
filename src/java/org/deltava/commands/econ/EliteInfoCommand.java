@@ -1,7 +1,8 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 import java.sql.Connection;
 
@@ -16,7 +17,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display a Pilot's Elite status history. 
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -54,7 +55,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Get this year and next year's levels
 			GetElite eldao = new GetElite(con);
-			Collection<EliteLevel> lvls = eldao.getLevels();
+			Collection<EliteLevel> lvls = eldao.getLevels().stream().filter(lvl -> lvl.getLegs() > 0).collect(Collectors.toList());
 			EliteStatus currentStatus = eldao.getStatus(p.getID());
 			Map<Integer, Collection<EliteLevel>> yearlyLevels = new HashMap<Integer, Collection<EliteLevel>>();
 			lvls.forEach(lvl -> CollectionUtils.addMapCollection(yearlyLevels, Integer.valueOf(lvl.getYear()), lvl));

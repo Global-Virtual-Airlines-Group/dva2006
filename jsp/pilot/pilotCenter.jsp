@@ -73,6 +73,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
+<content:sysdata var="eliteName" name="econ.elite.name" />
 <content:sysdata var="charterReqEnabled" name="schedule.charter.requests" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 <content:attr attr="isHROperations" value="true" roles="HR,Operations" />
@@ -177,7 +178,6 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
 </tr>
 
 <c:if test="${eliteEnabled && (!empty eliteStatus) && (currentEliteTotal.legs > 1)}">
-<content:sysdata var="eliteName" name="econ.elite.name" />
 <c:set var="legsRemaining" value="${nextEliteLevel.legs - currentEliteTotal.legs}" scope="page" />
 <c:set var="dstRemaining" value="${nextEliteLevel.distance - currentEliteTotal.distance}" scope="page" />
 <!-- ${eliteName} -->
@@ -189,12 +189,11 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <td class="data">${eliteYear} Flight Legs: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> | ${eliteYear} Flight Distance: <fmt:distance className="sec bld" value="${currentEliteTotal.distance}" /><br /> 
  Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}.
 <c:if test="${nextEliteLevel.isVisible}"><br />
-<br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> and </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" /> </c:if>remaining to 
+<br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> and </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" />&nbsp;</c:if>remaining to 
  reach ${eliteName}&nbsp;<span class="bld" style="color:#${nextEliteLevel.hexColor}">${nextEliteLevel.name}</span> status.</c:if></td> 
 </tr>
 </c:if>
 <c:if test="${helpDeskEnabled}">
-<!-- Help Desk Section -->
 <tr class="title caps">
  <td colspan="2"><content:airline /> HELP DESK</td>
 </tr>

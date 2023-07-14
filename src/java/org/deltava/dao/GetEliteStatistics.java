@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Elite program-related statistics.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -40,11 +40,10 @@ public class GetEliteStatistics extends EliteDAO {
 		
 		// Check the cache
 		CacheableList<YearlyTotal> results = _eliteTotalCache.get(Integer.valueOf(pilotID));
-		if (results != null)
-			return results.clone();
+		if (results != null) return results.clone();
 		
-		try (PreparedStatement ps = prepare("SELECT PE.YR AS Y, COUNT(DISTINCT P.ID), SUM(PE.DISTANCE) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM PIREPS P, PIREP_ELITE PE "
-			+ "WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) GROUP BY Y ORDER BY Y DESC")) {
+		try (PreparedStatement ps = prepare("SELECT PE.YEAR AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM "
+			+ "PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) GROUP BY Y ORDER BY Y DESC")) {
 			ps.setInt(1, pilotID);
 			
 			results = new CacheableList<YearlyTotal>(Integer.valueOf(pilotID));
@@ -123,7 +122,7 @@ public class GetEliteStatistics extends EliteDAO {
 		List<EliteStats> results = new ArrayList<EliteStats>();
 		try (PreparedStatement ps = prepare("SELECT EP.NAME, P.PILOT_ID, COUNT(PE.ID) AS CNT, SUM(PE.DISTANCE) AS DST, SUM(PE.SCORE) AS PTS, MAX(SUM(PE.DISTANCE)) OVER(PARTITION BY EP.NAME) AS MAXLDST, "
 			+ "STDDEV(SUM(PE.DISTANCE)) OVER (PARTITION BY EP.NAME) AS SDLDST, MAX(COUNT(PE.ID)) OVER (PARTITION BY EP.NAME) AS MAXLLEGS, STDDEV(COUNT(PE.ID)) OVER (PARTITION BY EP.NAME) AS SDLLEGS FROM "
-			+ "ELITE_PILOT EP, PIREPS P, PIREP_ELITE PE WHERE (EP.PILOT_ID=P.PILOT_ID) AND (EP.YR=?) AND (P.STATUS=?) AND (P.ID=PE.ID) AND (PE.YR=EP.YR) GROUP BY EP.NAME, P.PILOT_ID ORDER BY EP.NAME, P.PILOT_ID")) {
+			+ "ELITE_PILOT EP, PIREPS P, PIREP_ELITE PE WHERE (EP.PILOT_ID=P.PILOT_ID) AND (EP.YR=?) AND (P.STATUS=?) AND (P.ID=PE.ID) AND (PE.YEAR=EP.YR) GROUP BY EP.NAME, P.PILOT_ID ORDER BY EP.NAME, P.PILOT_ID")) {
 			ps.setInt(1, year);
 			ps.setInt(2, FlightStatus.OK.ordinal());
 			
