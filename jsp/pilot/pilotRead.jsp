@@ -40,6 +40,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="eliteName" name="econ.elite.name" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:filter roles="HR,Operations">
@@ -67,6 +68,12 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <c:if test="${pilot.noVoice}">&nbsp;<span class="warn bld">VOICE ACCESS DISABLED</span></c:if>
 <c:if test="${pilot.noExams}">&nbsp;<span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
 </c:if></td>
+<c:if test="${!empty eliteStatus}">
+<tr>
+ <td class="label">${eliteName}</td>
+ <td colspan="${cspan}"  class="data"><fmt:elite className="bld" level="${eliteStatus.level}" nameOnly="true" />, effective <fmt:date date="${eliteStatus.effectiveOn}" fmt="d" /> - <el:cmd url="eliteinfo" link="${pilot}">VIEW STATUS</el:cmd></td>
+</tr>
+</c:if>
 </tr>
 <c:if test="${acarsEnabled}">
 <c:if test="${access.canChangeStatus}">

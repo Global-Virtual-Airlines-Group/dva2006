@@ -784,6 +784,12 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetAccomplishment acdao = new GetAccomplishment(con);
 			ctx.setAttribute("accs", acdao.getByPilot(p, ctx.getDB()), REQUEST);
 			
+			// Get Elite status
+			if (SystemData.getBoolean("econ.elite.enabled")) {
+				GetElite eldao = new GetElite(con);
+				ctx.setAttribute("eliteStatus", eldao.getStatus(p.getID()), REQUEST);
+			}
+			
 			// Load instructor IDs
 			Collection<Integer> IDs = courses.stream().map(Course::getInstructorID).collect(Collectors.toSet());
 
