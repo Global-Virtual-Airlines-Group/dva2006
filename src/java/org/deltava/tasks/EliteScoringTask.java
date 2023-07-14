@@ -12,7 +12,6 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetSerializedPosition;
@@ -41,8 +40,8 @@ public class EliteScoringTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Determine lookback interval
-		AirlineInformation ai = SystemData.getApp(null);
 		log.info("Scoring flights submitted in the past 30 days");
+		EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -81,7 +80,6 @@ public class EliteScoringTask extends Task {
 				}
 				
 				// Load all previous Flight Reports for this Pilot
-				PointScorer es = PointScorer.init(SystemData.get("econ.elite.scorer"));
 				List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
 				pireps.stream().filter(pirep -> !IDs.contains(Integer.valueOf(pirep.getID()))).forEach(es::add);
 				
@@ -93,7 +91,7 @@ public class EliteScoringTask extends Task {
 				FlightEliteScore sc = null;
 				if (fr instanceof FDRFlightReport ffr) {
 					Aircraft ac = acdao.get(fr.getEquipmentType());
-					AircraftPolicyOptions opts = ac.getOptions(ai.getCode());
+					AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
 					
 					// Load the archived positions
 					Collection<RouteEntry> entries = new ArrayList<RouteEntry>();
@@ -119,13 +117,13 @@ public class EliteScoringTask extends Task {
 					sc  = es.score(fr, st.getLevel());
 				
 				// Write the score and status history
-				fr.addStatusUpdate(0, HistoryType.UPDATE, "Updated " + SystemData.get("econ.elite.name") + " activity");
-				frwdao.writeElite(sc, ai.getDB());
+				fr.addStatusUpdate(0, HistoryType.ELITE, "Updated " + SystemData.get("econ.elite.name") + " activity");
+				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				log.info("Scored Flight Report #" + fr.getID() + " - " + sc.getPoints());
 				
 				// Check for upgrade
-				UpgradeReason updR = total.wouldMatch(nextLevel, sc.getDistance(), sc.getPoints()); 
+				UpgradeReason updR = total.wouldMatch(nextLevel, sc); 
 				if ((nextLevel != null) && (updR != UpgradeReason.NONE)) {
 					log.warn(p.getName() + " reaches " + nextLevel.getName() + " for " + yr + " / " + updR.getDescription());
 					st = new EliteStatus(p.getID(), nextLevel);

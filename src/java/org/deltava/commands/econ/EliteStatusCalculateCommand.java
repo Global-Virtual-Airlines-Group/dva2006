@@ -1,4 +1,4 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 10.1
+ * @version 11.0
  * @since 9.2
  */
 
@@ -86,7 +86,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			elwdao.clear(p.getID(), year, false);
 			
 			// Score the Flight Reports
-			PointScorer es = PointScorer.init(SystemData.get("econ.elite.scorer"));
+			EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
 			YearlyTotal total = new YearlyTotal(year, p.getID());
 			Collection<String> msgs = new ArrayList<String>();
 			AirlineInformation ai = SystemData.getApp(null);
@@ -126,7 +126,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				
 				// Write the score
 				frwdao.writeElite(sc, ai.getDB());
-				UpgradeReason updR = total.wouldMatch(nextLevel, sc.getDistance(), sc.getPoints());
+				UpgradeReason updR = total.wouldMatch(nextLevel, sc);
 				if ((nextLevel != null) && (updR != UpgradeReason.NONE)) {
 					msgs.add("Reaches " + nextLevel.getName() + " for " + year + " on " + StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat()) + " / " + updR.getDescription());
 					EliteStatus newSt = new EliteStatus(p.getID(), nextLevel);
@@ -138,7 +138,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				
 				// Update the totals
 				es.add(fr);
-				total.addLegs(1, sc.getDistance(), sc.getPoints());
+				total.add(sc);
 			}
 			
 			// Set status attributes

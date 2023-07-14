@@ -746,7 +746,7 @@
 			<name>SkyMiles Medallion</name>
 			<points>SkyMiles</points>
 			<distance>Medallion Miles</distance>
-			<scorer>org.deltava.beans.econ.EliteScorer</scorer>
+			<scorer>org.deltava.beans.econ.SkyMilesScorer</scorer>
 			<round>
 				<leg type="Integer">5</leg>
 				<distance type="Integer">5000</distance>

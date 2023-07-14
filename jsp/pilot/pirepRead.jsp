@@ -72,6 +72,14 @@ golgotha.local.showRunwayChoices = function() {
 };
 </content:filter> 
 </script></c:if>
+<c:if test="${!empty eliteLevel}">
+<style type="text/css">
+table.form td.eliteStatus {
+	color: #ffffff;
+	background-color: #${eliteLevel.hexColor};
+}
+</style>
+</c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -407,6 +415,23 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!hasNext.last}">, </c:if></c:forEach></td>
 </tr>
 </c:if>
+</c:if>
+<c:if test="${!empty eliteScore}">
+<content:sysdata var="eliteName" name="econ.elite.name" />
+<content:sysdata var="pointUnit" name="econ.elite.points" />
+<content:sysdata var="distanceUnit" name="econ.elite.distance" />
+<tr class="title caps">
+ <td class="eliteStatus" colspan="2"><content:airline />&nbsp;${eliteName} INFORMATION</td>
+</tr>
+<tr>
+ <td class="label eliteStatus top">Mileage Information</td>
+ <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span>, Flown as <fmt:elite className="bld" level="${eliteLevel}"  nameOnly="true" /><br />
+<c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
+<hr />
+<span class="small"><c:forEach var="esEntry" items="${eliteScore.entries}" varStatus="esStatus">
+<fmt:int className="pri bld" value="${esEntry.points}" /> - ${esEntry.message}<c:if test="${esEntry.bonus}">&nbsp;<span class="ita">( BONUS )</span></c:if>
+<c:if test="${!esStatus.isLast()}"><br /></c:if></c:forEach></span></td> 
+</tr>
 </c:if>
 <content:browser human="true">
 <tr class="title">

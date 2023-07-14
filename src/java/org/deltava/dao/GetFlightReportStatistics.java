@@ -521,12 +521,13 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param startDate the start date
 	 * @param granularity the percentile granularity
 	 * @param isAvg TRUE to do the average across the percentile, FALSE for the base
+	 * @param sortBy the sorting column
 	 * @return a PercentileStatsEntry
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, boolean isAvg) throws DAOException {
+	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, boolean isAvg, String sortBy) throws DAOException {
 		LocalDateTime sd = startDate.atStartOfDay();
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY LEGS, DST")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY " + sortBy)) {
 			ps.setTimestamp(1, createTimestamp(sd.toInstant(ZoneOffset.UTC)));
 			ps.setTimestamp(2, createTimestamp(sd.plusYears(1).minusSeconds(1).toInstant(ZoneOffset.UTC)));
 			ps.setInt(3, FlightStatus.OK.ordinal());
