@@ -425,7 +425,7 @@ table.form td.eliteStatus {
 </tr>
 <tr>
  <td class="label eliteStatus top">Mileage Information</td>
- <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span>, Flown as <fmt:elite className="bld" level="${eliteLevel}"  nameOnly="true" /><br />
+ <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown as <fmt:elite className="bld" level="${eliteLevel}"  nameOnly="true" /><br />
 <c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
 <hr />
 <span class="small"><c:forEach var="esEntry" items="${eliteScore.entries}" varStatus="esStatus">
