@@ -9,7 +9,7 @@
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="https://docs.oracle.com/en/java/javase/17/docs/api/" />
+            <link href="https://docs.oracle.com/en/java/javase/20/docs/api/" />
         	<link href="https://javaee.github.io/javaee-spec/javadocs/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
@@ -326,7 +326,9 @@
 		<!-- Upload the config file to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="etc" includes="*.*">
+				<exclude name="log4j2.xml" />
 				<exclude name="log4j2-test.xml" />
+				<exclude name="cacheInfo-test.xml" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
