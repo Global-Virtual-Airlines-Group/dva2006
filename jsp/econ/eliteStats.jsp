@@ -21,25 +21,39 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="eliteDistance" name="econ.elite.distance" />
+<content:sysdata var="distUnit" name="econ.elite.distance" />
+<content:sysdata var="pointUnit" name="econ.elite.points" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline />&nbsp;${eliteName}&nbsp;Requirements by Year</td>
+ <td colspan="2"><content:airline />&nbsp;${eliteName} STATISTICS DASHBOARD</td>
+</tr>
+<tr>
+ <td class="label top">${currentYear} Levels</td>
+ <td class="data"><c:forEach var="lvl" items="${cyLevels}" varStatus="lvlStatus"><fmt:elite level="${lvl}" className="bld" />&nbsp;<fmt:int value="${lvl.legs}" /> legs, <fmt:int value="${lvl.distance}" />&nbsp;${distUnit}, <fmt:int value="${lvl.targetPercentile}" />%ile
+ <c:if test="${!lvStatis.isLast()}"><br /></c:if> </c:forEach></td>
+</tr>
+<tr>
+ <td class="label top"><c:if test="${estimatedLevels}">Estimated </c:if>${currentYear + 1} Levels</td>
+ <td class="data"><c:forEach var="lvl" items="${nyLevels}" varStatus="lvlStatus"><fmt:elite level="${lvl}" className="bld" />&nbsp;<fmt:int value="${lvl.legs}" /> legs, <fmt:int value="${lvl.distance}" />&nbsp;${distUnit}, <fmt:int value="${lvl.targetPercentile}" />%ile
+ <c:if test="${!lvStatis.isLast()}"><br /></c:if> </c:forEach></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">${eliteName}&nbsp;Requirements by Year</td>
 </tr>
 <tr>
  <td colspan="2"><div id="reqGraph" style="height:425px;"></div>
 </tr>
 <tr class="title caps">
- <td colspan="2"><content:airline />&nbsp;${eliteName}&nbsp;Pilots by Year</td>
+ <td colspan="2">${eliteName}&nbsp;Pilots by Year</td>
 </tr>
 <tr>
  <td colspan="2"><div id="pilotGraph" style="height:425px;"></div>
 </tr>
 <tr class="title caps">
- <td colspan="2"><content:airline />&nbsp;${eliteName}&nbsp;Current Statistics</td>
+ <td colspan="2">${eliteName}&nbsp;Current Statistics</td>
 </tr>
 <tr>
  <td colspan="2"><div id="statGraph" style="height:425px;"></div>
@@ -51,7 +65,7 @@
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script async>
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 

@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to automatically calulate Elite levels for an upcoming year.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -65,7 +65,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 			int legRound = SystemData.getInt("econ.elite.round.leg", 5); int dstRound = SystemData.getInt("econ.elite.round.distance", 5000);
 			Map<String, EliteLevel> newLevels = new HashMap<String, EliteLevel>();
 			for (EliteLevel oldLevel : pyLevels) {
-				EliteLevel lvl = new EliteLevel(year, oldLevel.getName());
+				EliteLevel lvl = new EliteLevel(year, oldLevel.getName(), oldLevel.getOwner());
 				lvl.setColor(oldLevel.getColor());
 				lvl.setBonusFactor(oldLevel.getBonusFactor());
 				lvl.setTargetPercentile(oldLevel.getTargetPercentile());

@@ -106,10 +106,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
 				int currentYear = EliteLevel.getYear(Instant.now());
+				ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
 				List<EliteStatus> myStatus = eldao.getStatus(p.getID(), currentYear);
 				if (!myStatus.isEmpty()) {
 					EliteStatus myCurrentStatus = myStatus.get(myStatus.size() - 1);
-					ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
 					ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
 					
 					// Get our totals

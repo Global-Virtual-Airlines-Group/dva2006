@@ -13,6 +13,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.EliteAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Elite status levels.
@@ -38,7 +39,7 @@ public class EliteLevelCommand extends AbstractFormCommand {
 			throw securityException("Cannot edit Elite levels");
 		
 		// Load from the request
-		EliteLevel lvl = new EliteLevel(StringUtils.parse(ctx.getParameter("year"), 0), ctx.getParameter("name"));
+		EliteLevel lvl = new EliteLevel(StringUtils.parse(ctx.getParameter("year"), 0), ctx.getParameter("name"), SystemData.get("airline.code"));
 		lvl.setLegs(StringUtils.parse(ctx.getParameter("legs"), 0));
 		lvl.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
 		lvl.setPoints(StringUtils.parse(ctx.getParameter("pts"), 0));

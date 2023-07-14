@@ -43,7 +43,7 @@ public class EliteInfoCommand extends AbstractCommand {
 		if ((ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) && (ctx.getID() != 0))
 			id = ctx.getID();
 		
-		final int currentYear = EliteLevel.getYear(Instant.now());
+		final Integer currentYear = Integer.valueOf(EliteLevel.getYear(Instant.now()));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -73,15 +73,21 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Get the Pilot's history
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
-			totals.putIfAbsent(Integer.valueOf(currentYear), new YearlyTotal(currentYear, p.getID()));
+			totals.putIfAbsent(currentYear, new YearlyTotal(currentYear.intValue(), p.getID()));
+			ctx.setAttribute("totals", totals, REQUEST);
+			
+			// Calculate next year's status
+			YearlyTotal yt = totals.get(currentYear);
+			TreeSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
+			EliteLevel nyLevel = cyLevels.descendingSet().stream().filter(yt::matches).findFirst().orElse(cyLevels.first());
+			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
 			
 			// Save status attributes
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("currentYear", Integer.valueOf(currentYear), REQUEST);
+			ctx.setAttribute("currentYear", currentYear, REQUEST);
 			ctx.setAttribute("baseLevel", EliteLevel.EMPTY, REQUEST);
 			ctx.setAttribute("levels", yearlyLevels, REQUEST);
 			ctx.setAttribute("currentStatus", currentStatus, REQUEST);
-			ctx.setAttribute("totals", totals, REQUEST);
 			ctx.setAttribute("maxStatus", yearMax, REQUEST);
 			ctx.setAttribute("statusUpdates", yearlyStatusUpdates, REQUEST);
 		} catch (DAOException de) {
@@ -92,7 +98,7 @@ public class EliteInfoCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/econ/eliteStatus.jsp");
+		result.setURL("/jsp/econ/eliteInfo.jsp");
 		result.setSuccess(true);
 	}
 }
