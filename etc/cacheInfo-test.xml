@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<caches>
+	<!-- Pilot data caches -->
+	<cache id="UserData" expires="4d" />
+	<cache id="Pilots" expires="2d" />
+
+	<!-- Navigation Data caches -->
+    <cache id="NavData" expires="2d" />
+    <cache id="NavRunway" expires="1d" />
+    
+    <!-- Elite Program caches -->
+    <cache id="EliteLevel" max="32" />
+    <cache id="EliteStatus" max="128" />
+
+	<!-- System caches -->
+	<cache id="AircraftInfo" max="96" expires="3600" />
+	<cache id="AircraftInfoALL" max="6" expires="3600" />
+	<cache id="EquipmentTypes" max="24" expires="3600" />
+	<cache id="Metadata" max="24" expires="1800" />
+</caches>
