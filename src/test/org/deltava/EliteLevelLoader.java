@@ -1,8 +1,8 @@
 package org.deltava;
 
-import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import org.apache.logging.log4j.*;
 import org.deltava.beans.econ.EliteLevel;
@@ -29,7 +29,8 @@ public class EliteLevelLoader extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
+		System.setProperty("user.timezone", "UTC"); // This is to ensure MySQL doesn't switch time zones on the fly
+		System.setProperty("log4j2.configurationFile", new java.io.File("etc/log4j2-test.xml").getAbsolutePath());
 		log = LogManager.getLogger(EliteLevelLoader.class);
 
 		// Connect to the database
@@ -51,19 +52,32 @@ public class EliteLevelLoader extends TestCase {
 		GetFlightReportStatistics frsdao = new GetFlightReportStatistics(_c);
 		SetElite ewdao = new SetElite(_c);
 		
-		for (int year = 2004; year < 2023; year++) {
-			PercentileStatsEntry pse = frsdao.getFlightPercentiles(LocalDate.of(year - 1, 1, 1), 1, false);
+		for (int year = EliteLevel.MIN_YEAR; year < 2024; year++) {
+			LocalDate sd = LocalDate.of(year - 2, 12, 1);
+			PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, false, "LEGS, DST");
+			PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, false, "DST, LEGS");
 			for (int x = 0; x < LEVEL_NAMES.length; x++) {
 				EliteLevel lvl = new EliteLevel(year, LEVEL_NAMES[x]);
 				lvl.setTargetPercentile(LEVEL_PCTS[x]);
-				lvl.setLegs(round(pse.getLegs(lvl.getTargetPercentile()), 5));
-				lvl.setDistance(round(pse.getDistance(lvl.getTargetPercentile()), 10000));
+				lvl.setLegs(round(lpse.getLegs(lvl.getTargetPercentile()), 5));
+				lvl.setDistance(round(dpse.getDistance(lvl.getTargetPercentile()), 10000));
 				lvl.setColor(Integer.parseInt(LEVEL_COLORS[x], 16));
 				lvl.setBonusFactor(LEVEL_BOOSTS[x]);
-				lvl.setVisible(true);
+				lvl.setVisible(x < (LEVEL_NAMES.length - 1));
+				lvl.setStatisticsStartDate(sd.atStartOfDay().toInstant(ZoneOffset.UTC));
 				log.info("{} for {} = {} legs, {} miles", lvl.getName(), Integer.valueOf(year), Integer.valueOf(lvl.getLegs()), Integer.valueOf(lvl.getDistance()));
 				ewdao.write(lvl);
 			}
+			
+			// Write default "member" entry
+			EliteLevel lvl = new EliteLevel(year, "Member");
+			lvl.setTargetPercentile(0);
+			lvl.setLegs(0); lvl.setDistance(0); lvl.setPoints(0);
+			lvl.setBonusFactor(0);
+			lvl.setVisible(false);
+			lvl.setColor(Integer.parseInt("1a4876", 16));
+			lvl.setStatisticsStartDate(sd.atStartOfDay().toInstant(ZoneOffset.UTC));
+			ewdao.write(lvl);
 		}
 		
 		_c.commit();
