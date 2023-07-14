@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 
 import org.deltava.beans.econ.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to update Elite status level definitions.
@@ -81,7 +82,7 @@ public class SetElite extends EliteDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			_lvlCache.remove(new EliteLevel(year, name).cacheKey());
+			_lvlCache.remove(new EliteLevel(year, name, SystemData.get("airline.code")).cacheKey());
 		}
 	}
 	
