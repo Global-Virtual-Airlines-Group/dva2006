@@ -192,6 +192,16 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
 <br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> and </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" />&nbsp;</c:if>remaining to 
  reach ${eliteName}&nbsp;<span class="bld" style="color:#${nextEliteLevel.hexColor}">${nextEliteLevel.name}</span> status.</c:if></td> 
 </tr>
+<content:filter roles="HR,Operations">
+<tr>
+ <td class="mid"><el:cmd url="eliteStats" className="bld">${eliteName} Statistics Dashboard</el:cmd></td>
+ <td class="data">You can view statistics about the <content:airline />&nbsp;${eliteName} program, including participation over time, current requirements and an estimate of next year's status levels based on current participation and level target percentiles.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="elitelevelset" className="bld">Upcoming Year Requirements</el:cmd></td>
+ <td class="data">You can calculate and adjust the requirements for the upcoming ${eliteYear + 1}&nbsp;<content:airline />&nbsp;${eliteName} year.</td>
+</tr>
+</content:filter>
 </c:if>
 <c:if test="${helpDeskEnabled}">
 <tr class="title caps">

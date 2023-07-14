@@ -71,7 +71,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <c:if test="${!empty eliteStatus}">
 <tr>
  <td class="label">${eliteName}</td>
- <td colspan="${cspan}"  class="data"><fmt:elite className="bld" level="${eliteStatus.level}" nameOnly="true" />, effective <fmt:date date="${eliteStatus.effectiveOn}" fmt="d" /> - <el:cmd url="eliteinfo" link="${pilot}">VIEW STATUS</el:cmd></td>
+ <td colspan="${cspan}"  class="data"><fmt:elite className="bld" level="${eliteStatus.level}" nameOnly="true" />, effective <fmt:date date="${eliteStatus.effectiveOn}" fmt="d" /><content:filter roles="HR,Operations"> - <el:cmd url="eliteinfo" link="${pilot}">VIEW STATUS</el:cmd></content:filter></td>
 </tr>
 </c:if>
 </tr>

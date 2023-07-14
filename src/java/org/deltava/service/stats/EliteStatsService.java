@@ -116,7 +116,7 @@ public class EliteStatsService extends WebService {
 		// Dump to the output stream
 		JSONUtils.ensureArrayPresent(jo, "stats", "levels", "reqs");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
 			ctx.println(jo.toString());
 			ctx.commit();

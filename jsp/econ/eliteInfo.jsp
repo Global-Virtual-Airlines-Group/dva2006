@@ -69,6 +69,14 @@ span.rmbar {
  <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
 </tr>
 <tr>
+ <td colspan="2" class="mid">Status in the <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> program is based on your flight activity during the previous year, and requires requalification each year. You can qualify for a given level
+ based on the number of flight legs flown, or the total flight distance. If you reach the threshold for a level, you immediately jump to that level and can maintain it throughout the year as well as the following year.</td>  
+</tr>
+<tr>
+ <td class="label eliteStatus">${currentYear + 1} Status</td>
+ <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td>
+</tr>
+<tr>
  <td class="label eliteStatus">Flight Progress</td>
  <td class="data">
  <c:set var="hasPrevLevel" value="true" scope="page" />
