@@ -3,7 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.LocalDate;
+import java.time.Instant;
 
 import org.deltava.beans.econ.*;
 
@@ -44,7 +44,7 @@ abstract class EliteDAO extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EliteLevel get(String name) throws DAOException {
-		return get(name, LocalDate.now().getYear(), SystemData.get("airline.db"));
+		return get(name, EliteLevel.getYear(Instant.now()), SystemData.get("airline.db"));
 	}
 
 	/**
@@ -58,14 +58,14 @@ abstract class EliteDAO extends DAO {
 	public EliteLevel get(String name, int year, String dbName) throws DAOException {
 		
 		// Check the cache
-		EliteLevel lvl = _lvlCache.get(new EliteLevel(year, name).cacheKey());
+		EliteLevel lvl = _lvlCache.get(new EliteLevel(year, name, dbName).cacheKey());
 		if (lvl != null)
 			return lvl;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, DATABASE() FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".ELITE_LEVELS WHERE (NAME=?) AND (YR=?) LIMIT 1");
+		sqlBuf.append(".ELITE_LEVELS EL WHERE (NAME=?) AND (YR=?) LIMIT 1");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, name);
@@ -86,7 +86,7 @@ abstract class EliteDAO extends DAO {
 		List<EliteLevel> results = new ArrayList<EliteLevel>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				EliteLevel lvl = new EliteLevel(rs.getInt(2), rs.getString(1));
+				EliteLevel lvl = new EliteLevel(rs.getInt(2), rs.getString(1), rs.getString(11));
 				lvl.setStatisticsStartDate(expandDate(rs.getDate(3)));
 				lvl.setLegs(rs.getInt(4));
 				lvl.setDistance(rs.getInt(5));

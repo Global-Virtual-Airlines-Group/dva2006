@@ -20,7 +20,6 @@ import org.deltava.util.system.SystemData;
 
 public class GetElite extends EliteDAO {
 	
-	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use 
@@ -35,7 +34,7 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EliteLevel> getLevels() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM ELITE_LEVELS ORDER BY YR DESC, LEGS, DISTANCE")) {
+		try (PreparedStatement ps = prepare("SELECT EL.*, DATABASE() FROM ELITE_LEVELS EL ORDER BY YR DESC, LEGS, DISTANCE")) {
 			return executeLevel(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -49,7 +48,7 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TreeSet<EliteLevel> getLevels(int year) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM ELITE_LEVELS WHERE (YR=?)")) {
+		try (PreparedStatement ps = prepare("SELECT EL.*, DATABASE() FROM ELITE_LEVELS EL WHERE (YR=?)")) {
 			ps.setInt(1, year);
 			return new TreeSet<EliteLevel>(executeLevel(ps));
 		} catch (SQLException se) {
@@ -119,7 +118,7 @@ public class GetElite extends EliteDAO {
 		}
 
 		if (dbIDs.size() > 0) {
-			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, MAX(CREATED) AS CD, UPD_REASON FROM ");
+			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), MAX(CREATED) AS CD, UPD_REASON FROM ");
 			sqlBuf.append(formatDBName(db));
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
 			sqlBuf.append(StringUtils.listConcat(dbIDs, ","));
@@ -158,7 +157,7 @@ public class GetElite extends EliteDAO {
 	public List<EliteStatus> getStatus(int pilotID, int year) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ELITE_STATUS WHERE (PILOT_ID=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), CREATED, UPD_REASON FROM ELITE_STATUS WHERE (PILOT_ID=?)");
 		if (year > 0) sqlBuf.append(" AND (YR=?)");
 		sqlBuf.append(" ORDER BY CREATED");
 		
@@ -222,10 +221,10 @@ public class GetElite extends EliteDAO {
 		List<EliteStatus> results = new ArrayList<EliteStatus>();
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				EliteLevel lvl = new EliteLevel(rs.getInt(3), rs.getString(2));
+				EliteLevel lvl = new EliteLevel(rs.getInt(3), rs.getString(2), rs.getString(4));
 				EliteStatus st = new EliteStatus(rs.getInt(1), lvl);
-				st.setEffectiveOn(toInstant(rs.getTimestamp(4)).plusSeconds(3600 * 12));
-				st.setUpgradeReason(UpgradeReason.values()[rs.getInt(5)]);
+				st.setEffectiveOn(toInstant(rs.getTimestamp(5)).plusSeconds(3600 * 12));
+				st.setUpgradeReason(UpgradeReason.values()[rs.getInt(6)]);
 				results.add(st);
 			}
 		}
