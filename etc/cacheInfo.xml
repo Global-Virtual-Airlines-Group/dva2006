@@ -10,6 +10,11 @@
 	<cache id="Image" max="32" expires="15m" />
 	<cache id="Tracks" expires="2d" remote="true" />
 	<cache id="UploadState" expires="4h" max="32" />
+	
+	<!-- SkyMiles caches -->
+	<cache id="EliteLevel" max="16" expires="24h" />
+	<cache id="EliteStatus" max="512" expires="24h" remote="true" />
+	<cache id="EliteYearlyTotal" max="512" expires="12h" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />
