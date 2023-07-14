@@ -314,12 +314,13 @@ public class SetFlightReport extends DAO {
 			startTransaction();
 		
 			// Write the core entry
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + db + ".PIREP_ELITE (ID, LEVEL, YR, DISTANCE, SCORE) VALUES (?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + db + ".PIREP_ELITE (ID, LEVEL, YEAR, DISTANCE, SCORE, SCORE_ONLY) VALUES (?, ?, ?, ?, ?, ?)")) {
 				ps.setInt(1, sc.getID());
 				ps.setString(2, sc.getEliteLevel());
 				ps.setInt(3, sc.getYear());
 				ps.setInt(4, sc.getDistance());
 				ps.setInt(5, sc.getPoints());
+				ps.setBoolean(6, sc.getScoreOnly());
 				executeUpdate(ps, 1);
 			}
 		
@@ -342,7 +343,7 @@ public class SetFlightReport extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		} finally {
-			_eliteTotalCache.remove(Integer.valueOf(sc.getAuthorID()));
+			_eliteTotalCache.remove(Integer.valueOf(sc.getID()));
 		}
 	}
 	

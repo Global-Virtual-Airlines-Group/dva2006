@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -8,16 +8,16 @@ import org.deltava.beans.*;
 /**
  * A bean to store Flight Report Elite point data.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
-public class FlightEliteScore extends DatabaseBean implements AuthoredBean, EliteTotals {
+public class FlightEliteScore extends DatabaseBean implements EliteTotals {
 	
-	private int _pilotID;
 	private String _level;
 	private int _year;
 	private int _distance;
+	private boolean _scoreOnly;
 	
 	private final Collection<EliteScoreEntry> _entries = new TreeSet<EliteScoreEntry>();
 
@@ -30,11 +30,6 @@ public class FlightEliteScore extends DatabaseBean implements AuthoredBean, Elit
 		setID(id);
 	}
 	
-	@Override
-	public int getAuthorID() {
-		return _pilotID;
-	}
-
 	/**
 	 * Returns the Pilot's Elite status level at the time of this flight.
 	 * @return the EliteLevel name
@@ -91,6 +86,14 @@ public class FlightEliteScore extends DatabaseBean implements AuthoredBean, Elit
 	}
 	
 	/**
+	 * Returns whether to ignore flight leg and distance for aggregation purposes. 
+	 * @return TRUE to ignore leg/distance, otherwise FALSE
+	 */
+	public boolean getScoreOnly() {
+		return _scoreOnly;
+	}
+	
+	/**
 	 * Updates the Pilot's Elite level at the time of this flight.
 	 * @param levelName the EliteLevel name
 	 * @param year the EliteLevel year
@@ -108,12 +111,13 @@ public class FlightEliteScore extends DatabaseBean implements AuthoredBean, Elit
 		_distance = dst;
 	}
 	
-	@Override
-	public void setAuthorID(int id) {
-		validateID(_pilotID, id);
-		_pilotID = id;
+	/**
+	 * Updates whether to ignore flight leg and distance for aggregation purpose.
+	 * @param scoreOnly TRUE to only count score, otherwise FALSE
+	 */
+	public void setScoreOnly(boolean scoreOnly) {
+		_scoreOnly = scoreOnly;
 	}
-	
 	/**
 	 * Adds a score entry.
 	 * @param amt the number of points

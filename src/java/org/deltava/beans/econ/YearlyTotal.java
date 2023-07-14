@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import org.deltava.beans.DatabaseBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store yearly Pilot Elite status totals.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -75,6 +75,18 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	}
 	
 	/**
+	 * Adds a Flight's totals.
+	 * @param sc a FlightEliteScore
+	 */
+	public void add(FlightEliteScore sc) {
+		_pts += sc.getPoints();
+		if (!sc.getScoreOnly()) {
+			_legs += sc.getLegs();
+			_distance += sc.getDistance();
+		}
+	}
+	
+	/**
 	 * Adds aggregated totals.
 	 * @param legs the number of flight legs
 	 * @param distance the distance in miles
@@ -114,21 +126,20 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	/**
 	 * Returns whether a specific flight leg would trigger a given Elite Level.
 	 * @param el the EliteLevel
-	 * @param distance the leg distance in miles
-	 * @param pts the flight score
+	 * @param sc the FlightEliteScore for that leg
 	 * @return an UpgradeReason
 	 */
-	public UpgradeReason wouldMatch(EliteLevel el, int distance, int pts) {
+	public UpgradeReason wouldMatch(EliteLevel el, FlightEliteScore sc) {
 		if ((el == null) || matches(el))
 			return UpgradeReason.NONE;
-
-		if ((_legs + 1) >= el.getLegs() && (_legs < el.getLegs())) 
-			return UpgradeReason.LEGS;
-		if ((_distance + distance) >= el.getDistance() && (_distance < el.getDistance()))
-			return UpgradeReason.DISTANCE;
-		if ((_pts + pts) >= el.getPoints() && (_pts < el.getPoints()) && (el.getPoints() > 0))
-			return UpgradeReason.POINTS;
 		
+		if (!sc.getScoreOnly() && ((_legs + 1) >= el.getLegs()) && (_legs < el.getLegs())) 
+			return UpgradeReason.LEGS;
+		if (!sc.getScoreOnly() && ((_distance + sc.getDistance()) >= el.getDistance()) && (_distance < el.getDistance()))
+			return UpgradeReason.DISTANCE;
+		if ((_pts + sc.getPoints()) >= el.getPoints() && (_pts < el.getPoints()) && (el.getPoints() > 0))
+			return UpgradeReason.UNITS;
+
 		return UpgradeReason.NONE;
 	}
 	

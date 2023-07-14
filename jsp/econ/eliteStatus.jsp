@@ -65,6 +65,9 @@ span.rmbar {
  <hr />
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld" ><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span></td>
 </tr>
+<tr class="title caps">
+ <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
+</tr>
 <tr>
  <td class="label eliteStatus">Flight Progress</td>
  <td class="data">
@@ -101,12 +104,20 @@ span.rmbar {
 <c:set var="yearMax" value="${maxStatus[yr].level}" scope="page" />
 <c:if test="${(yr ne currentYear) && (!empty upds)}">
 <tr>
- <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Progress</td>
+ <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
  <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span><br />
 <br />
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
-<c:set var="action" value="${(upd.upgradeReason == 'ROLLOVER') ? 'Rolled over' : 'Earned'}" scope="page" />
-<fmt:date date="${upd.effectiveOn}" fmt="d" />&nbsp;${action}&nbsp;<fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} ${ypd.upgradeReason}<c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
+<fmt:date date="${upd.effectiveOn}" fmt="d" />&nbsp;
+<c:choose>
+<c:when test="${upd.upgradeReason == 'ROLLOVER'}">
+Rolled over <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> achieved in ${upd.level.year - 1} for ${upd.level.year}</c:when>
+<c:when test="${upd.upgradeReason == 'DOWNGRADE'}">
+Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} achievement</c:when>
+<c:otherwise>
+Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (${upd.upgradeReason})</c:otherwise>
+</c:choose>
+<c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
 <hr />
 <c:set var="hasPrevLevel" value="true" scope="page" />
 <c:set var="prevLevel" value="${baseLevel}" scope="page" />

@@ -57,8 +57,8 @@ public class EliteLevelSetCommand extends AbstractCommand {
 			
 			// Get the PIREP statistics for the year
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			PercentileStatsEntry st = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, false);
-			PercentileStatsEntry ast = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, true);
+			PercentileStatsEntry st = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, false, "LEGS, DST");
+			PercentileStatsEntry ast = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, true, "LEGS, DST");
 			
 			// Write the new levels
 			SetElite ewdao = new SetElite(con);

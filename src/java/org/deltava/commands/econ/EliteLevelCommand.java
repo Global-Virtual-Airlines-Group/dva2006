@@ -1,8 +1,9 @@
-// Copyright 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
+import java.time.*;
 import java.sql.Connection;
-import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.econ.EliteLevel;
 
@@ -16,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Elite status levels.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -98,6 +99,8 @@ public class EliteLevelCommand extends AbstractFormCommand {
 				// Save in request
 				ctx.setAttribute("lvl", lvl, REQUEST);
 				ctx.setAttribute("pilotCount", Integer.valueOf(edao.getPilotCount(lvl)), REQUEST);
+				if (lvl.getStatisticsStartDate() != null)
+					ctx.setAttribute("statisticsEndDate", LocalDate.ofInstant(lvl.getStatisticsStartDate(), ZoneOffset.UTC).plus(1, ChronoUnit.YEARS), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

@@ -22,11 +22,13 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	/**
 	 * The first year of the Elite program.
 	 */
-	public static final int MIN_YEAR = 2003;
+	public static final int MIN_YEAR = 2004;
 	
 	private final String _name;
 	private final int _year;
 	private int _targetPercentile;
+	
+	private Instant _statStartDate;
 	
 	private int _legs;
 	private int _distance;
@@ -144,6 +146,14 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	}
 	
 	/**
+	 * Returns the first date of statistics used to generate thresholds.
+	 * @return the start date/time
+	 */
+	public Instant getStatisticsStartDate() {
+		return _statStartDate;
+	}
+	
+	/**
 	 * Updates the number of flight legs required for this level.
 	 * @param legs the number of legs
 	 */
@@ -197,6 +207,14 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	 */
 	public void setVisible(boolean isVisible) {
 		_visible = isVisible;
+	}
+	
+	/**
+	 * Updates the first date of statistics used to generate thresholds.
+	 * @param dt the start date/time
+	 */
+	public void setStatisticsStartDate(Instant dt) {
+		_statStartDate = dt;
 	}
 	
 	@Override

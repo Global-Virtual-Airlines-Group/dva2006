@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Elite program definitions. 
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -87,13 +87,14 @@ abstract class EliteDAO extends DAO {
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				EliteLevel lvl = new EliteLevel(rs.getInt(2), rs.getString(1));
-				lvl.setLegs(rs.getInt(3));
-				lvl.setDistance(rs.getInt(4));
-				lvl.setPoints(rs.getInt(5));
-				lvl.setBonusFactor(rs.getInt(6) / 100.0f);
-				lvl.setColor(rs.getInt(7));
-				lvl.setTargetPercentile(rs.getInt(8));
-				lvl.setVisible(rs.getBoolean(9));
+				lvl.setStatisticsStartDate(expandDate(rs.getDate(3)));
+				lvl.setLegs(rs.getInt(4));
+				lvl.setDistance(rs.getInt(5));
+				lvl.setPoints(rs.getInt(6));
+				lvl.setBonusFactor(rs.getInt(7) / 100.0f);
+				lvl.setColor(rs.getInt(8));
+				lvl.setTargetPercentile(rs.getInt(9));
+				lvl.setVisible(rs.getBoolean(10));
 				results.add(lvl);
 				_lvlCache.add(lvl);
 			}
