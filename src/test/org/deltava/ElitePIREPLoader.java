@@ -10,7 +10,7 @@ import org.apache.logging.log4j.*;
 
 import junit.framework.TestCase;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -25,6 +25,8 @@ public class ElitePIREPLoader extends TestCase {
 	
 	private Logger log;
 	private Connection _c;
+	
+	private static final LocalDateTime MIN_DATE = LocalDate.of(EliteLevel.MIN_YEAR, 1, 1).atStartOfDay();
 
 	private static final String AIRLINE_CODE = "DVA";
 	private static final String JDBC_URL = String.format("jdbc:mysql://sirius.sce.net/%s?connectionTimezone=SERVER", AIRLINE_CODE.toLowerCase());
@@ -97,25 +99,44 @@ public class ElitePIREPLoader extends TestCase {
 		
 		SetElite elwdao = new SetElite(_c);
 		SetFlightReport frwdao = new SetFlightReport(_c);
+		SetStatusUpdate updwdao = new SetStatusUpdate(_c);
 		
-		@SuppressWarnings("boxing")
-		Collection<Integer> IDs = List.of(604224, 8027, 640163, 10108);
+		// Load Pilots we've already populated
+		Collection<Integer> populatedIDs = new HashSet<Integer>();
+		try (Statement s = _c.createStatement(); ResultSet rs = s.executeQuery("SELECT DISTINCT P.PILOT_ID FROM PIREPS P, PIREP_ELITE PE WHERE (PE.ID=P.ID)")) {
+			while (rs.next())
+				populatedIDs.add(Integer.valueOf(rs.getInt(1)));
+		}
 		
-		//Collection<Pilot> pilots = pdao.getPilots();
-		//pilots.removeIf(p -> p.getLegs() == 0);
-		Collection<Pilot> pilots = pdao.getByID(IDs, "PILOTS").values();
+		Collection<Integer> IDs = new TreeSet<Integer>();
+		//IDs.addAll(List.of(604224, 8027, 640163, 10108));
+		try (PreparedStatement ps = _c.prepareStatement("SELECT P.ID FROM PILOTS P, PIREPS PR WHERE (P.ID=PR.PILOT_ID) AND (PR.STATUS=?) AND (PR.DATE>?)")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setTimestamp(2, new Timestamp(MIN_DATE.toEpochSecond(ZoneOffset.UTC) * 1000));
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+		}
+		
+		int size = IDs.size();
+		log.info("Loaded {} Pilots", Integer.valueOf(size));
+		IDs.removeIf(id -> populatedIDs.contains(id));
+		log.info("Removed {} Pilots with populated data", Integer.valueOf(size - IDs.size()));
 		
 		LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", SystemData.get("airline.db"));
-		for (Pilot p : pilots) {
-			List<FlightReport> allFlights = frdao.getByPilot(p.getID(), lsc);
+		for (Integer id : IDs) {
+			Pilot p = pdao.get(id.intValue());
+			List<FlightReport> allFlights = frdao.getByPilot(id.intValue(), lsc);
 			Collection<Integer> yrs = allFlights.stream().map(fr -> Integer.valueOf(EliteLevel.getYear(fr.getDate()))).filter(y -> y.intValue() >= EliteLevel.MIN_YEAR).collect(Collectors.toCollection(TreeSet::new));
 			log.info("Calculating {} status for {} ({})", SystemData.getObject("econ.elite.name"), p.getName(), p.getPilotCode());
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			
 			for (Integer yr : yrs) {
 				final int y = yr.intValue(); TreeSet<EliteLevel> lvls = eldao.getLevels(y);
 				List<FlightReport> pireps = allFlights.stream().filter(fr -> (EliteLevel.getYear(fr.getDate()) == y)).collect(Collectors.toList());
 				EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
-				
+
 				// Get pilot's elite status 
 				List<EliteStatus> pilotStatus = eldao.getStatus(p.getID(), y);
 				EliteStatus st = pilotStatus.isEmpty() ? null : pilotStatus.get(pilotStatus.size() - 1);
@@ -146,13 +167,19 @@ public class ElitePIREPLoader extends TestCase {
 					es.add(fr);
 					if (sc == null) continue;
 					
-					fr.addStatusUpdate(0, HistoryType.ELITE, "Updated " + SystemData.get("econ.elite.name") + " activity");
+					fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 					frwdao.writeElite(sc, AIRLINE_CODE);
-					//frwdao.writeHistory(fr.getStatusUpdates(), AIRLINE_CODE);
+					frwdao.writeHistory(fr.getStatusUpdates(), AIRLINE_CODE);
 					
 					// Check for upgrade
 					UpgradeReason updR = yt.wouldMatch(nextLevel, sc); 
 					if (updR != UpgradeReason.NONE) {
+						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
+						upd.setDate(fr.getDisposedOn());
+						upd.setAuthorID(p.getID());
+						upd.setDescription(String.format("Reached %s for %d / ( %s )", nextLevel.getName(), yr, updR.getDescription()));
+						upds.add(upd);
+						
 						log.info(p.getName() + " reaches " + nextLevel.getName() + " for " + yr + " / " + updR.getDescription());
 						st = new EliteStatus(p.getID(), nextLevel);
 						st.setEffectiveOn(fr.getDisposedOn());
@@ -169,10 +196,6 @@ public class ElitePIREPLoader extends TestCase {
 				EliteLevel eyLevel = lvls.descendingSet().stream().filter(yt::matches).findFirst().orElse(lvls.first());
 				if ((eyLevel.getLegs() > 0) && (eyLevel.getYear() < 2023)) {
 					UpgradeReason ur = (eyLevel.compareTo(st.getLevel()) == 0) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
-					if (ur == UpgradeReason.ROLLOVER)
-						log.info("{} rolls over {} for {}", p.getName(), eyLevel.getName(), Integer.valueOf(y + 1));
-					else
-						log.info("{} downgraded to {} for {}", p.getName(), eyLevel.getName(), Integer.valueOf(y + 1));
 					
 					// Get next year's level
 					EliteLevel rl = eldao.get(eyLevel.getName(), y+1, AIRLINE_CODE);
@@ -183,11 +206,26 @@ public class ElitePIREPLoader extends TestCase {
 					rs.setEffectiveOn(LocalDate.of(y + 1, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC));
 					rs.setUpgradeReason(ur);
 					elwdao.write(rs);
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
+					upd.setDate(LocalDateTime.of(y + 1, 1, 1, 12, 0,0).toInstant(ZoneOffset.UTC));
+					upd.setAuthorID(p.getID());
+					if (ur == UpgradeReason.ROLLOVER) {
+						log.info("{} rolls over {} for {}", p.getName(), eyLevel.getName(), Integer.valueOf(y + 1));
+						upd.setDescription(String.format("Rolls over %s for %d", eyLevel.getName(), Integer.valueOf(y + 1)));
+					} else {
+						log.info("{} downgraded to {} for {}", p.getName(), eyLevel.getName(), Integer.valueOf(y + 1));
+						upd.setDescription(String.format("Downgraded to %s for %d", eyLevel.getName(), Integer.valueOf(y + 1)));
+					}
+					
+					upds.add(upd);
 				} else
 					log.info("{} no rollover for {}", p.getName(), Integer.valueOf(y + 1));
 			}
 			
+			updwdao.write(upds);
 			_c.commit();
+			log.info("Commited data for {}", p.getName());
 		}
 	}
 }

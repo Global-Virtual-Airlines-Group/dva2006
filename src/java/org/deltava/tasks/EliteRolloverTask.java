@@ -1,11 +1,11 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.time.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 
 import org.deltava.dao.*;
@@ -14,7 +14,7 @@ import org.deltava.taskman.*;
 /**
  * A Scheduled Task to roll over Elite status for Pilots. 
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -42,6 +42,7 @@ public class EliteRolloverTask extends Task {
 			GetPilot pdao = new GetPilot(con);
 			GetElite eldao = new GetElite(con);
 			SetElite elwdao = new SetElite(con);
+			SetStatusUpdate updwdao = new SetStatusUpdate(con); 
 			Collection<Integer> IDs = eldao.getAllPilots(yr - 1);
 			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
 			
@@ -56,15 +57,22 @@ public class EliteRolloverTask extends Task {
 				EliteStatus st = status.get(status.size() - 1);
 				
 				// Calcualte new level
-				EliteLevel newLevel = lvls.stream().filter(lv -> lv.getName().equalsIgnoreCase(st.getLevel().getName())).findFirst().orElse(lvls.first());
+				EliteLevel newLevel = lvls.stream().filter(lv -> lv.matches(st.getLevel())).findFirst().orElse(lvls.first());
 				UpgradeReason ur = (newLevel.compareTo(st.getLevel()) == 0) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
 				log.info("Rolling over " + newLevel.getName() + " status for " + p.getName() + " in " + yr + " / " + ur.getDescription());
 				
 				// Write the status
 				EliteStatus newStatus = new EliteStatus(p.getID(), newLevel);
-				newStatus.setEffectiveOn(LocalDate.of(yr, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC));
+				newStatus.setEffectiveOn(LocalDateTime.of(yr, 1, 1, 12, 0, 0).toInstant(ZoneOffset.UTC));
 				newStatus.setUpgradeReason(ur);
 				elwdao.write(newStatus);
+				
+				// Write a status update
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
+				upd.setDate(Instant.now());
+				upd.setAuthorID(p.getID());
+				upd.setDescription(String.format("Reached %s for %d / ( %s )", newLevel.getName(), Integer.valueOf(yr), ur.getDescription()));
+				updwdao.write(upd, ctx.getDB());
 				ctx.commitTX();
 			}
 		} catch (DAOException de) {

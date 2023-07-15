@@ -6,8 +6,7 @@ import java.util.*;
 import java.time.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Compression;
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
@@ -40,7 +39,7 @@ public class EliteScoringTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Determine lookback interval
-		log.info("Scoring flights submitted in the past 30 days");
+		log.info("Scoring flights approved in the past 30 days");
 		EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
 		
 		try {
@@ -56,6 +55,7 @@ public class EliteScoringTask extends Task {
 			
 			SetElite elwdao = new SetElite(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
+			SetStatusUpdate updwdao = new SetStatusUpdate(con);
 			
 			// Get the Flight Reports
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
@@ -117,7 +117,7 @@ public class EliteScoringTask extends Task {
 					sc  = es.score(fr, st.getLevel());
 				
 				// Write the score and status history
-				fr.addStatusUpdate(0, HistoryType.ELITE, "Updated " + SystemData.get("econ.elite.name") + " activity");
+				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				log.info("Scored Flight Report #" + fr.getID() + " - " + sc.getPoints());
@@ -130,6 +130,12 @@ public class EliteScoringTask extends Task {
 					st.setEffectiveOn(Instant.now());
 					st.setUpgradeReason(updR);
 					elwdao.write(st);
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
+					upd.setDate(Instant.now());
+					upd.setAuthorID(p.getID());
+					upd.setDescription(String.format("Reached %s for %d / ( %s )", nextLevel.getName(), Integer.valueOf(yr), updR.getDescription()));
+					updwdao.write(upd, ctx.getDB());
 				}
 				
 				ctx.commitTX();
