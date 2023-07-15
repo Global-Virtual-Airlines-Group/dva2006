@@ -45,25 +45,25 @@
  <td colspan="2">${eliteName}&nbsp;Flight Requirements by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="lreqGraph" style="height:425px;"></div>
+ <td colspan="2"><div id="lreqGraph" style="height:375px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Distance Requirements by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="dreqGraph" style="height:425px;"></div>
+ <td colspan="2"><div id="dreqGraph" style="height:375px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Pilots by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="pilotGraph" style="height:425px;"></div>
+ <td colspan="2"><div id="pilotGraph" style="height:375px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Current Statistics</td>
 </tr>
 <tr>
- <td colspan="2"><div id="statGraph" style="height:425px;"></div>
+ <td colspan="2"><div id="statGraph" style="height:375px;"></div>
 </tr>
 <!-- Bottom Bar -->
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
@@ -103,7 +103,7 @@ golgotha.local.renderChart = function() {
 
 	for (var x = 0; x < dt.years.length; x++) {
 		const r = [dt.years[x].toString()];
-		dt.levels.forEach(function(lvl) { r.push(lvl.data[x]); });
+		dt.levels.forEach(function(lvl) { r.push(dt.levelCounts[lvl.name][x]); });
 		pdata.addRow(r);
 	}
 	
@@ -112,19 +112,19 @@ golgotha.local.renderChart = function() {
 	const drdata = new google.visualization.DataTable();
 	lrdata.addColumn('string','Year');
 	drdata.addColumn('string','Year');
-	for (var l = 1; l < dt.levels.length; l++) {
-		const lvl = dt.levels[l];
-		lrdata.addColumn('number',lvl.name + ' Legs');
-		drdata.addColumn('number',lvl.name + ' Distance');
-	}
+	dt.levels.slice(1).forEach(function(lvl) { 
+		lrdata.addColumn('number',lvl.name);
+		drdata.addColumn('number',lvl.name);
+	});
 
 	// Populate the data tables
 	for (var x = 0; x < dt.years.length; x++) {
 		const lr = [dt.years[x].toString()];
 		const dr = [dt.years[x].toString()];
 		for (var l = 1; l < dt.levels.length; l++) {
-			lr.push(dt.reqs[l].legs[x]);
-			dr.push(dt.reqs[l].distance[x]);
+			const lvl = dt.levels[l];
+			lr.push(dt.reqs[lvl.name].legs[x]);
+			dr.push(dt.reqs[lvl.name].distance[x]);
 		}
 		
 		lrdata.addRow(lr);
@@ -132,10 +132,11 @@ golgotha.local.renderChart = function() {
 	}
 	
 	// Display the legdistance requirements charts
+	const reqBarColors = barColors.slice(1); const hA = {title:'Year',textStyle:lgStyle};
 	const lrchart = new google.visualization.LineChart(document.getElementById('lreqGraph'));
 	const drchart = new google.visualization.LineChart(document.getElementById('dreqGraph'));
-	lrchart.draw(lrdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Flight Leg Requirements by Year',colors:barColors,vAxes:{0:{title:'Flight Legs',maxValue:600}}});
-	drchart.draw(drdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Distance Requirements by Year',colors:barColors,vAxes:{0:{title:'Flight Distance',maxValue:1000000}}});
+	lrchart.draw(lrdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Flight Leg Requirements by Year',colors:reqBarColors,vAxes:{0:{title:'Flight Legs',maxValue:600}}});
+	drchart.draw(drdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Distance Requirements by Year',colors:reqBarColors,vAxes:{0:{title:'Flight Distance',maxValue:1000000}}});
 	
 	// Display the statistics chart
 	const schart = new google.visualization.LineChart(document.getElementById('statGraph'));
@@ -143,7 +144,7 @@ golgotha.local.renderChart = function() {
 	sdata.addColumn('string','Level');
 
 	// Draw the pilot statistics chart
-	pchart.draw(pdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Pilots by Year',isStacked:true,colors:barColors});
+	pchart.draw(pdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Pilots by Year',isStacked:true,colors:barColors,vAxes:{0:{title:'Pilots'}}});
 	return true;
 };
 
