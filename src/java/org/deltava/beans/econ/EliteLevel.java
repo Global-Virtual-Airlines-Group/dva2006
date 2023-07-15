@@ -255,6 +255,15 @@ public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel
 		_statStartDate = dt;
 	}
 	
+	/**
+	 * Utility method to compare names only between Elite Levels. This is a rough cross-year equality test.
+	 * @param el2 the second EliteLevel
+	 * @return TRUE if the names match, otherwise FALSE
+	 */
+	public boolean matches(EliteLevel el2) {
+		return _name.equals(el2._name);
+	}
+	
 	@Override
 	public String getAuditID() {
 		return toString();
