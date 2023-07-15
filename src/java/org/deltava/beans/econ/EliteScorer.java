@@ -112,7 +112,7 @@ public abstract class EliteScorer {
 	 * @return TRUE if the flight report is non-null and neither draft nor rejected, otherwise FALSE
 	 */
 	protected static boolean canScore(FlightReport fr) {
-		return ((fr != null) && (fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED));
+		return (fr != null) && (fr.getStatus() == FlightStatus.OK);
 	}
 
 	/**
