@@ -261,7 +261,7 @@ public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel
 	 * @return TRUE if the names match, otherwise FALSE
 	 */
 	public boolean matches(EliteLevel el2) {
-		return _name.equals(el2._name);
+		return _name.equalsIgnoreCase(el2._name);
 	}
 	
 	@Override
