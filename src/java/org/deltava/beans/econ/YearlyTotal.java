@@ -1,6 +1,8 @@
 // Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
+import java.time.*;
+
 import org.deltava.beans.DatabaseBean;
 
 /**
@@ -96,6 +98,20 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 		_legs += legs;
 		_distance += distance;
 		_pts += pts;
+	}
+	
+	/**
+	 * Projects year to date totals over a full year. This will have no effect on totals for a prior year.
+	 * @param ld the date to project from
+	 * @return a YearlyTotal bean
+	 */
+	public YearlyTotal adjust(LocalDate ld) {
+		if (ld.getYear() != _year) return this;
+		int daysInYear = ld.lengthOfYear();
+		float factor =  1 / (ld.getDayOfYear() * 1.0f / daysInYear);
+		YearlyTotal yt = new YearlyTotal(_year, getID());
+		yt.addLegs(Math.round(_legs * factor), Math.round(_distance * factor), Math.round(_pts * factor));
+		return yt;
 	}
 	
 	/**

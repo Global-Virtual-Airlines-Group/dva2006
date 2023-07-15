@@ -188,6 +188,9 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <td class="mid"><el:cmd url="eliteinfo" className="bld"><span style="color:#${eliteStatus.level.hexColor}">My ${eliteName}</span></el:cmd></td>
  <td class="data">${eliteYear} Flight Legs: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> | ${eliteYear} Flight Distance: <fmt:distance className="sec bld" value="${currentEliteTotal.distance}" /><br /> 
  Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}.
+ <c:if test="${!empty nyLevel}" >
+ <br /><br />Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
+ <c:if test="${nyDowngrade}"> <span class="sec bld">Your status will be downgraded at the end of the year.</span></c:if></c:if>
 <c:if test="${nextEliteLevel.isVisible}"><br />
 <br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> and </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" />&nbsp;</c:if>remaining to 
  reach ${eliteName}&nbsp;<span class="bld" style="color:#${nextEliteLevel.hexColor}">${nextEliteLevel.name}</span> status.</c:if></td> 
