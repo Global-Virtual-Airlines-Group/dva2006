@@ -26,8 +26,10 @@ import org.deltava.util.JSONUtils;
 
 public class EliteStatsService extends WebService {
 	
+	/*
+	 * Helper method to compare EliteLevels by year as well as requirements.
+	 */
 	private class EliteLevelComparator implements Comparator<EliteLevel> {
-
 		@Override
 		public int compare(EliteLevel el1, EliteLevel el2) {
 			int tmpResult = Integer.compare(el1.getYear(), el2.getYear());
@@ -47,7 +49,7 @@ public class EliteStatsService extends WebService {
 		final int currentYear = EliteLevel.getYear(Instant.now());
 		SortedSet<EliteLevel> allLevels = new TreeSet<EliteLevel>(new EliteLevelComparator()); SortedSet<EliteLevel> levelLegend = new TreeSet<EliteLevel>();
 		Map<EliteLevel, Integer> allCounts = new TreeMap<EliteLevel, Integer>(new EliteLevelComparator());
-		List<EliteStats> yrStats = new ArrayList<EliteStats>(); Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
+		Collection<EliteStats> yrStats = new TreeSet<EliteStats>(); Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -121,9 +123,6 @@ public class EliteStatsService extends WebService {
 		for (EliteStats st : yrStats) {
 			JSONObject so = new JSONObject();
 			JSONArray sea = new JSONArray();
-			EliteLevel lvl = st.getLevel();
-			so.put("name", lvl.getName());
-			so.put("color", lvl.getHexColor());
 			sea.put(st.getLevel().getName());
 			sea.put(st.getPilots());
 			sea.put(st.getLegs());
@@ -134,11 +133,11 @@ public class EliteStatsService extends WebService {
 			sea.put(st.getLegSD());
 			sea.put(st.getDistanceSD());
 			so.put("data", sea);
-			//jo.append("stats", so);
+			jo.append("stats", so);
 		}
 		
 		// Dump to the output stream
-		JSONUtils.ensureArrayPresent(jo, "stats", "levels");
+		JSONUtils.ensureArrayPresent(jo, "levels", "stats");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
