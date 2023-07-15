@@ -99,8 +99,7 @@ public class ElitePIREPLoader extends TestCase {
 		SetFlightReport frwdao = new SetFlightReport(_c);
 		
 		@SuppressWarnings("boxing")
-		Collection<Integer> IDs = List.of(604224, 8027, 640163);
-		//Collection<Integer> IDs = List.of(10108);
+		Collection<Integer> IDs = List.of(604224, 8027, 640163, 10108);
 		
 		//Collection<Pilot> pilots = pdao.getPilots();
 		//pilots.removeIf(p -> p.getLegs() == 0);

@@ -9,6 +9,7 @@ import org.deltava.beans.econ.EliteLevel;
 import org.deltava.beans.stats.PercentileStatsEntry;
 
 import org.deltava.dao.*;
+import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
@@ -57,10 +58,10 @@ public class EliteLevelLoader extends TestCase {
 			PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, false, "LEGS, DST");
 			PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, false, "DST, LEGS");
 			for (int x = 0; x < LEVEL_NAMES.length; x++) {
-				EliteLevel lvl = new EliteLevel(year, LEVEL_NAMES[x]);
+				EliteLevel lvl = new EliteLevel(year, LEVEL_NAMES[x], SystemData.get("airline.code"));
 				lvl.setTargetPercentile(LEVEL_PCTS[x]);
-				lvl.setLegs(round(lpse.getLegs(lvl.getTargetPercentile()), 5));
-				lvl.setDistance(round(dpse.getDistance(lvl.getTargetPercentile()), 10000));
+				lvl.setLegs(EliteLevel.round(lpse.getLegs(lvl.getTargetPercentile()), 5));
+				lvl.setDistance(EliteLevel.round(dpse.getDistance(lvl.getTargetPercentile()), 10000));
 				lvl.setColor(Integer.parseInt(LEVEL_COLORS[x], 16));
 				lvl.setBonusFactor(LEVEL_BOOSTS[x]);
 				lvl.setVisible(x < (LEVEL_NAMES.length - 1));
@@ -70,7 +71,7 @@ public class EliteLevelLoader extends TestCase {
 			}
 			
 			// Write default "member" entry
-			EliteLevel lvl = new EliteLevel(year, "Member");
+			EliteLevel lvl = new EliteLevel(year, "Member", SystemData.get("airline.code"));
 			lvl.setTargetPercentile(0);
 			lvl.setLegs(0); lvl.setDistance(0); lvl.setPoints(0);
 			lvl.setBonusFactor(0);
@@ -81,9 +82,5 @@ public class EliteLevelLoader extends TestCase {
 		}
 		
 		_c.commit();
-	}
-	
-	private static int round(int value, int rndTo) {
-		return (rndTo == 1) ? value : ((value / rndTo) + 1) * rndTo;
 	}
 }
