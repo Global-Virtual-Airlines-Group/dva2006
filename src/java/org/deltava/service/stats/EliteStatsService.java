@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,11 +20,20 @@ import org.deltava.util.JSONUtils;
 /**
  * A Web Service to display Elite program statistics.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
 public class EliteStatsService extends WebService {
+	
+	private class EliteLevelComparator implements Comparator<EliteLevel> {
+
+		@Override
+		public int compare(EliteLevel el1, EliteLevel el2) {
+			int tmpResult = Integer.compare(el1.getYear(), el2.getYear());
+			return (tmpResult == 0) ? el1.compareTo(el2) : tmpResult;
+		}
+	}
 
 	/**
 	 * Executes the Web Service.
@@ -35,32 +44,24 @@ public class EliteStatsService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		int currentYear = EliteLevel.getYear(Instant.now());
-		List<EliteLevel> lvls = new ArrayList<EliteLevel>();
-		Map<String, Collection<Integer>> stats = new LinkedHashMap<String, Collection<Integer>>();
+		final int currentYear = EliteLevel.getYear(Instant.now());
+		SortedSet<EliteLevel> allLevels = new TreeSet<EliteLevel>(new EliteLevelComparator()); SortedSet<EliteLevel> levelLegend = new TreeSet<EliteLevel>();
+		Map<EliteLevel, Integer> allCounts = new TreeMap<EliteLevel, Integer>(new EliteLevelComparator());
 		List<EliteStats> yrStats = new ArrayList<EliteStats>(); Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Load levels
+			// Load current levels - assume they have been constant, but we will add if we need to
 			GetElite eldao = new GetElite(con);
-			lvls.addAll(eldao.getLevels());
+			allLevels.addAll(eldao.getLevels());
+			allLevels.stream().filter(lv -> (lv.getYear() == currentYear)).forEach(levelLegend::add);
 			
-			// Load yearly counts
+			// Load all of the pilot/level/year counts
 			for (int yr = EliteLevel.MIN_YEAR; yr <= currentYear; yr++) {
 				yrs.add(Integer.valueOf(yr));
-				Map<EliteLevel, Integer> cnts = eldao.getEliteCounts(yr);
-				for (Map.Entry<EliteLevel, Integer> me : cnts.entrySet()) {
-					Collection<Integer> cnt = stats.get(me.getKey().getName());
-					if (cnt == null) {
-						cnt = new ArrayList<Integer>();
-						stats.put(me.getKey().getName(), cnt);
-					}
-					
-					cnt.add(me.getValue());
-				}
+				allCounts.putAll(eldao.getEliteCounts(yr));
 			}
-			
+
 			// Load current stats and deviations
 			GetEliteStatistics elsdao = new GetEliteStatistics(con);
 			yrStats.addAll(elsdao.getStatistics(currentYear));
@@ -69,29 +70,52 @@ public class EliteStatsService extends WebService {
 		} finally {
 			ctx.release();
 		}
+		
+		// Aggregate into stats set, by year
+		Map<String, List<Integer>> stats = new LinkedHashMap<String, List<Integer>>();
+		for (Map.Entry<EliteLevel, Integer> me : allCounts.entrySet()) {
+			EliteLevel el = me.getKey();
+			if (!levelLegend.stream().anyMatch(el::matches))
+				levelLegend.add(me.getKey());
+			
+			// Get the count, and set to number of years
+			List<Integer> cnts = stats.getOrDefault(el.getName(), new ArrayList<Integer>());
+			while (cnts.size() < yrs.size())
+				cnts.add(Integer.valueOf(0));
+			
+			// Populate and set
+			cnts.set(el.getYear() - EliteLevel.MIN_YEAR, me.getValue());
+			stats.putIfAbsent(el.getName(), cnts);
+		}
 
-		// Create the JSON document and yearly counts
+		// Create the JSON document and level defintiions/requirements
 		JSONObject jo = new JSONObject();
 		jo.put("years", new JSONArray(yrs));
 		jo.put("currentYear", currentYear);
-		for (Map.Entry<String, Collection<Integer>> me : stats.entrySet()) {
+		
+		// Write the legend
+		for (EliteLevel el : levelLegend) {
 			JSONObject so = new JSONObject();
-			EliteLevel lvl = lvls.stream().filter(lv -> lv.getName().equals(me.getKey())).findAny().orElse(null);
-			so.put("name", lvl.getName());
-			so.put("color", lvl.getHexColor());
-			so.put("data", new JSONArray(me.getValue()));
+			so.put("name", el.getName());
+			so.put("color", el.getHexColor());
 			jo.append("levels", so);
 		}
 		
 		// Create the yearly requirements
-		for (String lvlName : stats.keySet()) {
-			JSONObject so = new JSONObject();
-			Collection<EliteLevel> yrLevels = lvls.stream().filter(lv -> lv.getName().equals(lvlName)).collect(Collectors.toList());
-			so.put("name", lvlName);
+		JSONObject jro = new JSONObject();
+		jo.put("reqs", jro);
+		for (EliteLevel lvl : levelLegend) {
+			JSONObject so = new JSONObject(); Collection<EliteLevel> yrLevels = new TreeSet<EliteLevel>(new EliteLevelComparator());
+			allLevels.stream().filter(lv -> lvl.matches(lv)).forEach(yrLevels::add);
 			so.put("legs", yrLevels.stream().map(EliteLevel::getLegs).collect(Collectors.toList()));
 			so.put("distance", yrLevels.stream().map(EliteLevel::getDistance).collect(Collectors.toList()));
-			jo.append("reqs", so);
+			jro.put(lvl.getName(), so);
 		}
+		
+		// Write yearly counts
+		JSONObject lco = new JSONObject();
+		stats.entrySet().forEach(me -> lco.put(me.getKey(), new JSONArray(me.getValue())));
+		jo.put("levelCounts", lco);
 		
 		// Add the level averages
 		for (EliteStats st : yrStats) {
@@ -110,11 +134,11 @@ public class EliteStatsService extends WebService {
 			sea.put(st.getLegSD());
 			sea.put(st.getDistanceSD());
 			so.put("data", sea);
-			jo.append("stats", so);
+			//jo.append("stats", so);
 		}
 		
 		// Dump to the output stream
-		JSONUtils.ensureArrayPresent(jo, "stats", "levels", "reqs");
+		JSONUtils.ensureArrayPresent(jo, "stats", "levels");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
