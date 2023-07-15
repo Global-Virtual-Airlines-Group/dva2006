@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.econ.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.econ.*;
 /**
  * A bean to store elite program statistics.
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -166,7 +166,8 @@ public class EliteStats implements EliteTotals, EliteLevelBean, Comparable<Elite
 
 	@Override
 	public int compareTo(EliteStats es2) {
-		int tmpResult = EliteTotals.compare(_lvl, es2._lvl);
+		int tmpResult = Integer.compare(_lvl.getYear(), es2._lvl.getYear());
+		tmpResult = (tmpResult == 0) ? EliteTotals.compare(_lvl, es2._lvl) : tmpResult;
 		return (tmpResult == 0) ? Integer.compare(_legs, es2._legs) : tmpResult;
 	}
 }
