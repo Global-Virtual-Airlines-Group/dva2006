@@ -63,7 +63,7 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public SortedMap<EliteLevel, Integer> getEliteCounts(int year) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits(" SELECT PILOT_ID, (SELECT NAME FROM ELITE_STATUS ES2 WHERE (ES2.PILOT_ID=ES.PILOT_ID) AND (ES2.YR=ES.YR) ORDER BY ES2.CREATED DESC LIMIT 1) AS LVL FROM ELITE_STATUS ES "
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, (SELECT NAME FROM ELITE_STATUS ES2 WHERE (ES2.PILOT_ID=ES.PILOT_ID) AND (ES2.YR=ES.YR) ORDER BY ES2.CREATED DESC LIMIT 1) AS LVL FROM ELITE_STATUS ES "
 			+ "WHERE (ES.YR=?) GROUP BY ES.PILOT_ID")) {
 			ps.setInt(1, year);
 			
