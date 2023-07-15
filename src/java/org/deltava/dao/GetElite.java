@@ -63,13 +63,14 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<EliteLevel, Integer> getEliteCounts(int year) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME, PILOT_ID, MAX(CREATED) AS CD FROM ELITE_STATUS WHERE (YR=?) GROUP BY NAME, PILOT_ID ORDER BY NAME")) {
+		try (PreparedStatement ps = prepareWithoutLimits(" SELECT PILOT_ID, (SELECT NAME FROM ELITE_STATUS ES2 WHERE (ES2.PILOT_ID=ES.PILOT_ID) AND (ES2.YR=ES.YR) ORDER BY ES2.CREATED DESC LIMIT 1) AS LVL FROM ELITE_STATUS ES "
+			+ "WHERE (ES.YR=?) GROUP BY ES.PILOT_ID")) {
 			ps.setInt(1, year);
 			
 			Map<String, MutableInteger> rawResults = new TreeMap<String, MutableInteger>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					String levelName = rs.getString(1);
+					String levelName = rs.getString(2);
 					MutableInteger cnt = rawResults.get(levelName);
 					if (cnt == null) {
 						cnt = new MutableInteger(0);

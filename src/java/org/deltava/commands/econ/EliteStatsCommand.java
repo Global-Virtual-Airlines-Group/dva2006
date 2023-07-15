@@ -35,6 +35,7 @@ public class EliteStatsCommand extends AbstractCommand {
 			// Load current levels
 			GetElite eldao = new GetElite(con);
 			SortedSet<EliteLevel> lvls = eldao.getLevels(year);
+			lvls.remove(lvls.first()); // remove dummy "Member"
 			ctx.setAttribute("cyLevels", lvls, REQUEST);
 			
 			// Load stats
@@ -43,18 +44,15 @@ public class EliteStatsCommand extends AbstractCommand {
 			ctx.setAttribute("elitePcts", pcts, REQUEST);
 			
 			// Get prediction of next year
-			Collection<EliteLevel> nyLevels = eldao.getLevels(year + 1);
+			TreeSet<EliteLevel> nyLevels = eldao.getLevels(year + 1);
 			if (nyLevels.isEmpty()) {
-				ctx.setAttribute("estimatedLevels", Boolean.TRUE, REQUEST);
 				GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
-				Instant statSD = parseDateTime(ctx, "start");
-				if (statSD == null)
-					statSD = Instant.now();
-				
+
 				// Go one year back
-				LocalDate sd = LocalDate.ofInstant(statSD, ZoneOffset.UTC).minusMonths(12);
-				if (statSD == null)
-					sd = sd.minusDays(sd.getDayOfMonth() - 1);
+				LocalDate sd = LocalDate.now().minusMonths(12);
+				sd = sd.minusDays(sd.getDayOfMonth() - 1);
+				ctx.setAttribute("estimateStart", sd, REQUEST);
+				ctx.setAttribute("estimatedLevels", Boolean.TRUE, REQUEST);
 				
 				PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, false, "LEGS, DST");
 				PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, false, "DST, LEGS");

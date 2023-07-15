@@ -70,11 +70,12 @@ span.rmbar {
 </tr>
 <tr>
  <td colspan="2" class="mid">Status in the <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> program is based on your flight activity during the previous year, and requires requalification each year. You can qualify for a given level
- based on the number of flight legs flown, or the total flight distance. If you reach the threshold for a level, you immediately jump to that level and can maintain it throughout the year as well as the following year.</td>  
+ based on the number of flight legs flown, or the total flight distance. If you reach the threshold for a level, you immediately jump to that level and can maintain it throughout the year it was achieved as well as the following year.</td>  
 </tr>
 <tr>
- <td class="label eliteStatus">${currentYear + 1} Status</td>
- <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td>
+ <td class="label eliteStatus top">${currentYear + 1} Status</td>
+ <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate <fmt:int value="${projectedTotal.legs}" /> 
+ flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if></td>
 </tr>
 <tr>
  <td class="label eliteStatus">Flight Progress</td>
@@ -116,14 +117,14 @@ span.rmbar {
  <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span><br />
 <br />
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
-<fmt:date date="${upd.effectiveOn}" fmt="d" />&nbsp;
+<fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
 <c:choose>
 <c:when test="${upd.upgradeReason == 'ROLLOVER'}">
 Rolled over <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> achieved in ${upd.level.year - 1} for ${upd.level.year}</c:when>
 <c:when test="${upd.upgradeReason == 'DOWNGRADE'}">
-Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} achievement</c:when>
-<c:otherwise>
-Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (${upd.upgradeReason})</c:otherwise>
+Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} mileage achievement</c:when>
+<c:when test="${upd.upgradeReason != 'NONE'}">
+Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason})</c:when>
 </c:choose>
 <c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
 <hr />

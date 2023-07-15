@@ -38,13 +38,20 @@
 <tr>
  <td class="label top"><c:if test="${estimatedLevels}">Estimated </c:if>${currentYear + 1} Levels</td>
  <td class="data"><c:forEach var="lvl" items="${nyLevels}" varStatus="lvlStatus"><fmt:elite level="${lvl}" className="bld" />&nbsp;<fmt:int value="${lvl.legs}" /> legs, <fmt:int value="${lvl.distance}" />&nbsp;${distUnit}, <fmt:int value="${lvl.targetPercentile}" />%ile
- <c:if test="${!lvStatis.isLast()}"><br /></c:if> </c:forEach></td>
+ <c:if test="${!lvStatis.isLast()}"><br /></c:if> </c:forEach>
+ <c:if test="${estimatedLevels}"><br /><span class="ita small">Estimated requirements based on current year percentiles and flight activity since <fmt:date date="${estimateStart}" fmt="d" className="bld" tzName="UTC "/>.</span></c:if></td>
 </tr>
 <tr class="title caps">
- <td colspan="2">${eliteName}&nbsp;Requirements by Year</td>
+ <td colspan="2">${eliteName}&nbsp;Flight Requirements by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="reqGraph" style="height:425px;"></div>
+ <td colspan="2"><div id="lreqGraph" style="height:425px;"></div>
+</tr>
+<tr class="title caps">
+ <td colspan="2">${eliteName}&nbsp;Distance Requirements by Year</td>
+</tr>
+<tr>
+ <td colspan="2"><div id="dreqGraph" style="height:425px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Pilots by Year</td>
@@ -59,7 +66,7 @@
  <td colspan="2"><div id="statGraph" style="height:425px;"></div>
 </tr>
 <!-- Bottom Bar -->
-<tr class="title"><td class="eliteStatus" colspan="2">&nbsp;</td></tr>
+<tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>
 <content:copyright />
 </content:region>
@@ -68,7 +75,6 @@
 <script async>
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
-
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('get', 'elitestats.ws', true);
 	xmlreq.onreadystatechange = function() {
@@ -100,37 +106,44 @@ golgotha.local.renderChart = function() {
 		dt.levels.forEach(function(lvl) { r.push(lvl.data[x]); });
 		pdata.addRow(r);
 	}
+	
+	// Build the requirement data tables
+	const lrdata = new google.visualization.DataTable();
+	const drdata = new google.visualization.DataTable();
+	lrdata.addColumn('string','Year');
+	drdata.addColumn('string','Year');
+	for (var l = 1; l < dt.levels.length; l++) {
+		const lvl = dt.levels[l];
+		lrdata.addColumn('number',lvl.name + ' Legs');
+		drdata.addColumn('number',lvl.name + ' Distance');
+	}
 
-	// Display the requirements chart
-	const rchart = new google.visualization.LineChart(document.getElementById('reqGraph'));
-	const rdata = new google.visualization.DataTable(); let reqVAxes = {};
-	rdata.addColumn('string','Year');
-	for (var l = 0; l < dt.reqs.length; l++) {
-		const lvl = dt.reqs[l];
-		rdata.addColumn('number',lvl.name + ' Legs');
-		rdata.addColumn('number',lvl.name + ' Distance');
-		reqVAxes[l * 2] = {targetAxisIndex:0};
-		reqVAxes[(l * 2) + 1] = {targetAxisIndex:1};
+	// Populate the data tables
+	for (var x = 0; x < dt.years.length; x++) {
+		const lr = [dt.years[x].toString()];
+		const dr = [dt.years[x].toString()];
+		for (var l = 1; l < dt.levels.length; l++) {
+			lr.push(dt.reqs[l].legs[x]);
+			dr.push(dt.reqs[l].distance[x]);
+		}
+		
+		lrdata.addRow(lr);
+		drdata.addRow(dr);
 	}
 	
-	for (var x = 0; x < dt.years.length; x++) {
-		const r = [dt.years[x].toString()];
-		for (var l = 0; l < dt.reqs.length; l++) {
-			r.push(dt.reqs[l].legs[x]);
-			r.push(dt.reqs[l].distance[x]);
-		}
-
-		rdata.addRow(r);
-	}
-
+	// Display the legdistance requirements charts
+	const lrchart = new google.visualization.LineChart(document.getElementById('lreqGraph'));
+	const drchart = new google.visualization.LineChart(document.getElementById('dreqGraph'));
+	lrchart.draw(lrdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Flight Leg Requirements by Year',colors:barColors,vAxes:{0:{title:'Flight Legs',maxValue:600}}});
+	drchart.draw(drdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Distance Requirements by Year',colors:barColors,vAxes:{0:{title:'Flight Distance',maxValue:1000000}}});
+	
 	// Display the statistics chart
 	const schart = new google.visualization.LineChart(document.getElementById('statGraph'));
 	const sdata = new google.visualization.DataTable();
 	sdata.addColumn('string','Level');
 
-	// Draw the charts
+	// Draw the pilot statistics chart
 	pchart.draw(pdata,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle},title:'Pilots by Year',isStacked:true,colors:barColors});
-	rchart.draw(rdata,{hAxis:{textStyle:lgStyle},legend:{position:'none'},title:'Requirements by Year',colors:barColors,series:reqVAxes,vAxes:{0:{title:'Flight Legs',maxValue:600},1:{title:'Distance',maxValue:600000}}});
 	return true;
 };
 

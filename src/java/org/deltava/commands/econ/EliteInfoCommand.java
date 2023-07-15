@@ -4,6 +4,7 @@ package org.deltava.commands.econ;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -81,6 +82,11 @@ public class EliteInfoCommand extends AbstractCommand {
 			TreeSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
 			EliteLevel nyLevel = cyLevels.descendingSet().stream().filter(yt::matches).findFirst().orElse(cyLevels.first());
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
+			if (LocalDate.now().getMonthValue() > 3) {
+				YearlyTotal pt = yt.adjust(LocalDate.now());
+				ctx.setAttribute("projectedTotal", pt, REQUEST);
+				ctx.setAttribute("projectedLevel", cyLevels.descendingSet().stream().filter(pt::matches).findFirst().orElse(cyLevels.first()), REQUEST);	
+			}
 			
 			// Save status attributes
 			ctx.setAttribute("pilot", p, REQUEST);

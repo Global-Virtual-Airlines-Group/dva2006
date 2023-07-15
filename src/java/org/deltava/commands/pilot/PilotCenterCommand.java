@@ -4,6 +4,7 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
@@ -106,21 +107,35 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
 				int currentYear = EliteLevel.getYear(Instant.now());
+				TreeSet<EliteLevel> levels = eldao.getLevels(currentYear);
 				ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
 				List<EliteStatus> myStatus = eldao.getStatus(p.getID(), currentYear);
-				if (!myStatus.isEmpty()) {
-					EliteStatus myCurrentStatus = myStatus.get(myStatus.size() - 1);
-					ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
+				if (myStatus.isEmpty()) {
+					EliteStatus curStatus = new EliteStatus(p.getID(), levels.first()); 
+					curStatus.setEffectiveOn(Instant.now());
+					myStatus.add(curStatus);
+				}
+				
+				// Get current status
+				EliteStatus myCurrentStatus = myStatus.get(myStatus.size() - 1);
+				ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
+				ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
 					
-					// Get our totals
-					GetEliteStatistics esdao = new GetEliteStatistics(con);
-					List<YearlyTotal> eliteTotals = esdao.getEliteTotals(p.getID());
-					ctx.setAttribute("currentEliteTotal", eliteTotals.stream().filter(yt -> yt.getYear() == currentYear).findFirst().orElse(new YearlyTotal(currentYear, p.getID())), REQUEST);
-					ctx.setAttribute("eliteTotals", eliteTotals, REQUEST);
+				// Get our totals
+				GetEliteStatistics esdao = new GetEliteStatistics(con);
+				List<YearlyTotal> eliteTotals = esdao.getEliteTotals(p.getID());
+				YearlyTotal cyt = eliteTotals.stream().filter(yt -> yt.getYear() == currentYear).findFirst().orElse(new YearlyTotal(currentYear, p.getID()));
+				ctx.setAttribute("currentEliteTotal", cyt, REQUEST);
+				ctx.setAttribute("eliteTotals", eliteTotals, REQUEST);
 					
-					// Display next level
-					TreeSet<EliteLevel> levels = eldao.getLevels(currentYear);
-					ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
+				// Display next year's level and downgrade potential after Q3
+				if (LocalDate.now().getMonthValue() > 9) {
+					EliteLevel nextYearLevel = levels.descendingSet().stream().filter(cyt::matches).findFirst().orElse(levels.first());
+					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
+					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
+					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
+					if (isDowngrade)
+						ctx.setAttribute("nextEliteLevel", myCurrentStatus.getLevel(), REQUEST);
 				}
 			}
 
