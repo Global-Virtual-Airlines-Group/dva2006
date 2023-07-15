@@ -3,6 +3,8 @@ package org.deltava.beans.econ;
 
 import java.time.*;
 
+import org.deltava.beans.Auditable;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -12,12 +14,12 @@ import org.deltava.util.cache.Cacheable;
  * @since 9.2
  */
 
-public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheable {
+public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel>, Cacheable {
 	
 	/**
 	 * A dummy, empty Elite level.
 	 */
-	public static final EliteLevel EMPTY = new EliteLevel(0, "$EMPTY");
+	public static final EliteLevel EMPTY = new EliteLevel(0, "$EMPTY", null);
 	
 	/**
 	 * The first year of the Elite program.
@@ -27,7 +29,7 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	private final String _name;
 	private final int _year;
 	private int _targetPercentile;
-	
+	private String _owner;
 	private Instant _statStartDate;
 	
 	private int _legs;
@@ -48,14 +50,26 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	}
 	
 	/**
+	 * Rounds a leg or mileage number to the nearest factor.
+	 * @param value the value
+	 * @param rndTo the rounding factor
+	 * @return the rounded number
+	 */
+	public static int round(int value, int rndTo) {
+		return ((value == 0) || (rndTo == 1)) ? value : ((value / rndTo) + 1) * rndTo;
+	}
+	
+	/**
 	 * Creates the bean.
 	 * @param year the year
 	 * @param name the level name
+	 * @param code the owner virtual airline code
 	 */
-	public EliteLevel(int year, String name) {
+	public EliteLevel(int year, String name, String code) {
 		super();
 		_year = year;
 		_name = name;
+		_owner = code;
 	}
 	
 	/**
@@ -72,6 +86,14 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	 */
 	public int getYear() {
 		return _year;
+	}
+	
+	/**
+	 * Returns the owner of this Elite Level.
+	 * @return the owner virtual airline code
+	 */
+	public String getOwner() {
+		return _owner;
 	}
 
 	/**
@@ -154,6 +176,14 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	}
 	
 	/**
+	 * Returns the last date of statistics used to generate thresholds.
+	 * @return the end date/time
+	 */
+	public Instant getStatisticsEndDate() {
+		return ZonedDateTime.ofInstant(_statStartDate, ZoneOffset.UTC).plusYears(1).minusSeconds(1).toInstant();
+	}
+	
+	/**
 	 * Updates the number of flight legs required for this level.
 	 * @param legs the number of legs
 	 */
@@ -167,6 +197,14 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	 */
 	public void setDistance(int dst) {
 		_distance = dst;
+	}
+	
+	/**
+	 * Updates the owner of this level.
+	 * @param code the owner virtual airline code
+	 */
+	public void setOwner(String code) {
+		_owner = code;
 	}
 
 	/**
@@ -218,6 +256,11 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 	}
 	
 	@Override
+	public String getAuditID() {
+		return toString();
+	}
+	
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
@@ -237,15 +280,15 @@ public class EliteLevel implements EliteTotals, Comparable<EliteLevel>, Cacheabl
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append('/');
 		buf.append(_year);
+		buf.append('/');
+		buf.append(_owner);
 		return buf.toString();
 	}
 
 	@Override
 	public int compareTo(EliteLevel el2) {
 		int tmpResult = Integer.compare(_points, el2._points);
-		if (tmpResult == 0)
-			tmpResult = Integer.compare(_legs, el2._legs);
-		
+		if (tmpResult == 0) tmpResult = Integer.compare(_legs, el2._legs);
 		return (tmpResult == 0) ? Integer.compare(_distance, el2._distance) : tmpResult;
 	}
 }

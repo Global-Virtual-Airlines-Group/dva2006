@@ -87,9 +87,10 @@ golgotha.local.validate = function(f) {
 <c:if test="${!empty lvl.statisticsStartDate}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><span class="sec bld caps">Eligibility Requirements calculated using Flight Data from <fmt:date date="${lvl.statisticsStartDate}" fmt="d" /> to <fmt:date date="${statisticsEndDate}" fmt="d" /></span></td>
+ <td class="data"><span class="sec bld caps">Eligibility Requirements calculated using Flight Data from <fmt:date date="${lvl.statisticsStartDate}" fmt="d" /> to <fmt:date date="${lvl.statisticsEndDate}" fmt="d" /></span></td>
 </tr>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

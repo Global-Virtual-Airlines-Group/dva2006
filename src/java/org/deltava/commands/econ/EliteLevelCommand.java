@@ -2,16 +2,17 @@
 package org.deltava.commands.econ;
 
 import java.time.*;
+import java.util.Collection;
 import java.sql.Connection;
-import java.time.temporal.ChronoUnit;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.econ.EliteLevel;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EliteAccessControl;
-
+import org.deltava.util.BeanUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 9.2
  */
 
-public class EliteLevelCommand extends AbstractFormCommand {
+public class EliteLevelCommand extends AbstractAuditFormCommand {
 
 	/**
      * Callback method called when saving the Elite level.
@@ -50,9 +51,28 @@ public class EliteLevelCommand extends AbstractFormCommand {
 		
 		// Save the bean
 		try {
-			SetElite ewdao = new SetElite(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			
+			// Get existing bean
+			GetElite edao = new GetElite(con);
+			EliteLevel ol = edao.get(lvl.getName(), lvl.getYear(), ctx.getDB());
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ol, lvl);
+			AuditLog ae = AuditLog.create(lvl, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Write the bean
+			SetElite ewdao = new SetElite(con);
 			ewdao.write(lvl);
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -100,8 +120,6 @@ public class EliteLevelCommand extends AbstractFormCommand {
 				// Save in request
 				ctx.setAttribute("lvl", lvl, REQUEST);
 				ctx.setAttribute("pilotCount", Integer.valueOf(edao.getPilotCount(lvl)), REQUEST);
-				if (lvl.getStatisticsStartDate() != null)
-					ctx.setAttribute("statisticsEndDate", LocalDate.ofInstant(lvl.getStatisticsStartDate(), ZoneOffset.UTC).plus(1, ChronoUnit.YEARS), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
