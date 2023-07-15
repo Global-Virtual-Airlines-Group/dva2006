@@ -234,7 +234,7 @@ public class GetServInfo extends OnlineNetworkDAO {
 								srv.setLocation(tk.nextToken());
 								srv.setComment(tk.nextToken());
 								MutableInteger srvCnt = serverCons.get(srv.getName());
-								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.getValue().intValue());
+								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.intValue());
 								info.add(srv);
 							} catch (Exception e) {
 								log.info("Error parsing server data for " + name + " - " + e.getMessage());

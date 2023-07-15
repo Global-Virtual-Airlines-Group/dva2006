@@ -1,10 +1,10 @@
- // Copyright 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 /**
  * A class to store mutable Integer values.
  * @author Luke
- * @version 8.7
+ * @version 11.0
  * @since 8.7
  */
 
@@ -28,7 +28,15 @@ public class MutableInteger implements Comparable<MutableInteger> {
 	}
 	
 	/**
-	 * Returns the value.
+	 * Returns the value as a primitive.
+	 * @return the value
+	 */
+	public int intValue() {
+		return _value;
+	}
+	
+	/**
+	 * Returns the value as an Object.
 	 * @return the value
 	 */
 	public Integer getValue() {

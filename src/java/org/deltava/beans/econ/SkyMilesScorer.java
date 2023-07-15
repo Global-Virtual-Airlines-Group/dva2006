@@ -84,7 +84,7 @@ public class SkyMilesScorer extends EliteScorer {
 		// Check for non-ACARS flights this month
 		boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS); 
 		if (!isACARS && (lvl.getYear() > 2004)) {
-			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).getValue().intValue();
+			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).intValue();
 			if (cnt >= MAX_NON_ACARS) {
 				setBase(fr.getDistance() / 2, "Non-ACARS Base Miles");
 				_score.setScoreOnly(true);
