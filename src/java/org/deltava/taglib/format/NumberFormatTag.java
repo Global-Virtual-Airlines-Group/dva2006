@@ -146,7 +146,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
      */
     protected void printValue() throws Exception {
     	JspWriter out = pageContext.getOut();
-    	if (_forceSign && (_value.doubleValue() < 0)) out.print('-');
+    	if (_forceSign && (_value.doubleValue() > 0)) out.print('+');
     	out.print(((_value.longValue() == 0) && (_zeroValue != null)) ? _zeroValue : _nF.format(_value.doubleValue()));
     }
     
