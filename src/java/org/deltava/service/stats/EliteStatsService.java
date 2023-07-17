@@ -46,7 +46,7 @@ public class EliteStatsService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		final int currentYear = EliteLevel.getYear(Instant.now());
+		final int currentYear = EliteScorer.getStatusYear(Instant.now());
 		SortedSet<EliteLevel> allLevels = new TreeSet<EliteLevel>(new EliteLevelComparator()); SortedSet<EliteLevel> levelLegend = new TreeSet<EliteLevel>();
 		Map<EliteLevel, Integer> allCounts = new TreeMap<EliteLevel, Integer>(new EliteLevelComparator());
 		Collection<EliteStats> yrStats = new TreeSet<EliteStats>(); Collection<Integer> yrs = new LinkedHashSet<Integer>(); 

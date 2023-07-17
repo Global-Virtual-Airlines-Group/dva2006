@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.EliteScorer;
 import org.deltava.beans.help.*;
 
 import org.deltava.commands.*;
@@ -206,7 +207,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 				ctx.setAttribute("issue", i, REQUEST);
 				ctx.setAttribute("access", ac, REQUEST);
 				if (SystemData.getBoolean("econ.elite.enabled"))
-					ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID()), REQUEST);
+					ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID(), EliteScorer.getStatusYear(Instant.now())), REQUEST);
 				
 				// Get audit log
 				readAuditLog(ctx, i);
@@ -302,7 +303,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			GetElite eldao = new GetElite(con);
 			ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
 			if (SystemData.getBoolean("econ.elite.enabled"))
-				ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID()), REQUEST);
+				ctx.setAttribute("eliteStatus", eldao.getStatus(i.getAuthorID(), EliteScorer.getStatusYear(Instant.now())), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -46,7 +46,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 		if (!ac.getCanRecalculate())
 			throw securityException("Cannot recalculate Elite status");
 
-		final int year = EliteLevel.getYear(Instant.now());
+		EliteScorer es = EliteScorer.getInstance();
+		final int year = EliteScorer.getStatusYear(Instant.now());
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -59,8 +60,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			// Get the current levels
 			GetElite edao = new GetElite(con);
 			TreeSet<EliteLevel> lvls = edao.getLevels(year);
-			List<EliteStatus> oldStatus = edao.getStatus(p.getID(), year);
-			EliteStatus st = oldStatus.stream().filter(es -> es.getUpgradeReason().isRollover()).findAny().orElse(new EliteStatus(p.getID(), lvls.first()));
+			List<EliteStatus> oldStatus = edao.getAllStatus(p.getID(), year);
+			EliteStatus st = oldStatus.stream().filter(est -> est.getUpgradeReason().isRollover()).findAny().orElse(new EliteStatus(p.getID(), lvls.first()));
 			if (st.getEffectiveOn() == null)
 				st.setEffectiveOn(LocalDate.of(year, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
 			
@@ -72,7 +73,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
 			GetFlightReports frdao = new GetFlightReports(con);
 			List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
-			pireps.removeIf(fr -> ((fr.getStatus() != FlightStatus.OK) || (EliteLevel.getYear(fr.getDate()) != year)));
+			pireps.removeIf(fr -> ((fr.getStatus() != FlightStatus.OK) || (EliteScorer.getStatsYear(fr.getDate()) != year)));
 			
 			// Get the DAOs
 			GetAircraft acdao = new GetAircraft(con);
@@ -86,7 +87,6 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			elwdao.clear(p.getID(), year, false);
 			
 			// Score the Flight Reports
-			EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
 			YearlyTotal total = new YearlyTotal(year, p.getID());
 			Collection<String> msgs = new ArrayList<String>();
 			AirlineInformation ai = SystemData.getApp(null);

@@ -40,7 +40,6 @@ public class EliteScoringTask extends Task {
 		
 		// Determine lookback interval
 		log.info("Scoring flights approved in the past 30 days");
-		EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -66,13 +65,14 @@ public class EliteScoringTask extends Task {
 			for (Integer id : IDs) {
 				ctx.startTX();
 				
+				EliteScorer es = EliteScorer.getInstance();
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
-				final int yr = EliteLevel.getYear(fr.getDate());
+				final int yr = EliteScorer.getStatusYear(fr.getDate());
 				TreeSet<EliteLevel> lvls = eldao.getLevels(yr);
 				
 				// Get the pilot and Elite data - if we have no status see if we need to do a rollover
 				Pilot p = pdao.get(fr.getAuthorID());
-				EliteStatus st = eldao.getStatus(p.getID());
+				EliteStatus st = eldao.getStatus(p.getID(), yr);
 				if (st == null) {
 					st = new EliteStatus(p.getID(), lvls.first());
 					st.setEffectiveOn(fr.getSubmittedOn());

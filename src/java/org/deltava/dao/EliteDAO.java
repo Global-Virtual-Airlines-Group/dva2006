@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.Instant;
 
 import org.deltava.beans.econ.*;
 
@@ -37,16 +36,6 @@ abstract class EliteDAO extends DAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns an Elite status level for the current year.
-	 * @param name the level name
-	 * @return an EliteLevel, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public EliteLevel get(String name) throws DAOException {
-		return get(name, EliteLevel.getYear(Instant.now()), SystemData.get("airline.db"));
-	}
-
 	/**
 	 * Returns an Elite status level for a particular year.
 	 * @param name the level name

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 10.2
+ * @version 11.0
  * @since 1.0
  */
 
@@ -106,10 +106,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Load elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
-				int currentYear = EliteLevel.getYear(Instant.now());
+				int currentYear = EliteScorer.getStatusYear(Instant.now());
 				TreeSet<EliteLevel> levels = eldao.getLevels(currentYear);
 				ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
-				List<EliteStatus> myStatus = eldao.getStatus(p.getID(), currentYear);
+				List<EliteStatus> myStatus = eldao.getAllStatus(p.getID(), currentYear);
 				if (myStatus.isEmpty()) {
 					EliteStatus curStatus = new EliteStatus(p.getID(), levels.first()); 
 					curStatus.setEffectiveOn(Instant.now());
