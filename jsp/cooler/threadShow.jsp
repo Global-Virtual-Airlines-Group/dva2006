@@ -128,6 +128,8 @@ return true;
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="page" />
 <c:set var="isDispatcher" value="${fn:contains(pilot.roles, 'Dispatch')}" scope="page" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="page" />
+<c:set var="va" value="${apps[pilotLoc.airlineCode]}" scope="page" />
+<c:set var="eliteLevel" value="${eliteStatus[msg.authorID]}" scope="page" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="page" />
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="page" />
 <c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="page" />
@@ -139,6 +141,7 @@ return true;
 <c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
 <br />
 <span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
+<c:if test="${!empty eliteStatus}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" /><br /></c:if>
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
