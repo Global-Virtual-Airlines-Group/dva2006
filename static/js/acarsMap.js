@@ -2,6 +2,7 @@ golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], ro
 golgotha.maps.acars.generateXMLRequest = function()
 {
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'acars_map_json.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -200,6 +201,7 @@ return true;
 golgotha.maps.acars.showFlightProgress = function(marker, doProgress, doRoute)
 {
 const xreq = new XMLHttpRequest();
+xreq.timeout = 3500;
 xreq.open('GET', 'acars_progress_json.ws?id=' + marker.flight_id + '&time=' + golgotha.util.getTimestamp(3000) + '&route=' + doRoute + '&isExternal=' + marker.isExternal, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
