@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 10.4
+ * @version 11.0
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
     protected Number _value;
     private String _className;
     protected String _zeroValue;
+    private boolean _forceSign;
     
     /**
      * Initializes the tag.
@@ -61,6 +62,14 @@ abstract class NumberFormatTag extends UserSettingsTag {
      */
     public final void setValue(Number value) {
         _value = value;
+    }
+    
+    /**
+     * Sets whether to explicitly display a positive or negative sign before the number.
+     * @param forceSign TRUE to always display the sign, otherwise FALSE
+     */
+    public void setForceSign(boolean forceSign) {
+    	_forceSign = forceSign;
     }
     
     /**
@@ -136,7 +145,9 @@ abstract class NumberFormatTag extends UserSettingsTag {
      * @throws Exception if an I/O error occurs
      */
     protected void printValue() throws Exception {
-    	pageContext.getOut().print(((_value.longValue() == 0) && (_zeroValue != null)) ? _zeroValue : _nF.format(_value.doubleValue()));
+    	JspWriter out = pageContext.getOut();
+    	if (_forceSign && (_value.doubleValue() < 0)) out.print('-');
+    	out.print(((_value.longValue() == 0) && (_zeroValue != null)) ? _zeroValue : _nF.format(_value.doubleValue()));
     }
     
     /**
