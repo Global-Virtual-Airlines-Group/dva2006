@@ -144,6 +144,7 @@ public class ThreadCommand extends AbstractCommand {
 			GetElite eldao = new GetElite(con);
 			GetAccomplishment accdao = new GetAccomplishment(con);
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
+			Map<String, AirlineInformation> apps = new HashMap<String, AirlineInformation>();
 			Map<Integer, EliteStatus> eStatus = new HashMap<Integer, EliteStatus>();
 			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
 			for (String dbTableName : udm.getTableNames()) {
@@ -151,6 +152,7 @@ public class ThreadCommand extends AbstractCommand {
 				
 				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserData.isPilotTable(dbTableName)) {
+					apps.putIfAbsent(ai.getCode(), ai);
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
 					for (Pilot p : pilots.values())
@@ -159,7 +161,7 @@ public class ThreadCommand extends AbstractCommand {
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
 					if (ai.getHasElite())
-						eStatus.putAll(eldao.getStatus(pilots.values(), EliteLevel.getYear(mt.getLastUpdatedOn()), dbTableName));
+						eStatus.putAll(eldao.getStatus(pilots.values(), EliteScorer.getStatusYear(mt.getLastUpdatedOn()), dbTableName));
 				} else
 					users.putAll(adao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
@@ -239,6 +241,7 @@ public class ThreadCommand extends AbstractCommand {
 			}
 			
 			// Save the thread, pilots and access controller in the request
+			ctx.setAttribute("apps", apps, REQUEST);
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 			ctx.setAttribute("pilots", users, REQUEST);
