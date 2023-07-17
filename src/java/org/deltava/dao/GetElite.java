@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.*;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.econ.*;
@@ -103,14 +102,13 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String db) throws DAOException {
-		int planYear = (year == 0) ? EliteLevel.getYear(Instant.now()) : year;
 		Collection<Integer> dbIDs = new HashSet<Integer>();
 		
 		// Load from the cache
 		Collection<EliteStatus> results = new ArrayList<EliteStatus>();
 		for (Iterator<?> i = IDs.iterator(); i.hasNext();) {
 			Integer id = toID(i.next());
-			Long cacheKey = EliteStatus.generateKey(planYear, id.intValue());
+			Long cacheKey = EliteStatus.generateKey(year, id.intValue());
 			EliteStatus st = _stCache.get(cacheKey);
 			if (st != null )
 				results.add(st);
@@ -126,7 +124,7 @@ public class GetElite extends EliteDAO {
 			sqlBuf.append(")) GROUP BY PILOT_ID ORDER BY CD DESC");
 			
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-				ps.setInt(1, planYear);
+				ps.setInt(1, year);
 				results.addAll(executeStatus(ps));
 				populateLevels(results);
 			} catch (SQLException se) {
@@ -138,13 +136,14 @@ public class GetElite extends EliteDAO {
 	}
 
 	/**
-	 * Loads a Pilot's most recent Elite status for the current year 
+	 * Loads a Pilot's most recent Elite status for a given year.
 	 * @param pilotID the Pilot's database ID
+	 * @param year the status year
 	 * @return an EliteStatus bean, or null
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public EliteStatus getStatus(int pilotID) throws DAOException {
-		List<EliteStatus> results = getStatus(pilotID, EliteLevel.getYear(Instant.now()));
+	public EliteStatus getStatus(int pilotID, int year) throws DAOException {
+		List<EliteStatus> results = getAllStatus(pilotID, year);
 		return results.isEmpty() ? null : results.get(results.size() - 1);
 	}
 	
@@ -155,7 +154,7 @@ public class GetElite extends EliteDAO {
 	 * @return a List of EliteStatus beans, ordered by acheivement date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<EliteStatus> getStatus(int pilotID, int year) throws DAOException {
+	public List<EliteStatus> getAllStatus(int pilotID, int year) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), CREATED, UPD_REASON FROM ELITE_STATUS WHERE (PILOT_ID=?)");

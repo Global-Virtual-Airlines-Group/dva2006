@@ -31,8 +31,8 @@ public class EliteRolloverTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Check if we've run this year
-		Instant lr = ctx.getLastRun(); final int yr = EliteLevel.getYear(Instant.now());
-		if ((lr != null) && (EliteLevel.getYear(lr) == yr))
+		Instant lr = ctx.getLastRun(); final int yr = EliteScorer.getStatusYear(Instant.now());
+		if ((lr != null) && (EliteScorer.getStatusYear(lr) == yr))
 			return;
 		
 		try {
@@ -52,7 +52,7 @@ public class EliteRolloverTask extends Task {
 			// Get highest status from last year
 			for (Pilot p : pilots.values()) {
 				ctx.startTX();
-				List<EliteStatus> status = eldao.getStatus(p.getID(), (yr - 1));
+				List<EliteStatus> status = eldao.getAllStatus(p.getID(), (yr - 1));
 				status.removeIf(es -> (es.getUpgradeReason() == UpgradeReason.ROLLOVER || es.getUpgradeReason() == UpgradeReason.DOWNGRADE));
 				EliteStatus st = status.get(status.size() - 1);
 				

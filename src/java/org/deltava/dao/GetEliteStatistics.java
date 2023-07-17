@@ -43,7 +43,7 @@ public class GetEliteStatistics extends EliteDAO {
 		CacheableList<YearlyTotal> results = _eliteTotalCache.get(Integer.valueOf(pilotID));
 		if (results != null) return results.clone();
 		
-		try (PreparedStatement ps = prepare("SELECT PE.YEAR AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM "
+		try (PreparedStatement ps = prepare("SELECT YEAR(P.DATE) AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM "
 			+ "PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) GROUP BY Y ORDER BY Y DESC")) {
 			ps.setInt(1, pilotID);
 			
@@ -67,11 +67,10 @@ public class GetEliteStatistics extends EliteDAO {
 	 * Loads flight/distance percentiles by Pilot for a one year interval.
 	 * @param year the program year
 	 * @param granularity the percentile granularity
-	 * @param isAvg TRUE to do the average across the percentile, FALSE for the base
 	 * @return a PercentileStatsEntry
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<ElitePercentile> getElitePercentiles(int year, int granularity, boolean isAvg) throws DAOException {
+	public List<ElitePercentile> getElitePercentiles(int year, int granularity) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT P.PILOT_ID, COUNT(DISTINCT P.ID) AS CNT, SUM(PE.DISTANCE) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM PIREPS P, PIREP_ELITE PE "
 			+ "WHERE (P.ID=PE.ID) AND ((P.DATE>=?) AND (P.DATE<=?)) AND (P.STATUS=?) GROUP BY P.PILOT_ID ORDER BY CNT")) {
 			ZonedDateTime sd = LocalDate.of(year, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC);
@@ -93,7 +92,7 @@ public class GetEliteStatistics extends EliteDAO {
 			List<ElitePercentile> results = new ArrayList<ElitePercentile>();
 			for (int pct = 0; pct < 100; pct += granularity) {
 				int startIdx = rawResults.size() * pct / 100;
-				int endIdx = isAvg ? Math.min(rawResults.size() - 1, rawResults.size() * (pct + 1) / 100) : startIdx + 1;
+				int endIdx = startIdx + 1;
 				
 				// Average the percentile (you may want to do just the minimum)
 				YearlyTotal totals = new YearlyTotal(year, 1);

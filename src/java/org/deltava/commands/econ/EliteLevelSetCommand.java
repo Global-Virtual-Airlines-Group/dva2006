@@ -1,12 +1,12 @@
 // Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
-import java.time.LocalDate;
 
-import org.deltava.beans.econ.EliteLevel;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.stats.PercentileStatsEntry;
 
 import org.deltava.commands.*;
@@ -15,6 +15,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.EliteAccessControl;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -40,54 +41,78 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		if (!ac.getCanEdit())
 			throw securityException("Cannot calculate Elite levels");
 		
-		int year = ctx.getID();
+		// Get the stats start date
+		ZonedDateTime now = ZonedDateTime.now();
+		 int currentYear = EliteScorer.getStatusYear(now.toInstant());
+		 ctx.setAttribute("startDate", ZonedDateTime.of(currentYear - 1, 12, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
+		 ctx.setAttribute("year", Integer.valueOf(currentYear + 1), REQUEST);
+		
+		// Redirect to JSP if needed
+		CommandResult result = ctx.getResult();
+		Instant startDate = parseDateTime(ctx, "start");
+		if (startDate == null) {
+			result.setURL("/jsp/econ/eliteLevelSet.jsp");
+			result.setSuccess(true);
+			return;
+		}
+		
+		// If we're calculating statistics for less than the previous calendar year
+		ZonedDateTime zsd = ZonedDateTime.ofInstant(startDate, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
+		float factor = 1.0f;
+		if (zsd.isAfter(now.minusYears(1)))  {
+			Duration d = Duration.between(zsd, now);
+			int daysInYear = Year.isLeap(now.getYear()) ? 365 : 366;
+			factor = daysInYear * 24f / d.toHours();
+		}
+		  
+		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("doCommit"));
 		try {
 			Connection con = ctx.getConnection();
-			ctx.startTX();
 			
-			// Remove the levels for this year, if they are present stop
+			// Get current year's levels
 			GetElite edao = new GetElite(con);
-			Collection<EliteLevel> allLevels = edao.getLevels(); 
-			Optional<EliteLevel> cyLevelsFound = allLevels.stream().filter(lv -> lv.getYear() == year).findAny();
-			if (!cyLevelsFound.isEmpty())
-				throw securityException("Elite levels already populated for " + year);
-			
-			// Get previous year's levels
-			Collection<EliteLevel> pyLevels = allLevels.stream().filter(lv -> lv.getYear() == (year - 1)).collect(Collectors.toList());
+			Collection<EliteLevel> cyLevels = edao.getLevels(currentYear) ;
 			
 			// Get the PIREP statistics for the year
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			PercentileStatsEntry st = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, false, "LEGS, DST");
-			PercentileStatsEntry ast = stdao.getFlightPercentiles(LocalDate.of(year - 2, 12, 1), 1, true, "LEGS, DST");
+			PercentileStatsEntry lst = stdao.getFlightPercentiles(zsd.toLocalDate(), 1, "LEGS, DST");
+			PercentileStatsEntry dst = stdao.getFlightPercentiles(zsd.toLocalDate(), 1, "DST, LEGS");
 			
-			// Write the new levels
-			SetElite ewdao = new SetElite(con);
-			int legRound = SystemData.getInt("econ.elite.round.leg", 5); int dstRound = SystemData.getInt("econ.elite.round.distance", 5000);
+			// Calculate the new levels
 			Map<String, EliteLevel> newLevels = new HashMap<String, EliteLevel>();
-			for (EliteLevel oldLevel : pyLevels) {
-				EliteLevel lvl = new EliteLevel(year, oldLevel.getName(), oldLevel.getOwner());
+			for (EliteLevel oldLevel : cyLevels) {
+				EliteLevel lvl = new EliteLevel(oldLevel.getYear() + 1, oldLevel.getName(), oldLevel.getOwner());
 				lvl.setColor(oldLevel.getColor());
 				lvl.setBonusFactor(oldLevel.getBonusFactor());
-				lvl.setTargetPercentile(oldLevel.getTargetPercentile());
-				lvl.setPoints(oldLevel.getPoints());
 				lvl.setVisible(oldLevel.getIsVisible());
+				lvl.setStatisticsStartDate(zsd.toInstant());
+				if (oldLevel.getLegs() > 0) {
+					int targetPct = StringUtils.parse(ctx.getParameter("adjust-" + oldLevel.getName()), -1);
+					lvl.setTargetPercentile((targetPct > 0) ? targetPct : oldLevel.getTargetPercentile());
+					lvl.setLegs(EliteLevel.round(lst.getLegs(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.leg", 5)));
+					lvl.setDistance(EliteLevel.round(dst.getDistance(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.distance", 5000)));
+					lvl.setPoints(EliteLevel.round(lvl.getPoints() * factor, SystemData.getInt("econ.elite.round.points", 5000)));
+				}
 				
-				// Calculate legs and distance
-				int legs = st.getLegs(oldLevel.getTargetPercentile()); int distance = ast.getDistance(oldLevel.getTargetPercentile());
-				int avgDistance = Math.max(575,  Math.min(925, (distance / legs)));
-				lvl.setLegs((lvl.getTargetPercentile() > 1) ? legs / legRound * legRound + legRound : 1);
-				lvl.setDistance(lvl.getLegs() * avgDistance / dstRound * dstRound + dstRound);
+				newLevels.put(lvl.getName(), lvl);
+			}
+			
+			// Write levels if needed
+			if (isCommit) {
+				ctx.startTX();
+				SetElite ewdao = new SetElite(con);	
+				for (EliteLevel nl : newLevels.values())
+					ewdao.write(nl);
 				
-				// Write the level
-				ewdao.write(lvl);
+				ctx.commitTX();
 			}
 			
 			// Save old and new levels
 			ctx.setAttribute("isLevelSet", Boolean.TRUE, REQUEST);
-			ctx.setAttribute("year", Integer.valueOf(year), REQUEST);
-			ctx.setAttribute("oldLevels", CollectionUtils.createMap(pyLevels, EliteLevel::getName), REQUEST);
+			ctx.setAttribute("startDate", zsd, REQUEST);
+			ctx.setAttribute("statsAdjustFactor", Double.valueOf(factor), REQUEST);
+			ctx.setAttribute("oldLevels", CollectionUtils.createMap(cyLevels, EliteLevel::getName), REQUEST);
 			ctx.setAttribute("newLevels", newLevels, REQUEST);
-			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -96,9 +121,8 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		}
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
-		result.setType(ResultType.REQREDIRECT);
-		result.setURL("/jsp/econ/eliteLevelUpdate.jsp");
+		result.setType(isCommit ? ResultType.REQREDIRECT : ResultType.FORWARD);
+		result.setURL("/jsp/econ/" + (isCommit ? "eliteLevelUpdate.jsp" : "eliteLevelSet.jsp"));
 		result.setSuccess(true);
 	}
 }

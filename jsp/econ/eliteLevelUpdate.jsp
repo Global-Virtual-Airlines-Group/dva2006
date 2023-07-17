@@ -27,14 +27,14 @@
 <c:when test="${isUpdate}">
 <div class="updateHdr">${eliteName} Level Updated</div>
 <br />
-The <span class="pri bld">${eliteName}</span>&nbsp;<span style="color:${lvl.hexColor}" class="bld">${lvl.name}</span> status level definition has been updated in the database. This will not make any changes to existing status levels.<br />
+The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" className="bld" nameOnly="true" /> status level definition has been updated in the database. This will not make any changes to existing ${eliteName} status levels.<br />
 </c:when>
 <c:when test="${isRecalc}">
 <div class="updateHdr">${eliteName} Status Recalculated</div>
 <br />
 <span class="pri bld">${eliteName}</span> status for ${pilot.name} has been recalculated.<br />
 <br />
-<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:distance value="${total.distance}" /> in ${total.year}.<br />
+<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${eliteDistance} in ${total.year}.<br />
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
@@ -43,7 +43,7 @@ ${msg}<br /></c:forEach>
 <c:when test="${isLevelSet}">
 <div class="updateHdr">${eliteName} Levels Calculated</div>
 <br />
-<span class="pri bld">${eliteName}</span>&nbsp; status levels for ${year} have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br />
+<span class="pri bld">${eliteName}</span>&nbsp; status levels for <span class="bld">${year}</span> have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br />
 <br />
 <c:forEach var="lvl" items="${newLevels}">
 <fmt:elite level="${lvl}" className="bld" nameOnly="true" /> - <fmt:int value="${lvl.legs}" /> flight legs, <fmt:int value="${lvl.distance}" /> ${eliteDistance}<br />

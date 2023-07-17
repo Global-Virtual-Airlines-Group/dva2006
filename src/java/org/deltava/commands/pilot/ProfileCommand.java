@@ -4,6 +4,7 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.logging.log4j.*;
 
@@ -12,6 +13,7 @@ import org.deltava.beans.academy.Course;
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.acars.UpdateChannel;
 import org.deltava.beans.cooler.SignatureImage;
+import org.deltava.beans.econ.EliteScorer;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.testing.Test;
@@ -787,7 +789,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get Elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
-				ctx.setAttribute("eliteStatus", eldao.getStatus(p.getID()), REQUEST);
+				ctx.setAttribute("eliteStatus", eldao.getStatus(p.getID(), EliteScorer.getStatusYear(Instant.now())), REQUEST);
 			}
 			
 			// Load instructor IDs

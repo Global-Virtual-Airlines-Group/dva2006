@@ -2,9 +2,7 @@
 package org.deltava.beans.econ;
 
 import java.util.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.temporal.ChronoField;
 
 import org.deltava.beans.acars.RunwayDistance;
@@ -26,6 +24,9 @@ public class SkyMilesScorer extends EliteScorer {
 	
 	private final Map<Integer, MutableInteger> _nonACARSCounts = new HashMap<Integer, MutableInteger>();
 	
+	/*
+	 * Helper method to generate the key value used to lookup the number of non-ACARS flights in a month.
+	 */
 	private static Integer getNonACARSKey(Instant dt) {
 		LocalDate ld = LocalDate.ofInstant(dt, ZoneOffset.UTC);
 		return Integer.valueOf(ld.get(ChronoField.YEAR) * 100 + ld.get(ChronoField.MONTH_OF_YEAR));
