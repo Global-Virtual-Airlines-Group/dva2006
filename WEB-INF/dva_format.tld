@@ -25,6 +25,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>forceSign</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -51,6 +57,12 @@
 			<name>zero</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>forceSign</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
 			<name>value</name>
@@ -126,6 +138,12 @@
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Integer</type>
 		</attribute>
+		<attribute>
+			<name>forceSign</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
 	</tag>
 
 	<tag>
@@ -159,6 +177,12 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>forceSign</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 
@@ -197,6 +221,12 @@
 			<name>zero</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>forceSign</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 
