@@ -520,12 +520,11 @@ public class GetFlightReportStatistics extends DAO {
 	 * Loads flight/distance percentiles by Pilot for a one year interval.
 	 * @param startDate the start date
 	 * @param granularity the percentile granularity
-	 * @param isAvg TRUE to do the average across the percentile, FALSE for the base
 	 * @param sortBy the sorting column
 	 * @return a PercentileStatsEntry
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, boolean isAvg, String sortBy) throws DAOException {
+	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, String sortBy) throws DAOException {
 		LocalDateTime sd = startDate.atStartOfDay();
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY " + sortBy)) {
 			ps.setTimestamp(1, createTimestamp(sd.toInstant(ZoneOffset.UTC)));
@@ -543,9 +542,7 @@ public class GetFlightReportStatistics extends DAO {
 			PercentileStatsEntry results = new PercentileStatsEntry(sd.toInstant(ZoneOffset.UTC), granularity);
 			results.setTotal(rawResults.size());
 			for (int pct = 0; pct < 100; pct += granularity) {
-				int startIdx = rawResults.size() * pct / 100;
-				int endIdx = isAvg ? Math.min(rawResults.size() - 1, rawResults.size() * (pct + 1) / 100) : startIdx + 1;
-				
+				int startIdx = rawResults.size() * pct / 100; int endIdx = startIdx + 1;
 				int legs = 0; int distance = 0; int pilots = (endIdx - startIdx);
 				for (int idx = startIdx; idx < endIdx; idx++) {
 					Tuple<Integer, Integer> tp = rawResults.get(idx);

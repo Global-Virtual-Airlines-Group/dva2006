@@ -29,7 +29,8 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EliteLevel lvl) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_LEVELS (NAME, YR, STAT_START, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepare("INSERT INTO ELITE_LEVELS (NAME, YR, STAT_START, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+			+ "STAT_START=N.STAT_START, LEGS=N.LEGS, DISTANCE=N.DISTANCE, POINTS=N.POINTS, BONUS=N.BONUS, COLOR=N.COLOR, TARGET_PCT=N.TARGET_PCT, VISIBLE=N.VISIBLE")) {
 			ps.setString(1, lvl.getName());
 			ps.setInt(2, lvl.getYear());
 			ps.setTimestamp(3, createTimestamp(lvl.getStatisticsStartDate()));

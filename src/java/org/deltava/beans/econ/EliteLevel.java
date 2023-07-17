@@ -41,22 +41,14 @@ public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel
 	private boolean _visible = true;
 	
 	/**
-	 * Calculates the Elite program year for a given date.
-	 * @param dt the date/time
-	 * @return the year
-	 */
-	public static int getYear(Instant dt) {
-		return LocalDate.ofInstant(dt, ZoneOffset.UTC).getYear();
-	}
-	
-	/**
 	 * Rounds a leg or mileage number to the nearest factor.
 	 * @param value the value
 	 * @param rndTo the rounding factor
 	 * @return the rounded number
 	 */
-	public static int round(int value, int rndTo) {
-		return ((value == 0) || (rndTo == 1)) ? value : ((value / rndTo) + 1) * rndTo;
+	public static int round(float value, int rndTo) {
+		int v = Math.round(value);
+		return ((v == 0) || (rndTo == 1)) ? v : ((v / rndTo) + 1) * rndTo;
 	}
 	
 	/**

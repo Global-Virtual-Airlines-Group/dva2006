@@ -53,15 +53,16 @@ public class EliteLevelLoader extends TestCase {
 		GetFlightReportStatistics frsdao = new GetFlightReportStatistics(_c);
 		SetElite ewdao = new SetElite(_c);
 		
+		int legRound = SystemData.getInt("econ.elite.round.leg", 5); int dstRound = SystemData.getInt("econ.elite.round.distance", 5000);
 		for (int year = EliteLevel.MIN_YEAR; year < 2024; year++) {
 			LocalDate sd = LocalDate.of(year - 2, 12, 1);
-			PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, false, "LEGS, DST");
-			PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, false, "DST, LEGS");
+			PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, "LEGS, DST");
+			PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, "DST, LEGS");
 			for (int x = 0; x < LEVEL_NAMES.length; x++) {
 				EliteLevel lvl = new EliteLevel(year, LEVEL_NAMES[x], SystemData.get("airline.code"));
 				lvl.setTargetPercentile(LEVEL_PCTS[x]);
-				lvl.setLegs(EliteLevel.round(lpse.getLegs(lvl.getTargetPercentile()), 5));
-				lvl.setDistance(EliteLevel.round(dpse.getDistance(lvl.getTargetPercentile()), 10000));
+				lvl.setLegs(EliteLevel.round(lpse.getLegs(lvl.getTargetPercentile()), legRound));
+				lvl.setDistance(EliteLevel.round(dpse.getDistance(lvl.getTargetPercentile()), dstRound));
 				lvl.setColor(Integer.parseInt(LEVEL_COLORS[x], 16));
 				lvl.setBonusFactor(LEVEL_BOOSTS[x]);
 				lvl.setVisible(x < (LEVEL_NAMES.length - 1));

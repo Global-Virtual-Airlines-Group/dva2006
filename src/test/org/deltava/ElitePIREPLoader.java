@@ -128,17 +128,17 @@ public class ElitePIREPLoader extends TestCase {
 		for (Integer id : IDs) {
 			Pilot p = pdao.get(id.intValue());
 			List<FlightReport> allFlights = frdao.getByPilot(id.intValue(), lsc);
-			Collection<Integer> yrs = allFlights.stream().map(fr -> Integer.valueOf(EliteLevel.getYear(fr.getDate()))).filter(y -> y.intValue() >= EliteLevel.MIN_YEAR).collect(Collectors.toCollection(TreeSet::new));
+			Collection<Integer> yrs = allFlights.stream().map(fr -> Integer.valueOf(EliteScorer.getStatsYear(fr.getDate()))).filter(y -> y.intValue() >= EliteLevel.MIN_YEAR).collect(Collectors.toCollection(TreeSet::new));
 			log.info("Calculating {} status for {} ({})", SystemData.getObject("econ.elite.name"), p.getName(), p.getPilotCode());
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			
 			for (Integer yr : yrs) {
+				EliteScorer es = EliteScorer.getInstance();
 				final int y = yr.intValue(); TreeSet<EliteLevel> lvls = eldao.getLevels(y);
-				List<FlightReport> pireps = allFlights.stream().filter(fr -> (EliteLevel.getYear(fr.getDate()) == y)).collect(Collectors.toList());
-				EliteScorer es = EliteScorer.init(SystemData.get("econ.elite.scorer"));
+				List<FlightReport> pireps = allFlights.stream().filter(fr -> (EliteScorer.getStatsYear(fr.getDate()) == y)).collect(Collectors.toList());
 
 				// Get pilot's elite status 
-				List<EliteStatus> pilotStatus = eldao.getStatus(p.getID(), y);
+				List<EliteStatus> pilotStatus = eldao.getAllStatus(p.getID(), y);
 				EliteStatus st = pilotStatus.isEmpty() ? null : pilotStatus.get(pilotStatus.size() - 1);
 				if (st == null) {
 					st = new EliteStatus(p.getID(), lvls.first());
@@ -167,7 +167,7 @@ public class ElitePIREPLoader extends TestCase {
 					es.add(fr);
 					if (sc == null) continue;
 					
-					fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
+					fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s (%s)", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points"), st.getLevel().toString()));
 					frwdao.writeElite(sc, AIRLINE_CODE);
 					frwdao.writeHistory(fr.getStatusUpdates(), AIRLINE_CODE);
 					
@@ -203,12 +203,12 @@ public class ElitePIREPLoader extends TestCase {
 						log.error("No {} level for {}!", eyLevel.getName(), Integer.valueOf(y + 1)); // this will fail next line, but tells us why
 
 					EliteStatus rs = new EliteStatus(p.getID(), rl);
-					rs.setEffectiveOn(LocalDate.of(y + 1, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC));
+					rs.setEffectiveOn(LocalDateTime.of(y + 1, 2, 1, 12, 0, 0).toInstant(ZoneOffset.UTC));
 					rs.setUpgradeReason(ur);
 					elwdao.write(rs);
 					
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
-					upd.setDate(LocalDateTime.of(y + 1, 1, 1, 12, 0,0).toInstant(ZoneOffset.UTC));
+					upd.setDate(LocalDateTime.of(y + 1, 2, 1, 12, 0,0).toInstant(ZoneOffset.UTC));
 					upd.setAuthorID(p.getID());
 					if (ur == UpgradeReason.ROLLOVER) {
 						log.info("{} rolls over {} for {}", p.getName(), eyLevel.getName(), Integer.valueOf(y + 1));

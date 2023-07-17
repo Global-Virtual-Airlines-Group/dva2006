@@ -44,7 +44,7 @@ public class EliteInfoCommand extends AbstractCommand {
 		if ((ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) && (ctx.getID() != 0))
 			id = ctx.getID();
 		
-		final Integer currentYear = Integer.valueOf(EliteLevel.getYear(Instant.now()));
+		final Integer currentYear = Integer.valueOf(EliteScorer.getStatusYear(Instant.now()));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -57,14 +57,14 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Get this year and next year's levels
 			GetElite eldao = new GetElite(con);
 			Collection<EliteLevel> lvls = eldao.getLevels().stream().filter(lvl -> lvl.getLegs() > 0).collect(Collectors.toList());
-			EliteStatus currentStatus = eldao.getStatus(p.getID());
+			EliteStatus currentStatus = eldao.getStatus(p.getID(), currentYear.intValue());
 			Map<Integer, Collection<EliteLevel>> yearlyLevels = new HashMap<Integer, Collection<EliteLevel>>();
 			lvls.forEach(lvl -> CollectionUtils.addMapCollection(yearlyLevels, Integer.valueOf(lvl.getYear()), lvl));
 			
 			// Get status history
 			Map<Integer, EliteStatus> yearMax = new TreeMap<Integer, EliteStatus>();
 			Map<Integer, Collection<EliteStatus>> yearlyStatusUpdates = new TreeMap<Integer, Collection<EliteStatus>>();
-			eldao.getStatus(p.getID(), 0).forEach(es -> CollectionUtils.addMapCollection(yearlyStatusUpdates, Integer.valueOf(es.getLevel().getYear()), es));
+			eldao.getAllStatus(p.getID(), 0).forEach(est -> CollectionUtils.addMapCollection(yearlyStatusUpdates, Integer.valueOf(est.getLevel().getYear()), est));
 			for (Map.Entry<Integer, Collection<EliteStatus>> me : yearlyStatusUpdates.entrySet()) {
 				Optional<EliteStatus> maxStatus = me.getValue().stream().max(new StatusComparator());
 				if (!maxStatus.isEmpty())

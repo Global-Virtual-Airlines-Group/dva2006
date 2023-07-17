@@ -3,9 +3,12 @@ package org.deltava.beans.econ;
 
 import java.util.*;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.Helper;
 import org.deltava.beans.flight.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * An interface for classes that calculate elite level point scores to Flight Reports.
@@ -28,10 +31,13 @@ public abstract class EliteScorer {
 	
 	/**
 	 * Creates a PointScorer implementation.
-	 * @param className the class name
-	 * @return a PointScorer impl
+	 * @return a PointScorer implementation
 	 */
-	public static EliteScorer init(String className) {
+	public static EliteScorer getInstance() {
+		String className = SystemData.get("econ.elite.scorer");
+		if (className == null)
+			throw new IllegalStateException("No Elite scorer defined");
+
 		try {
 			Class<?> c = Class.forName(className);
 			return (EliteScorer) c.getDeclaredConstructor().newInstance();
@@ -67,7 +73,28 @@ public abstract class EliteScorer {
 	 * @return the number of status points earned
 	 */
 	public abstract FlightEliteScore score(FlightReport fr, EliteLevel lvl);
-
+	
+	/**
+	 * Returns what Elite program year flight statistics should be assigned to. 
+	 * @param dt a date/time
+	 * @return the Elite program year
+	 */
+	public static final int getStatsYear(Instant dt) {
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC);
+		return zdt.getYear();
+	}
+	
+	/**
+	 * Returns what Elite program year status should be looked up for.
+	 * @param dt a date/time
+	 * @return the Elite program year
+	 */
+	public static final int getStatusYear(Instant dt) {
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC);
+		ZonedDateTime statusRolloverDate = ZonedDateTime.of(zdt.getYear(), 2, 1, 0, 0, 0, 0, ZoneOffset.UTC); 
+		return zdt.isAfter(statusRolloverDate) ? zdt.getYear() : zdt.getYear() - 1;
+	}
+		
 	/**
 	 * Returns the score bundle.
 	 * @return a FlightEliteScore, or null

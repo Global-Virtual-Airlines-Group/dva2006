@@ -6,10 +6,12 @@ import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.econ.EliteLevel;
+import org.deltava.beans.econ.EliteScorer;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to view statistics about the Elite program.
@@ -28,7 +30,7 @@ public class EliteStatsCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		int year = EliteLevel.getYear(Instant.now());
+		int year = EliteScorer.getStatusYear(Instant.now());
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -40,7 +42,7 @@ public class EliteStatsCommand extends AbstractCommand {
 			
 			// Load stats
 			GetEliteStatistics elsdao = new GetEliteStatistics(con);
-			List<ElitePercentile> pcts = elsdao.getElitePercentiles(year, 1, false);
+			List<ElitePercentile> pcts = elsdao.getElitePercentiles(year, 1);
 			ctx.setAttribute("elitePcts", pcts, REQUEST);
 			
 			// Get prediction of next year
@@ -49,21 +51,20 @@ public class EliteStatsCommand extends AbstractCommand {
 				GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
 
 				// Go one year back
-				LocalDate sd = LocalDate.now().minusMonths(12);
-				sd = sd.minusDays(sd.getDayOfMonth() - 1);
+				LocalDate sd = LocalDate.now().minusMonths(12).minusDays(LocalDate.now().getDayOfMonth() - 1);
 				ctx.setAttribute("estimateStart", sd, REQUEST);
 				ctx.setAttribute("estimatedLevels", Boolean.TRUE, REQUEST);
 				
-				PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, false, "LEGS, DST");
-				PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, false, "DST, LEGS");
+				PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, "LEGS, DST");
+				PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, "DST, LEGS");
 				for (EliteLevel ol : lvls) {
 					EliteLevel nl = new EliteLevel(ol.getYear() + 1, ol.getName(), ctx.getDB());
 					nl.setColor(ol.getColor());
 					nl.setBonusFactor(ol.getBonusFactor());
 					nl.setTargetPercentile(ol.getTargetPercentile());
 					nl.setStatisticsStartDate(sd.atStartOfDay().toInstant(ZoneOffset.UTC));
-					nl.setLegs(EliteLevel.round(lpse.getLegs(nl.getTargetPercentile()), 5));
-					nl.setDistance(EliteLevel.round(dpse.getDistance(nl.getTargetPercentile()), 10000));
+					nl.setLegs(EliteLevel.round(lpse.getLegs(nl.getTargetPercentile()), SystemData.getInt("econ.elite.round.leg", 5)));
+					nl.setDistance(EliteLevel.round(dpse.getDistance(nl.getTargetPercentile()), SystemData.getInt("econ.elite.round.distance", 5000)));
 					nyLevels.add(nl);
 				}
 			}
