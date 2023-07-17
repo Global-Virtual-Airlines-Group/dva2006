@@ -747,12 +747,12 @@
 			<points>SkyMiles</points>
 			<distance>Medallion Miles</distance>
 			<scorer>org.deltava.beans.econ.SkyMilesScorer</scorer>
+			<maxNonACARS type="Integer">2</maxNonACARS>
 			<round>
 				<leg type="Integer">5</leg>
-				<distance type="Integer">5000</distance>
+				<distance type="Integer">10000</distance>
+				<points type="Integer">5000</points>
 			</round>
-			
-			<maxNonACARS type="Integer">2</maxNonACARS>
 		</elite>
 	</econ>
 </config>
