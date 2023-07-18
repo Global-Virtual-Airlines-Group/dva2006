@@ -1,12 +1,13 @@
 package org.deltava;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.util.List;
 
 import org.apache.logging.log4j.*;
-import org.deltava.beans.econ.EliteLevel;
-import org.deltava.beans.stats.PercentileStatsEntry;
+
+import org.deltava.beans.econ.*;
+import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.util.system.SystemData;
@@ -56,8 +57,10 @@ public class EliteLevelLoader extends TestCase {
 		int legRound = SystemData.getInt("econ.elite.round.leg", 5); int dstRound = SystemData.getInt("econ.elite.round.distance", 5000);
 		for (int year = EliteLevel.MIN_YEAR; year < 2024; year++) {
 			LocalDate sd = LocalDate.of(year - 2, 12, 1);
-			PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, "LEGS, DST");
-			PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, "DST, LEGS");
+			List<YearlyTotal> totals = frsdao.getPilotTotals(sd);
+			FlightPercentileHelper fHelper = new FlightPercentileHelper(totals, 1);
+			PercentileStatsEntry lpse = fHelper.getLegs();
+			PercentileStatsEntry dpse = fHelper.getDistance();
 			for (int x = 0; x < LEVEL_NAMES.length; x++) {
 				EliteLevel lvl = new EliteLevel(year, LEVEL_NAMES[x], SystemData.get("airline.code"));
 				lvl.setTargetPercentile(LEVEL_PCTS[x]);
