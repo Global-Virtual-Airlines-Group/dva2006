@@ -120,6 +120,10 @@ This Flight Report has been succesfully deleted from the database.<br />
 <content:airline /> ACARS data for this Flight Report has been succesfully deleted from the database.<br />
 <br />
 </c:if>
+<c:if test="${eliteDataCleared}">
+<content:sysdata var="eliteName" name="econ.elite.name" />
+<content:airline />&nbsp;<span class="pri bld">${eliteName}</span> data associated with this Flight Report has been cleared.<br />
+<br /></c:if>
 <content:filter roles="PIREP"><c:if test="${isApprove || isReject || isHold || isDeleted}">
 To return to the <content:airline /> submitted Flight Report queue, <el:cmd url="pirepqueue" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${fn:EventID(pirep) > 0}">
