@@ -5,12 +5,12 @@ import java.util.*;
 import java.time.*;
 import java.sql.Connection;
 
-import org.deltava.beans.econ.EliteLevel;
-import org.deltava.beans.econ.EliteScorer;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -31,6 +31,7 @@ public class EliteStatsCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		int year = EliteScorer.getStatusYear(Instant.now());
+		LocalDate startDate = LocalDate.of(year, 1, 1);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -42,21 +43,25 @@ public class EliteStatsCommand extends AbstractCommand {
 			
 			// Load stats
 			GetEliteStatistics elsdao = new GetEliteStatistics(con);
-			List<ElitePercentile> pcts = elsdao.getElitePercentiles(year, 1);
-			ctx.setAttribute("elitePcts", pcts, REQUEST);
+			List<YearlyTotal> eTotals = elsdao.getPilotTotals(startDate);
+			FlightPercentileHelper eHelper = new FlightPercentileHelper(eTotals, 1);
+			ctx.setAttribute("elpse", eHelper.getLegs(), REQUEST);
+			ctx.setAttribute("edpse", eHelper.getDistance(), REQUEST);
+			ctx.setAttribute("eppse", eHelper.getPoints(), REQUEST);
 			
 			// Get prediction of next year
 			TreeSet<EliteLevel> nyLevels = eldao.getLevels(year + 1);
 			if (nyLevels.isEmpty()) {
 				GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
+				List<YearlyTotal> fTotals = frsdao.getPilotTotals(startDate);
+				FlightPercentileHelper fHelper = new FlightPercentileHelper(fTotals, 1);
 
 				// Go one year back
 				LocalDate sd = LocalDate.now().minusMonths(12).minusDays(LocalDate.now().getDayOfMonth() - 1);
 				ctx.setAttribute("estimateStart", sd, REQUEST);
 				ctx.setAttribute("estimatedLevels", Boolean.TRUE, REQUEST);
-				
-				PercentileStatsEntry lpse = frsdao.getFlightPercentiles(sd, 1, "LEGS, DST");
-				PercentileStatsEntry dpse = frsdao.getFlightPercentiles(sd, 1, "DST, LEGS");
+
+				PercentileStatsEntry lpse = fHelper.getLegs(); PercentileStatsEntry dpse = fHelper.getDistance(); PercentileStatsEntry ppse = fHelper.getPoints();
 				for (EliteLevel ol : lvls) {
 					EliteLevel nl = new EliteLevel(ol.getYear() + 1, ol.getName(), ctx.getDB());
 					nl.setColor(ol.getColor());
@@ -65,8 +70,13 @@ public class EliteStatsCommand extends AbstractCommand {
 					nl.setStatisticsStartDate(sd.atStartOfDay().toInstant(ZoneOffset.UTC));
 					nl.setLegs(EliteLevel.round(lpse.getLegs(nl.getTargetPercentile()), SystemData.getInt("econ.elite.round.leg", 5)));
 					nl.setDistance(EliteLevel.round(dpse.getDistance(nl.getTargetPercentile()), SystemData.getInt("econ.elite.round.distance", 5000)));
+					nl.setPoints(EliteLevel.round(ppse.getPoints(nl.getTargetPercentile()), SystemData.getInt("econ.elite.round.points", 5000)));
 					nyLevels.add(nl);
 				}
+				
+				// Save percentiles
+				ctx.setAttribute("flpse", fHelper.getLegs(), REQUEST);
+				ctx.setAttribute("fdpse", fHelper.getDistance(), REQUEST);
 			}
 			
 			ctx.setAttribute("nyLevels", nyLevels, REQUEST);

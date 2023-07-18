@@ -1,4 +1,4 @@
-// Copyright 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -6,7 +6,7 @@ import java.time.*;
 /**
  * A bean to store flight legs/hours per year by percentile. 
  * @author Luke
- * @version 10.3
+ * @version 11.0
  * @since 9.2
  */
 
@@ -48,6 +48,19 @@ public class PercentileStatsEntry extends LegHoursDateStatsEntry<Integer> {
 		return getDistance(Integer.valueOf(adjust(pctile)));
 	}
 	
+	/**
+	 * Returns the number of Elite points for a particular percentile.
+	 * @param pctile the percentile
+	 * @return the number of Elite points
+	 */
+	public int getPoints(int pctile) {
+		return (int) getHours(Integer.valueOf(adjust(pctile)));
+	}
+	
+	/**
+	 * Returns the total number of Pilots.
+	 * @return the number of Pilots
+	 */
 	public int getTotal() {
 		return _total;
 	}
@@ -57,11 +70,16 @@ public class PercentileStatsEntry extends LegHoursDateStatsEntry<Integer> {
 	 * @param pctile the percentile
 	 * @param legs the number of legs
 	 * @param dst the distance in miles
+	 * @param pts the Elite points
 	 */
-	public void setPercentile(int pctile, int legs, int dst) {
-		set(Integer.valueOf(adjust(pctile)), legs, dst, 0);
+	public void setPercentile(int pctile, int legs, int dst, int pts) {
+		set(Integer.valueOf(adjust(pctile)), legs, dst, pts);
 	}
-	
+
+	/**
+	 * Updates the total number of Pilots.
+	 * @param cnt the number of Pilots
+	 */
 	public void setTotal(int cnt) {
 		_total = cnt;
 	}
