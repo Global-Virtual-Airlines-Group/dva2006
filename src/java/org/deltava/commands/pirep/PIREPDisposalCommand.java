@@ -26,6 +26,7 @@ import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Flight Report status changes.
@@ -221,9 +222,15 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					}
 				}
 			}
+			
+			// Delete Elite data if not approving
+			SetFlightReport wdao = new SetFlightReport(con);
+			if (SystemData.getBoolean("econ.elite.enabled") && (op != FlightStatus.OK)) {
+				boolean isDeleted = wdao.deleteElite(fr.getID());
+				ctx.setAttribute("eliteDataCleared", Boolean.valueOf(isDeleted), REQUEST);
+			}
 
 			// Get the write DAO and update/dispose of the PIREP
-			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(ctx.getDB(), ctx.getUser(), fr, op);
 
 			// If this is part of a flight assignment, load it
