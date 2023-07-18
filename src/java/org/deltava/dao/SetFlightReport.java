@@ -53,12 +53,28 @@ public class SetFlightReport extends DAO {
 	/**
 	 * Deletes ACARS flight data from the database.
 	 * @param id the Flight Report database ID
+	 * @return TRUE if a record was deleted, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteACARS(int id) throws DAOException {
-		try (PreparedStatement ps = prepare("DELETE FROM ACARS_PIREPS WHERE (ID=?)")) {
+	public boolean deleteACARS(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM ACARS_PIREPS WHERE (ID=?)")) {
 			ps.setInt(1, id);
-			executeUpdate(ps, 0);
+			return (executeUpdate(ps, 0) > 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes Elite program Flight Report data from the database.
+	 * @param id the Flight Report database ID
+	 * @return TRUE if a record was deleted, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean deleteElite(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_ELTE WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			return (executeUpdate(ps, 0) > 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
