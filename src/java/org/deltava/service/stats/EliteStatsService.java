@@ -11,7 +11,6 @@ import java.time.Instant;
 import org.json.*;
 
 import org.deltava.beans.econ.*;
-import org.deltava.beans.stats.EliteStats;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -49,7 +48,7 @@ public class EliteStatsService extends WebService {
 		final int currentYear = EliteScorer.getStatusYear(Instant.now());
 		SortedSet<EliteLevel> allLevels = new TreeSet<EliteLevel>(new EliteLevelComparator()); SortedSet<EliteLevel> levelLegend = new TreeSet<EliteLevel>();
 		Map<EliteLevel, Integer> allCounts = new TreeMap<EliteLevel, Integer>(new EliteLevelComparator());
-		Collection<EliteStats> yrStats = new TreeSet<EliteStats>(); Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
+		Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -63,10 +62,6 @@ public class EliteStatsService extends WebService {
 				yrs.add(Integer.valueOf(yr));
 				allCounts.putAll(eldao.getEliteCounts(yr));
 			}
-
-			// Load current stats and deviations
-			GetEliteStatistics elsdao = new GetEliteStatistics(con);
-			yrStats.addAll(elsdao.getStatistics(currentYear));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -119,25 +114,8 @@ public class EliteStatsService extends WebService {
 		stats.entrySet().forEach(me -> lco.put(me.getKey(), new JSONArray(me.getValue())));
 		jo.put("levelCounts", lco);
 		
-		// Add the level averages
-		for (EliteStats st : yrStats) {
-			JSONObject so = new JSONObject();
-			JSONArray sea = new JSONArray();
-			sea.put(st.getLevel().getName());
-			sea.put(st.getPilots());
-			sea.put(st.getLegs());
-			sea.put(st.getDistance());
-			sea.put(st.getPilots());
-			sea.put(st.getMaxLegs());
-			sea.put(st.getMaxDistance());
-			sea.put(st.getLegSD());
-			sea.put(st.getDistanceSD());
-			so.put("data", sea);
-			jo.append("stats", so);
-		}
-		
 		// Dump to the output stream
-		JSONUtils.ensureArrayPresent(jo, "levels", "stats");
+		JSONUtils.ensureArrayPresent(jo, "levels");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
