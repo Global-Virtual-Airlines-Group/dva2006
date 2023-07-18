@@ -42,6 +42,16 @@
  <c:if test="${estimatedLevels}"><br /><span class="ita small">Estimated requirements based on current year percentiles and flight activity since <fmt:date date="${estimateStart}" fmt="d" className="bld" tzName="UTC "/>.</span></c:if></td>
 </tr>
 <tr class="title caps">
+ <td colspan="2">PERCENTILES BY FLIGHT / ACCUMULATION</td>
+</tr>
+<c:forEach var="idx" items="${eppse.keys}">
+<tr>
+ <td class="label"><fmt:int value="${idx}" /></td>
+ <td class="data">Flight: <fmt:int value="${flpse.getLegs(idx)}" className="pri bld" /> legs, <fmt:int value="${fdpse.getDistance(idx)}" className="bld" />&nbsp;${distUnit}, Elite: <fmt:int value="${elpse.getLegs(idx)}" className="pri bld" /> legs, 
+ <fmt:int value="${edpse.getDistance(idx)}" className="bld" />&nbsp;${distUnit}, <fmt:int value="${eppse.getPoints(idx)}" />&nbsp;${pointUnit}</td>
+</tr>
+</c:forEach>
+<tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Flight Requirements by Year</td>
 </tr>
 <tr>
@@ -59,13 +69,6 @@
 <tr>
  <td colspan="2"><div id="pilotGraph" style="height:375px;"></div>
 </tr>
-<tr class="title caps">
- <td colspan="2">${eliteName}&nbsp;Current Statistics</td>
-</tr>
-<tr>
- <td colspan="2"><div id="statGraph" style="height:375px;"></div>
-</tr>
-<!-- Bottom Bar -->
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>
 <content:copyright />
@@ -131,17 +134,12 @@ golgotha.local.renderChart = function() {
 		drdata.addRow(dr);
 	}
 	
-	// Display the legdistance requirements charts
+	// Display the leg/distance requirements charts
 	const reqBarColors = barColors.slice(1); const hA = {title:'Year',textStyle:lgStyle};
 	const lrchart = new google.visualization.LineChart(document.getElementById('lreqGraph'));
 	const drchart = new google.visualization.LineChart(document.getElementById('dreqGraph'));
 	lrchart.draw(lrdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Flight Leg Requirements by Year',colors:reqBarColors,vAxes:{0:{title:'Flight Legs',maxValue:600}}});
 	drchart.draw(drdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Distance Requirements by Year',colors:reqBarColors,vAxes:{0:{title:'Flight Distance',maxValue:1000000}}});
-	
-	// Display the statistics chart
-	const schart = new google.visualization.LineChart(document.getElementById('statGraph'));
-	const sdata = new google.visualization.DataTable();
-	sdata.addColumn('string','Level');
 
 	// Draw the pilot statistics chart
 	pchart.draw(pdata,{hAxis:hA,legend:{textStyle:lgStyle},title:'Pilots by Year',isStacked:true,colors:barColors,vAxes:{0:{title:'Pilots'}}});

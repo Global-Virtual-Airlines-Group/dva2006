@@ -6,11 +6,12 @@ import java.util.*;
 import java.time.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.YearlyTotal;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
-import org.deltava.util.StringUtils;
-import org.deltava.util.Tuple;
+
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -517,47 +518,36 @@ public class GetFlightReportStatistics extends DAO {
 	}
 	
 	/**
-	 * Loads flight/distance percentiles by Pilot for a one year interval.
-	 * @param startDate the start date
-	 * @param granularity the percentile granularity
-	 * @param sortBy the sorting column
-	 * @return a PercentileStatsEntry
+	 * Loads flight/distance statistics by Pilot for a one year interval.
+	 * @param sd the start date
+	 * @return a List of YearlyTotal beans
 	 * @throws DAOException if a JDBC error occurs
+	 * @see GetEliteStatistics#getPilotTotals(LocalDate)
 	 */
-	public PercentileStatsEntry getFlightPercentiles(LocalDate startDate, int granularity, String sortBy) throws DAOException {
-		LocalDateTime sd = startDate.atStartOfDay();
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=?) AND (DATE<=?)) AND (STATUS=?) GROUP BY PILOT_ID ORDER BY " + sortBy)) {
-			ps.setTimestamp(1, createTimestamp(sd.toInstant(ZoneOffset.UTC)));
-			ps.setTimestamp(2, createTimestamp(sd.plusYears(1).minusSeconds(1).toInstant(ZoneOffset.UTC)));
-			ps.setInt(3, FlightStatus.OK.ordinal());
-
-			// Load the raw results
-			List<Tuple<Integer, Integer>> rawResults = new ArrayList<Tuple<Integer, Integer>>();
+	public List<YearlyTotal> getPilotTotals(LocalDate sd) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=MAKEDATE(?,?)) AND (DATE<MAKEDATE(?,?))) AND (STATUS=?) GROUP BY PILOT_ID")) {
+			ps.setInt(1, sd.getYear());
+			ps.setInt(2, sd.getDayOfYear());
+			ps.setInt(3, sd.getYear() + 1);
+			ps.setInt(4, sd.getDayOfYear());
+			ps.setInt(5, FlightStatus.OK.ordinal());
+			
+			// Execute the query
+			List<YearlyTotal> results = new ArrayList<YearlyTotal>();
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					rawResults.add(Tuple.create(Integer.valueOf(rs.getInt(2)), Integer.valueOf(rs.getInt(3))));
-			}
-			
-			// Average the percentile (you may want to do just the minimum)
-			PercentileStatsEntry results = new PercentileStatsEntry(sd.toInstant(ZoneOffset.UTC), granularity);
-			results.setTotal(rawResults.size());
-			for (int pct = 0; pct < 100; pct += granularity) {
-				int startIdx = rawResults.size() * pct / 100; int endIdx = startIdx + 1;
-				int legs = 0; int distance = 0; int pilots = (endIdx - startIdx);
-				for (int idx = startIdx; idx < endIdx; idx++) {
-					Tuple<Integer, Integer> tp = rawResults.get(idx);
-					legs += tp.getLeft().intValue(); distance += tp.getRight().intValue();
+				while (rs.next()) {
+					YearlyTotal yt = new YearlyTotal(sd.getYear(), rs.getInt(1));
+					yt.addLegs(rs.getInt(2), rs.getInt(3), 0);
+					results.add(yt);
 				}
-				
-				results.setPercentile(pct, legs / pilots, distance / pilots);
 			}
-			
+
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns the number of Charter flights flown by a Pilot in a particular time interval.
 	 * @param pilotID the Pilot's datbase ID

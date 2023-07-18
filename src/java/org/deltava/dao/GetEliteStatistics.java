@@ -7,10 +7,8 @@ import java.util.*;
 
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.FlightStatus;
-import org.deltava.beans.stats.ElitePercentile;
-import org.deltava.beans.stats.EliteStats;
+
 import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Elite program-related statistics.
@@ -64,86 +62,35 @@ public class GetEliteStatistics extends EliteDAO {
 	}
 	
 	/**
-	 * Loads flight/distance percentiles by Pilot for a one year interval.
-	 * @param year the program year
-	 * @param granularity the percentile granularity
-	 * @return a PercentileStatsEntry
+	 * Loads flight/distance/point statistics by Pilot for a one year interval.
+	 * @param sd the start date
+	 * @return a List of YearlyTotal beans
 	 * @throws DAOException if a JDBC error occurs
+	 * @see GetFlightReportStatistics#getPilotTotals(LocalDate)
 	 */
-	public List<ElitePercentile> getElitePercentiles(int year, int granularity) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT P.PILOT_ID, COUNT(DISTINCT P.ID) AS CNT, SUM(PE.DISTANCE) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM PIREPS P, PIREP_ELITE PE "
-			+ "WHERE (P.ID=PE.ID) AND ((P.DATE>=?) AND (P.DATE<=?)) AND (P.STATUS=?) GROUP BY P.PILOT_ID ORDER BY CNT")) {
-			ZonedDateTime sd = LocalDate.of(year, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC);
-			ps.setTimestamp(1, createTimestamp(sd.toInstant()));
-			ps.setTimestamp(2, createTimestamp(sd.plusYears(1).minusSeconds(1).toInstant()));
-			ps.setInt(3, FlightStatus.OK.ordinal());
+	public List<YearlyTotal> getPilotTotals(LocalDate sd) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.PILOT_ID, COUNT(P.ID) AS LEGS, SUM(PE.DISTANCE) AS DST,(SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
+			+ "AND ((P2.DATE>=MAKEDATE(?,?)) AND (P2.DATE<MAKEDATE(?,?)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND ((P.DATE>=MAKEDATE(?,?)) AND (P.DATE<MAKEDATE(?,?))) AND (P.STATUS=?) GROUP BY P.PILOT_ID")) {
+			ps.setInt(1, sd.getYear());
+			ps.setInt(2, sd.getDayOfYear());
+			ps.setInt(3, sd.getYear() + 1);
+			ps.setInt(4, sd.getDayOfYear());
+			ps.setInt(5, sd.getYear());
+			ps.setInt(6, sd.getDayOfYear());
+			ps.setInt(7, sd.getYear() + 1);
+			ps.setInt(8, sd.getDayOfYear());
+			ps.setInt(9, FlightStatus.OK.ordinal());
 			
-			// Load from the database
-			List<YearlyTotal> rawResults = new ArrayList<YearlyTotal>();
+			// Execute the query
+			List<YearlyTotal> results = new ArrayList<YearlyTotal>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					YearlyTotal yt = new YearlyTotal(year, rs.getInt(1));
+					YearlyTotal yt = new YearlyTotal(sd.getYear(), rs.getInt(1));
 					yt.addLegs(rs.getInt(2), rs.getInt(3), rs.getInt(4));
-					rawResults.add(yt);
+					results.add(yt);
 				}
 			}
 			
-			// Convert to percentiles
-			List<ElitePercentile> results = new ArrayList<ElitePercentile>();
-			for (int pct = 0; pct < 100; pct += granularity) {
-				int startIdx = rawResults.size() * pct / 100;
-				int endIdx = startIdx + 1;
-				
-				// Average the percentile (you may want to do just the minimum)
-				YearlyTotal totals = new YearlyTotal(year, 1);
-				for (int idx = startIdx; idx < endIdx; idx++) {
-					YearlyTotal yt = rawResults.get(idx);
-					totals.addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
-				}
-
-				ElitePercentile ep = new ElitePercentile(pct); int pilots = (endIdx - startIdx);
-				ep.setInfo(totals.getLegs(), totals.getDistance() / pilots, totals.getPoints() / pilots);
-				results.add(ep);
-			}
-			
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Loads Elite program statistics for a given year. 
-	 * @param year the program year
-	 * @return a List of EliteStatus beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<EliteStats> getStatistics(int year) throws DAOException {
-		List<EliteStats> results = new ArrayList<EliteStats>();
-		try (PreparedStatement ps = prepare("SELECT EP.NAME, P.PILOT_ID, COUNT(PE.ID) AS CNT, SUM(PE.DISTANCE) AS DST, SUM(PE.SCORE) AS PTS, MAX(SUM(PE.DISTANCE)) OVER(PARTITION BY EP.NAME) AS MAXLDST, "
-			+ "STDDEV(SUM(PE.DISTANCE)) OVER (PARTITION BY EP.NAME) AS SDLDST, MAX(COUNT(PE.ID)) OVER (PARTITION BY EP.NAME) AS MAXLLEGS, STDDEV(COUNT(PE.ID)) OVER (PARTITION BY EP.NAME) AS SDLLEGS FROM "
-			+ "ELITE_PILOT EP, PIREPS P, PIREP_ELITE PE WHERE (EP.PILOT_ID=P.PILOT_ID) AND (EP.YR=?) AND (P.STATUS=?) AND (P.ID=PE.ID) AND (PE.YEAR=EP.YR) GROUP BY EP.NAME, P.PILOT_ID ORDER BY EP.NAME, P.PILOT_ID")) {
-			ps.setInt(1, year);
-			ps.setInt(2, FlightStatus.OK.ordinal());
-			
-			EliteStats lastStats = new EliteStats(EliteLevel.EMPTY);
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					EliteLevel lvl = new EliteLevel(year, rs.getString(1), SystemData.get("airline.code"));
-					if (!lvl.getName().equals(lastStats.getLevel().getName())) {
-						lastStats = new EliteStats(lvl);
-						results.add(lastStats);
-						lastStats.setMaxLegs(rs.getInt(8));
-						lastStats.setMaxDistance(rs.getInt(6));
-						lastStats.setStandardDeviation(rs.getDouble(9), rs.getDouble(7));
-					}
-				
-					lastStats.add(1, rs.getInt(3), rs.getInt(4), rs.getInt(5));
-				}
-			}
-			
-			populateLevels(results);
-			Collections.sort(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
