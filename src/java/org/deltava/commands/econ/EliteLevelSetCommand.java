@@ -7,15 +7,14 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.econ.*;
-import org.deltava.beans.stats.PercentileStatsEntry;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EliteAccessControl;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -74,9 +73,10 @@ public class EliteLevelSetCommand extends AbstractCommand {
 			Collection<EliteLevel> cyLevels = edao.getLevels(currentYear) ;
 			
 			// Get the PIREP statistics for the year
-			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			PercentileStatsEntry lst = stdao.getFlightPercentiles(zsd.toLocalDate(), 1, "LEGS, DST");
-			PercentileStatsEntry dst = stdao.getFlightPercentiles(zsd.toLocalDate(), 1, "DST, LEGS");
+			GetEliteStatistics esdao = new GetEliteStatistics(con);
+			List<YearlyTotal> eTotals = esdao.getPilotTotals(zsd.toLocalDate());
+			FlightPercentileHelper eHelper = new FlightPercentileHelper(eTotals, 1);
+			PercentileStatsEntry lst = eHelper.getLegs(); PercentileStatsEntry dst = eHelper.getDistance(); PercentileStatsEntry pst = eHelper.getPoints(); 
 			
 			// Calculate the new levels
 			Map<String, EliteLevel> newLevels = new HashMap<String, EliteLevel>();
@@ -91,7 +91,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 					lvl.setTargetPercentile((targetPct > 0) ? targetPct : oldLevel.getTargetPercentile());
 					lvl.setLegs(EliteLevel.round(lst.getLegs(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.leg", 5)));
 					lvl.setDistance(EliteLevel.round(dst.getDistance(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.distance", 5000)));
-					lvl.setPoints(EliteLevel.round(lvl.getPoints() * factor, SystemData.getInt("econ.elite.round.points", 5000)));
+					lvl.setPoints(EliteLevel.round(pst.getPoints(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.points", 5000)));
 				}
 				
 				newLevels.put(lvl.getName(), lvl);
