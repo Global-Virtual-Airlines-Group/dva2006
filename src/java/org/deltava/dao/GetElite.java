@@ -175,14 +175,15 @@ public class GetElite extends EliteDAO {
 	}
 	
 	/**
-	 * Loads all Pilots who have obtained Elite status in a particular year.
-	 * @param year the plan year
+	 * Loads all Pilots who have obtained a particular Elite status in a given year.
+	 * @param lvl the EliteLevel
 	 * @return a Collection of Pilot database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Integer> getAllPilots(int year) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT DISTINCT PILOT_ID FROM ELITE_STATUS WHERE (YR=?)")) {
-			ps.setInt(1, year);
+	public Collection<Integer> getPilots(EliteLevel lvl) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT PILOT_ID FROM ELITE_STATUS WHERE (NAME=?) AND (YR=?)")) {
+			ps.setString(1, lvl.getName());
+			ps.setInt(2, lvl.getYear());
 		
 			Collection<Integer> results = new HashSet<Integer>();
 			try (ResultSet rs = ps.executeQuery()) {
