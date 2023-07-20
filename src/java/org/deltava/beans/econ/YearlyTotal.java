@@ -121,9 +121,7 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 */
 	public boolean matches(EliteLevel el) {
 		if (el == null) return false;
-		boolean isMatch = ((el.getLegs() > 0) && (_legs >= el.getLegs()));
-		isMatch |= ((el.getDistance() > 0) && (_distance >= el.getDistance()));
-		return isMatch | ((el.getPoints() > 0) && (_pts >= el.getPoints()));
+		return ((el.getLegs() > 0) && (_legs >= el.getLegs())) || ((el.getDistance() > 0) && (_distance >= el.getDistance())) || ((el.getPoints() > 0) && (_pts >= el.getPoints()));
 	}
 	
 	/**
