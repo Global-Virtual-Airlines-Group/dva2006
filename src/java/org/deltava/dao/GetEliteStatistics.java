@@ -69,8 +69,8 @@ public class GetEliteStatistics extends EliteDAO {
 	 * @see GetFlightReportStatistics#getPilotTotals(LocalDate)
 	 */
 	public List<YearlyTotal> getPilotTotals(LocalDate sd) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.PILOT_ID, COUNT(P.ID) AS LEGS, SUM(PE.DISTANCE) AS DST,(SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
-			+ "AND ((P2.DATE>=MAKEDATE(?,?)) AND (P2.DATE<MAKEDATE(?,?)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND ((P.DATE>=MAKEDATE(?,?)) AND (P.DATE<MAKEDATE(?,?))) AND (P.STATUS=?) GROUP BY P.PILOT_ID")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.PILOT_ID, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST,(SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND "
+			+ "(P.PILOT_ID=P2.PILOT_ID) AND ((P2.DATE>=MAKEDATE(?,?)) AND (P2.DATE<MAKEDATE(?,?)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND ((P.DATE>=MAKEDATE(?,?)) AND (P.DATE<MAKEDATE(?,?))) AND (P.STATUS=?) GROUP BY P.PILOT_ID")) {
 			ps.setInt(1, sd.getYear());
 			ps.setInt(2, sd.getDayOfYear());
 			ps.setInt(3, sd.getYear() + 1);
