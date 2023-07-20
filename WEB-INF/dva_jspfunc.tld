@@ -82,6 +82,12 @@
 		<function-signature>java.lang.String toHex(long)</function-signature>
 	</function>
 
+	<function>
+		<name>rgba</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.lang.String toRGBA(int, float)</function-signature>
+	</function>
+
 	<!-- Converts a date/time into a string -->
 	<function>
 		<name>dateFmt</name>

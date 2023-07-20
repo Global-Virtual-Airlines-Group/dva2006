@@ -132,6 +132,25 @@ public class MiscFunctions {
 	public static String toUpper(String s) {
 		return (s == null) ? null : s.toUpperCase();
 	}
+	
+	/**
+	 * Generates a CSS color with alpha. 
+	 * @param c the RGB color
+	 * @param a the alpha factor from 0 to 1
+	 * @return a CSS color with alpha
+	 */
+	public static String toRGBA(int c, float a) {
+		StringBuilder sb = new StringBuilder("rgba(");
+		sb.append((c >> 16) & 0xFF);
+		sb.append(',');
+		sb.append((c >> 8) & 0xFF);
+		sb.append(',');
+		sb.append(c & 0xFF);
+		sb.append(',');
+		sb.append(a);
+		sb.append(");");
+		return sb.toString();
+	}
 
 	/**
 	 * Formats a Date into a String for use in a JSP Tag parameter.
