@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Elite status levels. 
  * @author Luke
- * @version 9.2
+ * @version 11.0
  * @since 9.2
  */
 
@@ -43,7 +43,7 @@ public class GetElite extends EliteDAO {
 	/**
 	 * Returns Elite status levels for a given year.
 	 * @param year the program year
-	 * @return a TreeSet of EliteLevel beans
+	 * @return a TreeSet of EliteLevel beans, in ascending order
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TreeSet<EliteLevel> getLevels(int year) throws DAOException {
