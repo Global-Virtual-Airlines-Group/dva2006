@@ -4,7 +4,6 @@ package org.deltava.commands.econ;
 import java.util.*;
 import java.time.*;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.econ.*;
 import org.deltava.beans.stats.*;
@@ -12,6 +11,7 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -76,8 +76,7 @@ public class EliteStatsCommand extends AbstractCommand {
 				}
 				
 				// Map percentiles to targets
-				Map<Integer, EliteLevel> targetLvls = nyLevels.stream().collect(Collectors.toMap(l -> Integer.valueOf(l.getTargetPercentile()), l -> l));
-				ctx.setAttribute("targetLvls", targetLvls, REQUEST);
+				ctx.setAttribute("targetLvls", CollectionUtils.createMap(nyLevels, EliteLevel::getTargetPercentile), REQUEST);
 				
 				// Save percentiles
 				ctx.setAttribute("flpse", fHelper.getLegs(), REQUEST);
