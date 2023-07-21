@@ -1452,7 +1452,13 @@
 		<roles>Operations,HR</roles>
 	</command>
 
-	
+	<command id="elitepilots">
+		<name>Elite Pilots List</name>
+		<class>org.deltava.commands.econ.ElitePilotsCommand</class>
+		<roles>*</roles>
+	</command>
+
+
 	<!-- Flight Assignment commands -->
 	<command id="findflight">
 		<name>Find A Flight</name>
