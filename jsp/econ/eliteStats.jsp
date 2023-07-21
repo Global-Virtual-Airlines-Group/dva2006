@@ -60,11 +60,11 @@
  <td colspan="2"><div id="pilotGraph" style="height:375px;"></div>
 </tr>
 <tr class="title caps">
- <td colspan="2">PERCENTILES BY FLIGHT / ACCUMULATION</td>
+ <td colspan="2">PERCENTILES BY FLIGHT / ACCUMULATION<span id="pctToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'elitePct')">COLLAPSE</span></td>
 </tr>
 <c:forEach var="idx" items="${eppse.keys}">
 <c:set var="lvl" value="${targetLvls[idx]}" scope="page" />
-<tr>
+<tr class="elitePct">
  <td class="label"<c:if test="${!empty lvl}"> style="color:#ffffff; background-color:#${lvl.hexColor};"</c:if>><c:if test="${!empty lvl}">(${lvl.name}) </c:if><fmt:int value="${idx}" /></td>
  <td class="data">Flight: <fmt:int value="${flpse.getLegs(idx)}" className="pri bld" /> legs, <fmt:int value="${fdpse.getDistance(idx)}" className="bld" />&nbsp;${distUnit}, Elite: <fmt:int value="${elpse.getLegs(idx)}" className="pri bld" /> legs, 
  <fmt:int value="${edpse.getDistance(idx)}" className="bld" />&nbsp;${distUnit}, <fmt:int value="${eppse.getPoints(idx)}" />&nbsp;${pointUnit}</td>
