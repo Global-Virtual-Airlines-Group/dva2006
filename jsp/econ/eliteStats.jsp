@@ -45,19 +45,19 @@
  <td colspan="2">${eliteName}&nbsp;Flight Requirements by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="lreqGraph" style="height:375px;"></div>
+ <td colspan="2"><div id="lreqGraph" style="height:325px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Distance Requirements by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="dreqGraph" style="height:375px;"></div>
+ <td colspan="2"><div id="dreqGraph" style="height:325px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Pilots by Year</td>
 </tr>
 <tr>
- <td colspan="2"><div id="pilotGraph" style="height:375px;"></div>
+ <td colspan="2"><div id="pilotGraph" style="height:500px;"></div>
 </tr>
 <tr class="title caps">
  <td colspan="2">PERCENTILES BY FLIGHT / ACCUMULATION<span id="pctToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'elitePct')">COLLAPSE</span></td>
