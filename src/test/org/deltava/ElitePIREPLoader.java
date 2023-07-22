@@ -177,7 +177,7 @@ public class ElitePIREPLoader extends TestCase {
 						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
 						upd.setDate(fr.getDisposedOn());
 						upd.setAuthorID(p.getID());
-						upd.setDescription(String.format("Reached %s for %d / ( %s )", nextLevel.getName(), yr, updR.getDescription()));
+						upd.setDescription(String.format("Reached %s for %d ( %s )", nextLevel.getName(), yr, updR.getDescription()));
 						upds.add(upd);
 						
 						log.info(p.getName() + " reaches " + nextLevel.getName() + " for " + yr + " / " + updR.getDescription());

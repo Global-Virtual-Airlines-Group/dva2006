@@ -134,7 +134,7 @@ public class EliteScoringTask extends Task {
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
 					upd.setDate(Instant.now());
 					upd.setAuthorID(p.getID());
-					upd.setDescription(String.format("Reached %s for %d / ( %s )", nextLevel.getName(), Integer.valueOf(yr), updR.getDescription()));
+					upd.setDescription(String.format("Reached %s for %d ( %s )", nextLevel.getName(), Integer.valueOf(yr), updR.getDescription()));
 					updwdao.write(upd, ctx.getDB());
 				}
 				
