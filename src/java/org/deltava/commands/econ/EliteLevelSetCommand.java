@@ -12,8 +12,6 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.EliteAccessControl;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -34,17 +32,13 @@ public class EliteLevelSetCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Check our access
-		EliteAccessControl ac = new EliteAccessControl(ctx);
-		ac.validate();
-		if (!ac.getCanEdit())
-			throw securityException("Cannot calculate Elite levels");
-		
-		// Get the stats start date
+		// Get the stats/status years and if we are in the rollover period
 		ZonedDateTime now = ZonedDateTime.now();
-		 int currentYear = EliteScorer.getStatusYear(now.toInstant());
-		 ctx.setAttribute("startDate", ZonedDateTime.of(currentYear - 1, 12, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
-		 ctx.setAttribute("year", Integer.valueOf(currentYear + 1), REQUEST);
+		 int statusYear = EliteScorer.getStatusYear(now.toInstant()); int statsYear = EliteScorer.getStatsYear(now.toInstant());
+		 boolean isRolloverPeriod = (statusYear < statsYear);
+		 ctx.setAttribute("startDate", ZonedDateTime.of(statsYear, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
+		 ctx.setAttribute("year", Integer.valueOf(statusYear + 1), REQUEST);
+		 ctx.setAttribute("isRollover", Boolean.valueOf(isRolloverPeriod), REQUEST);
 		
 		// Redirect to JSP if needed
 		CommandResult result = ctx.getResult();
@@ -64,13 +58,13 @@ public class EliteLevelSetCommand extends AbstractCommand {
 			factor = daysInYear * 24f / d.toHours();
 		}
 		  
-		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("doCommit"));
+		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("doCommit")) && isRolloverPeriod;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get current year's levels
 			GetElite edao = new GetElite(con);
-			Collection<EliteLevel> cyLevels = edao.getLevels(currentYear) ;
+			Collection<EliteLevel> cyLevels = edao.getLevels(statusYear);
 			
 			// Get the PIREP statistics for the year
 			GetEliteStatistics esdao = new GetEliteStatistics(con);

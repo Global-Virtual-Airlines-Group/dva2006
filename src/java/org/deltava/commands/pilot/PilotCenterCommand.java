@@ -42,7 +42,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 		// Get the command results
 		CommandResult result = ctx.getResult();
-		Pilot p = null;
+		Pilot p = null; final Instant now = Instant.now();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -106,13 +106,13 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Load elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
-				int currentYear = EliteScorer.getStatusYear(Instant.now());
+				int currentYear = EliteScorer.getStatusYear(now);
 				TreeSet<EliteLevel> levels = eldao.getLevels(currentYear);
 				ctx.setAttribute("eliteYear", Integer.valueOf(currentYear), REQUEST);
 				List<EliteStatus> myStatus = eldao.getAllStatus(p.getID(), currentYear);
 				if (myStatus.isEmpty()) {
 					EliteStatus curStatus = new EliteStatus(p.getID(), levels.first()); 
-					curStatus.setEffectiveOn(Instant.now());
+					curStatus.setEffectiveOn(now);
 					myStatus.add(curStatus);
 				}
 				
@@ -127,10 +127,19 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				YearlyTotal cyt = eliteTotals.stream().filter(yt -> yt.getYear() == currentYear).findFirst().orElse(new YearlyTotal(currentYear, p.getID()));
 				ctx.setAttribute("currentEliteTotal", cyt, REQUEST);
 				ctx.setAttribute("eliteTotals", eliteTotals, REQUEST);
-					
+				
+				// Determine if we can do year-end activities
+				boolean rolloverPeriod = (EliteScorer.getStatsYear(now) > currentYear);
+				ctx.setAttribute("eliteRollover", Boolean.valueOf(rolloverPeriod), REQUEST);
+				Collection<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
+				if (rolloverPeriod) {
+					nyLevels.addAll(eldao.getLevels(currentYear + 1));
+					ctx.setAttribute("nyLevels", nyLevels, REQUEST);
+				}
+				
 				// Display next year's level and downgrade potential after Q3
 				if (LocalDate.now().getMonthValue() > 9) {
-					EliteLevel nextYearLevel = cyt.matches(levels);
+					EliteLevel nextYearLevel = cyt.matches(nyLevels.isEmpty() ? levels : nyLevels);
 					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
 					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
 					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
@@ -300,8 +309,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
 				ctx.setAttribute("upcomingExpirations", testHistory.getCheckRides(expDays), REQUEST);
 				ctx.setAttribute("expiryDays", Integer.valueOf(expDays), REQUEST);
-				ctx.setAttribute("expirationDate", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
-				ctx.setAttribute("now", Instant.now(), REQUEST);
+				ctx.setAttribute("expirationDate", now.plus(expDays, ChronoUnit.DAYS), REQUEST);
+				ctx.setAttribute("now", now, REQUEST);
 			}
 
 			// See if we are enrolled in a Flight Academy course

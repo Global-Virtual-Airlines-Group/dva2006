@@ -200,11 +200,25 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <td class="mid"><el:cmd url="eliteStats" className="bld">${eliteName} Statistics Dashboard</el:cmd></td>
  <td class="data">You can view statistics about the <content:airline />&nbsp;${eliteName} program, including participation over time, current requirements and an estimate of next year's status levels based on current participation and level target percentiles.</td>
 </tr>
+</content:filter>
+<c:if test="${eliteRollover}">
+<content:filter roles="Operations">
+<tr>
+ <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year. Before the end of the rolover
+ period, the requirements for the upcoming status year will need to be calculated and stored in the database, and status from the previous year must be rolled over for eligible Pilots.</td>
+</tr>
 <tr>
  <td class="mid"><el:cmd url="elitelevelset" className="bld">Upcoming Year Requirements</el:cmd></td>
  <td class="data">You can calculate and adjust the requirements for the upcoming ${eliteYear + 1}&nbsp;<content:airline />&nbsp;${eliteName} year.</td>
 </tr>
+<c:if test="${!empty nyLevels}">
+<tr>
+ <td class="mid"><el:cmd url="eliterollover" className="bld">Roll Over ${eliteName} Status</el:cmd></td>
+ <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rollved over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.</td> 
+</tr>
+</c:if>
 </content:filter>
+</c:if>
 </c:if>
 <c:if test="${helpDeskEnabled}">
 <tr class="title caps">
