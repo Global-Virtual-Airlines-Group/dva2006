@@ -41,6 +41,7 @@ public class ElitePilotsCommand extends AbstractCommand {
 			// Load the levels
 			GetElite eldao = new GetElite(con);
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year);
+			lvls.removeIf(el -> (el.getLegs() == 0));
 			
 			// Load Pilot totals and sort
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
