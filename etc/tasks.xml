@@ -353,15 +353,4 @@
 			<wday>*</wday>
 		</time>
 	</task>
-
-	<task id="eliterollover" enabled="false">
-		<class>org.deltava.tasks.EliteRolloverTask</class>
-		<time>
-			<min>0</min>
-			<hour>1</hour>
-			<mday>1</mday>
-			<month>1</month>
-			<wday>*</wday>
-		</time>
-	</task>
 </tasks>
