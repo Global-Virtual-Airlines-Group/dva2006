@@ -86,7 +86,7 @@ span.rmbar {
 <c:set var="hasLevel" value="${ct.matches(lvl)}" scope="page" />
  <c:if test="${hasLevel || showAll || lvl.isVisible}">
 <c:set var="lr" value="${hasPrevLevel ? Math.max(0, lvl.legs - ct.legs) : lvl.legs}" scope="page" />
-<fmt:eliteProgressBar width="15" percent="true" className="prgbar fatbar" remainingClassName="prgbar rmbar fatbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}" units="l" showUnits="true" /></c:if>
+<fmt:eliteProgressBar width="19" percent="true" className="prgbar fatbar" remainingClassName="prgbar rmbar fatbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}" units="l" showUnits="true" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach></td>
 </tr>
@@ -99,7 +99,7 @@ span.rmbar {
  <c:set var="hasLevel" value="${ct.matches(lvl)}" scope="page" />
  <c:if test="${hasLevel || showAll || lvl.isVisible}">
 <c:set var="dr" value="${hasPrevLevel ? Math.max(0, lvl.distance - ct.distance) : lvl.distance}" scope="page" />
-<fmt:eliteProgressBar width="15" percent="true" className="prgbar fatbar" remainingClassName="prgbar rmbar fatbar" progress="${lvl.distance - prevLevel.distance - dr}" level="${lvl}" prev="${prevLevel}" units="d" showUnits="true" /></c:if>
+<fmt:eliteProgressBar width="19" percent="true" className="prgbar fatbar" remainingClassName="prgbar rmbar fatbar" progress="${lvl.distance - prevLevel.distance - dr}" level="${lvl}" prev="${prevLevel}" units="d" showUnits="true" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach></td>
 </tr>
@@ -134,7 +134,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 <c:set var="hasLevel" value="${total.matches(lvl)}" scope="page" />
 <c:if test="${hasLevel || (hasPrevLevel && (showAll || lvl.isVisible))}">
 <c:set var="lr" value="${hasPrevLevel ? Math.max(0, lvl.legs - total.legs) : lvl.legs}" scope="page" />
-<fmt:eliteProgressBar width="15" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}"  units="l" showUnits="false" /></c:if>
+<fmt:eliteProgressBar width="19" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}"  units="l" showUnits="false" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach><br />
 <div style="height:4px;"></div>
@@ -144,7 +144,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 <c:set var="hasLevel" value="${total.matches(lvl)}" scope="page" />
 <c:if test="${hasLevel || (hasPrevLevel && (showAll || lvl.isVisible))}">
 <c:set var="dr" value="${hasPrevLevel ? Math.max(0, lvl.distance - total.distance) : lvl.distance}" scope="page" />
-<fmt:eliteProgressBar width="15" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.distance - prevLevel.distance - dr}" level="${lvl}" prev="${prevLevel}"  units="d" showUnits="true" /></c:if>
+<fmt:eliteProgressBar width="19" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.distance - prevLevel.distance - dr}" level="${lvl}" prev="${prevLevel}"  units="d" showUnits="true" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach></td>
 </tr>
