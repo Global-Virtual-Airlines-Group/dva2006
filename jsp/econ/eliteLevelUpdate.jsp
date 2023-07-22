@@ -19,7 +19,8 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:sysdata var="eliteDistance" name="econ.elite.distance" />
+<content:sysdata var="distUnit" name="econ.elite.distance" />
+<content:sysdata var="pointUnit" name="econ.elite.points" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -34,20 +35,37 @@ The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" cla
 <br />
 <span class="pri bld">${eliteName}</span> status for ${pilot.name} has been recalculated.<br />
 <br />
-<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${eliteDistance} in ${total.year}.<br />
+<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} in ${total.year}.<br />
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
 <br />
 </c:when>
 <c:when test="${isLevelSet}">
-<div class="updateHdr">${eliteName} Levels Calculated</div>
+<div class="updateHdr">${eliteName} Requirements Calculated</div>
 <br />
-<span class="pri bld">${eliteName}</span>&nbsp; status levels for <span class="bld">${year}</span> have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br />
+The <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> status requirements for <span class="bld">${year}</span> have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br />
 <br />
-<c:forEach var="lvl" items="${newLevels}">
-<fmt:elite level="${lvl}" className="bld" nameOnly="true" /> - <fmt:int value="${lvl.legs}" /> flight legs, <fmt:int value="${lvl.distance}" /> ${eliteDistance}<br />
+<c:forEach var="lvlName" items="${oldLevels.keySet()}">
+<c:set var="ol" value="${oldLevels[lvlName]}" scope="page" />
+<c:set var="nl" value="${newLevels[lvlName]}" scope="page" />
+<fmt:elite level="${lvl}" className="bld" nameOnly="true" /><br />
+<br />
+<span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br />
+<span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br />
+Legs: <fmt:dec value="${(nl.legs - ol.legs) * 1.0 / ol.legs}" fmt="##0.0%" className="bld" forceSign="true" />, ${distUnit}&nbsp;<fmt:dec value="${(nl.distance - ol.distance) * 1.0 / ol.distance}" className="sec bld" fmt="##0.0%" forceSign="true" />, 
+${pointUnit }&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><hr />
+<br />
 </c:forEach>
+</c:when>
+<c:when test="${isRollover}">
+<div class="updateHdr">${eliteName} Status Rollover for ${year}</div>
+<br />
+<content:airline />&nbsp;${eliteName} stauts has been rolled over for the ${year} program year:<br />
+<br />
+<c:forEach var="msg" items="${msgs}">
+${msg}<br /></c:forEach>
+<br />
 </c:when>
 </c:choose>
 <br />

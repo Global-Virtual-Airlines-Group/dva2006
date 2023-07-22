@@ -1458,6 +1458,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="eliterollover">
+		<name>Elite Status Rollover</name>
+		<class>org.deltava.commands.econ.EliteRolloverCommand</class>
+		<roles>Operations</roles>
+	</command>
+
 
 	<!-- Flight Assignment commands -->
 	<command id="findflight">
