@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 
 public class GetEliteStatistics extends EliteDAO {
 	
-	private static final Cache<CacheableList<YearlyTotal>> _eliteTotalCache = CacheManager.getCollection(YearlyTotal.class, "EliteYearlyTotal");
+	private static final Cache<CacheableList<YearlyTotal>> _cache = CacheManager.getCollection(YearlyTotal.class, "EliteYearlyTotal");
 
 	/**
 	 * Initalizes the Data Access Object.
@@ -38,7 +38,7 @@ public class GetEliteStatistics extends EliteDAO {
 	public List<YearlyTotal> getEliteTotals(int pilotID) throws DAOException {
 		
 		// Check the cache
-		CacheableList<YearlyTotal> results = _eliteTotalCache.get(Integer.valueOf(pilotID));
+		CacheableList<YearlyTotal> results = _cache.get(Integer.valueOf(pilotID));
 		if (results != null) return results.clone();
 		
 		try (PreparedStatement ps = prepare("SELECT YEAR(P.DATE) AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM "
@@ -54,7 +54,7 @@ public class GetEliteStatistics extends EliteDAO {
 				}
 			}
 			
-			_eliteTotalCache.add(results);
+			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -69,6 +69,13 @@ public class GetEliteStatistics extends EliteDAO {
 	 * @see GetFlightReportStatistics#getPilotTotals(LocalDate)
 	 */
 	public List<YearlyTotal> getPilotTotals(LocalDate sd) throws DAOException {
+		
+		// Check the cache
+		Integer key = Integer.valueOf(-sd.getYear());
+		CacheableList<YearlyTotal> results = _cache.get(key);
+		if (results != null)
+			return results.clone();
+		
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.PILOT_ID, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST,(SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND "
 			+ "(P.PILOT_ID=P2.PILOT_ID) AND ((P2.DATE>=MAKEDATE(?,?)) AND (P2.DATE<MAKEDATE(?,?)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND ((P.DATE>=MAKEDATE(?,?)) AND (P.DATE<MAKEDATE(?,?))) AND (P.STATUS=?) GROUP BY P.PILOT_ID")) {
 			ps.setInt(1, sd.getYear());
@@ -82,7 +89,7 @@ public class GetEliteStatistics extends EliteDAO {
 			ps.setInt(9, FlightStatus.OK.ordinal());
 			
 			// Execute the query
-			List<YearlyTotal> results = new ArrayList<YearlyTotal>();
+			results = new CacheableList<YearlyTotal>(key);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					YearlyTotal yt = new YearlyTotal(sd.getYear(), rs.getInt(1));
@@ -91,7 +98,8 @@ public class GetEliteStatistics extends EliteDAO {
 				}
 			}
 			
-			return results;
+			_cache.add(results);
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

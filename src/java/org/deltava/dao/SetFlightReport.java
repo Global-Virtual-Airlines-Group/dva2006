@@ -359,6 +359,7 @@ public class SetFlightReport extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		} finally {
+			_eliteTotalCache.remove(Integer.valueOf(-sc.getYear()));
 			_eliteTotalCache.remove(Integer.valueOf(sc.getID()));
 		}
 	}
