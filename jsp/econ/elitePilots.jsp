@@ -47,7 +47,8 @@ td.requal-${lvl.name} {
  <td colspan="2" class="right">YEAR <el:combo name="year" options='${years}' size="1" idx="*" value="${year}" onChange="void golgotha.local.updateYear(this)" /></td>
 </tr>
 <tr>
- <td colspan="7" class="mid">Lorem Ipsum</td>
+ <td colspan="7" class="mid"><span class="pri bld">${eliteName}</span> is <content:airline/>'s Pilot loyalty program. It recognizes those Pilots who operate flights in the top percentiles of our Pilot population. Listed below are the Pilots who have demonstrated a sustained
+ commitment to <content:airline /> through their participation in our flight operations.</td>
 </tr>
 <c:forEach var="lvl" items="${totals.keySet()}">
 <c:set var="nl" value="${nyLevels[lvl.name]}" scope="page" />
