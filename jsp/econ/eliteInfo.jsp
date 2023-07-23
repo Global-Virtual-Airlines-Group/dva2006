@@ -124,7 +124,8 @@ Rolled over <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> a
 <c:when test="${upd.upgradeReason == 'DOWNGRADE'}">
 Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} mileage achievement</c:when>
 <c:when test="${upd.upgradeReason != 'NONE'}">
-Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason})</c:when>
+<content:defaultMethod var="urDesc" object="${upd.upgradeReason}" method="description" />
+Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${urDesc})</c:when>
 </c:choose>
 <c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
 <hr />
