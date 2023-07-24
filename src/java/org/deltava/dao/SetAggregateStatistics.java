@@ -96,7 +96,7 @@ public class SetAggregateStatistics extends DAO {
 			
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_GATE (SELECT G.ICAO, G.NAME, F.AIRLINE, F.AIRPORT_D, F.AIRPORT_A, GD.ISDEPARTURE, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS , "
 			+ "acars.GATEDATA GD, common.GATES G WHERE (GD.ID=F.ID) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (F.AIRPORT_D=?) AND (F.AIRPORT_A=?) AND (F.CREATED>DATE_SUB(NOW, INTERVAL ? YEAR)) "
-			+ "GROUYP BY G.ICAO, G.NAME, F.AIRLINE, F.AIRPORT_D, F.AIRPORT_A, GD.ISDEPARTURE")) {
+			+ "GROUP BY G.ICAO, G.NAME, F.AIRLINE, F.AIRPORT_D, F.AIRPORT_A, GD.ISDEPARTURE")) {
 			ps.setString(1, fr.getAirportD().getIATA());
 			ps.setString(2, fr.getAirportA().getIATA());
 			ps.setInt(3, GATE_USAGE_YEARS);
