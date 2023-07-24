@@ -21,6 +21,7 @@ import org.deltava.util.system.SystemData;
 public class SkyMilesScorer extends EliteScorer {
 	
 	private static final int MAX_NON_ACARS = SystemData.getInt("econ.elite.maxNonACARS", 5);
+	private static final int MAX_ACCEL_PCT = SystemData.getInt("econ.elite.maxAccelPct", 20);
 	
 	private final Map<Integer, MutableInteger> _nonACARSCounts = new HashMap<Integer, MutableInteger>();
 	
@@ -44,12 +45,6 @@ public class SkyMilesScorer extends EliteScorer {
 		_nonACARSCounts.put(k, i);
 	}
 	
-	/**
-	 * Scores an ACARS Flight Report.
-	 * @param pkg the ScorePackage
-	 * @param lvl the Pilot's Elite status level
-	 * @return a FlightScoreEntry
-	 */
 	@Override
 	public FlightEliteScore score(ScorePackage pkg, EliteLevel lvl) {
 		FDRFlightReport ffr = pkg.getFlightReport();
@@ -65,22 +60,24 @@ public class SkyMilesScorer extends EliteScorer {
 			addBonus(350, "Good Landing", (lr == LandingRating.GOOD));
 		}
 		
-		// Calculate no acceleration bonus
+		// Calculate minimal acceleration bonus
+		if (ffr instanceof ACARSFlightReport afr) {
+			Duration accTime = Duration.ofSeconds(afr.getTime(2) + afr.getTime(4));
+			float rawAccPct = accTime.toSeconds() * 1f / afr.getBlockTime().toSeconds();
+			int accPct = Math.round(rawAccPct * 100);
+			if (accPct < MAX_ACCEL_PCT) {
+				addBonus(ffr.getDistance() / 2, "Minimal Time Acceleration", true);
+				_score.setDistance(ffr.getDistance());
+			}
+		}
 		
 		return _score;
 	}
 
-	/**
-	 * Scores a Flight Report.
-	 * @param fr the FlightReport
-	 * @param lvl the Pilot's Elite status level
-	 * @return a FlightScoreEntry
-	 */
 	@Override
 	public FlightEliteScore score(FlightReport fr, EliteLevel lvl) {
 		if (!canScore(fr)) return null;
 		reset(fr.getID(), lvl);
-		_score.setDistance(fr.getDistance());
 
 		// Check for non-ACARS flights this month
 		boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS); 
@@ -88,11 +85,13 @@ public class SkyMilesScorer extends EliteScorer {
 			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).intValue();
 			if (cnt >= MAX_NON_ACARS) {
 				setBase(fr.getDistance() / 2, "Non-ACARS Base Miles");
+				_score.setDistance(fr.getDistance());
 				_score.setScoreOnly(true);
 				return _score;
 			}
 		}
 		
+		_score.setDistance(fr.getDistance() / 2);
 		setBase(fr.getDistance(), isACARS ? "ACARS/XACARS/simFDR Base Miles" : "Base Miles");
 		addBonus(250, "Promotion Leg", !fr.getCaptEQType().isEmpty());
 		addBonus(500, "New Aircraft - " + fr.getEquipmentType(), isNewEquipment(fr.getEquipmentType(), fr.getDate()));
