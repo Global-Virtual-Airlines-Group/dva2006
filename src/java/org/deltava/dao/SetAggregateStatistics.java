@@ -88,7 +88,7 @@ public class SetAggregateStatistics extends DAO {
 	 * Updates Gate statistics for a particular flight. 
 	 */
 	private void updateGates(FlightReport fr) throws SQLException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM FLIGHTSTATS_GATE WHERE (F.AIRPORT_D=?) AND (F.AIRPORT_A=?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM FLIGHTSTATS_GATE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)")) {
 			ps.setString(1, fr.getAirportD().getIATA());
 			ps.setString(2, fr.getAirportA().getIATA());
 			executeUpdate(ps, 0);
