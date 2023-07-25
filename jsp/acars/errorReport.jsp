@@ -86,7 +86,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 <c:when test="${err.isLoaded() && !err.isInfo}">
 <tr>
  <td class="label">Application Log</td>
- <td class="data"><span class="pri bld">acars_error${err.ID}.log</span> (<fmt:fileSize value="${err.size}" />) <a href="/error_log/${err.hexID}">Click to download</a></td>
+ <td class="data"><span class="pri bld">acars_error${err.ID}.log</span> (<fmt:fileSize value="${err.size}" />) <a href="/attach/error_log/${err.hexID}">Click to download</a></td>
 </tr>
 </c:when>
 <c:when test="${err.isLoaded()}">
@@ -144,6 +144,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	xmlreq.open('get', '/attach/error_log/' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
