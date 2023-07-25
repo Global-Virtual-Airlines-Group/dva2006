@@ -69,7 +69,7 @@ public class XMLClientDataService extends DownloadService {
 		}
 		
 		// Check the cache
-		if ((d != null) && (d.toHours() < 48) && (f.length() > 10240) && (md != null)) {
+		if ((d != null) && (d.toHours() < 72) && (f.length() > 10240) && (md != null)) {
 			ctx.setHeader("Content-disposition", String.format("attachment; filename=%s", ZIP_NAME));
 			ctx.setContentType("application/zip");
 			ctx.setHeader("max-age", 1800);
@@ -78,8 +78,9 @@ public class XMLClientDataService extends DownloadService {
 			ctx.setHeader("X-Signature-Type", md.getHashType());
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
-		}
-
+		} else if (d != null)
+			log.warn("Terminal Routes {} hours old, updating", Long.valueOf(d.toHours()));
+		
 		// Get the data
 		Map<String, String> docs = new ConcurrentHashMap<String, String>();
 		try {
@@ -132,6 +133,7 @@ public class XMLClientDataService extends DownloadService {
 			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
 				md = new Metadata(MessageDigester.convert(mdg.digest(is)), mdg.getAlgorithm());
 				md.setAirportCount(apCount);
+				_md.put(ZIP_NAME, md);
 			}
 
 			// Format and write
