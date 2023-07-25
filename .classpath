@@ -30,7 +30,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.15.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.12.7.jar"/>
@@ -49,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.61.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-8.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
