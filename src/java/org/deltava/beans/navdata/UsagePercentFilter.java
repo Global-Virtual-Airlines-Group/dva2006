@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.UsageFilter;
@@ -6,11 +6,11 @@ import org.deltava.beans.UsageFilter;
 /**
  * A UsageFilter to filter runways based on popularity. 
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 10.2
  */
 
-public class UsagePercentFilter implements UsageFilter<RunwayUsage> {
+public class UsagePercentFilter implements UsageFilter<RunwayUse> {
 	
 	/**
 	 * Filters all Runways.
@@ -29,7 +29,7 @@ public class UsagePercentFilter implements UsageFilter<RunwayUsage> {
 	}
 	
 	@Override
-	public boolean filter(RunwayUsage ru, int max, int total) {
+	public boolean filter(RunwayUse ru, int max, int total) {
 		ru.setPercentage((total == 0) ? 0 : ru.getUseCount() * 100 / total);
 		if (max < 50) return true;
 		

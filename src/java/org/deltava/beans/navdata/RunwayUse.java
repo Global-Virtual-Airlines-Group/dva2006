@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.UseCount;
@@ -6,22 +6,33 @@ import org.deltava.beans.UseCount;
 /**
  * A bean to store runway and usage data.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 10.2
  */
 
-public class RunwayUsage extends Runway implements UseCount {
+public class RunwayUse extends Runway implements UseCount {
 	
 	private int _useCount;
 	private int _pct;
 	
 	/**
-	 * Creates the bean.
-	 * @param lat the runway latitude
-	 * @param lng the runway longitude
+	 * Creates a RunwayUsage bean from a Runway.
+	 * @param r the Runway
 	 */
-	public RunwayUsage(double lat, double lng) {
-		super(lat, lng);
+	public RunwayUse(Runway r) {
+		super(r.getLatitude(), r.getLongitude());
+		setName(r.getName());
+		setCode(r.getCode());
+		setRegion(r.getRegion());
+		setLength(r.getLength());
+		setThresholdLength(r.getThresholdLength());
+		setWidth(r.getWidth());
+		setHeading(r.getHeading());
+		setFrequency(r.getFrequency());
+		setSurface(r.getSurface());
+		setSimulator(r.getSimulator());
+		setMagVar(r.getMagVar());
+		setOldCode(r.getOldCode());
 	}
 	
 	@Override
@@ -60,7 +71,7 @@ public class RunwayUsage extends Runway implements UseCount {
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof RunwayUsage) && (hashCode() == o.hashCode());
+		return (o instanceof RunwayUse) && (hashCode() == o.hashCode());
 	}
 	
 	@Override
@@ -76,8 +87,8 @@ public class RunwayUsage extends Runway implements UseCount {
 	
 	@Override
 	public int compareTo(NavigationDataBean nd2) {
-		if (!(nd2 instanceof RunwayUsage)) return super.compareTo(nd2);
-		RunwayUsage sr2 = (RunwayUsage) nd2;
+		if (!(nd2 instanceof RunwayUse)) return super.compareTo(nd2);
+		RunwayUse sr2 = (RunwayUse) nd2;
 		int tmpResult = Integer.compare(_useCount, sr2._useCount);
 		if (tmpResult == 0)
 			tmpResult = getName().compareTo(sr2.getName());
