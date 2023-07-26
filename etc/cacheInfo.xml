@@ -30,6 +30,7 @@
     <cache id="Gates" remote="true" expires="2d" />
     <cache id="GatePairs" remote="true" expires="4d" />
     <cache id="GateUsage" remote="true" expires="86400" />
+    <cache id="RunwayUsage" remote="true" expires="86400" />
     <cache id="Alternates" remote="true" expires="86400" />
 	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
@@ -43,7 +44,6 @@
 	<!-- ACARS caches -->
 	<cache id="ACARSMap" max="1" expires="3" />
 	<cache id="ACARSFlightID" max="1" expires="3" />
-	<cache id="ACARSRunways" remote="true" expires="86400" />
 	<cache id="simFDRFlightID" remote="true" expires="3600" />
 	<cache id="ACARSTrackCAS" max="16" expires="3600" />
 	<cache id="TaxiTime" remote="true" expires="86400" />
