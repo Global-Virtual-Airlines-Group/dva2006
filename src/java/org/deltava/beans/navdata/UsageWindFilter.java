@@ -46,8 +46,8 @@ public class UsageWindFilter extends UsagePercentFilter {
 	 * @param m the METAR bean 
 	 */
 	public void setWinds(METAR m) {
-		if (m != null)
-			setWinds(m.getWindDirection(), (m.getWindSpeed() + m.getWindGust()) / 2);
+		if (m != null) 
+			setWinds(m.getWindDirection(), (m.getWindSpeed() + Math.max(m.getWindSpeed(), m.getWindGust())) / 2);
 		else
 			setWinds(0, 0);
 	}
