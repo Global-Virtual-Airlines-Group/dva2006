@@ -79,7 +79,7 @@ public class XMLClientDataService extends DownloadService {
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		} else if (d != null)
-			log.warn("Terminal Routes {} hours old, updating", Long.valueOf(d.toHours()));
+			log.warn("Terminal Routes {} hours old (size={}), updating", Long.valueOf(d.toHours()), Long.valueOf(f.length()));
 		
 		// Get the data
 		Map<String, String> docs = new ConcurrentHashMap<String, String>();
