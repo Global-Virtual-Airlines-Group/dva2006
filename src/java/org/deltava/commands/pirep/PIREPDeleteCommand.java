@@ -15,7 +15,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
 			wdao.delete(ctx.getID());
 			
 			// Update statistics
-			if (fr.getStatus() == FlightStatus.OK) {
+			if ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.REJECTED)) {
 				SetAggregateStatistics stwdao = new SetAggregateStatistics(con);
 				stwdao.update(fr);
 			}
