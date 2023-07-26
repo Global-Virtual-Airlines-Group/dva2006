@@ -10,6 +10,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.TaxiTime;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RunwayUsage;
 import org.deltava.beans.wx.METAR;
 
 import org.deltava.commands.*;
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 6.3
  */
 
@@ -55,13 +56,15 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Get runway data and build bounding box
 			GetNavData nddao = new GetNavData(con);
 			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
-			ctx.setAttribute("rwys", allRwys.isEmpty() ? Collections.singleton(a) : allRwys.stream().map(GeoPosition::new).collect(Collectors.toSet()), REQUEST);
+			ctx.setAttribute("rwys", allRwys.isEmpty() ? Set.of(a) : allRwys.stream().map(GeoPosition::new).collect(Collectors.toSet()), REQUEST);
 			int maxLength = allRwys.stream().mapToInt(Runway::getLength).max().orElse(0);
 			
 			// Load takeoff/landing runways
-			GetACARSRunways rwdao = new GetACARSRunways(con);
-			List<RunwayUsage> allDRwys = rwdao.getPopularRunways(a, true); 
-			List<RunwayUsage> allARwys = rwdao.getPopularRunways(a, false);
+			GetRunwayUsage rwdao = new GetRunwayUsage(con);
+			RunwayUsage dru = rwdao.getPopularRunways(a, true);
+			RunwayUsage aru = rwdao.getPopularRunways(a, false);
+			List<RunwayUse> allDRwys = dru.apply(allRwys); 
+			List<RunwayUse> allARwys = aru.apply(allRwys);
 			
 			// Filter arrival/departure runways - first select those available due to winds, then other popular runways
 			UsagePercentFilter rf = new UsagePercentFilter(22);

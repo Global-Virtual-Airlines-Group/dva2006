@@ -15,6 +15,7 @@ import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RunwayUsage;
 import org.deltava.beans.wx.*;
 
 import org.deltava.comparators.*;
@@ -27,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -140,17 +141,21 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				// Add popular departure runways
 				if (doRunways) {
-					UsageFilter<RunwayUsage> rf = UsagePercentFilter.ALL;
+					UsageFilter<RunwayUse> rf = UsagePercentFilter.ALL;
 					if (!allDepartureRunways) {
 						UsageWindFilter uwf = new UsageWindFilter(10, -7);
 						uwf.setWinds(wxD);
 						rf = uwf;
 					}
 					
-					GetACARSRunways rwdao = new GetACARSRunways(con);
-					Collection<RunwayUsage> popRunways = rf.filter(rwdao.getPopularRunways(dr.getAirportD(), dr.getAirportA(), true));
-					if (popRunways.isEmpty())
-						popRunways.addAll(rf.filter(rwdao.getPopularRunways(dr.getAirportD(), null, true)));
+					GetRunwayUsage rwdao = new GetRunwayUsage(con);
+					RunwayUsage dru = rwdao.getPopularRunways(dr, true);
+					List<Runway> depRwys = dao.getRunways(dr.getAirportD(), sim);
+					Collection<RunwayUse> popRunways = rf.filter(dru.apply(depRwys));
+					if (popRunways.isEmpty()) {
+						dru = rwdao.getPopularRunways(dr.getAirportD(), true);
+						popRunways.addAll(rf.filter(dru.apply(depRwys)));
+					}
 					
 					final Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
 					popRunways.stream().filter(r -> filterSIDRwy(r, sidRunways)).forEach(runways::add);
