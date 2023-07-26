@@ -9,6 +9,7 @@ import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RunwayUsage;
 import org.deltava.beans.wx.METAR;
 
 import org.deltava.comparators.RunwayComparator;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -72,8 +73,10 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("gatesA", CollectionUtils.nonNull(gA), REQUEST);
 				
 				// Get departure runways
-				GetACARSRunways rwdao = new GetACARSRunways(con);
-				List<Runway> runways = rwdao.getPopularRunways(dfr.getAirportD(), dfr.getAirportA(), true).stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
+				GetRunwayUsage rwdao = new GetRunwayUsage(con);
+				RunwayUsage ru = rwdao.getPopularRunways(dfr, true);
+				List<RunwayUse> rwys = ru.apply(navdao.getRunways(dfr.getAirportD(), Simulator.P3Dv4));
+				List<Runway> runways = rwys.stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
 				
 				// Sort based on wind
 				GetWeather wxdao = new GetWeather(con);

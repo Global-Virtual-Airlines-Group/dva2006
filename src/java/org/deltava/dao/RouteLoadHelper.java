@@ -6,9 +6,10 @@ import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.Helper;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RunwayUsage;
 import org.deltava.beans.wx.METAR;
 
 import org.deltava.comparators.RunwayComparator;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 3.4
  */
 
@@ -162,8 +163,12 @@ public final class RouteLoadHelper {
 		UsageWindFilter rf = new UsageWindFilter(10, -7);
 		rf.setWinds(m);
 		
-		GetACARSRunways ardao = new GetACARSRunways(_c);
-		List<? extends Runway> rwys = rf.filter(ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff));
+		GetNavData nddao = new GetNavData(_c);
+		GetRunwayUsage ardao = new GetRunwayUsage(_c);
+		List<Runway> runways = nddao.getRunways(isTakeoff ? _rp.getAirportD() : _rp.getAirportA(), Simulator.P3Dv4);
+		RunwayUsage ru = ardao.getPopularRunways(_rp, isTakeoff);
+		
+		List<? extends Runway> rwys = rf.filter(ru.apply(runways));
 		if ((m != null) && (m.getWindSpeed() > 0))
 			rwys.sort(new RunwayComparator(m.getWindDirection(), m.getWindSpeed(), true));
 		

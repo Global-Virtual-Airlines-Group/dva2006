@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.1
  */
 
@@ -142,7 +142,7 @@ public class GetGates extends DAO {
 			// Load gate usage
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					gu.addGate(rs.getString(1), SystemData.getAirline(rs.getString(2)), rs.getInt(3));
+					gu.add(rs.getString(1), SystemData.getAirline(rs.getString(2)), rs.getInt(3));
 			}
 			
 			_useCache.add(gu);
