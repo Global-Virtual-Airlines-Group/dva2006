@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -118,15 +118,13 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of all active/on leave Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getActivePilots(String orderBy) throws DAOException {
+	public List<Integer> getActivePilots(String orderBy) throws DAOException {
 
-		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P "
-			+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) LEFT JOIN STAFF S ON (P.ID=S.ID) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
-		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
+		StringBuilder sql = new StringBuilder("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (PILOT_ID>0) ORDER BY ");
+		sql.append((orderBy != null) ? orderBy.toUpperCase() : "PILOT_ID");
 		try (PreparedStatement ps = prepare(sql.toString())) {
-			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, PilotStatus.ACTIVE.ordinal());
-			return execute(ps);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -149,9 +147,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".STAFF S ON (P.ID=S.ID) WHERE (P.EQTYPE=?)");
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
@@ -207,11 +203,13 @@ public class GetPilot extends PilotReadDAO {
 		if (StringUtils.isEmpty(letter) || !Character.isLetter(letter.charAt(0)))
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
+		char c = Character.toUpperCase(letter.charAt(0));
 		try (PreparedStatement ps = prepare("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) "
-			+ "AND (F.STATUS=?)) WHERE (LEFT(P.LASTNAME, 1)=?) AND (P.FORGOTTEN=?) GROUP BY P.ID ORDER BY P.LASTNAME")) {
+			+ "AND (F.STATUS=?)) WHERE (P.LASTNAME>=?) AND (P.LASTNAME<?) AND (P.FORGOTTEN=?) GROUP BY P.ID ORDER BY P.LASTNAME, P.FIRSTNAME, P.ID")) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setString(2, letter.substring(0, 1).toUpperCase());
-			ps.setBoolean(3, false);
+			ps.setString(2, Character.toString(c));
+			ps.setString(3, Character.toString(++c));
+			ps.setBoolean(4, false);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -72,11 +72,11 @@ public class RatingCheck extends TestCase {
 		GetEquipmentType eqdao = new GetEquipmentType(_c);
 		Collection<EquipmentType> allEQ = eqdao.getActive();
 
-		Collection<Pilot> pilots = pdao.getActivePilots("P.PILOT_ID");
+		Collection<Integer> IDs = pdao.getActivePilots("P.PILOT_ID");
 		try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
-			for (Pilot p : pilots) {
+			for (Integer id : IDs) {
+				Pilot p = pdao.get(id.intValue());
 				log.info("Processing " + p.getName());
-				p = pdao.get(p.getID());
 
 				// Load PIREPs and eqType
 				EquipmentType eq = eqdao.get(p.getEquipmentType());

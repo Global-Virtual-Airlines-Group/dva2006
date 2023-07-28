@@ -1,7 +1,8 @@
-// Copyright 2005, 2009, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -9,20 +10,17 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
-import org.deltava.comparators.PilotComparator;
-
 /**
  * A Web Site Command to display the Pilot Roster.
  * @author Luke
- * @version 8.3
+ * @version 11.1
  * @since 1.0
  */
 
 public class RosterCommand extends AbstractViewCommand {
 
-    // List of query columns we can order by
-    private static final String[] SORT_CODE = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED", "P.PILOT_ID", "P.EQTYPE", "IFNULL(S.SORT_ORDER, 100), P.RANKING DESC, P.PILOT_ID, P.CREATED", "LEGS DESC", "HOURS DESC", "P.STATUS", "LASTFLIGHT DESC"};
-    private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(PilotComparator.TYPES, SORT_CODE);
+	private static final String[] SORT_TYPE = {"First Name", "Last Name", "Last Login", "Join Date", "Pilot Code", "Equipment Type", "Rank"};
+    private static final String[] SORT_CODE = {"FIRSTNAME", "LASTNAME", "LAST_LOGIN DESC", "CREATED", "PILOT_ID", "EQTYPE", "RANKING DESC, PILOT_ID, CREATED"};
     
     /**
      * Executes the command.
@@ -49,9 +47,11 @@ public class RosterCommand extends AbstractViewCommand {
             GetPilot dao = new GetPilot(con);
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
-            if (eq == null)
-            	vc.setResults(dao.getActivePilots(vc.getSortType()));
-            else
+            if (eq == null) {
+            	List<Integer> IDs = dao.getActivePilots(vc.getSortType());
+            	Map<Integer, Pilot> pilots = dao.getByID(IDs, "PILOTS");
+            	vc.setResults(IDs.stream().map(pilots::get).filter(Objects::nonNull).collect(Collectors.toList()));
+            } else
             	vc.setResults(dao.getPilotsByEQ(eq, vc.getSortType(), true, null));
         } catch (DAOException de) {
             throw new CommandException(de);
@@ -60,7 +60,7 @@ public class RosterCommand extends AbstractViewCommand {
         }
         
         // Save the sorter types in the request
-        ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
+        ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_TYPE, SORT_CODE), REQUEST);
         
         // Set the result page and return
         CommandResult result = ctx.getResult();
