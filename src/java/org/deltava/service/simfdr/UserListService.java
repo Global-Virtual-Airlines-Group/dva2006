@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to display active User IDs. 
  * @author Luke
- * @version 7.0
+ * @version 11.1
  * @since 7.0
  */
 
@@ -39,7 +39,8 @@ public class UserListService extends SimFDRService {
 		Collection<Pilot> users = null;
 		try {
 			GetPilot pdao = new GetPilot(ctx.getConnection());
-			users = pdao.getActivePilots("ID");
+			Collection<Integer> IDs = pdao.getActivePilots("ID");
+			users = pdao.getByID(IDs, "PILOTS").values();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);	
 		} finally {
@@ -79,10 +80,6 @@ public class UserListService extends SimFDRService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
