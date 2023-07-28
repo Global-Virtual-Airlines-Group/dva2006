@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to calculate what Pilots are eligible for an Accomplishment.
  * @author Luke
- * @version 7.0
+ * @version 11.1
  * @since 3.6
  */
 
@@ -61,11 +61,12 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 			long lastUse = System.currentTimeMillis();
 			
 			// Validate Accomplishments
-			List<Pilot> pilots = pdao.getActivePilots(null); 
+			List<Integer> pilotIDs = pdao.getActivePilots(null); 
 			Collection<Pilot> awardedPilots = new ArrayList<Pilot>();
 			Collection<Pilot> clearedPilots = new ArrayList<Pilot>();
-			for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
+			for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext(); ) {
+				int id = i.next().intValue();
+				Pilot p = pdao.get(id);
 				boolean hasA = adao.has(p.getID(), a);
 
 				// Load Dispatch/Flight Report statistics
