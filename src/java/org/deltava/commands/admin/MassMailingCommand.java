@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -21,13 +21,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
 public class MassMailingCommand extends AbstractCommand {
-
-	private static final String ALL_ACTIVE = "$ALL$";
 
 	/**
 	 * Executes the command.
@@ -82,10 +80,6 @@ public class MassMailingCommand extends AbstractCommand {
 				pilots = dao.getByRole(eqType.substring(6), ctx.getDB());
 				ctx.setAttribute("eqType", eqType.substring(6), REQUEST);
 				ctx.setAttribute("isRole", Boolean.TRUE, REQUEST);
-			} else if (ALL_ACTIVE.equals(eqType)) {
-				GetPilot dao = new GetPilot(con);
-				pilots = dao.getActivePilots(null);
-				ctx.setAttribute("eqType", eqType, REQUEST);
 			} else if (!StringUtils.isEmpty(eqType)) {
 				GetPilot dao = new GetPilot(con);
 				pilots = dao.getPilotsByEQ(eqdao.get(ctx.getUser().getEquipmentType(), ctx.getDB()), null, true, null);
@@ -103,9 +97,6 @@ public class MassMailingCommand extends AbstractCommand {
 			String role = i.next().toString();
 			eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
 		}
-
-		// Add all users
-		eqTypes.add(ComboUtils.fromString("All Users", ALL_ACTIVE));
 
 		// Save the choices
 		ctx.setAttribute("eqTypes", eqTypes, REQUEST);
