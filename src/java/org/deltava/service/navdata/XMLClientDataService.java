@@ -60,9 +60,10 @@ public class XMLClientDataService extends DownloadService {
 			Instant fileAge = Instant.ofEpochMilli(f.lastModified());
 			d = Duration.between(fileAge, Instant.now());
 			if ((md != null) && fileAge.isAfter(md.getCreatedOn())) {
-				log.warn("Terminal Routes updated, clearing metadata");
+				log.warn("Terminal Routes updated on {}, clearing {} metadata from {}", StringUtils.format(fileAge, "MM/dd HH:mm"), ZIP_NAME, StringUtils.format(md.getCreatedOn(), "MM/dd HH:mm"));
 				_md.remove(ZIP_NAME);
-			}
+			} else if (md == null)
+				log.warn("No Metadata found");
 		} else if (md != null) {
 			log.warn("Terminal Routes deleted, clearing metadata");
 			_md.remove(ZIP_NAME);
@@ -134,6 +135,7 @@ public class XMLClientDataService extends DownloadService {
 				md = new Metadata(MessageDigester.convert(mdg.digest(is)), mdg.getAlgorithm());
 				md.setAirportCount(apCount);
 				_md.put(ZIP_NAME, md);
+				log.warn("Updated {} metadata on {}", ZIP_NAME, StringUtils.format(md.getCreatedOn(), "MM/dd HH:mm"));
 			}
 
 			// Format and write
