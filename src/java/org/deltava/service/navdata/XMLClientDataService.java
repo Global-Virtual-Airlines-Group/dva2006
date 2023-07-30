@@ -20,6 +20,7 @@ import org.deltava.crypt.MessageDigester;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -36,7 +37,7 @@ public class XMLClientDataService extends DownloadService {
 	private static final String XML_ZIP = "xmldata.zip";
 	private static final String XML_LEGACY_ZIP = "xmlsidstar.zip";
 	
-	private final Map<String, Metadata> _md = new HashMap<String, Metadata>();
+	private static final Cache<Metadata> _cache = CacheManager.get(Metadata.class, "XMLMetadata");
 
 	/**
 	 * Executes the Web Service.
@@ -50,7 +51,7 @@ public class XMLClientDataService extends DownloadService {
 		// Determine if we are pulling old/new format data
 		boolean isOld = Boolean.parseBoolean(ctx.getParameter("legacy"));
 		final String ZIP_NAME = isOld ? XML_LEGACY_ZIP : XML_ZIP;
-		Metadata md = _md.get(ZIP_NAME);
+		Metadata md = _cache.get(ZIP_NAME);
 
 		// Check if the file exists
 		File cacheDir = new File(SystemData.get("schedule.cache"));
@@ -61,12 +62,12 @@ public class XMLClientDataService extends DownloadService {
 			d = Duration.between(fileAge, Instant.now());
 			if ((md != null) && fileAge.isAfter(md.getCreatedOn())) {
 				log.warn("Terminal Routes updated on {}, clearing {} metadata from {}", StringUtils.format(fileAge, "MM/dd HH:mm"), ZIP_NAME, StringUtils.format(md.getCreatedOn(), "MM/dd HH:mm"));
-				_md.remove(ZIP_NAME);
+				_cache.remove(ZIP_NAME);
 			} else if (md == null)
-				log.warn("No Metadata found");
+				log.warn("No {} Metadata found", ZIP_NAME);
 		} else if (md != null) {
 			log.warn("Terminal Routes deleted, clearing metadata");
-			_md.remove(ZIP_NAME);
+			_cache.remove(ZIP_NAME);
 		}
 		
 		// Check the cache
@@ -132,10 +133,10 @@ public class XMLClientDataService extends DownloadService {
 			// Calculate the metadata
 			MessageDigester mdg = new MessageDigester("SHA-256", 8192);
 			try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
-				md = new Metadata(MessageDigester.convert(mdg.digest(is)), mdg.getAlgorithm());
+				md = new Metadata(ZIP_NAME, MessageDigester.convert(mdg.digest(is)), mdg.getAlgorithm());
 				md.setAirportCount(apCount);
-				_md.put(ZIP_NAME, md);
-				log.warn("Updated {} metadata on {}", ZIP_NAME, StringUtils.format(md.getCreatedOn(), "MM/dd HH:mm"));
+				_cache.add(md);
+				log.warn("Updated {} metadata", ZIP_NAME);
 			}
 
 			// Format and write
