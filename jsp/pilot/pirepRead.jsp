@@ -499,7 +499,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 <tr>
 <c:if test="${access.canDispose || access.canUpdateComments}">
- <td colspan="2" class="mid"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox><el:text name="reviewTime" type="hidden" value="0" /></td></c:if>
+ <td colspan="2" class="mid"><el:textbox name="dComments" resize="true" width="85%" height="5">${pirep.comments}</el:textbox><el:text name="reviewTime" type="hidden" value="0" /></td></c:if>
 <c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
  <td colspan="2" class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td></c:if>
 </tr>
