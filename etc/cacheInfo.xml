@@ -37,6 +37,7 @@
     <cache id="GeoCountry" remote="true" geo="true" expires="864000" precision="0.01" />
     <cache id="ATIS" remote="true" expires="900" />
     <cache id="ATISCodes" max="4" expires="3600" />
+    <cache id="XMLMetadata" remote="true" expires="4d" />
 
 	<!-- VATSIM caches -->
 	<cache id="OnlineIDs" max="4" expires="3600" />
