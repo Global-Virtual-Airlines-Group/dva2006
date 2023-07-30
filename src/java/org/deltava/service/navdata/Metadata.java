@@ -1,31 +1,44 @@
-// Copyright 2013, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.time.Instant;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to store Gate/Terminal Route archive metadata.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 10.0
  */
 
-class Metadata {
+class Metadata implements Cacheable {
 	
+	private final String _fileName;
 	private final String _hash;
 	private final String _hashType;
 	private int _airportCount;
 	private final Instant _created = Instant.now();
 	
 	/**
-	 * Creates the metadata.
+	 * Creates the metadata for a file.
+	 * @param fileName the file name
 	 * @param hash the archive hash
 	 * @param hashType the hash algorithm
 	 */
-	Metadata(String hash, String hashType) {
+	Metadata(String fileName, String hash, String hashType) {
 		super();
+		_fileName = fileName;
 		_hash = hash;
 		_hashType = hashType;
+	}
+	
+	/**
+	 * Returns the file name.
+	 * @return the file name
+	 */
+	public String getFileName() {
+		return _fileName;
 	}
 	
 	/**
@@ -66,5 +79,10 @@ class Metadata {
 	 */
 	public void setAirportCount(int cnt) {
 		_airportCount = cnt;
+	}
+
+	@Override
+	public Object cacheKey() {
+		return _fileName;
 	}
 }
