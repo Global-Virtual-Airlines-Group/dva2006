@@ -218,6 +218,21 @@ public class GetExam extends DAO {
 	}
 	
 	/**
+	 * Returns all unsubmitted Check Rides.
+	 * @return a List of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<CheckRide> getSubmittedRides() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) "
+				+ "LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.STATUS=?) AND (CR.EQTYPE=EQ.EQTYPE) AND (CR.OWNER=EQ.OWNER) ORDER BY CR.SUBMITTED, CR.CREATED")) {
+			ps.setInt(1, TestStatus.SUBMITTED.ordinal());
+			return executeCheckride(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all unsubmitted Check Rides older than a certain date.
 	 * @param days the number of days
 	 * @param rt a RideType
