@@ -341,14 +341,20 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
  <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
 <br />
-<b>There <fmt:is value="${promoQueueSize}" /> <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
+<span class="bld">There <fmt:is value="${promoQueueSize}" /> <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</span></c:if></td>
 </tr>
 <content:filter roles="HR,Examination">
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
  <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
 <br />
-<b>There <fmt:is value="${examQueueSize}" />&nbsp;<fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
+<span class="bld">There <fmt:is value="${examQueueSize}" />&nbsp;<fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</span></c:if></td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="crqueue">Submitted Check Rides</el:cmd></td>
+ <td class="data">You can view and score submitted Pilot Check Rides.<c:if test="${crQueueSize > 0}"><br />
+ <br />
+ <span class="bld">There <fmt:is value="${crQueueSize}" />&nbsp;<fmt:quantity value="${crQueueSize}" single="submitted Check Ride" /> awaiting evaluation.</span></c:if></td>
 </tr>
 </content:filter>
 </content:filter>

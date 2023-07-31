@@ -1704,7 +1704,13 @@
 		<class>org.deltava.commands.testing.CheckRideScoreCommand</class>
 		<roles>Examination,HR</roles>
 	</command>
-	
+
+	<command id="crqueue">
+		<name>Check Ride Queue</name>
+		<class>org.deltava.commands.testing.CheckRideQueueCommand</class>
+		<roles>Examination,HR</roles>
+	</command>
+
 	<command id="waivecr">
 		<name>Waive Check Ride</name>
 		<class>org.deltava.commands.testing.WaiveCheckRideCommand</class>

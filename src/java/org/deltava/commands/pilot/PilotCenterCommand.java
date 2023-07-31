@@ -302,6 +302,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				GetExam exdao = new GetExam(con);
 				ctx.setAttribute("examQueueSize", Integer.valueOf(exdao.getSubmitted().size()), REQUEST);
 				ctx.setAttribute("txQueueSize", Integer.valueOf(txdao.getCount(myEQType)), REQUEST);
+				ctx.setAttribute("crQueueSize", Integer.valueOf(exdao.getSubmittedRides().size()), REQUEST);
 			}
 			
 			// If we have proficiency-based check rides, get upcoming expirations
