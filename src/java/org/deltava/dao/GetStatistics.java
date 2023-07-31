@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,15 +15,15 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 1.0
  */
 
 public class GetStatistics extends DAO  {
 
-	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 1800);
-	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 1800);
-	private static final Cache<AirlineTotals> _aCache = new ExpiringCache<AirlineTotals>(2, 3600);
+	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 3600);
+	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 3600);
+	private static final Cache<AirlineTotals> _aCache = new ExpiringCache<AirlineTotals>(2, 43200);
 
 	/**
 	 * Initializes the Data Access Object.
