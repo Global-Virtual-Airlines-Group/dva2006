@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to delete Pilot Examinations and Check Rides.
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -42,8 +42,11 @@ public class ExamDeleteCommand extends AbstractCommand {
 				throw notFoundException("Invalid " + (isCheckRide ? "Check Ride - " : "Examination - ") + ctx.getID());
 
 			// Get the user data
+			GetPilot pdao = new GetPilot(con);
 			GetUserData uddao = new GetUserData(con);
 			UserData ud = uddao.get(t.getAuthorID());
+			Pilot p = pdao.get(ud);
+			ctx.setAttribute("pilot", p, REQUEST);
 
 			// Check our access
 			ExamAccessControl access = new ExamAccessControl(ctx, t, ud);
@@ -57,12 +60,12 @@ public class ExamDeleteCommand extends AbstractCommand {
 			// Get the write DAO and delete the test
 			SetExam wdao = new SetExam(con);
 			wdao.delete(t);
-			if (!isCheckRide)
-				wdao.updateStats((Examination) t);
+			if (t instanceof Examination ex)
+				wdao.updateStats(ex);
 
 			// If it's a check ride, find the PIREP
-			if (isCheckRide && (t.getStatus() != TestStatus.NEW)) {
-				int acarsID = ((CheckRide) t).getFlightID();
+			if ((t instanceof CheckRide cr) && (t.getStatus() != TestStatus.NEW)) {
+				int acarsID = cr.getFlightID();
 				GetFlightReports frdao = new GetFlightReports(con);
 				FlightReport fr = frdao.getACARS(ud.getDB(), acarsID);
 				if (fr != null) {

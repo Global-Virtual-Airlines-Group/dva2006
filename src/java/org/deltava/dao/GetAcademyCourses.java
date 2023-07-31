@@ -69,7 +69,7 @@ public class GetAcademyCourses extends DAO {
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getByCheckRide(Collection<Integer> ids) throws DAOException {
+	public List<Course> getByCheckRide(Collection<Integer> ids) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyList();
 		
