@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -401,6 +401,7 @@ public class GetFlightReports extends DAO {
 		
 		int idx = 1;
 		try (PreparedStatement ps = prepare(buf.toString())) {
+			ps.setFetchSize(2000);
 			ps.setInt(1, id);
 			if (sc.getEquipmentType() != null)
 				ps.setString(++idx, sc.getEquipmentType());
@@ -451,6 +452,7 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(IDs.size());
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setFetchSize(2000);
 			ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
 			ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 			ps.setInt(3, FlightReport.ATTR_ACARS);
@@ -874,7 +876,7 @@ public class GetFlightReports extends DAO {
 		
 		Map<Integer, FlightReport> pMap = CollectionUtils.createMap(pireps, FlightReport::getID);
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setFetchSize(Math.min(pireps.size(), 1000));
+			ps.setFetchSize(Math.min(pireps.size(), 2000));
 			ps.setInt(1, pilotID);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
