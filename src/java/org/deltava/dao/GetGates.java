@@ -183,6 +183,7 @@ public class GetGates extends DAO {
 					results.add(SystemData.getAirport(rs.getString(1)));
 			}
 			
+			results.removeIf(Objects::isNull);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
