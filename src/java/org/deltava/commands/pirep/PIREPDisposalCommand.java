@@ -9,6 +9,8 @@ import java.time.Instant;
 
 import org.apache.logging.log4j.*;
 
+import com.newrelic.api.agent.NewRelic;
+
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
@@ -31,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -131,6 +133,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
 				throw notFoundException(String.format("Unknown Pilot - %d", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT))));
+			
+			// Send Pilot to NewRelic
+			NewRelic.addCustomParameter("pilot.name", p.getName());
 
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -167,6 +172,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(acchelper::add);
+				NewRelic.addCustomParameter("pilot.flights", Integer.valueOf(pireps.size()));
 
 				// Load accomplishments - only save the ones we haven't obtained yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
