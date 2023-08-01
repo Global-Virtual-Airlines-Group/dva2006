@@ -7,6 +7,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import com.newrelic.api.agent.NewRelic;
+
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
@@ -26,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -77,6 +79,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p = profiles.get(Integer.valueOf(ctx.getUser().getID()));
 			p.setTotalLegs(totalLegs);
 			p.setTotalHours(totalHours);
+			NewRelic.addCustomParameter("pilot.name", p.getName());
 
 			// Stuff the pilot profile in the request and the session
 			ctx.setAttribute("pilot", p, REQUEST);
