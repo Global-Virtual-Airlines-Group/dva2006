@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Schedule Task to automatically release Flight Assignments.
  * @author Luke
- * @version 8.1
+ * @version 11.1
  * @since 1.0
  */
 
@@ -29,9 +29,6 @@ public class AssignmentPurgeTask extends Task {
 		super("Assignment Purge", AssignmentPurgeTask.class);
 	}
 
-	/**
-	 * Executes the task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 
@@ -50,21 +47,24 @@ public class AssignmentPurgeTask extends Task {
 			// Check the open assignments
 			GetPilot pdao = new GetPilot(con);
 			SetAssignment wdao = new SetAssignment(con);
-			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext();) {
-				AssignmentInfo a = i.next();
+			for (AssignmentInfo a :  assignments) {
 				if (cld.isAfter(a.getAssignDate())) {
 					Pilot usr = pdao.get(a.getPilotID());
+					if (usr == null) {
+						log.warn("Unknown Pilot ID - {}", Integer.valueOf(a.getPilotID()));
+						continue;
+					}
 
 					// If the assignment is repeatable, then release it - otherwise delete it
 					if (a.isRepeating()) {
-						log.warn("Releasing Assignment " + a.getID() + " reserved by " + usr.getName());
+						log.warn("Releasing Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
 						wdao.reset(a);
 					} else {
-						log.warn("Deleting Assignment " + a.getID() + " reserved by " + usr.getName());
+						log.warn("Deleting Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
 						wdao.delete(a);
 					}
 				} else if (log.isDebugEnabled())
-					log.debug("Skipping Assignment " + a.getID() + ", assigned on " + a.getAssignDate());
+					log.debug("Skipping Assignment {} assigned on {}", Integer.valueOf(a.getID()), a.getAssignDate());
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
