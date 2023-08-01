@@ -12,8 +12,9 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.passFail, min:1, t:'Check Ride status'});
@@ -46,7 +47,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> - <el:cmdbutton url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT</el:cmd></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
@@ -54,6 +55,12 @@ golgotha.local.validate = function(f) {
  <td class="label">Flight Academy Course</td>
  <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
  <el:cmdbutton url="course" link="${course}" label="VIEW COURSE" /></td>
+</tr>
+</c:if>
+<c:if test="${!empty txReq}">
+<tr>
+ <td class="label">Transfer Request</td>
+ <td class="data"><span class="pri bld">${txReq.equipmentType}</span>, created on <fmt:date date="${txReq.date}" fmt="d" /><span class="nophone"> - <span class="sec bld">${txReq.simulator.name}</span> - <el:cmd url="txreqview" link="${txReq}" className="sec bld">VIEW TRANSFER REQUEST</el:cmd></span></td>
 </tr>
 </c:if>
 <tr>
@@ -67,12 +74,12 @@ golgotha.local.validate = function(f) {
 <c:if test="${access.canScore}">
 <tr>
  <td class="label">Check Ride Status</td>
- <td class="data"><el:check type="radio" name="passFail" className="req" idx="*" options="${passFail}" value="${score}" /></td>
+ <td class="data caps bld"><el:check type="radio" name="passFail" className="req" idx="*" options="${passFail}" value="${score}" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="90%" height="4" readOnly="${!access.canScore}" resize="${access.canScore}">${checkRide.comments}</el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="90%" height="4" readOnly="${!access.canScore}" resize="true">${checkRide.comments}</el:textbox></td>
 </tr>
 </el:table>
 
