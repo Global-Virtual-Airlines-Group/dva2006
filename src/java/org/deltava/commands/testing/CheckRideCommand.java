@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,14 +18,13 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to view Check Ride records.
  * @author Luke
- * @version 8.0
+ * @version 11.1
  * @since 1.0
  */
 
 public class CheckRideCommand extends AbstractCommand {
 
-	private static final List<ComboAlias> PASS_FAIL = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" },
-			new String[] { "true", "false" });
+	private static final List<ComboAlias> PASS_FAIL = ComboUtils.fromArray(new String[] { "Pass", "Unsatisfactory" }, new String[] { "true", "false" });
 
 	/**
 	 * Executes the command.
@@ -59,28 +58,29 @@ public class CheckRideCommand extends AbstractCommand {
 			if (!access.getCanRead())
 				throw securityException("Cannot view Check Ride");
 
-			// Load Flight Academy data
+			// Load Flight Academy data, or transfer request
 			if (cr.getAcademy()) {
 				GetAcademyCourses acdao = new GetAcademyCourses(con);
-				List<Course> courses = new ArrayList<Course>(acdao.getByCheckRide(Collections.singleton(Integer.valueOf(cr.getID()))));
+				List<Course> courses = acdao.getByCheckRide(Set.of(Integer.valueOf(cr.getID())));
 				if (!courses.isEmpty())
 					ctx.setAttribute("course", courses.get(0), REQUEST);
+			} else {
+				GetTransferRequest txdao = new GetTransferRequest(con);
+				ctx.setAttribute("txReq", txdao.getByCheckRide(cr.getID()), REQUEST);	
 			}
 
 			// Load the pilot data
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilot", pdao.get(ud), REQUEST);
-			if (cr.getScorerID() != 0) {
+			if (cr.getScorerID() != 0)
 				ctx.setAttribute("scorer", pdao.get(uddao.get(cr.getScorerID())), REQUEST);
-				ctx.setAttribute("score", String.valueOf(cr.getPassFail()), REQUEST);
-			}
-
+			
 			// If the checkride has been submitted, get the flight report
 			if (cr.getFlightID() != 0) {
 				GetFlightReports frdao = new GetFlightReports(con);
 				ctx.setAttribute("pirep", frdao.getACARS(ud.getDB(), cr.getFlightID()), REQUEST);
 			}
-
+			
 			// Save the checkride and the access controller
 			ctx.setAttribute("checkRide", cr, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);

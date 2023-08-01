@@ -14,11 +14,11 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.toggleBody = function(id) {
-	var row = document.getElementById(id);
-	var linkDesc = document.getElementById('toggleC');
-	var visible = (row.style.display != 'none');
+	const row = document.getElementById(id);
+	const linkDesc = document.getElementById('toggleC');
+	const visible = (row.style.display != 'none');
 	golgotha.util.display(row, !visible);
 	linkDesc.innerHTML = visible ? 'View' : 'Hide';
 	return true;
@@ -56,14 +56,19 @@ golgotha.local.toggleBody = function(id) {
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data"><span class="sec bld"><fmt:int value="${checkRide.flightID}" /></span> - <el:cmd url="crview" link="${checkRide}">VIEW FLIGHT REPORT</el:cmd></td>
+ <td class="data"><span class="sec bld"><fmt:int value="${checkRide.flightID}" /></span> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT</el:cmd></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
 <tr>
  <td class="label">Flight Academy Course</td>
- <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
- <el:cmdbutton url="course" link="${course}" label="VIEW COURSE" /></td>
+ <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />) - <el:cmd url="course" link="${course}" className="bld">VIEW COURSE</el:cmd></td>
+</tr>
+</c:if>
+<c:if test="${!empty txReq}">
+<tr>
+ <td class="label">Transfer Request</td>
+ <td class="data"><span class="pri bld">${txReq.equipmentType}</span>, created on <fmt:date date="${txReq.date}" fmt="d" /><span class="nophone"> - <span class="sec bld">${txReq.simulator.name}</span> - <el:cmd url="txreqview" link="${txReq}" className="sec bld">VIEW TRANSFER REQUEST</el:cmd></span></td>
 </tr>
 </c:if>
 <tr>
@@ -120,12 +125,8 @@ golgotha.local.toggleBody = function(id) {
 <el:table className="bar">
 <tr>
  <td>&nbsp;
-<c:if test="${!fn:pending(checkRide) && access.canEdit}">
-<el:cmdbutton url="checkride" link="${checkRide}" op="edit" label="RESCORE EXAMINATION" />
-</c:if> 
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE${fn:isWaiver(checkRide) ? ' WAIVER' : ''}" />
-</c:if>
+<c:if test="${!fn:pending(checkRide) && access.canEdit}"><el:cmdbutton url="checkride" link="${checkRide}" op="edit" label="RESCORE EXAMINATION" /></c:if> 
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE${fn:isWaiver(checkRide) ? ' WAIVER' : ''}" /></c:if>
  </td>
 </tr>
 </el:table>
