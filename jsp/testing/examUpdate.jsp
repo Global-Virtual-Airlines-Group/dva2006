@@ -55,6 +55,10 @@ To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">
 <div class="updateHdr">Examination/Check Ride Deleted</div>
 <br />
 This ${exam.owner.name} ${isCheckRide ? 'Check Ride' : 'Examination'} has been canceled and deleted from the database.<br />
+<c:if test="${isCheckRide}">
+<br />
+To return to the list of submitted Check Rides, <el:cmd url="crqueue" className="sec bld">Click Here</el:cmd>.<br />
+To return to the Pilot's profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.</c:if>
 </c:when>
 <c:when test="${isWaiver}">
 <!-- Check Ride Waiver -->
