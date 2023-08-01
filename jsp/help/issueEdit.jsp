@@ -105,7 +105,8 @@ golgotha.local.checkAssignee = function(combo) {
  <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br />
 <el:box name="sendIssue" idx="*" value="true" checked="true" label="Send Notification to Assignee" /></td>
 </tr>
-<c:if test="${issue.linkedIssueID == 0}">
+</c:if>
+<c:if test="${access.canConvert}">
 <tr class="title">
  <td colspan="2" class="left caps">CONVERT TO DEVELOPMENT ISSUE</td>
 </tr>
@@ -125,7 +126,6 @@ golgotha.local.checkAssignee = function(combo) {
  <td class="label">Issue Type</td>
  <td class="data"><el:combo name="type" idx="*" size="1" options="${typeOpts}" firstEntry="-" /></td>
 </tr>
-</c:if>
 </c:if>
 
 <c:if test="${!empty issue}">
@@ -168,7 +168,7 @@ golgotha.local.checkAssignee = function(combo) {
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script>
+<script async>
 golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
 <content:googleAnalytics />
