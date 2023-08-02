@@ -112,10 +112,10 @@
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
-<c:if test="${!empty tour.completionIDs}">
+<c:if test="${!empty tour.completionIDs && !empty avgCompletionTime}">
 <tr>
  <td class="label">Average Completion Time</td>
- <td class="data" colspan="5"><fmt:duration long="true" duration="${avgCompletionTime}"  className="bld" /></td>
+ <td class="data" colspan="5"><fmt:duration long="true" duration="${avgCompletionTime}"  className="bld" default="N/A" /></td>
 </tr>
 </c:if>
 <tr>
