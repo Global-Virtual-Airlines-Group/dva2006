@@ -8,6 +8,8 @@ import java.time.temporal.ChronoUnit;
 
 import org.apache.logging.log4j.*;
 
+import com.newrelic.api.agent.NewRelic;
+
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.hr.TransferRequest;
@@ -23,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -45,6 +47,7 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", usr, REQUEST);
+			NewRelic.addCustomParameter("pilot.name", usr.getName());
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
@@ -73,15 +76,15 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(usr.getID());
 			if (txreq != null) {
-				log.info("Pending Transfer Request - no Examinations available for " + usr.getName());
+				log.info("Pending Transfer Request - no Examinations available for {}", usr.getName());
 				allExams.clear();
 				ctx.setAttribute("txreq", txreq, REQUEST);
 			} else if (activeExamID != 0) {
-				log.info("Pending Examination - no Examinations available for " + usr.getName());
+				log.info("Pending Examination - no Examinations available for {}", usr.getName());
 				allExams.clear();
 				ctx.setAttribute("examActive", Integer.valueOf(activeExamID), REQUEST);
 			} else if (failedExam) {
-				log.info("Recently failed exam - no Examinations available for " + usr.getName());
+				log.info("Recently failed exam - no Examinations available for {}", usr.getName());
 				allExams.clear();
 				ctx.setAttribute("failedExam", Boolean.TRUE, REQUEST);
 			} else {
