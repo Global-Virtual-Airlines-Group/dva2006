@@ -31,27 +31,27 @@
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="5"><content:airline /> FLIGHT TOUR - ${tour.name}</td>
+ <td colspan="6"><content:airline /> FLIGHT TOUR - ${tour.name}</td>
 </tr>
 <c:if test="${!empty tour.networks}">
 <tr>
  <td class="label">Network(s)</td>
- <td class="data sec bld" colspan="4"><fmt:list value="${tour.networks}" delim=", " /></td>
+ <td class="data sec bld" colspan="5"><fmt:list value="${tour.networks}" delim=", " /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Active between</td>
- <td class="data" colspan="4"><fmt:date date="${tour.startDate}" t="HH:mm" /> - <fmt:date date="${tour.endDate}" t="HH:mm" /> <c:if test="${tour.active}"><span class="ter bld"> ENABLED</span></c:if><c:if test="${isActiveNow}"><span class="sec bld"> CURRENTLY AVAILABLE</span></c:if></td>
+ <td class="data" colspan="5"><fmt:date date="${tour.startDate}" t="HH:mm" /> - <fmt:date date="${tour.endDate}" t="HH:mm" /> <c:if test="${tour.active}"><span class="ter bld"> ENABLED</span></c:if><c:if test="${isActiveNow}"><span class="sec bld"> CURRENTLY AVAILABLE</span></c:if></td>
 </tr>
 <c:if test="${access.canEdit && !tour.active}">
 <tr>
  <td class="label">Status</td>
- <td class="data ter bld" colspan="4">${tour.status.description}</td>
+ <td class="data ter bld" colspan="5">${tour.status.description}</td>
 </tr>
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small caps" colspan="4"><c:if test="${tour.ACARSOnly}">
+ <td class="data small caps" colspan="5"><c:if test="${tour.ACARSOnly}">
 <div class="pri bld">Tour requires flights logged with ACARS</div></c:if>
 <c:if test="${tour.allowOffline}">
 <div class="bld">Tour permits Offline Flights</div></c:if>
@@ -62,32 +62,32 @@
 </tr>
 <c:if test="${tour.size > 0}">
 <tr class="title caps">
- <td colspan="5">BRIEFING DOCUMENTATION</td>
+ <td colspan="6">BRIEFING DOCUMENTATION</td>
 </tr>
 <c:choose>
 <c:when test="${tour.isPDF}">
 <tr>
  <td class="label top">Tour Briefing</td>
- <td class="data" colspan="4"><el:link url="/attach/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:fileSize value="${tour.size}" />, Adobe PDF document</span>
+ <td class="data" colspan="5"><el:link url="/attach/tbrief/${tour.hexID}"><el:img src="library/adobe.png" className="noborder" caption="Flight Tour Briefing" x="32" y="32" /></el:link> <span class="small nophone"><fmt:fileSize value="${tour.size}" />, Adobe PDF document</span>
 </tr>
 </c:when>
 <c:otherwise>
 <tr>
  <td class="label top">Tour Briefing</td>
- <td class="data" colspan="4"><fmt:text value="${tour.text}" /></td>
+ <td class="data" colspan="5"><fmt:text value="${tour.text}" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
 </c:if>
 <c:if test="${!empty tourProgress}">
 <tr class="title caps">
- <td colspan="5">MY PROGRESS</td>
+ <td colspan="6">MY PROGRESS</td>
 </tr>
 <c:set var="pLeg" value="${tourProgress[maxLeg - 1]}" scope="page" />
 <c:set var="barPct" value="${maxLeg * 100 / tour.flights.size()}" scope="page" />
 <tr>
  <td class="label top">Previous Leg</td>
- <td class="data" colspan="4"><el:cmd url="pirep" link="${pLeg}" className="pri bld">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
+ <td class="data" colspan="5"><el:cmd url="pirep" link="${pLeg}" className="pri bld">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
  ${pLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportA.IATA}"><fmt:airport airport="${pLeg.airportA}" /></el:cmd>)<span class="nophone ita"> flown on <fmt:date date="${pLeg.date}" fmt="d" /></span><br />
  <span id="progressBar" class="bar" style="width:90%">&nbsp;</span></td>
 </tr>
@@ -95,17 +95,17 @@
 <c:set var="nLeg" value="${tour.flights[maxLeg]}" scope="page" />
 <tr>
  <td class="label">Next Leg</td>
- <td class="data" colspan="4"><span class="sec bld">${nLeg.flightCode}</span>: ${nLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${nLeg.airportD.IATA}"><fmt:airport airport="${nLeg.airportD}" /></el:cmd>) - 
+ <td class="data" colspan="5"><span class="sec bld">${nLeg.flightCode}</span>: ${nLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${nLeg.airportD.IATA}"><fmt:airport airport="${nLeg.airportD}" /></el:cmd>) - 
  ${nLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${nLeg.airportA.IATA}"><fmt:airport airport="${nLeg.airportA}" /></el:cmd>)</td>
 </tr>
 </c:if>
 </c:if>
 <tr class="title caps">
- <td colspan="5">PILOT PROGRESS</td>
+ <td colspan="6">PILOT PROGRESS</td>
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="4"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
+ <td class="data" colspan="5"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
  <c:if test="${!empty pilots}"><hr /></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
@@ -115,12 +115,12 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <c:if test="${!empty tour.completionIDs}">
 <tr>
  <td class="label">Average Completion Time</td>
- <td class="data" colspan="4"><fmt:duration long="true" duration="${avgCompletionTime}"  className="bld" /></td>
+ <td class="data" colspan="5"><fmt:duration long="true" duration="${avgCompletionTime}"  className="bld" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data"  colspan="4"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
+ <td class="data" colspan="5"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
  <c:if test="${!empty pilots}"><hr /></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
@@ -128,7 +128,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test="${!pilotNext.last}">, </c:if></c:forEach></span></c:if></td>
 </tr>
 <tr class="title caps">
- <td colspan="5">FLIGHT LEGS REQUIRED FOR COMPLETION</td>
+ <td colspan="6">FLIGHT LEGS REQUIRED FOR COMPLETION</td>
 </tr>
 <c:choose>
 <c:when test="${!empty tour.flights}">
@@ -140,15 +140,16 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td class="pri bld" style="width:15%;">${fl.flightCode}</td>
  <td class="sec bld" style="width:15%">${fl.equipmentType}</td>
  <td class="small">${fl.airportD.name} (<el:cmd url="airportinfo" linkID="${fl.airportD.IATA}" authOnly="true"><fmt:airport airport="${fl.airportD}" /></el:cmd>) - ${fl.airportA.name} (<el:cmd url="airportinfo" linkID="${fl.airportA.IATA}" authOnly="true"><fmt:airport airport="${fl.airportA}" /></el:cmd>)</td>
+ <td><fmt:distance value="${fl.distance}" /></td>
  <td class="bld" colspan="${tour.matchLeg ? 1 : 2}"><fmt:date fmt="t" t="HH:mm" tz="${fl.airportD.TZ}" date="${fl.timeD}" /> - <fmt:date fmt="t" t="HH:mm" tz="${fl.airportA.TZ}" date="${fl.timeA}" /> (<fmt:int value="${fl.duration.toHoursPart()}" />h <fmt:int value="${fl.duration.toMinutesPart()}" />m)</td>
 </tr>
 </c:forEach>
 <content:browser human="true">
 <tr class="title caps">
- <td colspan="5">FLIGHT LEG MAP <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
+ <td colspan="6">FLIGHT LEG MAP <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
 </tr>
 <tr class="tourMap">
- <td colspan="5"><map:div ID="googleMap" height="475" /></td>
+ <td colspan="6"><map:div ID="googleMap" height="475" /></td>
 </tr>
 <script async>
 const lines = [];
@@ -177,11 +178,11 @@ map.addMarkers(lines);
 </c:when>
 <c:otherwise>
 <tr id="tourEmpty">
- <td colspan="2" class="pri bld mid">NO FLIGHT LEGS ARE ASSOCIATED WITH THIS TOUR</td>
+ <td colspan="4" class="pri bld mid">NO FLIGHT LEGS ARE ASSOCIATED WITH THIS TOUR</td>
 </tr>
 </c:otherwise>
 </c:choose>
-<c:set var="auditCols" value="4" scope="request" />
+<c:set var="auditCols" value="5" scope="request" />
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
