@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to validate Google RECAPTCHA tokens.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 9.0
  */
 
@@ -59,6 +59,8 @@ public class ValidateCAPTCHAService extends WebService {
 				s = ctx.getRequest().getSession(true);
 				s.setAttribute(CAPTCHA_ATTR_NAME, cr);
 			}
+		} catch (IOException ie) {
+			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), false);
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
