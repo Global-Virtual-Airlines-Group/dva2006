@@ -208,7 +208,9 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Event> getWithACARS() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR, ACARS_PIREPS APR WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY E.STARTTIME DESC")) {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR WHERE (E.OWNER=?) AND (PR.EVENT_ID=E.ID) AND ((PR.ATTR & ?)>0) ORDER BY E.STARTTIME DESC")) {
+			ps.setString(1, SystemData.get("airline.code"));
+			ps.setInt(2, FlightReport.ATTR_ACARS);
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
