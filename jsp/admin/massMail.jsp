@@ -21,6 +21,12 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.local.updateEQ = function(cb) {
+	const isRole = golgotha.form.getCombo(cb).startsWith('$role_');
+	golgotha.util.display('soCheck', !isRole);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -45,8 +51,9 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:file name="fAttach" idx="*" size="96" max="144" maxSize="1024" /></td>
 </tr>
 <tr>
- <td class="label">Recipient Program / Security Role</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" /></td>
+ <td class="label top">Recipient Program / Security Role</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.updateEQ(this)" /><span id="soCheck"><br />
+<el:box name="staffOnly" value="true" checked="${param.staffOnly}" label="Chief Pilot / Assistant Chief Pilots only" /></span></td>
 </tr>
 <tr>
  <td class="label top">Message Text</td>
