@@ -7,15 +7,13 @@ import java.sql.Connection;
 import javax.activation.*;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.deltava.beans.FileUpload;
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -54,10 +52,11 @@ public class MassMailingCommand extends AbstractCommand {
 
 		// Check if we're sending to a role
 		boolean isRole = (eqType != null) && (eqType.startsWith("$role_"));
+		boolean staffOnly = Boolean.parseBoolean(ctx.getParameter("staffOnly"));
 		if (eqType == null)
 			eqType = "";
 
-		Collection<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
+		Collection<Pilot> pilots = new ArrayList<Pilot>();
 		Collection<Object> eqTypes = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -83,6 +82,8 @@ public class MassMailingCommand extends AbstractCommand {
 			} else if (!StringUtils.isEmpty(eqType)) {
 				GetPilot dao = new GetPilot(con);
 				pilots = dao.getPilotsByEQ(eqdao.get(ctx.getUser().getEquipmentType(), ctx.getDB()), null, true, null);
+				if (staffOnly)
+					pilots.removeIf(p -> ((p.getRank() != Rank.CP) && (p.getRank() != Rank.ACP)));
 				ctx.setAttribute("eqType", eqType, REQUEST);
 			}
 		} catch (DAOException de) {
