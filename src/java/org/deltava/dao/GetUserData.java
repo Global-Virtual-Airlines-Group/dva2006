@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 9.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -151,8 +151,7 @@ public class GetUserData extends DAO {
 			sqlBuf.append(StringUtils.listConcat(ids, ",")).append(")) GROUP BY UD.ID");
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, ",");
-				Map<Integer, UserData> results = CollectionUtils.createMap(execute(ps), UserData::getID);
-				result.putAll(results);
+				result.putAll(CollectionUtils.createMap(execute(ps), UserData::getID));
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
@@ -202,10 +201,9 @@ public class GetUserData extends DAO {
 				AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
 				info.setDB(rs.getString(3));
 				info.setDomain(rs.getString(4));
-				info.setEliteProgram(rs.getString(5));
-				info.setCanTransfer(rs.getBoolean(6));
-				info.setHistoricRestricted(rs.getBoolean(7));
-				info.setAllowMultiAirline(rs.getBoolean(8));
+				info.setCanTransfer(rs.getBoolean(5));
+				info.setHistoricRestricted(rs.getBoolean(6));
+				info.setAllowMultiAirline(rs.getBoolean(7));
 				results.add(info);
 			}
 		}
