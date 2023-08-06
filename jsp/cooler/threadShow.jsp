@@ -141,7 +141,7 @@ return true;
 <c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
 <br />
 <span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
-<c:if test="${!empty eliteStatus}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" /><br /></c:if>
+<c:if test="${!empty eliteStatus}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" showYear="true" /><br /></c:if>
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
