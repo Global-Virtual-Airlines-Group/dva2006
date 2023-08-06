@@ -595,6 +595,12 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>showYear</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>className</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
