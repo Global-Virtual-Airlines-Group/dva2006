@@ -19,10 +19,12 @@ import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.SharedData;
+
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -149,6 +151,7 @@ public class ThreadCommand extends AbstractCommand {
 			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
 			for (String dbTableName : udm.getTableNames()) {
 				AirlineInformation ai = SystemData.getApp(dbTableName.substring(0, dbTableName.indexOf('.')));
+				EliteProgram ep = (EliteProgram) SharedData.get(SharedData.ELITE_INFO + ai.getCode());
 				
 				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserData.isPilotTable(dbTableName)) {
@@ -160,7 +163,7 @@ public class ThreadCommand extends AbstractCommand {
 					
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
-					if (ai.getHasElite())
+					if (ep != null)
 						eStatus.putAll(eldao.getStatus(pilots.values(), EliteScorer.getStatusYear(mt.getLastUpdatedOn()), dbTableName));
 				} else
 					users.putAll(adao.getByID(udm.getByTable(dbTableName), dbTableName));
