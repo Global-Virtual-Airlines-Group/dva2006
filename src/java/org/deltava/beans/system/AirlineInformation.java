@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -21,7 +21,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    private boolean _canTransfer;
    private boolean _allowMulti;
    private boolean _histRestricted;
-   private String _eliteName;
 
    /**
     * Creates a new Airline Information bean.
@@ -99,24 +98,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    }
    
    /**
-    * Returns whether the Airlien has an elite status program.
-    * @return TRUE if an elite program exists, otherwise FALSE
-    * @see AirlineInformation#setEliteProgram(String)
-    */
-   public boolean getHasElite() {
-	   return (_eliteName != null) && (_eliteName.length() > 1);
-   }
-   
-   /**
-    * Retruns the name of the Airline's elite status program.
-    * @return the program name
-    * @see AirlineInformation#setEliteProgram(String)
-    */
-   public String getEliteProgram() {
-	   return _eliteName;
-   }
-   
-   /**
     * Updates the Airline domain name. The domain will be converted to lowercase.
     * @param domain the domain name
     * @throws NullPointerException if domain is null
@@ -161,16 +142,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
     */
    public void setAllowMultiAirline(boolean allowMulti) {
 	   _allowMulti = allowMulti;
-   }
-   
-   /**
-    * Updates the name of this Airline's elite status program.
-    * @param programName the program name
-    * @see AirlineInformation#getHasElite()
-    * @see AirlineInformation#getEliteProgram()
-    */
-   public void setEliteProgram(String programName) {
-	   _eliteName = programName;
    }
    
    @Override
