@@ -9,7 +9,7 @@ import javax.servlet.*;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.econ.EconomyInfo;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.ETOPSHelper;
 import org.deltava.beans.navdata.Airspace;
 import org.deltava.beans.schedule.Airport;
@@ -34,7 +34,7 @@ import org.gvagroup.tomcat.SharedWorker;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -47,12 +47,13 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 	@Override
 	public void contextInitialized(ServletContextEvent e) {
+		TaskTimer tt = new TaskTimer();
 		e.getServletContext().setAttribute("startedOn", java.time.Instant.now());
 
 		// Initialize system data
 		SystemData.init();
 		String code = SystemData.get("airline.code");
-		log.info("Starting " + code);
+		log.info("Starting {}", code);
 		SharedData.addApp(code);
 		
 		// Load Secrets
@@ -208,8 +209,16 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			econInfo.setYearlyCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
 			econInfo.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));
 			SystemData.add(SystemData.ECON_DATA, econInfo);
-			SharedData.addData(SharedData.ECON_DATA + SystemData.get("airline.code"), econInfo);
+			SharedData.addData(SharedData.ECON_DATA + code, econInfo);
 			log.info("Loaded Economic parameters");
+		}
+		
+		// Load elite program
+		if (SystemData.getBoolean("econ.elite.enabled")) {
+			EliteProgram ep = new EliteProgram(SystemData.get("econ.elite.name"));
+			ep.setUnits(SystemData.get("econ.elite.distance"), SystemData.get("econ.elite.points"));
+			SharedData.addData(SharedData.ELITE_INFO + code, ep);
+			log.info("Added {} program info", ep.getName());
 		}
 		
 		// Load discord bot
@@ -225,6 +234,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
 		spawnDaemon(new IPCDaemon());
+		log.warn("Started {} in {}ms", code, Long.valueOf(tt.stop()));
 	}
 
 	@Override
