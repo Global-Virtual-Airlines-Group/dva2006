@@ -52,10 +52,6 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:text name="db" idx="*" className="bld" required="true" size="5" max="12" value="${aInfo.DB}" /></td> 
 </tr>
 <tr>
- <td class="label">Elite Program Name</td>
- <td class="data"><el:text name="eliteName" idx="*" size="16" max="32" value="${aInfo.eliteProgram}" />
-</tr>
-<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
 <el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /><br />
