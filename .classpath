@@ -45,9 +45,9 @@
 	<classpathentry kind="lib" path="lib/deploy/javacord-api-3.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/okhttp-4.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-4.4.3.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.61.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-8.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20230618.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.62.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
