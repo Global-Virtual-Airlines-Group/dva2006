@@ -19,6 +19,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Program to transfer into'});
 	golgotha.form.validate({f:f.sim, t:'Preferred Simulator version'});
+	if (f.acType.required) golgotha.form.validate({f:f.acType, t:'Preferred Aircraft'});
 	golgotha.form.submit(f);
 	return true;
 };
