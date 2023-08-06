@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.econ.EliteLevel;
 /**
  * A JSP tag to format Elite Level names.
  * @author Luke
- * @version 9.2
+ * @version 11.1
  * @since 9.2
  */
 
@@ -18,6 +18,7 @@ public class EliteFormatTag extends TagSupport {
 	private EliteLevel _lvl;
 	private String _className;
 	private boolean _nameOnly;
+	private boolean _showYear;
 
 	/**
      * Updates the CSS class for this formatted level name.
@@ -43,6 +44,14 @@ public class EliteFormatTag extends TagSupport {
     	_nameOnly = nameOnly;
     }
     
+    /**
+     * Sets whether to display the program year in the span title.
+     * @param showYear TRUE to display the program year, otherwise FALSE
+     */
+    public void setShowYear(boolean showYear) {
+    	_showYear = showYear;
+    }
+    
     @Override
     public int doEndTag() throws JspException {
     	if (_lvl == null) return EVAL_PAGE;
@@ -53,6 +62,14 @@ public class EliteFormatTag extends TagSupport {
     			out.print(" class=\"");
     			out.print(_className);
     			out.print('\"');
+    		}
+    		
+    		if (_showYear) {
+    			out.print(" title=\"");
+    			out.print(_lvl.getName());
+    			out.print(" (");
+    			out.print(_lvl.getYear());
+    			out.print(")\"");
     		}
     		
     		out.print(" style=\"color:#");
@@ -76,5 +93,6 @@ public class EliteFormatTag extends TagSupport {
     	super.release();
     	_className = null;
     	_nameOnly = false;
+    	_showYear = false;
     }
 }
