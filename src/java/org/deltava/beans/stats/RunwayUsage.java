@@ -38,6 +38,17 @@ public class RunwayUsage extends RunwayGateUsage {
 	public void add(String name, int totalUsage) {
 		add(name, null, totalUsage);
 	}
+
+	/**
+	 * Applys runway remapping to usage totals. Totals for the old and new codes will be added and applied to the new runway code.
+	 * @param rm a RunwayMapping bean
+	 */
+	public void apply(RunwayMapping rm) {
+		int ot = getTotalUsage(rm.getOldCode());
+		int nt = getTotalUsage(rm.getOldCode());
+		_usage.removeIf(rt -> rt.getName().equals(rm.getOldCode()) || rt.getName().equals(rm.getNewCode()));
+		add(rm.getNewCode(), null, ot+nt);
+	}
 	
 	/**
 	 * Applies usage data to multiple Runways.
