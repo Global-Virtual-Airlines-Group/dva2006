@@ -61,8 +61,11 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Load takeoff/landing runways
 			GetRunwayUsage rwdao = new GetRunwayUsage(con);
+			GetRunwayMapping rwmdao = new GetRunwayMapping(con);
+			Collection<RunwayMapping> rwMaps = rwmdao.getAll(a);
 			RunwayUsage dru = rwdao.getPopularRunways(a, true);
 			RunwayUsage aru = rwdao.getPopularRunways(a, false);
+			rwMaps.forEach(rm -> { dru.apply(rm); aru.apply(rm); }); 
 			List<RunwayUse> allDRwys = dru.apply(allRwys); 
 			List<RunwayUse> allARwys = aru.apply(allRwys);
 			
