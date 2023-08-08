@@ -54,7 +54,6 @@ public class RoutePlotMapService extends MapPlotService {
 		// Check if we download runways
 		boolean doRunways = req.optBoolean("runways");
 		boolean allDepartureRunways = req.optBoolean("allSID");
-		Simulator sim = Simulator.fromName(req.optString("simVersion"), Simulator.P3Dv4);
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
@@ -126,7 +125,7 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				if (sid != null) {
 					req.put("sid", sid.toString());
-					Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), sim);
+					Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), Simulator.P3Dv4);
 					if (r != null)
 						routePoints.add(r);
 					if (!CollectionUtils.isEmpty(wps))
@@ -134,7 +133,7 @@ public class RoutePlotMapService extends MapPlotService {
 					else
 						routePoints.addAll(sid.getWaypoints());
 				} else if (dr.getAirportD() != null) {
-					Runway r = dao.getRunway(dr.getAirportD(), req.optString("runway"), sim);
+					Runway r = dao.getRunway(dr.getAirportD(), req.optString("runway"), Simulator.P3Dv4);
 					if (r != null)
 						routePoints.add(r);
 				}
@@ -149,8 +148,11 @@ public class RoutePlotMapService extends MapPlotService {
 					}
 					
 					GetRunwayUsage rwdao = new GetRunwayUsage(con);
+					GetRunwayMapping rwmdao = new GetRunwayMapping(con);
 					RunwayUsage dru = rwdao.getPopularRunways(dr, true);
-					List<Runway> depRwys = dao.getRunways(dr.getAirportD(), sim);
+					Collection<RunwayMapping> rwmaps = rwmdao.getAll(dr.getAirportD());
+					rwmaps.forEach(dru::apply);
+					List<Runway> depRwys = dao.getRunways(dr.getAirportD(), Simulator.P3Dv4);
 					Collection<RunwayUse> popRunways = rf.filter(dru.apply(depRwys));
 					if (popRunways.isEmpty()) {
 						dru = rwdao.getPopularRunways(dr.getAirportD(), true);
@@ -181,7 +183,7 @@ public class RoutePlotMapService extends MapPlotService {
 				else
 					routePoints.addAll(star.getWaypoints());
 				
-				Runway r = dao.getRunway(dr.getAirportA(), star.getRunway(), sim);
+				Runway r = dao.getRunway(dr.getAirportA(), star.getRunway(), Simulator.P3Dv4);
 				if (r != null)
 					routePoints.add(r);
 			}
