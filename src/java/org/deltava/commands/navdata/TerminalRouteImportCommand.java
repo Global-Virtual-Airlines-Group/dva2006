@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.0
  */
 
@@ -177,9 +177,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			// Commit
 			ctx.commitTX();
 		} catch (Exception e) {
-			if (br != null)
-				log.error("Import error at line " + br.getLineNumber());
-			
+			if (br != null) log.error("Import error at line {}", Integer.valueOf(br.getLineNumber()));
 			ctx.rollbackTX();
 			throw new CommandException(e);
 		} finally { 
@@ -190,6 +188,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("NavSIDSTAR");
 		CacheManager.invalidate("NavRunway");
 		CacheManager.invalidate("NavRoute");
+		CacheManager.invalidate("XMLMetadata");
 		
 		// Set status attributes
 		ctx.setAttribute("timings", timings, REQUEST);
@@ -199,8 +198,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		ctx.setAttribute("terminalRoute", Boolean.TRUE, REQUEST);
 		
 		// Save error messages
-		if (!errors.isEmpty())
-			ctx.setAttribute("errors", errors, REQUEST);
+		ctx.setAttribute("errors", errors, REQUEST);
 		
 		// Forward to the JSP
 		result.setType(ResultType.REQREDIRECT);
