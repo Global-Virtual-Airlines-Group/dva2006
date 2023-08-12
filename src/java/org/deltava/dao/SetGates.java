@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 6.3
  */
 
@@ -32,7 +32,7 @@ public class SetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Collection<Gate> gates) throws DAOException {
-		Collection<String> cacheKeys = gates.stream().map(Gate::getCode).collect(Collectors.toSet());
+		Collection<String> cacheKeys = gates.stream().map(g -> ("AP-" + g.getCode())).collect(Collectors.toSet());
 		try {
 			startTransaction();
 			
