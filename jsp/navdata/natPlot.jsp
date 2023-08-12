@@ -40,7 +40,7 @@
 </tr>
 <tr>
  <td class="label"><span id="trackLabel">Track Data</span></td>
- <td class="data"><span id="trackData">N/A</span></td>
+ <td class="data"><span id="trackData">N/A</span>&nbsp;<span id="trackCopy" style="display:none;"><a href="javascript:void golgotha.maps.oceanic.copyRoute()"><el:img src="copyIcon.png" x="14" y="14" caption="Copy Track Waypoints" /></a></span></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
@@ -88,7 +88,6 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	// golgotha.local.loader.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>

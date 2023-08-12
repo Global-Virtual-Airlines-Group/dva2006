@@ -1,8 +1,20 @@
 golgotha.maps.oceanic = golgotha.maps.oceanic || {};
 
+golgotha.maps.oceanic.copyRoute = function() {
+	const d = document.getElementById('trackData');
+	const t = document.createElement('textarea');
+	t.value = d.innerText;
+	document.body.appendChild(t);
+	t.select();
+	navigator.clipboard.writeText(t.value);
+	t.remove();
+	return true;
+};
+
 golgotha.maps.oceanic.showTrackInfo = function(marker) {
 	golgotha.util.setHTML('trackLabel', 'Track ' + marker.title);
 	golgotha.util.setHTML('trackData', marker.trackPoints);
+	golgotha.util.display('trackCopy', true);
 	return true;
 };
 
@@ -14,6 +26,7 @@ golgotha.maps.oceanic.resetTracks = function() {
 	// Reset track data label
 	golgotha.util.setHTML('trackLabel', 'Track Data');
 	golgotha.util.setHTML('trackData', 'N/A');
+	golgotha.util.display('trackCopy', false);
 	return true;
 };
 
@@ -36,6 +49,7 @@ if (f.date.selectedIndex < 1) return;
 
 // Generate an XMLHTTP request
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('GET', 'otrackinfo.ws?type=' + type + '&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -50,12 +64,12 @@ xmlreq.onreadystatechange = function() {
 	// Get the JSON document
 	const jsData = JSON.parse(xmlreq.responseText);
 	jsData.tracks.forEach(function(t) {
-		let trackPos = [];
+		const trackPos = [];
 		t.waypoints.forEach(function(wp) {
 			trackPos.push(wp.ll);
 
 			// Create the map marker
-			var mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75}, wp.ll);
+			const mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75}, wp.ll);
 			mrk.title = t.code; mrk.trackPoints = t.track; 
 			google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.oceanic.showTrackInfo(this); });
 			golgotha.maps.oceanic.points[t.type].push(mrk);
