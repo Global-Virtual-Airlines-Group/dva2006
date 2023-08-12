@@ -38,7 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-3.19.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.36.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.36.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.23.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.20.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.20.0.jar"/>
@@ -49,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20230618.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.62.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
