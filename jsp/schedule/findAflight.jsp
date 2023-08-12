@@ -19,7 +19,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.ff = golgotha.ff || {};
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {
@@ -199,7 +199,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
  <td class="nophone" style="width:5%" title="ACARS Dispatch Routes">ROUTES</td>
  <td class="nophone">DISTANCE</td>
 <c:if test="${hasLastFlight}" >
- <td class="nophone">FLOWN</td>
+ <td class="nophone" title="Number of times flown">FLOWN</td>
 </c:if>
 </tr>
 
