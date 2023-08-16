@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide JSON-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -79,31 +79,26 @@ public class MapJSONService extends WebService {
 			eo.put("busy", entry.isBusy());
 			
 			// Display heading if available
-			if (entry instanceof RouteEntry) {
-				RouteEntry rte = (RouteEntry) entry;
+			if (entry instanceof RouteEntry rte) {
 				eo.put("hdg", rte.getHeading());
 				eo.put("gs", rte.getGroundSpeed());
 			}
 			
-			if (entry instanceof GroundMapEntry) {
-				GroundMapEntry gme = (GroundMapEntry) entry;
+			if (entry instanceof GroundMapEntry gme)
 				eo.put("range", (gme.getRange() > 5000) ? 0 : gme.getRange());
-			} else if ((entry.getID() == 0) && (entry instanceof MapRouteEntry)) {
-				MapRouteEntry mrte = (MapRouteEntry) entry;
+			else if ((entry.getID() == 0) && (entry instanceof MapRouteEntry mrte))
 				eo.put("external_id", mrte.getExternalID());
-			} else
+			else
 				eo.put("flight_id", entry.getID());
 			
 			// Display icons as required
-			if (entry instanceof IconMapEntry) {
-				IconMapEntry ime = (IconMapEntry) entry;
+			if (entry instanceof IconMapEntry ime) {
 				eo.put("pal", ime.getPaletteCode());
 				eo.put("icon", ime.getIconCode());
 			}
 			
 			// Add tabs
-			if (entry instanceof TabbedMapEntry) {
-				TabbedMapEntry tme = (TabbedMapEntry) entry;
+			if (entry instanceof TabbedMapEntry tme) {
 				for (Map.Entry<String, String> me : tme.getTabs().entrySet()) {
 					JSONObject to = new JSONObject();
 					to.put("name", me.getKey());
@@ -135,7 +130,7 @@ public class MapJSONService extends WebService {
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "aircraft", "dispatch");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(5);
 			ctx.println(jo.toString());
 			ctx.commit();
