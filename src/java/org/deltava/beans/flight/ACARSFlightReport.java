@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 1.0
  */
 
@@ -265,11 +265,8 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	public int getCargoWeight() {
 		return _cargoWeight;
 	}
-	
-	/**
-	 * Returns the aircraft/simulator capabilities flags.
-	 * @return the Capabilities flag bitmap
-	 */
+
+	@Override
 	public long getCapabilities() {
 		return _capabilities;
 	}
