@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -909,7 +909,11 @@ public class ACARSRouteEntry extends RouteEntry {
 		
 		// Add Pause/Stall/VAS/Warning flags
 		if (isFlagSet(ACARSFlags.PAUSED))
-			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
+			buf.append("<span class=\"bld error\">FLIGHT PAUSED</span><br />");
+		if (_networkConnected)
+			buf.append("<br /><span class=\"ita\">NETWORK CONNECTED</span><br />");
+		if (!_acarsConnected)
+			buf.append("<span class=\"ter ita\">DISCONNECTED</span><br />");
 		if ((_frameRate > 0) && (_frameRate <= 8)) {
 			buf.append("<br /><span class=\"warn\">FRAME RATE - ");
 			buf.append(_frameRate);
