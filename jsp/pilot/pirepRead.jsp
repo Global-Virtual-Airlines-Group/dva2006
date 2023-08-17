@@ -612,6 +612,7 @@ map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xreq = new XMLHttpRequest();
+xreq.timeout = 3500;
 xreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
@@ -638,7 +639,6 @@ xreq.onreadystatechange = function() {
     const sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
 
 	// Create formatting options
-	
 	const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
