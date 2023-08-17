@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import java.time.Instant;
 import org.deltava.beans.*;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
-
+import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.EnumUtils;
 
 /**
@@ -17,7 +17,7 @@ import org.deltava.util.EnumUtils;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 2.4
  */
 
@@ -88,9 +88,8 @@ public class GetOnlineTrack extends DAO {
 			List<PositionData> results = new ArrayList<PositionData>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					PositionData pd = new PositionData(rs.getTimestamp(2).toInstant());
+					PositionData pd = new PositionData(toInstant(rs.getTimestamp(2)), new GeoPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5)));
 					pd.setFlightID(rs.getInt(1));
-					pd.setPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5));
 					pd.setHeading(rs.getInt(6));
 					pd.setAirSpeed(rs.getInt(7));
 					pd.setPilotID(rs.getInt(8));
@@ -135,10 +134,9 @@ public class GetOnlineTrack extends DAO {
 			List<PositionData> results = new ArrayList<PositionData>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					PositionData pd = new PositionData(rs.getTimestamp(3).toInstant());
+					PositionData pd = new PositionData(toInstant(rs.getTimestamp(3)), new GeoPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6)));
 					pd.setPilotID(rs.getInt(1));
 					pd.setFlightID(rs.getInt(2));
-					pd.setPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6));
 					pd.setHeading(rs.getInt(7));
 					pd.setAirSpeed(rs.getInt(8));
 					results.add(pd);

@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.4
  */
 
@@ -25,12 +25,14 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	private int _pirepID;
 
 	/**
-	 * Initializes the bean.
-	 * @param dt the date/time of the position entry 
+	 * Initializes the bean with a date/time and a position.
+	 * @param dt the date/time of the position entry
+	 * @param pos the position (not cloned)
 	 */
-	public PositionData(Instant dt) {
+	public PositionData(Instant dt, GeoPosition pos) {
 		super();
 		_dt = dt;
+		_pos = pos;
 	}
 
 	/**

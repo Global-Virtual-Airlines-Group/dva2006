@@ -8,7 +8,7 @@ import java.net.SocketTimeoutException;
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.dao.DAOException;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load VATSIM track data from VRoute.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.4
  */
 
@@ -59,9 +59,9 @@ public class GetVRouteData extends DAO {
 					List<String> tkns = StringUtils.split(data, "\t");
 					if ((tkns.size() == 10) && (tkns.get(8).equals(aD.getICAO())) && (tkns.get(9).equals(aA.getICAO()))) {
 						try {
-							PositionData pd = new PositionData(StringUtils.parseInstant(tkns.get(0), "yyyy-MM-dd HH:mm:ss"));
+							GeoPosition gp = new GeoPosition(StringUtils.parse(tkns.get(3), 0.0d), StringUtils.parse(tkns.get(4), 0.0d), StringUtils.parse(tkns.get(7), 0));
+							PositionData pd = new PositionData(StringUtils.parseInstant(tkns.get(0), "yyyy-MM-dd HH:mm:ss"), gp);
 							pd.setPilotID(usr.getID());
-							pd.setPosition(StringUtils.parse(tkns.get(3), 0.0d), StringUtils.parse(tkns.get(4), 0.0d), StringUtils.parse(tkns.get(7), 0));
 							pd.setAirSpeed(StringUtils.parse(tkns.get(5), 0));
 							pd.setHeading(StringUtils.parse(tkns.get(6), 0));
 							results.add(pd);

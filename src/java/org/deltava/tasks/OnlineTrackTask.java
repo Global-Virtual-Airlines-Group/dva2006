@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.logging.log4j.Level;
 
 import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all Online networks.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 3.1
  */
 
@@ -94,9 +95,8 @@ public class OnlineTrackTask extends Task {
 					}
 					
 					// Create the position
-					PositionData pd = new PositionData(info.getValidDate());
+					PositionData pd = new PositionData(info.getValidDate(), new GeoPosition(p.getLatitude(), p.getLongitude(), p.getAltitude()));
 					pd.setFlightID(trackID);
-					pd.setPosition(p.getLatitude(), p.getLongitude(), p.getAltitude());
 					pd.setAirSpeed(p.getGroundSpeed());
 					pd.setHeading(p.getHeading());
 					flightCount++;
