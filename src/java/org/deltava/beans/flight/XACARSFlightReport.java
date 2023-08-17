@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Simulator;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing XACARS-submitted Flight Reports.
  * @author Luke
- * @version 7.2
+ * @version 11.1
  * @since 4.1
  */
 
@@ -54,6 +54,11 @@ public class XACARSFlightReport extends FDRFlightReport {
     public double getAverageFrameRate() {
     	return 0;
     }
+    
+	@Override
+	public long getCapabilities() {
+		return 0;
+	}
     
     /**
      * Returns the alternate Airport.

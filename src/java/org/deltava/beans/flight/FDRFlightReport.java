@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -78,9 +78,13 @@ public abstract class FDRFlightReport extends FlightReport implements TimeSpan {
 	public GeoLocation getStartLocation() {
 		return _startPos;
 	}
+	
+	/**
+	 * Returns the aircraft/simulator capabilities flags.
+	 * @return the Capabilities flag bitmap
+	 */
+	public abstract long getCapabilities();
 
-
-    
     /**
      * Returns the date/time of pushback.
      * @return the date/time the aircraft was pushed back
