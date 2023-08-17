@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -86,12 +86,12 @@ public class FlightStatsService extends WebService {
 				if (re instanceof ACARSRouteEntry ae) {
 					je.put(fwdTime ? ae.getSimUTC().toEpochMilli() : ae.getDate().toEpochMilli());
 					je.put(re.getGroundSpeed());
-					je.put(re.getAltitude());	
+					je.put(Math.max(0, re.getAltitude()));	
 					je.put(Math.max(0, ae.getAltitude() - ae.getRadarAltitude()));
 				} else {
 					je.put(re.getDate().toEpochMilli());
 					je.put(re.getGroundSpeed());
-					je.put(re.getAltitude());	
+					je.put(Math.max(0, re.getAltitude()));	
 				}
 				
 				jo.append("data", je);
@@ -114,7 +114,7 @@ public class FlightStatsService extends WebService {
 		// Dump to the output stream
 		JSONUtils.ensureArrayPresent(jo, "data");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
 			ctx.println(jo.toString());
 			ctx.commit();
