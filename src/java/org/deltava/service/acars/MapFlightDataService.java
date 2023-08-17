@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -56,17 +56,13 @@ public class MapFlightDataService extends WebService {
 				
 			// Check airspace
 			for (GeospaceLocation rt : routePoints) {
-				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
-				if (re != null) {
-					re.setAutopilotType(info.getAutopilotType());
-					re.setDisplayPerEngineNX(ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP"));
-				}
-				
 				Airspace a = Airspace.isRestricted(rt);
 				if (a != null)
 					airspaces.add(a);
-				if (rt.getAltitude() > 18000) {
-					if (re != null)
+				
+				if (rt instanceof ACARSRouteEntry re) {
+					re.setAutopilotType(info.getAutopilotType());
+					if (re.getAltitude() > 18000)
 						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
 				}
 			}
@@ -79,20 +75,8 @@ public class MapFlightDataService extends WebService {
 		// Check airspace
 		GeospaceLocation lastLoc = null;
 		for (GeospaceLocation rt : routePoints) {
-			ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
-			if (re != null)
-				re.setAutopilotType(info.getAutopilotType());
-			
-			Airspace a = Airspace.isRestricted(rt);
-			if (a != null)
-				airspaces.add(a);
-			if ((rt.getAltitude() > 18000) && (re != null))
-				re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
-			else if (rt.distanceFeet(lastLoc) > 52800) {
+			if (rt.distanceFeet(lastLoc) > 52800)
 				airspaces.addAll(Airspace.findRestricted(rt, 10));
-				if (re != null)
-					re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
-			}
 			
 			lastLoc = rt;
 		}
@@ -104,31 +88,26 @@ public class MapFlightDataService extends WebService {
 			JSONObject eo = new JSONObject(); 
 			eo.put("ll", JSONUtils.format(entry));
 			
-			if (entry instanceof MarkerMapEntry) {
-				MarkerMapEntry me = (MarkerMapEntry) entry;
+			if (entry instanceof MarkerMapEntry me) {
 				eo.put("color", me.getIconColor());
 				eo.put("info", me.getInfoBox());
-			} else if (entry instanceof IconMapEntry) {
-				IconMapEntry me = (IconMapEntry) entry;
+			} else if (entry instanceof IconMapEntry me) {
 				eo.put("pal", me.getPaletteCode());
 				eo.put("icon", me.getIconCode());
 				eo.put("info", me.getInfoBox());
 			} 
 			
-			if (entry instanceof ACARSRouteEntry) {
-				ACARSRouteEntry rte = (ACARSRouteEntry) entry;
-				if (rte.getATC1() != null) {
-					JSONObject ao = new JSONObject();
-					Controller ctr = rte.getATC1();
-					ao.put("id", ctr.getCallsign());
-					ao.put("type", String.valueOf(ctr.getFacility()));
-					if ((ctr.getFacility() != Facility.CTR) && (ctr.getFacility() != Facility.FSS)) {
-						ao.put("ll", JSONUtils.format(ctr));
-						ao.put("range", ctr.getFacility().getRange());
-					}
-					
-					eo.put("atc", ao);
+			if ((entry instanceof ACARSRouteEntry rte) && (rte.getATC1() != null)) {
+				JSONObject ao = new JSONObject();
+				Controller ctr = rte.getATC1();
+				ao.put("id", ctr.getCallsign());
+				ao.put("type", String.valueOf(ctr.getFacility()));
+				if ((ctr.getFacility() != Facility.CTR) && (ctr.getFacility() != Facility.FSS)) {
+					ao.put("ll", JSONUtils.format(ctr));
+					ao.put("range", ctr.getFacility().getRange());
 				}
+					
+				eo.put("atc", ao);
 			}
 			
 			jo.append("positions", eo);
