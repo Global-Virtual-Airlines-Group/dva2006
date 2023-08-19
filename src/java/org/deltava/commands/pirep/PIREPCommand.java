@@ -517,7 +517,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetFlightReportHistory stdao = new GetFlightReportHistory(con);
 				Collection<FlightHistoryEntry> history = stdao.getEntries(fr.getID());
 				Collection<Integer> IDs = history.stream().filter(upd -> (upd.getAuthorID() != 0)).map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
-				history.forEach(fr::addStatusUpdate);
+				ctx.setAttribute("statusHistory", history, REQUEST);
 				ctx.setAttribute("statusHistoryUsers", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			}
 			
@@ -897,8 +897,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Calculate actual usage
 					APIUsage totalUse = new APIUsage(Instant.now(), method);
 					usage.stream().forEach(u -> { totalUse.setTotal(totalUse.getTotal() + u.getTotal()); totalUse.setAnonymous(totalUse.getAnonymous() + u.getAnonymous()); });
-					if (ctx.isUserInRole("Developer"))
-						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
 					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
