@@ -41,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -517,7 +517,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetFlightReportHistory stdao = new GetFlightReportHistory(con);
 				Collection<FlightHistoryEntry> history = stdao.getEntries(fr.getID());
 				Collection<Integer> IDs = history.stream().filter(upd -> (upd.getAuthorID() != 0)).map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
-				ctx.setAttribute("statusHistory", history, REQUEST);
+				history.forEach(fr::addStatusUpdate);
 				ctx.setAttribute("statusHistoryUsers", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			}
 			
@@ -566,14 +566,20 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetNavRoute navdao = new GetNavRoute(con);
 			navdao.setEffectiveDate(fr.getDate());
 
+			// Online time variables; for scoping issues
+			int otMaxGap = SystemData.getInt("online.track_gap", 20); int onlineTime = 0;
+			
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
-			if (isACARS) {
-				FDRFlightReport afr = (FDRFlightReport) fr;
+			if (isACARS && (fr instanceof FDRFlightReport afr)) {
 				mapType = MapType.GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("isSimFDR", Boolean.valueOf(afr.getFDR() == Recorder.SIMFDR), REQUEST);
 				ctx.setAttribute("isXACARS", Boolean.valueOf(afr.getFDR() == Recorder.XACARS), REQUEST);
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
+				
+				// Check if we can track online time from client
+				final long ocMask = Capabilities.IVAP.getMask() | Capabilities.VPILOT.getMask() | Capabilities.XIVAP.getMask();
+				boolean hasClientOnlineTime = ((ocMask & afr.getCapabilities()) != 0);
 
 				// Get the route data from the DAFIF database
 				GetACARSLog ardao = new GetACARSLog(con);
@@ -584,10 +590,14 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Get the flight score
 					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
-					if (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS)) {
+					if (hasClientOnlineTime || (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS))) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
 						positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
+						
+						// Get online data if we can
+						Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
+						onlineTime = OnlineTime.calculate(entries, otMaxGap);
 					}
 					
 					FlightScore score = FlightScorer.score(pkg);
@@ -801,7 +811,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				// Calculate the online time
-				ctx.setAttribute("onlineTime", Integer.valueOf(OnlineTime.calculate(pd, SystemData.getInt("online.track_gap", 20))), REQUEST);
+				int onlineTrackTime = OnlineTime.calculate(pd, otMaxGap);
+				ctx.setAttribute("onlineTime", Duration.ofSeconds(Math.max(onlineTime, onlineTrackTime)), REQUEST);
+				ctx.setAttribute("onlineTrackTime", Duration.ofSeconds(onlineTrackTime), REQUEST);
 				
 				// Write the positions
 				if (mapType == MapType.GOOGLE)
@@ -869,7 +881,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				APIUsage todayUse = sldao.getCurrentAPIUsage(API.GoogleMaps, "DYNAMIC");
 				APIUsage predictedUse = APIUsageHelper.predictToday(todayUse);
 				if (ctx.isUserInRole("Developer"))
-					ctx.setHeader("X-API-DailyUsage", "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
+					fr.addStatusUpdate(0, HistoryType.SYSTEM, "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
 				
 				// Override usage
 				boolean isOurs = ctx.isAuthenticated() && (fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID());
@@ -886,7 +898,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					APIUsage totalUse = new APIUsage(Instant.now(), method);
 					usage.stream().forEach(u -> { totalUse.setTotal(totalUse.getTotal() + u.getTotal()); totalUse.setAnonymous(totalUse.getAnonymous() + u.getAnonymous()); });
 					if (ctx.isUserInRole("Developer"))
-						ctx.setHeader("X-API-MonthUsage", "Max " + max + " / a=" + totalUse.getTotal() + ",p=" + predictedUse.getTotal());
+						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
 					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {

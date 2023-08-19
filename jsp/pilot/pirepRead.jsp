@@ -297,12 +297,12 @@ table.form td.eliteStatus {
 </tr>
 </c:if>
 <c:if test="${!empty onlineTrack}">
-<c:set var="onlinePct" value="${onlineTime * 100 / (pirep.length * 360)}" scope="page" />
+<c:set var="onlinePct" value="${onlineTime.seconds * 100 / (pirep.length * 360)}" scope="page" />
 <c:set var="onlinePct" value="${(onlinePct > 100) ? 100 : onlinePct}" scope="page" />
 <c:set var="onlinePctClass" value="${(onlinePct < 50) ? 'warn bld' : 'visible'}" scope="page" />
 <tr>
  <td class="label">Estimated Online Time</td>
- <td class="data"><fmt:int value="${onlineTime / 3600}" />:<fmt:int value="${(onlineTime % 3600) / 60}" fmt="00" />, <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
+ <td class="data"><fmt:duration duration="${onlineTime}" />, <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
 </tr>
 </c:if>
 <c:if test="${!empty networkOutages}">
@@ -481,11 +481,11 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 </c:if>
 </content:browser>
-<c:if test="${!empty statusHistory}">
+<c:if test="${!empty pirep.statusUpdates}">
 <tr class="title caps">
  <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pirepHistory')">COLLAPSE</span></td>
 </tr>
-<c:forEach var="upd" items="${statusHistory}">
+<c:forEach var="upd" items="${pirep.statusUpdates}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
 <tr class="pirepHistory">
  <td class="ter bld mid"><fmt:defaultMethod object="${upd.type}" method="description" /></td>
