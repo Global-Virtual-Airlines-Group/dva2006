@@ -481,11 +481,11 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 </c:if>
 </content:browser>
-<c:if test="${!empty pirep.statusUpdates}">
+<c:if test="${!empty statusHistory}">
 <tr class="title caps">
  <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pirepHistory')">COLLAPSE</span></td>
 </tr>
-<c:forEach var="upd" items="${pirep.statusUpdates}">
+<c:forEach var="upd" items="${statusHistory}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />
 <tr class="pirepHistory">
  <td class="ter bld mid"><fmt:defaultMethod object="${upd.type}" method="description" /></td>
