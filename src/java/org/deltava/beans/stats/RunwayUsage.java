@@ -57,7 +57,7 @@ public class RunwayUsage extends RunwayGateUsage {
 	 */
 	public List<RunwayUse> apply(Collection<Runway> rwys) {
 		List<RunwayUse> results = rwys.stream().map(RunwayUse::new).collect(Collectors.toList());
-		results.forEach(r -> r.setUseCount(getTotalUsage(r.getName()) + getTotalUsage(r.getOldCode())));
+		results.forEach(r -> r.setUseCount(getTotalUsage(r.getName()) + getTotalUsage(r.getAlternateCode())));
 		return results;
 	}
 	

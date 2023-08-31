@@ -32,7 +32,7 @@ public class RunwayUse extends Runway implements UseCount {
 		setSurface(r.getSurface());
 		setSimulator(r.getSimulator());
 		setMagVar(r.getMagVar());
-		setOldCode(r.getOldCode());
+		setAlternateCode(r.getAlternateCode(), r.isAltNew());
 	}
 	
 	@Override
