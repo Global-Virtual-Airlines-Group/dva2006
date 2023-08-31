@@ -163,8 +163,8 @@
 <c:if test="${!empty rwy}">
 <c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" />
  <span class="pri bld">${rwy.name}</span>
-<c:if test="${!empty rwy.oldCode}">
- <span class="small ita">(was ${rwy.oldCode})</span>
+<c:if test="${!empty rwy.alternateCode}">
+ <span class="small ita">(${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode})</span>
 </c:if>
   (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
 <c:choose>
