@@ -76,7 +76,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				GetRunwayUsage rwdao = new GetRunwayUsage(con);
 				RunwayUsage ru = rwdao.getPopularRunways(dfr, true);
 				List<RunwayUse> rwys = ru.apply(navdao.getRunways(dfr.getAirportD(), Simulator.P3Dv4));
-				List<Runway> runways = rwys.stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
+				List<Runway> runways = rwys.stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.stream().anyMatch(sr -> r.matches(sr))).collect(Collectors.toList());
 				
 				// Sort based on wind
 				GetWeather wxdao = new GetWeather(con);
