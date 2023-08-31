@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class GetACARSData extends DAO {
 					r.setLength(rs.getInt(6));
 					r.setHeading(rs.getInt(9));
 					r.setFrequency(rs.getString(10));
-					r.setOldCode(rs.getString(11));
+					r.setAlternateCode(rs.getString(11), false);
 					return new RunwayDistance(r, rs.getInt(7));
 				}
 			}
@@ -186,7 +186,7 @@ public class GetACARSData extends DAO {
 							r.setThresholdLength(rs.getInt(13));
 							r.setSurface(Surface.values()[rs.getInt(14)]);
 							r.setSimulator(info.getSimulator());
-							r.setOldCode(rs.getString(15));
+							r.setAlternateCode(rs.getString(15), false);
 							if (rs.getBoolean(8))
 								info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 							else
