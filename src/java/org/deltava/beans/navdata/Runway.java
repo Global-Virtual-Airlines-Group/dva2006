@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 1.0
  */
 
@@ -26,7 +26,8 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	private Surface _sfc = Surface.UNKNOWN;
 	private double _magVar;
 	
-	private String _oldCode;
+	private String _altCode;
+	private boolean _isAltNew;
 	
 	private transient Geometry _geo;
 
@@ -109,12 +110,20 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	/**
-	 * Returns the previous code for this Runway.
-	 * @return the previous code, or null if none
-	 * @see Runway#setOldCode(String)
+	 * Returns the alternate code for this Runway.
+	 * @return the alternet code, or null if none
+	 * @see Runway#setAlternateCode(String, boolean)
 	 */
-	public String getOldCode() {
-		return _oldCode;
+	public String getAlternateCode() {
+		return _altCode;
+	}
+	
+	/**
+	 * Returns if the alternate code is the newer code for the Runway.
+	 * @return TRUE if the newer code, otherwise FALSE
+	 */
+	public boolean isAltNew() {
+		return _isAltNew;
 	}
 	
 	/**
@@ -196,11 +205,13 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	/**
-	 * If this runway has been renumbered, the previous runway code.
-	 * @param oldCode the previous runway code, or null if none
+	 * If this runway has been renumbered, the other runway code.
+	 * @param altCode the previous runway code, or null if none
+	 * @param isNew TRUE if a newer code for the runway, otherwise FALSE
 	 */
-	public void setOldCode(String oldCode) {
-		_oldCode = oldCode;
+	public void setAlternateCode(String altCode, boolean isNew) {
+		_altCode = altCode;
+		_isAltNew = isNew && (altCode != null);
 	}
 	
 	/**
@@ -235,28 +246,16 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		_geo = GeoUtils.toGeometry(List.of(sl, sr, er, el));
 	}
  
-	/**
-	 * Return the default Google Maps icon color.
-	 * @return org.deltava.beans.MapEntry.YELLOW
-	 */
 	@Override
 	public String getIconColor() {
 		return YELLOW;
 	}
 	
-	/**
-	 * Returns the Google Earth palette code.
-	 * @return 3
-	 */
 	@Override
 	public int getPaletteCode() {
 		return 3;
 	}
 	
-	/**
-	 * Returns the Google Earth icon code.
-	 * @return 60 (40 if displaced threshold)
-	 */
 	@Override
 	public int getIconCode() {
 		return (_threshold == 0) ? 60 : 40;
@@ -270,7 +269,21 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public boolean equals(Runway r2) {
 		return (r2 == null) ? false : getComboAlias().equals(r2.getComboAlias());
 	}
-
+	
+	/**
+	 * Returns whether a runway code matches the current or alternate codes used for this Runway.
+	 * @param rwCode the runway code
+	 * @return TRUE if the code matches the current or alternate code, otherwise FALSE
+	 */
+	public boolean matches(String rwCode) {
+		if (rwCode ==  null) return false;
+		String c = rwCode.toUpperCase();
+		if (c.startsWith("RW"))
+			c = c.substring(2);
+		
+		return c.equals(getName()) || c.equals(_altCode);
+	}
+	
 	/**
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
@@ -279,9 +292,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
 		buf.append(getHTMLTitle());
-		if (_oldCode != null) {
-			buf.append("<span class=\"ita\">Previously <span class=\"sec bld\">");
-			buf.append(_oldCode);
+		if (_altCode != null) {
+			buf.append("<span class=\"ita\">");
+			buf.append(_isAltNew ? "Now" : "Previously");
+			buf.append(" <span class=\"sec bld\">");
+			buf.append(_altCode);
 			buf.append("</span></span><br />");
 		}
 		
@@ -307,9 +322,10 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public String getComboName() {
 		StringBuilder buf = new StringBuilder("Runway ");
 		buf.append(getName());
-		if (_oldCode != null) {
-			buf.append(" [was ");
-			buf.append(_oldCode);
+		if (_altCode != null) {
+			buf.append(" [");
+			buf.append(_isAltNew ? "now " : "was ");
+			buf.append(_altCode);
 			buf.append(']');
 		}
 		
