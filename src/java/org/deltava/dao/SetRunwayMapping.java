@@ -1,14 +1,16 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.navdata.RunwayMapping;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object to update runway mappings in the database. 
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 8.3
  */
 
@@ -35,6 +37,8 @@ public class SetRunwayMapping extends DAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Runways");
 		}
 	}
 
@@ -49,6 +53,8 @@ public class SetRunwayMapping extends DAO {
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Runways");
 		}
 	}
 }
