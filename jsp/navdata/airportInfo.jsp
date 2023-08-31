@@ -178,16 +178,16 @@ golgotha.onDOMReady(function() {
  <td class="label top">Takeoff Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${departureRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode }]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - 
- Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures (<fmt:int value="${rwy.percentage}" />%)</span></div>
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode }]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced 
+<fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures (<fmt:int value="${rwy.percentage}" />%)</span></div>
 </c:forEach></td>
 </tr>
 <tr>
  <td class="label top">Landing Runways</td>
  <td class="data" colspan="2"><c:forEach var="rwy" items="${arrivalRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) -
- Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals (<fmt:int value="${rwy.percentage}" />%)</span></div> 
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced 
+<fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals (<fmt:int value="${rwy.percentage}" />%)</span></div> 
 </c:forEach></td>
 <c:if test="${maxRwyLength > 0}">
 <c:if test="${!empty validAC}">
@@ -211,7 +211,7 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="2"><c:forEach var="rwy" items="${otherRunways}">
 <c:set var="dCount" value="${odRwyStats[rwy.name]}" scope="page" />
 <c:set var="aCount" value="${oaRwyStats[rwy.name]}" scope="page" />
-Runway ${rwy.name}<c:if test="${!empty rwy.oldCode}">&nbsp;<span class="ita">[was ${rwy.oldCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; (<fmt:int value="${dCount.useCount}" /> departures, <fmt:int value="${aCount.useCount}" /> arrivals)<br /></c:forEach></td>
+Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; (<fmt:int value="${dCount.useCount}" /> departures, <fmt:int value="${aCount.useCount}" /> arrivals)<br /></c:forEach></td>
 </tr>
 </c:if>
 <tr>
