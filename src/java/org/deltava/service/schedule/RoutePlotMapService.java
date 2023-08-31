@@ -111,10 +111,14 @@ public class RoutePlotMapService extends MapPlotService {
 				else
 					routePoints.add(new AirportLocation(dr.getAirportD()));
 				
-				final String rwyD = rwy;
 				Collection<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
-				if (!StringUtils.isEmpty(rwyD))
-					sids = sids.stream().filter(sid -> sid.getRunway().equals("ALL") || sid.getRunway().equals(rwyD)).collect(Collectors.toCollection(TreeSet::new));
+				if (!StringUtils.isEmpty(rwy)) {
+					Runway rD = dao.getRunway(dr.getAirportD(), rwy, Simulator.P3Dv4);
+					if (rD != null) {
+						sids = sids.stream().filter(sid -> rD.matches(sid.getRunway())).collect(Collectors.toCollection(TreeSet::new));
+						rwy = rD.getName();
+					}
+				}
 				
 				tRoutes.addAll(sids);
 				
@@ -392,6 +396,6 @@ public class RoutePlotMapService extends MapPlotService {
 	 * Helper method to filter SID runways using current and optional old runway codes.
 	 */
 	private static boolean filterSIDRwy(Runway r, Collection<String> rwyCodes) {
-		return rwyCodes.contains("RW" + r.getName()) || ((r.getOldCode() != null) && rwyCodes.contains("RW" + r.getOldCode()));
+		return rwyCodes.contains("RW" + r.getName()) || ((r.getAlternateCode() != null) && rwyCodes.contains("RW" + r.getAlternateCode()));
 	}
 }
