@@ -26,6 +26,7 @@
     <cache id="NavRunway" expires="1d" remote="true" />
     <cache id="NavSIDSTAR" expires="1d" remote="true" />
     <cache id="NavRoute" expires="12h" remote="true" />
+    <cache id="Runways" expires="1d" remote="true" />
 	<cache id="Airspace" expires="86400" remote="true" />
     <cache id="Gates" remote="true" expires="2d" />
     <cache id="GatePairs" remote="true" expires="4d" />
