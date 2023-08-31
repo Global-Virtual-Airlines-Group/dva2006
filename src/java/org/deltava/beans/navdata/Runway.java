@@ -227,8 +227,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	private void calculateGeo() {
-		if (_geo != null)
-			return;
+		if (_geo != null) return;
 		
 		double rcpHdg = GeoUtils.normalize(_heading + 180);
 		GeoLocation end = GeoUtils.bearingPointS(this, (_length * 1.0d / GeoLocation.FEET_MILES), _heading);
@@ -273,7 +272,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	/**
 	 * Returns whether a runway code matches the current or alternate codes used for this Runway.
 	 * @param rwCode the runway code
-	 * @return TRUE if the code matches the current or alternate code, otherwise FALSE
+	 * @return TRUE if the code matches the current code, alternate code or &quot;ALL&quot;, otherwise FALSE
 	 */
 	public boolean matches(String rwCode) {
 		if (rwCode ==  null) return false;
@@ -281,13 +280,9 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		if (c.startsWith("RW"))
 			c = c.substring(2);
 		
-		return c.equals(getName()) || c.equals(_altCode);
+		return c.equals(getName()) || c.equals(_altCode) || "ALL".equals(c);
 	}
 	
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
