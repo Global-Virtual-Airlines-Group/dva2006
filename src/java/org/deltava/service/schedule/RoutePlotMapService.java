@@ -116,7 +116,7 @@ public class RoutePlotMapService extends MapPlotService {
 					Runway rD = dao.getRunway(dr.getAirportD(), rwy, Simulator.P3Dv4);
 					if (rD != null) {
 						sids = sids.stream().filter(sid -> rD.matches(sid.getRunway())).collect(Collectors.toCollection(TreeSet::new));
-						rwy = rD.getName();
+						rwy = "RW" + rD.getName();
 					}
 				}
 				
