@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -33,7 +33,8 @@ if (combo.selectedIndex < 1) {
 }
 
 const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'ridecount.ws?id=' + golgotha.form.getCombo(combo), true);
+xmlreq.timeout = 2500;
+xmlreq.open('get', 'ridecount.ws?id=' + golgotha.form.getCombo(combo), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	const jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];

@@ -49,6 +49,7 @@ if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return f
 	
 // Create the AJAX request
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + encodeURI(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

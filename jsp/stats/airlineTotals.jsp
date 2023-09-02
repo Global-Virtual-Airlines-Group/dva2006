@@ -107,6 +107,7 @@
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 7500;
 xmlreq.open('GET', 'allstats.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

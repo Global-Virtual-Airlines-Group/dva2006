@@ -53,9 +53,10 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script async>
 golgotha.local.download = function(srcs) {
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 15500;
 	xmlreq.open('post', '/schedexport.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';

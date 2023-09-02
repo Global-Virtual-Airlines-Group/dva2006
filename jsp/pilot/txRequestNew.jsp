@@ -26,6 +26,7 @@ golgotha.local.validate = function(f) {
 
 golgotha.local.loadAircraft = function() {
 	const xreq = new XMLHttpRequest();
+	xreq.timeout = 2500;
 	xreq.open('get', 'crsims.ws');
 	xreq.onreadystatechange = function() {
 		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;

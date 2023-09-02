@@ -48,7 +48,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function(cb) {
 	if (!golgotha.form.comboSet(cb)) return false;
@@ -56,7 +56,8 @@ golgotha.local.showChart = function(cb) {
 	const weeks = golgotha.form.getCombo(cb);
 	if ((golgotha.local.chartData) && (golgotha.local.chartData.weeks >= weeks)) return golgotha.local.renderChart(weeks);
 
-	var xmlreq = new XMLHttpRequest();
+	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 7500;
 	xmlreq.open('get', 'acarsbuildstats.ws?count=' + weeks, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) {

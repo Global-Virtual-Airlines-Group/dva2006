@@ -17,7 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:js name="markermanager" />
 <content:js name="markerWithLabel" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.navaidCode, l:2, t:'Navigation Aid Code'});
@@ -55,6 +55,7 @@ golgotha.form.submit();
 
 // Build the XML Requester
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 4500;
 xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
