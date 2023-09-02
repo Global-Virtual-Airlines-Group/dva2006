@@ -56,6 +56,7 @@ golgotha.push.unsub = async function() {
 
 golgotha.push.clear = function() {
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	xmlreq.open('post', 'pushclear.ws', true);
 	xmlreq.onreadystatechange = function() {
 		if (xmlreq.readyState != 4) return false;

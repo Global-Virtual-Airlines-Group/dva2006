@@ -47,6 +47,7 @@ golgotha.local.selectResponse = function(f)
 {
 if (!golgotha.form.comboSet(f.rspTemplate)) return false;
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'hdrsptmp.ws?id=' + encodeURI(golgotha.form.getCombo(f.rspTemplate)));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

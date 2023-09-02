@@ -46,6 +46,7 @@ useFA = f.useFA.checked;</content:filter>
 	
 // Build the XML Request
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 4500;
 xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -56,7 +57,7 @@ xmlreq.onreadystatechange = function() {
 		const wx = js.wx[i];
 
 		// Check for an existing marker
-		var mrk = golgotha.local.wxMarkers[wx.code];
+		let mrk = golgotha.local.wxMarkers[wx.code];
 		if (mrk) {
 			if (mrk.isOpen) map.infoWindow.close();
 			if (wx.tabs.length == 0) {

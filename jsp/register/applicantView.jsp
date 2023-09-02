@@ -27,6 +27,7 @@ golgotha.local.checkVATSIMData = function(id, name)
 {
 golgotha.util.disable('ValidateButton');
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'vatsim_info.ws?id=' + id + '&name=' + encodeURI(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;

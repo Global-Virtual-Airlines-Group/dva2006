@@ -14,7 +14,7 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="imgPath" name="path.img" />
-<script>
+<script async>
 golgotha.local.selectAC = function(combo)
 {
 if (!golgotha.form.comboSet(combo)) {
@@ -25,6 +25,7 @@ if (!golgotha.form.comboSet(combo)) {
 
 // Get the code
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('GET', 'fleetlib.ws?code=' + encodeURI(golgotha.form.getCombo(combo)), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;

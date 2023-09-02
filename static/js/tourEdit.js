@@ -119,6 +119,7 @@ golgotha.tour.searchCustom = function() {
 	params.push('timeA=' + f.flightTimeA.value);
 
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	xmlreq.open('post', 'tourleg.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.onreadystatechange = function() {
@@ -159,6 +160,7 @@ golgotha.tour.addCustomLeg = function() {
 golgotha.tour.search = function() {
 	const f = document.forms[0];
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) return false;
 	xmlreq.open('get', 'search.ws?airportD=' + golgotha.form.getCombo(f.airportD) + '&airportA=' + golgotha.form.getCombo(f.airportA), true);
 	xmlreq.onreadystatechange = function() {

@@ -238,6 +238,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 google.charts.load('current',{'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 7500;
 xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

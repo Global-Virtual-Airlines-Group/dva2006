@@ -25,6 +25,7 @@ golgotha.local.export = function(cb) {
 	golgotha.form.submit(f);
 	const t = golgotha.form.getCombo(cb);
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 15500;
 	xmlreq.open('post', '/mylogbook.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';

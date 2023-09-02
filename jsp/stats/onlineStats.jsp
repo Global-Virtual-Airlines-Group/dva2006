@@ -89,6 +89,7 @@ google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	xmlreq.open('get', 'onlinestats.ws', true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
