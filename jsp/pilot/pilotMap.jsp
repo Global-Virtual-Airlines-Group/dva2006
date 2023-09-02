@@ -19,29 +19,29 @@
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
 <content:filter roles="HR">
-<script>
-golgotha.pilotMap.deleteMarker = function(id)
-{
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('post', 'pilotmapclear.ws', true);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
-		const mrk = golgotha.pilotMap.mrks[x];
-		if (mrk.ID == id) {
-			golgotha.pilotMap.mrks.remove(mrk);
-			mrk.setMap(null);
-			return true;
+<script async>
+golgotha.pilotMap.deleteMarker = function(id) {
+	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 7500;
+	xmlreq.open('post', 'pilotmapclear.ws', true);
+	xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	xmlreq.onreadystatechange = function() {
+		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+		for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
+			const mrk = golgotha.pilotMap.mrks[x];
+			if (mrk.ID == id) {
+				golgotha.pilotMap.mrks.remove(mrk);
+				mrk.setMap(null);
+				return true;
+			}
 		}
+
+		return false;
 	}
 
-	return false;
-}
-
-golgotha.event.beacon('Pilot Map', 'Delete Invalid Marker');
-xmlreq.send('id=0x' + id.toString(16));
-return true;
+	golgotha.event.beacon('Pilot Map', 'Delete Invalid Marker');
+	xmlreq.send('id=0x' + id.toString(16));
+	return true;
 };
 </script></content:filter>
 </head>

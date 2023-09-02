@@ -38,6 +38,7 @@ golgotha.local.selectGate = function(e) {
 golgotha.local.updateGateStats = function() {
 	const f = document.forms[0];
 	const xreq = new XMLHttpRequest();
+	xreq.timeout = 7500;
 	xreq.open('get', '/gateuse.ws?a=${airport.ICAO}&a2=' + golgotha.form.getCombo(f.gateAP) + '&isDeparture=' + golgotha.form.getCheck(f.gateAirportType), true);
 	xreq.onreadystatechange = function() {
 		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
@@ -275,6 +276,7 @@ google.maps.event.addListener(map, 'zoom_changed', function() {
 
 google.charts.load('current', {'packages':['corechart']});
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 7500;
 xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

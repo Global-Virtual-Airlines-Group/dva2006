@@ -58,6 +58,7 @@ golgotha.local.openEmoticons = function() {
 golgotha.local.postQuote = function(postID, f)
 {
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

@@ -17,7 +17,7 @@
 <content:js name="airportRefresh" />
 <content:js name="datePicker" />
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airline, t:'Airline'});
@@ -38,6 +38,7 @@ golgotha.local.getAvailableFlight = function(f)
 {
 golgotha.form.validate({f:f.airline, t:'Airline'});
 const xmlreq = new XMLHttpRequest();
+xmlreq.timeout = 2500;
 xmlreq.open('get', 'next_flight.ws?start=' + f.rangeStart.value + '&end=' + f.rangeEnd.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 xmlreq.onreadystatechange = function () {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -56,6 +57,7 @@ return true;
 golgotha.local.getAvailableLeg = function(f) {
 	golgotha.form.validate({f:f.airline, t:'Airline'});
 	const xmlreq = new XMLHttpRequest();
+	xmlreq.timeout = 2500;
 	xmlreq.open('get', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 	xmlreq.onreadystatechange = function () {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
