@@ -110,11 +110,16 @@ public class Intersection extends NavigationDataBean {
 	 * @throws NumberFormatException if the latitude/longitude cannot be parsed
 	 */
 	public static Intersection parse(String code) {
-		if (code == null)
-			return null;
-		else if (code.contains("/") && (code.length() == 5))
+		if (code == null) return null;
+		if (code.contains("/") && (code.length() == 5))
 			return parse(code.substring(0, 2) + code.substring(3) + "N");
-		
+		else if (code.contains("/") && (code.length() > 6)) {
+			int spos = code.indexOf('/');
+			double lat = Double.parseDouble(code.substring(0, spos));
+			double lng = Double.parseDouble(code.substring(spos + 1));
+			return new Intersection(code, parseDMSLatitude(lat), -parseDMSLongitude(lng));
+		}
+	
 		// Determine what type of coordinate we are
 		CodeType ct = NavigationDataBean.isCoordinates(code);
 		switch (ct) {
