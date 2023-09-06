@@ -82,6 +82,12 @@ protected void tearDown() throws Exception {
 	   assertEquals(Navaid.INT, i2.getType());
 	   assertEquals(52.0, i2.getLatitude(), 0.001);
 	   assertEquals(-50.0, i2.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("5230/50");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(52.5, i.getLatitude(), 0.001);
+	   assertEquals(-50.0, i.getLongitude(), 0.001);
 
 	   i = Intersection.parse("5250S");
 	   assertNotNull(i);
