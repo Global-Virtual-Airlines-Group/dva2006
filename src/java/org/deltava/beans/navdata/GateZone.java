@@ -1,15 +1,15 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * An enumeration of Gate types, to handle special customs/immigration zones. 
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 10.0
  */
 
 public enum GateZone implements org.deltava.beans.EnumDescription {
-	DOMESTIC("Domestic"), INTERNATIONAL("International"), USPFI("US Departures");
+	DOMESTIC("Domestic"), INTERNATIONAL("International"), USPFI("US Departures"), SCHENGEN("Schengen");
 	
 	private final String _desc;
 	

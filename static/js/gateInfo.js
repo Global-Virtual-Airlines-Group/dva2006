@@ -1,5 +1,5 @@
-golgotha.gate = golgotha.gate || {ids:[],gates:[],mrks:{},isDirty:[],data:[]};
-golgotha.gate.icons = {ours:{pal:2,icon:56,tx:0.8},intl:{pal:2,icon:48,tx:0.8},pop:{pal:3,icon:52,tx:0.675},other:{pal:3,icon:60,tx:0.425},uspfi:{pal:2,icon:16,tx:0.7}};
+golgotha.gate = golgotha.gate || {ids:[],gates:[],mrks:{},isDirty:[],data:[],zones:{}};
+golgotha.gate.icons = {ours:{pal:2,icon:56,tx:0.8},intl:{pal:2,icon:48,tx:0.8},pop:{pal:3,icon:52,tx:0.675},other:{pal:3,icon:60,tx:0.425},uspfi:{pal:2,icon:16,tx:0.7},schengen:{pal:2,icon:17,tx:0.7}};
 golgotha.gate.markDirty = function(id) { if (!golgotha.gate.isDirty.contains(id)) golgotha.gate.isDirty.push(id); };
 golgotha.gate.clearListeners = function(m) { google.maps.event.clearInstanceListeners(m); };
 
@@ -12,11 +12,12 @@ if (opts.forceReload)
 	url += '&time=' + golgotha.util.getTimestamp(3000);
 
 const xreq = new XMLHttpRequest();
+xreq.timeout = 2500;
 xreq.open('get', url, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 	const jsData = JSON.parse(xreq.responseText);
-	golgotha.gate.zones = jsData.zones;
+	jsData.zones.forEach(function(z) { golgotha.gate.zones[z.id] = z; });
 	golgotha.gate.airportD = jsData.airportD; 
 	golgotha.gate.ids = [];
 	golgotha.gate.maxUse = jsData.maxUse;
@@ -33,9 +34,11 @@ return true;
 golgotha.gate.getOptions = function(g) {
 	let opts = golgotha.gate.icons.other;
 	const isOurs = (g.airlines.length > 0);
-	if (isOurs && (g.zone == 2))
+	if (isOurs && (g.zone == 'USPFI'))
 		opts = golgotha.gate.icons.uspfi;
-	else if (isOurs && (g.zone == 1))
+	else if (isOurs && (g.zone == 'SCHENGEN'))
+		opts = golgotha.gate.icons.schengen;
+	else if (isOurs && (g.zone == 'INTERNATIONAL'))
 		opts = golgotha.gate.icons.intl;
 	else if (isOurs)
 		opts = golgotha.gate.icons.ours;
@@ -85,6 +88,7 @@ golgotha.gate.display = function(al) {
 
 golgotha.gate.save = function() {
 	const xreq = new XMLHttpRequest();
+	xreq.timeout = 3500;
 	xreq.open('post', 'gateupdate.ws?id=' + golgotha.gate.airportD.icao, true);
 	xreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 	xreq.onreadystatechange = function() {
@@ -117,8 +121,8 @@ golgotha.gate.undo = function() {
 golgotha.gate.updateZone = function(cb) {
 	const id = cb.name.substring(cb.name.indexOf('-') + 1);
 	const g = golgotha.gate.data[id];
-	g.zone = cb.selectedIndex;
-	
+	g.zone = golgotha.form.getCombo(cb);
+
 	const mrk = golgotha.gate.mrks[id]; const opts = golgotha.maps.convertOptions(golgotha.gate.getOptions(g));
 	mrk.setOptions(opts);
 	console.log('Gate ' + g.name + ' set to ' + golgotha.gate.zones[g.zone].description);

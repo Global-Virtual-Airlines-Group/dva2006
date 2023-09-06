@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.flight.FlightType;
 import org.deltava.beans.stats.GateUsage;
 
 import org.deltava.comparators.GateComparator;
@@ -14,7 +13,7 @@ import org.deltava.comparators.GateComparator;
 /**
  * A helper class to handle gate assignments. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
@@ -98,6 +97,7 @@ public class GateHelper {
 	public GateZone getDepartureZone() {
 		return switch (_rp.getFlightType()) {
 			case USPFI -> GateZone.USPFI;
+			case SCHENGEN -> GateZone.SCHENGEN;
 			case INTERNATIONAL -> GateZone.INTERNATIONAL;
 			default -> GateZone.DOMESTIC;
 		};
@@ -108,7 +108,11 @@ public class GateHelper {
 	 * @return the GateZone
 	 */
 	public GateZone getArrivalZone() {
-		return (_rp.getFlightType() == FlightType.INTERNATIONAL) ? GateZone.INTERNATIONAL : GateZone.DOMESTIC;
+		return switch (_rp.getFlightType()) {
+			case SCHENGEN -> GateZone.SCHENGEN;	
+			case INTERNATIONAL -> GateZone.INTERNATIONAL;
+			default -> GateZone.DOMESTIC;
+		};
 	}
 	
 	/**
