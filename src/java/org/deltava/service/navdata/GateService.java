@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 6.3
  */
 
@@ -70,6 +70,7 @@ public class GateService extends WebService {
 		// Write gate zones
 		List<GateZone> zones = new ArrayList<GateZone>(Arrays.asList(GateZone.values()));
 		if (!a.getHasPFI()) zones.remove(GateZone.USPFI);
+		if (!a.getIsSchengen()) zones.remove(GateZone.SCHENGEN);
 		for (GateZone gz : zones) {
 			JSONObject zo = new JSONObject();
 			zo.put("id", gz.name());
@@ -87,7 +88,7 @@ public class GateService extends WebService {
 			go.put("name", sg.getName());
 			go.put("info", sg.getInfoBox());
 			go.put("ll", JSONUtils.format(sg));
-			go.put("zone", sg.getZone().ordinal());
+			go.put("zone", sg.getZone().name());
 			go.put("useCount", sg.getUseCount());
 			sg.getAirlines().stream().filter(al -> !al.getHistoric()).forEach(al -> go.accumulate("airlines", al.getCode()));
 			for (Map.Entry<String, String> me : sg.getTabs().entrySet()) {

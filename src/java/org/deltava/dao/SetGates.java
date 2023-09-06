@@ -32,7 +32,7 @@ public class SetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Collection<Gate> gates) throws DAOException {
-		Collection<String> cacheKeys = gates.stream().map(g -> ("AP-" + g.getCode())).collect(Collectors.toSet());
+		Collection<String> cacheKeys = gates.stream().map(g -> "AP-" + g.getCode()).collect(Collectors.toSet());
 		try {
 			startTransaction();
 			

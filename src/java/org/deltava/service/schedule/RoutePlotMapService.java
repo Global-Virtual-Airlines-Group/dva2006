@@ -314,7 +314,6 @@ public class RoutePlotMapService extends MapPlotService {
 			go.put("pal", g.getPaletteCode());
 			go.put("icon", g.getIconCode());
 			go.put("airlines", g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet()));
-			go.put("isIntl", (g.getZone() != GateZone.DOMESTIC) && (g.getZone() != GateZone.USPFI));
 			go.put("zone", g.getZone().getDescription());
 			go.put("useCount", g.getUseCount());
 			go.put("info", g.getInfoBox());
