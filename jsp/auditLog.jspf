@@ -9,7 +9,7 @@
 <c:set var="ipInfo" value="${auditIPInfo[logEntry.remoteAddr]}" scope="page" />
 <c:set var="author" value="${auditAuthors[logEntry.authorID]}" scope="page" />
 <tr class="auditLogEntry" style="display:none;">
- <td class="mid"><fmt:date date="${logEntry.date}" t="HH:mm" /></td>
+ <td class="mid top"><fmt:date date="${logEntry.date}" t="HH:mm" /></td>
  <td class="small ellipsis" colspan="${auditCols}"><span>Modified by <span class="pri bld">${author.name}</span> (<span class="bld">${author.pilotCode}</span>)<span class="nophone"> from <fmt:ipaddr addr="${logEntry}" info="${ipInfo}" showFlag="true" /></span></span><br />
 <fmt:text value="${logEntry.description}"></fmt:text></td>
 </tr>
