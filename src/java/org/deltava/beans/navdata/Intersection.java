@@ -110,14 +110,16 @@ public class Intersection extends NavigationDataBean {
 	 * @throws NumberFormatException if the latitude/longitude cannot be parsed
 	 */
 	public static Intersection parse(String code) {
-		if (code == null) return null;
-		if (code.contains("/") && (code.length() == 5))
+		if (code == null) return null; 
+		int spos = code.indexOf('/');
+		if ((spos > 0) && (code.length() == 5))
 			return parse(code.substring(0, 2) + code.substring(3) + "N");
-		else if (code.contains("/") && (code.length() > 6)) {
-			int spos = code.indexOf('/');
-			double lat = Double.parseDouble(code.substring(0, spos));
-			double lng = Double.parseDouble(code.substring(spos + 1));
-			return new Intersection(code, parseDMSLatitude(lat), -parseDMSLongitude(lng));
+		else if ((spos > 0) && (code.length() > 6)) {
+			if (!Character.isLetter(code.charAt(spos - 1)) && !Character.isLetter(code.charAt(code.length() - 1))) {
+				double lat = Double.parseDouble(code.substring(0, spos));
+				double lng = Double.parseDouble(code.substring(spos + 1));
+				return new Intersection(code, parseDMSLatitude(lat), -parseDMSLongitude(lng));
+			}
 		}
 	
 		// Determine what type of coordinate we are
@@ -154,7 +156,6 @@ public class Intersection extends NavigationDataBean {
 				}
 				
 			case SLASH:
-				int spos = code.indexOf('/');
 				try {
 					Hemisphere hLat = Hemisphere.valueOf(String.valueOf(code.charAt(spos - 1)).toUpperCase());
 					Hemisphere hLng = Hemisphere.valueOf(String.valueOf(code.charAt(code.length() - 1)).toUpperCase());
