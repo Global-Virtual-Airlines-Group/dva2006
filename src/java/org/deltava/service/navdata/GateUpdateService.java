@@ -14,13 +14,13 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 6.3
  */
 
@@ -61,7 +61,7 @@ public class GateUpdateService extends WebService {
 				for (int y = 0; (ga != null) && (y < ga.length()); y++)
 					g.addAirline(SystemData.getAirline(ga.getString(y)));
 				
-				GateZone gz = GateZone.values()[go.getInt("zone")];
+				GateZone gz = EnumUtils.parse(GateZone.class, go.getString("zone"), GateZone.DOMESTIC);
 				g.setZone(gz);
 				updGates.add(g);
 			}

@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 5.1
  */
 
@@ -240,6 +240,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 	public int getIconCode() {
 		return switch (_zone) {
 			case USPFI -> 16;
+			case SCHENGEN -> 17;
 			case INTERNATIONAL -> 48;
 			default -> 56;
 		};
