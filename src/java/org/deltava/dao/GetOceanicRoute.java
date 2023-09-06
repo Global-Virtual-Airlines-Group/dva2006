@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 10.1
+ * @version 11.1
  * @since 1.0
  */
 
@@ -211,17 +211,16 @@ public class GetOceanicRoute extends GetNavAirway {
     			for (NavigationDataBean np : ot.getWaypoints()) {
     				NavigationDataMap ndmap = get(np.getCode());
     				NavigationDataBean nd = ndmap.get(np.getCode(), np);
-    				if (nd != null) {
-						try {
-							NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
-							if (StringUtils.isEmpty(nd2.getAirway()))
-								nd2.setAirway(nt.getCode());
-							
-							nt.addWaypoint(nd2);
-						} catch (CloneNotSupportedException cnse) {
-							// 	empty
-						}
-    				}
+    				if (nd == null) nd = np;
+					try {
+						NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
+						if (StringUtils.isEmpty(nd2.getAirway()))
+							nd2.setAirway(nt.getCode());
+						
+						nt.addWaypoint(nd2);
+					} catch (CloneNotSupportedException cnse) {
+						// 	empty
+					}
     			}
     			
     			results.addTrack(nt);
