@@ -309,7 +309,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		
 		// Check to ensure no additional letters, except in position 1/2
 		int ltrCount = 0;
-		for (int x = 1; x < code.length() - 2; x++) {
+		for (int x = 1; x < code.length() - 1; x++) {
 			if (Character.isLetter(code.charAt(x))) {
 				ltrCount++;
 				if ((ltrCount > 1) || ((x != 2) && (x != 4) && (x != 6)))
