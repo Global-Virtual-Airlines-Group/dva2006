@@ -1,14 +1,18 @@
-// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
+
+import org.apache.logging.log4j.*;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 1.0
  */
 
 public class Intersection extends NavigationDataBean {
+	
+	private static final Logger log = LogManager.getLogger(Intersection.class);
 	
 	/**
 	 * Creates a new Intersection object.
@@ -39,37 +43,21 @@ public class Intersection extends NavigationDataBean {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Return the default Google Maps icon color.
-	 * @return MapEntry#White
-	 */
 	@Override
 	public String getIconColor() {
 		return WHITE;
 	}
 	
-	/**
-	 * Returns the Google Earth palette code.
-	 * @return 3
-	 */
 	@Override
 	public int getPaletteCode() {
 		return 3;
 	}
 	
-	/**
-	 * Returns the Google Earth icon code.
-	 * @return 56
-	 */
 	@Override
 	public int getIconCode() {
 		return 61;
 	}
 
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
@@ -144,7 +132,8 @@ public class Intersection extends NavigationDataBean {
 					double lng = Double.parseDouble(code.substring(pos + 1, code.length() - 1));
 					return new Intersection(code, parseDMSLatitude(lat) * hLat.getLatitudeFactor(), parseDMSLongitude(lng) * hLng.getLongitudeFactor());
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid full waypoint code - " + code);
+					log.warn("Invalid full waypoint code - {}", code);
+					return null;
 				}
 				
 			case QUADRANT:
@@ -155,7 +144,8 @@ public class Intersection extends NavigationDataBean {
 					double lng = Double.parseDouble(code.substring(2, code.length() - 1)) * h.getLongitudeFactor();
 					return new Intersection(code, lat, lng);
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid quadrant waypoint code - " + code);
+					log.warn("Invalid quadrant waypoint code - {}", code);
+					return null;
 				}
 				
 			case SLASH:
@@ -167,7 +157,8 @@ public class Intersection extends NavigationDataBean {
 					double lng = Double.parseDouble(code.substring(spos + 1, code.length() -1 ));
 					return new Intersection(code, parseDMSLatitude(lat) * hLat.getLatitudeFactor(), parseDMSLongitude(lng) * hLng.getLongitudeFactor());
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid slash waypoint code - " + code);
+					log.warn("Invalid slash waypoint code - {}", code);
+					return null;
 				}
 				
 			default:
