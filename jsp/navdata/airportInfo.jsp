@@ -235,11 +235,12 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </tr>
 <tr class="airportMap">
  <td class="label">Gate Legend</td>
- <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic Gate
- | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;International Gate
-<c:if test="${airport.hasPFI}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon16.png" alt="USPFI Gate" width="16" height="16" />&nbsp;US PFI Gate</c:if>
- | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gate
- | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gate
+ <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic
+ | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;International
+<c:if test="${airport.hasPFI}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon16.png" alt="USPFI Gate" width="16" height="16" />&nbsp;US PFI</c:if>
+<c:if test="${airport.isSchengen}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon17.png" alt="Schengen Gate" width="16" height="16" />&nbsp;Schengen</c:if>
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other
 <content:filter roles="Operations,Schedule"> | <el:cmd url="gateinfo" linkID="${airport.ICAO}" className="sec bld">EDIT GATE DATA</el:cmd></content:filter></td>
 </tr>
 <tr class="airportMap">
