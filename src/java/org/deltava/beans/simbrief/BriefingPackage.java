@@ -15,7 +15,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
- * @version 10.4
+ * @version 11.1
  * @since 10.3
  */
 
@@ -24,6 +24,7 @@ public class BriefingPackage extends DatabaseBean {
 	private final PackageFormat _fmt;
 	private String _sbID;
 	private String _sbUserID;
+	private int _releaseVersion;
 	private Instant _createdOn;
 	private String _tailCode;
 	private String _airframeID;
@@ -84,6 +85,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public PackageFormat getFormat() {
 		return _fmt;
+	}
+	
+	/**
+	 * Returns the briefing release version.
+	 * @return the version
+	 */
+	public int getReleaseVersion() {
+		return _releaseVersion;
 	}
 
 	/**
@@ -284,6 +293,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setSimBriefID(String id) {
 		_sbID = id;
+	}
+	
+	/**
+	 * Updates the SimBrief release version.
+	 * @param v the version
+	 */
+	public void setReleaseVersion(int v) {
+		_releaseVersion = v;
 	}
 	
 	/**

@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A parser for SimBrief XML dispatch packages.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
@@ -62,6 +62,7 @@ public class SimBriefParser {
 		WeightUnit wt = EnumUtils.parse(WeightUnit.class, wtu.substring(0, wtu.length() - 1), WeightUnit.LB);
 		PackageFormat fmt = PackageFormat.parse(pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
 		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0), fmt);
+		sb.setReleaseVersion(StringUtils.parse(XMLUtils.getChildText(re, "general", "release"), 0));
 		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
