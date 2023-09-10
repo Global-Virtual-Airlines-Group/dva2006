@@ -9,21 +9,33 @@
 <head>
 <title><content:airline /> Pilot Accomplishments</title>
 <content:css name="main" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script async>
+golgotha.local.update = function() { document.forms[0].submit(); };
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="units" className="org.deltava.beans.stats.AccomplishUnit" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="accomplishments.do" method="post" validate="return true">
 <view:table cmd="accomplishments">
+<!-- Table Title Bar -->
+<tr class="title caps">
+ <td colspan="3" class="left"><span class="nophone"><content:airline />&nbsp;</span>PILOT ACCOMPLISHMENTS</td>
+<td colspan="4" class="right">UNIT <el:combo name="unit" value="${param.unit}" options="${units}" firstEntry="[ ALL ]" onChange="void golgotha.local.update()" /></td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title caps">
 <c:if test="${access.canCreate}">
@@ -50,7 +62,7 @@
 <c:if test="${!ac.canEdit}">
  <td class="pri bld" colspan="2">${a.name}</td>
 </c:if>
- <td class="sec bld">${a.unit.name}</td>
+ <td class="sec bld">${a.unit.description}</td>
  <td class="bld"><fmt:int value="${a.value}" /></td>
  <td class="nophone"><fmt:int value="${a.pilots}" /></td>
  <td class="small nophone"><fmt:list value="${a.choices}" delim=", " empty="No Restrctions" /></td>
@@ -60,9 +72,11 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
