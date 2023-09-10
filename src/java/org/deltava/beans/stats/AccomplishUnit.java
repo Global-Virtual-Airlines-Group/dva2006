@@ -1,16 +1,14 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
-
-import org.deltava.beans.ComboAlias;
 
 /**
  * An enumeration to track Accomplishment units of measurement.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 6.3
  */
 
-public enum AccomplishUnit implements ComboAlias {
+public enum AccomplishUnit implements org.deltava.beans.EnumDescription {
 	
 	LEGS("Flight Legs"), MILES("Flight Miles"), OLEGS("Online Legs"), VLEGS("VATSIM Legs"), ILEGS("IVAO Legs"), HLEGS("Historic Legs"), EVENTS("Events"), 
 	DLEGS("Dispatch Legs"), ALEGS("ACARS Legs"), AIRPORTS("Airports Visited", true), AIRCRAFT("Aircraft Used"), COUNTRIES("Countries Visited", true), 
@@ -19,11 +17,14 @@ public enum AccomplishUnit implements ComboAlias {
 	AIRPORTD("Departure Airport", true), AIRPORTA("Arrival Airport", true), PROMOLEGS("Promotion Legs"), ADLEGS("Departures from Airport", true), AALEGS("Arrivals at Airport", true),
 	DOMESTIC("Domestic Legs"), INTL("International Legs"), SCHENGEN("Schengen Zone Legs"), TLEGS("Tour Legs"), OTLEGS("On-Time Legs");
 
+	/**
+	 * Accomplishment data source.
+	 */
 	public enum Data {
 		NONE, DISPATCH, FLIGHTS
 	}
 	
-	private final String _name;
+	private final String _desc;
 	private final Data _data;
 	private final boolean _isGeo;
 	
@@ -51,17 +52,14 @@ public enum AccomplishUnit implements ComboAlias {
 	 * @param isGeo TRUE if a geolocation is utilized, otherwise FALSE
 	 */
 	AccomplishUnit(String name, Data d, boolean isGeo) {
-		_name = name;
+		_desc = name;
 		_data = d;
 		_isGeo= isGeo;
 	}
 	
-	/**
-	 * Returns the Unit name.
-	 * @return the name
-	 */
-	public String getName() {
-		return _name;
+	@Override
+	public String getDescription() {
+		return _desc;
 	}
 	
 	/**
@@ -78,15 +76,5 @@ public enum AccomplishUnit implements ComboAlias {
 	 */
 	public boolean isGeo() {
 		return _isGeo;
-	}
-	
-	@Override
-	public String getComboName() {
-		return _name;
-	}
-	
-	@Override
-	public String getComboAlias() {
-		return name();
 	}
 }
