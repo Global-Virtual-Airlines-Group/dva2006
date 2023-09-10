@@ -3,12 +3,14 @@ package org.deltava.commands.stats;
 
 import java.util.*;
 
-import org.deltava.beans.stats.Accomplishment;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.AccomplishmentAccessControl;
+
+import org.deltava.util.EnumUtils;
 
 /**
  * A Web Site Command to display Accomplishment profiles. 
@@ -28,11 +30,12 @@ public class AccomplishmentListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		ViewContext<Accomplishment> vc = initView(ctx, Accomplishment.class);
+		AccomplishUnit unit = EnumUtils.parse(AccomplishUnit.class, ctx.getParameter("unit"), null);
 		try {
 			GetAccomplishment dao = new GetAccomplishment(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			vc.setResults(dao.getAll());
+			vc.setResults((unit == null) ? dao.getAll() : dao.getByUnit(unit));
 			
 			// Check our access
 			Map<Accomplishment, AccomplishmentAccessControl> accessMap = new HashMap<Accomplishment, AccomplishmentAccessControl>();
