@@ -45,7 +45,7 @@ The <content:airline /> &quot;Century Club&quot; recognizes those pilots who ove
 <c:set var="acc" value="${me.key}" scope="page" />
 <!-- Level Header Bar -->
 <tr class="title">
- <td colspan="8" class="caps left">${acc.name} - <fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
+ <td colspan="8" class="caps left">${acc.name} - <fmt:int value="${acc.value}" /> ${acc.unit.description}</td>
 </tr>
 
 <!-- Level Pilot Data -->
