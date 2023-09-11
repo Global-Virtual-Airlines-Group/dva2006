@@ -32,9 +32,6 @@
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.12.7.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.12.7.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.12.7.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-3.19.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.36.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.36.jar"/>
@@ -49,5 +46,8 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.62.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-5.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.15.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
