@@ -31,9 +31,6 @@ public class OnlineTrackTask extends Task {
 		super("Online Track Download", OnlineTrackTask.class);
 	}
 
-	/**
-	 * Executes the task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
@@ -42,7 +39,7 @@ public class OnlineTrackTask extends Task {
 		boolean logAll = SystemData.getBoolean("online.log_all");
 		for (Iterator<?> i = networkNames.iterator(); i.hasNext(); ) {
 			OnlineNetwork network = OnlineNetwork.valueOf(String.valueOf(i.next()).toUpperCase());
-			log.info(String.format("Loading %s information for %s", network, SystemData.get("airline.code")));
+			log.info("Loading {} information for {}", network, SystemData.get("airline.code"));
 			
 			// Get the network info
 			NetworkInfo info = ServInfoHelper.getInfo(network);
@@ -56,8 +53,7 @@ public class OnlineTrackTask extends Task {
 				GetPilotOnline podao = new GetPilotOnline(con);
 				networkIDs.putAll(podao.getIDs(network));
 				info.setPilotIDs(networkIDs);
-				if (log.isDebugEnabled())
-					log.debug(String.format("Loaded %d %s IDs", Integer.valueOf(networkIDs.size()), network));
+				log.debug("Loaded {} {} IDs", Integer.valueOf(networkIDs.size()), network);
 				
 				// Aggregate the data for VATSIM
 				if (logAll && ((ctx.getLastRun() == null) || (info.getValidDate().isAfter(ctx.getLastRun())))) {
@@ -67,8 +63,7 @@ public class OnlineTrackTask extends Task {
 
 					SetOnlineTime otwdao = new SetOnlineTime(con);
 					otwdao.write(network, users, timeDelta);
-					if (log.isDebugEnabled())
-						log.debug(String.format("Wrote %d stats records for %s", Integer.valueOf(users.size()), network));
+					log.debug("Wrote {} stats records for {}", Integer.valueOf(users.size()), network);
 				}
 				
 				// Loop through the pilots
@@ -107,11 +102,11 @@ public class OnlineTrackTask extends Task {
 				}
 				
 				// Log flight records written
-				log.info(String.format("Saved %d %s position records", Integer.valueOf(flightCount), network));
+				log.info("Saved {} {} position records", Integer.valueOf(flightCount), network);
 				
 				// Purge old flight entries
-				int purgeCount = otwdao.purgeAll(48);
-				log.info(String.format("Purged %d old flight tracks", Integer.valueOf(purgeCount)));
+				int purgeCount = otwdao.purgeAll(72);
+				log.info("Purged {} old flight tracks after 72 hours", Integer.valueOf(purgeCount));
 			} catch (DAOException de) {
 				ctx.rollbackTX();
 				log.error("Error loading " + network + " data", de);
