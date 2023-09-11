@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
@@ -90,7 +90,7 @@ public class PackageRefreshService extends WebService {
 				LogbookHistoryHelper lh = new LogbookHistoryHelper(pireps);
 				if (lh.isConsistentSimulator(3)) {
 					fr.setSimulator(lh.getLastFlight().getSimulator());
-					fr.addStatusUpdate(0, HistoryType.UPDATE, String.format("Updated Simulator to", fr.getSimulator()));
+					fr.addStatusUpdate(0, HistoryType.UPDATE, String.format("Updated Simulator to %s", fr.getSimulator()));
 				}
 			}
 				
@@ -103,13 +103,17 @@ public class PackageRefreshService extends WebService {
 					
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();
-				if (!dGates.isEmpty())
+				if (!dGates.isEmpty()) {
 					fr.setGateD(dGates.get(0).getName());
+					fr.addStatusUpdate(0, HistoryType.DISPATCH, String.format("Assigned Departure Gate %s", fr.getGateD()));
+				}
 					
 				// Load arrival gate
 				List<Gate> aGates = gh.getArrivalGates();
-				if (!aGates.isEmpty())
+				if (!aGates.isEmpty()) {
 					fr.setGateA(aGates.get(0).getName());
+					fr.addStatusUpdate(0, HistoryType.DISPATCH, String.format("Assigned Arrival Gate %s", fr.getGateA()));	
+				}
 				
 				isUpdated |= fr.hasGates();
 			}
@@ -122,6 +126,9 @@ public class PackageRefreshService extends WebService {
 				if (!StringUtils.isEmpty(sbdata.getSimBriefID())) frwdao.writeSimBrief(sbdata); // non-null if updated
 				ctx.commitTX();
 			}
+		} catch (ServiceException se) {
+			ctx.setHeader("X-SB-Error-Message", se.getMessage());
+			throw se;
 		} catch (Exception de) {
 			ctx.rollbackTX();
 			if (de instanceof HTTPDAOException hde) {
