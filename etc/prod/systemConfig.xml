@@ -213,7 +213,9 @@
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
-			<useSSL>false</useSSL>
+			<sslMode>DISABLED</sslMode>
+			<allowPublicKeyRetrieval>true</allowPublicKeyRetrieval>
+			<defaultAuthenticationPlugin>caching_sha2_password</defaultAuthenticationPlugin>
 			<characterEncoding>utf-8</characterEncoding>
 			<connectionCollation>latin1_swedish_ci</connectionCollation>
 			<connectTimeout>1000</connectTimeout>
