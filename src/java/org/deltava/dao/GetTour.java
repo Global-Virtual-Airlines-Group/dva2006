@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 10.0
  */
 
@@ -74,7 +74,7 @@ public class GetTour extends DAO {
 	 */
 	public Collection<Tour> getAll() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOURS T "
-			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID")) {
+			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID ORDER BY T.START_DATE DESC, T.END_DATE DESC")) {
 			List<Tour> results = execute(ps);
 			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
 			return results;
