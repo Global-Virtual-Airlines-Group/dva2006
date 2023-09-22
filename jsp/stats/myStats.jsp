@@ -101,7 +101,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <tr id="eqLandingLabel" class="title mid caps tdStats">
  <td>#</td>
  <td style="width:12%">EQUIPMENT</td>
- <td style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('flights')">FLIGHTS</a></td>
+ <td style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('legs')">FLIGHTS</a></td>
  <td class="nophone" style="width:10%"><a href="javascript:void golgotha.local.sortEQLanding('hours')">HOURS</a></td>
  <td style="width:18%"><a href="javascript:void golgotha.local.sortEQLanding('vSpeed')">AVERAGE SPEED</a></td>
  <td style="width:12%" class="nophone"><a href="javascript:void golgotha.local.sortEQLanding('vSpeedSD')">STD. DEVIATION</a></td>
