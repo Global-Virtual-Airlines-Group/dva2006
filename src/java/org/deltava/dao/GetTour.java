@@ -73,8 +73,8 @@ public class GetTour extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Tour> getAll() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOURS T "
-			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID ORDER BY T.START_DATE DESC, T.END_DATE DESC")) {
+		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOURS T LEFT JOIN "
+			+ "TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) GROUP BY T.ID ORDER BY T.STATUS DESC, IF(T.END_DATE<CURDATE(),1,0), T.START_DATE DESC, T.END_DATE DESC")) {
 			List<Tour> results = execute(ps);
 			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
 			return results;
