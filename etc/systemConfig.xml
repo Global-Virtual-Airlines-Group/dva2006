@@ -192,12 +192,12 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://localhost/dva</url>
-		<socket>/run/mysql/mysql.sock</socket>
+		<!--  <socket>/run/mysql/mysql.sock</socket>  -->
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
 			<sslMode>DISABLED</sslMode>
-			<allowPublicKeyRetrieval>true</allowPublicKeyRetrieval>
+			<serverRSAPublicKeyFile>/usr/local/tomcat/conf/mysql_sha256_pub.pem</serverRSAPublicKeyFile>
 			<characterEncoding>utf-8</characterEncoding>
 			<connectionCollation>latin1_swedish_ci</connectionCollation>
 			<connectTimeout>1000</connectTimeout>
