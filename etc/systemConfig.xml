@@ -198,8 +198,7 @@
 			<useCompression>false</useCompression>
 			<sslMode>DISABLED</sslMode>
 			<allowPublicKeyRetrieval>true</allowPublicKeyRetrieval>
-			<defaultAuthenticationPlugin>caching_sha2_password</defaultAuthenticationPlugin>
-			<characterEncoding>UTF-8</characterEncoding>
+			<characterEncoding>utf-8</characterEncoding>
 			<connectionCollation>latin1_swedish_ci</connectionCollation>
 			<connectTimeout>1000</connectTimeout>
 			<autoReconnect>false</autoReconnect>
