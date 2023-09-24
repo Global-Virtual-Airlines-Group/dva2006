@@ -43,11 +43,11 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-8.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20230618.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.62.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.62.jar" sourcepath="/IPC"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-5.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.7.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
