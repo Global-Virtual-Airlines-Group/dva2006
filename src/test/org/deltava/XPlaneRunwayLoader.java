@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -17,17 +17,19 @@ import junit.framework.TestCase;
 
 public class XPlaneRunwayLoader extends TestCase {
 	
-	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?useSSL=false&allowPublicKeyRetrieval=true";
+	private static final String JDBC_USER = "luke";
+	private static final String JDBC_PWD = "test";
 	
 	private static final double FT_PER_M = 3.2808399;
 	
 	private static final Surface[] SFCS = { Surface.UNKNOWN, Surface.ASPHALT, Surface.CONCRETE, Surface.GRASS, Surface.DIRT, Surface.GRAVEL, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN,
-			Surface.UNKNOWN, Surface.SAND, Surface.WATER, Surface.ICE, Surface.UNKNOWN };
+			Surface.UNKNOWN, Surface.SAND, Surface.WATER, Surface.ICE, Surface.CONCRETE };
 	
 	private static final int WGS84_SRID = 4326;
 	
-	private static final Simulator SIM = Simulator.XP10;
-	private static final String DATA_FILE = "apt10.dat";
+	private static final Simulator SIM = Simulator.XP12;
+	private static final String DATA_FILE = "apt12.dat";
 	
 	private Logger log;
 	
@@ -56,7 +58,7 @@ public class XPlaneRunwayLoader extends TestCase {
 		
 		// Load existing airport codes
 		Collection<String> apCodes = new HashSet<String>();
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD)) {
 			try (PreparedStatement ps = c.prepareStatement("SELECT CODE FROM common.NAVDATA WHERE (ITEMTYPE=?)")) {
 				ps.setInt(1, Navaid.AIRPORT.ordinal());
 				ps.setFetchSize(500);
@@ -96,7 +98,16 @@ public class XPlaneRunwayLoader extends TestCase {
 				if ((apCode == null) || (!"100".equals(type))) continue;
 				
 				// Get surface type
-				int sfcType = StringUtils.parse(dd.get(1), 0); Surface s = SFCS[Math.min(sfcType, 13)];
+				int sfcType = StringUtils.parse(dd.get(1), 0); Surface s = Surface.UNKNOWN; 
+				if ((sfcType >= 20) && (sfcType <= 38))
+					s = Surface.ASPHALT;
+				else if ((sfcType >= 50) && (sfcType <= 57))
+					s  = Surface.CONCRETE;
+				else if ((sfcType > 0) && (sfcType < 16))
+					s = SFCS[sfcType];
+				
+				if (s == Surface.UNKNOWN)
+					log.warn("Unknown Runway Surface - {}", dd.get(1));
 
 				// Get runway position, heading, length
 				GeoLocation gl1 = new GeoPosition(StringUtils.parse(dd.get(8), 0.0d), StringUtils.parse(dd.get(9), 0.0d));
@@ -131,7 +142,7 @@ public class XPlaneRunwayLoader extends TestCase {
 		}
 		
 		// Write data
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD)) {
 			c.setAutoCommit(false);
 			try (PreparedStatement ps = c.prepareStatement("DELETE FROM common.RUNWAYS WHERE (SIMVERSION=?)")) {
 				ps.setInt(1, SIM.getCode());
@@ -157,7 +168,7 @@ public class XPlaneRunwayLoader extends TestCase {
 					ps.addBatch(); rowsWritten++;
 					if ((rowsWritten % 100) == 0) {
 						ps.executeBatch();
-						log.info("Wrote " + rowsWritten + " runways");
+						log.info("Wrote {} runways", Integer.valueOf(rowsWritten));
 					}
 				}
 				
@@ -165,7 +176,7 @@ public class XPlaneRunwayLoader extends TestCase {
 					ps.executeBatch();
 				
 				c.commit();
-				log.info("Wrote " + rowsWritten + " runways");
+				log.info("Wrote {} runways", Integer.valueOf(rowsWritten));
 			}
 		}
 	}
