@@ -151,8 +151,8 @@ public class ThreadCommand extends AbstractCommand {
 			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
 			for (String dbTableName : udm.getTableNames()) {
 				AirlineInformation ai = SystemData.getApp(dbTableName.substring(0, dbTableName.indexOf('.')));
-				EliteProgram ep = (EliteProgram) SharedData.get(SharedData.ELITE_INFO + ai.getCode());
-				
+				Object ep = SharedData.get(SharedData.ELITE_INFO + ai.getCode());
+
 				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserData.isPilotTable(dbTableName)) {
 					apps.putIfAbsent(ai.getCode(), ai);
