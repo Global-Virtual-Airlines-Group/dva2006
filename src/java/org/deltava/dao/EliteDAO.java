@@ -7,12 +7,11 @@ import java.util.*;
 import org.deltava.beans.econ.*;
 
 import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Elite program definitions. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -99,7 +98,7 @@ abstract class EliteDAO extends DAO {
 	 */
 	protected void populateLevels(Collection<? extends EliteLevelBean> data) throws DAOException {
 		for (EliteLevelBean eb : data) {
-			EliteLevel lvl = get(eb.getLevel().getName(), eb.getLevel().getYear(), SystemData.get("airline.db"));
+			EliteLevel lvl = get(eb.getLevel().getName(), eb.getLevel().getYear(), eb.getLevel().getOwner());
 			if (lvl != null)
 				eb.setLevel(lvl);
 		}
