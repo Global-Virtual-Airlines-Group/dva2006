@@ -1,6 +1,8 @@
 // Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Aircraft;
 
@@ -9,11 +11,13 @@ import org.deltava.util.StringUtils;
 /**
  * A log book export class to generate Volanta-formatted CSV logbooks.  
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
 class VolantaCSVExport extends CSVExport {
+	
+	private static final Logger log = LogManager.getLogger(VolantaCSVExport.class);
 	
 	/**
 	 * Creates the exporter.
@@ -29,6 +33,8 @@ class VolantaCSVExport extends CSVExport {
 		if (fr.getFDR() == null) return;
 		FDRFlightReport fdr = (FDRFlightReport) fr;
 		Aircraft ac = getAircraft(fdr.getEquipmentType());
+		if (ac == null)
+			log.warn("Unknown Equipment for Flight {} - {}", Integer.valueOf(fr.getID()), fr.getEquipmentType());
 		
 		// Write data
 		StringBuilder buf = new StringBuilder(); 
@@ -44,7 +50,7 @@ class VolantaCSVExport extends CSVExport {
 		buf.append(',');
 		buf.append(fr.getShortCode());
 		buf.append(',');
-		buf.append(ac.getICAO());
+		buf.append((ac == null) ? "ZZZZ" : ac.getICAO());
 		buf.append(',');
 		buf.append(String.valueOf(fr.getDistance()));
 		writeln(buf);
