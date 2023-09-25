@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Elite status levels. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -117,14 +117,16 @@ public class GetElite extends EliteDAO {
 		}
 
 		if (dbIDs.size() > 0) {
-			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), MAX(CREATED) AS CD, UPD_REASON FROM ");
-			sqlBuf.append(formatDBName(db));
+			String dbName = formatDBName(db);
+			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, MAX(CREATED) AS CD, UPD_REASON FROM ");
+			sqlBuf.append(dbName);
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
 			sqlBuf.append(StringUtils.listConcat(dbIDs, ","));
 			sqlBuf.append(")) GROUP BY PILOT_ID ORDER BY CD DESC");
 			
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-				ps.setInt(1, year);
+				ps.setString(1, dbName);
+				ps.setInt(2, year);
 				results.addAll(executeStatus(ps));
 				populateLevels(results);
 			} catch (SQLException se) {
