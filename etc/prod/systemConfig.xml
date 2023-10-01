@@ -728,7 +728,7 @@
 	
 	<!-- Discord data -->
 	<discord>
-		<bot type="Boolean">false</bot>
+		<bot type="Boolean">true</bot>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
 		<list name="roles" attr="role" unique="true">
 			<role>PIREP</role>		
