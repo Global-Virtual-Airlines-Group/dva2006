@@ -14,6 +14,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.acars.RunwayDistance;
 
 import org.deltava.dao.*;
 
@@ -26,10 +27,13 @@ public class ElitePIREPLoader extends TestCase {
 	private Logger log;
 	private Connection _c;
 	
-	private static final LocalDateTime MIN_DATE = LocalDate.of(EliteLevel.MIN_YEAR, 1, 1).atStartOfDay();
+	private static final int MIN_YEAR = 2022;
+	private static final LocalDateTime MIN_DATE = LocalDate.of(MIN_YEAR, 1, 1).atStartOfDay();
 
 	private static final String AIRLINE_CODE = "DVA";
-	private static final String JDBC_URL = String.format("jdbc:mysql://sirius.sce.net/%s?connectionTimezone=SERVER", AIRLINE_CODE.toLowerCase());
+	private static final String JDBC_URL = String.format("jdbc:mysql://sirius.sce.net/%s?connectionTimezone=SERVER&allowPublicKeyRetrieval=true", AIRLINE_CODE.toLowerCase());
+	private static final String JDBC_USER = "luke";
+	private static final String JDBC_PWD = "test";
 
 	@Override
 	protected void setUp() throws Exception {
@@ -42,7 +46,7 @@ public class ElitePIREPLoader extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
@@ -95,6 +99,7 @@ public class ElitePIREPLoader extends TestCase {
 		GetPilot pdao = new GetPilot(_c);
 		GetElite eldao = new GetElite(_c);
 		GetAircraft acdao = new GetAircraft(_c);
+		GetACARSData fidao = new GetACARSData(_c);
 		GetFlightReports frdao = new GetFlightReports(_c);
 		
 		SetElite elwdao = new SetElite(_c);
@@ -128,7 +133,7 @@ public class ElitePIREPLoader extends TestCase {
 		for (Integer id : IDs) {
 			Pilot p = pdao.get(id.intValue());
 			List<FlightReport> allFlights = frdao.getByPilot(id.intValue(), lsc);
-			Collection<Integer> yrs = allFlights.stream().map(fr -> Integer.valueOf(EliteScorer.getStatsYear(fr.getDate()))).filter(y -> y.intValue() >= EliteLevel.MIN_YEAR).collect(Collectors.toCollection(TreeSet::new));
+			Collection<Integer> yrs = allFlights.stream().map(fr -> Integer.valueOf(EliteScorer.getStatsYear(fr.getDate()))).filter(y -> y.intValue() >= MIN_YEAR).collect(Collectors.toCollection(TreeSet::new));
 			log.info("Calculating {} status for {} ({})", SystemData.getObject("econ.elite.name"), p.getName(), p.getPilotCode());
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			
@@ -155,10 +160,10 @@ public class ElitePIREPLoader extends TestCase {
 						AircraftPolicyOptions opts = ac.getOptions(AIRLINE_CODE);
 						
 						// Get the landing runway
-						//RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+						RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
 						
 						// Create the package
-						ScorePackage pkg = new ScorePackage(ac, ffr, null, null, opts);
+						ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
 						sc = es.score(pkg, st.getLevel());
 					} else
 						sc = es.score(fr, st.getLevel());
@@ -194,7 +199,7 @@ public class ElitePIREPLoader extends TestCase {
 				
 				// Calculate end of year status
 				EliteLevel eyLevel = yt.matches(lvls);
-				if ((eyLevel.getLegs() > 0) && (eyLevel.getYear() < 2023)) {
+				if ((eyLevel != null) && (eyLevel.getLegs() > 0) && (eyLevel.getYear() < 2023)) {
 					UpgradeReason ur = (eyLevel.compareTo(st.getLevel()) == 0) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
 					
 					// Get next year's level
@@ -219,7 +224,7 @@ public class ElitePIREPLoader extends TestCase {
 					}
 					
 					upds.add(upd);
-				} else
+				} else if (yt.getYear() < 2023)
 					log.info("{} no rollover for {}", p.getName(), Integer.valueOf(y + 1));
 			}
 			
