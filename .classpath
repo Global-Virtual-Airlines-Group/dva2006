@@ -47,7 +47,7 @@
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-5.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
