@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ssc.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		ssc.setDBName(ctx.getDB());
 		ssc.setCheckDispatchRoutes(Boolean.parseBoolean(ctx.getParameter("checkDispatch")));
-		ssc.setExcludeHistoric((a != null) ? Inclusion.ALL : EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
+		ssc.setExcludeHistoric(EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
 		ssc.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
 		ssc.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
 		ssc.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
@@ -139,6 +139,10 @@ public class FindFlightCommand extends AbstractCommand {
 		ssc.setNotVisitedD(Boolean.parseBoolean(ctx.getParameter("nVD")));
 		ssc.setNotVisitedA(Boolean.parseBoolean(ctx.getParameter("nVA")));
 		ssc.setMaxResults(Math.max(0, Math.min(ssc.getMaxResults(), 500)));
+		if ((a != null) && a.getHistoric() && (ssc.getExcludeHistoric() == Inclusion.EXCLUDE))
+			ssc.setExcludeHistoric(Inclusion.INCLUDE);
+		else if ((a != null) && !a.getHistoric() && (ssc.getExcludeHistoric() == Inclusion.INCLUDE))
+			ssc.setExcludeHistoric(Inclusion.EXCLUDE);
 
 		// Set equipment type(s)
 		final String f = ctx.getParameter("family");
