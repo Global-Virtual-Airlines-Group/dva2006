@@ -33,7 +33,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -127,7 +127,7 @@ public class Bot {
     		log.info("Disconnecting from Discord API");
     		CompletableFuture<Void> cf = api.disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
     		cf.join();
-    		log.info("Shutdown in " + tt.stop() + "ms");
+    		log.warn("Shutdown in " + tt.stop() + "ms");
     		
     		// Wait for threads to shut down
     		Thread.sleep(58000);
