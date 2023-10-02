@@ -740,7 +740,7 @@
 
 		<!-- Discord Role names -->
 		<role>
-			<staff>Staff</staff>
+			<pirep>Staff</pirep>
 			<hr>Senior Staff</hr>
 			<default>Pilot</default>
 		</role>
