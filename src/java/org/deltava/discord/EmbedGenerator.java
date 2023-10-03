@@ -35,12 +35,13 @@ class EmbedGenerator {
 	 * @return an EmbedBuilder
 	 */
     static EmbedBuilder createError(MessageCreateEvent e, Exception ex) {
+    	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
                 .setTitle(":warning: Internal Error")
                 .setColor(Color.RED)
                 .addInlineField("User", e.getMessageAuthor().getDisplayName())
                 .addInlineField("Error", ex.getMessage())
-                .setThumbnail("https://www.deltava.org/img/favicon/v852/favicon-32x32.png")
+                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
                 .setTimestampToNow();
     }
     
@@ -81,15 +82,17 @@ class EmbedGenerator {
 	 * Generates an embedded temporary nickname message.
 	 * @param e the MessageCreateEvent
 	 * @param p the Pilot
-	 * @param roleName the Discord security role 
+	 * @param roleName the Discord security role
+	 * @param nickName the nickname 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createTemporaryNick(MessageCreateEvent e, Pilot p, String roleName) {
+    static EmbedBuilder createTemporaryNick(MessageCreateEvent e, Pilot p, String roleName, String nickName) {
     	return new EmbedBuilder().setColor(Color.BLUE)
                 .setFooter("Temporary Nickname Assignment")
                 .setTitle(":exclamation: Temporary Nickname Assigned")
-                .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a temporary nickname to the following member.")
-                .addInlineField("Name", e.getMessageAuthor().getDisplayName())
+                .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
+                .addInlineField("User", e.getMessageAuthor().getDisplayName())
+                .addInlineField("Name", nickName)
                 .addInlineField("Permissions Level", roleName)
                 .setTimestampToNow();
     }
@@ -126,13 +129,28 @@ class EmbedGenerator {
         return new EmbedBuilder()
                 .setTitle(":wave: Welcome Aboard!")
                 .setDescription("Welcome to the Delta Virtual Airlines Discord Server. To gain access, you must be an active member of Delta Virtual Airlines at www.deltava.org. We are a non-profit organization dedicated to flight simulation and education and are not affiliated with the real Delta Air Lines in any way. To complete your discord registration with us, follow the steps below.")
-                .setThumbnail(String.format("https://%s/img/favicon/v852/favicon-32x32.png", host))
+                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
                 .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
                 .setFooter(String.format("%s Discord New Member Registration", code))
                 .setTimestampToNow()
                 .setColor(new Color(1, 0, 100))
-                .addField("Step 1: Link your Discord and DVA User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=" + id, code, code, host))
+                .addField("Step 1: Link your Discord and DVA User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
                 .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"done\" when you've completed linking your accounts and your roles will be assigned.")
                 .addField("Didn't work?", String.format("If you follow the above process and are still not able to gain access, open a help desk ticket here: https://%s/helpdesk.do", host));
+    }
+    
+    /**
+     * Returns a welcome message.
+     * @param e the MessageCreateEvent
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder welcome(MessageCreateEvent e) {
+    	String host = SystemData.get("airline.url");
+    	return new EmbedBuilder()
+                .setTitle(":wave: Welcome Aboard!")
+                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+                .setColor(new Color(1, 0, 100))
+                .setDescription(String.format("Welcome to the %s Discord server! Type !roles to register.", SystemData.get("airline.name")))
+                .setTimestampToNow();
     }
 }

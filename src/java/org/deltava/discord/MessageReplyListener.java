@@ -25,7 +25,7 @@ public class MessageReplyListener implements org.javacord.api.listener.message.M
         }
     }
 
-    public static boolean isGoodChannel(MessageReplyEvent event) {
+    private static boolean isGoodChannel(MessageReplyEvent event) {
     	ServerChannel ch = event.getChannel().asServerChannel().orElse(null);
         return (ch != null) && ch.getName().equals(ChannelName.MOD_ALERTS.getName());
     }

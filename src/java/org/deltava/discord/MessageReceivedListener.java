@@ -22,6 +22,14 @@ import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.ConnectionPoolException;
 
+/**
+ * A Discord message receiver.
+ * @author Luke
+ * @author danielw
+ * @version 11.1
+ * @since 11.0
+ */
+
 public class MessageReceivedListener implements MessageCreateListener {
 
     private static final Logger log = LogManager.getLogger(MessageReceivedListener.class);
@@ -34,7 +42,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
     	try {
     		if (msg.equalsIgnoreCase("done")) {
-    			e.getMessage().delete("Auto delete interaction message.");
+    			e.getMessage().delete("Auto delete interaction message");
     			assignRoles(e);
     			return;
     		}
@@ -44,10 +52,13 @@ public class MessageReceivedListener implements MessageCreateListener {
 
     		// Check if this is a message requesting roles
     		if (channelName.equals(ChannelName.WELCOME.getName())) {
-    			if (e.getMessageContent().equalsIgnoreCase("!roles"))
-                    	registerDVA(e);
-               	else
-               		e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
+    			if (!e.getMessageContent().equalsIgnoreCase("!roles")) {
+    				e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
+                    Optional<User> uo = e.getMessageAuthor().asUser();
+                    if (uo.isPresent())
+                    	uo.get().sendMessage(EmbedGenerator.welcome(e));
+    			} else
+    				registerDVA(e);
     		}
         
     		// Check content
@@ -91,6 +102,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         	return;
         } else if (p.getStatus() != PilotStatus.ACTIVE) {
         	log.warn(String.format("%s (%s) Status = %s", p.getName(), p.getPilotCode(), p.getStatus()));
+        	msgAuth.sendMessage(EmbedGenerator.createInsufficientAccess(e));
         	return;
         }
         
@@ -119,13 +131,13 @@ public class MessageReceivedListener implements MessageCreateListener {
         // Unable to do nicknames longer than 32 chars or less than 1
         if (nickname.length() <= 32) {
         	msgAuth.updateNickname(e.getServer().get(), nickname);
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName()));
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName(), nickname));
     	} else
         	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, r.getName())); 
 
         // Everything went well
-        msgAuth.sendMessage(String.format("Your DVA account (%s) has been located and linked to this Discord user profile", p.getPilotCode()));
-        msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://www.%s/helpdesk.do", SystemData.get("airline.domain")));
+        msgAuth.sendMessage(String.format("Your %s account (%s) has been located and linked to this Discord user profile", SystemData.get("airline.code"), p.getPilotCode()));
+        msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://%s/helpdesk.do", SystemData.get("airline.url")));
         log.info(String.format("Registered User [ Name = %s, UUID = %s ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId())));
     }
 }
