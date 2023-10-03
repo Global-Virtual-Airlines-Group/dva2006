@@ -130,7 +130,7 @@ public class Bot {
     		log.warn("Shutdown in " + tt.stop() + "ms");
     		
     		// Wait for threads to shut down
-    		Thread.sleep(58000);
+    		Thread.sleep(8000);
     	} catch (CompletionException ce) {
     		log.error("Error disconnecting from Discord API - " + ce.getMessage(), ce);
     	} catch (InterruptedException ie) {
