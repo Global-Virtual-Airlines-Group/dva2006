@@ -147,7 +147,7 @@ class EmbedGenerator {
     static EmbedBuilder welcome(MessageCreateEvent e) {
     	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
-                .setTitle(":wave: Welcome Aboard!")
+                .setTitle("Welcome Aboard!")
                 .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
                 .setColor(new Color(1, 0, 100))
                 .setDescription(String.format("Welcome to the %s Discord server! Type !roles to register.", SystemData.get("airline.name")))
