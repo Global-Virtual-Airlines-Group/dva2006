@@ -13,8 +13,7 @@ import java.sql.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.PilotStatus;
+import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
@@ -100,6 +99,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         boolean hasReqRoles = p.getRoles().stream().anyMatch(r -> reqRoles.contains(r));
         if (!hasReqRoles) {
         	log.warn(String.format("User %s (%s) not in required Roles %s [ roles = %s ]", p.getName(), p.getPilotCode(), reqRoles, p.getRoles()));
+        	msgAuth.sendMessage(EmbedGenerator.createInsufficientAccess(e));
         	return;
         }
         
@@ -117,16 +117,15 @@ public class MessageReceivedListener implements MessageCreateListener {
         msgAuth.addRole(r);
 
         // Unable to do nicknames longer than 32 chars or less than 1
-        if (nickname.length() > 32)
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName())); 
-        else {
-            msgAuth.updateNickname(e.getServer().get(), nickname);
-            Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName())); 
-        }
+        if (nickname.length() <= 32) {
+        	msgAuth.updateNickname(e.getServer().get(), nickname);
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName()));
+    	} else
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, r.getName())); 
 
         // Everything went well
         msgAuth.sendMessage(String.format("Your DVA account (%s) has been located and linked to this Discord user profile", p.getPilotCode()));
-        msgAuth.sendMessage("If you feel that a mistake has been made, submit a ticket here: https://www.deltava.org/helpdesk.do");
+        msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://www.%s/helpdesk.do", SystemData.get("airline.domain")));
         log.info(String.format("Registered User [ Name = %s, UUID = %s ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId())));
     }
 }
