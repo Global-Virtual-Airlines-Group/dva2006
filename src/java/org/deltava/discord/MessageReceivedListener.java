@@ -55,8 +55,11 @@ public class MessageReceivedListener implements MessageCreateListener {
     			if (!e.getMessageContent().equalsIgnoreCase("!roles")) {
     				e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
                     Optional<User> uo = e.getMessageAuthor().asUser();
-                    if (uo.isPresent())
-                    	uo.get().sendMessage(EmbedGenerator.welcome(e));
+                    if (uo.isPresent()) {
+                    	User u = uo.get();
+                    	if (u.getRoles(e.getServer().get()).isEmpty())
+                    		u.sendMessage(EmbedGenerator.welcome(e));
+                    }
     			} else
     				registerDVA(e);
     		}
@@ -80,7 +83,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         e.getMessage().delete("Auto-delete role request message");
     }
 
-    public static void assignRoles(MessageCreateEvent e) {
+    private static void assignRoles(MessageCreateEvent e) {
 
     	// Make sure user is stil here
     	if (e.getMessageAuthor().asUser().isEmpty()) return;
