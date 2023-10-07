@@ -69,8 +69,9 @@ public class MessageReceivedListener implements MessageCreateListener {
     		if (!fr.isOK())
     			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createKeyword(e, fr.getFlaggedResults()));
     	} catch (Exception ex) {
+    		log.error("Error on MessageReceive - " + ex.getMessage(), ex);
     		ChannelName ch = EnumUtils.parse(ChannelName.class, channelName, ChannelName.LOG);
-    		Bot.send(ch, EmbedGenerator.createError(e, ex));
+    		Bot.send(ch, EmbedGenerator.createError(e.getMessageAuthor().getDisplayName(), "Registration", ex));
     	}
     }
 
