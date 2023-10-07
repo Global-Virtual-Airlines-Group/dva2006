@@ -12,7 +12,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 6.1
  */
 
@@ -105,7 +105,7 @@ public class RedisUtils {
 			config.setJmxNamePrefix("redis-" + poolName.toLowerCase());
 			config.setMaxWait(Duration.ofMillis(50));
 			config.setMaxTotal(12);
-			config.setSoftMinEvictableIdleTime(Duration.ofMillis(5000));
+			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
@@ -259,8 +259,8 @@ public class RedisUtils {
 		}
 		
 		// Get connection pool info
-		results.put("maxWait", Long.valueOf(_client.getMaxBorrowWaitTimeMillis()));
-		results.put("meanWait", Long.valueOf(_client.getMeanBorrowWaitTimeMillis()));
+		results.put("maxWait", Long.valueOf(_client.getMaxBorrowWaitDuration().toMillis()));
+		results.put("meanWait", Long.valueOf(_client.getMeanBorrowWaitDuration().toMillis()));
 		results.put("idle", Long.valueOf(_client.getNumIdle()));
 		results.put("active", Long.valueOf(_client.getNumActive()));
 		return results;
