@@ -4,15 +4,15 @@ package org.deltava.discord;
 import java.awt.Color;
 import java.util.Collection;
 
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
+
 import org.deltava.beans.Pilot;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
-
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.Role;
-import org.javacord.api.event.message.MessageCreateEvent;
 
 /**
  * A utility class to generate Discord responses.
@@ -30,16 +30,18 @@ class EmbedGenerator {
 	
 	/**
 	 * Generates an embedded error message.
-	 * @param e the MessageCreateEvent
+	 * @param userName the User Name
+	 * @param actionName the action being performed
 	 * @param ex the Exception
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createError(MessageCreateEvent e, Exception ex) {
+    static EmbedBuilder createError(String userName, String actionName, Exception ex) {
     	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
                 .setTitle(":warning: Internal Error")
                 .setColor(Color.RED)
-                .addInlineField("User", e.getMessageAuthor().getDisplayName())
+                .addInlineField("User", userName)
+                .addInlineField("Action", actionName)
                 .addInlineField("Error", ex.getMessage())
                 .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
                 .setTimestampToNow();
@@ -152,5 +154,41 @@ class EmbedGenerator {
                 .setColor(new Color(1, 0, 100))
                 .setDescription(String.format("Welcome to the %s Discord server! Type !roles to register.", SystemData.get("airline.name")))
                 .setTimestampToNow();
+    }
+    
+    /**
+     * Returns a keyword added message.
+     * @param isSafe TRUE if a safe word, otherwise FALSE
+     * @param key the keyword
+     * @param user the User adding the keyword
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder wordDeleted(boolean isSafe, String key, String user) {
+    	return new EmbedBuilder()
+    			.setTitle(String.format(":x: %s Keyword Deleted", isSafe ? "Safe" : "Prohibited"))
+    			.setDescription(String.format("A keyword was deleted from the list of %s words or phrases. The bot will no longer ignore this word/phrase.", isSafe ? "accepted" : "prohibited"))
+    			.setFooter("Keyword Deleted")
+    			.addInlineField("User", user)
+    			.addInlineField("Safe Word Deleted", key)
+    			.setColor(Color.GREEN)
+    			.setTimestampToNow();
+    }
+  
+    /**
+     * Returns a keyword removed message.
+     * @param isSafe TRUE if a safe word, otherwise FALSE
+     * @param key the keyword
+     * @param user the User removing the keyword
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder wordAdded(boolean isSafe, String key, String user) {
+    	return new EmbedBuilder()
+                .setTitle(String.format(":new: %s keyword Added", isSafe? "Accepted" : "Prohibited"))
+                .setDescription(String.format("A new keyword was added to the list of %s words or phrases. The bot will now alert to any message which contains this phrase or a similar one.", isSafe ? "accepted" : "prohibited"))
+                .setTimestampToNow()
+                .setFooter("Keyword Added")
+                .addInlineField("User", user)
+                .addInlineField("Keyword Created", key)
+                .setColor(Color.GREEN);
     }
 }
