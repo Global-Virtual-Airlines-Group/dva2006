@@ -730,6 +730,7 @@
 	<discord>
 		<bot type="Boolean">true</bot>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
+		<url>https://discord.gg/ZXAnsajh8j</url>
 
 		<!-- DVA roles required to join -->
 		<list name="requiredRoles" attr="role" unique="true">
