@@ -1,16 +1,17 @@
 // Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
-import java.awt.*;
+import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
 
 import org.javacord.api.entity.message.component.*;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 import org.javacord.api.interaction.*;
 
 import org.deltava.beans.discord.*;
+
+import org.deltava.dao.SetFilterData;
 import org.deltava.util.StringUtils;
 
 public class CommandListener implements org.javacord.api.listener.interaction.SlashCommandCreateListener {
@@ -33,7 +34,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     }
 
     @SuppressWarnings("static-method")
-	public void addWord(SlashCommandCreateEvent e, boolean isSafe) {
+	private void addWord(SlashCommandCreateEvent e, boolean isSafe) {
 
         SlashCommandInteraction sci = e.getSlashCommandInteraction();
         String keyType = isSafe ? "safe" : "key";
@@ -52,20 +53,19 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
             return;
         }
         
-        sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).respond();
-
-        //Log to bot-alerts
-        Bot.send(ChannelName.ALERTS, new EmbedBuilder()
-                .setTitle(String.format(":new: %s keyword Added", isSafe? "Accepted" : "Prohibited"))
-                .setDescription(String.format("A new keyword was added to the list of %s words or phrases. The bot will now alert to any message which contains this phrase or a similar one.", isSafe ? "accepted" : "prohibited"))
-                .setTimestampToNow()
-                .setFooter("Keyword Added")
-                .addInlineField("User", sci.getUser().getDisplayName(sci.getServer().get()))
-                .addInlineField("Keyword Created", key)
-                .setColor(Color.GREEN));
+        // Write to the database
+        try (Connection con = Bot.getConnection()){
+        	SetFilterData wdao = new SetFilterData(con);
+        	wdao.add(key, isSafe);
+        	sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).respond();
+            Bot.send(ChannelName.ALERTS, EmbedGenerator.wordAdded(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
+        } catch (Exception ex) {
+        	log.error("Error adding " + keyType + " word - " + ex.getMessage(), ex);
+        	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Add %s word", keyType), ex));
+        }
     }
 
-    public static void dropWord(SlashCommandCreateEvent e, boolean isSafe) {
+    private static void dropWord(SlashCommandCreateEvent e, boolean isSafe) {
 
     	SlashCommandInteraction sci = e.getSlashCommandInteraction();
     	String keyType = isSafe ? "safe" : "key";
@@ -83,21 +83,20 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
             return;
         }
     	
-    	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).respond();
-        
-    	//Log to bot-alerts
-       	Bot.send(ChannelName.ALERTS, new EmbedBuilder()
-       			.setTitle(String.format(":x: %s Keyword Deleted", isSafe ? "Safe" : "Prohibited"))
-                .setDescription(String.format("A keyword was deleted from the list of %s words or phrases. The bot will no longer ignore this word/phrase.", isSafe ? "accepted" : "prohibited"))
-                .setTimestampToNow()
-                .setFooter("Keyword Deleted")
-                .addInlineField("User", sci.getUser().getDisplayName(sci.getServer().get()))
-                .addInlineField("Safe Word Deleted", key)
-                .setColor(Color.GREEN));
+    	try (Connection con = Bot.getConnection()) {
+    		SetFilterData wdao = new SetFilterData(con);
+    		wdao.delete(key, isSafe);
+        	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).respond();
+           	Bot.send(ChannelName.ALERTS, EmbedGenerator.wordDeleted(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
+    	} catch (Exception ex) {
+    		log.error("Error removing " + keyType + " word - " + ex.getMessage(), ex);
+        	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Remove %s word", keyType), ex));
+    	}
     }
 
-    public static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
-        e.getSlashCommandInteraction().respondWithModal("fwm_modal", "Create Fly-With-Me Request",ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
+    private static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
+    	SlashCommandInteraction sci = e.getSlashCommandInteraction();
+        sci.respondWithModal("fwm_modal", "Create Fly-With-Me Request",ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
                 ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")), ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
     }
     
