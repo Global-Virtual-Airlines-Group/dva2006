@@ -24,7 +24,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for a generated SimBrief flight plan.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
@@ -62,11 +62,19 @@ public class URLCheckService extends WebService {
 			if (dfr == null)
 				throw error(SC_NOT_FOUND, "Invalid Flight Report - " + sbdata.getID(), false);
 			
+			// Check/log if package created
+			boolean initialSB = false;
+			if (!dfr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
+				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Added SimBrief briefing package");
+				initialSB = true;
+			}
+			
 			// Update route
 			dfr.setAttribute(FlightReport.ATTR_SIMBRIEF, true);
 			if (!sbdata.getRoute().equalsIgnoreCase(dfr.getRoute())) {
 				dfr.setRoute(sbdata.getRoute());
-				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated Route via SimBrief");
+				if (!initialSB)
+					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated Route via SimBrief");
 			}
 			
 			// Load gates if needed
