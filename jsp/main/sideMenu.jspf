@@ -93,7 +93,7 @@
  <content:subitem><el:cmd url="lroster">View Logbooks</el:cmd></content:subitem>
  <content:subitem><el:cmd url="recognition">Pilot Accomplishments</el:cmd></content:subitem>
  <content:subitem><el:cmd url="centuryclub">Century Club</el:cmd></content:subitem>
-<c:if test="${eliteEnabled}">
+<c:if test="${eliteEnabled && !empty user}">
  <content:subitem><el:cmd url="elitepilots">${eliteName}</el:cmd></content:subitem>
 </c:if>
 </content:submenu>
