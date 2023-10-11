@@ -1455,7 +1455,7 @@
 	<command id="elitepilots">
 		<name>Elite Pilots List</name>
 		<class>org.deltava.commands.econ.ElitePilotsCommand</class>
-		<roles>*</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="eliterollover">
