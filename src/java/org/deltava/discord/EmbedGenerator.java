@@ -69,6 +69,11 @@ class EmbedGenerator {
                 .setTimestampToNow();
     }
     
+    /**
+     * Generates an insufficient access message.
+     * @param e the MessageCreateEvent
+     * @return an EmbedBuilder
+     */
     static EmbedBuilder createInsufficientAccess(MessageCreateEvent e) {
     	String code = SystemData.get("airline.code");
     	return new EmbedBuilder().setColor(Color.RED)
@@ -81,17 +86,17 @@ class EmbedGenerator {
     }
     
     /**
-	 * Generates an embedded temporary nickname message.
+	 * Generates a nickname message.
 	 * @param e the MessageCreateEvent
 	 * @param p the Pilot
 	 * @param roleName the Discord security role
 	 * @param nickName the nickname 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createTemporaryNick(MessageCreateEvent e, Pilot p, String roleName, String nickName) {
+    static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, String roleName, String nickName) {
     	return new EmbedBuilder().setColor(Color.BLUE)
-                .setFooter("Temporary Nickname Assignment")
-                .setTitle(":exclamation: Temporary Nickname Assigned")
+                .setFooter("Nickname Assignment")
+                .setTitle(":exclamation: Nickname Assigned")
                 .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
                 .addInlineField("User", e.getMessageAuthor().getDisplayName())
                 .addInlineField("Name", nickName)

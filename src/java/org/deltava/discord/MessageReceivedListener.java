@@ -77,7 +77,7 @@ public class MessageReceivedListener implements MessageCreateListener {
 
     public static void registerDVA(MessageCreateEvent e) {
         long UUID = e.getMessageAuthor().getId();
-        log.info(String.format("Registration request received [UUID = %s, Name = %s]", Long.toHexString(UUID), e.getMessageAuthor().getName()));
+        log.info("Registration request received [ UUID = {}, Name = {} ]", Long.toHexString(UUID), e.getMessageAuthor().getName());
         if (e.getMessageAuthor().asUser().isPresent())
             e.getMessageAuthor().asUser().get().sendMessage(EmbedGenerator.register(UUID));
 
@@ -89,7 +89,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     	// Make sure user is stil here
     	if (e.getMessageAuthor().asUser().isEmpty()) return;
         User msgAuth = e.getMessageAuthor().asUser().get();
-        log.info(String.format("User requested roles. [Name = %s, UUID = %s ]", msgAuth.getName(), Long.toHexString(msgAuth.getId())));
+        log.info("User requested access [ Name = {}, UUID = {} ]", msgAuth.getName(), Long.toHexString(msgAuth.getId()));
         
         Pilot p = null;
         try (Connection con = Bot.getConnection()) {
@@ -105,27 +105,27 @@ public class MessageReceivedListener implements MessageCreateListener {
         	log.warn(String.format("Cannot find Discord ID %s", msgAuth.getIdAsString()));
         	return;
         } else if (p.getStatus() != PilotStatus.ACTIVE) {
-        	log.warn(String.format("%s (%s) Status = %s", p.getName(), p.getPilotCode(), p.getStatus()));
+        	log.warn("{} ({}) Status = {}", p.getName(), p.getPilotCode(), p.getStatus());
         	msgAuth.sendMessage(EmbedGenerator.createInsufficientAccess(e));
         	return;
         }
         
         // Check that user meets base roles
         Collection<?> reqRoles = (Collection<?>) SystemData.getObject("discord.requiredRoles");
-        boolean hasReqRoles = p.getRoles().stream().anyMatch(r -> reqRoles.contains(r));
+        boolean hasReqRoles = p.getRoles().stream().anyMatch(reqRoles::contains);
         if (!hasReqRoles) {
-        	log.warn(String.format("User %s (%s) not in required Roles %s [ roles = %s ]", p.getName(), p.getPilotCode(), reqRoles, p.getRoles()));
+        	log.warn("User {} ({}) not in required Roles {} [ roles = {} ]", p.getName(), p.getPilotCode(), reqRoles, p.getRoles());
         	msgAuth.sendMessage(EmbedGenerator.createInsufficientAccess(e));
         	return;
         }
         
         // Determine roles as appropriate
-        Role r;
+        Role r = null;
         if (p.getRoles().contains("HR"))
         	r = Bot.findRole(SystemData.get("discord.role.hr"));
         else if (p.getRoles().contains("PIREP") || p.getRoles().contains("Operations"))
         	r = Bot.findRole(SystemData.get("discord.role.pirep"));
-        else
+        if (r == null)
         	r = Bot.findRole(SystemData.get("discord.role.default"));
 
         // Set the nickname and role
@@ -135,7 +135,7 @@ public class MessageReceivedListener implements MessageCreateListener {
         // Unable to do nicknames longer than 32 chars or less than 1
         if (nickname.length() <= 32) {
         	msgAuth.updateNickname(e.getServer().get(), nickname);
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createTemporaryNick(e, p, r.getName(), nickname));
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, r.getName(), nickname));
     	} else
         	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, r.getName())); 
 
