@@ -757,5 +757,20 @@
 		<hourlyFactor type="Double">0.155</hourlyFactor>
 		<yearlyCycleLength type="Integer">1420</yearlyCycleLength>
 		<hourlyCycleLength type="Integer">24</hourlyCycleLength>
+
+		<!-- Frequent Pilot / Elite program -->
+		<elite>
+			<enabled type="Boolean">true</enabled>
+			<name>SkyMiles Medallion</name>
+			<points>SkyMiles</points>
+			<distance>Medallion Miles</distance>
+			<scorer>org.deltava.beans.econ.SkyMilesScorer</scorer>
+			<maxNonACARS type="Integer">2</maxNonACARS>
+			<round>
+				<leg type="Integer">5</leg>
+				<distance type="Integer">10000</distance>
+				<points type="Integer">5000</points>
+			</round>
+		</elite>
 	</econ>
 </config>
