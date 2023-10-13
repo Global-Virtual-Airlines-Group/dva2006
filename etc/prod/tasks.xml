@@ -366,4 +366,15 @@
     			<wday>*</wday>
     		</time>
     </task>
+
+	<task id="elitescore" enabled="false">
+		<class>org.deltava.tasks.EliteScoringTask</class>
+		<time>
+			<min>30</min>
+			<hour>8</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>
