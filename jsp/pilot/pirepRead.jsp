@@ -400,7 +400,7 @@ table.form td.eliteStatus {
  </tr>
  <tr class="sbData">
  <td class="label">Fuel Load</td>
- <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate</td>
+ <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate <span class="ita">(<fmt:weight value="${sbPackage.totalFuel}" /> total)</span></td>
 </tr>
 <c:forEach var ="ap" items="${sbPackage.alternates}">
 <tr class="sbData">
@@ -416,6 +416,7 @@ table.form td.eliteStatus {
 </tr>
 </c:if>
 </c:if>
+<content:authUser>
 <c:if test="${!empty eliteScore}">
 <content:sysdata var="eliteName" name="econ.elite.name" />
 <content:sysdata var="pointUnit" name="econ.elite.points" />
@@ -433,6 +434,7 @@ table.form td.eliteStatus {
 <c:if test="${!esStatus.isLast()}"><br /></c:if></c:forEach></span></td> 
 </tr>
 </c:if>
+</content:authUser>
 <content:browser human="true">
 <tr class="title">
  <td colspan="2">ROUTE MAP<c:if test="${filedETOPS.result.time > 75}"> - ${filedETOPS.result}</c:if><span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
