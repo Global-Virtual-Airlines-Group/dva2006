@@ -3,6 +3,7 @@ package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.time.*;
 import java.sql.Connection;
 
@@ -16,18 +17,18 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.taskman.*;
-
+import org.deltava.util.TaskTimer;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
 public class EliteScoringTask extends Task {
-
+	
 	/**
 	 * Initializes the Task.
 	 */
@@ -39,7 +40,7 @@ public class EliteScoringTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Determine lookback interval
-		log.info("Scoring flights approved in the past 30 days");
+		log.info("Scoring flights approved in the past 31 days");
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -60,11 +61,13 @@ public class EliteScoringTask extends Task {
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
 			frsdao.setDayFilter(31);
-			LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
 			Collection<Integer> IDs = frsdao.getUnscoredFlights();
+			log.warn("Scoring {} flights", Integer.valueOf(IDs.size()));
+			
+			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Integer id : IDs) {
 				ctx.startTX();
-				
+				TaskTimer tt = new TaskTimer();
 				EliteScorer es = EliteScorer.getInstance();
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
 				final int yr = EliteScorer.getStatusYear(fr.getDate());
@@ -80,7 +83,14 @@ public class EliteScoringTask extends Task {
 				}
 				
 				// Load all previous Flight Reports for this Pilot
-				List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
+				if (p.getID() != lastID) {
+					lastID = p.getID();
+					pireps.clear();
+					pireps.addAll(frdao.getEliteFlights(p.getID(), EliteScorer.getStatsYear(fr.getDate())));
+					long ms = TimeUnit.MILLISECONDS.convert(tt.getInterval(), TimeUnit.NANOSECONDS);
+					log.info("Loaded {} flights for {} ({}) in {}ms", Integer.valueOf(pireps.size()), p.getName(), p.getPilotCode(), Long.valueOf(ms));
+				}
+				
 				pireps.stream().filter(pirep -> !IDs.contains(Integer.valueOf(pirep.getID()))).forEach(es::add);
 				
 				// Get our total and next level
@@ -103,7 +113,7 @@ public class EliteScoringTask extends Task {
 							entries.addAll(psdao.read());
 						}
 					} catch (IOException ie) {
-						log.error("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
+						log.error("Error reading positions for Flight {} - {}", Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)), ie.getMessage());
 					}
 					
 					// Get the landing runway
@@ -120,12 +130,11 @@ public class EliteScoringTask extends Task {
 				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
-				log.info("Scored Flight Report #" + fr.getID() + " - " + sc.getPoints());
 				
 				// Check for upgrade
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc); 
 				if ((nextLevel != null) && (updR != UpgradeReason.NONE)) {
-					log.warn(p.getName() + " reaches " + nextLevel.getName() + " for " + yr + " / " + updR.getDescription());
+					log.warn("{} reaches {} for {} / {}", p.getName(), nextLevel.getName(), Integer.valueOf(yr), updR.getDescription());
 					st = new EliteStatus(p.getID(), nextLevel);
 					st.setEffectiveOn(Instant.now());
 					st.setUpgradeReason(updR);
@@ -139,6 +148,11 @@ public class EliteScoringTask extends Task {
 				}
 				
 				ctx.commitTX();
+				long ms = tt.stop();
+				if (ms > 500)
+					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
+				else
+					log.info("Scored Flight Report #{} - {} pts", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()));
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
