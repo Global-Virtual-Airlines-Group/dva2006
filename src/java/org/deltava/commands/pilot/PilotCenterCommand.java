@@ -134,7 +134,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Determine if we can do year-end activities
 				boolean rolloverPeriod = (EliteScorer.getStatsYear(now) > currentYear);
 				ctx.setAttribute("eliteRollover", Boolean.valueOf(rolloverPeriod), REQUEST);
-				Collection<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
+				TreeSet<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
 				if (rolloverPeriod) {
 					nyLevels.addAll(eldao.getLevels(currentYear + 1));
 					ctx.setAttribute("nyLevels", nyLevels, REQUEST);
@@ -142,7 +142,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				
 				// Display next year's level and downgrade potential after Q3
 				if (LocalDate.now().getMonthValue() > 9) {
-					EliteLevel nextYearLevel = cyt.matches(nyLevels.isEmpty() ? levels : nyLevels);
+					TreeSet<EliteLevel> lvls = nyLevels.isEmpty() ? levels : nyLevels;
+					EliteLevel nextYearLevel = cyt.matches(lvls);
+					if (nextYearLevel == null)
+						nextYearLevel = lvls.first();
+					
 					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
 					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
 					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
