@@ -367,7 +367,7 @@
     		</time>
     </task>
 
-	<task id="elitescore" enabled="false">
+	<task id="elitescore" enabled="true">
 		<class>org.deltava.tasks.EliteScoringTask</class>
 		<time>
 			<min>30</min>
