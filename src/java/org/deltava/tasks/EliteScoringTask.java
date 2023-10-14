@@ -65,7 +65,8 @@ public class EliteScoringTask extends Task {
 			log.warn("Scoring {} flights", Integer.valueOf(IDs.size()));
 			
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
-			for (Integer id : IDs) {
+			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+				Integer id = i.next();
 				ctx.startTX();
 				TaskTimer tt = new TaskTimer();
 				EliteScorer es = EliteScorer.getInstance();
@@ -148,8 +149,9 @@ public class EliteScoringTask extends Task {
 				}
 				
 				ctx.commitTX();
+				i.remove();
 				long ms = tt.stop();
-				if (ms > 500)
+				if (ms > 1250)
 					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
 				else
 					log.info("Scored Flight Report #{} - {} pts", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()));
