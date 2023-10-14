@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean deleteElite(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_ELTE WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_ELITE WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			return (executeUpdate(ps, 0) > 0);
 		} catch (SQLException se) {
