@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.1
  */
 
@@ -665,7 +665,8 @@ public class GetFlightReportStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getUnscoredFlights() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT P.ID, PE.ID AS EID FROM PIREPS P LEFT JOIN PIREP_ELITE PE ON (P.ID=PE.ID) WHERE (P.STATUS=?) AND (P.DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) HAVING (EID IS NULL)")) {
+		try (PreparedStatement ps = prepare("SELECT P.ID, PE.ID AS EID FROM PIREPS P LEFT JOIN PIREP_ELITE PE ON (P.ID=PE.ID) WHERE (P.STATUS=?) AND (P.DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) HAVING (EID IS NULL) "
+			+ "ORDER BY P.PILOT_ID, P.DATE, P.SUBMITTED")) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setInt(2, (_dayFilter < 1) ? 7 : _dayFilter);
 			

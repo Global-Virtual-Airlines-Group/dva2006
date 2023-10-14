@@ -363,6 +363,28 @@ public class GetFlightReports extends DAO {
 	}
 	
 	/**
+	 * Returns all Flight Reports for a given Elite program year.
+	 * @param id the Pilot database ID
+	 * @param year the Elite Program year
+	 * @return a List of FlightREports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getEliteFlights(int id, int year) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PR.*, NULL, NULL, APR.*, AO.ONTIME FROM PIREPS PR LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (PR.PILOT_ID=?) "
+			+ "AND (PR.STATUS=?) AND ((PR.DATE>=MAKEDATE(?,?)) AND (PR.DATE<MAKEDATE(?,?))) ORDER BY PR.DATE, PR.SUBMITTED")) {
+			ps.setInt(1, id);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, year);
+			ps.setInt(4, 1);
+			ps.setInt(5, year + 1);
+			ps.setInt(6, 1);
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.
 	 * @param id the Pilot database ID
 	 * @param criteria the search criteria
