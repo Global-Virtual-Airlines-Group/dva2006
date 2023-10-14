@@ -44,7 +44,6 @@ public class EliteScoringTask extends Task {
 		
 		try {
 			Connection con = ctx.getConnection();
-			ctx.startTX();
 			
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
