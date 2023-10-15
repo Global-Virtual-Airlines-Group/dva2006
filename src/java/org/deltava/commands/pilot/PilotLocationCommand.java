@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -90,7 +90,7 @@ public class PilotLocationCommand extends AbstractCommand {
 						GetGoogleGeocode gcdao = new GetGoogleGeocode();
 						geoCode = gcdao.getGeoData(loc);
 					} catch (Exception e) {
-						log.error(e.getMessage(), e);
+						log.atError().withThrowable(e).log(e.getMessage());
 					}
 
 					// Start a transaction

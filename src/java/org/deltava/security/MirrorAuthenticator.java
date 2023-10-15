@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -6,11 +6,10 @@ import java.util.*;
 import org.deltava.beans.Person;
 
 /**
- * An Authenticator used to mirror data from one authenticator to another. When a user is sucessfully authenticated by
- * the first (&quot;source&quot;) authenticator, the directory name and password are written into the second
- * (&quot;destination&quot;) authenticator.
+ * An Authenticator used to mirror data from one authenticator to another. When a user is sucessfully authenticated by the first (&quot;source&quot;) 
+ * Authenticator, the directory name and password are written into the second (&quot;destination&quot;) Authenticator.
  * @author Luke
- * @version 6.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -34,8 +33,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 
 	/**
-	 * Authenticates the user against the source authenticator. This then synchronizes credentials information with the
-	 * destination authenticator.
+	 * Authenticates the user against the source authenticator. This then synchronizes credentials information with the destination authenticator.
 	 * @param usr the User bean
 	 * @param pwd the user's supplied password
 	 * @throws SecurityException if authentication fails
@@ -142,8 +140,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 	
 	/**
-	 * Disables a User's account in all authenticators. If this operation fails, no guarantee of transaction
-	 * atomicity is given.
+	 * Disables a User's account in all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the user bean
 	 */
 	@Override
@@ -166,7 +163,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 				try {
 					dst.disable(usr);
 				} catch (SecurityException se) {
-					log.error(se.getMessage(), se);
+					log.atError().withThrowable(se).log(se.getMessage());
 				}
 			}
 
@@ -198,7 +195,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 				try {
 					dst.remove(usr);
 				} catch (SecurityException se) {
-					log.error(se.getMessage(), se);
+					log.atError().withThrowable(se).log(se.getMessage());
 				}
 			}
 

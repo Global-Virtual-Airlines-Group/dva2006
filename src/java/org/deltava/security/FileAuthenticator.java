@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against a file repository. This should typically be used for testing or backup purposes only.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class FileAuthenticator implements Authenticator {
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
+			log.error("Error loading {} - {}", propsFile, ie.getMessage());
 			throw new SecurityException(ie.getMessage());
 		}
 
@@ -86,14 +86,13 @@ public class FileAuthenticator implements Authenticator {
 			while (br.ready()) {
 				UserInfo info = new UserInfo(br.readLine());
 				_users.put(info.getDN(), info);
-				log.debug("Loaded user " + info.getDN());
+				log.debug("Loaded user {}", info.getDN());
 			}
 		} catch (IOException ie) {
-			log.warn("Error loading " + _props.getProperty("file.name") + " - "
-					+ ie.getMessage());
+			log.warn("Error loading {} = {}", _props.getProperty("file.name"), ie.getMessage());
 		}
 
-		log.info("Loaded " + _users.size() + " user records");
+		log.info("Loaded {} user records", Integer.valueOf(_users.size()));
 	}
 
 	/**
@@ -112,12 +111,11 @@ public class FileAuthenticator implements Authenticator {
 			throw new SecurityException(usr.getDN() + " not found");
 
 		if (!ui.getPassword().equals(pwd)) {
-			log.warn(usr.getDN()
-					+ " Authentication FAILURE - Invalid credentials");
+			log.warn("{} Authentication FAILURE - Invalid credentials", usr.getDN());
 			throw new SecurityException("Invalid Credentials");
 		}
 
-		log.info(usr.getDN() + " authenticated");
+		log.info("{} authenticated", usr.getDN());
 	}
 
 	/**
@@ -159,7 +157,7 @@ public class FileAuthenticator implements Authenticator {
 			throw new SecurityException(ie);
 		}
 
-		log.info("Saved " + _users.size() + " user records");
+		log.info("Saved {} user records", Integer.valueOf(_users.size()));
 	}
 
 	/**

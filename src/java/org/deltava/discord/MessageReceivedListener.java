@@ -69,7 +69,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     		if (!fr.isOK())
     			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createKeyword(e, fr.getFlaggedResults()));
     	} catch (Exception ex) {
-    		log.error("Error on MessageReceive - " + ex.getMessage(), ex);
+    		log.atError().withThrowable(ex).log("Error on MessageReceive - {}", ex.getMessage());
     		ChannelName ch = EnumUtils.parse(ChannelName.class, channelName, ChannelName.LOG);
     		Bot.send(ch, EmbedGenerator.createError(e.getMessageAuthor().getDisplayName(), "Registration", ex));
     	}
@@ -98,11 +98,11 @@ public class MessageReceivedListener implements MessageCreateListener {
         } catch (ConnectionPoolException cpe) {
         	log.error("Connection Pool Full, Aborting");
         } catch (DAOException | SQLException de) {
-        	log.error(de.getMessage(), de);
+        	log.atError().withThrowable(de).log(de.getMessage());
         }
         
         if (p == null) {
-        	log.warn(String.format("Cannot find Discord ID %s", msgAuth.getIdAsString()));
+        	log.warn("Cannot find Discord ID {}", msgAuth.getIdAsString());
         	return;
         } else if (p.getStatus() != PilotStatus.ACTIVE) {
         	log.warn("{} ({}) Status = {}", p.getName(), p.getPilotCode(), p.getStatus());

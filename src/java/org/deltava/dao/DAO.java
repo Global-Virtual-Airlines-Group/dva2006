@@ -13,7 +13,7 @@ import org.deltava.beans.*;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -299,7 +299,7 @@ public abstract class DAO {
 				_c.rollback();
 				_c.setAutoCommit(_commitLevel);
 			} catch (SQLException se) {
-				log.error("Cannot rollback - " + se.getMessage(), se);
+				log.atError().withThrowable(se).log("Cannot rollback - {}", se.getMessage());
 			}
 		}
 	}

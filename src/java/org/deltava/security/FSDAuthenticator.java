@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An Authenticator to read/write from FSD certificate files.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -93,7 +93,7 @@ public class FSDAuthenticator implements Authenticator {
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
+			log.error("Error loading {} - {}", propsFile, ie.getMessage());
 			throw new SecurityException(ie.getMessage());
 		}
 
@@ -109,7 +109,7 @@ public class FSDAuthenticator implements Authenticator {
 		// Check for the certificate file
 		_certFile = new File(_props.getProperty("fsd.cert"));
 		if (!_certFile.exists()) {
-			log.warn("Cannot open " + _certFile.getPath() + " - not found");
+			log.warn("Cannot open {} - not found", _certFile.getPath());
 			return;
 		}
 
@@ -120,7 +120,7 @@ public class FSDAuthenticator implements Authenticator {
 				if (!data.startsWith(";")) {
 					StringTokenizer tkns = new StringTokenizer(data, " ");
 					if (tkns.countTokens() < 4)
-						log.warn("Invalid token count on Line " + br.getLineNumber() + " tokens=" + tkns.countTokens());
+						log.warn("Invalid token count on Line {}, tokens={}", Integer.valueOf(br.getLineNumber()), Integer.valueOf(tkns.countTokens()));
 					else {
 						String userID = tkns.nextToken();
 						try {
@@ -130,16 +130,16 @@ public class FSDAuthenticator implements Authenticator {
 							cert.setID(StringUtils.parse(dbID, 0));
 							_certs.put(Integer.valueOf(cert.getID()), cert);
 						} catch (IllegalArgumentException iae) {
-							log.warn("Invalid database ID for " + userID + " - " + iae.getMessage());
+							log.warn("Invalid database ID for {} - {}", userID, iae.getMessage());
 						}
 					}
 				}
 			}
 		} catch (IOException ie) {
-			log.warn("Error loading " + _props.getProperty("fsd.cert") + " - " + ie.getMessage());
+			log.warn("Error loading {} - {}", _props.getProperty("fsd.cert"), ie.getMessage());
 		}
 
-		log.info("Loaded " + _certs.size() + " user records");
+		log.info("Loaded {} user records", Integer.valueOf(_certs.size()));
 	}
 
 	/**
@@ -216,11 +216,10 @@ public class FSDAuthenticator implements Authenticator {
 
 		// Get the user's level; abort if they do not have access
 		Rating level = getUserLevel(usr);
-		if ((level == Rating.DISABLED) || (!(usr instanceof Pilot)))
+		if ((level == Rating.DISABLED) || (!(usr instanceof Pilot p)))
 			return;
 
 		// Add the user
-		Pilot p = (Pilot) usr;
 		FSDCert cert = new FSDCert(p.getPilotCode(), pwd, level);
 		cert.setID(usr.getID());
 		_certs.put(Integer.valueOf(cert.getID()), cert);

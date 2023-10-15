@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against an LDAP server.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class LDAPAuthenticator implements Authenticator {
 		try {
 			props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
+			log.error("Error loading {} - {}", propsFile, ie.getMessage());
 			throw new SecurityException(ie.getMessage());
 		}
 
@@ -77,9 +77,9 @@ public class LDAPAuthenticator implements Authenticator {
 		try {
 			DirContext ctxt = new InitialDirContext(userEnv);
 			ctxt.close();
-			log.info(usr.getName() + " authenticated");
+			log.info("{} authenticated", usr.getName());
 		} catch (NamingException ne) {
-			log.warn(usr.getDN() + " Authentication FAILURE - " + ne.getMessage());
+			log.warn("{} Authentication FAILURE - {}", usr.getDN(), ne.getMessage());
 			throw new SecurityException("Authentication failure for " + usr.getDN(), ne);
 		}
 	}
@@ -92,7 +92,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 */
 	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		log.debug("Updating password for " + usr.getName() + " in Directory");
+		log.debug("Updating password for {} in Directory", usr.getName());
 
 		// Bind to the directory
 		try {
@@ -126,7 +126,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 */
 	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
-		log.debug("Adding user " + usr.getDN() + " to Directory");
+		log.debug("Adding user {} to Directory", usr.getDN());
 
 		// Bind to the directory
 		try {
@@ -202,7 +202,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 */
 	@Override
 	public void remove(Person usr) throws SecurityException {
-		log.debug("Removing user " + usr.getDN() + " from Directory");
+		log.debug("Removing user {} from Directory", usr.getDN());
 		if (!contains(usr))
 			throw new SecurityException(usr.getDN() + " not found");
 
@@ -227,7 +227,7 @@ public class LDAPAuthenticator implements Authenticator {
 		if (usr.getDN().equalsIgnoreCase(newName))
 		   return;
 		
-	   log.debug("Renaming user " + usr.getDN() + " to " + newName);
+	   log.debug("Renaming user {} to {}", usr.getDN(), newName);
 		if (!contains(usr))
 			throw new SecurityException(usr.getDN() + " not found");
 

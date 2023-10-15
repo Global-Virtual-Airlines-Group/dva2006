@@ -25,7 +25,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class ImageServlet extends DownloadServlet {
 		URLParser url = new URLParser(req.getRequestURI());
 		ImageType imgType = (ImageType) getFileType(url, ImageType.values());
 		if (imgType == null) {
-			log.warn("Invalid Image type - " + url.getLastPath());
+			log.warn("Invalid Image type - {}", url.getLastPath());
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
@@ -89,7 +89,7 @@ public class ImageServlet extends DownloadServlet {
 
 			imgID = StringUtils.parseHex(name);
 		} catch (Exception e) {
-			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
+			log.warn("Error parsing ID {} - {}", url.getName(), e.getClass().getName());
 			rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -98,8 +98,7 @@ public class ImageServlet extends DownloadServlet {
 		ConnectionPool jdbcPool = getConnectionPool();
 
 		byte[] imgBuffer = null;
-		if (log.isDebugEnabled())
-			log.debug("Getting " + imgType.name() + " image ID" + String.valueOf(imgID));
+		log.debug("Getting {} image ID {}", imgType.name(), String.valueOf(imgID));
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
@@ -220,9 +219,9 @@ public class ImageServlet extends DownloadServlet {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn("Error retrieving image - " + ce.getMessage());
+				log.warn("Error retrieving image - {}", ce.getMessage());
 			else
-				log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {

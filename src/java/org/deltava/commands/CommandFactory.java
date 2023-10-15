@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -70,14 +70,13 @@ public class CommandFactory {
 
 			// Check if the command ID is unique
 			if (results.containsKey(cmdID))
-				log.warn("Duplicate command ID " + cmdID);
+				log.warn("Duplicate command ID {}", cmdID);
 			else {
 				Command cmd = null;
 				try {
 					Class<?> c = Class.forName(cmdClassName);
 					cmd = (Command) c.getDeclaredConstructor().newInstance();
-					if (log.isDebugEnabled())
-						log.debug("Loaded command " + cmdID);
+					log.debug("Loaded command {}", cmdID);
 
 					// init the command
 					cmd.init(cmdID, e.getChildTextTrim("name"));
@@ -85,17 +84,16 @@ public class CommandFactory {
 
 					// Save the command in the map
 					results.put(cmdID.toLowerCase(), cmd);
-					if (log.isDebugEnabled())
-						log.debug("Initialized command " + cmdID);
+					log.debug("Initialized command {}", cmdID);
 				} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
-					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
+					log.error("Cannot find class {} for {}", cmdClassName, cmdID);
 				} catch (Exception ex) {
-					log.error("Cannot start " + cmdID + " - " + ex.getClass().getName());
+					log.error("Cannot start {} - {}", cmdID, ex.getClass().getName());
 				}
 			}
 		}
 
-		log.info("Loaded " + results.size() + " commands");
+		log.info("Loaded {} commands", Integer.valueOf(results.size()));
 		return results;
 	}
 }

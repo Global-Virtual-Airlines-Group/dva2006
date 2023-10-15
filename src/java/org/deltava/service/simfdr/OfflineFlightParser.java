@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.0
  */
 
@@ -84,7 +84,7 @@ final class OfflineFlightParser {
 		inf.setFDR(Recorder.SIMFDR); // needs to be set after simulator
 		inf.setSimulatorVersion(StringUtils.parse(ie.getChildTextTrim("simMajor"), 0), StringUtils.parse(ie.getChildTextTrim("simMinor"), 0));
 		if (inf.getSimulator() == Simulator.UNKNOWN)
-			log.warn("Unknown simulator version - " + sim);
+			log.warn("Unknown simulator version - {}", sim);
 		
 		// Build a flight data entry
 		SimFDRFlightReport afr = new SimFDRFlightReport(f.getAirline(), f.getFlightNumber(), f.getLeg());
@@ -124,7 +124,7 @@ final class OfflineFlightParser {
 					ACARSRouteEntry rte = parsePosition(pe);
 					of.addPosition(rte);
 				} catch (Exception e) {
-					log.error("Error loading Position Report - " + e.getMessage(), e);
+					log.atError().withThrowable(e).log("Error loading Position Report - {}", e.getMessage());
 				}
 			}
 		}

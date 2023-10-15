@@ -18,7 +18,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.6
  */
 
@@ -58,7 +58,7 @@ public class SignatureServlet extends GenericServlet {
 
 			imgID = StringUtils.parseHex(name);
 		} catch (Exception e) {
-			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
+			log.warn("Error parsing ID {} - {}", url.getName(), e.getClass().getName());
 			return -1;
 		}
 		
@@ -73,12 +73,12 @@ public class SignatureServlet extends GenericServlet {
 			GetImage dao = new GetImage(c);
 			lastMod = dao.getSigModified(imgID, ai.getDB());
 		} catch (ConnectionPoolException cpe) {
-			log.warn("Connection pool error - " + cpe.getMessage());
+			log.warn("Connection pool error - {}", cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn("Error retrieving image data - " + ce.getMessage());
+				log.warn("Error retrieving image data - {}", ce.getMessage());
 			else
-				log.error("Error retrieving image data - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+				log.error("Error retrieving image data - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 		} finally {
 			jdbcPool.release(c);
 		}
@@ -112,7 +112,7 @@ public class SignatureServlet extends GenericServlet {
 
 			imgID = StringUtils.parseHex(name);
 		} catch (Exception e) {
-			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
+			log.warn("Error parsing ID {} - {}", url.getName(), e.getClass().getName());
 			rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -121,9 +121,7 @@ public class SignatureServlet extends GenericServlet {
 		ConnectionPool jdbcPool = getConnectionPool();
 
 		byte[] imgBuffer = null;
-		if (log.isDebugEnabled())
-			log.debug("Getting signature image ID" + String.valueOf(imgID));
-
+		log.debug("Getting signature image ID {}", String.valueOf(imgID));
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
@@ -132,19 +130,19 @@ public class SignatureServlet extends GenericServlet {
 			GetImage dao = new GetImage(c);
 			imgBuffer = dao.getSignatureImage(imgID, ai.getDB());
 		} catch (ConnectionPoolException cpe) {
-			log.warn("Connection pool error - " + cpe.getMessage());
+			log.warn("Connection pool error - {}", cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn("Error retrieving image - " + ce.getMessage());
+				log.warn("Error retrieving image - {}", ce.getMessage());
 			else
-				log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 		} finally {
 			jdbcPool.release(c);
 		}
 
 		// If we got nothing, then throw an error
 		if (imgBuffer == null) {
-			log.error("Cannot find image " + url.getLastPath() + "/" + imgID);
+			log.error("Cannot find image {}/{}", url.getLastPath(), Integer.valueOf(imgID));
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}

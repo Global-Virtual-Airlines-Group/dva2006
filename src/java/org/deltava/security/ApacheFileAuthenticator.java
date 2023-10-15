@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An Authenticator to authenticate users using an Apache-style password file. This authenticator only supports SHA hashing of the password, not MD5 or crypt().
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -40,14 +40,14 @@ public class ApacheFileAuthenticator implements Authenticator {
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
+			log.error("Error loading {} - {}", propsFile, ie.getMessage());
 			throw new SecurityException(ie.getMessage());
 		}
 		
 		// Check for the file
 		_pwdFile = new File(_props.getProperty("apachefile.name"));
 		if (!_pwdFile.exists()) {
-			log.warn("Cannot open " + _pwdFile.getPath() + " - not found");
+			log.warn("Cannot open {} - not found", _pwdFile.getPath());
 			return;
 		}
 
@@ -56,21 +56,20 @@ public class ApacheFileAuthenticator implements Authenticator {
 			while (br.ready()) {
 				StringTokenizer tkns = new StringTokenizer(br.readLine(), ":");
 				if (tkns.countTokens() != 2)
-					log.warn("Invalid token count on Line " + br.getLineNumber() + " tokens=" + tkns.countTokens());
+					log.warn("Invalid token count on Line {}, tokens = {}", Integer.valueOf(br.getLineNumber()), Integer.valueOf(tkns.countTokens()));
 				else {
 					String userID = tkns.nextToken();
 					String pwdInfo = tkns.nextToken();
 					if (!pwdInfo.startsWith(SHA_HDR))
-						log.warn("Invalid (non-SHA-1) password type on Line " + br.getLineNumber());
+						log.warn("Invalid (non-SHA-1) password type on Line {}", Integer.valueOf(br.getLineNumber()));
 					else {
 						_pwdInfo.put(userID, pwdInfo);
-						if (log.isDebugEnabled())
-							log.debug("Loaded user " + userID);
+						log.debug("Loaded user {}", userID);
 					}
 				}
 			}
 		} catch (IOException ie) {
-			log.warn("Error loading " + _props.getProperty("apachefile.name") + " - " + ie.getMessage());
+			log.warn("Error loading {} - {}", _props.getProperty("apachefile.name"), ie.getMessage());
 		}
 	}
 
@@ -244,6 +243,6 @@ public class ApacheFileAuthenticator implements Authenticator {
 			throw new SecurityException(ie);
 		}
 
-		log.debug("Saved " + _pwdInfo.size() + " entries");
+		log.debug("Saved {} entries", Integer.valueOf(_pwdInfo.size()));
 	}
 }

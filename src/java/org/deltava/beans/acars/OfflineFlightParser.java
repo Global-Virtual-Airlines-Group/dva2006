@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.4
  */
 
@@ -195,9 +195,9 @@ public final class OfflineFlightParser {
 					pos.setSimUTC((sd == null) ? pos.getDate() : LocalDateTime.parse(sd, mdtf).toInstant(ZoneOffset.UTC));
 					result.addPosition(pos);
 				} catch (NumberFormatException nfe) {
-					log.error("Error parsing value - " + nfe.getMessage());
+					log.error("Error parsing value - {}", nfe.getMessage());
 				} catch (Exception e) {
-					log.error("Error loading Position Report - " + e.getMessage());
+					log.error("Error loading Position Report - {}", e.getMessage());
 				}
 			}
 		}

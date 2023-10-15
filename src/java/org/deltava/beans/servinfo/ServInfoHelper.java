@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.4
  */
 
@@ -77,7 +77,7 @@ public class ServInfoHelper {
 				_iCache.add(info);
 			}
 		} catch (Exception e) {
-			log.error("Cannot load " + net + " ServInfo feed - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Cannot load {} ServInfo feed - {}", net, e.getMessage());
 			info = new NetworkInfo(net);
 			info.setValidDate(Instant.now());
 		}

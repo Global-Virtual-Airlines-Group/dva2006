@@ -18,7 +18,7 @@ import org.gvagroup.tile.PNGTile;
 /**
  * A servlet to fetch non-temporal quadtree tiles.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.2
  */
 
@@ -59,7 +59,7 @@ public class CustomTileServlet extends TileServlet {
 					data = pt.getData();
 			}
 		} catch (DAOException e) {
-			log.error("Error fetching " + addr, e);
+			log.atError().withThrowable(e).log("Error fetching {}", addr);
 		}
 		
 		writeTile(rsp, data);
