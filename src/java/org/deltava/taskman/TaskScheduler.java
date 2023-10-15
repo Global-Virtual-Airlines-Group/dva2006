@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in that it checks whether a task should be executed once every 60 seconds.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -65,8 +65,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 			// Check each task
 			for (Iterator<Task> i = _tasks.values().iterator(); i.hasNext();) {
 				Task t = i.next();
-				if (log.isDebugEnabled())
-					log.debug("Checking " + t.getName());
+				log.debug("Checking {}", t.getName());
 
 				// If the task is running, leave it alone. Only execute when it's supposed to
 				if (t.isRunnable()) {
@@ -120,6 +119,6 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		log.error("Uncaught Exception in " + t.getName(), e);
+		log.atError().withThrowable(e).log("Uncaught Exception in {}", t.getName());
 	}
 }
