@@ -8,12 +8,13 @@ import org.deltava.beans.*;
 /**
  * A bean to store Flight Report Elite point data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
-public class FlightEliteScore extends DatabaseBean implements EliteTotals {
+public class FlightEliteScore extends DatabaseBean implements AuthoredBean, EliteTotals {
 	
+	private int _pilotID;
 	private String _level;
 	private int _year;
 	private int _distance;
@@ -93,6 +94,11 @@ public class FlightEliteScore extends DatabaseBean implements EliteTotals {
 		return _scoreOnly;
 	}
 	
+	@Override
+	public int getAuthorID() {
+		return _pilotID;
+	}
+	
 	/**
 	 * Updates the Pilot's Elite level at the time of this flight.
 	 * @param levelName the EliteLevel name
@@ -118,6 +124,12 @@ public class FlightEliteScore extends DatabaseBean implements EliteTotals {
 	public void setScoreOnly(boolean scoreOnly) {
 		_scoreOnly = scoreOnly;
 	}
+	
+	@Override
+	public void setAuthorID(int id) {
+		validateID(_pilotID, id);
+	}
+	
 	/**
 	 * Adds a score entry.
 	 * @param amt the number of points

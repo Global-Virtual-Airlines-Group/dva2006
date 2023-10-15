@@ -172,6 +172,7 @@ public class ElitePIREPLoader extends TestCase {
 					es.add(fr);
 					if (sc == null) continue;
 					
+					sc.setAuthorID(fr.getAuthorID());
 					fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s (%s)", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points"), st.getLevel().toString()));
 					frwdao.writeElite(sc, AIRLINE_CODE);
 					frwdao.writeHistory(fr.getStatusUpdates(), AIRLINE_CODE);
