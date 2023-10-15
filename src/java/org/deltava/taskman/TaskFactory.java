@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -67,25 +67,25 @@ public class TaskFactory {
             Task t = (Task) c.getDeclaredConstructor().newInstance();
             t.setID(id);
             t.setEnabled(Boolean.parseBoolean(e.getAttributeValue("enabled")));
-           	log.debug(id + " enabled = " + t.getEnabled());
+           	log.debug("{} enabled = {}", id, Boolean.valueOf(t.getEnabled()));
             
             // Load the time
             Element te = e.getChild("time");
             if (te == null) {
-            	log.warn("No time specified for " + c.getName());
+            	log.warn("No time specified for {}", c.getName());
             	t.setEnabled(false);
             } else
             	te.getChildren().forEach(tte -> t.setRunTimes(tte.getName(), tte.getTextNormalize()));
 
             results.add(t);
         } catch (ClassNotFoundException cnfe) {
-            log.error("Cannot find class " + className);
+            log.error("Cannot find class {}", className);
         } catch (Exception ex) {
-           log.error("Error loading " + className + " - " + ex.getMessage());
+           log.error("Error loading {} - {}", className, ex.getMessage());
         }
       }
 
-      log.info("Loaded " + results.size() + " tasks");
+      log.info("Loaded {} tasks", Integer.valueOf(results.size()));
       return results;
    }
 }
