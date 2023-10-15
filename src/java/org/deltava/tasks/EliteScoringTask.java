@@ -152,12 +152,10 @@ public class EliteScoringTask extends Task {
 				long ms = tt.stop();
 				if (ms > 1250)
 					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
-				else
-					log.info("Scored Flight Report #{} - {} pts", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()));
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
