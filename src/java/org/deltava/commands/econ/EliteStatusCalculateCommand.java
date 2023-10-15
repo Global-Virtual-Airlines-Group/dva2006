@@ -7,7 +7,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -102,10 +102,13 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					// Load the positions
 					Collection<RouteEntry> entries = new ArrayList<RouteEntry>();
 					if ((fi != null) && fi.getArchived()) {
-						File f = ArchiveHelper.getPositions(fi.getID());
-						try (InputStream is = new BufferedInputStream(new FileInputStream(f), 32768)) {
-							GetSerializedPosition psdao = new GetSerializedPosition(is);
-							entries.addAll(psdao.read());
+						try {
+							File f = ArchiveHelper.getPositions(fi.getID());
+							Compression c = Compression.detect(f);
+							try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
+								GetSerializedPosition psdao = new GetSerializedPosition(is);
+								entries.addAll(psdao.read());
+							}
 						} catch (IOException ie) {
 							msgs.add("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
 						}
