@@ -28,7 +28,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.3
  */
 
@@ -89,7 +89,7 @@ public class AttachmentServlet extends DownloadServlet {
 		URLParser url = new URLParser(req.getRequestURI());
 		AttachType fType = (AttachType) getFileType(url, AttachType.values());
 		if (fType == null) {
-			log.warn(String.format("Invalid File type - %s", url.getLastPath()));
+			log.warn("Invalid File type - {}", url.getLastPath());
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
@@ -112,7 +112,7 @@ public class AttachmentServlet extends DownloadServlet {
 
 			dbID = StringUtils.parseHex(name);
 		} catch (Exception e) {
-			log.warn(String.format("Error parsing ID %s - %s", url.getName(), e.getClass().getName()));
+			log.warn("Error parsing ID {} - {}", url.getName(), e.getClass().getName());
 			rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
@@ -121,8 +121,7 @@ public class AttachmentServlet extends DownloadServlet {
 		ConnectionPool jdbcPool = getConnectionPool();
 
 		byte[] buffer = null;
-		if (log.isDebugEnabled())
-			log.debug(String.format("Getting %s attachment ID %d", fType.name(), Integer.valueOf(dbID)));
+		log.debug("Getting {} attachment ID {}", fType.name(), Integer.valueOf(dbID));
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
@@ -237,9 +236,9 @@ public class AttachmentServlet extends DownloadServlet {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn(String.format("Error retrieving image - %s", ce.getMessage()));
+				log.warn("Error retrieving image - {}", ce.getMessage());
 			else
-				log.error(String.format("Error retrieving image - %s", ce.getMessage()), ce.getLogStackDump() ? ce : null);
+				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {

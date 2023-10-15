@@ -64,7 +64,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				sm.getKeys().forEach(k -> SystemData.add(k, sm.get(k)));
 				log.info(String.format("Loaded %d secrets from %s", Integer.valueOf(sm.size()), SystemData.get("security.secrets")));
 			} catch (IOException ie) {
-				log.error("Error loading secrets - " + ie.getMessage(), ie);
+				log.atError().withThrowable(ie).log("Error loading secrets - {}", ie.getMessage());
 			}
 		}
 		
@@ -75,7 +75,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		try (InputStream is = ConfigLoader.getStream("/etc/cacheInfo.xml")) {
 			CacheLoader.load(is);
 		} catch(IOException ie) {
-			log.warn("Cannot configure caches from code");
+			log.warn("Cannot configure caches from code - {}", ie.getMessage());
 		}
 		
 		// Init Redis
@@ -104,10 +104,10 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			JMXUtils.register("org.gvagroup:type=JDBCPool,name=" + code, jmxpool);
 			SharedWorker.register(new JMXRefreshTask(jmxpool, 60000));
 		} catch (ClassNotFoundException cnfe) {
-			log.error("Cannot load JDBC driver class - " + SystemData.get("jdbc.Driver"));
+			log.error("Cannot load JDBC driver class - {}", SystemData.get("jdbc.Driver"));
 		} catch (ConnectionPoolException cpe) {
 			Throwable t = cpe.getCause();
-			log.error("Error connecting to JDBC data source - " + t.getMessage(), t);
+			log.atError().withThrowable(t).log("Error connecting to JDBC data source - {}", t.getMessage());
 		}
 
 		// Save the connection pool in the SystemData
@@ -125,11 +125,11 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			auth.init(Authenticator.DEFAULT_PROPS_FILE);
 			SystemData.add(SystemData.AUTHENTICATOR, auth);
 		} catch (ClassNotFoundException cnfe) {
-			log.error("Cannot find authenticator class " + authClass);
+			log.error("Cannot find authenticator class {}", authClass);
 		} catch (SecurityException se) {
-			log.error("Error initializing authenticator - " + se.getMessage());
+			log.error("Error initializing authenticator - {}", se.getMessage());
 		} catch (Exception ex) {
-			log.error("Error starting authenticator - " + ex.getClass().getName() + " - " + ex.getMessage());
+			log.error("Error starting authenticator - {} - {}", ex.getClass().getName(), ex.getMessage());
 		}
 
 		// Start the Task Manager
@@ -139,7 +139,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			SystemData.add(SystemData.TASK_POOL, taskSched);
 			spawnDaemon(taskSched);
 		} catch (IOException ie) {
-			log.error(String.format("Cannot load scheduled tasks - %s", ie.getMessage()), ie);
+			log.atError().withThrowable(ie).log("Cannot load scheduled tasks - {}", ie.getMessage());
 		}
 
 		// Load data from the database
@@ -157,7 +157,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			// Load country codes
 			log.info("Loading Country codes");
 			GetCountry cdao = new GetCountry(c);
-			log.info("Loaded " + cdao.initAll() + " Country codes");
+			log.info("Loaded {} Country codes", Integer.valueOf(cdao.initAll()));
 
 			// Load Database information
 			log.info("Loading Cross-Application data");
@@ -195,7 +195,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			GetMetadata mddao = new GetMetadata(c);
 			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
 		} catch (Exception ex) {
-			log.error("Error retrieving data - " + ex.getMessage(), ex);
+			log.atError().withThrowable(ex).log("Error retrieving data - {}", ex.getMessage());
 		} finally {
 			_jdbcPool.release(c);
 		}
@@ -227,7 +227,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				Bot.init();
 				log.info("Loaded Discord server bot");
 			} catch (Exception ex) {
-				log.error("Error initializing Discord bot - " + ex.getMessage(), ex);
+				log.atError().withThrowable(ex).log("Error initializing Discord bot - {}", ex.getMessage());
 			}
 		}
 		
@@ -266,7 +266,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		
 		// Clear shared data
 		SharedData.purge(code);
-		log.error(String.format("Shut down %s", code));
+		log.error("Shut down {}", code);
 	}
 
 	/*
@@ -283,12 +283,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	public void uncaughtException(Thread t, Throwable e) {
 		Runnable sd = _daemons.get(t);
 		if (sd == null) {
-			log.error(String.format("Unknown daemon thread - %s", t.getName()));
+			log.error("Unknown daemon thread - {}", t.getName());
 			return;
 		}
 
 		// Restart the daemon
-		log.error(String.format("Restarting %s", sd), e);
+		log.atError().withThrowable(e).log("Restarting {}", sd);
 		synchronized (_daemons) {
 			_daemons.remove(t);
 			spawnDaemon(sd);

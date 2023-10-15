@@ -13,7 +13,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -137,7 +137,7 @@ public abstract class ConnectionContext {
     		   _con.setAutoCommit(_autoCommit);
     	   }
        } catch (Exception e) {
-   		   log.error("Error rolling back transaction - " + e.getMessage());
+   		   log.error("Error rolling back transaction - {}", e.getMessage());
        }
     }
     

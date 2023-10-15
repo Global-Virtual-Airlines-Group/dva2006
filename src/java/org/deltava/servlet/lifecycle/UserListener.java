@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -47,8 +47,7 @@ public class UserListener implements HttpSessionListener {
 	@Override
 	public void sessionDestroyed(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-		if (log.isDebugEnabled())
-			log.debug("Destroyed Session " + s.getId());
+		log.debug("Destroyed Session {}", s.getId());
 
 		// Get the user object
 		Person p = (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
@@ -57,7 +56,7 @@ public class UserListener implements HttpSessionListener {
 
 		// Log the user off
 		UserPool.remove(p, s.getId());
-		log.info(p.getName() + " logged out");
+		log.info("{} logged out", p.getName());
 
 		// Get the JDBC connection pool and a system connection
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
@@ -70,7 +69,7 @@ public class UserListener implements HttpSessionListener {
 		} catch (ConnectionPoolException cpe) {
 			log.warn(cpe.getMessage());
 		} catch (Exception ex) {
-			log.error("Error logging session close for " + p.getID() + " - " + ex.getMessage(), ex);
+			log.atError().withThrowable(ex).log("Error logging session close for {} ({}) - {}", p.getName(), Integer.valueOf(p.getID()), ex.getMessage());
 		} finally {
 			jdbcPool.release(con);
 		}

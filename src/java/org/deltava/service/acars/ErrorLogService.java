@@ -23,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 1.0
  */
 
@@ -91,7 +91,7 @@ public class ErrorLogService extends WebService {
 					
 				err.load(os.toByteArray());
 			} catch (IOException ie) {
-				log.error(ie.getMessage(), ie);
+				log.atError().withThrowable(ie).log(ie.getMessage());
 				err.load(ie.getMessage().getBytes());
 			}
 		}

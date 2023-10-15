@@ -15,7 +15,7 @@ import static org.deltava.commands.HTTPContext.*;
 /**
  * An HTTP session listener to track serialization of User sessions.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -46,8 +46,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 
 			// Remove the user
 			UserPool.remove(p, s.getId());
-			if (log.isDebugEnabled())
-				log.debug("Serializing Session " + s.getId());
+			log.debug("Serializing Session {}", s.getId());
 		} catch (IllegalStateException ise) {
 			log.error("Attempting to save invalid Session");
 		}

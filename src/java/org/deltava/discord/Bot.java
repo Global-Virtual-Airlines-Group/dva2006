@@ -63,7 +63,7 @@ public class Bot {
     		api = b.login().orTimeout(3500, TimeUnit.MILLISECONDS).join();
     		log.info("API Connected");
     	} catch (CompletionException ce) {
-    		log.error("Error connecting to Discord API - " + ce.getMessage(), ce);
+    		log.atError().withThrowable(ce).log("Error connecting to Discord API - {}", ce.getMessage());
     		return;
     	}
         
@@ -72,7 +72,7 @@ public class Bot {
         	GetFilterData dao = new GetFilterData(con);
         	_filter.init(dao.getKeywords(false), dao.getKeywords(true));
         } catch (ConnectionPoolException | DAOException | SQLException de) {
-        	log.error("Error initializing Content Filter - " + de.getMessage(), de);
+        	log.atError().withThrowable(de).log("Error initializing Content Filter - {}", de.getMessage());
         }
         
         log.info("Generating Commands");
@@ -121,18 +121,18 @@ public class Bot {
     				httpClient.connectionPool().evictAll();
     			}
     		} catch (NoSuchFieldException | IllegalAccessException nfe) {
-    			log.error(nfe.getClass().getSimpleName() + " obtaining Discord HTTP Client - " + nfe.getMessage());	
+    			log.error("{} obtaining Discord HTTP Client - {}",nfe.getClass().getSimpleName(), nfe.getMessage());	
     		}
     		
     		log.info("Disconnecting from Discord API");
     		CompletableFuture<Void> cf = api.disconnect().orTimeout(4500, TimeUnit.MILLISECONDS);
     		cf.join();
-    		log.warn("Shutdown in " + tt.stop() + "ms");
+    		log.warn("Shutdown in {}ms", Long.valueOf(tt.stop()));
     		
     		// Wait for threads to shut down
     		Thread.sleep(8000);
     	} catch (CompletionException ce) {
-    		log.error("Error disconnecting from Discord API - " + ce.getMessage(), ce);
+    		log.atError().withThrowable(ce).log("Error disconnecting from Discord API - {}", ce.getMessage());
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted waiting for threads to terminate");
     	} finally {
@@ -149,7 +149,7 @@ public class Bot {
     			ch = channels.get(0);
     			_channelIDs.put(c.getName(), Long.valueOf(ch.getId()));
     		} else
-    			log.warn(String.format("Unknown Discord channel - %s", c.getName()));
+    			log.warn("Unknown Discord channel - {}", c.getName());
     		
     		return ch;
     	}
@@ -194,18 +194,18 @@ public class Bot {
     	try {
     		User usr = _srv.getApi().getUserById(p.getExternalID(ExternalID.DISCORD)).get();
     		if (usr == null) {
-    			log.warn(String.format("User %s (%s) not found with ID %s", p.getName(), p.getPilotCode(), p.getExternalID(ExternalID.DISCORD)));
+    			log.warn("User {} ({}) not found with ID {}", p.getName(), p.getPilotCode(), p.getExternalID(ExternalID.DISCORD));
     			return;
     		}
     	
     		// Remove roles
     		List<Role> roles = usr.getRoles(_srv);
     		roles.forEach(usr::removeRole);
-    		log.info(String.format("Removed Discord roles %s from %s (%s)", roles, p.getName(), p.getPilotCode()));
+    		log.info("Removed Discord roles {} from {} ({})", roles, p.getName(), p.getPilotCode());
     	} catch (ExecutionException ee) {
-    		log.error(ee.getMessage(), ee);
+    		log.atError().withThrowable(ee).log(ee.getMessage());
     	} catch (InterruptedException ie) {
-    		log.warn(String.format("Interrupted removing Discord roles from %s (%s)", p.getName(), p.getPilotCode()));
+    		log.warn("Interrupted removing Discord roles from {} ({})", p.getName(), p.getPilotCode());
     	}
     }
 }

@@ -27,7 +27,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class LibraryServlet extends GenericServlet {
 				wdao.download(entry.getFileName(), sctxt.getUser().getID());
 			}
 		} catch (ConnectionPoolException cpe) {
-			log.error("Error downloading " + url.getFileName() + " - " + cpe.getMessage());
+			log.error("Error downloading {} - {}", url.getFileName(), cpe.getMessage());
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (ControllerException ce) {
 			String msg = "Error downloading " + url.getFileName() + " - " + ce.getMessage();
@@ -122,24 +122,20 @@ public class LibraryServlet extends GenericServlet {
 			return;
 
 		// Log Status message
-		log.info("Downloading " + url.getFileName().toLowerCase() + ", " + entry.getSize() + " bytes");
+		log.info("Downloading {}, {} bytes", url.getFileName().toLowerCase(), Long.valueOf(entry.getSize()));
 
 		// Set the response headers
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength((int) entry.file().length());
 		if ("pdf".equals(url.getExtension()))
 			rsp.setContentType("application/pdf");
-		else if ("avi".equals(url.getExtension()))
-			rsp.setContentType("video/avi");
-		else if ("wmv".equals(url.getExtension()))
-			rsp.setContentType("video/x-ms-wmv");
 		else
 			rsp.setContentType("application/octet-stream");
 		
 		// Check if we stream via mod_xsendfile
 		boolean doSendFile = SystemData.getBoolean("airline.files.sendfile");
 		if (doSendFile && entry.file().exists()) {
-			log.info("Sending " + entry.getFileName() + " via mod_xsendfile");
+			log.info("Sending {} via mod_xsendfile", entry.getFileName());
 			rsp.addHeader("X-Sendfile", entry.file().getAbsolutePath());
 			return;
 		}
@@ -165,13 +161,12 @@ public class LibraryServlet extends GenericServlet {
 		} catch (IOException ie) {
 			log.info("Download canceled");
 		} catch (Exception e) {
-			log.error("Error downloading " + entry.getName(), e);
+			log.atError().withThrowable(e).log("Error downloading {}" + entry.getName());
 		}
 
 		// Close the file and log download time
 		long totalTime = Math.max(1, tt.stop());
 		if (isComplete)
-			log.info(entry.getFileName().toLowerCase() + " download complete, " + (totalTime / 1000) + "s, "
-				+ (entry.getSize() * 1000 / totalTime) + " bytes/sec");
+			log.info("{} download complete, {}s, bytes/sec", entry.getFileName().toLowerCase(), Long.valueOf(totalTime / 1000), Long.valueOf(entry.getSize() * 1000 / totalTime));
 	}
 }

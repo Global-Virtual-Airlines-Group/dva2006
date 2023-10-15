@@ -16,7 +16,7 @@ import org.gvagroup.tile.PNGTile;
 /**
  * A servlet to fetch weather quadtree tiles.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -53,7 +53,7 @@ public class WeatherTileServlet extends TileServlet {
 			if (pt != null)
 				data = pt.getData();
 		} catch (DAOException e) {
-			log.error("Error fetching " + addr, e);
+			log.atError().withThrowable(e).log("Error fetching {}", addr);
 		}
 		
 		writeTile(rsp, data);

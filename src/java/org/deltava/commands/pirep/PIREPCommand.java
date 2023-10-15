@@ -666,7 +666,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							if (arcRt.getAIRACVersion() > 0)
 								ctx.setAttribute("routeCycleInfo", ncdao.getCycle(String.valueOf(arcRt.getAIRACVersion())), REQUEST);
 						} catch (IOException ie) {
-							log.error("Error loading serialized route - " + ie.getMessage(), ie);
+							log.atError().withThrowable(ie).log("Error loading serialized route - {}", ie.getMessage());
 						}
 					}
 					
@@ -753,7 +753,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						GetSerializedOnline stdao = new GetSerializedOnline(in);
 						pd.addAll(stdao.read());
 					} catch (IOException ie) {
-						log.error("Error loading serialized Online Track data - " + ie.getMessage(), ie);
+						log.atError().withThrowable(ie).log("Error loading serialized online track data - {}", ie.getMessage());
 						f.delete();
 					}
 				}

@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class DiagnosticCommand extends AbstractCommand {
 				GetACARSBandwidth bwdao = new GetACARSBandwidth(con);
 				ctx.setAttribute("acarsBW", bwdao.getLatest(), REQUEST);
 			} catch (DAOException de) {
-				log.error("Error loading ACARS bandwidth - " + de.getMessage(), de);
+				log.atError().withThrowable(de).log("Error loading ACARS bandwidth - {}", de.getMessage());
 			} finally {
 				ctx.release();
 			}

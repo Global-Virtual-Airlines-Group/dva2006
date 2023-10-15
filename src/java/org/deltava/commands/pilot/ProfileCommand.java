@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					} catch (IllegalStateException ise) {
 						log.warn(ise);
 					} catch (Exception e) {
-						log.error(e.getMessage(), e);
+						log.atError().withThrowable(e).log(e.getMessage());
 					} finally {
 						if (!StringUtils.isEmpty(vid)) {
 							p.setNetworkID(OnlineNetwork.VATSIM, vid);

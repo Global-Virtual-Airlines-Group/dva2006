@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service supporting file downloads.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.2
  */
 
@@ -31,7 +31,7 @@ public abstract class DownloadService extends WebService {
 		
 		// Check if we stream via mod_xsendfile
 		if (SystemData.getBoolean("airline.files.sendfile")) {
-			if (log.isDebugEnabled()) log.debug("Sending " + f.getName() + " via mod_xsendfile");
+			log.debug("Sending {} via mod_xsendfile", f.getName());
 			rsp.addHeader("X-Sendfile", f.getAbsolutePath());
 			return;
 		}
@@ -52,7 +52,7 @@ public abstract class DownloadService extends WebService {
 		} catch (IOException ie) {
 			log.info("Download canceled");
 		} catch (Exception e) {
-			log.error("Error downloading " + f.getName(), e);
+			log.atError().withThrowable(e).log("Error downloading {}", f.getName());
 		}
 	}
 }

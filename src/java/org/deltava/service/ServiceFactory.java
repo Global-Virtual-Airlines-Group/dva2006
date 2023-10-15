@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -60,13 +60,13 @@ public class ServiceFactory {
 				WebService ws = (WebService) c.getDeclaredConstructor().newInstance();
 				results.put(svcID.toLowerCase(), ws);
 			} catch (ClassNotFoundException cnfe) {
-				log.error("Cannot find class " + svcClassName + " for " + svcID);
+				log.error("Cannot find class {} for {}", svcClassName, svcID);
 			} catch (Exception ex) {
-				log.error("Cannot load " + svcClassName + " - " + ex.getMessage());
+				log.error("Cannot load {} -{}", svcClassName, ex.getMessage());
 			}
 		}
 
-		log.info("Loaded " + results.size() + " services");
+		log.info("Loaded {} services", Integer.valueOf(results.size()));
 		return results;
 	}
 }
