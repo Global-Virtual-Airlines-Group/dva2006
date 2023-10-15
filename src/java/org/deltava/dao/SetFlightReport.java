@@ -26,8 +26,6 @@ import org.deltava.util.system.SystemData;
 
 public class SetFlightReport extends DAO {
 	
-	private static final Cache<CacheableList<YearlyTotal>> _eliteTotalCache = CacheManager.getCollection(YearlyTotal.class, "EliteYearlyTotal");
-	
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -67,16 +65,18 @@ public class SetFlightReport extends DAO {
 	
 	/**
 	 * Deletes Elite program Flight Report data from the database.
-	 * @param id the Flight Report database ID
+	 * @param fr the FlightReport
 	 * @return TRUE if a record was deleted, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public boolean deleteElite(int id) throws DAOException {
+	public boolean deleteElite(FlightReport fr) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_ELITE WHERE (ID=?)")) {
-			ps.setInt(1, id);
+			ps.setInt(1, fr.getID());
 			return (executeUpdate(ps, 0) > 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(fr.getAuthorID()));
 		}
 	}
 
@@ -359,8 +359,7 @@ public class SetFlightReport extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		} finally {
-			_eliteTotalCache.remove(Integer.valueOf(-sc.getYear()));
-			_eliteTotalCache.remove(Integer.valueOf(sc.getID()));
+			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(sc.getAuthorID()));
 		}
 	}
 	
