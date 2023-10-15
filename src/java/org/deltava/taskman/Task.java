@@ -21,7 +21,7 @@ import com.newrelic.api.agent.*;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -148,8 +148,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	for (int x = 0; x < TIME_OPTS.length; x++) {
     		Collection<Integer> runTimes = _runTimes.get(TIME_OPTS[x]);
     		int timeField = zdt.get(TIME_FIELDS[x]);
-    		if (log.isDebugEnabled())
-    			log.debug(TIME_OPTS[x] + ", now = " + timeField + ", allowed = " + runTimes);
+   			log.debug("{}, now = {}, allowed = {}", TIME_OPTS[x], Integer.valueOf(timeField), runTimes);
     		
     		// Make sure we qualify to run
     		if ((runTimes != null) && (!runTimes.contains(ANY)) && (!runTimes.contains(Integer.valueOf(timeField))))
@@ -256,7 +255,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     public void run(Pilot usr) {
     	setStartTime(Instant.now());
     	_runCount++;
-    	log.info(_name + " starting ");
+    	log.info("{} starting", _name);
     	
     	TaskContext ctxt = new TaskContext();
     	try {
@@ -272,7 +271,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		SetSystemData dao = new SetSystemData(con);
     		dao.logTaskExecution(getID(), 0);
     	} catch (Exception e) {
-    		log.error("Cannot log Task start - " + e.getMessage(), e);
+    		log.atError().withThrowable(e).log("Cannot log Task start - {}", e.getMessage());
     	} finally {
     		ctxt.release();
     	}
@@ -280,7 +279,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	// Execute the task
         execute(ctxt);
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.toEpochMilli());
-        log.info(getName() + " completed - " + _lastRunTime + " ms");
+        log.info("{} completed - {}ms", getName(), Long.valueOf(_lastRunTime));
         NewRelic.setRequestAndResponse(new SyntheticRequest(_name, (usr == null) ? "SYSTEM" : usr.getPilotCode()), new SyntheticResponse());
         NewRelic.setTransactionName("Task", _name);
         NewRelic.recordResponseTimeMetric(_name, _lastRunTime);
@@ -290,7 +289,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		SetSystemData dao = new SetSystemData(ctxt.getConnection());
     		dao.logTaskExecution(getID(), _lastRunTime);
     	} catch (Exception e) {
-    		log.error("Cannot log Task completion - " + e.getMessage(), e);
+    		log.atError().withThrowable(e).log("Cannot log Task completion - {}", e.getMessage());
     	} finally {
     		ctxt.release();
     	}
@@ -308,7 +307,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-    	log.error("Error in child thread " + t.getName(), e);
+    	log.atError().withThrowable(e).log("Error in child thread {}", t.getName());
     }
     
     /**
