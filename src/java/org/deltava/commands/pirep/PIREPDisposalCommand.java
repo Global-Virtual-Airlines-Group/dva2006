@@ -232,7 +232,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Delete Elite data if not approving
 			SetFlightReport wdao = new SetFlightReport(con);
 			if (SystemData.getBoolean("econ.elite.enabled") && (op != FlightStatus.OK)) {
-				boolean isDeleted = wdao.deleteElite(fr.getID());
+				boolean isDeleted = wdao.deleteElite(fr);
 				ctx.setAttribute("eliteDataCleared", Boolean.valueOf(isDeleted), REQUEST);
 			}
 
