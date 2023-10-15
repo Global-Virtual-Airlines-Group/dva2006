@@ -11,7 +11,7 @@ import org.deltava.beans.stats.HTTPStatistics;
 /**
  * A Log Parser for Apache 2.0 common access logs. <i>This requires that the log be in the Apache 2.x format &quot;%h %u %t \"%r\" %>s %B %D&quot;.</i>
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -123,7 +123,7 @@ public class ApacheLogParser implements LogParser {
             }
          }
       } catch (Exception e) {
-         log.error("Error loading " + f.getAbsolutePath(), e);
+         log.atError().withThrowable(e).log("Error loading {}", f.getAbsolutePath());
          return null;
       }
       

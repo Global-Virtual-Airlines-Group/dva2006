@@ -19,7 +19,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -47,19 +47,19 @@ public class IPCDaemon implements Runnable {
 					for (SystemEvent event : events) {
 						switch (event.getCode()) {
 							case AIRLINE_RELOAD:
-								log.warn(SystemData.get("airline.code") + " Reloading Airlines");
+								log.warn("{} Reloading Airlines", SystemData.get("airline.code"));
 								GetAirline aldao = new GetAirline(con);
 								SystemData.add("airlines", aldao.getAll());
 								break;
 								
 							case TZ_RELOAD:
-								log.warn(SystemData.get("airline.code") + " Reloading Time Zones");
+								log.warn("{} Reloading Time Zones", SystemData.get("airline.code"));
 								GetTimeZone tzdao = new GetTimeZone(con);
 								tzdao.initAll();
 								break;
 								
 							case AIRPORT_RELOAD:
-								log.warn(SystemData.get("airline.code") + " Reloading Airports");
+								log.warn("{} Reloading Airports", SystemData.get("airline.code"));
 								GetAirport apdao = new GetAirport(con);
 								SystemData.add("airports", apdao.getAll());
 								break;
@@ -67,13 +67,13 @@ public class IPCDaemon implements Runnable {
 							case CACHE_FLUSH:
 								IDEvent ie = (IDEvent) event;
 								CacheManager.invalidate(ie.getID(), false);
-								log.warn(SystemData.get("airline.code") + " Flushing cache " + ie.getID());
+								log.warn("{} Flushing cache {}", SystemData.get("airline.code"), ie.getID());
 								break;
 								
 							case AIRPORT_RENAME:
 								ie = (IDEvent) event;
 								if (ie.getData() == null) break;
-								log.warn(SystemData.get("airline.code") + " renaming Airport " + ie.getData() + " to " + ie.getID());
+								log.warn("{} renaming Airport {} to {}", SystemData.get("airline.code"), ie.getData(), ie.getID());
 								
 								// Update accomplishments
 								try {
@@ -88,7 +88,7 @@ public class IPCDaemon implements Runnable {
 									if (!accs.isEmpty()) {
 										SetAccomplishment acwdao = new SetAccomplishment(con);
 										for (Accomplishment acc : accs) {
-											log.warn(SystemData.get("airline.code") + " updating Accomplishment " + acc.getName());
+											log.warn("{} updating Accomplishment {}", SystemData.get("airline.code"), acc.getName());
 											acwdao.write(acc);
 										}
 										
@@ -103,7 +103,7 @@ public class IPCDaemon implements Runnable {
 							case AIRCRAFT_RENAME:
 								ie = (IDEvent) event;
 								if (ie.getData() == null) break;
-								log.warn(SystemData.get("airline.code") + " renaming Aircraft " + ie.getData() + " to " + ie.getID());
+								log.warn("{} renaming Aircraft {} to {}", SystemData.get("airline.code"), ie.getData(), ie.getID());
 								
 								// Update accomplishments
 								try {
@@ -115,7 +115,7 @@ public class IPCDaemon implements Runnable {
 									if (!accs.isEmpty()) {
 										SetAccomplishment acwdao = new SetAccomplishment(con);
 										for (Accomplishment acc : accs) {
-											log.warn(SystemData.get("airline.code") + " updating Accomplishment " + acc.getName());
+											log.warn("{} updating Accomplishment {}", SystemData.get("airline.code"), acc.getName());
 											acwdao.write(acc);
 										}
 										
@@ -132,7 +132,7 @@ public class IPCDaemon implements Runnable {
 						}
 					}
 				} catch (ConnectionPoolException | DAOException cpde) {
-					log.error(cpde.getMessage(), cpde);
+					log.atError().withThrowable(cpde).log(cpde.getMessage());
 				} finally {
 					cPool.release(con);
 				}
