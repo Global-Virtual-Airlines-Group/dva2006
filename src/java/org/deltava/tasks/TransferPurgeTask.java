@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class TransferPurgeTask extends Task {
 					ctx.commitTX();
 					
 					// Log the deletion
-					log.warn("Deleting transfer to " + tx.getEquipmentType() + " by " + p.getName() + " after " + purgeInterval + " days");
+					log.warn("Deleting transfer to {} by {} after {} days", tx.getEquipmentType(), p.getName(), Integer.valueOf(purgeInterval));
 					
 					// Create the e-mail message
 					MessageContext mctxt = new MessageContext();
@@ -96,7 +96,7 @@ public class TransferPurgeTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

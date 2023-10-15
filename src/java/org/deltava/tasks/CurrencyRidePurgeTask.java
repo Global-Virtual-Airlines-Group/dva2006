@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge old Currency Check Rides.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 8.0
  */
 
@@ -30,10 +30,6 @@ public class CurrencyRidePurgeTask extends Task {
 		super("Currency Ride Purge", CurrencyRidePurgeTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 * @param ctx the TaskContext
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		log.info("Starting");
@@ -66,7 +62,7 @@ public class CurrencyRidePurgeTask extends Task {
 				suwdao.write(upd, ctx.getDB());
 				
 				// Log the deletion
-				log.warn("Deleting currency Check Ride for " + p.getName() + " after " + purgeInterval + " days");
+				log.warn("Deleting currency Check Ride for {} after {} days", p.getName(), Integer.valueOf(purgeInterval));
 
 				// Commit
 				ctx.commitTX();
@@ -86,7 +82,7 @@ public class CurrencyRidePurgeTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

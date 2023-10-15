@@ -1,4 +1,4 @@
-// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 5.2
  */
 
@@ -48,7 +48,7 @@ public class GFSDownloadTask extends Task {
 			String host = SystemData.get("weather.gfs.host");
 			try (FTPConnection con = new FTPConnection(host)) {
 				con.connect("anonymous", SystemData.get("airline.mail.webmaster"));
-				log.info("Connected to " + host);
+				log.info("Connected to {}", host);
 			
 				// Find the latest GFS run and get the latest GFS file
 				String basePath = SystemData.get("weather.gfs.path");
@@ -58,8 +58,8 @@ public class GFSDownloadTask extends Task {
 				String fName = con.getNewest(gribPath, FileUtils.fileFilter("gfs.", ".pgrb2.0p25.f000"));
 				if (!StringUtils.isEmpty(fName)) {
 					Instant lm = con.getTimestamp(gribPath, fName);
-					log.info(fName + " timestamp = " + StringUtils.format(lm, "MM/dd HH:mm"));
-					log.info("Local timestamp = " + StringUtils.format(Instant.ofEpochMilli(outF.lastModified()), "MM/dd HH:mm"));
+					log.info("{} timestamp = {}", fName, StringUtils.format(lm, "MM/dd HH:mm"));
+					log.info("Local timestamp = {}", StringUtils.format(Instant.ofEpochMilli(outF.lastModified()), "MM/dd HH:mm"));
 				
 					// Calculate the effective date and download
 					dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1) + hDir, "yyyyMMddHH");
@@ -67,16 +67,16 @@ public class GFSDownloadTask extends Task {
 						log.info("Downloading updated GFS data");
 						TaskTimer tt = new TaskTimer(); 
 						try (InputStream in = con.get(gribPath + "/" + fName, outF)) {
-							log.info("Downloaded GFS data - " + outF.length());
+							log.info("Downloaded GFS data - {}", Long.valueOf(outF.length()));
 							outF.setLastModified(lm.toEpochMilli());
-							log.info("Download completed in " + tt.stop() + "ms");
+							log.info("Download completed in {}ms", Long.valueOf(tt.stop()));
 						}
 					}
 				} else
 					log.warn("GRIB not ready yet");
 			}
 		} catch (FTPClientException | IOException e) {
-			log.error("Error processing GFS data - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error processing GFS data - {}", e.getMessage());
 			return;
 		}
 		
@@ -86,20 +86,20 @@ public class GFSDownloadTask extends Task {
 			if (dt == null) {
 				GetMetadata mddao = new GetMetadata(con);
 				dt = Instant.ofEpochSecond(Long.parseLong(mddao.get("gfs.cycle")));
-				log.info("Reusing " + dt + " GFS data");
+				log.info("Reusing {} GFS data", dt);
 			} else {
 				SetMetadata mdwdao = new SetMetadata(con);
 				mdwdao.write("gfs.cycle", dt);
 			}
 		} catch(DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
 			
 		// Plot the tiles
 		int threads = Math.max(3, Runtime.getRuntime().availableProcessors() + 1);
-		log.info("Running " + threads + " Tile workers");
+		log.info("Running {} Tile workers", Integer.valueOf(threads));
 		try (GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath())) {
 			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
 			for (PressureLevel lvl : LEVELS) {
@@ -129,7 +129,7 @@ public class GFSDownloadTask extends Task {
 				}
 
 				ThreadUtils.waitOnPool(workers);
-				log.info(lvl.getPressure() + "mb Tiles plotted in " + tt.stop() + "ms");
+				log.info("{}mb Tiles plotted in {}ms", Integer.valueOf(lvl.getPressure()), Long.valueOf(tt.stop()));
 				
 				// Get existing tile layers
 				GetTiles trdao = new GetTiles();
@@ -140,12 +140,12 @@ public class GFSDownloadTask extends Task {
 				SetTiles twdao = new SetTiles();
 				twdao.write(is);
 				for (Instant sd : seriesDates) {
-					log.info("Purging " + is.getType() + " / " + StringUtils.format(sd, "MM/dd HH:mm"));
+					log.info("Purging {} / {}", is.getType(), StringUtils.format(sd, "MM/dd HH:mm"));
 					twdao.purge(new ImageSeries(is.getType(), sd));
 				}
 			}
 		} catch (Exception e) {
-			log.error("Error processing GFS data - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error processing GFS data - {}", e.getMessage());
 		}
 
 		log.info("Processing Complete");

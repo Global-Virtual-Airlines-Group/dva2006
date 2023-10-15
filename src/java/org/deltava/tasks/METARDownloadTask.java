@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2015, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2015, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 2.7
  */
 
@@ -37,7 +37,7 @@ public class METARDownloadTask extends Task {
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
 			wxdao.setCompression(Compression.GZIP, Compression.BROTLI);
-			log.info("Loading METAR cycle for " + StringUtils.format(hour, "00") + "00Z");
+			log.info("Loading METAR cycle for {}00Z", StringUtils.format(hour, "00"));
 			Map<String, METAR> data = wxdao.getMETARCycle(hour);
 			for (METAR m : data.values())
 				m.setILS(WeatherUtils.getILS(m));
@@ -52,7 +52,7 @@ public class METARDownloadTask extends Task {
 			wxwdao.purgeMETAR(270);
 			
 			// Save the METARs
-			log.info("Saving METAR cycle - " + data.size() + " entries");
+			log.info("Saving METAR cycle - {} entries", Integer.valueOf(data.size()));
 			for (METAR m : data.values()) {
 				AirportLocation al = nddao.getAirport(m.getCode());
 				if (al != null)
@@ -64,7 +64,7 @@ public class METARDownloadTask extends Task {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error("Error saving METAR Data - " + de.getMessage(), de);
+			log.atError().withThrowable(de).log("Error saving METAR Data - {}", de.getMessage());
 		} finally {
 			ctx.release();
 		}

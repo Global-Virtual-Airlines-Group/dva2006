@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -37,9 +37,6 @@ public class InactivityUpdateTask extends Task {
 		super("Inactivity Status Update", InactivityUpdateTask.class);
 	}
 
-	/**
-	 * Executes the task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 
@@ -99,18 +96,18 @@ public class InactivityUpdateTask extends Task {
 				Integer id = me.getKey();
 				Pilot p = pilots.get(id);
 				if (p.getIsPermanent())
-					log.warn(String.format("Ignoring %s - Permanent Account", p.getName()));
+					log.warn("Ignoring {} - Permanent Account", p.getName());
 				else if ((p.getStatus() == PilotStatus.RETIRED) || (p.getStatus() == PilotStatus.SUSPENDED)) {
-					log.warn(String.format("Ignoring %s - Status = %s", p.getName(), p.getStatus()));
+					log.warn("Ignoring {} - Status = {}", p.getName(), p.getStatus());
 					iwdao.delete(p.getID());
 				} else {
 					boolean noWarn = !ip.isNotified();
 					if (noWarn)
-						log.warn("Marking " + p.getName() + " Inactive after no participation in " + inactiveDays + " days");
+						log.warn("Marking {} Inactive after no participation in {} days", p.getName(), Integer.valueOf(inactiveDays));
 					else if (p.getLoginCount() == 0)
-						log.warn("Marking " + p.getName() + " Inactive after no first login in " + notifyDays + " days");
+						log.warn("Marking {} Inactive after no first login in {} days", p.getName(), Integer.valueOf(notifyDays));
 					else
-						log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
+						log.warn("Marking {} Inactive after {} days", p.getName(), Integer.valueOf(ip.getInterval()));
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
@@ -145,7 +142,7 @@ public class InactivityUpdateTask extends Task {
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
 						cc.setCreatedOn(upd.getDate());
 						cc.setBody(upd.getDescription());
-						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
+						log.warn("Removing {} from {} Flight Academy Course", p.getName(), c.getName());
 						
 						// Write
 						cwdao.comment(cc);
@@ -227,7 +224,7 @@ public class InactivityUpdateTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

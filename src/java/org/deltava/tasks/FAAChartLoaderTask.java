@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download FAA approach charts.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 5.0
  */
 
@@ -45,7 +45,7 @@ public class FAAChartLoaderTask extends Task {
 				dao.load(_ec);
 				_out.add(_ec);
 			} catch (Exception e) {
-				log.error("Error loading " + _ec.getName(), e);
+				log.atError().withThrowable(e).log("Error loading {}", _ec.getName());
 			}
 		}
 	}
@@ -68,7 +68,7 @@ public class FAAChartLoaderTask extends Task {
 				dao.loadSize(_ec);
 				_out.add(_ec);
 			} catch (Exception e) {
-				log.error("Error loading " + _ec.getName(), e);
+				log.atError().withThrowable(e).log("Error loading {}", _ec.getName());
 			}
 		}
 	}
@@ -80,9 +80,6 @@ public class FAAChartLoaderTask extends Task {
 		super("FAA Chart Loader", FAAChartLoaderTask.class);
 	}
 	
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
@@ -97,7 +94,7 @@ public class FAAChartLoaderTask extends Task {
 				month = cycleInfo.getSequence();
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
@@ -127,7 +124,7 @@ public class FAAChartLoaderTask extends Task {
 					oldCharts.put(a, new AirportCharts<Chart>(a, charts));
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
@@ -142,7 +139,7 @@ public class FAAChartLoaderTask extends Task {
 		// If there are new FAA airports, queue them
 		Collection<Airport> newAirports = CollectionUtils.getDelta(newCharts.keySet(), oldCharts.keySet());
 		for (Airport a : newAirports) {
-			log.info("Loading charts for new Airport " + a);
+			log.info("Loading charts for new Airport {}", a);
 			Collection<ExternalChart> charts = newCharts.get(a).getCharts();
 			chartsToLoad.addAll(charts);
 			newCharts.remove(a);
@@ -161,13 +158,13 @@ public class FAAChartLoaderTask extends Task {
 					boolean isSame = oec.getIsExternal() && ((ExternalChart)oec).getURL().equals(ec.getURL());
 					if (!isSame) {
 						ec.setID(oec.getID());
-						log.info("Updating chart " + oec.getName());
+						log.info("Updating chart {}", oec.getName());
 						oc.getCharts().remove(oec);
 						chartsToLoad.add(ec);
 						updCnt++;
 					}
 				} else {
-					log.info("Adding chart " + ec.getName());
+					log.info("Adding chart {}", ec.getName());
 					chartsToLoad.add(ec);
 					addCnt++;
 				}
@@ -176,14 +173,14 @@ public class FAAChartLoaderTask extends Task {
 			// Find charts that are no longer in the new charts
 			for (Chart oec : oc.getCharts()) {
 				if (ac.get(oec.getName()) == null) {
-					log.info("Deleting chart " + oec.getName());
+					log.info("Deleting chart {}", oec.getName());
 					chartsToDelete.add(Integer.valueOf(oec.getID()));
 					delCnt++;
 				}
 			}
 		}
 		
-		log.info("Added " + addCnt + ", updated " + updCnt + ", deleted " + delCnt + " charts");
+		log.info("Added {}, updated {}, deleted {} charts", Integer.valueOf(addCnt), Integer.valueOf(updCnt), Integer.valueOf(delCnt));
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -228,7 +225,7 @@ public class FAAChartLoaderTask extends Task {
 				
 					keepRunning = !exec.isTerminated() || !work.isEmpty();
 					ctx.commitTX(); ctx.release();
-					log.info(charts + " charts saved to Database");
+					log.info("{} charts saved to Database", Integer.valueOf(charts));
 				}
 			
 				// Wait for timeout
@@ -236,7 +233,7 @@ public class FAAChartLoaderTask extends Task {
 			}
 			
 			long ms = tt.stop();
-			log.info(chartsToLoad + " charts updated in " + StringUtils.format(ms/1000.0, "#0.00") + "s");
+			log.info("{} charts updated in {}s", Integer.valueOf(chartsToLoad.size()), StringUtils.format(ms/1000.0, "#0.00"));
 		} catch (InterruptedException | DAOException de) {
 			ctx.rollbackTX();
 			log.error(de.getMessage(), (de instanceof InterruptedException) ? null : de);

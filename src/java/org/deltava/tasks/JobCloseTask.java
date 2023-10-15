@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.taskman.*;
 /**
  * A Scheduled Task to automatically close Job Postings.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 3.6
  */
 
@@ -46,7 +46,7 @@ public class JobCloseTask extends Task {
 				}
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

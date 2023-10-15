@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download AUSOT data.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 2.7
  */
 
@@ -47,7 +47,7 @@ public class AUSOTDownloadTask extends Task {
 			or.setSource(url.getHost());
 			
 			// Get the DAO and the AUSOT data
-			log.info("Loading AUSOT track data from " + url.toString());
+			log.info("Loading AUSOT track data from {}", url);
 			GetAUSOTs dao = new GetAUSOTs(url.toString());
 			
 			// Load waypoint data, retry up to 3 times
@@ -60,7 +60,7 @@ public class AUSOTDownloadTask extends Task {
 					dao.setConnectTimeout(5000);
 					dao.reset();
 					retryCount++;
-					log.warn("Error downloading AUSOT Data - " + de.getMessage());
+					log.warn("Error downloading AUSOT Data - {}", de.getMessage());
 				}
 			}
 			
@@ -115,10 +115,10 @@ public class AUSOTDownloadTask extends Task {
 			
 			ctx.commitTX();
 		} catch (URISyntaxException se) {
-			log.error("Error downloading AUSOT Tracks - " + se.getMessage(), se);
+			log.atError().withThrowable(se).log("Error downloading AUSOT Tracks - {}", se.getMessage());
 		} catch (Exception e) {
 			ctx.rollbackTX();
-			log.error("Error saving AUSOT Data - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error saving AUSOT Data - {}", e.getMessage());
 		} finally {
 			ctx.release();
 		}

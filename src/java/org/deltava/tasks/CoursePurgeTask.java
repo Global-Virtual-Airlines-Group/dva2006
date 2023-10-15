@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to suspend inactive Flight Academy Courses. 
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 6.3
  */
 
@@ -32,15 +32,12 @@ public class CoursePurgeTask extends Task {
 		super("Inactive Course Suspend", CoursePurgeTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
 		int purgeDays = SystemData.getInt("academy.coursePurge", 240);
 		Instant pd = ZonedDateTime.now().minusDays(purgeDays).toInstant();
-		log.warn("Purging Flight Academy Courses inactive since before " + pd);
+		log.warn("Purging Flight Academy Courses inactive since before {}", pd);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -92,7 +89,7 @@ public class CoursePurgeTask extends Task {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

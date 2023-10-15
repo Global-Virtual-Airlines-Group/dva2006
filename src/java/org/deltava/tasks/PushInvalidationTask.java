@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.taskman.*;
 /**
  * A Scheduled Task to remove invalid Push Notification endpoints. 
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 10.0
  */
 
@@ -27,9 +27,6 @@ public class PushInvalidationTask extends Task {
 		super("Push Endpoint Invalidation", PushInvalidationTask.class);
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
@@ -55,10 +52,10 @@ public class PushInvalidationTask extends Task {
 			for (PushEndpoint ep : endpoints) {
 				UserData ud = udm.get(Integer.valueOf(ep.getID()));
 				if (ud == null) {
-					log.warn("Unknown Pilot ID - " + ep.getID());
+					log.warn("Unknown Pilot ID - {}", Integer.valueOf(ep.getID()));
 					continue;
 				} else if (!ud.getDB().equals(ctx.getDB())) {
-					log.error(String.format("Cannot invalidate endpoint for Pilot %d (app = %s)", Integer.valueOf(ud.getID()), ud.getAirlineCode()));
+					log.error("Cannot invalidate endpoint for Pilot {} (app = {})", Integer.valueOf(ud.getID()), ud.getAirlineCode());
 					continue;
 				}
 				
@@ -68,16 +65,15 @@ public class PushInvalidationTask extends Task {
 				upd.setDescription("Invalid Push Endpoint - " + ep.getURL());
 				
 				Pilot p = pilots.get(Integer.valueOf(ep.getID()));
-				log.warn(String.format("Deleting invalid endpoint %s for %s (%d)", ep.getURL(), p.getName(), Integer.valueOf(ep.getID())));
+				log.warn("Deleting invalid endpoint {} for {} ({})", ep.getURL(), p.getName(), Integer.valueOf(ep.getID()));
 				pwdao.delete(p.getID(), ep.getURL());
 				uwdao.write(upd, ctx.getDB());
 			}
 			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
