@@ -11,7 +11,7 @@ import org.gvagroup.ipc.IPCInfo;
 /**
  * A utility class to handle deserializing IPC data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -36,9 +36,9 @@ public class IPCUtils {
 				return (Serializable) in.readObject();
 			}
 		} catch (ClassNotFoundException cnfe) {
-			log.error("Unknown class " + cnfe.getMessage());
+			log.error("Unknown class {}", cnfe.getMessage());
 		} catch (IOException ie) {
-			log.error("I/O exception - " + ie.getMessage(), ie);
+			log.atError().withThrowable(ie).log("I/O exception - {}", ie.getMessage());
 		}
 		
 		return null;
@@ -67,9 +67,9 @@ public class IPCUtils {
 				T entry = (T) ois.readObject();
 				results.add(entry);
 			} catch (IOException ie) {
-				log.error(ie.getClass().getSimpleName() + " - " + ie.getMessage(), ie);
+				log.atError().withThrowable(ie).log("{} - {}", ie.getClass().getSimpleName(), ie.getMessage());
 			} catch (ClassNotFoundException cnfe) {
-				log.error("Cannot find class " + cnfe.getMessage());
+				log.error("Cannot find class {}", cnfe.getMessage());
 			}
 		}
 		
@@ -88,7 +88,7 @@ public class IPCUtils {
 				oos.writeObject(entry);
 				results.add(bos.toByteArray());
 			} catch (IOException ie) {
-				log.error(ie.getClass().getSimpleName() + " - " + ie.getMessage());
+				log.atError().withThrowable(ie).log("{} - {}", ie.getClass().getSimpleName(), ie.getMessage());
 			}
 		}
 		

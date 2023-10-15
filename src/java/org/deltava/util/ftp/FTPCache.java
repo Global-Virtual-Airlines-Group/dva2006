@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -74,12 +74,12 @@ public class FTPCache {
 		// Init the FTPConnection object
 		try (FTPConnection con = new FTPConnection(_host)) {
 			con.connect(_user, _pwd);
-			log.info("Connected to " + _host);
+			log.info("Connected to {}", _host);
 			String fileName = con.getNewest(dirName, filter); 
 			if (fileName != null)
 				return fileName;
 		} catch (FTPClientException ce) {
-			log.error(ce.getMessage() + " to " + _host);
+			log.error("{} to {}", ce.getMessage(), _host);
 		}
 
 		// Return the newest from the cache if this has an exception
@@ -87,7 +87,7 @@ public class FTPCache {
 		if (f == null)
 			return null;
 
-		log.info("Newest cache file is " + f.getName());
+		log.info("Newest cache file is {}", f.getName());
 		return f.getName();
 	}
 
@@ -107,7 +107,7 @@ public class FTPCache {
 		InputStream is = null;
 		try (FTPConnection con = new FTPConnection(_host)) {
 			con.connect(_user, _pwd);
-			log.info("Connected to " + _host);
+			log.info("Connected to {}", _host);
 
 			// Check the remote file date
 			Instant rdt = con.getTimestamp("", fileName);
@@ -121,14 +121,14 @@ public class FTPCache {
 			
 			if ((ldt == null) || (ldt.isBefore(rdt))) {
 				TaskTimer tt = new TaskTimer();
-				log.info("Downloading " + cf.getName() + ", local=" + ldt + ", remote=" + rdt);
+				log.info("Downloading {}, local={}, remote={}", cf.getName(), ldt, rdt);
 				is = con.get(fileName, cf);
 				cf.setLastModified(rdt.toEpochMilli());
 				long time = tt.stop();
-				log.info("Download Complete. " + is.available() + " bytes, " + time + " ms");
+				log.info("Download Complete - {} bytes, {}ms", Integer.valueOf(is.available()), Long.valueOf(time));
 				_fileInfo = new FTPDownloadData(fileName, is.available(), time);
 			} else {
-				log.info("Using local copy " + cf.getAbsolutePath());
+				log.info("Using local copy {}", cf.getAbsolutePath());
 				is = new FileInputStream(cf);
 				_fileInfo = new FTPDownloadData(cf);
 			}
@@ -146,14 +146,14 @@ public class FTPCache {
 			ZipInputStream zis = new ZipInputStream(is);
 			try {
 				ZipEntry entry = zis.getNextEntry();
-				log.info("Detected ZIP File - Returning " + entry.getName());
+				log.info("Detected ZIP File - Returning {}", entry.getName());
 				return zis;
 			} catch (IOException ie) {
 				throw new FTPClientException("Error opening ZIP file - " + ie.getMessage());
 			}
 		} else if (fn.endsWith(".gz")) {
 			try {
-				log.info("Detected ZIP File - Returning " + fn.substring(0, fn.length() - 3));
+				log.info("Detected ZIP File - Returning {}", fn.substring(0, fn.length() - 3));
 				return new GZIPInputStream(is);
 			} catch (IOException ie) {
 				throw new FTPClientException("Error opening GZIP file - " + ie.getMessage());
