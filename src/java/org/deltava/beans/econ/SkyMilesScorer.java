@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -78,6 +78,7 @@ public class SkyMilesScorer extends EliteScorer {
 	public FlightEliteScore score(FlightReport fr, EliteLevel lvl) {
 		if (!canScore(fr)) return null;
 		reset(fr.getID(), lvl);
+		_score.setAuthorID(fr.getAuthorID());
 
 		// Check for non-ACARS flights this month
 		boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS); 

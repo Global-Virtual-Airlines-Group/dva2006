@@ -529,6 +529,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				FlightEliteScore es = dao.getElite(fr.getID());
 				if (es != null) {
+					es.setAuthorID(fr.getAuthorID());
 					GetElite edao = new GetElite(con);	
 					ctx.setAttribute("eliteLevel", edao.get(es.getEliteLevel(), es.getYear(), ctx.getDB()), REQUEST);
 					ctx.setAttribute("eliteScore", es, REQUEST);
