@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -48,9 +48,6 @@ public class EventAssignTask extends Task {
 		return false;
 	}
 
-	/**
-	 * Executes the Task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		
@@ -95,7 +92,7 @@ public class EventAssignTask extends Task {
 					ctx.startTX();
 					
 					// Get the signups for this event
-					log.info("Assigning flights for Event " + e.getName());
+					log.info("Assigning flights for Event {}", e.getName());
 					for (Signup s : e.getSignups()) {
 						UserData usrData = usrmap.get(s.getPilotID());
 						Pilot usr = pdao.get(usrData);
@@ -104,7 +101,7 @@ public class EventAssignTask extends Task {
 							continue;
 						
 						// Log assignment creation
-						log.info("Assigning Event flight for " + usr.getName());
+						log.info("Assigning Event flight for {}", usr.getName());
 
 						// Create a Flight Assignment
 						AssignmentInfo ai = new AssignmentInfo(s.getEquipmentType());
@@ -187,7 +184,7 @@ public class EventAssignTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

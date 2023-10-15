@@ -67,7 +67,7 @@ public class AssignmentPurgeTask extends Task {
 					log.debug("Skipping Assignment {} assigned on {}", Integer.valueOf(a.getID()), a.getAssignDate());
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to update Pilot ratings based on currency Check Rides.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 8.0
  */
 
@@ -44,7 +44,7 @@ public class CurrencyRatingTask extends Task {
 			// Load Pilots enrolled in program
 			GetPilot pdao = new GetPilot(con);
 			Collection<Pilot> pilots = pdao.getCurrencyPilots();
-			log.info("Recaculating ratings for " + pilots.size() + " Pilots");
+			log.info("Recaculating ratings for {} Pilots", Integer.valueOf(pilots.size()));
 			
 			// Get all equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -82,18 +82,17 @@ public class CurrencyRatingTask extends Task {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Proficiency Check Rides disabled, no current ratings");
 					upds.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
+					log.info("{} {}", p.getName(), upd.getDescription());
 					
 					// Recalculate ratings
 					helper.clearExpiration();
 					newRatings = helper.getQualifiedRatings();
-					
 				} else if (!newEQ.contains(myEQ)) { // If newEQ is not empty but doesn't include eqType, switch to one that does
 					EquipmentType newET = newEQ.last();
 					p.setEquipmentType(newET.getName());
 					Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
-					log.info(p.getName() + " lost " + myEQ + " rating, switching to " + newET);
-					log.info(p.getName() + " removed " + removedRatings + " ratings");
+					log.info("{} lost {} rating, switching to {}", p.getName(), myEQ, newET);
+					log.info("{} removed {} ratings", p.getName(), removedRatings);
 					p.removeRatings(removedRatings);
 					
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.CURRENCY);
@@ -108,7 +107,7 @@ public class CurrencyRatingTask extends Task {
 				} else if (CollectionUtils.hasDelta(p.getRatings(), newRatings)) { // Check if any ratings were removed
 					Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
 					p.removeRatings(removedRatings);
-					log.info(p.getName() + " removed " + removedRatings + " ratings");
+					log.info("{} removed {} ratings", p.getName(), removedRatings);
 					
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RATING_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -137,7 +136,7 @@ public class CurrencyRatingTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

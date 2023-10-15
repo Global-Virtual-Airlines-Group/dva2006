@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.time.*;
@@ -14,7 +14,7 @@ import org.deltava.taskman.*;
 /**
  * A Scheduled Task to periodically refresh inbound/outbound Taxi times.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 10.0
  */
 
@@ -47,14 +47,14 @@ public class TaxiUpdateTask extends Task {
 			// Update the airports
 			SetACARSTaxiTimes twdao = new SetACARSTaxiTimes(con);
 			for (Airport ap : airports) {
-				log.info(String.format("Calculating Taxi times for %s (%s)", ap.getName(), ap.getICAO()));
+				log.info("Calculating Taxi times for %s (%s)", ap.getName(), ap.getICAO());
 				twdao.calculate(ap);
 			}
 				
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
