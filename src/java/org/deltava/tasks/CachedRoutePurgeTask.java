@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import org.deltava.dao.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to purge cached FlightAware routes from the database.
  * @author Luke
- * @version 3.6
+ * @version 11.1
  * @since 3.6
  */
 
@@ -32,10 +32,10 @@ public class CachedRoutePurgeTask extends Task {
 		int maxAge = SystemData.getInt("schedule.flightaware.max_age", 365);
 		try {
 			SetCachedRoutes rcwdao = new SetCachedRoutes(ctx.getConnection());
-			log.warn("Purged " + rcwdao.purge(maxAge) + " cached routes " + maxAge + " days of age or older");
+			log.warn("Purged {} cached routes {} days of age or older", Integer.valueOf(rcwdao.purge(maxAge)), Integer.valueOf(maxAge));
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

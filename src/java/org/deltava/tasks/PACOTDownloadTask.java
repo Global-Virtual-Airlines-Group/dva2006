@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class PACOTDownloadTask extends Task {
 			or.setSource(url.getHost());
 			
 			// Load waypoint data, retry up to 3 times
-			log.info("Loading PACOT track data from " + url.toString());
+			log.info("Loading PACOT track data from {}", url);
 			GetPACOTs dao = new GetPACOTs(url.toString());
 			int retryCount = 0; boolean isDownloaded = false;
 			while (!isDownloaded && (retryCount < 3)) {
@@ -56,7 +56,7 @@ public class PACOTDownloadTask extends Task {
 					dao.setConnectTimeout(5000);
 					dao.reset();
 					retryCount++;
-					log.warn("Error downloading PACOT Data - " + de.getMessage());
+					log.warn("Error downloading PACOT Data - {}", de.getMessage());
 				}
 			}
 			
@@ -111,10 +111,10 @@ public class PACOTDownloadTask extends Task {
 			ctx.commitTX();
 			
 		} catch (URISyntaxException se) {
-			log.error("Error downloading PACOT Tracks - " + se.getMessage(), se);
+			log.atError().withThrowable(se).log("Error downloading PACOT Tracks - {}", se.getMessage());
 		} catch (Exception e) {
 			ctx.rollbackTX();
-			log.error("Error saving PACOT Data - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error saving PACOT Data - {}", e.getMessage());
 		} finally {
 			ctx.release();
 		}

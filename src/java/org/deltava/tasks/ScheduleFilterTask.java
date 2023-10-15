@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 8.0
  */
 
@@ -44,7 +44,7 @@ public class ScheduleFilterTask extends Task {
 			for (ScheduleSourceInfo src : srcs) {
 				Collection<Airline> airlines = srcAirlines.getOrDefault(src.getSource(), Collections.emptyList());
 				src.setAirlines(airlines);
-				log.info("Importing " + src.getAirlines() + " from " + src.getSource());
+				log.info("Importing {} from {}", src.getAirlines(), src.getSource());
 			}
 			
 			// TODO: Are we ensuring that previously imported airlines are not getting restored?
@@ -61,7 +61,7 @@ public class ScheduleFilterTask extends Task {
 			for (ScheduleSourceHistory srcInfo : srcs) {
 				TaskTimer tt = new TaskTimer();
 				LocalDate effDate = srcInfo.getNextImportDate();
-				log.info("Filtering " + srcInfo.getSource() + ", effective " + effDate);
+				log.info("Filtering {}, effective {}", srcInfo.getSource(), effDate);
 				srcInfo.setEffectiveDate(effDate.atStartOfDay().toInstant(ZoneOffset.UTC));
 				srcInfo.setImportDate(Instant.now());
 				srcInfo.setAutoImport(true);
@@ -69,7 +69,7 @@ public class ScheduleFilterTask extends Task {
 				
 				// Purge this source
 				int entriesPurged = swdao.purge(srcInfo.getSource());
-				log.info("Purged " + entriesPurged + " flight schedule entries from " + srcInfo.getSource().getDescription());
+				log.info("Purged {} flight schedule entries from {}", Integer.valueOf(entriesPurged), srcInfo.getSource().getDescription());
 				
 				// Load schedule entries, assign legs
 				List<RawScheduleEntry> rawEntries = rawdao.load(srcInfo.getSource(), srcInfo.getEffectiveDate()).stream().filter(se -> srcInfo.contains(se.getAirline())).collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class ScheduleFilterTask extends Task {
 					String key = rse.createKey();
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if ((ir.getSource() != srcInfo.getSource()) && ir.hasAirline(rse.getAirline()) && !rse.getForceInclude()) {
-						log.debug(ir + " already imported by " + ir.getSource());
+						log.debug("{} already imported by {}", ir, ir.getSource());
 						srcInfo.skip();
 						continue;
 					}
@@ -96,14 +96,14 @@ public class ScheduleFilterTask extends Task {
 						srcPairs.putIfAbsent(key, ir);
 					} else {
 						srcInfo.skip();
-						log.info(rse.getShortCode() + " already exists [ " + rse.getAirportD().getIATA() + " - " + rse.getAirportA().getIATA() + " ]");
+						log.info("{} already exists [ {} - {} ]", rse.getShortCode(), rse.getAirportD().getIATA(), rse.getAirportA().getIATA());
 					}
 				}
 
 				srcInfo.setTime((int) tt.stop());
 				srcInfo.setActive(srcInfo.getLegs() > 1);
 				swdao.writeSourceAirlines(srcInfo);
-				log.info("Loaded " + srcInfo.getLegs() + " (" + srcInfo.getSkipped() + " skipped) "+ srcInfo.getSource().getDescription() + " schedule entries for " + srcInfo.getEffectiveDate() + " in " + srcInfo.getTime() + "ms");
+				log.info("Loaded {} ({} skipped) {} schedule entries for {} in {}ms", Integer.valueOf(srcInfo.getLegs()), Integer.valueOf(srcInfo.getSkipped()), srcInfo.getSource().getDescription(), srcInfo.getEffectiveDate(), Integer.valueOf(srcInfo.getTime()));
 			}
 			
 			// Save the schedule entries
@@ -119,7 +119,7 @@ public class ScheduleFilterTask extends Task {
 			for (Airport ap : allAirports) {
 				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
 				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
-					log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+					log.info("Updating {} new codes = {}, was {}", ap.getName(), newAirlines, ap.getAirlineCodes());
 					ap.setAirlines(svcMap.getAirlineCodes(ap));
 					awdao.update(ap, ap.getIATA());
 				}
@@ -129,7 +129,7 @@ public class ScheduleFilterTask extends Task {
 			CacheManager.invalidate("ScheduleSource", true);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 8.6
+ * @version 11.1
  * @since 2.6
  */
 
@@ -61,7 +61,7 @@ public class CachedRouteUpdateTask extends Task {
 				// Ensure the route includes one US airport
 				boolean isUS = (rp.getAirportD().getCountry() == Country.get("US")) || (rp.getAirportA().getCountry() == Country.get("US"));
 				if (!isUS) {
-					log.warn(rp.getAirportD() + " to " + rp.getAirportA() + " not a US route, skipping");
+					log.warn("{} to {} not a US route, skipping", rp.getAirportD(), rp.getAirportA());
 					continue;
 				}
 				
@@ -76,11 +76,11 @@ public class CachedRouteUpdateTask extends Task {
 					routesLoaded++;
 					Collection<ExternalRoute> faroutes = fwdao.getRouteData(rp);
 					if (!faroutes.isEmpty()) {
-						log.warn("Loaded " + faroutes.size() + " routes between " + rp.getAirportD() + " and " + rp.getAirportA());
+						log.warn("Loaded {} routes between {} and {}", Integer.valueOf(faroutes.size()), rp.getAirportD(), rp.getAirportA());
 						rcwdao.purge(rp);
 						rcwdao.write(faroutes);
 					} else {
-						log.warn("Created dummy route between " + rp.getAirportD() + " and " + rp.getAirportA());
+						log.warn("Created dummy route between {} and {}", rp.getAirportD(), rp.getAirportA());
 						ExternalRoute rt = new ExternalRoute("Internal");
 						rt.setAirportD(rp.getAirportD());
 						rt.setAirportA(rp.getAirportA());
@@ -98,7 +98,7 @@ public class CachedRouteUpdateTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

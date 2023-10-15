@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Applicants with invalid CAPTCHAs
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.3
  */
 
@@ -46,7 +46,7 @@ public class ApplicantPurgeTask extends Task {
 			for (Applicant a : apps) {
 				ctx.startTX();
 				Duration d = Duration.between(a.getCreatedOn(), now);
-				log.warn(String.format("Automatically deleting %s for CAPTCHA failure after %d hours", a.getName(), Long.valueOf(d.toHours())));
+				log.warn("Automatically deleting {} for CAPTCHA failure after {} hours", a.getName(), Long.valueOf(d.toHours()));
 				awdao.delete(a.getID());
 				ctx.commitTX();
 			}
@@ -58,7 +58,7 @@ public class ApplicantPurgeTask extends Task {
 				if (a.getHasCAPTCHA() || (d.toHours() < registerTimeout)) continue;
 				
 				// Reject the applicant
-				log.warn(String.format("Automatically rejecting %s for CAPTCHA failure after %d hours", a.getName(), Long.valueOf(d.toHours())));
+				log.warn("Automatically rejecting {} for CAPTCHA failure after {} hours", a.getName(), Long.valueOf(d.toHours()));
 				a.setStatus(ApplicantStatus.REJECTED);
 				a.setAutoReject(true);
 				ctx.startTX();
@@ -81,7 +81,7 @@ public class ApplicantPurgeTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -75,23 +75,23 @@ public class ImageLinkTestTask extends Task {
 					// Validate the result code
 					int resultCode = hc.executeMethod(hm);
 					if (resultCode != HttpURLConnection.HTTP_OK)
-						tLog.warn("Invalid Image HTTP result code - " + resultCode);
+						tLog.warn("Invalid Image HTTP result code - {}", Integer.valueOf(resultCode));
 					else {
 						Header[] hdrs = hm.getResponseHeaders("Content-Type");
 						String cType = (hdrs.length == 0) ? "unknown" : hdrs[0].getValue();
 						isOK = _mimeTypes.contains(cType);
 						if (!isOK)
-							tLog.warn("Invalid MIME type for " + img + " - " + cType);
+							tLog.warn("Invalid MIME type for {} - {}", img, cType);
 						else
-							tLog.info("Validated " + url.toString());
+							tLog.info("Validated {}", url.toString());
 					}
 				} catch (IllegalArgumentException iae) {
 					if (url != null)
-						tLog.warn("Known bad host - " + url.getHost());
+						tLog.warn("Known bad host - {}", url.getHost());
 				} catch (URISyntaxException se) {
-					tLog.warn("Invalid URL - " + img);
+					tLog.warn("Invalid URL - {}", img);
 				} catch (IOException ie) {
-					tLog.warn("Error validating " + img + " - " + ie.getMessage());
+					tLog.warn("Error validating {} - {}", img, ie.getMessage());
 					if ("Connection timed out".equals(ie.getMessage()))
 						_invalidHosts.add(url.getHost());
 				}
@@ -183,7 +183,7 @@ public class ImageLinkTestTask extends Task {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error("Error validating images - " + de.getMessage(), de);
+			log.atError().withThrowable(de).log("Error validating images - {}", de.getMessage());
 		} finally {
 			ctx.release();
 		}

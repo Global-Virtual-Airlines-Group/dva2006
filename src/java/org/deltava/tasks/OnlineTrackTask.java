@@ -109,7 +109,7 @@ public class OnlineTrackTask extends Task {
 				log.info("Purged {} old flight tracks after 72 hours", Integer.valueOf(purgeCount));
 			} catch (DAOException de) {
 				ctx.rollbackTX();
-				log.error("Error loading " + network + " data", de);
+				log.atError().withThrowable(de).log("Error loading {} data", network);
 			} finally {
 				ctx.release();
 			}

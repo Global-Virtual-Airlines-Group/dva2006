@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to send e-mail notifications when the Flight Report disposal queue exceeds a certain size.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -86,7 +86,7 @@ public class QueueWarningTask extends Task {
 				}
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

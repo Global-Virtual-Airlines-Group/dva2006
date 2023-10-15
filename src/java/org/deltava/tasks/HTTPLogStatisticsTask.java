@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate HTTP log statistics.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class HTTPLogStatisticsTask extends Task {
 		// Get the HTTP log path
 		File logPath = new File(SystemData.get("path.httplog"));
 		if (!logPath.exists()) {
-			log.error("Cannot find HTTP log path " + logPath.getAbsolutePath());
+			log.error("Cannot find HTTP log path {}", logPath.getAbsolutePath());
 			return;
 		}
 
@@ -94,12 +94,12 @@ public class HTTPLogStatisticsTask extends Task {
 						
 						// Delete the raw log file
 						if  (!f.delete())
-							log.warn("Cannot delete " + f.getName());
+							log.warn("Cannot delete {}", f.getName());
 					} catch (IOException ie) {
-						log.error("Error compressing " + f.getName(), ie);
+						log.atError().withThrowable(ie).log("Error compressing {}", f.getName());
 					}
 				} catch (DAOException de) {
-					log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy") + " - " + de.getMessage(), de);
+					log.atError().withThrowable(de).log("Error saving statistics for {} - {}", StringUtils.format(stats.getDate(), "MM/dd/yyyy"), de.getMessage());
 				} finally {
 					ctx.release();
 				}
@@ -117,7 +117,7 @@ public class HTTPLogStatisticsTask extends Task {
 			Class<?> c = Class.forName(className);
 			return (LogParser) c.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
-			log.error("Cannot load " + className + " - " + e.getClass().getName(), e);
+			log.atError().withThrowable(e).log("Cannot load {} - {}", className, e.getClass().getName());
 		}
 
 		return null;

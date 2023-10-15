@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import org.deltava.dao.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge the Web Site Command log. 
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class CommandLogPurgeTask extends Task {
 			SetSystemData dao = new SetSystemData(ctx.getConnection());
 			dao.purgeCommands(purgeDays);
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

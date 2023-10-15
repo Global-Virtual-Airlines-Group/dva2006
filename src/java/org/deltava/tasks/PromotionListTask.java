@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to display daily promotions in the Water Cooler. 
  * @author Luke
- * @version 8.7
+ * @version 11.1
  * @since 3.6
  */
 
@@ -70,8 +70,7 @@ public class PromotionListTask extends Task {
 			Message msg = new Message(ctx.getUser().getID());
 			msg.setRemoteAddr("127.0.0.1");
 			msg.setRemoteHost("localhost");
-			StringBuilder msgBuf = new StringBuilder("The following " + SystemData.get("airline.name")
-				+ " pilots have received promotions, Flight Academy certifications or achieved Accomplishments:");
+			StringBuilder msgBuf = new StringBuilder("The following " + SystemData.get("airline.name") + " pilots have received promotions, Flight Academy certifications or achieved Accomplishments:");
 			msgBuf.append("\n\n");
 			
 			// Add the pilots
@@ -107,7 +106,7 @@ public class PromotionListTask extends Task {
 				mwdao.write(mt);
 			}
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}

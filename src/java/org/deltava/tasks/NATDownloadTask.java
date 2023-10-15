@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 1.0
  */
 
@@ -32,9 +32,6 @@ public class NATDownloadTask extends Task {
 		super("NAT Download", NATDownloadTask.class);
 	}
 
-	/**
-	 * Executes the task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {
@@ -45,7 +42,7 @@ public class NATDownloadTask extends Task {
 			or.setSource(url.getHost());
 			
 			// Load waypoint data, retry up to 3 times
-			log.info("Loading NAT track data from " + url.toString());
+			log.info("Loading NAT track data from {}", url);
 			GetNATs dao = new GetNATs(url.toString());
 			int retryCount = 0; boolean isDownloaded = false;
 			while (!isDownloaded && (retryCount < 3)) {
@@ -56,7 +53,7 @@ public class NATDownloadTask extends Task {
 					dao.setConnectTimeout(5000);
 					dao.reset();
 					retryCount++;
-					log.warn("Error downloading NAT Data - " + de.getMessage());
+					log.warn("Error downloading NAT Data - {}", de.getMessage());
 				}
 			}
 			
@@ -113,10 +110,10 @@ public class NATDownloadTask extends Task {
 			
 			ctx.commitTX();
 		} catch (URISyntaxException se) {
-			log.error("Error downloading NAT Tracks - " + se.getMessage(), se);
+			log.atError().withThrowable(se).log("Error downloading NAT Tracks - {}", se.getMessage());
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.error("Error saving NAT Data - " + de.getMessage(), de);
+			log.atError().withThrowable(de).log("Error saving NAT Data - {}", de.getMessage());
 		} finally {
 			ctx.release();
 		}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import org.deltava.dao.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge SELCAL code reservations.
  * @author Luke
- * @version 7.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -32,9 +32,9 @@ public class SELCALPurgeTask extends Task {
 		
 		try {
 			SetSELCAL dao = new SetSELCAL(ctx.getConnection());
-			log.info("Freed up " + dao.free(purgeInterval) + " reserved SELCAL codes");
+			log.info("Freed up {} reserved SELCAL codes", Integer.valueOf(dao.free(purgeInterval)));
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
+			log.atError().withThrowable(de).log(de.getMessage());
 		} finally {
 			ctx.release();
 		}
