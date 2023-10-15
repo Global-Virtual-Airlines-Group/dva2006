@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -143,7 +143,7 @@ public class PasswordResetCommand extends AbstractCommand {
 				auth.authenticate(usr, newPwd);
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			log.atError().withThrowable(e).log(e.getMessage());
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + e.getMessage());
 			return;
 		} finally {

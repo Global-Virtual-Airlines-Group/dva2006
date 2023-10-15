@@ -60,7 +60,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         	sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).respond();
             Bot.send(ChannelName.ALERTS, EmbedGenerator.wordAdded(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
         } catch (Exception ex) {
-        	log.error("Error adding " + keyType + " word - " + ex.getMessage(), ex);
+        	log.atError().withThrowable(ex).log("Error adding {} word - {}", keyType, ex.getMessage());
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Add %s word", keyType), ex));
         }
     }
@@ -89,7 +89,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).respond();
            	Bot.send(ChannelName.ALERTS, EmbedGenerator.wordDeleted(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
     	} catch (Exception ex) {
-    		log.error("Error removing " + keyType + " word - " + ex.getMessage(), ex);
+    		log.atError().withThrowable(ex).log("Error removing {} word - {}", keyType, ex.getMessage());
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Remove %s word", keyType), ex));
     	}
     }

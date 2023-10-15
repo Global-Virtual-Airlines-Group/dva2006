@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to manually execute Scheduled Tasks. Unlike the Task Scheduler, which spawns a new Thread to
  * execute a Scheduled Task, this Command will execute the Task using the same Thread.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -39,11 +39,11 @@ public class TaskExecuteCommand extends AbstractCommand {
 		} catch (RuntimeException rte) {
 			Throwable tc = rte.getCause();
 			if (tc != null)
-			   log.error("Scheduled Task threw " + tc.getClass().getName() + " - " + tc.getMessage());
+			   log.error("Scheduled Task threw {} - {}", tc.getClass().getName(), tc.getMessage());
 			
 			ctx.setAttribute("ex", (tc == null) ? rte : tc, REQUEST);
 		} catch (Exception e) {
-			log.error("Scheduled Task threw " + e.getClass().getName() + " - " + e.getMessage());
+			log.error("Scheduled Task threw {} - {}", e.getClass().getName(), e.getMessage());
 			ctx.setAttribute("ex", e, REQUEST);
 		}
 

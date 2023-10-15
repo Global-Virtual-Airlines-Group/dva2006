@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail and VAPID messages in the background. SMTP messages are not designed for critical information; they are
  * designed to fail silently on an error.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -68,16 +68,16 @@ public class MailerDaemon implements Runnable {
 			SMTPEnvelope se = (SMTPEnvelope) env;
 			Address[] addr = se.getRecipients();
 			if (log.isDebugEnabled() && (addr != null) && (addr.length > 0))
-				log.debug("Queued message for " + addr[0]);
+				log.debug("Queued message for {}", addr[0]);
 			break;
 
 		case VAPID:
 			VAPIDEnvelope ve = (VAPIDEnvelope) env;
-			log.debug("Queued message for " + ve.getEndpoint());
+			log.debug("Queued message for {}", ve.getEndpoint());
 			break;
 
 		default:
-			log.warn("Unknown notification protocol - " + env.getProtocol());
+			log.warn("Unknown notification protocol - {}", env.getProtocol());
 		}
 	}
 
@@ -94,7 +94,7 @@ public class MailerDaemon implements Runnable {
 	private void send(VAPIDEnvelope env) throws DAOException, GeneralSecurityException {
 		if (_jwtAlgo == null) return;
 		if (_invalidEndpoints.contains(env.getEndpoint())) {
-			log.warn("Skipping invalid endpoint " + env.getEndpoint());
+			log.warn("Skipping invalid endpoint {}", env.getEndpoint());
 			return;
 		}
 
@@ -136,7 +136,7 @@ public class MailerDaemon implements Runnable {
 			if (env.getCopyTo() != null)
 				imsg.addRecipients(CC, env.getCopyTo());
 		} catch (Exception e) {
-			log.error("Error setting message headers - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error setting message headers - {}", e.getMessage());
 			return;
 		}
 
@@ -163,21 +163,21 @@ public class MailerDaemon implements Runnable {
 			imsg.setContent(mp);
 			imsg.setSentDate(new Date(env.getCreatedOn().toEpochMilli()));
 		} catch (MessagingException me) {
-			log.error("Error setting message content - " + me.getMessage(), me);
+			log.atError().withThrowable(me).log("Error setting message content - {}", me.getMessage());
 		}
 
 		// Send the message
 		try {
 			Transport.send(imsg);
-			log.info("Sent message to " + env);
+			log.info("Sent message to {}", env);
 		} catch (Exception e) {
-			log.error("Error sending email to " + env, e);
+			log.atError().withThrowable(e).log("Error sending email to {}", env);
 		}
 	}
 
 	@Override
 	public void run() {
-		log.info("Starting " + _code);
+		log.info("Starting {}", _code);
 		boolean isAnon = StringUtils.isEmpty(SystemData.get("smtp.user"));
 
 		// Set the SMTP server
@@ -186,7 +186,7 @@ public class MailerDaemon implements Runnable {
 		props.put("mail.smtp.auth", String.valueOf(!isAnon));
 		props.put("mail.transport.protocol", "smtp");
 		if (SystemData.getBoolean("smtp.tls")) {
-			log.info("Enabling SMTP over TLS - " + (isAnon ? "anonymous" : "using credentials"));
+			log.info("Enabling SMTP over TLS - {}", isAnon ? "anonymous" : "using credentials");
 			props.put("mail.smtp.port", String.valueOf(SystemData.getInt("smtp.port", 587)));
 			props.put("mail.smtp.starttls.enable", "true");
 		}
@@ -204,9 +204,9 @@ public class MailerDaemon implements Runnable {
 				_jwtAlgo = Algorithm.ECDSA256(ecPub, ecPvt);
 				log.info("Loaded VAPID encryption keys");
 			} else
-				log.warn("No encryption keys - VAPID disabled for " + _code);
+				log.warn("No encryption keys - VAPID disabled for {}", _code);
 		} catch (Exception e) {
-			log.error("Error loading VAPID keys - " + e.getMessage(), e);
+			log.atError().withThrowable(e).log("Error loading VAPID keys - {}", e.getMessage());
 		}
 
 		while (!Thread.currentThread().isInterrupted()) {
@@ -223,18 +223,18 @@ public class MailerDaemon implements Runnable {
 						break;
 
 					default:
-						log.error("Unknown notification protocol - " + env.getProtocol());
+						log.error("Unknown notification protocol - {}", env.getProtocol());
 						break;
 					}
 				} catch (Exception e) {
-					log.error("Error sending " + env.getProtocol() + " message - " + e.getMessage(), e);
+					log.atError().withThrowable(e).log("Error sending {} message - {}", env.getProtocol(), e.getMessage());
 				}
 			} catch (InterruptedException ie) {
 				Thread.currentThread().interrupt();
 			}
 		}
 
-		log.info("Stopping " + _code);
+		log.info("Stopping {}", _code);
 	}
 
 	@Override

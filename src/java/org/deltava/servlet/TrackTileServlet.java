@@ -18,7 +18,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -62,9 +62,9 @@ public class TrackTileServlet extends TileServlet {
 				log.error(cpe.getMessage());
 			} catch (ControllerException ce) {
 				if (ce.isWarning())
-					log.warn("Error retrieving image - " + ce.getMessage());
+					log.warn("Error retrieving image - {}", ce.getMessage());
 				else
-					log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+					log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			} finally {
 				jdbcPool.release(c);
 			}

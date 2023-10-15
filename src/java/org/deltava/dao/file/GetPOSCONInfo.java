@@ -16,7 +16,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Data Access Object to parse a POSCON JSON servinfo feed. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.1
  */
 
@@ -50,7 +50,7 @@ public class GetPOSCONInfo extends OnlineNetworkDAO {
 			
 			return c;
 		} catch (Exception e) {
-			log.error("Error parsing controller " + id + " - " + e.getMessage());
+			log.error("Error parsing controller {} - {}", Integer.valueOf(id), e.getMessage());
 			return null;
 		}
 	}
@@ -82,7 +82,7 @@ public class GetPOSCONInfo extends OnlineNetworkDAO {
 			
 			return p;
 		} catch (Exception e) {
-			log.error("Error parsing pilot " + id + " - " + e.getMessage());
+			log.error("Error parsing pilot {} - {}", Integer.valueOf(id), e.getMessage());
 			return null;
 		}
 	}

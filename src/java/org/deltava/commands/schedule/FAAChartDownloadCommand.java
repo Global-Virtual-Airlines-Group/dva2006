@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -51,7 +51,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 				dao.load(_ec);
 				_out.add(_ec);
 			} catch (Exception e) {
-				log.error("Error loading " + _ec.getName(), e);
+				log.atError().withThrowable(e).log("Error loading {}", _ec.getName());
 			}
 		}
 	}
@@ -74,7 +74,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 				dao.loadSize(_ec);
 				_out.add(_ec);
 			} catch (Exception e) {
-				log.error("Error loading " + _ec.getName(), e);
+				log.atError().withThrowable(e).log("Error loading {}", _ec.getName());
 			}
 		}
 	}

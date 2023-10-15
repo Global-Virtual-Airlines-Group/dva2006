@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read the VATSIM JSON data feed.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.0
  */
 
@@ -47,7 +47,7 @@ public class GetVATSIMInfo extends OnlineNetworkDAO {
 			c.setFacility(StringUtils.isEmpty(co.optString("atis_code"))  ? Facility.values()[co.optInt("facility", Facility.ATIS.ordinal())] : Facility.ATIS);
 			return c;
 		} catch (Exception e) {
-			log.error(String.format("Error parsing controller %d - %s", Integer.valueOf(id), e.getMessage()));
+			log.error("Error parsing controller {} - {}", Integer.valueOf(id), e.getMessage());
 			return null;
 		}
 	}
@@ -76,7 +76,7 @@ public class GetVATSIMInfo extends OnlineNetworkDAO {
 			
 			return p;
 		} catch (Exception e) {
-			log.error(String.format("Error parsing pilot %d - %s", Integer.valueOf(id), e.getMessage()));
+			log.error("Error parsing pilot {} - {}", Integer.valueOf(id), e.getMessage());
 			return null;
 		}
 	}

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -102,7 +102,7 @@ public class SecurityCookieFilter extends HttpFilter {
 				
 				s.setAttribute(AUTH_COOKIE_NAME, cData);
 			} catch (Exception e) {
-				log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + req.getHeader("user-agent") + " - " + e.getMessage());
+				log.error("Error decrypting security cookie from {} using {} - {}", req.getRemoteHost(), req.getHeader("user-agent"), e.getMessage());
 				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 				cData = null;
 			}
@@ -111,7 +111,7 @@ public class SecurityCookieFilter extends HttpFilter {
 		// If the context has expired, invalidate the session
 		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
 		if ((cData != null) && cData.isExpired()) {
-			log.warn("Cookie for " + cData.getUserID() + " has expired");
+			log.warn("Cookie for {} has expired", cData.getUserID());
 			rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			req.setAttribute("isExpired", Boolean.TRUE);
 			s.invalidate();
@@ -142,7 +142,7 @@ public class SecurityCookieFilter extends HttpFilter {
 				if ((savedOtherAddress == null) && !isSame) { // Assume IPv4 <-> IPv6
 					s.setAttribute(OTHERADDR_ATTR_NAME, remoteAddr);
 					isOK = true;
-					log.warn("Adding " + remoteAddr + " as other address for " + p + " with " + savedAddr);
+					log.warn("Adding {} as other address for {} with {}", remoteAddr, p, savedAddr);
 				} else if (savedOtherAddress != null)
 					isOK = savedOtherAddress.equals(remoteAddr);
 					
@@ -159,7 +159,7 @@ public class SecurityCookieFilter extends HttpFilter {
 					}
 				}
 				
-				log.info("Flipped HTTP session from " + savedAddr + " to " + remoteAddr);
+				log.info("Flipped HTTP session from {} to {}", savedAddr, remoteAddr);
 				if (!isOK)
 					throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
 			}
@@ -196,7 +196,7 @@ public class SecurityCookieFilter extends HttpFilter {
 				} else
 					log.error("Unknown Pilot - " + cData.getUserID());
 			} catch (DAOException de) {
-				log.error("Error loading " + cData.getUserID() + " - " + de.getMessage(), de);
+				log.atError().withThrowable(de).log("Error loading {} - {}", cData.getUserID(), de.getMessage());
 			} catch (org.gvagroup.jdbc.ConnectionPoolException cpe) {
 				log.error(cpe.getMessage());
 			} finally {
@@ -210,7 +210,7 @@ public class SecurityCookieFilter extends HttpFilter {
 						String userAgent = req.getHeader("user-agent");
 						s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
 						s.setAttribute(USER_ATTR_NAME, p);
-						log.info("Restored " + p.getName() + " from Security Cookie");
+						log.info("Restored {} from Security Cookie", p.getName());
 							
 						// Check if we are a superUser impersonating someone
 						Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);

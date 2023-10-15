@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.4
  */
 
@@ -157,7 +157,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		
 			flight = OfflineFlightParser.create(new String(xml, UTF_8));
 		} catch (Exception e) {
-			log.error("Error parsing XML - " + e.getMessage(), (e instanceof IllegalArgumentException) ? null : e);
+			log.error("Error parsing XML - {}", e.getMessage(), (e instanceof IllegalArgumentException) ? null : e);
 			ctx.setAttribute("error", e.getCause(), REQUEST);
 			ctx.setMessage(e.getMessage());
 			return;

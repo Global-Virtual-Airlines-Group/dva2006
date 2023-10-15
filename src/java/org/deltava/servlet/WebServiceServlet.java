@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -121,11 +121,11 @@ public class WebServiceServlet extends BasicAuthServlet {
 			if (e instanceof ServiceException se) {
 				resultCode = se.getCode();
 				if (se.isWarning())
-					log.warn("Error executing Web Service - " + e.getMessage());
+					log.warn("Error executing Web Service - {}", e.getMessage());
 				else
-					log.error("Error executing Web Service - " + e.getMessage(), se.getLogStackDump() ? e : null);	
+					log.error("Error executing Web Service - {}", e.getMessage(), se.getLogStackDump() ? e : null);	
 			} else
-				log.error("Error executing " + parser.getName() + " - " + e.getMessage(), e);
+				log.atError().withThrowable(e).log("Error executing {} - {}", parser.getName(), e.getMessage());
 
 			try {
 				rsp.sendError(resultCode, e.getMessage());
@@ -139,7 +139,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		// Log excessive execution
 		NewRelic.recordResponseTimeMetric(svc.getClass().getSimpleName(), tt.getMillis());
 		if (tt.getMillis() > 5000)
-			log.warn("Excessive execution time for " + parser.getName().toLowerCase() + " - " + tt.getMillis() + "ms");
+			log.warn("Excessive execution time for {} - {}ms", parser.getName().toLowerCase(), Long.valueOf(tt.getMillis()));
 	}
 
 	/**

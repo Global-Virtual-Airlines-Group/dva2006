@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -140,8 +140,7 @@ abstract class PilotReadDAO extends DAO {
 		String table = (ofs != -1) ? tableName.substring(ofs + 1) : tableName;
 
 		List<Pilot> results = new ArrayList<Pilot>(ids.size());
-		if (log.isDebugEnabled())
-			log.debug("Raw set size = " + ids.size());
+		log.debug("Raw set size = {}", Integer.valueOf(ids.size()));
 
 		// Init the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
@@ -191,7 +190,7 @@ abstract class PilotReadDAO extends DAO {
 				loadAccomplishments(ucMap, dbName);
 				loadPushEndpoints(ucMap, dbName);
 			} catch (SQLException se) {
-				log.error("Query = " + sqlBuf.toString());
+				log.error("Query = {}", sqlBuf);
 				throw new DAOException(se);
 			}
 
@@ -390,7 +389,7 @@ abstract class PilotReadDAO extends DAO {
 						try {
 							p.setExternalID(ExternalID.valueOf(imType), rs.getString(3));
 						} catch (Exception e) {
-							log.warn("Unknown IM address type - " + imType);
+							log.warn("Unknown IM address type - {}", imType);
 						}
 					}	
 				}
