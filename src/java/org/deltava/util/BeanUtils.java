@@ -10,7 +10,7 @@ import org.apache.logging.log4j.*;
 /**
  * A utility class to perform java bean operations.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.4
  */
 
@@ -96,7 +96,7 @@ public class BeanUtils {
 				if (dataChange)
 					results.add(new PropertyChange(propertyName, String.valueOf(p1), String.valueOf(p2)));
 			} catch (Exception e) {
-				log.error(e.getMessage() + " on " + o.getClass().getSimpleName() + "::" + propertyName);
+				log.error("{} on {}::{}", e.getMessage(), o.getClass().getSimpleName(), propertyName);
 			}
 		}
 		

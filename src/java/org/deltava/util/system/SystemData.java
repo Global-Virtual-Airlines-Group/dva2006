@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -51,10 +51,10 @@ public final class SystemData implements Serializable {
 		try {
 			Class<?> ldClass = Class.forName(loaderClassName);
 			loader = (SystemDataLoader) ldClass.getDeclaredConstructor().newInstance();
-			log.debug(String.format("Instantiated %s", loaderClassName));
+			log.debug("Instantiated {}", loaderClassName);
 		} catch (Exception e) {
 			loader = new XMLSystemDataLoader();
-			log.info(String.format("Using default loader class %s", loader.getClass().getSimpleName()));
+			log.info("Using default loader class {}", loader.getClass().getSimpleName());
 		}
 		
 		// Reset the properties
@@ -62,7 +62,7 @@ public final class SystemData implements Serializable {
 		try {
 			_properties.putAll(loader.load());
 		} catch (IOException ie) {
-			log.error("Error loading System Data - " + ie.getMessage(), ie );
+			log.atError().withThrowable(ie).log("Error loading System Data - {}", ie.getMessage());
 		} finally {
 			_properties.put(SystemData.LOADER_NAME, loader.getClass().getName());
 		}

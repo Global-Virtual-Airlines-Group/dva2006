@@ -11,7 +11,7 @@ import org.apache.logging.log4j.*;
 /**
  * A utility class for registering JMX Objects.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.2
  */
 
@@ -36,9 +36,9 @@ public class JMXUtils {
 			ObjectName jmsName = new ObjectName(name);
 			mbs.registerMBean(o, jmsName);
 			_objNames.add(name);
-			log.info(String.format("Registered JMX bean %s", jmsName.getCanonicalName()));
+			log.info("Registered JMX bean {}", jmsName.getCanonicalName());
 		} catch (JMException jme) {
-			log.error(String.format("Error registering %s - %s", name, jme.getMessage()), jme);
+			log.atError().withThrowable(jme).log("Error registering {} - {}", name, jme.getMessage());
 		}
 	}
 	
@@ -52,9 +52,9 @@ public class JMXUtils {
 			ObjectName jmsName = new ObjectName(name);
 			mbs.unregisterMBean(jmsName);
 			_objNames.remove(name);
-			log.info(String.format("Unregistered JMX bean %s", jmsName.getCanonicalName()));
+			log.info("Unregistered JMX bean {}", jmsName.getCanonicalName());
 		} catch (JMException jme) {
-			log.warn(String.format("Error unregistering %s - %s", name, jme.getMessage()), jme);
+			log.atWarn().withThrowable(jme).log("Error unregistering {} - {}", name, jme.getMessage());
 		}
 	}
 	
