@@ -1,5 +1,7 @@
-// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.time.*;
@@ -12,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 9.1
+ * @version 11.1
  * @since 1.0
  */
 
@@ -32,12 +34,8 @@ public abstract class AbstractCommand implements Command {
 		if (_name != null)
 			throw new IllegalStateException(_name + " Command already initialized");
 
-		try {
-			_id = id.trim();
-			_name = cmdName.trim();
-		} catch (NullPointerException npe) {
-			throw new IllegalArgumentException("Command ID/Name cannot be null");
-		}
+		_id = id.trim();
+		_name = cmdName.trim();
 	}
 
 	/**
@@ -49,7 +47,7 @@ public abstract class AbstractCommand implements Command {
 		CommandException ce = new CommandException("Security Error - " + msg, false);
 		ce.setForwardURL("/jsp/error/securityViolation.jsp");
 		ce.setWarning(true);
-		ce.setStatusCode(403);
+		ce.setStatusCode(SC_FORBIDDEN);
 		return ce;
 	}
 	
@@ -69,23 +67,15 @@ public abstract class AbstractCommand implements Command {
 	protected static CommandException notFoundException(String msg) {
 		CommandException ce = new CommandException(msg, false);
 		ce.setWarning(true);
-		ce.setStatusCode(404);
+		ce.setStatusCode(SC_NOT_FOUND);
 		return ce;
 	}
 
-	/**
-	 * Returns the Command name.
-	 * @return the name of the command
-	 */
 	@Override
 	public final String getName() {
 		return _name;
 	}
 
-	/**
-	 * Returns the Command ID.
-	 * @return the command ID
-	 */
 	@Override
 	public final String getID() {
 		return _id;
