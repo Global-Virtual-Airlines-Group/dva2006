@@ -69,6 +69,10 @@ public class SkyMilesScorer extends EliteScorer {
 				addBonus(ffr.getDistance() / 2, "Minimal Time Acceleration", true);
 				_score.setDistance(ffr.getDistance());
 			}
+			
+			// Calculate on-time bonus
+			addBonus(Math.round(ffr.getDistance() * 0.4f), "Early Arrival", (afr.getOnTime() == OnTime.EARLY));
+			addBonus(Math.round(ffr.getDistance() * 0.15f), "On Time Arrival", (afr.getOnTime() == OnTime.EARLY));
 		}
 		
 		return _score;
@@ -82,7 +86,7 @@ public class SkyMilesScorer extends EliteScorer {
 
 		// Check for non-ACARS flights this month
 		boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS); 
-		if (!isACARS && (lvl.getYear() > 2004)) {
+		if (!isACARS) {
 			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).intValue();
 			if (cnt >= MAX_NON_ACARS) {
 				setBase(fr.getDistance() / 2, "Non-ACARS Base Miles");
