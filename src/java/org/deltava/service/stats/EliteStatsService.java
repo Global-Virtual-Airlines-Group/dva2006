@@ -19,7 +19,7 @@ import org.deltava.util.JSONUtils;
 /**
  * A Web Service to display Elite program statistics.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -73,7 +73,7 @@ public class EliteStatsService extends WebService {
 		for (Map.Entry<EliteLevel, Integer> me : allCounts.entrySet()) {
 			EliteLevel el = me.getKey();
 			if (!levelLegend.stream().anyMatch(el::matches))
-				levelLegend.add(me.getKey());
+				levelLegend.add(el);
 			
 			// Get the count, and set to number of years
 			List<Integer> cnts = stats.getOrDefault(el.getName(), new ArrayList<Integer>());
@@ -103,7 +103,7 @@ public class EliteStatsService extends WebService {
 		jo.put("reqs", jro);
 		for (EliteLevel lvl : levelLegend) {
 			JSONObject so = new JSONObject(); Collection<EliteLevel> yrLevels = new TreeSet<EliteLevel>(new EliteLevelComparator());
-			allLevels.stream().filter(lv -> lvl.matches(lv)).forEach(yrLevels::add);
+			allLevels.stream().filter(lvl::matches).forEach(yrLevels::add);
 			so.put("legs", yrLevels.stream().map(EliteLevel::getLegs).collect(Collectors.toList()));
 			so.put("distance", yrLevels.stream().map(EliteLevel::getDistance).collect(Collectors.toList()));
 			jro.put(lvl.getName(), so);
