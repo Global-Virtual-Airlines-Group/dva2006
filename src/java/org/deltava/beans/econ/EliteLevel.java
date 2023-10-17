@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Pilot loyalty status level definitions for a particular year. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -24,7 +24,7 @@ public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel
 	/**
 	 * The first year of the Elite program.
 	 */
-	public static final int MIN_YEAR = 2004;
+	public static final int MIN_YEAR = 2022;
 	
 	private final String _name;
 	private final int _year;
