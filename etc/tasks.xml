@@ -145,7 +145,7 @@
 	</task>
 
 	<!-- Create Online Event Flight Assignments -->
-	<task id="eventassign" enabled="true">
+	<task id="eventassign" enabled="false">
 		<class>org.deltava.tasks.EventAssignTask</class>
 		<time>
 			<min>0,30</min>
