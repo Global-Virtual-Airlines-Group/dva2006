@@ -118,22 +118,29 @@ public class GetElite extends EliteDAO {
 
 		if (dbIDs.size() > 0) {
 			String dbName = formatDBName(db);
-			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, MAX(CREATED) AS CD, UPD_REASON FROM ");
+			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, CREATED, UPD_REASON FROM ");
 			sqlBuf.append(dbName);
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
 			sqlBuf.append(StringUtils.listConcat(dbIDs, ","));
-			sqlBuf.append(")) GROUP BY PILOT_ID ORDER BY CD DESC");
+			sqlBuf.append(")) ORDER BY PILOT_ID, CREATED DESC");
 			
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, dbName);
 				ps.setInt(2, year);
 				results.addAll(executeStatus(ps));
-				populateLevels(results);
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
+			
+			// Now filter - at most one per pilot ID
+			for (Iterator<EliteStatus> i = results.iterator(); i.hasNext(); ) {
+				Integer id = Integer.valueOf(i.next().getID());
+				if (!dbIDs.remove(id))
+					i.remove();
+			}
 		}
 		
+		populateLevels(results);
 		return CollectionUtils.createMap(results, EliteStatus::getID);
 	}
 
