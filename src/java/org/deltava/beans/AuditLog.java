@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A bean to store an audit log record. 
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 7.4
  */
 
@@ -46,7 +46,7 @@ public class AuditLog implements AuditEntry, RemoteAddressBean, Comparable<Audit
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<BeanUtils.PropertyChange> i = delta.iterator(); i.hasNext(); ) {
 			BeanUtils.PropertyChange bc = i.next();
-			buf.append(bc.toString());
+			buf.append(bc.toJSON());
 			if (i.hasNext())
 				buf.append('\n');
 		}

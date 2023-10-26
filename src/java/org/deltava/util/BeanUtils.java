@@ -49,6 +49,14 @@ public class BeanUtils {
 		
 		@Override
 		public String toString() {
+			StringBuilder buf = new StringBuilder(_name).append(": ");
+			buf.append(_old);
+			buf.append("\" -> \"");
+			buf.append(_new);
+			return buf.toString();
+		}
+		
+		public String toJSON() {
 			StringBuilder buf = new StringBuilder(_name).append(": { \"");
 			buf.append(_old);
 			buf.append("\" -> \"");
@@ -78,7 +86,7 @@ public class BeanUtils {
 	public static List<PropertyChange> getDelta(Object o, Object n, String... ignoredFields) {
 		if ((o == null) || (n == null)) return Collections.emptyList();
 		if (!o.getClass().equals(n.getClass()))
-			throw new IllegalArgumentException("Cannot compare " + o.getClass().getName() + " to " + n.getClass().getName());
+			throw new IllegalArgumentException(String.format("Cannot compare %s to %s", o.getClass().getName(), n.getClass().getName()));
 		
 		BeanMap m = new BeanMap(o);
 		PropertyUtilsBean pu = new PropertyUtilsBean();
