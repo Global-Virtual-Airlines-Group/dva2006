@@ -82,7 +82,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				GetWeather wxdao = new GetWeather(con);
 				METAR wxD = wxdao.getMETAR(dfr.getAirportD());
 				if ((wxD != null) && (wxD.getWindSpeed() > 0))
-					runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed()));
+					runways.sort(new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed(), true));
 				
 				// Save runways and best runway
 				Runway rwyD = runways.isEmpty() ? null : runways.get(0);
