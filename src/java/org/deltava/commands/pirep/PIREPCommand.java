@@ -700,13 +700,13 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Load departure and arrival runways
 					if (ac.getCanDispose()) {
-						Collection<Runway> dRwys = navdao.getRunways(fr.getAirportD(), fr.getSimulator());
+						List<Runway> dRwys = navdao.getRunways(fr.getAirportD(), fr.getSimulator());
 						if (info.getRunwayD() != null)
-							dRwys = CollectionUtils.sort(dRwys, new RunwayComparator(info.getRunwayD().getHeading(), 5));	
+							dRwys.sort(new RunwayComparator(info.getRunwayD().getHeading(), 5, false));	
 					
-						Collection<Runway> aRwys = navdao.getRunways(fr.getAirportA(), fr.getSimulator());
+						List<Runway> aRwys = navdao.getRunways(fr.getAirportA(), fr.getSimulator());
 						if (info.getRunwayA() != null)
-							aRwys = CollectionUtils.sort(aRwys, new RunwayComparator(info.getRunwayA().getHeading(), 5));	
+							aRwys.sort(new RunwayComparator(info.getRunwayA().getHeading(), 5, false));	
 					
 						// Save runway choices
 						ctx.setAttribute("dRunways", dRwys, REQUEST);
