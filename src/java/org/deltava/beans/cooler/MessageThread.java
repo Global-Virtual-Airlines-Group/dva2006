@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 */
 	@Override
 	public int getAuthorID() {
-		return (_posts == null) ? _authorID : (_posts.iterator().next()).getAuthorID();
+		return (_posts == null) ? _authorID : _posts.getFirst().getAuthorID();
 	}
 
 	/**

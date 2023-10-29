@@ -1,14 +1,13 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
 
 /**
- * An Authenticator used to migrate user data from one Directory to another. When a user is sucessfully authenticated by
- * the first (&quot;source&quot;) authenticator, the directory name and password are written into the second
- * (&quot;destination&quot;) authenticator and deleted from the source.
+ * An Authenticator used to migrate user data from one Directory to another. When a user is sucessfully authenticated by the first (&quot;source&quot;) 
+ * authenticator, the directory name and password are written into the second (&quot;destination&quot;) authenticator and deleted from the source.
  * @author Luke
- * @version 7.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -33,7 +32,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 		init(propsFile, "migration");
 		
 		// Migration authenticators can only have one destination, so trim things out
-		dst = _dst.iterator().next();
+		dst = _dst.getFirst();
 		if (_dst.size() > 1) {
 			_dst.clear();
 			_dst.add(dst);
