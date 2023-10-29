@@ -46,8 +46,8 @@
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.24.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.12.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.63.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-5.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20231013.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.64.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
