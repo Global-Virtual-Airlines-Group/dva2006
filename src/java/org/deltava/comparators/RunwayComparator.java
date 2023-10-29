@@ -11,7 +11,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A comparator to sort Runways based on appropriateness based on a wind heading. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.6
  */
 
@@ -21,15 +21,6 @@ public class RunwayComparator implements Comparator<Runway>, java.io.Serializabl
 	private final int _spd;
 	private final boolean _compareUse;
 	
-	/**
-	 * Initializes the Comparator.
-	 * @param windHdg the wind heading in degrees  
-	 * @param windSpeed the wind speed in knots
-	 */
-	public RunwayComparator(int windHdg, int windSpeed) {
-		this(windHdg, windSpeed, false);
-	}
-
 	/**
 	 * Initializes the Comparator.
 	 * @param windHdg the wind heading in degrees  
@@ -60,7 +51,7 @@ public class RunwayComparator implements Comparator<Runway>, java.io.Serializabl
 		// the one with the more uses will be smaller - THIS IS A REVERSE SORTER
 		int tmpResult = Integer.compare(hw2 / 3, hw1 / 3);
 		if (tmpResult == 0) tmpResult = Integer.compare(u2, u1);
-		return (tmpResult == 0) ? -r2.compareTo(r1) : tmpResult;
+		return (tmpResult == 0) ? -(r2.compareTo(r1)) : tmpResult;
 	}
 	
 	@Override
