@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class ScheduleSearchCriteria extends Flight {
 
 	private String _sortBy;
 	private String _dbName;
-	private final Collection<String> _eqTypes = new LinkedHashSet<String>();
+	private final SequencedCollection<String> _eqTypes = new LinkedHashSet<String>();
 
 	/**
 	 * Initializes the search criteria.
@@ -302,14 +302,9 @@ public class ScheduleSearchCriteria extends Flight {
 
 	@Override
 	public final String getEquipmentType() {
-		return (_eqTypes.isEmpty()) ? null : _eqTypes.iterator().next();
+		return _eqTypes.isEmpty() ? null : _eqTypes.getFirst();
 	}
 
-	/**
-	 * Adds an equipment type to the criteria.
-	 * @param eqType the equipment type
-	 * @see ScheduleSearchCriteria#addEquipmentType(String)
-	 */
 	@Override
 	public final void setEquipmentType(String eqType) {
 		setEquipmentTypes(List.of(eqType)); // this will also clear the eqTypes set

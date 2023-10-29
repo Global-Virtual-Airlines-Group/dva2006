@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2014, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2014, 2016, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -14,15 +14,15 @@ import org.deltava.beans.*;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 9.1
+ * @version 11.1
  * @since 1.0
  */
 
 class SMTPEnvelope implements NotificationEnvelope<Address> {
 
 	private final EMailAddress _msgFrom;
-	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
-	private final Collection<Address> _copyTo = new LinkedHashSet<Address>();
+	private final SequencedCollection<Address> _msgTo = new LinkedHashSet<Address>();
+	private final SequencedCollection<Address> _copyTo = new LinkedHashSet<Address>();
 	private final Map<String, String> _hdrs = new HashMap<String, String>();
 	
 	private final Instant _createdOn = Instant.now();
@@ -123,7 +123,7 @@ class SMTPEnvelope implements NotificationEnvelope<Address> {
 	
 	@Override
 	public Address getEndpoint() {
-		return _msgTo.iterator().next();
+		return _msgTo.getFirst();
 	}
 	
 	/**
@@ -291,7 +291,6 @@ class SMTPEnvelope implements NotificationEnvelope<Address> {
 			return "UNKNOWN";
 
 		// Get the first recipient
-		Address addr = _msgTo.iterator().next();
-		return addr.toString();
+		return _msgTo.getFirst().toString();
 	}
 }

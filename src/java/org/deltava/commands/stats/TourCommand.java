@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 10.0
  */
 
@@ -263,7 +263,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 			ctx.setAttribute("progressIDs", progressIDs, REQUEST);
 			
 			// Build list of airports
-			Collection<Airport> tourAirports = t.getFlights().stream().flatMap(f -> f.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
+			SequencedCollection<Airport> tourAirports = t.getFlights().stream().flatMap(f -> f.getAirports().stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 			ctx.setAttribute("tourAirports", tourAirports, REQUEST);
 			
 			// Load PIREPs and see current progress
@@ -289,7 +289,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				ctx.setAttribute("maxLeg", Integer.valueOf(maxLeg), REQUEST);
 				if (!t.getFlights().isEmpty()) {
 					if (myAirports.isEmpty()) 
-						ctx.setAttribute("ctr", tourAirports.isEmpty() ? tourFlights.get(tourFlights.size() - 1).getAirportA() : tourAirports.iterator().next(), REQUEST);
+						ctx.setAttribute("ctr", tourAirports.isEmpty() ? tourFlights.getLast().getAirportA() : tourAirports.getFirst(), REQUEST);
 					else
 						ctx.setAttribute("ctr", myAirports.get(myAirports.size() - 1), REQUEST);
 				}
@@ -297,7 +297,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				List<Airport> tourRemaining = new ArrayList<Airport>();
 				t.getFlights().forEach(rp -> filterRoute(rp, tourRemaining));
 				ctx.setAttribute("tourRemaining", tourRemaining, REQUEST);
-				ctx.setAttribute("ctr", tourAirports.iterator().next(), REQUEST);
+				ctx.setAttribute("ctr", tourAirports.getFirst(), REQUEST);
 			}
 
 			readAuditLog(ctx, t);

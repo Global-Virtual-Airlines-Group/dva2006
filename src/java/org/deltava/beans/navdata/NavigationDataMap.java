@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2010, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010, 2012, 2016, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class NavigationDataMap implements Cacheable {
     * @return TRUE if at least one bean with this code is contained within the map, otherwise FALSE
     */
    public boolean contains(String code) {
-      return (code == null) ? false : _entries.containsKey(code.toUpperCase());
+      return (code != null) && _entries.containsKey(code.toUpperCase());
    }
    
    /**
@@ -81,8 +81,8 @@ public class NavigationDataMap implements Cacheable {
     * @see NavigationDataMap#get(String, GeoLocation) 
     */
    public NavigationDataBean get(String code) {
-	   Collection<NavigationDataBean> codes = getEntries(code);
-      return codes.isEmpty() ? null : codes.iterator().next();
+	   SortedSet<NavigationDataBean> codes = getEntries(code);
+	   return codes.isEmpty() ? null : codes.getFirst();
    }
 
    /**
@@ -94,9 +94,9 @@ public class NavigationDataMap implements Cacheable {
     * @see NavigationDataMap#get(String)
     */
    public NavigationDataBean get(String code, GeoLocation loc) {
-      Collection<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
+      SortedSet<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
       codes.addAll(getEntries(code));
-      return codes.isEmpty() ? null : codes.iterator().next();
+      return codes.isEmpty() ? null : codes.getFirst();
    }
    
    /**
