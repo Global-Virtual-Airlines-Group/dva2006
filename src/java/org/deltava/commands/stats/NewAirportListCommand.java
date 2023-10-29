@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 4.0
  */
 
@@ -106,13 +106,13 @@ public class NewAirportListCommand extends AbstractCommand {
 				continue;
 			
 			// Sort the airlines for the airport, default first
-			Collection<String> apAirlines = new LinkedHashSet<String>();
+			SequencedCollection<String> apAirlines = new LinkedHashSet<String>();
 			if (a.hasAirlineCode(defaultCode))
 				apAirlines.add(defaultCode);
 			apAirlines.addAll(a.getAirlineCodes());
 			
 			// Get the first airline and its group
-			String alCode = apAirlines.iterator().next();
+			String alCode = apAirlines.getFirst();
 			Collection<Airport> aps = airports.get(alCode);
 			if (aps == null) {
 				aps = new LinkedHashSet<Airport>();

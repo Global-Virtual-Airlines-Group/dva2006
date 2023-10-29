@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -27,7 +27,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	/**
 	 * The &quot;destination&quot; authenticators.
 	 */
-	protected final Collection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
+	protected final SequencedCollection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
 
 	/**
 	 * The log4j logger.
