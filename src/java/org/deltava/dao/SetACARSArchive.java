@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 9.0
+ * @version 11.1
  * @since 4.1
  */
 
@@ -34,7 +34,7 @@ public class SetACARSArchive extends DAO {
 	 * @param positions a Collection of RouteEntry beans 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
+	public void archive(int flightID, SequencedCollection<? extends RouteEntry> positions) throws DAOException {
 		try {
 			startTransaction();
 			

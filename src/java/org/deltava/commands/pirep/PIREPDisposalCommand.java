@@ -331,10 +331,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				GetACARSPositions posdao = new GetACARSPositions(con);
 				SetACARSArchive acdao = new SetACARSArchive(con);
 				if (fr instanceof ACARSFlightReport) {
-					Collection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
+					SequencedCollection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
 					acdao.archive(acarsID, entries);
 				} else if (fr instanceof XACARSFlightReport) {
-					Collection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
+					SequencedCollection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
 					acdao.archive(acarsID, entries);
 				}
 
