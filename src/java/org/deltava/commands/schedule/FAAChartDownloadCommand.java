@@ -268,8 +268,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			int poolSize = SystemData.getInt("schedule.chart.threads", 8);
 			int queueSize = 0; TaskTimer tt = new TaskTimer(); 
 			
-			// TODO: Use Virtual Threads
-			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(poolSize, poolSize, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), Thread.ofVirtual().factory())) {
 				exec.allowCoreThreadTimeOut(true);
 			
 				// Queue the charts
