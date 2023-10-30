@@ -48,14 +48,14 @@ public class ACARSDataPurgeTask extends Task {
 			SetACARSPurge pwdao = new SetACARSPurge(con);
 			Collection<Integer> unsynchedIDs = prdao.getUnsynchedACARSFlights();
 			for (Integer ID : unsynchedIDs) {
-				Collection<? extends RouteEntry> entries = posdao.getRouteEntries(ID.intValue(), false);
+				SequencedCollection<? extends RouteEntry> entries = posdao.getRouteEntries(ID.intValue(), false);
 				log.warn("Moved unsynchronized ACARS flight {} to archive", ID);
 				awdao.archive(ID.intValue(), entries);
 			}
 			
 			unsynchedIDs = prdao.getUnsynchedXACARSFlights();
 			for (Integer ID : unsynchedIDs) {
-				Collection<? extends RouteEntry> entries = posdao.getXACARSEntries(ID.intValue());
+				SequencedCollection<? extends RouteEntry> entries = posdao.getXACARSEntries(ID.intValue());
 				log.warn("Moved unsynchronized XACARS flight {} to archive", ID);
 				awdao.archive(ID.intValue(), entries);
 			}
