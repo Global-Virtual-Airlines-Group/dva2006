@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.0
  */
 
@@ -267,7 +267,7 @@ public class FlightSubmissionHelper {
 		GetEquipmentType eqdao = new GetEquipmentType(_c);
 		EquipmentType eqType = eqdao.get(_p.getEquipmentType(), _db);
 		if (!_p.getRatings().contains(_fr.getEquipmentType()) && !eqType.getRatings().contains(_fr.getEquipmentType())) {
-			log.info(_p.getName() + " not rated in " + _fr.getEquipmentType() + " ratings = " + _p.getRatings());
+			log.info("{} not rated in {} ratings - {}", _p.getName(), _fr.getEquipmentType(), _p.getRatings());
 			_fr.setAttribute(FlightReport.ATTR_NOTRATED, !_fr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 		}
 		
@@ -279,7 +279,7 @@ public class FlightSubmissionHelper {
 				String pType = i.next();
 				EquipmentType pEQ = eqdao.get(pType, _db);
 				if (pEQ == null)
-					log.warn("Cannot find " + pType + " in " + _db);
+					log.warn("Cannot find {} in {}", pType, _db);
 				
 				boolean isOK = helper.canPromote(pEQ);
 				if (!isOK) {
@@ -292,7 +292,7 @@ public class FlightSubmissionHelper {
 			if (!promoEQ.isEmpty())
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Flight eligible for promotion in %s" , StringUtils.listConcat(promoEQ, ", ")));
 		} else if (promoEQ.isEmpty())
-			log.warn("No equipment program found for " + _fr.getEquipmentType() + " in " + _db);
+			log.warn("No equipment program found for {} in {}", _fr.getEquipmentType(), _db);
 	}
 	
 	/**
