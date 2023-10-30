@@ -197,7 +197,7 @@ public class FAAChartLoaderTask extends Task {
 			// Create the thread pool
 			int maxSize = SystemData.getInt("schedule.chart.threads", 8); TaskTimer tt = new TaskTimer();
 			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
-			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(maxSize, maxSize, 250, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())) {
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(maxSize, maxSize, 250, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), Thread.ofVirtual().factory())) {
 				exec.allowCoreThreadTimeOut(true);
 
 				// Queue the charts
