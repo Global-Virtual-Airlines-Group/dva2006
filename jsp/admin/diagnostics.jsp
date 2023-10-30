@@ -125,6 +125,13 @@ Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize va
  <td class="label">Google Maps API Usage</td>
  <td class="data"><fmt:int value="${d_APIuse}" /> dynamic, <fmt:int value="${s_APIuse}" /> static since application start</td>
 </tr>
+<c:if test="${!empty buildDataCore && !empty buildDataJSP}">
+<tr>
+ <td class="label">Build Information</td>
+ <td class="data"><span class="pri bld">Core</span> - Built on ${buildDataCore['build.date']} on Java ${buildDataCore['build.jvm']} / ${buildDataCore['build.os']}<br />
+<span class="pri bld">JSP</span> - Built on ${buildDataJSP['build.date']} on Java ${buildDataJSP['build.jvm']} / ${buildDataJSP['build.os']}</td>
+</tr>
+</c:if>
 </el:table>
 <%@ include file="/jsp/admin/diag/jdbcPool.jspf" %>
 <%@ include file="/jsp/admin/diag/daoCache.jspf" %>
