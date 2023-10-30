@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -171,7 +171,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				GetACARSPositions posdao = new GetACARSPositions(con);
 				SetACARSArchive acdao = new SetACARSArchive(con);
 				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
-				Collection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
+				SequencedCollection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
 				acdao.archive(acarsID, entries);
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}

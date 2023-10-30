@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2018, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge orphaned ACARS position entries.
  * @author Luke
- * @version 8.1
+ * @version 11.1
  * @since 3.2
  */
 
@@ -68,13 +68,13 @@ public class ACARSPositionPurgeTask extends Task {
 				FlightInfo fInfo = dao.getInfo(id);
 				if (fInfo == null) {
 					int purgeCount = wdao.deletePositions(id);
-					log.warn("Flight ID " + id + " not found, purged " + purgeCount + " poistions");
+					log.warn("Flight ID {} not found, purged {} positions", Integer.valueOf(id), Integer.valueOf(purgeCount));
 
 				// If we're supposed to be archived, archive positions
 				} else if (fInfo.getArchived()) {
-					Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
+					SequencedCollection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
 					arcdao.archive(id, entries);
-					log.warn("Flight ID " + id + " archived, moved " + entries.size() + " poistions");
+					log.warn("Flight ID {}, moved {} positions", Integer.valueOf(id), Integer.valueOf(entries.size()));
 
 				// If we don't have a PIREP, nuke
 				} else if (!fInfo.getHasPIREP()) {
@@ -82,7 +82,7 @@ public class ACARSPositionPurgeTask extends Task {
 					wdao.deleteInfo(id);
 					int purgeCount = wdao.deletePositions(id);
 					ctx.commitTX();
-					log.warn("Flight ID " + id + " has no PIREP, purged " + purgeCount + " poistions");
+					log.warn("Flight ID {} has no PIREP, purged {} positions", Integer.valueOf(id), Integer.valueOf(purgeCount));
 
 				// Validate that the PIREP does exist
 				} else {
@@ -97,17 +97,17 @@ public class ACARSPositionPurgeTask extends Task {
 								cr.setStatus(TestStatus.NEW);
 
 							exwdao.write(cr);
-							log.warn("Reset Check Ride " + cr.getID() + " for Flight ID " + id);
+							log.warn("Reset Check Ride {} for Flight ID {}", Integer.valueOf(cr.getID()), Integer.valueOf(id));
 						}
 
 						wdao.deleteInfo(id);
 						int purgeCount = wdao.deletePositions(id);
 						ctx.commitTX();
-						log.warn("Flight ID " + id + " has no PIREP, purged " + purgeCount + " poistions");
+						log.warn("Flight ID {} has no PIREP, purged {} positions", Integer.valueOf(id), Integer.valueOf(purgeCount));
 					} else if ((afr.getStatus() == FlightStatus.OK) || (afr.getStatus() == FlightStatus.REJECTED)) {
-						Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
+						SequencedCollection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
 						arcdao.archive(id, entries);
-						log.warn("Flight ID " + id + " is not archived, moved " + entries.size() + " poistions");
+						log.warn("Flight ID {} is not archived, moved {} positions", Integer.valueOf(id), Integer.valueOf(entries.size()));
 					}
 				}
 			}
