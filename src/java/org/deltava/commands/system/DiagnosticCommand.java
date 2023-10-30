@@ -56,7 +56,7 @@ public class DiagnosticCommand extends AbstractCommand {
 				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
 				ctx.setAttribute("osMemInfo", procdao.getMemory(), REQUEST);
 			} catch (DAOException de) {
-				log.error(de.getMessage());
+				log.atError().withThrowable(de).log(de.getMessage());
 			}
 		}
 
@@ -132,6 +132,10 @@ public class DiagnosticCommand extends AbstractCommand {
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);
+		
+		// Load build data
+		ctx.setAttribute("buildDataCore", BuildUtils.getBuildInfo("golgotha_build.properties"), REQUEST);
+		ctx.setAttribute("buildDataJSP", BuildUtils.getBuildInfo("golgotha_jsp_build.properties"), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
