@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved. -->
-<project default="deploy">
+<project default="deploy" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="20" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="21" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -107,7 +107,6 @@
 	</target>
 	
 	<target name="compile" unless="task.compile" description="Compile the Java classes">
-		<!-- Set build date/time -->
 		<tstamp>
 			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss Z" />
 		</tstamp>
@@ -119,9 +118,9 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="20" target="20" compiler="modern" fork="true">
-			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
-			<compilerarg value="--enable-preview" />
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" updatedProperty="jar.compile" includeantruntime="false" debuglevel="lines,vars,source" source="21" target="21" compiler="modern" fork="true">
+			<compilerarg value="-Xlint:unchecked,deprecation,path,finally,-options" />
+			<compilerarg value="-proc:none" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
 		    	<fileset dir="lib">
@@ -130,16 +129,45 @@
 	    	</classpath>
 		</javac>
 		
+		<!-- Load version constant -->
+		<taskdef classname="org.gvagroup.ant.VersionInfoTask" name="versionInfo">
+			<classpath id="vi.classpath">
+				<pathelement path="${classpath}" />
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+				<pathelement path="${java.io.tmpdir}/build/classes" />
+			</classpath>
+		</taskdef>
+    	
+		<versionInfo property="v.major" className="org.deltava.beans.system.VersionInfo" fieldName="MAJOR" />
+		<versionInfo property="v.minor" className="org.deltava.beans.system.VersionInfo" fieldName="MINOR" />
+		<versionInfo property="v.build" className="org.deltava.beans.system.VersionInfo" fieldName="BUILD" />
+		
 		<!-- Save Build date/time in property file -->
-		<propertyfile file="${java.io.tmpdir}/build/golgotha_build.properties" comment="Golgotha build properties">
+		<propertyfile if:set="jar.compile" file="${java.io.tmpdir}/build/classes/golgotha_build.properties" comment="Golgotha build properties">
 			<entry key="build.date" value="${build_utc}" />
+			<entry key="build.ts" value="${ant.tstamp}" />
 			<entry key="build.ant" value="${ant.version}" />
 			<entry key="build.jvm" value="${ant.java.version}" />
 			<entry key="build.os" value="${os.name} ${os.version} ${os.arch}" />
+			<entry key="build.user" value="${user.name}" />
+			<entry key="build.version" value="${v.major} ${v.minor} ${v.build}" />
 		</propertyfile>
+    	
+		<!-- Build the manifest -->
+		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+			<section name="common">
+				<attribute name="Specification-Title" value="Golgotha" />
+				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
+				<attribute name="Specification-Vendor" value="Global Virtual Airlines Group" />
+				<attribute name="Implementation-Title" value="Golgotha" />
+				<attribute name="Implementation-Version" value="${v.major}.${v.minor}.${v.build}" />
+				<attribute name="Implementation-Vendor" value="Global Virtual Airlines Group" />
+			</section>
+		</manifest>
 		
 		<!-- Compress the base Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.core}">
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.core}" manifest="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
 			<exclude name="org/deltava/commands/**/*.class" />
 			<exclude name="org/deltava/security/command/*.class" />
 			<exclude name="org/deltava/discord/*.class" />
@@ -151,7 +179,7 @@
 		</jar>
 		
 		<!-- Compress the web-specific classes into another JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.web}">
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.web}" manifest="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
 			<include name="org/deltava/commands/**/*.class" />
 			<include name="org/deltava/security/command/*.class" />
 			<include name="org/deltava/discord/*.class" />
@@ -161,11 +189,15 @@
 			<include name="org/deltava/taskman/*.class" />
 			<include name="org/deltava/tasks/*.class" />
 		</jar>
-		
+    	
 		<property name="task.compile" value="true" />
 	</target>
 
 	<target name="jspc" depends="compile" unless="task.jspc" description="Precompile the JSP pages">
+		<tstamp>
+			<format property="build_jsp_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss Z" />
+		</tstamp>
+		
 		<property name="jspc.webXMLInc" value="${java.io.tmpdir}/src/jsp/include.xml" />
 		<taskdef classname="org.apache.jasper.JspC" name="jasper2">
 			<classpath id="jspc.classpath"> 
@@ -179,24 +211,61 @@
 		<delete file="${java.io.tmpdir}/build/web.xml" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 		
+		<!-- Load version constant -->
+		<taskdef unless:set="${v.major}" classname="org.gvagroup.ant.VersionInfoTask" name="versionInfo">
+			<classpath id="vi.classpath">
+				<pathelement path="${classpath}" />
+				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
+				<fileset dir="${java.io.tmpdir}/build" includes="golgotha.jar" />
+			</classpath>
+		</taskdef>
+		
+		<versionInfo property="v.major" className="org.deltava.beans.system.VersionInfo" fieldName="MAJOR" />
+		<versionInfo property="v.minor" className="org.deltava.beans.system.VersionInfo" fieldName="MINOR" />
+		<versionInfo property="v.build" className="org.deltava.beans.system.VersionInfo" fieldName="BUILD" />
+		
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.20" compilerSourceVM="1.20" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.21" compilerSourceVM="1.21" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="20" source="20" includeantruntime="false" fork="true">
-			<compilerarg value="-Xlint:deprecation,finally" />
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" updatedProperty="jsp.compile" compiler="modern" debug="on" debuglevel="source" target="21" source="21" includeantruntime="false" fork="true">
+			<compilerarg value="-Xlint:deprecation,finally,-options" />
+			<compilerarg value="-proc:none" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
 		
+    	<propertyfile if:set="jsp.compile" file="${java.io.tmpdir}/build/jsp/golgotha_jsp_build.properties" comment="Golgotha JSP build properties">
+    		<entry key="build.date" value="${build_jsp_utc}" />
+    		<entry key="build.ts" value="${ant.tstamp}" />
+			<entry key="build.ant" value="${ant.version}" />
+			<entry key="build.jvm" value="${ant.java.version}" />
+    		<entry key="build.os" value="${os.name} ${os.version} ${os.arch}" />
+    		<entry key="build.user" value="${user.name}" />
+    		<entry key="build.version" value="${v.major} ${v.minor} ${v.build}" />
+    	</propertyfile>
+		
+		<!-- Build the manifest -->
+		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_jsp_MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+			<section name="common">
+				<attribute name="Specification-Title" value="Golgotha JSP" />
+				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
+				<attribute name="Specification-Vendor" value="Global Virtual Airlines Group" />
+				<attribute name="Implementation-Title" value="Golgotha JSP" />
+				<attribute name="Implementation-Version" value="${v.major}.${v.minor}.${v.build}" />
+				<attribute name="Implementation-Vendor" value="Global Virtual Airlines Group" />
+			</section>
+		</manifest>
+		
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true" destfile="${jar.jsp}" />
-		 		 
+    	
 		<!-- Merge the precompile definitions into web.xml -->
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
 		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
