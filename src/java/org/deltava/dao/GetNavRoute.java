@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.6
  */
 
@@ -88,7 +88,7 @@ public class GetNavRoute extends GetOceanicRoute {
 
 		// Get the route text
 		List<String> tkns = StringUtils.split(rt2, " ");
-		GeoLocation lastPosition = start; Collection<Airway> aws = new ArrayList<Airway>();
+		GeoLocation lastPosition = start; SequencedCollection<Airway> aws = new ArrayList<Airway>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);
@@ -151,7 +151,7 @@ public class GetNavRoute extends GetOceanicRoute {
 					airways.addAll(aws);
 					aw = airways.first();
 				} else
-					aw = aws.iterator().next();
+					aw = aws.getFirst();
 				
 				// Get the waypoints
 				String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
