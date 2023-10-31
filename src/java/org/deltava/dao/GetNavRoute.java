@@ -228,7 +228,7 @@ public class GetNavRoute extends GetOceanicRoute {
 			TerminalRoute star = getRoute(rt.getSTAR());
 			if (star != null) {
 				pr.setSTAR(rt.getSTAR());
-				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.get(wpCodes.size() - 1);
+				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.getLast();
 				for (NavigationDataBean nd : star.getWaypoints(transition))
 					pr.addWaypoint(nd, star.getCode());
 			}

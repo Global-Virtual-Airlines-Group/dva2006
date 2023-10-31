@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -91,7 +91,7 @@ public class MapRouteService extends WebService {
 					if (sid != null) {
 						wps.remove(0);
 						if (!CollectionUtils.isEmpty(wps))
-							p.addWaypoints(sid.getWaypoints(wps.get(0)));
+							p.addWaypoints(sid.getWaypoints(wps.getFirst()));
 						else
 							p.addWaypoints(sid.getWaypoints());
 					}
@@ -101,12 +101,12 @@ public class MapRouteService extends WebService {
 
 				// Load the STAR
 				if (wps.size() > 2) {
-					String name = wps.get(wps.size() - 1);
+					String name = wps.getLast();
 					TerminalRoute star = navdao.getBestRoute(p.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
 					if (star != null) {
 						wps.remove(wps.size() - 1);
 						if (!CollectionUtils.isEmpty(wps))
-							p.addWaypoints(star.getWaypoints(wps.get(wps.size() - 1)));
+							p.addWaypoints(star.getWaypoints(wps.getLast()));
 						else
 							p.addWaypoints(star.getWaypoints());
 					}

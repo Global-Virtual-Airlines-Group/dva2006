@@ -337,9 +337,9 @@ public class FlightSubmissionHelper {
 	public void calculateGates() throws DAOException {
 		if (!(_fr instanceof FDRFlightReport ffr) ||  (_rte.size() < 2)) return;
 		if (!GeoUtils.isValid(ffr.getStartLocation()))
-			ffr.setStartLocation(_rte.get(0));
+			ffr.setStartLocation(_rte.getFirst());
 		if (!GeoUtils.isValid(ffr.getEndLocation()))
-			ffr.setEndLocation(_rte.get(_rte.size() - 1));
+			ffr.setEndLocation(_rte.getLast());
 		
 		GeoComparator dgc = new GeoComparator(ffr.getStartLocation(), true);
 		GeoComparator agc = new GeoComparator(ffr.getEndLocation(), true);

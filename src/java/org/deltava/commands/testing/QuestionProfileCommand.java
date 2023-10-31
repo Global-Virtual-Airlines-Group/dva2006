@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -268,7 +268,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 				Collection<NavigationDataBean> rt = new LinkedHashSet<NavigationDataBean>();
 				rt.add(new AirportLocation(rp.getAirportD()));
 				if ((wps.size() > 1) && (wps.get(0).indexOf('.') != -1)) {
-					TerminalRoute sid = rtdao.getRoute(rp.getAirportD(), TerminalRoute.Type.SID, wps.get(0));
+					TerminalRoute sid = rtdao.getRoute(rp.getAirportD(), TerminalRoute.Type.SID, wps.getFirst());
 					if (sid != null) {
 						rt.addAll(sid.getWaypoints());
 						wps.remove(0);
@@ -277,7 +277,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 				
 				rt.addAll(rtdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), rp.getAirportD()));
 				if ((wps.size() > 1) && (wps.get(wps.size() - 1).indexOf('.') != -1)) {
-					TerminalRoute star = rtdao.getRoute(rp.getAirportA(), TerminalRoute.Type.STAR, wps.get(wps.size() - 1));
+					TerminalRoute star = rtdao.getRoute(rp.getAirportA(), TerminalRoute.Type.STAR, wps.getLast());
 					if (star != null)
 						rt.addAll(star.getWaypoints());
 				}

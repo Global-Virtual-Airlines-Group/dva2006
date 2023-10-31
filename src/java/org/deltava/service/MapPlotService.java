@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.JSONUtils;
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 7.5
+ * @version 11.1
  * @since 2.3
  */
 
@@ -30,11 +30,11 @@ public abstract class MapPlotService extends WebService {
 		GeoLocation mp = null; 
 		int distance = 500;
 		if (points.size() > 1) {
-			NavigationDataBean ndf = points.get(0);
-			mp = ndf.getPosition().midPoint(points.get(points.size() - 1));
-			distance = ndf.getPosition().distanceTo(points.get(points.size() - 1));
+			NavigationDataBean ndf = points.getFirst();
+			mp = ndf.getPosition().midPoint(points.getLast());
+			distance = ndf.getPosition().distanceTo(points.getLast());
 		} else if (points.size() == 1)
-			mp = points.get(0);
+			mp = points.getFirst();
 
 		// Save the midpoint
 		JSONObject jo = new JSONObject();
@@ -46,7 +46,7 @@ public abstract class MapPlotService extends WebService {
 		}
 
 		// Write the entries
-		GeoLocation start = points.isEmpty() ? null : points.get(0); distance = 0;
+		GeoLocation start = points.isEmpty() ? null : points.getFirst(); distance = 0;
 		for (NavigationDataBean entry : points) {
 			distance += entry.distanceTo(start);
 			JSONObject po = new JSONObject();
@@ -65,10 +65,6 @@ public abstract class MapPlotService extends WebService {
 		return jo;
 	}
 	
-	/**
-	 * Returns if the Web Service invocation is logged.
-	 * @return FALSE
-	 */
 	@Override
 	public boolean isLogged() {
 		return false;

@@ -120,7 +120,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				}
 				
 				// Get current status
-				EliteStatus myCurrentStatus = myStatus.get(myStatus.size() - 1);
+				EliteStatus myCurrentStatus = myStatus.getLast();
 				ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
 				ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
 					
@@ -327,7 +327,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				List<Course> courses = new ArrayList<Course>(fadao.getByPilot(p.getID()));
 				ctx.setAttribute("courses", courses, REQUEST);
 				if (!courses.isEmpty()) {
-					Course c = courses.get(courses.size() - 1);
+					Course c = courses.getLast();
 					if (c.getStatus() == Status.STARTED)
 						ctx.setAttribute("course", c, REQUEST);
 				}
