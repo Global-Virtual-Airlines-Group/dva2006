@@ -29,7 +29,7 @@
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -51,9 +51,7 @@ golgotha.form.submit(f);
 return true;
 };
 
-golgotha.local.openEmoticons = function() {
-	return window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
-};
+golgotha.local.openEmoticons = function() {	return window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes'); };
 <c:if test="${access.canReply && !doEdit}">
 golgotha.local.postQuote = function(postID, f)
 {
@@ -142,7 +140,7 @@ return true;
 <c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
 <br />
 <span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
-<c:if test="${!empty eliteStatus}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" showYear="true" /><br /></c:if>
+<c:if test="${!empty eliteStatus && (eliteLevel.level.legs > 0)}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" showYear="true" /><br /></c:if>
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
@@ -348,7 +346,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script>
+<script async>
 const postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
