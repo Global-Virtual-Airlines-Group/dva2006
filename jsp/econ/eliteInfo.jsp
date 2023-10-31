@@ -55,7 +55,7 @@ span.rmbar {
 
 <!-- Pilot Information -->
 <tr class="title caps">
- <td class="eliteStatus" colspan="2" ><content:airline />&nbsp;${eliteName} PROGRAM - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td class="eliteStatus" colspan="2" ><content:airline />&nbsp;${eliteName} PROGRAM - <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <c:set var="currentLevels" value="${levels[currentYear]}" scope="page" />
 <c:set var="ct" value="${totals[currentYear]}" scope="page" />
@@ -153,7 +153,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 </c:forEach>
 
 <!-- Bottom Bar -->
-<tr class="title"><td class="eliteStatus" colspan="2">&nbsp;</td></tr>
+<tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" /></td></tr>
 </el:table>
 <content:copyright />
 </content:region>
