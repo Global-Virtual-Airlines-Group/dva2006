@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -55,7 +55,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 				ctx.startTX();
 				List<EliteStatus> status = eldao.getAllStatus(p.getID(), (year - 1));
 				status.removeIf(es -> es.getUpgradeReason().isRollover());
-				EliteStatus st = status.get(status.size() - 1);
+				EliteStatus st = status.getLast();
 				
 				// Calcualte new level
 				EliteLevel newLevel = lvls.stream().filter(lv -> lv.matches(st.getLevel())).findFirst().orElse(lvls.first());

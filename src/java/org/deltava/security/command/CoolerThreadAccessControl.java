@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Water Cooler Threads.
  * @author Luke
- * @version 8.6
+ * @version 11.1
  * @since 1.0
  */
 
@@ -66,9 +66,6 @@ public final class CoolerThreadAccessControl extends AccessControl {
 		_cac = new CoolerChannelAccessControl(ctx, _c);
 	}
 
-	/**
-	 * Calculates access rights.
-	 */
 	@Override
 	public void validate() {
 		validateContext();
@@ -108,7 +105,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
 		// Check if we can update the thread - ie. we have written the last reply and we can edit
 		if (_canReply && (!_mt.getPosts().isEmpty())) {
 			List<Message> posts = _mt.getPosts();
-			Message msg = posts.get(posts.size() - 1);
+			Message msg = posts.getLast();
 			_canEdit = (msg.getAuthorID() == _ctx.getUser().getID());
 			_canDelete |= (isOurs && (posts.size() == 1));
 		}

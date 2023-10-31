@@ -183,7 +183,7 @@ public class RoutePlotMapService extends MapPlotService {
 			if (star != null) {
 				req.put("star", star.toString());
 				if (!CollectionUtils.isEmpty(wps))
-					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
+					routePoints.addAll(star.getWaypoints(wps.getLast()));
 				else
 					routePoints.addAll(star.getWaypoints());
 				

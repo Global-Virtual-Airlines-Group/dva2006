@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 5.4
+ * @version 11.1
  * @since 2.2
  */
 
@@ -65,7 +65,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.Type.SID, ctx.getParameter("sid"), true);
 			if (sid != null) {
 				rp.setSID(sid.getCode());
-				String transition = wpCodes.isEmpty() ? sid.getTransition() : wpCodes.get(0);
+				String transition = wpCodes.isEmpty() ? sid.getTransition() : wpCodes.getFirst();
 				for (NavigationDataBean nd : sid.getWaypoints(transition))
 					rp.addWaypoint(nd, sid.getCode());
 			}
@@ -81,7 +81,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.Type.STAR, ctx.getParameter("star"), true);
 			if (star != null) {
 				rp.setSTAR(star.getCode());
-				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.get(wpCodes.size() - 1);
+				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.getLast();
 				for (NavigationDataBean nd : star.getWaypoints(transition))
 					rp.addWaypoint(nd, star.getCode());
 			}

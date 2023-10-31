@@ -96,13 +96,13 @@ public class RoutePlotCommand extends AbstractCommand {
 				// Load up route
 				if (!StringUtils.isEmpty(dfr.getRoute())) {
 					List<String> wps = StringUtils.split(dfr.getRoute(), " ");
-					if (TerminalRoute.isNameValid(wps.get(0))) {
+					if (TerminalRoute.isNameValid(wps.getFirst())) {
 						if ((rwyD != null) && (wps.size() > 1))
-							ctx.setAttribute("sid", navdao.getBestRoute(dfr.getAirportD(), TerminalRoute.Type.SID, wps.get(0), wps.get(1), rwyD), REQUEST);
+							ctx.setAttribute("sid", navdao.getBestRoute(dfr.getAirportD(), TerminalRoute.Type.SID, wps.getFirst(), wps.get(1), rwyD), REQUEST);
 						
 						wps.remove(0);
-					} if ((wps.size() > 1) && TerminalRoute.isNameValid(wps.get(wps.size() - 1))) {
-						ctx.setAttribute("star", navdao.getBestRoute(dfr.getAirportA(), TerminalRoute.Type.STAR, wps.get(wps.size() -1), wps.get(wps.size() - 2), (String)null), REQUEST);
+					} if ((wps.size() > 1) && TerminalRoute.isNameValid(wps.getLast())) {
+						ctx.setAttribute("star", navdao.getBestRoute(dfr.getAirportA(), TerminalRoute.Type.STAR, wps.getLast(), wps.get(wps.size() - 2), (String)null), REQUEST);
 						wps.remove(wps.size() - 1);
 					}
 					
