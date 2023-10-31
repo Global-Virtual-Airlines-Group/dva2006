@@ -141,6 +141,7 @@ public class GetElite extends EliteDAO {
 		}
 		
 		populateLevels(results);
+		_stCache.addAll(results);
 		return CollectionUtils.createMap(results, EliteStatus::getID);
 	}
 
@@ -153,7 +154,7 @@ public class GetElite extends EliteDAO {
 	 */
 	public EliteStatus getStatus(int pilotID, int year) throws DAOException {
 		List<EliteStatus> results = getAllStatus(pilotID, year);
-		return results.isEmpty() ? null : results.get(results.size() - 1);
+		return results.isEmpty() ? null : results.getLast();
 	}
 	
 	/**
@@ -179,7 +180,8 @@ public class GetElite extends EliteDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
+		_stCache.addAll(results);
 		return results;
 	}
 	
