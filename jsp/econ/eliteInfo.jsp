@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <style type="text/css">
-table.form td.eliteStatus {
+table.form td.eliteStatus, .button {
 	color: #ffffff;
 	background-color: #${currentStatus.level.hexColor};
 }
