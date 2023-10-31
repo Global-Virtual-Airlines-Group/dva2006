@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
  * @author Luke
- * @version 7.3
+ * @version 11.1
  * @since 1.0
  */
 
@@ -99,8 +99,8 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Calculate and save the map center for the Google Map
 			if (!positions.isEmpty()) {
-			   GeoPosition start = new GeoPosition(positions.get(0));
-			   GeoLocation end = positions.get(positions.size() - 1);
+			   GeoPosition start = new GeoPosition(positions.getFirst());
+			   GeoLocation end = positions.getLast();
 			   ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
 			   ctx.setAttribute("routeLength", Integer.valueOf(start.distanceTo(end)), REQUEST);
 			} else {

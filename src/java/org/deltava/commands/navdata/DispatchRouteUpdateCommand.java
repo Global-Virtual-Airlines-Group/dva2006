@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to ensure Dispatch Routes have the latest Terminal Route waypoints.
  * @author Luke
- * @version 5.1
+ * @version 11.1
  * @since 2.6
  */
 
@@ -40,8 +40,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 			Collection<String> msgs = new ArrayList<String>();
 			GetACARSRoute rdao = new GetACARSRoute(con);
 			Collection<DispatchRoute> routes = rdao.getAll(true, true);
-			for (Iterator<DispatchRoute> i = routes.iterator(); i.hasNext(); ) {
-				DispatchRoute rt = i.next();
+			for (DispatchRoute rt : routes) {
 				boolean isUpdated = false;
 				
 				// Get the SID/STAR transition if different
@@ -70,10 +69,8 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 						// Add the waypoints
 						String startWP = wps.isEmpty() ? null : wps.get(0);
 						LinkedList<NavigationDataBean> waypoints = new LinkedList<NavigationDataBean>(sid.getWaypoints(startWP));
-						for (Iterator<NavigationDataBean> ni = waypoints.descendingIterator(); ni.hasNext(); ) {
-							NavigationDataBean nd = ni.next();		
-							rt.insertWaypoint(nd, sid.getName());
-						}
+						for (Iterator<NavigationDataBean> ni = waypoints.descendingIterator(); ni.hasNext(); )
+							rt.insertWaypoint(ni.next(), sid.getName());
 					} else {
 						String msg = "Invalid SID - " + rt.getSID() + ", disabling Route #" + rt.getID();
 						msgs.add(msg);
@@ -104,11 +101,9 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 						isUpdated = true;
 						
 						// Add the waypoints
-						String endWP = wps.isEmpty() ? null : wps.get(wps.size() - 1);
-						for (Iterator<NavigationDataBean> ni = star.getWaypoints(endWP).iterator(); ni.hasNext(); ) {
-							NavigationDataBean nd = ni.next();
-							rt.addWaypoint(nd, star.getName());
-						}
+						String endWP = wps.isEmpty() ? null : wps.getLast();
+						for (Iterator<NavigationDataBean> ni = star.getWaypoints(endWP).iterator(); ni.hasNext(); )
+							rt.addWaypoint(ni.next(), star.getName());
 					} else {
 						String msg = "Invalid STAR - " + rt.getSTAR() + ", disabling Route #" + rt.getID();
 						msgs.add(msg);

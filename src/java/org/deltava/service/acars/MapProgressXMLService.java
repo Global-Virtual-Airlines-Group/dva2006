@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class MapProgressXMLService extends WebService {
 			GetTrack tkdao = new GetTrack();
 			tempPoints.addAll(tkdao.getTrack(true, String.valueOf(id)));
 			if (!routePoints.isEmpty())
-				tempPoints.add(0, routePoints.get(routePoints.size() - 1));
+				tempPoints.add(0, routePoints.getLast());
 
 			// Load the route and the route waypoints
 			if ((info != null) && doRoute) {

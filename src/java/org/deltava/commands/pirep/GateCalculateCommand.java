@@ -18,7 +18,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the gates used.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 5.1
  */
 
@@ -60,8 +60,8 @@ public class GateCalculateCommand extends AbstractCommand {
 
 			// Load the positions
 			List<? extends RouteEntry> entries = acdao.getRouteEntries(info.getID(), info.getArchived());
-			GeoComparator dgc = new GeoComparator(entries.get(0), true);
-			GeoComparator agc = new GeoComparator(entries.get(entries.size() - 1), true);
+			GeoComparator dgc = new GeoComparator(entries.getFirst(), true);
+			GeoComparator agc = new GeoComparator(entries.getLast(), true);
 
 			// Get the closest departure gate
 			GetGates gdao = new GetGates(con);

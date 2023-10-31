@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.3
  */
 
@@ -85,8 +85,8 @@ public class RoutePlotService extends MapPlotService {
 			List<String> wps = StringUtils.split(answer, " ");
 			wps.remove(rpq.getAirportD().getICAO());
 			wps.remove(rpq.getAirportA().getICAO());
-			if ((wps.size() > 1) && (wps.get(0).indexOf('.') != -1)) {
-				TerminalRoute sid = dao.getRoute(rpq.getAirportD(), TerminalRoute.Type.SID, wps.get(0));
+			if ((wps.size() > 1) && (wps.getFirst().indexOf('.') != -1)) {
+				TerminalRoute sid = dao.getRoute(rpq.getAirportD(), TerminalRoute.Type.SID, wps.getFirst());
 				if (sid != null) {
 					routePoints.addAll(sid.getWaypoints());
 					wps.remove(0);
@@ -99,7 +99,7 @@ public class RoutePlotService extends MapPlotService {
 			// Check if we have a STAR
 			TerminalRoute star = null;
 			if ((wps.size() > 1) && (wps.get(wps.size() - 1).indexOf('.') != -1)) {
-				star = dao.getRoute(rpq.getAirportA(), TerminalRoute.Type.STAR, wps.get(wps.size() - 1));
+				star = dao.getRoute(rpq.getAirportA(), TerminalRoute.Type.STAR, wps.getLast());
 				if (star != null) {
 					wps.remove(wps.size() - 1);
 					for (NavigationDataBean nd : star.getWaypoints())
