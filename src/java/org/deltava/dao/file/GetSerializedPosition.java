@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 4.1
  */
 
@@ -55,7 +55,7 @@ public class GetSerializedPosition extends DAO {
 	 * @return a Collection of RouteEntry beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public Collection<? extends RouteEntry> read() throws DAOException {
+	public SequencedCollection<? extends RouteEntry> read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(getStream())) {
 			_v = SerializedDataVersion.fromCode(in.readShort());
 			in.readInt(); // flight ID
@@ -65,9 +65,9 @@ public class GetSerializedPosition extends DAO {
 		}
 	}
 	
-	private Collection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
+	private SequencedCollection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
-		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
+		SequencedCollection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			ACARSRouteEntry re = new ACARSRouteEntry(Instant.ofEpochMilli(in.readLong()), gp);
@@ -175,9 +175,9 @@ public class GetSerializedPosition extends DAO {
 		return results;
 	}
 	
-	private static Collection<XARouteEntry> loadXACARS(DataInputStream in) throws IOException {
+	private static SequencedCollection<XARouteEntry> loadXACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
-		Collection<XARouteEntry> results = new ArrayList<XARouteEntry>(size + 2);
+		SequencedCollection<XARouteEntry> results = new ArrayList<XARouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			XARouteEntry re = new XARouteEntry(gp, Instant.ofEpochMilli(in.readLong()));
