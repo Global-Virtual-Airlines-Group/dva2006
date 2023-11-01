@@ -70,10 +70,9 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			myStatus.put(st.getEffectiveOn(), st);
 			
 			// Get the Flight Reports
-			LogbookSearchCriteria lsc = new LogbookSearchCriteria("DATE, PR.SUBMITTED", ctx.getDB());
 			GetFlightReports frdao = new GetFlightReports(con);
-			List<FlightReport> pireps = frdao.getByPilot(p.getID(), lsc);
-			pireps.removeIf(fr -> ((fr.getStatus() != FlightStatus.OK) || (EliteScorer.getStatsYear(fr.getDate()) != year)));
+			List<FlightReport> pireps = frdao.getEliteFlights(p.getID(), year);
+			pireps.removeIf(fr -> (fr.getStatus() != FlightStatus.OK));
 			
 			// Get the DAOs
 			GetAircraft acdao = new GetAircraft(con);
@@ -100,22 +99,19 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					FlightInfo fi = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
 					
 					// Load the positions
-					Collection<RouteEntry> entries = new ArrayList<RouteEntry>();
 					if ((fi != null) && fi.getArchived()) {
+						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
 						try {
 							File f = ArchiveHelper.getPositions(fi.getID());
 							Compression c = Compression.detect(f);
 							try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
 								GetSerializedPosition psdao = new GetSerializedPosition(is);
-								entries.addAll(psdao.read());
+								psdao.read().forEach(pkg::add);
 							}
 						} catch (IOException ie) {
 							msgs.add("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
 						}
 						
-						// Create the package
-						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
-						entries.forEach(pkg::add);
 						sc = es.score(pkg, st.getLevel());
 					} else if (fi != null)
 						sc = es.score(new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts), st.getLevel());
