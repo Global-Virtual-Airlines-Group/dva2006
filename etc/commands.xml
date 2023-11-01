@@ -1443,7 +1443,7 @@
 	<command id="eliterecalc">
 		<name>Elite Status Recalculate</name>
 		<class>org.deltava.commands.econ.EliteStatusCalculateCommand</class>
-		<roles>Operations,HR,PIREP</roles>
+		<roles>Operations,HR</roles>
 	</command>
 
 	<command id="elitestats">
