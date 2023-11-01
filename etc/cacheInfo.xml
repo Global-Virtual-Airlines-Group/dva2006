@@ -13,8 +13,8 @@
 	
 	<!-- SkyMiles caches -->
 	<cache id="EliteLevel" max="16" expires="24h" />
-	<cache id="EliteStatus" max="512" expires="24h" remote="true" />
-	<cache id="EliteYearlyTotal" max="512" expires="8h" remote="true" />
+	<cache id="EliteStatus" expires="24h" remote="true" />
+	<cache id="EliteYearlyTotal" expires="4h" remote="true" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />
