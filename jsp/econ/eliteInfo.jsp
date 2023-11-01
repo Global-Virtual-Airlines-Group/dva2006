@@ -153,7 +153,8 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 </c:forEach>
 
 <!-- Bottom Bar -->
-<tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" /></td></tr>
+<tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" />
+<content:filter roles="Operations,HR">&nbsp;<el:cmdbutton url="eliterecalc" link="${pilot}" label="RECALCULATE ${eliteName} STATUS" /></content:filter></td></tr>
 </el:table>
 <content:copyright />
 </content:region>
