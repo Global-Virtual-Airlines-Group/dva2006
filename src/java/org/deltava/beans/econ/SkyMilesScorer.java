@@ -72,7 +72,7 @@ public class SkyMilesScorer extends EliteScorer {
 			
 			// Calculate on-time bonus
 			addBonus(Math.round(ffr.getDistance() * 0.4f), "Early Arrival", (afr.getOnTime() == OnTime.EARLY));
-			addBonus(Math.round(ffr.getDistance() * 0.15f), "On Time Arrival", (afr.getOnTime() == OnTime.EARLY));
+			addBonus(Math.round(ffr.getDistance() * 0.15f), "On Time Arrival", (afr.getOnTime() == OnTime.ONTIME));
 		}
 		
 		return _score;
