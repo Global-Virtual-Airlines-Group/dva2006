@@ -6,13 +6,12 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.deltava.util.RedisUtils;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.*;
 
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -22,6 +21,9 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	private final String _bucket;
 	private final int _expiryTime;
 	private final LongAdder _errors = new LongAdder();
+	
+	private long _lastSizeTime;
+	private int _size;
 	
 	/**
 	 * Creates a new Cache.
@@ -152,8 +154,15 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	}
 	
 	@Override
-	public int size() {
-		Collection<String> keys = RedisUtils.keys(createKey("*"));
-		return keys.size();
+	public synchronized int size() {
+		long now = System.currentTimeMillis();
+		long sizeLatency = now - _lastSizeTime;
+		if (sizeLatency > 600_000) {
+			_lastSizeTime = now;
+			Collection<String> keys = RedisUtils.keys(createKey("*"));
+			_size = keys.size();
+		}
+		
+		return _size;	
 	}
 }
