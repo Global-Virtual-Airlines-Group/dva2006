@@ -29,11 +29,12 @@ public class IPCUtils {
 	 * @param data the shared object
 	 * @return a local class version of the shared object
 	 */
-	public static Serializable reserialize(Serializable data) {
+	@SuppressWarnings("unchecked")
+	public static <T extends Serializable> T reserialize(T data) {
 		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(512); ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 			oos.writeObject(data);
 			try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-				return (Serializable) in.readObject();
+				return (T) in.readObject();
 			}
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Unknown class {}", cnfe.getMessage());

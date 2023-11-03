@@ -49,18 +49,15 @@ public class BeanUtils {
 		
 		@Override
 		public String toString() {
-			StringBuilder buf = new StringBuilder(_name).append(": ");
-			buf.append(_old);
-			buf.append("\" -> \"");
-			buf.append(_new);
+			StringBuilder buf = new StringBuilder(_name).append(": \"");
+			buf.append(_old).append("\" -> \"").append(_new);
+			buf.append('\"');
 			return buf.toString();
 		}
 		
 		public String toJSON() {
 			StringBuilder buf = new StringBuilder(_name).append(": { \"");
-			buf.append(_old);
-			buf.append("\" -> \"");
-			buf.append(_new);
+			buf.append(_old).append("\" -> \"").append(_new);
 			buf.append("\" }");
 			return buf.toString();
 		}
@@ -71,7 +68,11 @@ public class BeanUtils {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * Deep clones an object by serializing and deserializing it.
+	 * @param obj the object
+	 * @return a clone of the object
+	 */
 	public static <T extends java.io.Serializable> T clone(T obj) {
 		return (obj == null) ? null : (T) IPCUtils.reserialize(obj);
 	}
