@@ -235,7 +235,7 @@ public class RegisterCommand extends AbstractCommand {
 		List<?> okAddrs = (List<?>) SystemData.getObject("registration.email.ok");
 		boolean checkAddr = (okAddrs == null) || (!okAddrs.contains(a.getEmail()));
 		if (!checkAddr)
-			log.warn(String.format("Skipping address uniqueness checks for %s", a.getEmail()));
+			log.warn("Skipping address uniqueness checks for {}", a.getEmail());
 		
 		Examination ex = null;
 		Pilot eMailFrom = null;
@@ -275,7 +275,7 @@ public class RegisterCommand extends AbstractCommand {
 			GetSystemData sysdao = new GetSystemData(con);
 			BlacklistEntry be = sysdao.getBlacklist(a.getRegisterAddress());
 			if (be != null) {
-				log.warn(String.format("Registration blacklist for %s from %s", a.getName(), be));
+				log.warn("Registration blacklist for {} from {}", a.getName(), be);
 				result.setURL("/jsp/register/blackList.jsp");
 				result.setSuccess(true);
 				return;
@@ -310,7 +310,7 @@ public class RegisterCommand extends AbstractCommand {
 
 						// Save airline
 						ctx.setAttribute("airline", info, REQUEST);
-						log.warn(String.format("Duplicate IDs %s found for %s", dupeResults, a.getName()));
+						log.warn("Duplicate IDs {} found for {}", dupeResults, a.getName());
 
 						// Forward to JSP
 						result.setURL("/jsp/register/duplicateRegistration.jsp");

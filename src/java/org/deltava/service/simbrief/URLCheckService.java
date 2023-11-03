@@ -108,7 +108,7 @@ public class URLCheckService extends WebService {
 			frwdao.writeSimBrief(sbdata);
 			ctx.commitTX();
 		} catch (HTTPDAOException hde) {
-			log.info(String.format("Response %d downloading %s", Integer.valueOf(hde.getStatusCode()), id));
+			log.info("Response {} downloading {}", Integer.valueOf(hde.getStatusCode()), id);
 			// not downloaded yet
 		} catch (DAOException de) {
 			ctx.rollbackTX();

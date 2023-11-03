@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to update serialized ACARS track metadata if needed.
  * @author Luke
- * @version 10.5
+ * @version 11.1
  * @since 10.5
  */
 
@@ -69,7 +69,7 @@ public class TrackMetadataUpdateService extends WebService {
 				SerializedDataVersion v = psdao.getFormat();
 				if (md.getFormat() != v) {
 					if (md.getFormat() != null)
-						log.warn(String.format("Updating format for %d from %s to %s", Integer.valueOf(acarsID), md.getFormat(), v));
+						log.warn("Updating format for {} from {} to {}", Integer.valueOf(acarsID), md.getFormat(), v);
 					
 					isUpdated = true;
 					md.setFormat(v);

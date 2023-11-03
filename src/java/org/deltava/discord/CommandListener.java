@@ -29,7 +29,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
             case "flywithme" -> newFlyWithMeRequest(e);
             case "addsafe" -> addWord(e, true);
             case "dropsafe" -> dropWord(e, true);
-            default -> log.info(String.format("Ignored command - %s", cmdName));
+            default -> log.info("Ignored command - {}", cmdName);
         }
     }
 

@@ -17,7 +17,7 @@ import ucar.unidata.io.RandomAccessFile;
  * A Data Access Object to load WAFS GRIB2 winds aloft data. The field format for the GRIB file is located
  * at {@link "https://www.nco.ncep.noaa.gov/pmb/products/gfs/gfs.t00z.pgrb2.0p25.f000.shtml"}
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.2
  */
 
@@ -100,7 +100,7 @@ public class GetWAFSData extends DAO implements Closeable {
 			for (int l = 0; l < offsets.length; l++) {
 				int layer = offsets[l];
 				if (layer >= records.size()) {
-					log.warn(String.format("GRIB2 file is only %d records long (idx=%d)", Integer.valueOf(records.size()), Integer.valueOf(layer)));
+					log.warn("GRIB2 file is only {} records long (idx={})", Integer.valueOf(records.size()), Integer.valueOf(layer));
 					continue;
 				}
 				

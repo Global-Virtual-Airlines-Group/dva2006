@@ -427,7 +427,7 @@ public class FlightSubmissionHelper {
 		boolean isTour = (_fr.getDatabaseID(DatabaseID.TOUR) != 0);
 		FlightTime avgHours = sdao.getFlightTime(_fr, _db);
 		if ((avgHours.getType() == RoutePairType.UNKNOWN) && !isAcademy && !isAssignment && !isEvent && !isTour) {
-			log.warn(String.format("No flights found between %s and %s", _fr.getAirportD(), _fr.getAirportA()));
+			log.warn("No flights found between {} and {}", _fr.getAirportD(), _fr.getAirportA());
 			boolean wasValid = (_info != null) && _info.isScheduleValidated() && _info.matches(_fr);
 			if (!wasValid)
 				_fr.setAttribute(FlightReport.ATTR_ROUTEWARN, !_fr.hasAttribute(FlightReport.ATTR_CHARTER));
