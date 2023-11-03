@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -241,9 +241,9 @@ public class MessageContext {
 
         if (!hasData(objName)) {
         	if (_mt == null)
-        		log.warn(String.format("Cannot evaluate %s", objName));
+        		log.warn("Cannot evaluate {}", objName);
         	else
-        		log.warn(String.format("Cannot evaluate %s in %s", objName, _mt.getName()));
+        		log.warn("Cannot evaluate {} in {}", objName, _mt.getName());
         	
         	return "";
         }
@@ -265,7 +265,7 @@ public class MessageContext {
                     Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), (Class []) null);
                     objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
-                    log.warn(String.format("Error reading %s.%s - %s", objName, methodName, e.getClass().getName()));
+                    log.warn("Error reading {}.{} - {}", objName, methodName, e.getClass().getName());
                     return "";
                 }
             } else if (hasMethod(objValue, methodName)) {
@@ -273,7 +273,7 @@ public class MessageContext {
                     Method m = objValue.getClass().getMethod(methodName, (Class []) null);
                     objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
-                    log.warn(String.format("Error invoking %s.%s() - %s", objName, methodName, e.getClass().getName()));
+                    log.warn("Error invoking {}.{}() - {}", objName, methodName, e.getClass().getName());
                     return "";
                 }
             } else if (hasField(objValue, methodName)) {
@@ -281,14 +281,14 @@ public class MessageContext {
                     Field f = objValue.getClass().getField(methodName);
                     objValue = f.get(objValue);
                 } catch (Exception e) {
-                    log.warn(String.format("Error getting %s.%s - %s", objName, methodName, e.getClass().getName()));
+                    log.warn("Error getting {}.{} - {}", objName, methodName, e.getClass().getName());
                     return "";
                 }
             } else {
             	if (_mt == null)
-            		log.warn(String.format("Cannot evaluate %s at %s", objName, methodName));
+            		log.warn("Cannot evaluate {} at {}", objName, methodName);
             	else
-            		log.warn(String.format("Cannot evaluate %s at %s in %s", objName, methodName, _mt.getName()));
+            		log.warn("Cannot evaluate {} at {} in {}", objName, methodName, _mt.getName());
             	
                 return "";
             }

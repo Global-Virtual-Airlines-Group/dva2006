@@ -142,6 +142,6 @@ public class MessageReceivedListener implements MessageCreateListener {
         // Everything went well
         msgAuth.sendMessage(String.format("Your %s account (%s) has been located and linked to this Discord user profile", SystemData.get("airline.code"), p.getPilotCode()));
         msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://%s/helpdesk.do", SystemData.get("airline.url")));
-        log.info(String.format("Registered User [ Name = %s, UUID = %s ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId())));
+        log.info("Registered User [ Name = {}, UUID = {} ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId()));
     }
 }

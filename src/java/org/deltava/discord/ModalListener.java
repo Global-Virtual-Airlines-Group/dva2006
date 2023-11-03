@@ -21,7 +21,7 @@ public class ModalListener implements ModalSubmitListener {
         ModalInteraction interaction = event.getModalInteraction();
         switch (interaction.getCustomId()) {
             case "fwm_modal" -> flyWithMeModalResponder(event);
-            default -> log.info(String.format("Ignored modal - %s", interaction.getCustomId()));
+            default -> log.info("Ignored modal - {}", interaction.getCustomId());
         }
     }
 

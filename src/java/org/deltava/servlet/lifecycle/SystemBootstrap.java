@@ -62,7 +62,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				SecretManager sm = new PropertiesSecretManager(SystemData.get("security.secrets"));
 				sm.load();
 				sm.getKeys().forEach(k -> SystemData.add(k, sm.get(k)));
-				log.info(String.format("Loaded %d secrets from %s", Integer.valueOf(sm.size()), SystemData.get("security.secrets")));
+				log.info("Loaded {} secrets from {}", Integer.valueOf(sm.size()), SystemData.get("security.secrets"));
 			} catch (IOException ie) {
 				log.atError().withThrowable(ie).log("Error loading secrets - {}", ie.getMessage());
 			}
@@ -119,7 +119,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		try {
 			Class<?> c = Class.forName(authClass);
 			Authenticator auth = (Authenticator) c.getDeclaredConstructor().newInstance();
-			log.debug(String.format("Loaded class %s", authClass));
+			log.debug("Loaded class {}", authClass);
 
 			// Initialize and store in the servlet context
 			auth.init(Authenticator.DEFAULT_PROPS_FILE);
@@ -240,7 +240,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	@Override
 	public void contextDestroyed(ServletContextEvent e) {
 		String code = SystemData.get("airline.code");
-		log.warn(String.format("Shutting Down %s", code));
+		log.warn("Shutting Down {}", code);
 
 		// Shut down the extra threads
 		Collection<Thread> dt = new ArrayList<Thread>(_daemons.keySet());

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -131,7 +131,7 @@ public class LoginCommand extends AbstractCommand {
 					try {
 						p = dao.get(StringUtils.parseHex(code));
 					} catch (Exception e) {
-						log.warn(String.format("Cannot parse pilot ID - %s", code));
+						log.warn("Cannot parse pilot ID - {}", code);
 					}
 				}
 				
@@ -164,18 +164,18 @@ public class LoginCommand extends AbstractCommand {
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;
 			if (p.getStatus() == PilotStatus.ONLEAVE) {
-				log.info(String.format("Returning %s from Leave", p.getName()));
+				log.info("Returning {} from Leave", p.getName());
 				returnToActive = true;
 				p.setStatus(PilotStatus.ACTIVE);
 			} else if (p.getStatus() != PilotStatus.ACTIVE) {
 				if (p.getStatus() == PilotStatus.SUSPENDED) {
-					log.warn(String.format("%s status = Suspended, setting cookie", p.getName()));
+					log.warn("{} status = Suspended, setting cookie", p.getName());
 					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
 					wc.setPath("/");
 					wc.setMaxAge(86400 * 180);
 					ctx.addCookie(wc);
 				} else
-					log.warn(String.format("%s status = %s", p.getName(), p.getStatus().getDescription()));
+					log.warn("{} status = {}", p.getName(), p.getStatus().getDescription());
 				
 				throw new SecurityException(String.format("You are not an Active Pilot at %s", SystemData.get("airline.name")));
 			}
@@ -276,7 +276,7 @@ public class LoginCommand extends AbstractCommand {
 			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
-				log.info(String.format("Invalidated e-mail address for %s", p.getName()));
+				log.info("Invalidated e-mail address for {}", p.getName());
 				s.setAttribute("addr", av);
 				s.setAttribute("next_url", "validate.do");
 			} else if (!StringUtils.isEmpty(ctx.getParameter("redirectTo")))
@@ -342,7 +342,7 @@ public class LoginCommand extends AbstractCommand {
 		
 		// Clear warning cookie if valid
 		if (ctx.getCookie("dvaAuthStatus") != null) {
-			log.warn(String.format("Resetting Suspended warning cookie for %s", p.getName()));
+			log.warn("Resetting Suspended warning cookie for {}", p.getName());
 			Cookie wc = new Cookie("dvaAuthStatus", "");
 			wc.setMaxAge(0);
 			ctx.addCookie(wc);
