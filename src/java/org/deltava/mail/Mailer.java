@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -138,7 +138,7 @@ public class Mailer {
 			if (ctx instanceof IDBean idb)
 				ID = Integer.valueOf(idb.getID());
 			else
-				log.warn(String.format("Context object %s not a DatabaseBean - %s", mt.getNotifyContext(), ctx.getClass().getName()));
+				log.warn("Context object {} not a DatabaseBean - {}", mt.getNotifyContext(), ctx.getClass().getName());
 		}
 		
 		// Add the actions
@@ -174,7 +174,7 @@ public class Mailer {
 		
 		// If we're in test mode, send back to the sender only
 		if (SystemData.getBoolean("smtp.testMode")) {
-			log.warn(String.format("STMP Test Mode enabled - sending to %s", _env.getFrom().getEmail()));
+			log.warn("STMP Test Mode enabled - sending to {}", _env.getFrom().getEmail());
 			_msgTo.clear();
 			_msgTo.add(_env.getFrom());
 			_env.clearRecipients();

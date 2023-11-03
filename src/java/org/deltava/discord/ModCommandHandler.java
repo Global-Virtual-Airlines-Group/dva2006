@@ -14,7 +14,7 @@ import org.deltava.beans.discord.ChannelName;
  * A class to handle moderator commands.
  * @author danielw
  * @author luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -39,7 +39,7 @@ public class ModCommandHandler {
         switch (cmd.toLowerCase()) {
             case "!ignore", "!ig" -> ignoreAlert(e, embed);
             case "!done", "!d" -> handleAlert(e, embed, comment);
-            default -> log.info(String.format("Ignored command - %s", cmd));
+            default -> log.info("Ignored command - {}", cmd);
         }
     }
 
@@ -48,7 +48,7 @@ public class ModCommandHandler {
         Optional<EmbedField> f = embed.getFields().stream().filter(ef -> ef.getName().equals("Message Content")).findAny();
         String msg = f.isPresent() ? f.get().getValue() : null;
 
-        log.info(String.format("Alert ignored by %s [ Content = %s ]", e.getMessageAuthor().getName(), msg));
+        log.info("Alert ignored by {} [ Content = {} ]", e.getMessageAuthor().getName(), msg);
         e.getMessage().delete();
         e.getReferencedMessage().delete();
     }
@@ -57,7 +57,7 @@ public class ModCommandHandler {
     	
     	Optional<EmbedField> f = embed.getFields().stream().filter(ef -> ef.getName().equals("Message Content")).findAny();
         String msg = f.isPresent() ? f.get().getValue() : null;
-        log.info(String.format("Mod alert handled by %s [ Content = %s ]", e.getMessageAuthor().getName(), msg));
+        log.info("Mod alert handled by {} [ Content = {} ]", e.getMessageAuthor().getName(), msg);
 
         EmbedBuilder builder = embed.toBuilder();
         e.getMessageAuthor().asUser().flatMap(user -> user.getNickname(e.getServer().get())).ifPresent(usr -> builder.addField("Handled By", usr));
