@@ -95,10 +95,9 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean contains(Object key) {
 		try {
-			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(createKey(key));
+			RemoteCacheEntry<?> e = (RemoteCacheEntry<?>) RedisUtils.get(createKey(key));
 			return (e != null);
 		} catch (Exception e) {
 			_errors.increment();
