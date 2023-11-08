@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
@@ -74,7 +74,7 @@ golgotha.local.setViewType = function(idx) {
  <td class="sec bld"><fmt:int value="${err.ID}" /></td>
  <td class="small bld"><el:cmd url="acarserror" link="${err}"><fmt:date date="${err.createdOn}" t="HH:mm" /></el:cmd></td>
  <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
- <td class="sec bld"><fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}">b${err.beta}</c:if></td>
+ <td class="sec bld"><fmt:int value="${err.clientBuild}" /><c:if test="${err.getBeta() > 0}">b${err.beta}</c:if></td>
  <td class="small nophone">${err.simulator}</td>
  <td class="left nophone"><fmt:text value="${err.message}" /></td>
 </view:row>

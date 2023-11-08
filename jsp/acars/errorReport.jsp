@@ -39,7 +39,7 @@
 </tr>
 <tr>
  <td class="label">Client Build</td>
- <td class="data">Build <fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}"> Beta <fmt:int value="${err.beta}" /></c:if></td>
+ <td class="data">Build <fmt:int value="${err.clientBuild}" /><c:if test="${err.getBeta() > 0}"> Beta <fmt:int value="${err.beta}" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Operating System</td>
