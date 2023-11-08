@@ -36,7 +36,7 @@
  <td class="label">Pilot Name</td>
  <td class="data">${pilot.rank.name}&nbsp;<span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
  <td class="label">ACARS Client Build</td>
- <td class="data">Build <fmt:int value="${info.clientBuild}" /><c:if test="${info.beta > 0}"> (Beta ${info.beta})</c:if></td>
+ <td class="data">Build <fmt:int value="${info.clientBuild}" /><c:if test="${info.getBeta() > 0}"> (Beta ${info.beta})</c:if></td>
 </tr>
 <tr>
  <td class="label">Remote Address</td>
