@@ -371,7 +371,7 @@
 		<class>org.deltava.tasks.EliteScoringTask</class>
 		<time>
 			<min>30</min>
-			<hour>4,8,12,16,20</hour>
+			<hour>4,8,12,14,16,18,20,22</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
