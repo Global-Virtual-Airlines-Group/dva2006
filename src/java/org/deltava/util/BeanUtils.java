@@ -49,17 +49,11 @@ public class BeanUtils {
 		
 		@Override
 		public String toString() {
-			StringBuilder buf = new StringBuilder(_name).append(": \"");
-			buf.append(_old).append("\" -> \"").append(_new);
-			buf.append('\"');
-			return buf.toString();
+			return String.format("%s: \"%s\" -> \"%s\"", _name, _old, _new);
 		}
 		
 		public String toJSON() {
-			StringBuilder buf = new StringBuilder(_name).append(": { \"");
-			buf.append(_old).append("\" -> \"").append(_new);
-			buf.append("\" }");
-			return buf.toString();
+			return String.format("%s: { \"%s\" -> \"%s\" }", _name, _old, _new);
 		}
 
 		@Override
