@@ -118,10 +118,10 @@ public class SecurityCookieFilter extends HttpFilter {
 			cData = null;
 			p = null;
 		} else if (cData != null) {
-			long timeUntilExpiry = (cData.getExpiryDate().toEpochMilli() - System.currentTimeMillis());
+			long timeUntilExpiry = cData.getExpiryDate().toEpochMilli() - System.currentTimeMillis();
 			
 			// Renew the cookie if it's about to expire
-			if (timeUntilExpiry < 3_600_000) {
+			if (timeUntilExpiry < 7_200_000) {
 				cData.setExpiryDate(cData.getExpiryDate().plusSeconds(3600 * 4));
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
 				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
@@ -155,7 +155,11 @@ public class SecurityCookieFilter extends HttpFilter {
 						con = _jdbcPool.getConnection();
 						GetIPLocation ipdao = new GetIPLocation(con);
 						IPBlock ipb = ipdao.get(savedAddr);
-						isOK = ((ipb != null) && (ipb.contains(remoteAddr)));
+						if (ipb == null) {
+							CIDRBlock cb = new CIDRBlock(savedAddr, 24);
+							isOK = cb.isInRange(remoteAddr);
+						} else
+							isOK = ipb.contains(remoteAddr);
 					}
 				}
 				
@@ -194,7 +198,7 @@ public class SecurityCookieFilter extends HttpFilter {
 					GetIPLocation ipdao = new GetIPLocation(con);
 					addrInfo = ipdao.get(remoteAddr);
 				} else
-					log.error("Unknown Pilot - " + cData.getUserID());
+					log.error("Unknown Pilot - {}", cData.getUserID());
 			} catch (DAOException de) {
 				log.atError().withThrowable(de).log("Error loading {} - {}", cData.getUserID(), de.getMessage());
 			} catch (org.gvagroup.jdbc.ConnectionPoolException cpe) {
