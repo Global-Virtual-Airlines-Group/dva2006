@@ -18,6 +18,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.taskman.*;
 import org.deltava.util.TaskTimer;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -42,6 +43,7 @@ public class EliteScoringTask extends Task {
 		// Determine lookback interval
 		log.info("Scoring flights approved in the past 31 days");
 		
+		Collection<Integer> pilotIDs = new HashSet<Integer>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -130,6 +132,9 @@ public class EliteScoringTask extends Task {
 				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
+				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
+				if (sc.getAuthorID() != fr.getAuthorID())
+					log.warn("Package Author = {}, Flight Report Author = {}", Integer.valueOf(sc.getAuthorID()), Integer.valueOf(fr.getAuthorID()));
 				
 				// Check for upgrade
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc); 
@@ -160,6 +165,8 @@ public class EliteScoringTask extends Task {
 			ctx.release();
 		}
 		
+		// Invalidate cache
+		pilotIDs.forEach(id -> CacheManager.invalidate("EliteYearlyTotal", id));
 		log.info("Processing Complete");
 	}
 }
