@@ -1,7 +1,10 @@
 // Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.*;
+import java.util.HexFormat;
 import java.util.StringTokenizer;
 
 import javax.servlet.jsp.*;
@@ -18,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 10.6
+ * @version 11.1
  * @since 1.0
  */
 
@@ -47,7 +50,7 @@ public class MessageFormatTag extends TagSupport {
 	/*
 	 * Helper method to generate an emotion IMG tag.
 	 */
-	private static String emoticonURL(Emoticons ei) {
+	private static StringBuilder emoticonURL(Emoticons ei) {
 		StringBuilder imgbuf = new StringBuilder("<img src=\"");
 		imgbuf.append(SystemData.get("path.img"));
 		imgbuf.append("/cooler/emoticons/");
@@ -57,7 +60,7 @@ public class MessageFormatTag extends TagSupport {
 		imgbuf.append("\" title=\"");
 		imgbuf.append(ei.getName());
 		imgbuf.append("\" />");
-		return imgbuf.toString();
+		return imgbuf;
 	}
 
 	/**
@@ -104,9 +107,13 @@ public class MessageFormatTag extends TagSupport {
 					while (token.endsWith(".") || token.endsWith(","))
 						token = token.substring(0, token.length() - 1);
 					
+					// Detect URLEncoding
+					int pctPos = token.indexOf('%');
+					boolean isEncoded = (pctPos > -1) && (pctPos < (token.length() + 2)) && HexFormat.isHexDigit(token.charAt(pctPos +1)) && HexFormat.isHexDigit(token.charAt(pctPos + 2));
+					
 					URI url = new URI(token);
 					buf.append("<a href=\"");
-					buf.append(token);
+					buf.append(isEncoded ? URLDecoder.decode(token, UTF_8) : token);
 					if (!SystemData.get("airline.url").equals(url.getHost()))
 						buf.append("\" target=\"_new\" rel=\"external");
 
