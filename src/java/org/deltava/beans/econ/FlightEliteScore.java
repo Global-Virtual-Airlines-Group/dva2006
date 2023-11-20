@@ -128,6 +128,7 @@ public class FlightEliteScore extends DatabaseBean implements AuthoredBean, Elit
 	@Override
 	public void setAuthorID(int id) {
 		validateID(_pilotID, id);
+		_pilotID = id;
 	}
 	
 	/**
