@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Elite status level definitions.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -99,7 +99,7 @@ public class SetElite extends EliteDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ELITE_STATUS WHERE (PILOT_ID=?) AND (YR=?)");
 		if (!includeRollover)
-			sqlBuf.append(" AND (UPD REASON<>?) AND (UPD_REASON<>?)");
+			sqlBuf.append(" AND (UPD_REASON<>?) AND (UPD_REASON<>?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
