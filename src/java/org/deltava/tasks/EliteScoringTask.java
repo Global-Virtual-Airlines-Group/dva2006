@@ -18,7 +18,6 @@ import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.taskman.*;
 import org.deltava.util.TaskTimer;
-import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -165,8 +164,6 @@ public class EliteScoringTask extends Task {
 			ctx.release();
 		}
 		
-		// Invalidate cache
-		pilotIDs.forEach(id -> CacheManager.invalidate("EliteYearlyTotal", id));
 		log.info("Processing Complete");
 	}
 }
