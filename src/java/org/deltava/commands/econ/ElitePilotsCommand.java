@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.PilotStatus;
 import org.deltava.beans.econ.*;
 
 import org.deltava.comparators.YearlyTotalComparator;
@@ -19,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display Pilots at a particular Elite status level. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -54,8 +55,14 @@ public class ElitePilotsCommand extends AbstractCommand {
 			Map<EliteLevel, Collection<YearlyTotal>> lvlTotals = new TreeMap<EliteLevel, Collection<YearlyTotal>>(Comparator.reverseOrder());
 			for (EliteLevel lvl : lvls.descendingSet()) {
 				Collection<Integer> IDs = eldao.getPilots(lvl); IDs.removeAll(pilots.keySet());
+				
+				// Get the Pilots - remove inactive
+				Map<Integer, Pilot> lvPilots = pdao.getByID(IDs, "PILOTS");
+				Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE))).map(Pilot::getID).collect(Collectors.toSet());
+				IDs.removeAll(inactiveIDs); lvPilots.keySet().removeAll(inactiveIDs);
+				
 				List<YearlyTotal> lt = totals.stream().filter(yt -> IDs.contains(Integer.valueOf(yt.getID()))).collect(Collectors.toList());
-				pilots.putAll(pdao.getByID(IDs, "PILOTS"));
+				pilots.putAll(lvPilots);
 				lvlTotals.put(lvl, lt);
 			}
 			
