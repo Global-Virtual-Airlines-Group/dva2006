@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 1.0
  */
 
@@ -224,7 +224,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		
 		buf.append("<br />");
 		if (_network != null) {
-			buf.append("Flight operated online using <span class=\"sec bld\">");
+			buf.append("Flight ");
+			buf.append(getNetworkConnected() ? "connected to" : "operated online using");
+			buf.append(" <span class=\"sec bld\">");
 			buf.append(_network.toString());
 			buf.append("</span><br />");
 		}
