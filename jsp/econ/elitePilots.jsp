@@ -43,7 +43,7 @@ td.requal-${lvl.name} {
 <el:form action="elitepilots.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="5"><content:airline />&nbsp;${eliteName} MEMBERSHIP</td>
+ <td colspan="6"><content:airline />&nbsp;${eliteName} MEMBERSHIP</td>
  <td colspan="2" class="right">YEAR <el:combo name="year" options='${years}' size="1" idx="*" value="${year}" onChange="void golgotha.local.updateYear(this)" /></td>
 </tr>
 <tr>
@@ -56,11 +56,12 @@ td.requal-${lvl.name} {
 <c:set var="idx" value="0" scope="page" />
 <!-- ${lvl.name} -->
 <tr class="mid title caps" style="background-color:#${lvl.hexColor};">
- <td colspan="7" ><span title="${lvl.legs} flights, ${lvl.distance} miles">${lvl.name}</span> - <fmt:int value="${lvlTotals.size()}"  /> PILOTS<span id="elite-${lvl.name}-Toggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'elite-${lvl.name}')">COLLAPSE</span></td>
+ <td colspan="8" ><span title="${lvl.legs} flights, ${lvl.distance} miles">${lvl.name}</span> - <fmt:int value="${lvlTotals.size()}"  /> PILOTS<c:if test="${lvlTotals.size() > 0}"><span id="elite-${lvl.name}-Toggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'elite-${lvl.name}')">COLLAPSE</span></c:if></td>
 </tr>
 <tr class="mid title caps" style="background-color:#${lvl.hexColor};">
  <td>#</td>
- <td >PILOT NAME</td>
+ <td>PILOT NAME</td>
+ <td>PILOT ID</td>
  <td>RANK</td>
  <td>EQUIPMENT</td>
  <td>${year} FLIGHTS</td>
@@ -79,6 +80,7 @@ td.requal-${lvl.name} {
  <td class="sec bld"><fmt:int value="${idx}" /></td>
 </c:if>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
+ <td class="bld">${pilot.pilotCode}</td>
  <td class="sec bld">${pilot.rank.name}</td>
  <td class="pri bld">${pilot.equipmentType}</td>
  <td <c:if test="${((nl.legs > 0) && (yd.legs < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><el:cmd url="logbook" link="${pilot}" className="bld"><fmt:int value="${yt.legs}" /></el:cmd></td>
@@ -88,7 +90,7 @@ td.requal-${lvl.name} {
 </c:forEach>
 </c:forEach>
 <!-- Bottom bar -->
-<tr class="title"><td colspan="7">&nbsp;</td></tr>
+<tr class="title"><td colspan="8">&nbsp;</td></tr>
 </el:table>
 </el:form>
 <br />
