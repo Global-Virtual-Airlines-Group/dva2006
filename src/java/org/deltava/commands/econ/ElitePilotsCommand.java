@@ -56,10 +56,12 @@ public class ElitePilotsCommand extends AbstractCommand {
 			for (EliteLevel lvl : lvls.descendingSet()) {
 				Collection<Integer> IDs = eldao.getPilots(lvl); IDs.removeAll(pilots.keySet());
 				
-				// Get the Pilots - remove inactive
+				// Get the Pilots - remove inactive if previous year
 				Map<Integer, Pilot> lvPilots = pdao.getByID(IDs, "PILOTS");
-				Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE))).map(Pilot::getID).collect(Collectors.toSet());
-				IDs.removeAll(inactiveIDs); lvPilots.keySet().removeAll(inactiveIDs);
+				if (year == currentYear) {
+					Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE))).map(Pilot::getID).collect(Collectors.toSet());
+					IDs.removeAll(inactiveIDs); lvPilots.keySet().removeAll(inactiveIDs);
+				}
 				
 				List<YearlyTotal> lt = totals.stream().filter(yt -> IDs.contains(Integer.valueOf(yt.getID()))).collect(Collectors.toList());
 				pilots.putAll(lvPilots);
