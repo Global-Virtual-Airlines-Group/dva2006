@@ -402,12 +402,13 @@ table.form td.eliteStatus {
  <td class="label">Fuel Load</td>
  <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate <span class="ita">(<fmt:weight value="${sbPackage.totalFuel}" /> total)</span></td>
 </tr>
-<c:forEach var ="ap" items="${sbPackage.alternates}">
+<c:if test="${!empty sbPackage.alternates}">
 <tr class="sbData">
- <td class="label">Alternate</td>
- <td class="data">${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span></td>
+<td class="label top">Alternates</td>
+<td class="data"><c:forEach var ="ap" items="${sbPackage.alternates}" varStatus="aaStatus">
+${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span><c:if test="${!aaStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
-</c:forEach>
+</c:if>
 <c:if test="${sbPackage.ETOPS.time > 75}" >
 <tr class="sbData">
  <td class="label">ETOPS</td>
