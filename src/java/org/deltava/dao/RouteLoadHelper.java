@@ -93,7 +93,7 @@ public final class RouteLoadHelper {
 		GetACARSRoute rdao = new GetACARSRoute(_c);
 		Collection<? extends FlightRoute> routes = rdao.getRoutes(_rp, true);
 		_routes.addAll(routes);
-		log.info("Loaded " + routes.size() + " Dispatch Routes");
+		log.info("Loaded {} Dispatch Routes", Integer.valueOf(routes.size()));
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public final class RouteLoadHelper {
 	public void loadCachedRoutes() throws DAOException {
 		GetCachedRoutes rcdao = new GetCachedRoutes(_c);
 		Collection<? extends FlightRoute> routes = rcdao.getRoutes(_rp, false);
-		log.info("Loaded " + routes.size() + " Cached FlightAware Routes");
+		log.info("Loaded {} Cached FlightAware Routes", Integer.valueOf(routes.size()));
 		_routes.addAll(routes);
 	}
 	
@@ -115,7 +115,7 @@ public final class RouteLoadHelper {
 	public void loadFlightAwareRoutes(boolean saveRoutes) throws DAOException {
 		boolean isUS = (_rp.getAirportD().getCountry().getCode().equals("US")) || (_rp.getAirportA().getCountry().getCode().equals("US"));
 		if (!isUS) {
-			log.info(_rp.getAirportD() + " to " + _rp.getAirportA() + " not a US route");
+			log.info("{} to {} not a US route", _rp.getAirportD(), _rp.getAirportA());
 			return;
 		}
 		
@@ -136,7 +136,7 @@ public final class RouteLoadHelper {
 					rcwdao.write(routes);
 				
 				_c.commit();
-				log.info("Saved " + routes.size() + " FlightAware Routes");
+				log.info("Saved {} FlightAware Routes", Integer.valueOf(routes.size()));
 			} catch (Exception e) {
 				throw new DAOException(e);
 			}
@@ -151,7 +151,7 @@ public final class RouteLoadHelper {
 	public void loadPIREPRoutes(String dbName) throws DAOException {
 		GetFlightReportRoutes frrdao = new GetFlightReportRoutes(_c);
 		Collection<? extends FlightRoute> routes = frrdao.getRoutes(_rp, dbName);
-		log.info("Loaded " + routes.size() + " Flight Report Routes");
+		log.info("Loaded {} Flight Report Routes", Integer.valueOf(routes.size()));
 		_routes.addAll(routes);
 	}
 	
@@ -193,21 +193,21 @@ public final class RouteLoadHelper {
 			
 			// Get best SID
 			if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
-				log.info("Searching for best SID for " + rt.getSID() + " runway " + dRwy);
+				log.info("Searching for best SID for {} runway {}", rt.getSID(), dRwy);
 				List<String> tkns = StringUtils.split(rt.getSID(), ".");
 				String sidName = TerminalRoute.makeGeneric(tkns.get(0));
 				TerminalRoute sid = navdao.getBestRoute(_rp.getAirportD(), TerminalRoute.Type.SID, sidName, tkns.get(1), _preferredRunway);
 				if (sid == null)
 					sid = navdao.getBestRoute(_rp.getAirportD(), TerminalRoute.Type.SID, sidName, tkns.get(1), dRwy);
 				if (sid != null) {
-					log.info("Found " + sid.getCode());
+					log.info("Found {}", sid.getCode());
 					rt.setSID(sid.getCode());
 				}
 			}
 			
 			// Get best STAR
 			if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
-				log.info("Searching for best STAR for " + rt.getSTAR());
+				log.info("Searching for best STAR for {}", rt.getSTAR());
 				List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
 				String arrRwy = (tkns.size() < 3) ? aRwy : tkns.get(2);
 
@@ -217,7 +217,7 @@ public final class RouteLoadHelper {
 				if (star == null)
 					star = navdao.getBestRoute(_rp.getAirportA(), TerminalRoute.Type.STAR, starName, tkns.get(1), aRwy);
 				if (star != null) {
-					log.info("Found " + star.getCode()); 
+					log.info("Found {}", star.getCode()); 
 					rt.setSTAR(star.getCode());
 				}
 			}
@@ -236,7 +236,7 @@ public final class RouteLoadHelper {
 		for (Iterator<FlightRoute> i = _routes.iterator(); i.hasNext(); ) {
 			FlightRoute rp = i.next();
 			if (!rts.add(rp.getRoute())) {
-				log.info("Removed duplicate route " + rp.getRoute());
+				log.info("Removed duplicate route {}", rp.getRoute());
 				continue;
 			}
 			

@@ -54,7 +54,7 @@ public final class SystemData implements Serializable {
 			log.debug("Instantiated {}", loaderClassName);
 		} catch (Exception e) {
 			loader = new XMLSystemDataLoader();
-			log.info("Using default loader class {}", loader.getClass().getSimpleName());
+			log.info("Using default loader {}", loader.getClass().getSimpleName());
 		}
 		
 		// Reset the properties
@@ -163,7 +163,7 @@ public final class SystemData implements Serializable {
 	 */
 	public static void add(String pName, Object value) {
 		if (log.isDebugEnabled())
-			log.debug("Adding value " + pName);
+			log.debug("Adding value {}", pName);
 
 		_properties.put(pName, value);
 	}

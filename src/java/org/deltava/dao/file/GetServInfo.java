@@ -24,7 +24,7 @@ import org.deltava.util.*;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -80,7 +80,6 @@ public class GetServInfo extends OnlineNetworkDAO {
 			StringUtils.split(data, ":").forEach(s -> add(s.trim()));
 		}
 	}
-
 	
 	@Override
 	public NetworkInfo getInfo() throws DAOException {
@@ -91,8 +90,7 @@ public class GetServInfo extends OnlineNetworkDAO {
 			while (iData != null) {
 				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
-					if (log.isDebugEnabled())
-						log.debug("Loading Section " + sectionName);
+					log.debug("Loading Section {}", sectionName);
 
 					// Parse the general section
 					if ("GENERAL".equals(sectionName)) {
@@ -106,13 +104,11 @@ public class GetServInfo extends OnlineNetworkDAO {
 								else if ("UPDATE".equalsIgnoreCase(name)) {
 									try {
 										info.setValidDate(StringUtils.parseInstant(val, "yyyyMMddHHmmss"));
+										log.debug("Valid as of {}", info.getValidDate());
 									} catch (Exception e) {
 										log.info(e.getMessage());
 										info.setValidDate(Instant.now());
 									}
-
-									if (log.isDebugEnabled())
-										log.debug("Valid as of " + info.getValidDate());
 								}
 							}
 
@@ -160,7 +156,7 @@ public class GetServInfo extends OnlineNetworkDAO {
 										
 										info.add(c);
 									} catch (Exception e) {
-										log.info("Error parsing controller data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.info("Error parsing controller data for {} - {}", si.get(SITokens.CALLSIGN), e.getMessage());
 									}
 									
 									break;
@@ -217,7 +213,7 @@ public class GetServInfo extends OnlineNetworkDAO {
 										if (p.getID() != 0)
 											info.add(p);
 									} catch (Exception e) {
-										log.info("Error parsing pilot data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.info("Error parsing pilot data for {} - {}", si.get(SITokens.CALLSIGN), e.getMessage());
 									}
 							}
 
@@ -237,7 +233,7 @@ public class GetServInfo extends OnlineNetworkDAO {
 								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.intValue());
 								info.add(srv);
 							} catch (Exception e) {
-								log.info("Error parsing server data for " + name + " - " + e.getMessage());
+								log.info("Error parsing server data for {} - {}", name, e.getMessage());
 							}
 
 							iData = br.readLine();

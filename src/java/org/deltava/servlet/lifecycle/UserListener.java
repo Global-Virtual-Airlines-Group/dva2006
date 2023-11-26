@@ -36,8 +36,7 @@ public class UserListener implements HttpSessionListener {
 	public void sessionCreated(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
 		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, UserStartupListener.INSTANCE);
-		if (log.isDebugEnabled())
-			log.debug("Created Session " + s.getId());
+		log.debug("Created Session {}", s.getId());
 	}
 	
 	/**

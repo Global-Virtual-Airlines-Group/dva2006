@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -93,7 +93,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 					ImportRoute ir = srcPairs.getOrDefault(key, new ImportRoute(rse.getSource(), rse.getAirportD(), rse.getAirportA()));
 					if ((ir.getSource() != src.getSource()) && ir.hasAirline(rse.getAirline()) && !rse.getForceInclude()) {
 						src.skip();
-						log.debug(ir + " already imported by " + ir.getSource());
+						log.debug("{} already imported by {}", ir, ir.getSource());
 						continue;
 					}
 					
@@ -109,13 +109,13 @@ public class ScheduleFilterCommand extends AbstractCommand {
 						ir.addEntry(rse);
 						srcPairs.putIfAbsent(key, ir);
 					} else {
-						log.info(rse.getShortCode() + " already exists [ " + ir + " ]");
+						log.info("{} already exists [ {} ]", rse.getShortCode(), ir);
 						src.skip();
 					}
 				}
 				
 				src.setTime((int) tt.stop());
-				log.info("Loaded " + src.getLegs() + " (" + src.getSkipped() + " skipped) "+ src.getSource().getDescription() + " schedule entries for " + src.getEffectiveDate() + " in " + src.getTime() + "ms");
+				log.info("Loaded {} ( skipped) {} schedule entries for {} in {}ms", Integer.valueOf(src.getLegs()), Integer.valueOf(src.getSkipped()), src.getSource().getDescription(), src.getEffectiveDate(), Integer.valueOf(src.getTime()));
 			}
 			
 			// Purge if needed
@@ -161,7 +161,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 				for (Airport ap : allAirports) {
 					Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
 					if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
-						log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+						log.info("Updating {} new codes = {}, was {}", ap.getName(), newAirlines, ap.getAirlineCodes());
 						updateAirports = true;
 						ap.setAirlines(svcMap.getAirlineCodes(ap));
 						awdao.update(ap, ap.getIATA());

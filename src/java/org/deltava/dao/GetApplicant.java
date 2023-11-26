@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -96,7 +96,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Map<Integer, Applicant> getByID(Collection<?> ids, String tableName) throws DAOException {
 		List<Applicant> results = new ArrayList<Applicant>();
-		log.debug("Raw set size = " + ids.size());
+		log.debug("Raw set size = {}", Integer.valueOf(ids.size()));
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, INET6_NTOA(A.REGADDR) FROM ");

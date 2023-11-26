@@ -19,7 +19,7 @@ public class MessageReplyListener implements org.javacord.api.listener.message.M
         if (isGoodChannel(e) && e.getReferencedMessage().getAuthor().isBotUser()) {
             String content = e.getMessageContent();
             if (content.startsWith("!")) {
-                log.info("Mod command received from " + e.getMessageAuthor().getName());
+                log.info("Mod command received from {}", e.getMessageAuthor().getName());
                 ModCommandHandler.handle(e);
             }
         }

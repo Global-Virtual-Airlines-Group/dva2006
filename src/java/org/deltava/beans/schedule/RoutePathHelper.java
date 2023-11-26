@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class that uses Dijkstra's algorithm to calculate the shortest multi-airport leg.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.5
  */
 
@@ -119,10 +119,10 @@ public final class RoutePathHelper {
 			Vertex u = Q.get(0);
 			Q.remove(0);
 			if (u.getAirport().equals(rp.getAirportA())) {
-				log.info("Skipping " + u);
+				log.info("Skipping {}", u);
 				continue;
 			} else if (u.getDistance() == Integer.MAX_VALUE) {
-				log.info("No routes to " + u);
+				log.info("No routes to {}", u);
 				continue;
 			}
 			
@@ -135,7 +135,7 @@ public final class RoutePathHelper {
 				int distance = u.getDistance() + srt.getDistance() + (isHistoricLeg ? _historicCost : _legCost);
 				if (distance < vN.getDistance() && (distance > 0)) {
 					if (vN.getPrevious() != null)
-						log.info("Distance to " + vN + " is now " + distance + " from " + u + " was " + vN.getDistance() + " from " + vN.getPrevious());
+						log.info("Distance to {} is now {} from {}, was {} from {}", vN, Integer.valueOf(distance), u, Integer.valueOf(vN.getDistance()), vN.getPrevious());
 					
 					vN.setDistance(distance);
 					vN.setPrevious(u);

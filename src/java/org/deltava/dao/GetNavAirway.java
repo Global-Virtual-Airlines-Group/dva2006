@@ -4,24 +4,24 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
-import com.enterprisedt.util.debug.Logger;
-
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
 public class GetNavAirway extends GetNavData {
 	
-	private static final Logger log = Logger.getLogger(GetNavAirway.class);
+	private static final Logger log = LogManager.getLogger(GetNavAirway.class);
 	private static final Cache<TerminalRoute> _rCache = CacheManager.get(TerminalRoute.class, "NavSIDSTAR");
 	private static final Cache<CacheableSet<String>> _rwCache = CacheManager.getCollection(String.class, "NavRunway");
 	
@@ -240,7 +240,7 @@ public class GetNavAirway extends GetNavData {
 			}
 
 			// Fetch the route itself
-			log.info("Found " + code);
+			log.info("Found {}", code);
 			return getRoute(a, t, code);
 		} catch (SQLException se) {
 			throw new DAOException(se);

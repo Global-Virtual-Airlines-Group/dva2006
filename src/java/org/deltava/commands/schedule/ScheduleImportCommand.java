@@ -177,7 +177,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 				Aircraft a = pastChoices.get(rse.getShortCode());
 				if (a != null) {
 					rse.setEquipmentType(a.getName());
-					log.debug("Variable equipment for " + rse.getShortCode() + ", reusing " + rse.getEquipmentType());
+					log.debug("Variable equipment for {}, reusing {}", rse.getShortCode(), rse.getEquipmentType());
 					continue;
 				}
 				

@@ -22,7 +22,7 @@ import org.deltava.service.ServiceException;
 /**
  * A Web Service to handle Amazon SES delivery reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 8.5
  */
 
@@ -60,11 +60,11 @@ public class SESDeliveryService extends SNSReceiverService {
 				String addr = ra.getString(x);
 				Pilot p = pdao.getByEMail(addr);
 				if (p == null) {
-					log.info("Ignoring message for unknown address " + addr);
+					log.info("Ignoring message for unknown address {}", addr);
 					continue;
 				}
 				
-				log.info("Received delivery report for " + p.getName() + "[ " + p.getEmail() + " ]");
+				log.info("Received delivery report for {} [ {} ]", p.getName(), p.getEmail());
 				EMailDelivery dv = new EMailDelivery(DeliveryType.DELIVER, p.getID(), deliveryTime);
 				dv.setSendTime(sendTime);
 				dv.setEmail(addr);

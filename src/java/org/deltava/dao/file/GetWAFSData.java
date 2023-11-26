@@ -46,7 +46,7 @@ public class GetWAFSData extends DAO implements Closeable {
 	 */
 	private static WindData[] initObs(PressureLevel pl, Grib2GDSVariables grid) {
 		int gridW = grid.getNx(); int gridH = grid.getNy();
-		log.info("Generating " + gridW + "x" + gridH + " grid, dLat = " + grid.getDx() + ", dLng = " + grid.getDy());
+		log.info("Generating {}x{} grid, dLat = {}, dLng = {}", Integer.valueOf(gridW), Integer.valueOf(gridH), Double.valueOf(grid.getDx()), Double.valueOf(grid.getDy()));
 		
 		WindData[] results = new WindData[gridW * gridH];
 		float lat = grid.getLa1();

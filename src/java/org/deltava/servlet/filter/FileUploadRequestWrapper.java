@@ -12,7 +12,7 @@ import org.apache.logging.log4j.*;
  * request; file parts are stored within the request, and this wrapper is used to access the parameter parts by the
  * standard method calls contained within the Java Servlet API.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -40,16 +40,12 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 		
 		// Add the parameter
 		if (_params.containsKey(pName)) {
-			if (log.isDebugEnabled())
-				log.debug("Adding to parameter " + pName);
-			
+			log.debug("Adding to parameter {}", pName);
 			List<String> values = new ArrayList<String>(Arrays.asList(getParameterValues(pName)));
 			values.addAll(Arrays.asList(pValues));
 			_params.put(pName, values.toArray(new String[0]));
 		} else {
-			if (log.isDebugEnabled())
-				log.debug("Creating parameter " + pName);
-			
+			log.debug("Creating parameter {}", pName);
 			_params.put(pName, pValues);
 		}
 	}

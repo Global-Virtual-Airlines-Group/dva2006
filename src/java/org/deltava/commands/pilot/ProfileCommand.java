@@ -197,7 +197,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Voice access locked out" : "Voice access enabled");
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
+					log.info("{} {}", p.getName(), upd.getDescription());
 				}
 
 				// Check ACARS server access
@@ -208,7 +208,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("ACARS restrictions set to " + p.getACARSRestriction().getName());
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
+					log.info("{} {}", p.getName(), upd.getDescription());
 				}
 				
 				// Check ACARS Time compression access
@@ -219,7 +219,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(compressLocked ? "Time Compression locked out" : "Time Compression enabled");
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
+					log.info("{} {}", p.getName(), upd.getDescription());
 				}
 				
 				// Check permanent account status
