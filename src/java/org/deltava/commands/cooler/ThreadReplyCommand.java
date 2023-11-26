@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -110,7 +110,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 					ac.updateContext(sctx);
 					ac.validate();
 					if (!ac.getCanRead()) {
-						log.warn(usr.getName() + " can no longer read " + mt.getSubject());
+						log.warn("{} can no longer read {}", usr.getName(), mt.getSubject());
 						i.remove();
 					}
 				}

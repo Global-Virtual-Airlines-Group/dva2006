@@ -8,7 +8,7 @@ import org.apache.logging.log4j.*;
 /**
  * An internal Web Site Command to preserve request state across HTTP redirects.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class RedirectCommand extends AbstractCommand {
          result.setURL(RequestStateHelper.restore(ctx.getRequest()));
       } catch (IllegalStateException ise) {
     	  String referer = ctx.getRequest().getHeader("Referer");
-    	  log.warn("No HTTP Session redirecting from " + referer);
+    	  log.warn("No HTTP Session redirecting from {}", referer);
     	  ctx.setAttribute("referer", referer, REQUEST);
     	  result.setURL("/jsp/error/redirectError.jsp");
       }

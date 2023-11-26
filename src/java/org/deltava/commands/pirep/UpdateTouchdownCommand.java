@@ -22,7 +22,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 3.1
  */
 
@@ -105,7 +105,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 				SetFlightReport frwdao = new SetFlightReport(con);
 				frwdao.writeACARS(afr, ctx.getDB());
 			} else
-				log.warn("Cannot update takeoff/touchdown - " + tdEntries.size() + " touchdown points");
+				log.warn("Cannot update takeoff/touchdown - {} touchdown points", Integer.valueOf(tdEntries.size()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

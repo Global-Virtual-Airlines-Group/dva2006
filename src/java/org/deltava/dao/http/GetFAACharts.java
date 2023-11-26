@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -59,7 +59,7 @@ public class GetFAACharts extends DAO {
 			String icao = ae.getAttributeValue("icao_ident").toUpperCase();
 			Airport a = SystemData.getAirport(icao);
 			if (a == null) {
-				log.info("Skipping airport " + icao);
+				log.info("Skipping airport {}", icao);
 				continue;
 			}
 
@@ -71,7 +71,7 @@ public class GetFAACharts extends DAO {
 				// Check for deletions
 				String opCode = ce.getChildTextTrim("useraction");
 				if ("D".equals(opCode)) {
-					log.info("Skipping deleted chart " + chartName);
+					log.info("Skipping deleted chart {}", chartName);
 					continue;
 				}
 
@@ -90,7 +90,7 @@ public class GetFAACharts extends DAO {
 					c.setType(Chart.Type.MIN);
 				
 				if (c.getType() == Chart.Type.UNKNOWN)
-					log.warn("Unknown chart type - " + typeCode);
+					log.warn("Unknown chart type - {}", typeCode);
 				else
 					charts.add(c);
 			}

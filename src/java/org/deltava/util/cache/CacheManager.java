@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 5.0
  */
 
@@ -74,7 +74,7 @@ public class CacheManager {
 	public static void invalidate(String id, boolean sendEvent) {
 		Cache<?> cache = get(id);
 		if (cache == null) {
-			log.warn("Unknown cache - " + id);
+			log.warn("Unknown cache - {}", id);
 			return;
 		}
 		
@@ -114,7 +114,7 @@ public class CacheManager {
 	static <T extends Cacheable> Cache<T> register(Class<T> c, CacheConfig cfg) {
 		Cache<T> cache = get(cfg.getID());
 		if (cache != null) {
-			log.warn("Duplicate registration attempted for cache " + cfg.getID() + "!");
+			log.warn("Duplicate registration attempted for cache {}", cfg.getID());
 			return cache;
 		}
 		
@@ -124,19 +124,19 @@ public class CacheManager {
 		
 		if (cfg.isGeo() && cfg.isRemote()) {
 			cache = new RedisGeoCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime(), cfg.getPrecision());
-			log.info("Registered GeoRedis cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s, precision=" + cfg.getPrecision());
+			log.info("Registered GeoRedis cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
 		} else if (cfg.isRemote()) {
 			cache = new RedisCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime());
-			log.info("Registered Redis cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s");
+			log.info("Registered Redis cache {}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()));
 		} else if (cfg.isGeo()) {
 			cache = new ExpiringGeoCache<T>(cfg.getMaxSize(), cfg.getExpiryTime(), cfg.getPrecision());
-			log.info("Registered Geo cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s, precision=" + cfg.getPrecision());
+			log.info("Registered Geo cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
 		} else if (cfg.getExpiryTime() > 0) {
 			cache = new ExpiringCache<T>(cfg.getMaxSize(), cfg.getExpiryTime());
-			log.info("Registered cache " + cfg.getID() + ", size=" + cfg.getMaxSize() + ", expiry=" + cfg.getExpiryTime() + "s");
+			log.info("Registered cache {}, size={}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getMaxSize()), Integer.valueOf(cfg.getExpiryTime()));
 		} else {
 			cache = new AgingCache<T>(cfg.getMaxSize());
-			log.info("Registered cache " + cfg.getID() + ", size=" + cfg.getMaxSize());
+			log.info("Registered cache {}, size={}", cfg.getID(), Integer.valueOf(cfg.getMaxSize()));
 		}
 		
 		addCache(cfg.getID(), cache);
@@ -149,12 +149,12 @@ public class CacheManager {
 	private static <T extends Cacheable> Cache<T> registerNull(String id) {
 		Cache<T> cache = get(id);
 		if (cache != null) {
-			log.warn("Duplicate registration attempted for cache " + id + "!");
+			log.warn("Duplicate registration attempted for cache {}", id);
 			return cache;
 		}
 		
 		cache = new NullCache<T>();
-		log.warn("Registered cache " + id + ", null cache");
+		log.warn("Registered cache {}, null cache", id);
 		addCache(id, cache);
 		return cache;
 	}

@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Amazone SES feedback SNS messages.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 8.5
  */
 
@@ -162,11 +162,11 @@ public class SESFeedbackService extends SNSReceiverService {
 				break;
 
 			case "delivery":
-				log.info("Delivery report to " + mo.getJSONArray("destination"));
+				log.info("Delivery report to {}", mo.getJSONArray("destination"));
 				break;
 
 			default:
-				log.warn("Unknown feedback type - " + type);
+				log.warn("Unknown feedback type - {}", type);
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());

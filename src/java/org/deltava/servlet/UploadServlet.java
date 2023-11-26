@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to support file uploads.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.5
  */
 
@@ -90,7 +90,7 @@ public class UploadServlet extends BasicAuthServlet {
 				}
 			}
 
-			log.info("Wrote " + totalRead + " bytes for chunk " + chunk + " " + p.getSubmittedFileName());
+			log.info("Wrote {} bytes for chunk {} {}", Integer.valueOf(totalRead), Integer.valueOf(chunk), p.getSubmittedFileName());
 		}
 
 		info.complete(chunk);
@@ -101,13 +101,13 @@ public class UploadServlet extends BasicAuthServlet {
 			if (info.isComplete()) {
 				File nf = new File(info.getTempFile().getParentFile(), info.getFileName());
 				if (nf.exists()) {
-					log.warn(nf + " already exists, deleting");
+					log.warn("{} already exists, deleting", nf);
 					nf.delete();
 				}
 
 				info.getTempFile().renameTo(nf);
 				_cache.remove(info.getID());
-				log.info("Renaming " + info.getTempFile() + " to " + nf);
+				log.info("Renaming {} to {}", info.getTempFile(), nf);
 				rw.print("Complete");
 			} else
 				rw.print("Uploaded " + chunk);
@@ -170,7 +170,7 @@ public class UploadServlet extends BasicAuthServlet {
 		for (int x = 0; (ff != null) && (x < ff.length); x++) {
 			File f = ff[x];
 			if (((now - f.lastModified()) / 1000) > 14400) {
-				log.warn("Deleting partial upload " + f.getName());
+				log.warn("Deleting partial upload {}", f.getName());
 				f.delete();
 			}
 		}

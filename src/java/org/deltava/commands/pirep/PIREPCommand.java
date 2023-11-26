@@ -772,7 +772,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
 							ctx.setAttribute("vRouteData", Boolean.valueOf(pd.size() > 0), REQUEST);
 						} catch (DAOException de) {
-							log.warn("Cannot download VRoute position data - " + de.getMessage());
+							log.warn("Cannot download VRoute position data - {}", de.getMessage());
 						}
 					} else if (trackID != 0) {
 						pd = tdao.getRaw(trackID);
@@ -901,7 +901,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
 					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
-						log.warn("GoogleMap disabled - usage [max=" + max + ", predicted=" + predictedUse.getTotal() + ", actual=" + totalUse.getTotal() + "] : " + ctx.getRequest().getRemoteHost() + " spider=" + isSpider);
+						log.warn("GoogleMap disabled - usage [max={}, predicted={}, actual={}] : {} spider={}", Integer.valueOf(max), Integer.valueOf(predictedUse.getTotal()), Integer.valueOf(totalUse.getTotal()), ctx.getRequest().getRemoteHost(), Boolean.valueOf(isSpider));
 						mapType = MapType.GOOGLEStatic;
 					}
 				} else if ((isSpider || isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))

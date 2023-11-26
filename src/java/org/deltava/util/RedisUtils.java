@@ -65,7 +65,7 @@ public class RedisUtils {
 		try (ByteArrayInputStream bi = new ByteArrayInputStream(data); ObjectInputStream oi = new ObjectInputStream(bi)) {
 			return oi.readObject();
 		} catch (ClassNotFoundException cnfe) {
-			log.warn("Cannot load " + cnfe.getMessage());
+			log.warn("Cannot load {}", cnfe.getMessage());
 		} catch (IOException ie) {
 			// empty
 		}
@@ -83,7 +83,7 @@ public class RedisUtils {
 			oo.writeObject(o);
 			return bo.toByteArray();
 		} catch (Exception e) {
-			log.warn("Error writing " + o.getClass().getName() + " - " + e.getClass().getSimpleName());
+			log.warn("Error writing {} - {}", o.getClass().getName(), e.getClass().getSimpleName());
 		}
 			
 		return null;
@@ -114,7 +114,7 @@ public class RedisUtils {
 			// Check for domain socket
 			String host = StringUtils.isEmpty(addr) ? "localhost" : addr;
 			if (host.startsWith("/")) {
-				log.info("Using Unix socket " + addr);
+				log.info("Using Unix socket {}", addr);
 				JedisSocketFactory sf = new JedisDomainSocketFactory(host);
 				_client = new JedisPool(config, sf, new DefaultJedisConfig());
 			} else
@@ -122,7 +122,7 @@ public class RedisUtils {
 			
 			_db = Math.max(0, db);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
-			log.info("Initialized using database " + _db);
+			log.info("Initialized using database {}", Integer.valueOf(_db));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -136,9 +136,9 @@ public class RedisUtils {
 			if (_client != null) {
 				int isActive = _client.getNumActive();
 				if (isActive > 0)
-					log.warn(isActive + " active connections on close");
+					log.warn("{} active connections on close", Integer.valueOf(isActive));
 
-				log.info(_client.getNumIdle() + " idle connections on close");
+				log.info("{} idle connections on close", Integer.valueOf(_client.getNumIdle()));
 				_client.close();
 				_client.destroy();
 				log.info("Disconnected");

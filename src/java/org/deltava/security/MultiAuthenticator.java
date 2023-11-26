@@ -133,33 +133,32 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	protected void sync(Person usr, String pwd) throws SecurityException {
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
-			Authenticator dst = i.next();
+		for (Authenticator dst : _dst) {
 			String authName = dst.getClass().getSimpleName();
 			setConnection(dst);
 			if (dst.accepts(usr)) {
 				try {
 					if (log.isDebugEnabled())
-						log.debug("Validating " + usr.getName() + " credentials in " + authName);
+						log.debug("Validating {} credentials in {}", usr.getName(), authName);
 
 					dst.authenticate(usr, pwd);
 				} catch (SecurityException se) {
 					if (dst.contains(usr)) {
-						log.warn("Updating password for " + usr.getName() + " in " + authName);
+						log.warn("Updating password for {} in {}", usr.getName(), authName);
 						dst.updatePassword(usr, pwd);
 					} else {
-						log.warn("Adding " + usr.getName() + " in " + authName);
+						log.warn("Adding {} in {}", usr.getName(), authName);
 						dst.add(usr, pwd);
 					}
 				}
 			} else {
 				try {
 					if (dst.contains(usr)) {
-						log.warn(authName + " contains " + usr.getName() + ", removing");
+						log.warn("{} contains {}, removing", authName, usr.getName());
 						dst.remove(usr);
 					}
 				} catch (SecurityException se) {
-					log.warn("Error removing " + usr.getName() + " from " + authName + " - " + se.getMessage());
+					log.warn("Error removing {} from {} - {}", usr.getName(), authName, se.getMessage());
 				}
 			}
 

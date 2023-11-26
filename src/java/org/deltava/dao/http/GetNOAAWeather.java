@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.2
  */
 
@@ -72,7 +72,7 @@ public class GetNOAAWeather extends DAO {
 							results.put(m.getCode(), m);
 						}
 					} catch (Exception e) {
-						log.warn("Error parsing " + buf.toString() + " at Line " + lr.getLineNumber() + " - " + e.getMessage());
+						log.warn("Error parsing {} at Line {} - {}", buf, Integer.valueOf(lr.getLineNumber()), e.getMessage());
 					}
 				}
 			}
@@ -137,7 +137,7 @@ public class GetNOAAWeather extends DAO {
 							results.put(code, t);
 						}
 					} catch (Exception e) {
-						log.warn("Error parsing " + buf.toString() + " at Line " + lr.getLineNumber() + " - " + e.getMessage());
+						log.warn("Error parsing {} at Line {} - {}", buf, Integer.valueOf(lr.getLineNumber()), e.getMessage());
 					}
 				}
 			}

@@ -17,7 +17,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site command to display the Document Library.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 			// Check that the resource exists
 			if (e.getSize() == 0) {
-				log.warn(e.getFullName() + " not found in file system!");
+				log.warn("{} not found in file system", e.getFullName());
 				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
 			} else if (!ac.getCanView())

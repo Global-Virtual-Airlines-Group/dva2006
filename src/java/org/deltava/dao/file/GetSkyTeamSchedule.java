@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to import the SkyTeam schedule.
  * @author Luke
- * @version 11.-
+ * @version 11.1
  * @since 9.0
  */
 
@@ -59,7 +59,7 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 					if (aD == null) {
 						_status.addInvalidAirport(code);
 						_status.addMessage("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
-						log.warn("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
+						log.warn("Unknown airport at Line {} - {}", Integer.valueOf(lr.getLineNumber()), code);
 					}
 				} else if (data.startsWith("TO: ")) {
 					String code = data.substring(data.lastIndexOf(' ') + 1);
@@ -67,7 +67,7 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 					if (aA == null) {
 						_status.addInvalidAirport(code);
 						_status.addMessage("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
-						log.warn("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
+						log.warn("Unknown airport at Line {} - {}", Integer.valueOf(lr.getLineNumber()), code);
 					}
 				} else if ((data.length() > 40) && Character.isDigit(data.charAt(0)) && Character.isDigit(data.charAt(1)) && (aD != null) && (aA != null)) {
 					FlightData fd = parseFlightLine(data); boolean isOK = true;
@@ -115,16 +115,16 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 						if (se.getEquipmentType() == null) {
 							isOK = false;
 							_status.addInvalidEquipment(fd.eqType);
-							log.warn("Unknown equipment code at Line " + lr.getLineNumber() + " - " + fd.eqType + " (" + data + ")");
+							log.warn("Unknown equipment code at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), fd.eqType, data);
 							_status.addMessage("Unknown equipment code at Line " + lr.getLineNumber() + " - " + fd.eqType);
 						} else if (se.getAirline() == null) {
 							isOK = false;
 							_status.addInvalidAirline(fd.flightNumber.substring(0, 2));
-							log.warn("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber + " (" + data + ")");
+							log.warn("Unknown airline at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), fd.flightNumber, data);
 							_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + fd.flightNumber);
 						} else if (!se.getAirline().getApplications().contains(SystemData.get("airline.code"))) {
 							isOK = false;
-							log.info("Disabled airline at Line " + lr.getLineNumber() + " - " + se.getAirline().getCode() + " (" + fd.flightNumber.substring(0, 2) + ")");
+							log.info("Disabled airline at Line {} - {} ({})", Integer.valueOf(lr.getLineNumber()), se.getAirline().getCode(), fd.flightNumber.substring(0, 2));
 						}
 
 						if (isOK) {

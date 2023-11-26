@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to switch credentials and impersonate a user.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class UserSwitchCommand extends AbstractCommand {
 		}
 		
 		// Log warning
-		log.warn(ctx.getUser().getName() + " switching to user " + usr.getName());
+		log.warn("{} switching to user {}", ctx.getUser().getName(), usr.getName());
 		
 		// Save new user in request and switch to the user, saving the old user
 		ctx.setAttribute("user", usr, REQUEST);

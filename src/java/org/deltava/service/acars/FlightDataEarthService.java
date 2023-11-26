@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 			try {
 				IDs.add(Integer.valueOf(StringUtils.parseHex(rawID)));
 			} catch (NumberFormatException nfe) {
-				log.warn("Invalid ACARS flight ID - " + rawID);
+				log.warn("Invalid ACARS flight ID - {}", rawID);
 			}
 		}
 		
@@ -120,7 +120,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 					
 					flights.put(info, airspaces);
 				} else
-					log.warn("Cannot find ACARS flight " + id);
+					log.warn("Cannot find ACARS flight {}", Integer.valueOf(id));
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());

@@ -1,6 +1,8 @@
 // Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -18,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -50,30 +52,29 @@ public class FileUploadFilter extends HttpFilter {
 		String cType = req.getContentType();
 		if (("POST".equalsIgnoreCase(req.getMethod())) && (!StringUtils.isEmpty(cType)) && (cType.startsWith(CONTENT_TYPE))) {
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(req);
-			if (log.isDebugEnabled())
-				log.debug("Processing form upload request");
+			log.debug("Processing form upload request");
 
 			for (Part p : req.getParts()) {
 				if (log.isDebugEnabled())
-					log.debug(p.getName() + " " + p.getHeaderNames());
+					log.debug("{} {}", p.getName(), p.getHeaderNames());
 				String fName = p.getSubmittedFileName();
 				if (!StringUtils.isEmpty(fName)) {
 					if (log.isDebugEnabled())
-						log.debug("Found File element " + p.getName() + ", file=" + fName);
+						log.debug("Found File element {}, file={}", p.getName(), fName);
 
 					FileUpload upload = new FileUpload(fName);
 					try {
 						upload.load(p.getInputStream());
 						req.setAttribute("FILE$" + p.getName(), upload);
 					} catch (IOException ie) {
-						log.warn("Cannot load attachment - " + ie.getMessage());
+						log.warn("Cannot load attachment - {}", ie.getMessage());
 						reqWrap.setAttribute(INVALIDREQ_ATTR_NAME, ie);
 					} finally {
 						p.delete();
 					}
 				} else {
 					StringBuilder buf = new StringBuilder();
-					try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"))) {
+					try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
 						while (br.ready()) {
 							buf.append(br.readLine());
 							if (br.ready())
@@ -92,7 +93,7 @@ public class FileUploadFilter extends HttpFilter {
 				String pName = pNames.nextElement();
 				String[] rawValues = req.getParameterValues(pName);
 				for (int x = 0; x < rawValues.length; x++)
-					rawValues[x] = new String(rawValues[x].getBytes("ISO-8859-1"), "UTF-8");
+					rawValues[x] = new String(rawValues[x].getBytes(ISO_8859_1), UTF_8);
 
 				reqWrap.addParameter(pName, rawValues);
 			}

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(pirep);
 			if (fwdao.updatePaxCount(pirep.getID()))
-				log.warn("Update Passenger count for PIREP #" + pirep.getID());
+				log.warn("Update Passenger count for PIREP #{}", Integer.valueOf(pirep.getID()));
 			
 			// Move track data from the raw table
 			if (fsh.hasTrackData()) {

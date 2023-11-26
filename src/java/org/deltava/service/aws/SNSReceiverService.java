@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to receive Amazon SNS messages.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 8.5
  */
 
@@ -68,13 +68,13 @@ abstract class SNSReceiverService extends WebService {
 	 */
 	protected static boolean confirm(SNSPayload sns) throws ServiceException {
 		
-		log.warn("Received subscription confirmation for " + sns.getTopic());
+		log.warn("Received subscription confirmation for {}", sns.getTopic());
 		String url = sns.getBody().getString("SubscribeURL");
 		try {
-			log.info("Fetching confirmation URL " + url);
+			log.info("Fetching confirmation URL {}", url);
 			GetURL urldao = new GetURL(url, "");
 			boolean isOK = urldao.isAvailable();
-			log.warn("Subscription confirmation " + (isOK ? "SUCCEESS" : "FAILED"));
+			log.warn("Subscription confirmation {}", (isOK ? "SUCCEESS" : "FAILED"));
 			return isOK;
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());

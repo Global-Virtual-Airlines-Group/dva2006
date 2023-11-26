@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -116,7 +116,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			
 			// Do a sanity check on the question pool size
 			if (qPool.size() > ep.getSize()) {
-				log.warn(ep.getName() + " size=" + ep.getSize() + ", pool=" + qPool.size());
+				log.warn("{} size={}, pool={}", ep.getName(), Integer.valueOf(ep.getSize()), Integer.valueOf(qPool.size()));
 				Collections.shuffle(qPool);
 				qPool = qPool.subList(0, ep.getSize());
 			}

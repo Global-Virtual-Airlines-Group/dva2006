@@ -52,7 +52,7 @@ public class LoginCommand extends AbstractCommand {
 				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
 					ctx.setAttribute("referTo", referer, REQUEST);
 			} catch (URISyntaxException se) {
-				log.warn("Invalid HTTP referer - " + referer);
+				log.warn("Invalid HTTP referer - {}", referer);
 				referer = null;
 			}
 		}

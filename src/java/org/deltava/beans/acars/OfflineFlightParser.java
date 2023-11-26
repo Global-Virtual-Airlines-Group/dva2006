@@ -132,7 +132,7 @@ public final class OfflineFlightParser {
 		inf.setIsACARS64Bit(Boolean.parseBoolean(ie.getChildTextTrim("isACARS64Bit")));
 		inf.setFDR(Recorder.ACARS); // need to set after sim
 		if (inf.getSimulator() == Simulator.UNKNOWN)
-			log.warn("Unknown simulator version - " + sim);
+			log.warn("Unknown simulator version - {}", sim);
 		
 		// Load sim major/minor
 		String simVersion = ie.getChildTextTrim("simVersion"); 

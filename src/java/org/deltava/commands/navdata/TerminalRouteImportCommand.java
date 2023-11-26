@@ -111,7 +111,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 						if (trIDs.add(routeID))
 							results.add(tr);
 						else {
-							log.warn("Duplicate " + tr.getType().name() + " - " + routeID);
+							log.warn("Duplicate {} - {}", tr.getType().name(), routeID);
 							tr = null;
 						}
 					} else

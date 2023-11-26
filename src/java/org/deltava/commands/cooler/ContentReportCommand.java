@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class ContentReportCommand extends AbstractCommand {
 			mt.addReportID(ctx.getUser().getID());
 			int maxWarns = SystemData.getInt("cooler.maxreports", 4);
 			if (mt.getReportCount() == maxWarns) {
-				log.warn("Locking Thread \"" + mt.getSubject() + "\" after " + maxWarns + " Contentn Warnings");
+				log.warn("Locking Thread \"{}\" after {} Content Warnings", mt.getSubject(), Integer.valueOf(maxWarns));
 				wdao.moderateThread(mt.getID(), true, true);
 				
 				// Mark the thread as locked
@@ -124,7 +124,7 @@ public class ContentReportCommand extends AbstractCommand {
 		
 		// Notify Moderators on first warning
 		if (!moderators.isEmpty()) {
-			log.warn("Sending Content Warning notification to moderators");
+			log.warn("Sending Content Warning notification to {} moderators", Integer.valueOf(moderators.size()));
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctx);
 			mailer.send(moderators);
