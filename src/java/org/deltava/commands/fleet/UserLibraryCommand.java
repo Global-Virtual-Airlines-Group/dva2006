@@ -18,7 +18,7 @@ import org.deltava.security.command.FileEntryAccessControl;
 /**
  * A Web Site Command to display user-sharable files.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
 
 			// Check that the resource exists
 			if (e.getSize() == 0) {
-				log.warn(e.getFullName() + " not found in file system!");
+				log.warn("{} not found in file system", e.getFullName());
 				if (!access.getCanEdit())
 					i.remove();
 			} else if (!access.getCanView())

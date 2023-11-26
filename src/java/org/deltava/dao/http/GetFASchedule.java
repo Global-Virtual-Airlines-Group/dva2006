@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * Loads airline schedule data from FlightAware.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 8.0
  */
 
@@ -95,7 +95,7 @@ public class GetFASchedule extends FlightAwareDAO {
 				RawScheduleEntry sce = new RawScheduleEntry(f.getAirline(), f.getFlightNumber(), 1);
 				if (f.getAirline() == null) {
 					_unknownAirlines.add(fo.getString("ident"));
-					log.warn("Unknown airline " + fo.getString("ident"));
+					log.warn("Unknown airline - {}", fo.getString("ident"));
 					continue;
 				}
 				
@@ -104,7 +104,7 @@ public class GetFASchedule extends FlightAwareDAO {
 				if (!sce.isPopulated()) {
 					if (sce.getAirportD() == null) _unknownAirports.add(fo.optString("origin"));
 					if (sce.getAirportA() == null) _unknownAirports.add(fo.optString("destination"));
-					log.warn("Unknown airport pair - [ " + fo.optString("origin") + " / " + fo.optString("destination") + " ]");
+					log.warn("Unknown airport pair - [ {} / {} ]", fo.optString("origin"), fo.optString("destination"));
 					continue;
 				}
 				

@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ThreadUtils {
 				t.interrupt();
 				t.join(waitTime);
 			} catch (InterruptedException ie) {
-				log.warn("Cannot kill thread [" + t.getName() + "] after " + waitTime + "ms");
+				log.warn("Cannot kill thread [{}] after {}ms", t.getName(), Long.valueOf(waitTime));
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class ThreadUtils {
 		t2.forEach(Thread::interrupt);
 		int totalTime = 0;
 		while ((t2.size() > 0) && (totalTime < waitTime)) {
-			t2.removeIf(ThreadUtils::isAlive);
+			t2.removeIf(t -> !t.isAlive());
 			sleep(125);
 			totalTime += 125;
 		}
@@ -73,7 +73,7 @@ public class ThreadUtils {
 			Thread.sleep(sleepTime);
 		} catch (InterruptedException ie) {
 			Thread.currentThread().interrupt();
-			log.warn("Thread [" + Thread.currentThread().getName() + "] interrupted");
+			log.warn("Thread [{}] interrupted", Thread.currentThread().getName());
 		}
 	}
 
@@ -103,7 +103,7 @@ public class ThreadUtils {
 		
 		// If we're interrupted, shut the threads down
 		if (Thread.currentThread().isInterrupted())
-			threadPool.forEach(w -> w.interrupt());
+			threadPool.forEach(Thread::interrupt);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class ThreadUtils {
 		final Collection<Future<?>> fPool = new ArrayList<Future<?>>(futures);
 		do {
 			sleep(125);
-			fPool.removeIf(f -> f.isDone());
+			fPool.removeIf(Future::isDone);
 		} while (!fPool.isEmpty() && (!Thread.currentThread().isInterrupted()));
 	}
 }

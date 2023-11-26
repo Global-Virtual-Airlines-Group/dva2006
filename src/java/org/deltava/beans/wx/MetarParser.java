@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.6
  */
 
@@ -212,14 +212,14 @@ public class MetarParser {
 					double viz = StringUtils.parse(tmpToken.substring(0, pos), -1.0d) /
 						StringUtils.parse(tmpToken.substring(pos + 1), 1.0d);
 					if (viz < 0) {
-						log.warn("Unparseable visibility - " + token);
+						log.warn("Unparseable visibility - {}", token);
 						result.setVisibility(Distance.SM.getFeet(15), false);
 					} else
 						result.setVisibility(dst.getFeet(viz), lessThan);
 				} else {
 					int viz = StringUtils.parse(tmpToken, -1);
 					if (viz == -1) {
-						log.warn("Unparseable visibility - " + token);
+						log.warn("Unparseable visibility - {}", token);
 						result.setVisibility(Distance.SM.getFeet(15), false);
 					} else
 						result.setVisibility(dst.getFeet(viz), lessThan);

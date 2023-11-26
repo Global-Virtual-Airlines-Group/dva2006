@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 /**
  * Loads weather data from FlightAware.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 2.2
  */
 
@@ -110,7 +110,7 @@ public class GetFAWeather extends FlightAwareDAO {
 				for (RunwayVisualRange rvr : rm.getRVR())
 					result.add(rvr);
 			} catch (Exception e) {
-				log.warn("Error parsing METAR - " + e.getMessage());
+				log.warn("Error parsing METAR - {}", e.getMessage());
 			}
 			
             _wxCache.add(result);

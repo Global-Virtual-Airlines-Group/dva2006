@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to load OpenAir airspace definition files.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.3
  */
 
@@ -79,7 +79,7 @@ public class GetAirspaceDefinition extends DAO {
 					
 					a = new Airspace(id, type);
 					a.setName(name);
-					log.info("Loaded " + a.getID() + " - " + a.getName());
+					log.info("Loaded {} - {}", a.getID(), a.getName());
 					break;
 					
 				case "AH":
@@ -124,7 +124,7 @@ public class GetAirspaceDefinition extends DAO {
 					break;
 				
 				default:
-					log.warn("Unknown entry " + codeType + " at Line " + lr.getLineNumber());
+					log.warn("Unknown entry {} at Line {}", codeType, Integer.valueOf(lr.getLineNumber()));
 				}
 			}
 		} catch (Exception ie) {

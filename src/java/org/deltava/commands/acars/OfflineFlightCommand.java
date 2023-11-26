@@ -128,7 +128,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				// Calculate length
 				int xmlSize = StringUtils.parse(shaData.getOrDefault("Size", "0"), 0);
 				if (xml.length != xmlSize) {
-					log.warn("Expected XML size = " + xmlSize + ", actual size = " + xml.length);
+					log.warn("Expected XML size = {}, actual size = {}", Integer.valueOf(xmlSize), Integer.valueOf(xml.length));
 					if (xml.length > xmlSize)
 						xml = Arrays.copyOf(xml, xmlSize);
 				}
@@ -143,9 +143,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 					hashData.put(me.getKey(), calcHash);
 					if (calcHash.equals(me.getValue())) {
 						isHashOK = true;
-						log.info("ACARS " + me.getKey() + " validated - " + calcHash);
+						log.info("ACARS {} validated - {}", me.getKey(), calcHash);
 					} else {
-						log.warn("ACARS " + me.getKey() + " mismatch - expected " + me.getValue() + ", calculated " + calcHash);
+						log.warn("ACARS {} mismatch - expected {}, calculated {}", me.getKey(), me.getValue(), calcHash);
 					}
 				}
 				
@@ -381,7 +381,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			fwdao.write(afr);
 			fwdao.writeACARS(afr, ctx.getDB());
 			if (fwdao.updatePaxCount(afr.getID()))
-				log.warn("Update Passnger count for PIREP #" + afr.getID());
+				log.warn("Update Passnger count for PIREP #{}", Integer.valueOf(afr.getID()));
 			
 			// Write ontime data if there is any
 			if (afr.getOnTime() != OnTime.UNKNOWN) {

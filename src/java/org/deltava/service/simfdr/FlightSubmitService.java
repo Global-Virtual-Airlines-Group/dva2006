@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 7.0
  */
 
@@ -91,7 +91,7 @@ public class FlightSubmitService extends SimFDRService {
 			// If we don't have an aircraft type
 			if (a == null) {
 				String acTypes = "ICAO=" +  fr.getAircraftCode() + ", IATA=" + iataCodes;
-				log.warn("Unknown aircraft types, " + acTypes);
+				log.warn("Unknown aircraft types, {}", acTypes);
 				throw error(SC_BAD_REQUEST, "Unknown Aircraft - " + acTypes, false);
 			} 
 			
@@ -145,7 +145,7 @@ public class FlightSubmitService extends SimFDRService {
 			fwdao.write(fr);
 			fwdao.writeACARS(fr, ctx.getDB());
 			if (fwdao.updatePaxCount(fr.getID()))
-				log.warn("Update Passnger count for PIREP #" + fr.getID());
+				log.warn("Update Passnger count for PIREP #{}", Integer.valueOf(fr.getID()));
 			
 			// Write ontime data if there is any
 			if (fr.getOnTime() != OnTime.UNKNOWN) {

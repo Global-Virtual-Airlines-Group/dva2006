@@ -79,7 +79,7 @@ public class Mailer {
 				cnt += (_pushTo.size() - oldCnt);
 		}
 		
-		if (cnt == 0) log.warn("Not sending to " + MailUtils.format(addr));
+		if (cnt == 0) log.warn("Not sending to {}", MailUtils.format(addr));
 		return cnt;
 	}
 
@@ -99,7 +99,7 @@ public class Mailer {
 	public void send(Collection<? extends EMailAddress> addrs) {
 		int sentCount = addrs.stream().mapToInt(addr -> addRecipient(addr)).sum();
 		if (sentCount == 0)
-			log.warn("Sent zero messages from " + addrs.size() + " addresses");
+			log.warn("Sent zero messages from {} addresses", Integer.valueOf(addrs.size()));
 		else
 			send();
 	}

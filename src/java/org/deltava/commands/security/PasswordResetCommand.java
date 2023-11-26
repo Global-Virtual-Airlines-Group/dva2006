@@ -78,7 +78,7 @@ public class PasswordResetCommand extends AbstractCommand {
 						int id = StringUtils.parseHex(code);
 						usr = dao.get(id);
 					} catch (Exception e) {
-						log.warn("Cannot parse pilot ID - " + code);
+						log.warn("Cannot parse pilot ID - {}", code);
 					}
 				}
 				
@@ -135,7 +135,7 @@ public class PasswordResetCommand extends AbstractCommand {
 				if (auth.contains(usr))
 					auth.updatePassword(usr, newPwd);
 				else {
-					log.warn(usr.getName() + " not found, adding");
+					log.warn("{} not found, adding", usr.getName());
 					auth.add(usr, newPwd);
 				}
 			
