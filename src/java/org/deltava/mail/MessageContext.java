@@ -226,9 +226,7 @@ public class MessageContext {
      * @see MessageContext#execute(String)
      */
     Object evaluate(String arg) {
-    	if (log.isDebugEnabled())
-    		log.debug("Evaluating " + arg);
-    	
+   		log.debug("Evaluating {}", arg);
     	FormatType fmtType = FormatType.RAW;
         StringTokenizer tkns = new StringTokenizer(arg, ".");
         

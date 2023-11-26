@@ -9,7 +9,7 @@ import org.apache.logging.log4j.*;
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 3.2
  */
 
@@ -70,7 +70,7 @@ public class SetACARSPurge extends SetACARSLog {
 
 			// Purge the ones we want to
 			for (Integer id : results) {
-				log.info("Deleting Flight #" + id.toString());
+				log.info("Deleting Flight #{}", id);
 				deleteInfo(id.intValue());
 			}
 			

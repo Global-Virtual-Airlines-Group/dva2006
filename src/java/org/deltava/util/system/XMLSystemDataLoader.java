@@ -51,7 +51,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         // Log the configuration
         _data = new HashMap<String, Object>();
         _data.put(SystemData.CFG_NAME, root.getAttributeValue("env"));
-        log.info("Loading configuration environemnt - " + root.getAttributeValue("env"));
+        log.info("Loading configuration environemnt - {}", root.getAttributeValue("env"));
 
         // Parse through its children
         process("", root);
@@ -159,19 +159,19 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             try {
                 if ("list".equals(eType)) {
                     String eName = rootName + e.getAttributeValue("name", "$unNamedList");
-                    log.debug("Processing List " + eName);
+                    log.debug("Processing List {}", eName);
                     _data.put(eName, processList(e));
                 } else if ("map".equals(eType)) {
                     String eName = rootName + e.getAttributeValue("name", "$unNamedMap");
-                    log.debug("Processing Map " + eName);
+                    log.debug("Processing Map {}", eName);
                     _data.put(eName, processMap(e));
                 } else if (e.getChildren().size() == 0) {
                     String eName = rootName + eType;
-                    log.debug("Processing " + eName);
+                    log.debug("Processing {}", eName);
                     _data.put(eName, getElementWithType(e));
                 } else {
                     String eName = rootName + eType;
-                    log.debug("Processing sub-entry " + eName);
+                    log.debug("Processing sub-entry {}", eName);
                     process(eName, e);
                 }
             } catch (Exception ex) {

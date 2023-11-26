@@ -87,14 +87,14 @@ public class URLCheckService extends WebService {
 				// Load departure gate
 				List<Gate> dGates = gh.getDepartureGates();
 				if (!dGates.isEmpty()) {
-					log.info("Departure Gates = " + dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					log.info("Departure Gates = {}", dGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
 					dfr.setGateD(dGates.get(0).getName());
 				}	
 				
 				// Load arrival gate
 				List<Gate> aGates = gh.getArrivalGates();
 				if (!aGates.isEmpty()) {
-					log.info("Arrival Gates = " + aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
+					log.info("Arrival Gates = {}", aGates.stream().map(g -> String.format("%s/%d", g.getName(), Integer.valueOf(g.getUseCount()))).collect(Collectors.toList()));
 					dfr.setGateA(aGates.get(0).getName());
 				}
 			}

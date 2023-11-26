@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * An Authenticator to authenticate users against Apache2-style database tables.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -108,8 +108,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	 */
 	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		if (log.isDebugEnabled())
-			log.debug("Updating password for " + usr.getDN() + " in Directory");
+		log.debug("Updating password for {} in Directory", usr.getDN());
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
@@ -142,8 +141,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	 */
 	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
-		if (log.isDebugEnabled())
-			log.debug("Adding user " + usr.getDN() + " to Directory");
+		log.debug("Adding user {} to Directory", usr.getDN());
 
 		// Get the ID
 		int id = (usr instanceof Applicant a) ? a.getPilotID() : usr.getID();
@@ -230,8 +228,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	 */
 	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
-		if (log.isDebugEnabled())
-			log.debug("Renaming user " + usr.getDN() + " to " + newName);
+		log.debug("Renaming user {} to {}", usr.getDN(), newName);
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
@@ -257,7 +254,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	 */
 	@Override
 	public void disable(Person usr) throws SecurityException {
-		log.debug("Disabling user " + usr.getName());
+		log.debug("Disabling user {}", usr.getName());
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
@@ -283,8 +280,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	 */
 	@Override
 	public void remove(Person usr) throws SecurityException {
-		if (log.isDebugEnabled())
-			log.debug("Removing user " + usr.getName() + " from Directory");
+		log.debug("Removing user {} from Directory", usr.getName());
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");

@@ -11,7 +11,7 @@ import org.deltava.beans.Helper;
 /**
  * A utility class to save and restore servlet request state.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -53,8 +53,7 @@ public final class RequestStateHelper {
 		// Restore the request attributes
 		for (String attrName : rc.getAttributeNames()) {
 			req.setAttribute(attrName, rc.getAttribute(attrName));
-			if (log.isDebugEnabled())
-				log.debug("Restoring attribute " + attrName);
+			log.debug("Restoring attribute {}", attrName);
 		}
 
 		// Return the URL to forward to
@@ -78,8 +77,7 @@ public final class RequestStateHelper {
 			Object o = req.getAttribute(attrName);
 			if (!(o instanceof Cookie)) {
 				rc.setAttribute(attrName, o);
-				if (log.isDebugEnabled())
-					log.debug("Saving attribute " + attrName);
+				log.debug("Saving attribute {}", attrName);
 			}
 		}
 
@@ -101,8 +99,7 @@ public final class RequestStateHelper {
 			HttpSession s = req.getSession(false);
 			if ((s != null) && (s.getAttribute(STATE_ATTR_NAME) != null)) {
 				s.removeAttribute(STATE_ATTR_NAME);
-				if (log.isDebugEnabled())
-					log.debug("Clearing saved request state");
+				log.debug("Clearing saved request state");
 			}
 		}
 	}
