@@ -1,14 +1,14 @@
-// Copyright 2004, 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2011, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.crypt;
 
-import java.io.InputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.MessageDigest;
+import java.util.HexFormat;
 
 /**
  * A class to generate MD5/SHA message digests.
  * @author Luke
- * @version 4.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -107,22 +107,7 @@ public class MessageDigester {
      * @return the hexadecimal representation of the message digest
      */
     public static String convert(byte[] hash) {
-    	if (hash == null)
-    		return null;
-    	
-    	StringBuilder buf = new StringBuilder(hash.length << 1);
-    	for (int x = 0; x < hash.length; x++) {
-    		int b = hash[x];
-    		if (b < 0)
-    			b += 256;
-    		
-    		if (b < 0x10)
-    			buf.append('0');
-    			
-    		buf.append(Integer.toHexString(b).toLowerCase());
-    	}
-    	
-    	return buf.toString();
+    	return (hash == null) ? null : HexFormat.of().formatHex(hash);
     }
     
     /**
@@ -134,11 +119,6 @@ public class MessageDigester {
     	if ((hash == null) || ((hash.length() & 0x1) == 1))
     		throw new IllegalArgumentException("Invalid Hash - " + hash);
     	
-    	byte[] results = new byte[hash.length() >> 1];
-    	for (int x = 0; x < hash.length(); x += 2) {
-    		results[x >> 1] = (byte) Integer.parseInt(hash.substring(x, x + 2), 16);
-    	}
-    	
-    	return results;
+    	return HexFormat.of().parseHex(hash);
     }
 }
