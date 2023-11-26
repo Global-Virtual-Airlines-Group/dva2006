@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 3.2
  */
 
@@ -60,6 +60,7 @@ public class MapService extends WebService {
 		// Display the pilots
 		List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
 		for (Pilot usr : info.getPilots()) {
+			if (!usr.hasLocation()) continue;
 			for (Iterator<?> ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted()); ) {
 				String code = (String) ci.next();
 				if (usr.getCallsign().startsWith(code))
@@ -76,11 +77,10 @@ public class MapService extends WebService {
 		}
 		
 		// Display the controllers if required
-		boolean doATC = Boolean.parseBoolean(ctx.getParameter("atc"));
-		if (doATC) {
+		if (Boolean.parseBoolean(ctx.getParameter("atc"))) {
 			for (Iterator<Controller> i = info.getControllers().iterator(); i.hasNext(); ) {
 				Controller usr = i.next();
-				if ((usr.getPosition() == null) || ((usr.getFacility() != Facility.FSS) && (usr.getFacility() != Facility.CTR) && (usr.getFacility() != Facility.APP)))
+				if (!usr.hasLocation() || ((usr.getFacility() != Facility.FSS) && (usr.getFacility() != Facility.CTR) && (usr.getFacility() != Facility.APP)))
 					continue;
 
 				JSONObject ao = new JSONObject();
@@ -109,10 +109,6 @@ public class MapService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
