@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to merge a Pilot's data into another.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class SetPilotMerge extends PilotWriteDAO {
 		   ps.setInt(2, oldUser.getID());
 		   int rowsUpdated = executeUpdate(ps, 0);
 		   if (rowsUpdated > 0)
-			   log.info("Moved " + rowsUpdated + " Flight Reports from " + oldUser.getName() + " to " + newUser.getName());
+			   log.info("Moved {} Flight Reports from {} to {}", Integer.valueOf(rowsUpdated), oldUser.getName(), newUser.getName());
 		   
 		   return rowsUpdated;
 	   } catch (SQLException se) {
@@ -65,7 +65,7 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       ps.setInt(2, oldUser.getID());
 	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
-	    	   log.info("Moved " + rowsUpdated + " Examinations from " + oldUser.getName() + " to " + newUser.getName());
+	    	   log.info("Moved {} Examinations from {} to {}", Integer.valueOf(rowsUpdated), oldUser.getName(), newUser.getName());
 	         
 	       return rowsUpdated;
 	   } catch (SQLException se) {
@@ -89,7 +89,7 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       ps.setInt(2, oldUser.getID());
 	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
-	    	   log.info("Moved " + rowsUpdated + " Check Rides from " + oldUser.getName() + " to " + newUser.getName());
+	    	   log.info("Moved {} Check Rides from {} to {}", Integer.valueOf(rowsUpdated), oldUser.getName(), newUser.getName());
 	       
 	       return rowsUpdated;
 	   } catch (SQLException se) {
@@ -113,7 +113,7 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       ps.setInt(2, oldUser.getID());
 	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
-	    	   log.info("Moved " + rowsUpdated + " Check Rides from " + oldUser.getName() + " to " + newUser.getName());
+	    	   log.info("Moved {} Courses from {} to {}", Integer.valueOf(rowsUpdated), oldUser.getName(), newUser.getName());
 		   
 	       return rowsUpdated;
 	   } catch (SQLException se) {

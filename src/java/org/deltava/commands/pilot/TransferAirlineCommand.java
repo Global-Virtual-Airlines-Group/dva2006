@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -142,10 +142,10 @@ public class TransferAirlineCommand extends AbstractCommand {
 			
 			if (newUser != null) {
 				newRatings.addAll(CollectionUtils.getDelta(newUser.getRatings(), newEQ.getRatings()));
-				log.info("Reactivating " + newUser.getName());
+				log.info("Reactivating {}", newUser.getName());
 				newUser.addRatings(newRatings);
 			} else {
-				log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
+				log.info("Creating User record for {} at {}", p.getName(), aInfo.getCode());
 
 				// Clone the Pilot and update the ID
 				newUser = p.cloneExceptID();

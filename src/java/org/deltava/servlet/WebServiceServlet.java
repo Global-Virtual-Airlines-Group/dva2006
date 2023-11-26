@@ -110,7 +110,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		ServiceContext ctx = new ServiceContext(req, rsp);
 		ctx.setUser(usr);
 		if (svc.isLogged())
-			log.info("Executing Web Service " + svc.getClass().getName());
+			log.info("Executing Web Service {}", svc.getClass().getName());
 
 		// Execute the Web Service
 		TaskTimer tt = new TaskTimer();

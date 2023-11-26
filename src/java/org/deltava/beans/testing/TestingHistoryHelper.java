@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -515,7 +515,7 @@ public final class TestingHistoryHelper implements Cacheable {
 
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
-		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		log.info("Exam Lockout: interval = {}s, period ={}s", Long.valueOf(timeInterval), Integer.valueOf(lockoutHours * 3600));
 		return (timeInterval < (lockoutHours * 3600L));
 	}
 	

@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to verify Amazon SNS messages.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 8.5
  */
 
@@ -42,7 +42,7 @@ public class SNSVerifier {
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
 			_certs.put(url, cert);
-			log.info("Loaded certificate at " + url);
+			log.info("Loaded certificate at {}", url);
 			return cert;
 		}
 	}

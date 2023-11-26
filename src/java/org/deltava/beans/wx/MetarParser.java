@@ -228,7 +228,7 @@ public class MetarParser {
 				rmk.append(token);
 				rmk.append(' ');
 			} else if (log.isDebugEnabled())
-				log.debug("Unknown METAR token - " + token);
+				log.debug("Unknown METAR token - {}", token);
 			
 			//lastToken = token;
 		}

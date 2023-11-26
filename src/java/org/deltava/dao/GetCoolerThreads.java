@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -314,8 +314,7 @@ public class GetCoolerThreads extends DAO {
 		
 		// Build the comparator
 		Comparator<DatabaseBean> cmp = new ArbitraryComparator(IDs);
-		if (log.isDebugEnabled())
-			log.debug("Raw set size = " + IDs.size());
+		log.debug("Raw set size = {}", Integer.valueOf(IDs.size()));
 		
 		// Check the cache
 		List<MessageThread> results = new ArrayList<MessageThread>(IDs.size());
