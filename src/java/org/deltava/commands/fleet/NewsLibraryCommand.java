@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view Newsletters.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
 public class NewsLibraryCommand extends AbstractViewCommand {
 
-	private static final Logger log = LogManager.getLogger(DocumentLibraryCommand.class);
+	private static final Logger log = LogManager.getLogger(NewsLibraryCommand.class);
 
 	/**
 	 * Executes the command.
@@ -72,7 +72,7 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 
 			// Check that the resource exists
 			if (nws.getSize() == 0) {
-				log.warn(nws.getFullName() + " not found in file system!");
+				log.warn("{} not found in file system", nws.getFullName());
 				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
 			} else if (!access.getCanView())

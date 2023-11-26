@@ -84,7 +84,7 @@ public void execute(CommandContext ctx) throws CommandException {
 
          // If the entry is not present on the file system, remove it
          if (e.getSize() == 0) {
-            log.warn("Resource " + e.getFullName() + " not found in file system!");
+        	log.warn("Resource {} not found in file system", e.getFullName());
             if (!isAdmin)
                i.remove();
          }

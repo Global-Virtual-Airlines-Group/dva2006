@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -195,10 +195,10 @@ public class ScheduleImportCommand extends AbstractCommand {
 					if (!possibleEQ.isEmpty()) {
 						Collections.shuffle(possibleEQ); Aircraft ac = possibleEQ.get(0); 
 						rse.setEquipmentType(ac.getName());
-						log.debug("Variable equipment for " + rse.getShortCode() + ", using " + rse.getEquipmentType());
+						log.debug("Variable equipment for {}, using {}", rse.getShortCode(), rse.getEquipmentType());
 						pastChoices.put(rse.getShortCode(), ac);
 					} else
-						log.warn("Variable equipment for " + rse.getShortCode() + " (" + rse.getAirportD().getIATA() + "-" + rse.getAirportA().getIATA() + "), no available aircraft!");
+						log.warn("Variable equipment for {} ({}-{}), no available aircraft", rse.getShortCode(), rse.getAirportD().getIATA(), rse.getAirportA().getIATA());
 				}
 				else
 					rse.setEquipmentType(eqTypes.get(0).getName());
@@ -208,14 +208,14 @@ public class ScheduleImportCommand extends AbstractCommand {
 			int rawEntryCount = entries.size();
 			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(new RawDupeChecker());
 			entries.removeIf(se -> !dupeFilter.add(se)); int dupeCount = rawEntryCount - entries.size(); 
-			log.info("Removed " + dupeCount + " duplicate schedule entries");
+			log.info("Removed {} duplicate schedule entries", Integer.valueOf(dupeCount));
 
 			// Save the data
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
 			if (doPurge && !entries.isEmpty()) {
 				int purgeCount = swdao.purgeRaw(ss);
-				log.info("Purged " + purgeCount + " raw schedule entries from " + ss.getDescription());
+				log.info("Purged {} raw schedule entries from {}", Integer.valueOf(purgeCount), ss.getDescription());
 				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
 			}
 			

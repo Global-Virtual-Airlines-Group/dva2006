@@ -65,7 +65,7 @@ public class ServInfoHelper {
 				GetVATSIMTransceivers tdao = new GetVATSIMTransceivers(tfi);
 				positions.addAll(tdao.load());
 			} catch (DAOException | IOException ie) {
-				log.warn("Cannot load VATSIM radio data - " + ie.getMessage());
+				log.warn("Cannot load VATSIM radio data - {}", ie.getMessage());
 			}
 		}
 		

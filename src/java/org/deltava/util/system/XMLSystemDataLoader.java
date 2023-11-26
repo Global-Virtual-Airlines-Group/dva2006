@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             Method m = eClass.getMethod("valueOf", new Class[] { String.class });
             return m.invoke(null, new Object[] { e.getValue() });
         } catch (Exception ex) {
-            log.warn("Error loading " + e.getName() + " - " + ex.getClass().getName());
+            log.warn("Error loading {} - {}", e.getName(), ex.getClass().getName());
             return null;
         }
     }
@@ -175,7 +175,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
                     process(eName, e);
                 }
             } catch (Exception ex) {
-                log.warn("Error processing " + eType + " - " + ex.getMessage());
+                log.warn("Error processing {} - {}", eType, ex.getMessage());
             }
         }
     }

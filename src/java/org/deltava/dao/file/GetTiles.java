@@ -20,7 +20,7 @@ import org.gvagroup.tile.*;
 /**
  * A Data Access Object to read image tiles from the filesystem. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 10.0
  */
 
@@ -62,7 +62,7 @@ public class GetTiles extends DAO implements SeriesReader {
 					Instant isdDate = StringUtils.parseInstant(d.getFileName().toString(), "yyyyMMdd-HHmm");
 					results.add(isdDate);
 				} catch (Exception e) {
-					log.warn("Unparseable date - " + d.getFileName());
+					log.warn("Unparseable date - {}", d.getFileName());
 				}
 			}
 		} catch (IOException ie) {

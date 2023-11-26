@@ -66,7 +66,7 @@ public class GetVRouteData extends DAO {
 							pd.setHeading(StringUtils.parse(tkns.get(6), 0));
 							results.add(pd);
 						} catch (Exception pe) {
-							log.warn("Error parsing " + data + " - " + pe.getMessage());
+							log.warn("Error parsing {} - {}", data, pe.getMessage());
 						}
 					}
 				}
@@ -74,7 +74,7 @@ public class GetVRouteData extends DAO {
 
 			return results;
 		} catch (SocketTimeoutException ste) {
-			log.warn("Socket Timeout - " + url);
+			log.warn("Socket Timeout - {}", url);
 			return Collections.emptyList();
 		} catch (IOException ie) {
 			throw new DAOException(ie);

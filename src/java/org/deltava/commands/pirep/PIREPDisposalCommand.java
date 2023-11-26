@@ -372,7 +372,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 							SetSerializedRoute rtw = new SetSerializedRoute(os);
 							rtw.archive(arcRt);
 						} catch (IOException ie) {
-							log.warn("Error writing serialized route data", ie);
+							log.atWarn().withThrowable(ie).log("Error writing serialized route data");
 						}
 					}
 				}

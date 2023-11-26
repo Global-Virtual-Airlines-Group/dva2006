@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -68,11 +68,11 @@ abstract class BasicAuthServlet extends GenericServlet {
 			
 			p = usr;
 		} catch (SecurityException se) {
-			log.warn("Authentication failure - " + se.getMessage());
+			log.warn("Authentication failure - {}", se.getMessage());
 		} catch (DAOException de) {
-			log.warn("Data load failure - " + de.getMessage());
+			log.warn("Data load failure - {}", de.getMessage());
 		} catch (ConnectionPoolException cpe) {
-			log.warn("Connection pool error - " + cpe.getMessage());
+			log.warn("Connection pool error - {}", cpe.getMessage());
 		} finally {
 			pool.release(con);
 		}

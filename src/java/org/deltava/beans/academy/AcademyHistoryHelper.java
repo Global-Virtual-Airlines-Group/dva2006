@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -51,8 +51,8 @@ public final class AcademyHistoryHelper {
 		_certs.putAll(CollectionUtils.createMap(allCerts, Certification::getCode));
 	}
 
-	private void log(String msg) {
-		if (_debugLog) log.warn(msg);
+	private void log(String msg, Object... params) {
+		if (_debugLog) log.warn(msg, params);
 	}
 
 	/**
@@ -214,10 +214,10 @@ public final class AcademyHistoryHelper {
 		// Check if we're enrolled in the course
 		Course cr = _courses.get(certName);
 		if ((cr == null) || (cr.getStatus() == Status.ABANDONED)) {
-			log(certName +  " not complete, not enrolled or abandoned");
+			log("{} not complete, not enrolled or abandoned", certName);
 			return false;
 		} else if (cr.getStatus() == Status.COMPLETE) {
-			log(certName +  " alread completed");
+			log("{} alread completed", certName);
 			return true;
 		}
 		
@@ -225,7 +225,7 @@ public final class AcademyHistoryHelper {
 		Certification cert = _certs.get(certName);
 		for (String examName : cert.getExamNames()) {
 			if (!passedExam(examName)) {
-				log(certName +  " not complete, " + examName + " not passed");
+				log("{} not complete, {} not passed", certName, examName);
 				return false;
 			}
 		}
@@ -233,7 +233,7 @@ public final class AcademyHistoryHelper {
 		// Check if we've finished up all of the requirements
 		for (CourseProgress cp : cr.getProgress()) {
 			if (!cp.getComplete()) {
-				log(certName +  " not complete, requirement #" + cp.getID() + " incomplete");
+				log("{} not complete, requirement #{} incomplete", certName, Integer.valueOf(cp.getID()));
 				return false;
 			}
 		}
@@ -265,41 +265,41 @@ public final class AcademyHistoryHelper {
 		
 		// If it's inactive, and we're not an instructor no
 		if (!c.getActive() && !_allowInactive) {
-			log(c.getName() + " inactive");
+			log("{} inactive", c.getName());
 			return false;
 		}
 		
 		// Check that it matches our airline
 		AirlineInformation appInfo = SystemData.getApp(_p.getAirlineCode());
 		if (!c.getAirlines().contains(appInfo)) {
-			log(c.getName() + " not available to " + appInfo.getName() + " pilots");
+			log("{} not available to {} pilots", c.getName(), appInfo.getName());
 			return false;
 		}
 		
 		// If we've already passed it or are taking it, then no
 		if (hasPassed(c.getName()) || isPending(c.getName())) {
-			log("Already passed/enrolled in " + c.getName());
+			log("Already passed/enrolled in {}", c.getName());
 			return false;
 		}
 		
 		// If we are already in another course
 		Course cr = getCurrentCourse();
 		if (cr != null) {
-			log("Cannot take " + c.getName() + ", already enrolled in " + cr.getName());
+			log("Cannot take {}, already enrolled in {}", c.getName(), cr.getName());
 			return false;
 		}
 		
 		// Check security roles
 		if (!_p.isInRole("AcademyAdmin") && !_p.isInRole("AcademyAudit")) {
 			if (!RoleUtils.hasAccess(_p.getRoles(), c.getRoles())) {
-				log("Cannot take " + c.getName() + ", needs role in " + c.getRoles());
+				log("Cannot take {}, needs role in {}", c.getName(), c.getRoles());
 				return false;
 			}
 		}
 		
 		// Check if we have a network ID
 		if ((c.getNetwork() != null) && !_p.hasNetworkID(c.getNetwork())) {
-			log("Cannot take " + c.getName() + ", no " + c.getNetwork() + " ID");
+			log("Cannot take {}, no {} ID", c.getName(), c.getNetwork());
 			return false;
 		}
 		
@@ -307,7 +307,7 @@ public final class AcademyHistoryHelper {
 		switch (c.getReqs()) {
 			case ANY_PRIOR :
 				if (!hasAny(c.getStage())) {
-					log("Has no Stage " + c.getStage() + " certs for " + c.getName());
+					log("Has no Stage {} certs for {}", Integer.valueOf(c.getStage()), c.getName());
 					return false;
 				}
 				
@@ -315,7 +315,7 @@ public final class AcademyHistoryHelper {
 				
 			case ALL_PRIOR :
 				if (!hasAll(c.getStage() - 1)) {
-					log("Missing Stage " + c.getStage() + " cert for " + c.getName());
+					log("Missing Stage {} cert for {}", Integer.valueOf(c.getStage()), c.getName());
 					return false;
 				}
 				
@@ -324,9 +324,9 @@ public final class AcademyHistoryHelper {
 			case SPECIFIC:
 				Certification prCert = _certs.get(c.getReqCert());
 				if (prCert == null)
-					log.warn("No Certification called " + c.getReqCert() + " for " + c.getCode());
+					log.warn("No Certification called {} for {}", c.getReqCert(), c.getCode());
 				else if (!hasPassed(prCert.getName())) {
-					log("Missing pre-requisite " + prCert.getName() + " cert for " + c.getName());
+					log("Missing pre-requisite {} cert for {}", prCert.getName(), c.getName());
 					return false;
 				}
 				
@@ -335,7 +335,7 @@ public final class AcademyHistoryHelper {
 			case FLIGHTS:
 				int legs = getFlightTotals(c.getEquipmentProgram(), false); 
 				if (legs < c.getFlightCount()) {
-					log("Requires " + c.getFlightCount() + " legs in " + c.getEquipmentProgram() + ", pilot has " + legs);
+					log("Requires {} legs in {}, pilot has {}", Integer.valueOf(c.getFlightCount()), c.getEquipmentProgram(), Integer.valueOf(legs));
 					return false;
 				}
 				
@@ -344,7 +344,7 @@ public final class AcademyHistoryHelper {
 			case HOURS:
 				double hours = getFlightTotals(c.getEquipmentProgram(), true) / 10.0;
 				if (hours < c.getFlightCount()) {
-					log("Requires " + c.getFlightCount() + " hours in " + c.getEquipmentProgram() + ", pilot has " + StringUtils.format(hours, "#0.0"));
+					log("Requires {} hours in {}, pilot has {}", Integer.valueOf(c.getFlightCount()), c.getEquipmentProgram(), StringUtils.format(hours, "#0.0"));
 					return false;
 				}
 				
@@ -371,17 +371,17 @@ public final class AcademyHistoryHelper {
 		
 		// If we've already passed the exam, then no
 		if (passedExam(ep.getName()) || hasSubmitted(ep.getName())) {
-			log("Already submitted/passed " + ep.getName());
+			log("Already submitted/passed {}", ep.getName());
 			return false;
 		}
 		
 		// Determine if we are enrolled anywhere
 		Course cr = getCurrentCourse();
 		if (cr == null) {
-			log("Cannot take " + ep.getName() + " Not enrolled in a course");
+			log("Cannot take {}, not enrolled in a Course", ep.getName());
 			return false;
 		} else if (cr.getStatus() == Status.PENDING) {
-			log("Cannot take " + ep.getName() + " Course pending");
+			log("Cannot take {}, Course pending", ep.getName());
 			return false;
 		}
 		
@@ -412,7 +412,7 @@ public final class AcademyHistoryHelper {
 
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
-		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		log.info("Exam Lockout: interval = {}s, period = {}s", Long.valueOf(timeInterval), Integer.valueOf(lockoutHours * 3600));
 		return (timeInterval < (lockoutHours * 3600L));
 	}
 	

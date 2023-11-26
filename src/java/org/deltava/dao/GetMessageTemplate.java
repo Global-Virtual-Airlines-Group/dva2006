@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class GetMessageTemplate extends DAO {
 				result = results.get(0);
 				_cache.add(result);
 			} else
-				log.warn("Cannot load Message Template " + name);
+				log.warn("Cannot load Message Template {}", name);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
