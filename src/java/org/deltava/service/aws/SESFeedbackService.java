@@ -147,7 +147,7 @@ public class SESFeedbackService extends SNSReceiverService {
 						EMailDelivery dv = new EMailDelivery(DeliveryType.COMPLAINT, p.getID(), Instant.now());
 						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(co.getString("timestamp"))));
 						dv.setEmail(ro.getString("emailAddress"));
-						dv.setResponse(co.getString("complaintFeedbackType"));
+						dv.setResponse(co.optString("complaintFeedbackType", "?"));
 						dv.setMessageID(co.optString("feedbackId", "?"));
 						dvwdao.write(dv);
 						
