@@ -31,7 +31,6 @@ import org.deltava.comparators.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-import org.deltava.dao.http.GetVRouteData;
 
 import org.deltava.security.command.*;
 
@@ -766,15 +765,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().toEpochMilli()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
-					if ((trackID == 0) && (fr.getNetwork() == OnlineNetwork.VATSIM)) {
-						try {
-							GetVRouteData vddao = new GetVRouteData();
-							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
-							ctx.setAttribute("vRouteData", Boolean.valueOf(pd.size() > 0), REQUEST);
-						} catch (DAOException de) {
-							log.warn("Cannot download VRoute position data - {}", de.getMessage());
-						}
-					} else if (trackID != 0) {
+					if (trackID != 0) {
 						pd = tdao.getRaw(trackID);
 						if (StringUtils.isEmpty(fr.getRoute()))
 							fr.setRoute(tdao.getRoute(trackID));
