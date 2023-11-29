@@ -39,6 +39,7 @@ golgotha.local.updateSignups = function() {
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:5, t:'Event Name'});
+	golgotha.form.validate({f:f.network, min:1, t:'Online Network'});
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
 	golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
 	golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
