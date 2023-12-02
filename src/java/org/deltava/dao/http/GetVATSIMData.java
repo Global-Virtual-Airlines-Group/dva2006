@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read VATSIM API data.
  * @author Luke
- * @version 10.1
+ * @version 11.1
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class GetVATSIMData extends DAO {
 		String url = String.format("%s/%s/", SystemData.get("online.vatsim.validation_url"), id);
 		
 		try {
+			setCompression(Compression.GZIP);
 			init(url);
 			if (getResponseCode() != HTTP_OK)
 				return null;
