@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to fetch Airport ATIS data. 
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 10.3
  */
 
@@ -41,6 +41,7 @@ public class GetATIS extends DAO {
 			return codes.clone();
 		
 		try {
+			setCompression(Compression.GZIP);
 			init("https://datis.clowd.io/api/facilities");
 			if (getResponseCode() != 200) return Collections.emptySet();
 			Collection<String> results = new TreeSet<String>();

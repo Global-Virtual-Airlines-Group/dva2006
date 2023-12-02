@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 8.6
+ * @version 11.1
  * @since 2.2
  */
 
@@ -36,6 +36,7 @@ public class GetFARoutes extends FlightAwareDAO {
 		params.put("destination", rp.getAirportA().getICAO());
 		
 		try {
+			setCompression(Compression.GZIP);
 			init(buildURL("RoutesBetweenAirports", params)); JSONObject jo = null;
 			try (InputStream is = getIn()) {
 				jo = new JSONObject(new JSONTokener(is));
