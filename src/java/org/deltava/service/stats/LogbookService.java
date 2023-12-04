@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export a Pilot's log book. 
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 3.6
  */
 
@@ -44,7 +44,11 @@ public class LogbookService extends WebService {
 		// Get the logbook exporter
 		LogbookExport le = null;
 		try {
-			Class<?> ec = Class.forName(String.format("org.deltava.service.stats.%s", ctx.getParameter("export")));
+			String cName = ctx.getParameter("export");
+			if ((cName == null) || !Character.isLetter(cName.charAt(0)))
+				return SC_BAD_REQUEST;
+			
+			Class<?> ec = Class.forName(String.format("org.deltava.service.stats.%s", cName));
 			Constructor<?> cc = ec.getConstructor((Class<?>[]) null);
 			le = (LogbookExport) cc.newInstance((Object[]) null);
 		} catch (Exception cnfe) {
