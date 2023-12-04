@@ -132,8 +132,6 @@ public class EliteScoringTask extends Task {
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
-				if (sc.getAuthorID() != fr.getAuthorID())
-					log.warn("Package Author = {}, Flight Report Author = {}", Integer.valueOf(sc.getAuthorID()), Integer.valueOf(fr.getAuthorID()));
 				
 				// Check for upgrade
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc); 
