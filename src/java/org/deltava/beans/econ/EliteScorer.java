@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An interface for classes that calculate elite level point scores to Flight Reports.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -104,7 +104,7 @@ public abstract class EliteScorer {
 	}
 	
 	/**
-	 * Adds a conditional bonus entry to the flight score.
+	 * Adds a conditional entry to the flight score.
 	 * @param pts the number of points
 	 * @param msg the entry message
 	 */
@@ -113,7 +113,7 @@ public abstract class EliteScorer {
 	}
 	
 	/**
-	 * Adds a conditional entry to the flight score.
+	 * Adds a conditional bonus entry to the flight score.
 	 * @param pts the number of points
 	 * @param msg the entry message
 	 * @param condition the condition
