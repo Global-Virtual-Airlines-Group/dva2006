@@ -70,7 +70,7 @@ ${msg}<br /></c:forEach>
 </c:choose>
 <br />
 To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br />
-<c:if test="${!empty pilot}">To view this Pilot's ${eliteName} status history, <el:cmd url="eliteinfo" link="${pilot}" className="bld">Click Here</el:cmd>.<br />
+<c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="bld">Click Here</el:cmd>.<br />
 To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <br />
 <content:copyright />
