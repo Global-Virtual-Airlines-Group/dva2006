@@ -3,9 +3,12 @@ package org.deltava.commands.econ;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.sql.Connection;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -20,7 +23,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.security.command.EliteAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -31,6 +34,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class EliteStatusCalculateCommand extends AbstractCommand {
+	
+	private static final Logger log = LogManager.getLogger(EliteStatusCalculateCommand.class);
 	
 	/**
 	 * Executes the command.
@@ -69,28 +74,47 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			SortedMap<Instant, EliteStatus> myStatus = new TreeMap<Instant, EliteStatus>();
 			myStatus.put(st.getEffectiveOn(), st);
 			
+			// We also want to load previous year's status for January flights
+			List<EliteStatus> pyStatus = edao.getAllStatus(p.getID(), year - 1);
+			if (!pyStatus.isEmpty()) {
+				EliteStatus lyStatus = pyStatus.getLast();
+				myStatus.put(lyStatus.getEffectiveOn(), lyStatus);
+			}
+			
+			// Get current totals
+			GetEliteStatistics esdao = new GetEliteStatistics(con);
+			YearlyTotal oldTotal = esdao.getEliteTotals(p.getID()).stream().filter(yt -> yt.getYear() == year).findAny().orElse(new YearlyTotal(year, p.getID()));
+			
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
 			List<FlightReport> pireps = frdao.getEliteFlights(p.getID(), year);
 			pireps.removeIf(fr -> (fr.getStatus() != FlightStatus.OK));
+			
+			// Load the ACARS data
+			TaskTimer tt = new TaskTimer();
+			Collection<Integer> IDs = pireps.stream().filter(FDRFlightReport.class::isInstance).map(fr -> Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS))).collect(Collectors.toSet());
+			Map<Integer, SequencedCollection<? extends RouteEntry>> routeData = new HashMap<Integer, SequencedCollection<? extends RouteEntry>>();
+			IDs.parallelStream().map(id -> Map.entry(id, loadACARS(id))).forEach(me -> routeData.put(me.getKey(), me.getValue()));
+			log.info("ACARS data for {} flights loaded in {}ms", Integer.valueOf(IDs.size()), Long.valueOf(tt.stop()));
+			
+			// Open transaction boundary
+			ctx.startTX();
 			
 			// Get the DAOs
 			GetAircraft acdao = new GetAircraft(con);
 			GetACARSData fidao = new GetACARSData(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
 			
-			ctx.startTX();
-			
 			// Purge status
 			SetElite elwdao = new SetElite(con);
 			elwdao.clear(p.getID(), year, false);
 			
 			// Score the Flight Reports
+			FlightEliteScore sc = null; 
 			YearlyTotal total = new YearlyTotal(year, p.getID());
 			Collection<String> msgs = new ArrayList<String>();
 			AirlineInformation ai = SystemData.getApp(null);
 			for (FlightReport fr : pireps) {
-				FlightEliteScore sc = null;
 				st = myStatus.getOrDefault(myStatus.headMap(fr.getSubmittedOn()).lastKey(), myStatus.get(myStatus.firstKey()));
 				
 				if (fr instanceof FDRFlightReport ffr) {
@@ -101,17 +125,11 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					// Load the positions
 					if ((fi != null) && fi.getArchived()) {
 						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
-						try {
-							File f = ArchiveHelper.getPositions(fi.getID());
-							Compression c = Compression.detect(f);
-							try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
-								GetSerializedPosition psdao = new GetSerializedPosition(is);
-								psdao.read().forEach(pkg::add);
-							}
-						} catch (IOException ie) {
-							msgs.add("Error reading positions for Flight " + fr.getDatabaseID(DatabaseID.ACARS) + " - " + ie.getMessage());
-						}
-						
+						SequencedCollection<? extends RouteEntry> entries = routeData.getOrDefault(Integer.valueOf(fi.getID()), Collections.emptyList());
+						if (entries.isEmpty())
+							msgs.add(String.format("No flight data found for Flight %d", Integer.valueOf(fr.getID())));
+
+						entries.forEach(pkg::add);
 						sc = es.score(pkg, st.getLevel());
 					} else if (fi != null)
 						sc = es.score(new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts), st.getLevel());
@@ -120,14 +138,16 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				} else
 					sc  = es.score(fr, st.getLevel());
 				
-				// Determine the next level
-				EliteLevel nextLevel = lvls.higher(st.getLevel());
-				
 				// Write the score
 				frwdao.writeElite(sc, ai.getDB());
+				
+				// Determine the next level
+				EliteLevel nextLevel = lvls.higher(st.getLevel());
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc);
 				if ((nextLevel != null) && (updR != UpgradeReason.NONE)) {
-					msgs.add("Reaches " + nextLevel.getName() + " for " + year + " on " + StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat()) + " / " + updR.getDescription());
+					String msg = String.format("%s reaches %s for %d on %s / %s", p.getName(), nextLevel.getName(), Integer.valueOf(year), StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat()), updR.getDescription());
+					log.info(msg);
+					msgs.add(msg);
 					EliteStatus newSt = new EliteStatus(p.getID(), nextLevel);
 					newSt.setEffectiveOn(ZonedDateTime.ofInstant(fr.getDate(), ZoneOffset.UTC).plusDays(1).truncatedTo(ChronoUnit.DAYS).toInstant());
 					newSt.setUpgradeReason(updR);
@@ -140,11 +160,16 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				total.add(sc);
 			}
 			
+			// Commit
+			//ctx.commitTX();
+			
 			// Set status attributes
 			ctx.setAttribute("isRecalc", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("msgs", msgs, REQUEST);
-			ctx.setAttribute("plilot", p, REQUEST);
+			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("total", total, REQUEST);
+			ctx.setAttribute("oldTotal", oldTotal, REQUEST);
+			ctx.setAttribute("isDifferent", Boolean.valueOf(EliteTotals.compare(total, oldTotal) != 0), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -157,5 +182,19 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/econ/eliteLevelUpdate.jsp");
 		result.setSuccess(true);		
+	}
+	
+	private static SequencedCollection<? extends RouteEntry> loadACARS(Integer id) {
+		try {
+			File f = ArchiveHelper.getPositions(id.intValue());
+			Compression c = Compression.detect(f);
+			try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
+				GetSerializedPosition psdao = new GetSerializedPosition(is);
+				return psdao.read();
+			}
+		} catch (DAOException | IOException ie) {
+			log.atError().withThrowable(ie).log("Error reading positions for Flight {} -{}", id, ie.getMessage());
+			return Collections.emptyList();
+		}		
 	}
 }
