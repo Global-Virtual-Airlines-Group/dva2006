@@ -35,7 +35,9 @@ The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" cla
 <br />
 <span class="pri bld">${eliteName}</span> status for ${pilot.name} has been recalculated.<br />
 <br />
-<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} in ${total.year}.<br />
+<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} and <fmt:int value="${total.points}" />&nbsp;${pointUnit} in ${total.year}.<br />
+<c:if test="${isDifferent}">
+<span class="ita"> Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span><br /></c:if>
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
