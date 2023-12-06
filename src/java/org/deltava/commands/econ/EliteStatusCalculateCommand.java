@@ -161,7 +161,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			}
 			
 			// Commit
-			//ctx.commitTX();
+			ctx.commitTX();
 			
 			// Set status attributes
 			ctx.setAttribute("isRecalc", Boolean.TRUE, REQUEST);
