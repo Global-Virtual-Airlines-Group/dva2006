@@ -59,6 +59,8 @@ Legs: <fmt:dec value="${(nl.legs - ol.legs) * 1.0 / ol.legs}" fmt="##0.0%" class
 ${pointUnit }&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><hr />
 <br />
 </c:forEach>
+<c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span><br />
+<br /></c:if>
 </c:when>
 <c:when test="${isRollover}">
 <div class="updateHdr">${eliteName} Status Rollover for ${year}</div>

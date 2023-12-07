@@ -53,6 +53,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 
 		EliteScorer es = EliteScorer.getInstance();
 		final int year = EliteScorer.getStatusYear(Instant.now());
+		boolean saveChanges = Boolean.parseBoolean(ctx.getParameter("saveChanges"));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -88,7 +89,6 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
 			List<FlightReport> pireps = frdao.getEliteFlights(p.getID(), year);
-			pireps.removeIf(fr -> (fr.getStatus() != FlightStatus.OK));
 			
 			// Load the ACARS data
 			TaskTimer tt = new TaskTimer();
@@ -161,7 +161,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			}
 			
 			// Commit
-			ctx.commitTX();
+			if (saveChanges)
+				ctx.commitTX();
 			
 			// Set status attributes
 			ctx.setAttribute("isRecalc", Boolean.TRUE, REQUEST);
@@ -169,6 +170,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("total", total, REQUEST);
 			ctx.setAttribute("oldTotal", oldTotal, REQUEST);
+			ctx.setAttribute("isPersisted", Boolean.valueOf(saveChanges), REQUEST);
 			ctx.setAttribute("isDifferent", Boolean.valueOf(EliteTotals.compare(total, oldTotal) != 0), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
