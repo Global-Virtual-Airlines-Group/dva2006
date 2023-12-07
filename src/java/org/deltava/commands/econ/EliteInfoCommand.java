@@ -2,14 +2,13 @@
 package org.deltava.commands.econ;
 
 import java.util.*;
+import java.time.*;
 import java.util.stream.Collectors;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.econ.*;
-
+import org.deltava.beans.flight.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -76,6 +75,13 @@ public class EliteInfoCommand extends AbstractCommand {
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
 			totals.putIfAbsent(currentYear, new YearlyTotal(currentYear.intValue(), p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
+			
+			// Get and score pending flights
+			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear.intValue(), id);
+			GetFlightReports frdao = new GetFlightReports(con);
+			List<FlightReport> pendingFlights = frdao.getLogbookCalendar(p.getID(), ctx.getDB(), Instant.now().minusSeconds(Duration.ofDays(30).toSeconds()), 30);
+			pendingFlights.stream().filter(fr -> (fr.getStatus() == FlightStatus.SUBMITTED) && (EliteScorer.getStatsYear(fr.getDate()) == currentYear.intValue())).map(fr -> es.score(fr, currentStatus.getLevel())).forEach(pndt::add);
+			ctx.setAttribute("pending", pndt, REQUEST);
 			
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(currentYear);
