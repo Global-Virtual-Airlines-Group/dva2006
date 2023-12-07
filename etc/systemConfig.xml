@@ -192,7 +192,7 @@
 	<jdbc>
 		<driver>com.mysql.cj.jdbc.Driver</driver>
 		<url>jdbc:mysql://localhost/dva</url>
-		<!--  <socket>/run/mysql/mysql.sock</socket>  -->
+		<socket>/run/mysql/mysql.sock</socket>
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
