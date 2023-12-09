@@ -97,10 +97,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Attempt to load the driver and connect
 		try {
-			Random r = new Random();
 			_jdbcPool.setDriver(SystemData.get("jdbc.driver"));
 			_jdbcPool.setSocket(SystemData.get("jdbc.socket"));
-			ThreadUtils.sleep(r.nextLong(375));
 			_jdbcPool.connect(SystemData.getInt("jdbc.pool_size"));
 			JMXConnectionPool jmxpool = new JMXConnectionPool(code, _jdbcPool);
 			JMXUtils.register("org.gvagroup:type=JDBCPool,name=" + code, jmxpool);
