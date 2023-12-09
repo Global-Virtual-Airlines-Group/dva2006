@@ -80,7 +80,8 @@ public class EliteInfoCommand extends AbstractCommand {
 			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear.intValue(), id);
 			GetFlightReports frdao = new GetFlightReports(con);
 			List<FlightReport> pendingFlights = frdao.getLogbookCalendar(p.getID(), ctx.getDB(), Instant.now().minusSeconds(Duration.ofDays(30).toSeconds()), 30);
-			pendingFlights.stream().filter(fr -> (fr.getStatus() == FlightStatus.SUBMITTED) && (EliteScorer.getStatsYear(fr.getDate()) == currentYear.intValue())).map(fr -> es.score(fr, currentStatus.getLevel())).forEach(pndt::add);
+			pendingFlights.removeIf(fr -> (fr.getStatus() != FlightStatus.SUBMITTED) || (EliteScorer.getStatsYear(fr.getDate()) != currentYear.intValue()));
+			pendingFlights.stream().map(fr -> { fr.setStatus(FlightStatus.OK); return es.score(fr, currentStatus.getLevel()); }).forEach(pndt::add);
 			ctx.setAttribute("pending", pndt, REQUEST);
 			
 			// Calculate next year's status
