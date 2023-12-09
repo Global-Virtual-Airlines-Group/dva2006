@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display ACARS Dispatcher statistics.
  * @author Luke
- * @version 8.1
+ * @version 11.1
  * @since 3.6
  */
 
@@ -40,7 +40,6 @@ public class DispatcherStatsCommand extends AbstractCommand {
 			// Load the statistics
 			GetACARSDispatchStats sdao = new GetACARSDispatchStats(con);
 			Collection<DispatchStatistics> stats = sdao.getTopDispatchers(dr);
-			ctx.setAttribute("stats", stats, REQUEST);
 			ctx.setAttribute("ranges", sdao.getDispatchRanges(), REQUEST);
 			
 			// Get the User IDs
@@ -52,6 +51,11 @@ public class DispatcherStatsCommand extends AbstractCommand {
 			UserDataMap udm = uddao.get(IDs);
 			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
+			
+			// Trim out other airline
+			udm.values().removeIf(ud -> !ud.getDB().equals(ctx.getDB()));
+			stats.removeIf(ds -> !udm.keySet().contains(Integer.valueOf(ds.getID())));
+			ctx.setAttribute("stats", stats, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
