@@ -23,6 +23,8 @@ public class SkyMilesScorer extends EliteScorer {
 	private static final int MAX_NON_ACARS = SystemData.getInt("econ.elite.maxNonACARS", 5);
 	private static final int MAX_ACCEL_PCT = SystemData.getInt("econ.elite.maxAccelPct", 20);
 	
+	private static final int MIN_DISTANCE = 500;
+	
 	private final Map<Integer, MutableInteger> _nonACARSCounts = new HashMap<Integer, MutableInteger>();
 	
 	/*
@@ -51,6 +53,7 @@ public class SkyMilesScorer extends EliteScorer {
 
 		// Calculate base miles, break out if needed
 		if (score(ffr, lvl) == null) return null;
+		_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 		
 		// Calculate landing score bonus
 		if (pkg.getRunwayA() instanceof RunwayDistance ra) {
