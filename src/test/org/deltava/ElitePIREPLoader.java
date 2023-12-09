@@ -186,7 +186,7 @@ public class ElitePIREPLoader extends TestCase {
 						upd.setDescription(String.format("Reached %s for %d ( %s )", nextLevel.getName(), yr, updR.getDescription()));
 						upds.add(upd);
 						
-						log.info(p.getName() + " reaches " + nextLevel.getName() + " for " + yr + " / " + updR.getDescription());
+						log.info("{} reaches {} for {} / {}", p.getName(), nextLevel.getName(), yr, updR.getDescription());
 						st = new EliteStatus(p.getID(), nextLevel);
 						st.setEffectiveOn(fr.getDisposedOn());
 						st.setUpgradeReason(updR);
