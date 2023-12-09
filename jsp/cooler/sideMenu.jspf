@@ -5,6 +5,8 @@
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="toursEnabled" name="online.tours" />
+<content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
+<content:sysdata var="elitePoints" name="econ.elite.points" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
@@ -68,6 +70,9 @@
 <content:filter roles="Pilot">
  <content:subitem><el:cmd url="pilotcenter" className="bld">Pilot Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="logbook" link="${user}">Log Book</el:cmd></content:subitem>
+<c:if test="${eliteEnabled}">
+ <content:subitem><el:cmd url="eliteinfo">My ${elitePoints}</el:cmd></content:subitem>
+</c:if>
 <c:if test="${(user.legs >= 5) && !user.noExams}">
  <content:subitem><el:cmd url="testcenter">Testing Center</el:cmd></content:subitem> 
 </c:if>
