@@ -28,34 +28,25 @@
 <script>
 const loaders = {};
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
-loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-loaders.series.setData('futureRadar', 0.45, 'wxRadar');
-loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
 
-golgotha.maps.acars.reloadData = function(isAuto)
-{
-// Get auto refresh
-const f = document.forms[0];
-const doRefresh = f.autoRefresh.checked;
+golgotha.maps.acars.reloadData = function(isAuto) {
+	const isVisible = !document.visibilityState || (document.visibilityState == 'visible');
+	const doRefresh = document.forms[0].autoRefresh.checked;
 
-// Generate XMLHTTPRequest if we're not already viewing a flight
-if (!document.pauseRefresh) {
-	const isLoading = document.getElementById('isLoading');
-	isLoading.innerHTML = ' - LOADING...';
-	const xmlreq = golgotha.maps.acars.generateXMLRequest();
-	xmlreq.send(null);
-}
+	// Generate XMLHTTPRequest if we're not already viewing a flight
+	if (!document.pauseRefresh && isVisible) {
+		const isLoading = document.getElementById('isLoading');
+		isLoading.innerHTML = ' - LOADING...';
+		const xmlreq = golgotha.maps.acars.generateXMLRequest();
+		xmlreq.send(null);
+	}
 
-// Set timer to reload the data
-if (doRefresh && isAuto)
-	window.setTimeout(golgotha.maps.acars.reloadData, ${refreshInterval + 2000}, true);
+	// Set timer to reload the data
+	if (doRefresh && isAuto)
+		window.setTimeout(golgotha.maps.acars.reloadData, ${refreshInterval + 2000}, true);
 
-return true;
+	return true;
 };
 
 golgotha.maps.acars.showLegend = function(box) {
@@ -151,11 +142,6 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 // Build the weather layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 
 // Add other layers
@@ -195,7 +181,6 @@ golgotha.maps.reloadData = function(isReload) {
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	// loaders.series.loadGinsu();
 	return true;
 };
 </script>
