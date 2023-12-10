@@ -45,6 +45,7 @@ public class EliteScoringTask extends Task {
 		Collection<Integer> pilotIDs = new HashSet<Integer>();
 		try {
 			Connection con = ctx.getConnection();
+			ctx.startTX();
 			
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
@@ -67,7 +68,6 @@ public class EliteScoringTask extends Task {
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
-				ctx.startTX();
 				TaskTimer tt = new TaskTimer();
 				EliteScorer es = EliteScorer.getInstance();
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
