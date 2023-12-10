@@ -14,6 +14,14 @@ import org.deltava.beans.discord.*;
 import org.deltava.dao.SetFilterData;
 import org.deltava.util.StringUtils;
 
+/**
+ * A class to listen for Discord commands.
+ * @author danielw
+ * @author luke
+ * @version 11.0
+ * @since 11.0
+ */
+
 public class CommandListener implements org.javacord.api.listener.interaction.SlashCommandCreateListener {
 	
 	private static final Logger log = LogManager.getLogger(CommandListener.class); 

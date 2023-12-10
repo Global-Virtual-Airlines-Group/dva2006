@@ -8,6 +8,14 @@ import org.javacord.api.event.message.MessageReplyEvent;
 
 import org.deltava.beans.discord.ChannelName;
 
+/**
+ * A class to handle Discord message responses.
+ * @author danielw
+ * @author luke
+ * @version 11.0
+ * @since 11.0
+ */
+
 public class MessageReplyListener implements org.javacord.api.listener.message.MessageReplyListener {
 	
     private static final Logger log = LogManager.getLogger(MessageReplyListener.class);
