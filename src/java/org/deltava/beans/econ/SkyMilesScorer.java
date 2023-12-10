@@ -53,7 +53,6 @@ public class SkyMilesScorer extends EliteScorer {
 
 		// Calculate base miles, break out if needed
 		if (score(ffr, lvl) == null) return null;
-		_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 		
 		// Calculate landing score bonus
 		if (pkg.getRunwayA() instanceof RunwayDistance ra) {
@@ -65,13 +64,14 @@ public class SkyMilesScorer extends EliteScorer {
 		
 		// Calculate minimal acceleration bonus
 		if (ffr instanceof ACARSFlightReport afr) {
-			Duration accTime = Duration.ofSeconds(afr.getTime(2) + afr.getTime(4));
-			float rawAccPct = accTime.toSeconds() * 1f / afr.getBlockTime().toSeconds();
+			float accTime = afr.getTime(2) + afr.getTime(4);
+			float rawAccPct = accTime / afr.getBlockTime().toSeconds();
 			int accPct = Math.round(rawAccPct * 100);
 			if (accPct < MAX_ACCEL_PCT) {
-				addBonus(ffr.getDistance() / 2, "Minimal Time Acceleration", true);
-				_score.setDistance(ffr.getDistance());
-			}
+				addBonus(ffr.getDistance() / 2, "Minimal Time Acceleration (" + accPct + "%)", true);
+				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
+			} else
+				_score.setDistance(Math.max(MIN_DISTANCE, Math.round(ffr.getDistance() * (1f - accPct))));
 			
 			// Calculate on-time bonus
 			addBonus(Math.round(ffr.getDistance() * 0.4f), "Early Arrival", (afr.getOnTime() == OnTime.EARLY));
