@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to write Content Filtering lists.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 11.0
  */
 
@@ -27,7 +27,7 @@ public class SetFilterData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void add(String kw, boolean isSafe) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO CONTENT_FILTER (KEYWORD, UPDATEDON, SAFE) VALUES (?, NOW(), ?) AS N ON DUPLICATE KEY UPDATE N.UPDATEDON=NOW()")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO CONTENT_FILTER (KEYWORD, UPDATED_ON, SAFE) VALUES (?, NOW(), ?) AS N ON DUPLICATE KEY UPDATE UPDATED_ON=NOW()")) {
 			ps.setString(1, kw);
 			ps.setBoolean(2, isSafe);
 			executeUpdate(ps, 1);
