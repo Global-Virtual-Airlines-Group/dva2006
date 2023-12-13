@@ -11,6 +11,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.http.GetFARoutes;
 import org.deltava.taskman.*;
 
+import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -48,7 +49,7 @@ public class CachedRouteUpdateTask extends Task {
 			Connection con = ctx.getConnection();
 			
 			// Load popular route pairs
-			int routesLoaded = 0;
+			int routesLoaded = 0; Random r = new Random();
 			GetCachedRoutes rcdao = new GetCachedRoutes(con);
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 			stdao.setDayFilter(60);
@@ -68,13 +69,14 @@ public class CachedRouteUpdateTask extends Task {
 				// Get the average age - if over three-quarters of the max age load new routes
 				int avgAge = rcdao.getAverageAge(rp);
 				boolean isExpired = (avgAge == -1) || (avgAge >= maxAge);
-				SetCachedRoutes rcwdao = new SetCachedRoutes(con);
 				if (SystemData.getBoolean("schedule.flightaware.enabled") && isExpired) {
+					ThreadUtils.sleep(r.nextLong(350) + 350); // Slow down so FlightAware doesn't get mad
 					ctx.startTX();
 					
 					// Purge the routes and load new ones
 					routesLoaded++;
 					Collection<ExternalRoute> faroutes = fwdao.getRouteData(rp);
+					SetCachedRoutes rcwdao = new SetCachedRoutes(con);
 					if (!faroutes.isEmpty()) {
 						log.warn("Loaded {} routes between {} and {}", Integer.valueOf(faroutes.size()), rp.getAirportD(), rp.getAirportA());
 						rcwdao.purge(rp);
