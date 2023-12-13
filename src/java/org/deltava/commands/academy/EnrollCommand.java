@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 10.0
+ * @version 11.1
  * @since 1.0
  */
 
@@ -85,7 +85,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			// Figure out if we have passed any stage 1 certs; if so, then immediately start
 			boolean autoEnroll = cert.getAutoEnroll();
 			if (cert.getStage() > 1)
-				autoEnroll &= academyHistory.hasAny(1) ;
+				autoEnroll &= academyHistory.hasAny(1);
 			
 			// Start a transaction
 			ctx.startTX();
@@ -111,7 +111,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 					
 					StatusUpdate upd2 = new StatusUpdate(ctx.getUser().getID(), UpdateType.ACADEMY);
 					upd2.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Ratings added: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
+					upd2.setDescription("Ratings added: " + StringUtils.listConcat(academyEQ, ", ") + " for " + c.getName());
 					upds.add(upd2);
 				}
 			}
@@ -120,11 +120,9 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.write(c);
 			
-			// Write the status update
+			// Write the status update and commit
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			uwdao.write(upds);
-			
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
