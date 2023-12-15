@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display a Pilot's Elite status history. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -79,8 +79,10 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Get and score pending flights
 			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear.intValue(), id);
 			GetFlightReports frdao = new GetFlightReports(con);
+			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
+			Collection<Integer> unscoredFlightIDs = frsdao.getUnscoredFlights();
 			List<FlightReport> pendingFlights = frdao.getLogbookCalendar(p.getID(), ctx.getDB(), Instant.now().minusSeconds(Duration.ofDays(30).toSeconds()), 30);
-			pendingFlights.removeIf(fr -> (fr.getStatus() != FlightStatus.SUBMITTED) || (EliteScorer.getStatsYear(fr.getDate()) != currentYear.intValue()));
+			pendingFlights.removeIf(fr -> !isPending(fr, currentYear.intValue(), unscoredFlightIDs));
 			pendingFlights.stream().map(fr -> { fr.setStatus(FlightStatus.OK); return es.score(fr, currentStatus.getLevel()); }).forEach(pndt::add);
 			ctx.setAttribute("pending", pndt, REQUEST);
 			
@@ -113,5 +115,13 @@ public class EliteInfoCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/econ/eliteInfo.jsp");
 		result.setSuccess(true);
+	}
+	
+	/*
+	 * Helper method to determine inclusion in pending flights.
+	 */
+	private static boolean isPending(FlightReport fr, int yr, Collection<Integer> unscoredIDs) {
+		if ((fr.getStatus() == FlightStatus.DRAFT) || (fr.getStatus() == FlightStatus.REJECTED) || (EliteScorer.getStatsYear(fr.getDate()) != yr)) return false;
+		return (fr.getStatus() != FlightStatus.OK) || unscoredIDs.contains(Integer.valueOf(fr.getID()));
 	}
 }
