@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -155,7 +155,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 <c:set var="hasLevel" value="${total.matches(lvl)}" scope="page" />
 <c:if test="${hasLevel || (hasPrevLevel && (isOps || lvl.isVisible))}">
 <c:set var="lr" value="${hasPrevLevel ? Math.max(0, lvl.legs - total.legs) : lvl.legs}" scope="page" />
-<fmt:eliteProgressBar width="19" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}"  units="l" showUnits="false" /></c:if>
+<fmt:eliteProgressBar width="19" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}"  units="l" showUnits="true" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach><br />
 <div style="height:4px;"></div>
