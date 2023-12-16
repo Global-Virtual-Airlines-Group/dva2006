@@ -76,11 +76,14 @@ public class EliteInfoCommand extends AbstractCommand {
 			totals.putIfAbsent(currentYear, new YearlyTotal(currentYear.intValue(), p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
 			
+			// Load unscored flight IDs
+			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
+			frsdao.setDayFilter(30);
+			Collection<Integer> unscoredFlightIDs = frsdao.getUnscoredFlights();
+			
 			// Get and score pending flights
 			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear.intValue(), id);
 			GetFlightReports frdao = new GetFlightReports(con);
-			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
-			Collection<Integer> unscoredFlightIDs = frsdao.getUnscoredFlights();
 			List<FlightReport> pendingFlights = frdao.getLogbookCalendar(p.getID(), ctx.getDB(), Instant.now().minusSeconds(Duration.ofDays(30).toSeconds()), 30);
 			pendingFlights.removeIf(fr -> !isPending(fr, currentYear.intValue(), unscoredFlightIDs));
 			pendingFlights.stream().map(fr -> { fr.setStatus(FlightStatus.OK); return es.score(fr, currentStatus.getLevel()); }).forEach(pndt::add);
