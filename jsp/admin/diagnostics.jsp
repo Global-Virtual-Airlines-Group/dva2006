@@ -127,7 +127,7 @@ Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize va
 </tr>
 <c:if test="${!empty buildDataCore && !empty buildDataJSP}">
 <tr>
- <td class="label">Build Information</td>
+ <td class="label top">Build Information</td>
  <td class="data"><span class="pri bld">Core</span> - Built on ${buildDataCore['build.date']} on Java ${buildDataCore['build.jvm']} / ${buildDataCore['build.os']}<br />
 <span class="pri bld">JSP</span> - Built on ${buildDataJSP['build.date']} on Java ${buildDataJSP['build.jvm']} / ${buildDataJSP['build.os']}</td>
 </tr>
