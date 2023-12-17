@@ -39,8 +39,7 @@ public class CachedRouteUpdateTask extends Task {
 		
 		// Get the flightaware DAO
 		GetFARoutes fwdao = new GetFARoutes();
-		fwdao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-		fwdao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fwdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
 
 		// Get max routes to load
 		int maxAge = SystemData.getInt("schedule.flightaware.max_age", 365);
@@ -70,7 +69,7 @@ public class CachedRouteUpdateTask extends Task {
 				int avgAge = rcdao.getAverageAge(rp);
 				boolean isExpired = (avgAge == -1) || (avgAge >= maxAge);
 				if (SystemData.getBoolean("schedule.flightaware.enabled") && isExpired) {
-					ThreadUtils.sleep(r.nextLong(350) + 350); // Slow down so FlightAware doesn't get mad
+					ThreadUtils.sleep(r.nextLong(350) + 6000); // Limited to 10/min
 					ctx.startTX();
 					
 					// Purge the routes and load new ones
