@@ -68,7 +68,7 @@ public class SkyMilesScorer extends EliteScorer {
 			float rawAccPct = accTime / afr.getBlockTime().toSeconds();
 			int accPct = Math.round(rawAccPct * 100);
 			if (accPct < MAX_ACCEL_PCT) {
-				addBonus(ffr.getDistance() / 2, String.format("Minimal Time Acceleration (%d%%)", Integer.valueOf(accPct)), true);
+				addBonus(ffr.getDistance() / 2, String.format("Minimal Time Acceleration - %d%%", Integer.valueOf(accPct)), true);
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 			} else
 				_score.setDistance(Math.max(MIN_DISTANCE, Math.round(ffr.getDistance() * (1f - (accPct / 2)))));
