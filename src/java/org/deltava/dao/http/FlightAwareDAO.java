@@ -1,56 +1,30 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 import java.util.*;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * An abstract class to describe FlightAware RESTful Data Access Objects. 
  * @author Luke
- * @version 8.0
+ * @version 11.1
  * @since 8.0
  */
 
 abstract class FlightAwareDAO extends DAO {
 	
-	private String _userID;
-	private String _password;
+	private String _key;
 	private int _maxResults;
 	
 	/**
-	 * Offset to a subsequent data call.
+	 * Sets the API Key to use.
+	 * @param key the key
 	 */
-	protected int _nextOffset;
-
-	/**
-	 * Clears the returned subsequent offset value.
-	 */
-	public void clearNextOffset() {
-		_nextOffset = 0;
-	}
-	
-	/**
-	 * Returns the starting offset of a subequent paginated data call.
-	 * @return the offset
-	 */
-	public int getNextOffset() {
-		return _nextOffset;
-	}
-	
-	/**
-	 * Sets the User ID to use.
-	 * @param usr the user ID
-	 */
-	public final void setUser(String usr) {
-		_userID = usr;
-	}
-	
-	/**
-	 * Sets the password to use.
-	 * @param password the password
-	 */
-	public final void setPassword(String password) {
-		_password = password;
+	public final void setKey(String key) {
+		_key = key;
 	}
 	
 	/**
@@ -63,8 +37,9 @@ abstract class FlightAwareDAO extends DAO {
 	
 	@Override
 	protected void init(String url) throws IOException {
+		setCompression(Compression.GZIP, Compression.BROTLI);
 		super.init(url);
-		setAuthentication(_userID, _password);
+		setRequestHeader("x-apikey", _key);
 	}
 	
 	/**
@@ -74,19 +49,17 @@ abstract class FlightAwareDAO extends DAO {
 	 * @return the URL to call
 	 */
 	protected String buildURL(String method, Map<String, String> params) {
-		StringBuilder buf = new StringBuilder("https://flightxml.flightaware.com/json/FlightXML3/");
+		StringBuilder buf = new StringBuilder("https://aeroapi.flightaware.com/aeroapi/");
 		buf.append(method);
 		buf.append('?');
-		if (_nextOffset > 0)
-			params.putIfAbsent("offset", String.valueOf(_nextOffset));
 		if (_maxResults > 0)
 			params.put("howMany", String.valueOf(_maxResults));
 		
 		for (Iterator<Map.Entry<String, String>> i = params.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, String> me = i.next();
-			buf.append(me.getKey());
+			buf.append(URLEncoder.encode(me.getKey(), ISO_8859_1));
 			buf.append('=');
-			buf.append(me.getValue());
+			buf.append(URLEncoder.encode(me.getValue(), ISO_8859_1));
 			if (i.hasNext())
 				buf.append('&');
 		}

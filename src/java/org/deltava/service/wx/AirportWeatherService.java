@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 2.3
  */
 
@@ -64,15 +64,14 @@ public class AirportWeatherService extends WebService {
 			
 			// Get the weather
 			if (useFA) {
-				GetFAWeather dao = new GetFAWeather();
-				dao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-				dao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
-				dao.setReadTimeout(5000);
+				GetFAWeather wxdao = new GetFAWeather();
+				wxdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
+				wxdao.setReadTimeout(5000);
 				APILogger.add(new APIRequest(API.FlightAware.createName("WEATHER"), !ctx.isAuthenticated()));
 				if (useMETAR)
-					wxBeans.add(dao.getMETAR(al));
+					wxBeans.add(wxdao.getMETAR(al));
 				if (useTAF)
-					wxBeans.add(dao.getTAF(al));
+					wxBeans.add(wxdao.getTAF(al));
 			} else {
 				GetWeather wxdao = new GetWeather(con);
 				if (useMETAR)

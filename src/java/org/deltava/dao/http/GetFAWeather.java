@@ -1,9 +1,10 @@
 // Copyright 2008, 2009, 2010, 2012, 2016, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
-import java.util.HashMap;
+import java.util.*;
 import java.io.InputStream;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import org.json.*;
 
@@ -64,18 +65,20 @@ public class GetFAWeather extends FlightAwareDAO {
 			return result;
 
 		try {
-			init(buildURL("WeatherConditions", new HashMap<String, String>() {{ put("airport_code", loc.getCode()); }})); JSONObject jo = null;
+			init(buildURL(String.format("airports/%s/weather/observations", loc.getCode()), Map.of("temperature_units", "C"))); JSONObject jo = null;
 			try (InputStream is = getIn()) {
 				jo = new JSONObject(new JSONTokener(is));
 			}
 					
 			// Get the parsed METAR
-			JSONObject dto = jo.getJSONObject("WeatherConditionsResult");
-			JSONObject mo = dto.getJSONArray("conditions").getJSONObject(0);
+			JSONArray oa = jo.optJSONArray("observations");
+			if ((oa == null) || (oa.length() == 0))
+				return null;
 			
+			JSONObject mo = oa.getJSONObject(0);
 			result = new METAR();
 			result.setAirport(loc);
-			result.setDate(Instant.ofEpochSecond(mo.getLong("time")));
+			result.setDate(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(mo.getString("time"))));
 			result.setData(mo.getString("raw_data"));
 			result.setTemperature(mo.getInt("temp_air"));
 			result.setHumidity(mo.optInt("temp_relhum"));
@@ -136,20 +139,23 @@ public class GetFAWeather extends FlightAwareDAO {
 			return result;
 
 		try {
-			init(buildURL("WeatherForecast", new HashMap<String, String>() {{ put("airport_code", loc.getCode()); }})); JSONObject jo = null;
+			init(buildURL(String.format("airports/%s/weather/forecast", loc.getCode()), Collections.emptyMap())); JSONObject jo = null;
 			try (InputStream is = getIn()) {
 				jo = new JSONObject(new JSONTokener(is));
 			}
 			
 			// Get the parsed TAF
-			JSONObject dto = jo.getJSONObject("WeatherForecastResult");
-			JSONArray rfa = dto.getJSONArray("raw_forecast");
+			JSONArray rfa = jo.optJSONArray("raw_forecast");
+			if ((rfa == null) || (rfa.length() == 0))
+				return null;
+			
 			StringBuilder buf = new StringBuilder();
 			for (int x = 0; x < rfa.length(); x++)
 				buf.append(rfa.getString(x)).append('\n');
 			
 			result = new TAF();
 			result.setAirport(loc);
+			result.setDate(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(jo.getString("time"))));
 			result.setData(buf.toString());
 			_fCache.add(result);
 			return result;

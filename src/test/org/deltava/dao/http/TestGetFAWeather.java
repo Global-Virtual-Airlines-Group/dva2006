@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.File;
@@ -17,7 +17,8 @@ import org.deltava.util.system.SystemData;
 
 public class TestGetFAWeather extends TestCase {
 	
-	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
+	private static final String KEY = "foo";
 	
 	private static Logger log;
 
@@ -43,7 +44,7 @@ public class TestGetFAWeather extends TestCase {
 			// Load country codes
 			log.info("Loading Country codes");
 			GetCountry cdao = new GetCountry(c);
-			log.info("Loaded " + cdao.initAll() + " Country codes");
+			log.info("Loaded {} Country codes", Integer.valueOf(cdao.initAll()));
 
 			// Load Database information
 			log.info("Loading Cross-Application data");
@@ -73,8 +74,7 @@ public class TestGetFAWeather extends TestCase {
 		
 		GetFAWeather fadao = new GetFAWeather();
 		fadao.setReadTimeout(7500);
-		fadao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-		fadao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fadao.setKey(KEY);
 		
 		METAR m = fadao.getMETAR(new AirportLocation(SystemData.getAirport("EGLL")));
 		assertNotNull(m);
@@ -91,8 +91,7 @@ public class TestGetFAWeather extends TestCase {
 
 		GetFAWeather fadao = new GetFAWeather();
 		fadao.setReadTimeout(7500);
-		fadao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-		fadao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fadao.setKey(KEY);
 
 		TAF t = fadao.getTAF(new AirportLocation(SystemData.getAirport("EGLL")));
 		assertNotNull(t);
