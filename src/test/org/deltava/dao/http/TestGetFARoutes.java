@@ -73,8 +73,7 @@ public class TestGetFARoutes extends TestCase {
 		
 		GetFARoutes fadao = new GetFARoutes();
 		fadao.setReadTimeout(7500);
-		fadao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-		fadao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fadao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
 		
 		RoutePair rp = RoutePair.of(SystemData.getAirport("KCVG"), SystemData.getAirport("KATL"));
 		Collection<ExternalRoute> routes = fadao.getRouteData(rp);

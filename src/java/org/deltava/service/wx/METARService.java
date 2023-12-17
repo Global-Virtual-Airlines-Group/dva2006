@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.sql.Connection;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch METAR data. 
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 2.3
  */
 
@@ -53,8 +53,7 @@ public class METARService extends WebService {
 				
 				// Load the weather
 				GetFAWeather wxdao = new GetFAWeather();
-				wxdao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-				wxdao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+				wxdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
 				wxdao.setReadTimeout(5000);
 				APILogger.add(new APIRequest(API.FlightAware.createName("WEATHER"), !ctx.isAuthenticated()));
 				data = wxdao.getMETAR(loc);

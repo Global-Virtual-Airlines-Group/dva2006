@@ -120,8 +120,7 @@ public final class RouteLoadHelper {
 		}
 		
 		GetFARoutes fwdao = new GetFARoutes();
-		fwdao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
-		fwdao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fwdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
 		Collection<? extends FlightRoute> routes = fwdao.getRouteData(_rp);
 		log.info("Loaded " + routes.size() + " FlightAware Routes");
 		_routes.addAll(routes);

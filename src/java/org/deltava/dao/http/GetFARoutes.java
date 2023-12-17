@@ -29,35 +29,30 @@ public class GetFARoutes extends FlightAwareDAO {
 	 */
 	public Collection<ExternalRoute> getRouteData(RoutePair rp) throws DAOException {
 		Collection<ExternalRoute> results = new LinkedHashSet<ExternalRoute>();
-		
-		// Build the URL
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("origin", rp.getAirportD().getICAO());
-		params.put("destination", rp.getAirportA().getICAO());
-		
 		try {
-			setCompression(Compression.GZIP);
-			init(buildURL("RoutesBetweenAirports", params)); JSONObject jo = null;
+			init(buildURL(String.format("airports/%s/routes/%s", rp.getAirportD().getICAO(), rp.getAirportA().getICAO()), Map.of("sort_by", "count", "max_file_age", "2 days"))); JSONObject jo = null;
 			try (InputStream is = getIn()) {
 				jo = new JSONObject(new JSONTokener(is));
 			}
 
-			JSONObject ro = jo.optJSONObject("RoutesBetweenAirportsResult");
-			if (ro == null)
+			JSONArray ra = jo.optJSONArray("routes");
+			if ((ra == null) || (ra.length() == 0))
 				return results;
             
             // Loop through the results
-			JSONArray data = ro.getJSONArray("data");
-            for (int x = 0; x < data.length(); x++) {
-            	JSONObject dto = data.getJSONObject(x);
-            	int altitude = dto.optInt("filed_altitude_max");
+            for (int x = 0; x < ra.length(); x++) {
+            	JSONObject dto = ra.getJSONObject(x);
+            	int maxAlt = dto.optInt("filed_altitude_max");
+            	int minAlt = dto.optInt("filed_altitude_min", maxAlt);
+            	int alt = (maxAlt + minAlt) / 2;
+            	
             	ExternalRoute rt = new ExternalRoute("FlightAware");
             	rt.setAirportD(rp.getAirportD());
             	rt.setAirportA(rp.getAirportA());
             	rt.setCreatedOn(Instant.now());
             	rt.setCount(dto.optInt("count"));
-            	rt.setCruiseAltitude((altitude < 1000) ? "FL" + String.valueOf(altitude) : String.valueOf(altitude));
-            	rt.setComments("Loaded from FlightAware on " + rt.getCreatedOn());
+            	rt.setCruiseAltitude((alt < 1000) ? "FL" + String.valueOf(alt) : String.valueOf(alt));
+            	rt.setComments(String.format("Loaded from FlightAware on %s", StringUtils.format(rt.getCreatedOn(), "MM/dd/yyyy")));
             	
             	// Try and parse SID/STAR
             	List<String> waypoints = StringUtils.split(dto.optString("route"), " "); 

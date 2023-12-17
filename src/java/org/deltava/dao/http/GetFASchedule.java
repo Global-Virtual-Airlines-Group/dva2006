@@ -1,6 +1,8 @@
 // Copyright 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
+import static java.time.format.DateTimeFormatter.*;
+
 import java.io.*;
 import java.util.*;
 import java.time.*;
@@ -32,8 +34,6 @@ public class GetFASchedule extends FlightAwareDAO {
 	private final Collection<String> _unknownAirlines = new HashSet<String>();
 	private final Collection<String> _unknownAirports = new HashSet<String>();
 	
-	private int _errorCount;
-
 	/**
 	 * Returns any unknown Airport codes from the import.
 	 * @return a Collection of Airport codes
@@ -50,10 +50,6 @@ public class GetFASchedule extends FlightAwareDAO {
 		return _unknownAirlines;
 	}
 	
-	public int getErrorCount() {
-		return _errorCount;
-	}
-	
 	/**
 	 * Loads flight schedule entries from FlightAware. 
 	 * @param a the Airline
@@ -65,32 +61,21 @@ public class GetFASchedule extends FlightAwareDAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public Collection<RawScheduleEntry> getSchedule(Airline a, int start, Instant startDate, int days, boolean includeCS) throws DAOException {
+
 		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
-		
-		// Build the URL
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("airline", a.getCode());
-		Instant sd = startDate.truncatedTo(ChronoUnit.DAYS);
-		params.put("start_date", String.valueOf(sd.getEpochSecond()));
-		params.put("end_date", String.valueOf(sd.plus(days, ChronoUnit.DAYS).getEpochSecond()));
-		if (start > 0)
-			params.put("offset", String.valueOf(start));
-		if (!includeCS)
-			params.put("exclude_codeshare", "true");
-			
+		String url = String.format("/schedules/%s/%s", ISO_DATE.format(startDate), ISO_DATE.format(startDate.plus(days, ChronoUnit.DAYS)));
 		try {
-			init(buildURL("AirlineFlightSchedules", params)); JSONObject jo = null;
+			init(buildURL(url, Map.of("airline", a.getCode(), "include_codeshares", String.valueOf(includeCS)))); JSONObject jo = null;
 			try (InputStream is = getIn()) {
 				jo = new JSONObject(new JSONTokener(is));
 			}
 			
-			JSONObject ro = jo.getJSONObject("AirlineFlightSchedulesResult");
-			JSONArray data = ro.getJSONArray("flights");
-			_nextOffset = ro.optInt("next_offset", data.length());
-			_errorCount = 0;
+			JSONArray data = jo.optJSONArray("scheduled");
+			if ((data == null) || (data.length() == 0))
+				return results;
+			
 			for (int x = 0; x < data.length(); x++) {
 				JSONObject fo = data.getJSONObject(x);
-				
 				Flight f = FlightCodeParser.parse(fo.getString("ident"));
 				RawScheduleEntry sce = new RawScheduleEntry(f.getAirline(), f.getFlightNumber(), 1);
 				if (f.getAirline() == null) {
@@ -108,18 +93,17 @@ public class GetFASchedule extends FlightAwareDAO {
 					continue;
 				}
 				
-				sce.setEquipmentType(fo.optString("aircrafttype"));
+				sce.setEquipmentType(fo.optString("aircraft_type"));
 				sce.setCodeShare(fo.optString("actual_ident"));
 				
 				// Get the arrival/departure times
-				ZonedDateTime zdd = ZonedDateTime.ofInstant(Instant.ofEpochSecond(fo.optLong("departuretime")), sce.getAirportD().getTZ().getZone());
-				ZonedDateTime zda = ZonedDateTime.ofInstant(Instant.ofEpochSecond(fo.optLong("arrivaltime")), sce.getAirportA().getTZ().getZone());
+				ZonedDateTime zdd = ZonedDateTime.ofInstant(Instant.from(ISO_DATE_TIME.parse(fo.getString("scheduled_out"))), sce.getAirportD().getTZ().getZone());
+				ZonedDateTime zda = ZonedDateTime.ofInstant(Instant.from(ISO_DATE_TIME.parse(fo.getString("scheduled_in"))), sce.getAirportA().getTZ().getZone());
 				sce.setTimeD(zdd.toLocalDateTime());
 				sce.setTimeA(zda.toLocalDateTime());
 				results.add(sce);
 			}
 		} catch (Exception e) {
-			_errorCount++;
 			throw new DAOException(e);
 		}
 		
