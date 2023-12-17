@@ -58,8 +58,8 @@ public class SkyMilesScorer extends EliteScorer {
 		if (pkg.getRunwayA() instanceof RunwayDistance ra) {
 			double ls = LandingScorer.score(ffr.getLandingVSpeed(), ra.getDistance());
 			LandingRating lr = LandingRating.rate((int)ls);
-			addBonus(125, "Acceptable Landing", (lr == LandingRating.ACCEPTABLE));
-			addBonus(350, "Good Landing", (lr == LandingRating.GOOD));
+			addBonus(Math.round(ffr.getDistance() * 0.15f), "Acceptable Landing", (lr == LandingRating.ACCEPTABLE));
+			addBonus(Math.round(ffr.getDistance() * 0.375f), "Good Landing", (lr == LandingRating.GOOD));
 		}
 		
 		// Calculate minimal acceleration bonus
