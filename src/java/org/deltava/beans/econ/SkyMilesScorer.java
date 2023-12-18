@@ -64,11 +64,10 @@ public class SkyMilesScorer extends EliteScorer {
 		
 		// Calculate minimal acceleration bonus
 		if (ffr instanceof ACARSFlightReport afr) {
-			float accTime = afr.getTime(2) + afr.getTime(4);
-			float rawAccPct = accTime / afr.getBlockTime().toSeconds();
-			int accPct = Math.round(rawAccPct * 100);
+			int accTime = afr.getTime(2) + afr.getTime(4);
+			long accPct = accTime * 100 / afr.getBlockTime().toSeconds();
 			if (accPct < MAX_ACCEL_PCT) {
-				addBonus(ffr.getDistance() / 2, String.format("Minimal Time Acceleration - %d%%", Integer.valueOf(accPct)), true);
+				addBonus(ffr.getDistance() / 2, String.format("Minimal Time Acceleration - %d%%", Long.valueOf(accPct)), true);
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 			} else
 				_score.setDistance(Math.max(MIN_DISTANCE, Math.round(ffr.getDistance() * (1f - (accPct / 2)))));
