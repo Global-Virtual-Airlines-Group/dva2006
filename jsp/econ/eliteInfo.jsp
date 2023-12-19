@@ -55,6 +55,7 @@ span.rmbar {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="eliteDistance" name="econ.elite.distance" />
+<content:sysdata var="elitePoint" name="econ.elite.points" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -71,8 +72,8 @@ span.rmbar {
  <td class="label eliteStatus top">Current Status</td>
  <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)<br />
  <hr />
- ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>
- <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="sec bld" /> flight legs, <span class="bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if></td>
+ ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
+ <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
@@ -136,7 +137,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 <c:if test="${(yr ne currentYear) && (!empty upds)}">
 <tr>
  <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
- <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span><br />
+ <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span><br />
 <br />
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
