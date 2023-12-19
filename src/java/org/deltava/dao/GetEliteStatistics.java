@@ -41,20 +41,37 @@ public class GetEliteStatistics extends EliteDAO {
 		CacheableList<YearlyTotal> results = _cache.get(Integer.valueOf(pilotID));
 		if (results != null) return results.clone();
 		
-		try (PreparedStatement ps = prepare("SELECT YEAR(P.DATE) AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE WHERE (PEE.ID=PE.ID)) AS PTS FROM "
-			+ "PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY Y ORDER BY Y DESC")) {
-			ps.setInt(1, pilotID);
-			ps.setInt(2, FlightStatus.OK.ordinal());
+		try {
+			startTransaction();
+			Map<Integer, YearlyTotal> totals = new TreeMap<Integer, YearlyTotal>(Collections.reverseOrder());
+			try (PreparedStatement ps = prepare("SELECT PE.YEAR AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY Y")) {
+				ps.setInt(1, pilotID);
+				ps.setInt(2, FlightStatus.OK.ordinal());
 			
-			results = new CacheableList<YearlyTotal>(Integer.valueOf(pilotID));
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					YearlyTotal t = new YearlyTotal(rs.getInt(1), pilotID);
-					t.addLegs(rs.getInt(2), rs.getInt(3), rs.getInt(4));
-					results.add(t);
+				results = new CacheableList<YearlyTotal>(Integer.valueOf(pilotID));
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						YearlyTotal t = new YearlyTotal(rs.getInt(1), pilotID);
+						t.addLegs(rs.getInt(2), rs.getInt(3), 0);
+						totals.put(Integer.valueOf(t.getYear()), t);
+					}
 				}
 			}
 			
+			// This avoids a bad subquery
+			try (PreparedStatement ps = prepare("SELECT YEAR(P.DATE) AS Y, SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P WHERE (PEE.ID=P.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY Y")) {
+				ps.setInt(1, pilotID);
+				ps.setInt(2, FlightStatus.OK.ordinal());
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						YearlyTotal yt = totals.get(Integer.valueOf(rs.getInt(1)));
+						yt.addLegs(0, 0, rs.getInt(2));
+					}
+				}
+			}
+			
+			rollbackTransaction();
+			results.addAll(totals.values());
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
