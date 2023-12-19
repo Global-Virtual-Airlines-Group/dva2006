@@ -44,7 +44,7 @@ public class GetEliteStatistics extends EliteDAO {
 		try {
 			startTransaction();
 			Map<Integer, YearlyTotal> totals = new TreeMap<Integer, YearlyTotal>(Collections.reverseOrder());
-			try (PreparedStatement ps = prepare("SELECT PE.YEAR AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY Y")) {
+			try (PreparedStatement ps = prepare("SELECT YEAR(P.DATE) AS Y, SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY Y")) {
 				ps.setInt(1, pilotID);
 				ps.setInt(2, FlightStatus.OK.ordinal());
 			
