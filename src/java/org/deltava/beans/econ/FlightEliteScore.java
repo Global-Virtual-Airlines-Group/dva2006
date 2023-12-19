@@ -142,4 +142,9 @@ public class FlightEliteScore extends DatabaseBean implements AuthoredBean, Elit
 		ese.setBonus(isBonus);
 		_entries.add(ese);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return (o instanceof FlightEliteScore es2) ? ((getID() == es2.getID()) && (_distance == es2._distance) && (getPoints() == es2.getPoints())) : super.equals(o);
+	}
 }

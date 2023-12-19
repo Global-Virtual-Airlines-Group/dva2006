@@ -97,6 +97,16 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			IDs.parallelStream().map(id -> Map.entry(id, loadACARS(id))).forEach(me -> routeData.put(me.getKey(), me.getValue()));
 			log.info("ACARS data for {} flights loaded in {}ms", Integer.valueOf(IDs.size()), Long.valueOf(tt.stop()));
 			
+			// Load elite scoring data
+			tt.start(); Map<Integer, FlightEliteScore> scores = new HashMap<Integer, FlightEliteScore>();
+			for (FlightReport fr : pireps) {
+				FlightEliteScore sc = frdao.getElite(fr.getID());
+				if (sc != null)
+					scores.put(Integer.valueOf(fr.getID()), sc);
+			}
+			
+			log.info("{} data for {} flights loaded in {}ms", SystemData.get("econ.elite.name"), Integer.valueOf(pireps.size()), Long.valueOf(tt.stop()));
+			
 			// Open transaction boundary
 			ctx.startTX();
 			
@@ -112,7 +122,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			// Score the Flight Reports
 			FlightEliteScore sc = null; 
 			YearlyTotal total = new YearlyTotal(year, p.getID());
-			Collection<String> msgs = new ArrayList<String>();
+			Collection<String> msgs = new ArrayList<String>(); Map<Integer, String> updatedScores = new LinkedHashMap<Integer, String>();
 			AirlineInformation ai = SystemData.getApp(null);
 			for (FlightReport fr : pireps) {
 				st = myStatus.getOrDefault(myStatus.headMap(fr.getSubmittedOn()).lastKey(), myStatus.get(myStatus.firstKey()));
@@ -137,6 +147,11 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 						sc  = es.score(new ScorePackage(a, ffr, null, null, opts), st.getLevel());
 				} else
 					sc  = es.score(fr, st.getLevel());
+				
+				// Check if the score has changed
+				FlightEliteScore oldScore = scores.getOrDefault(Integer.valueOf(fr.getID()), new FlightEliteScore(fr.getID()));
+				if (!sc.equals(oldScore) && (oldScore.getPoints() > 0))
+					updatedScores.put(Integer.valueOf(fr.getID()), String.format("Was %d / %d, now %d / %d", Integer.valueOf(oldScore.getDistance()), Integer.valueOf(oldScore.getPoints()), Integer.valueOf(sc.getDistance()), Integer.valueOf(sc.getPoints())));
 				
 				// Write the score
 				frwdao.writeElite(sc, ai.getDB());
@@ -170,6 +185,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("total", total, REQUEST);
 			ctx.setAttribute("oldTotal", oldTotal, REQUEST);
+			ctx.setAttribute("updatedScores", updatedScores, REQUEST);
 			ctx.setAttribute("isPersisted", Boolean.valueOf(saveChanges), REQUEST);
 			ctx.setAttribute("isDifferent", Boolean.valueOf(EliteTotals.compare(total, oldTotal) != 0), REQUEST);
 		} catch (DAOException de) {
