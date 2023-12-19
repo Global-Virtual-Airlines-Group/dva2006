@@ -67,7 +67,7 @@ public class SkyMilesScorer extends EliteScorer {
 			int accTime = afr.getTime(2) + afr.getTime(4);
 			long accPct = accTime * 100 / afr.getBlockTime().toSeconds();
 			if (accPct < MAX_ACCEL_PCT) {
-				addBonus(ffr.getDistance() / 2, String.format("Minimal Time Acceleration - %d%%", Long.valueOf(accPct)), true);
+				addBonus(Math.max(MIN_DISTANCE, ffr.getDistance() / 2), String.format("Minimal Time Acceleration - %d%%", Long.valueOf(accPct)), true);
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 			} else if (_score.getYear() <= 2023)
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
