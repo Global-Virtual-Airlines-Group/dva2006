@@ -91,13 +91,29 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(currentYear);
-			Collection<EliteLevel> cyLevels = yearlyLevels.get(currentYear);
+			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
 			EliteLevel nyLevel = yt.matches(cyLevels);
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
-			if (LocalDate.now().getMonthValue() > 3) {
+			
+			// Calculate projections
+			int m = LocalDate.now().getMonthValue();
+			if (m > 3) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
-				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);	
+				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
+				
+				// Check if almost going to miss
+				if (m > 9) {
+					EliteLevel nl = cyLevels.stream().filter(lv -> (lv.compareTo(currentStatus.getLevel()) > 0)).findFirst().orElse(null);
+					if (nl != null) {
+						YearlyTotal pd = pt.delta(nl);	
+						float ld = Math.max(0, pd.getLegs() * 1f / yt.getLegs());
+						float dd = Math.max(0, pd.getDistance() * 1f / yt.getDistance());
+						ctx.setAttribute("legDelta", Float.valueOf(ld), REQUEST);
+						ctx.setAttribute("distDelta", Float.valueOf(dd), REQUEST);
+						ctx.setAttribute("nextLevel", nl, REQUEST);
+					}
+				}
 			}
 			
 			// Save status attributes
