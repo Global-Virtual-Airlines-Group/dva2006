@@ -20,7 +20,8 @@ public class IntervalTaskTimer extends TaskTimer {
 	 * Creates and starts the timer. 
 	 */
 	public IntervalTaskTimer() {
-		super();
+		super(false);
+		start();
 	}
 	
 	/**
@@ -28,8 +29,8 @@ public class IntervalTaskTimer extends TaskTimer {
 	 */
 	@Override
 	public void start() {
-		_intervals.clear();
 		super.start();
+		_intervals.clear();
 		_intervals.put("start", Long.valueOf(getStart()));
 	}
 	
@@ -65,13 +66,13 @@ public class IntervalTaskTimer extends TaskTimer {
 	/**
 	 * Returns the exectution time for a given marker.
 	 * @param name the marker name
-	 * @return the execution time in milliseconds, or zero if the marker does not exist
+	 * @return the execution time in milliseconds, or -1 if the marker does not exist
 	 */
 	public long getInterval(String name) {
 		Long mrk = _intervals.get(name);
-		if (mrk == null) return 0;
+		if (mrk == null) return -1;
 		
 		long execTime = mrk.longValue() - getStart();
-		return MILLISECONDS.convert(execTime, NANOSECONDS);
+		return NANOSECONDS.toMillis(execTime); 
 	}
 }

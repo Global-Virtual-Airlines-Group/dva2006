@@ -15,12 +15,22 @@ public class TaskTimer {
 	protected long _start;
 	private long _end;
 	private long _interval;
-	
+
 	/**
-	 * Creates and starts a timer.
+	 * Creates an unstarted timer.
 	 */
 	public TaskTimer() {
-		start();
+		this(true);
+	}
+	
+	/**
+	 * Creates and optionally starts a timer.
+	 * @param doStart TRUE to start the timer, otherwise FALSE
+	 */
+	public TaskTimer(boolean doStart) {
+		super();
+		if (doStart)
+			start();
 	}
 
 	/**
