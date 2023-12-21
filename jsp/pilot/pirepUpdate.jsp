@@ -134,7 +134,7 @@ To view this flight's Online Event, <el:cmd url="event" linkID="${fn:EventID(pir
 To return to the <content:airline /> Flight Academy Check Ride queue, <el:cmd url="academyridequeue" className="sec bld">Click Here</el:cmd>.<br />
 </c:if></content:filter>
 <c:if test="${!isDeleted}">
-To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" noCache="true" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <c:if test="${isOurs}">
 To return to your Log Book, <el:cmd url="logbook" className="sec bld" noCache="true">Click Here</el:cmd>.<br /></c:if>
 <br />
