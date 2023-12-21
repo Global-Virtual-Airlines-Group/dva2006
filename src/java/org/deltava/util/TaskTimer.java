@@ -1,7 +1,7 @@
 // Copyright 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.*;
 
 /**
  * A utility class to time operations. 
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TaskTimer {
 	
-	private long _start;
+	protected long _start;
 	private long _end;
 	private long _interval;
 	
@@ -32,13 +32,29 @@ public class TaskTimer {
 	}
 	
 	/**
+	 * Returns the start time.
+	 * @return the start time, in nanoseconds
+	 */
+	protected long getStart() {
+		return _start;
+	}
+	
+	/**
+	 * Returns the end time.
+	 * @return the end time, in nanoseconds or zero if running
+	 */
+	protected long getEnd() {
+		return _end;
+	}
+	
+	/**
 	 * Stops the timer.
 	 * @return the execution time in milliseconds
 	 */
 	public long stop() {
 		_end = System.nanoTime();
 		_interval = (_end - _start);
-		return TimeUnit.MILLISECONDS.convert(_interval, TimeUnit.NANOSECONDS);
+		return MILLISECONDS.convert(_interval, NANOSECONDS);
 	}
 	
 	/**
@@ -62,6 +78,6 @@ public class TaskTimer {
 	 * @return the execution time
 	 */
 	public long getMillis() {
-		return TimeUnit.MILLISECONDS.convert(_interval, TimeUnit.NANOSECONDS);
+		return MILLISECONDS.convert(_interval, NANOSECONDS);
 	}
 }
