@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 6.2
  */
 
@@ -25,7 +25,35 @@ public class SetAggregateStatistics extends DAO {
 	public SetAggregateStatistics(Connection c) {
 		super(c);
 	}
-
+	
+	/**
+	 * Adds an entry to the aggregation queue.
+	 * @param id the Flight Report database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void addQueueEntry(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_AGGREGATE_QUEUE VALUES(?, NOW())")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes an entry from the aggregation queue.
+	 * @param id the Flight Report database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteQueueEntry(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_AGGREGATE_QUEUE WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Updates flight statistics based linked to a flight report.
 	 * @param fr the FlightReport
