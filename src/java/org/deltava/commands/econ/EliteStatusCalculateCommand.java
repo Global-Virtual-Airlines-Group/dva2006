@@ -1,6 +1,8 @@
 // Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
+import static java.util.concurrent.TimeUnit.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,11 +93,12 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			List<FlightReport> pireps = frdao.getEliteFlights(p.getID(), year);
 			
 			// Load the ACARS data
-			TaskTimer tt = new TaskTimer();
+			IntervalTaskTimer tt = new IntervalTaskTimer();
 			Collection<Integer> IDs = pireps.stream().filter(FDRFlightReport.class::isInstance).map(fr -> Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS))).collect(Collectors.toSet());
 			Map<Integer, SequencedCollection<? extends RouteEntry>> routeData = new HashMap<Integer, SequencedCollection<? extends RouteEntry>>();
 			IDs.parallelStream().map(id -> Map.entry(id, loadACARS(id))).forEach(me -> routeData.put(me.getKey(), me.getValue()));
-			log.info("ACARS data for {} flights loaded in {}ms", Integer.valueOf(IDs.size()), Long.valueOf(tt.stop()));
+			long ms = MILLISECONDS.convert(tt.mark("flights"), NANOSECONDS);
+			log.info("ACARS data for {} flights loaded in {}ms", Integer.valueOf(IDs.size()), Long.valueOf(ms));
 			
 			// Load elite scoring data
 			tt.start(); Map<Integer, FlightEliteScore> scores = new HashMap<Integer, FlightEliteScore>();
@@ -105,7 +108,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					scores.put(Integer.valueOf(fr.getID()), sc);
 			}
 			
-			log.info("{} data for {} flights loaded in {}ms", SystemData.get("econ.elite.name"), Integer.valueOf(pireps.size()), Long.valueOf(tt.stop()));
+			ms = MILLISECONDS.convert(tt.mark("totals"), NANOSECONDS);
+			log.info("{} data for {} flights loaded in {}ms", SystemData.get("econ.elite.name"), Integer.valueOf(pireps.size()), Long.valueOf(ms));
 			
 			// Open transaction boundary
 			ctx.startTX();
@@ -125,6 +129,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			Collection<String> msgs = new ArrayList<String>(); Map<Integer, String> updatedScores = new LinkedHashMap<Integer, String>();
 			AirlineInformation ai = SystemData.getApp(null);
 			for (FlightReport fr : pireps) {
+				tt.mark("scoreStart");
 				st = myStatus.getOrDefault(myStatus.headMap(fr.getSubmittedOn()).lastKey(), myStatus.get(myStatus.firstKey()));
 				
 				if (fr instanceof FDRFlightReport ffr) {
@@ -154,6 +159,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					updatedScores.put(Integer.valueOf(fr.getID()), String.format("Was %d / %d, now %d / %d", Integer.valueOf(oldScore.getDistance()), Integer.valueOf(oldScore.getPoints()), Integer.valueOf(sc.getDistance()), Integer.valueOf(sc.getPoints())));
 				
 				// Write the score
+				tt.mark("acarsData");
 				frwdao.writeElite(sc, ai.getDB());
 				
 				// Determine the next level
@@ -168,16 +174,27 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					newSt.setUpgradeReason(updR);
 					myStatus.put(newSt.getEffectiveOn(), newSt);
 					elwdao.write(st);
+					tt.mark("upgrade");
 				}
 				
 				// Update the totals
 				es.add(fr);
 				total.add(sc);
+				
+				// Log warning
+				ms = MILLISECONDS.convert(tt.mark("scoreEnd") - tt.getInterval("scoreStsart"), NANOSECONDS);
+				if (ms > 1250) {
+					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
+					tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
+				}
 			}
 			
 			// Commit
-			if (saveChanges)
+			boolean isChanged = (EliteTotals.compare(total, oldTotal) != 0);
+			if (saveChanges && isChanged)
 				ctx.commitTX();
+			else
+				ctx.rollbackTX();
 			
 			// Set status attributes
 			ctx.setAttribute("isRecalc", Boolean.TRUE, REQUEST);
@@ -187,7 +204,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			ctx.setAttribute("oldTotal", oldTotal, REQUEST);
 			ctx.setAttribute("updatedScores", updatedScores, REQUEST);
 			ctx.setAttribute("isPersisted", Boolean.valueOf(saveChanges), REQUEST);
-			ctx.setAttribute("isDifferent", Boolean.valueOf(EliteTotals.compare(total, oldTotal) != 0), REQUEST);
+			ctx.setAttribute("isDifferent", Boolean.valueOf(isChanged), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -211,7 +228,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				return psdao.read();
 			}
 		} catch (DAOException | IOException ie) {
-			log.atError().withThrowable(ie).log("Error reading positions for Flight {} -{}", id, ie.getMessage());
+			log.atError().withThrowable(ie).log("Error reading positions for Flight {} - {}", id, ie.getMessage());
 			return Collections.emptyList();
 		}		
 	}
