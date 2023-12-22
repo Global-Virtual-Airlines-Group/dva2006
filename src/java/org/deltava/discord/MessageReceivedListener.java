@@ -66,8 +66,10 @@ public class MessageReceivedListener implements MessageCreateListener {
         
     		// Check content
     		FilterResults fr = Bot.getFilter().search(msg);
-    		if (!fr.isOK())
-    			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createKeyword(e, fr.getFlaggedResults()));
+    		if (!fr.isOK()) {
+    			log.warn("Content warning from {} - {} [{}]", e.getMessageAuthor().getDisplayName(), msg, fr.getFlaggedResults());
+    			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(e, fr.getFlaggedResults()));
+    		}
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error on MessageReceive - {}", ex.getMessage());
     		ChannelName ch = EnumUtils.parse(ChannelName.class, channelName, ChannelName.LOG);
