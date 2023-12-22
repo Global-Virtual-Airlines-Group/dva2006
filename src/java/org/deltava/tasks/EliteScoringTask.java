@@ -1,9 +1,10 @@
 // Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
+import static java.util.concurrent.TimeUnit.*;
+
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.time.*;
 import java.sql.Connection;
 
@@ -17,7 +18,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.taskman.*;
-import org.deltava.util.TaskTimer;
+import org.deltava.util.IntervalTaskTimer;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -68,7 +69,7 @@ public class EliteScoringTask extends Task {
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
-				TaskTimer tt = new TaskTimer();
+				IntervalTaskTimer tt = new IntervalTaskTimer();
 				EliteScorer es = EliteScorer.getInstance();
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
 				final int yr = EliteScorer.getStatusYear(fr.getDate());
@@ -84,11 +85,13 @@ public class EliteScoringTask extends Task {
 				}
 				
 				// Load all previous Flight Reports for this Pilot
+				tt.mark("init");
 				if (p.getID() != lastID) {
 					lastID = p.getID();
 					pireps.clear();
 					pireps.addAll(frdao.getEliteFlights(p.getID(), EliteScorer.getStatsYear(fr.getDate())));
-					long ms = TimeUnit.MILLISECONDS.convert(tt.getInterval(), TimeUnit.NANOSECONDS);
+					
+					long ms = MILLISECONDS.convert(tt.mark("flights"), NANOSECONDS);
 					log.info("Loaded {} flights for {} ({}) in {}ms", Integer.valueOf(pireps.size()), p.getName(), p.getPilotCode(), Long.valueOf(ms));
 				}
 				
@@ -97,6 +100,7 @@ public class EliteScoringTask extends Task {
 				// Get our total and next level
 				YearlyTotal total = esdao.getEliteTotals(p.getID()).stream().filter(yt -> yt.getYear() == yr).findFirst().orElse(new YearlyTotal(yr, p.getID()));
 				EliteLevel nextLevel = lvls.higher(st.getLevel());
+				tt.mark("totals");
 				
 				// Calculate the sore
 				FlightEliteScore sc = null;
@@ -119,6 +123,7 @@ public class EliteScoringTask extends Task {
 					
 					// Get the landing runway
 					RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+					tt.mark("acarsData");
 					
 					// Create the package
 					ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
@@ -128,6 +133,7 @@ public class EliteScoringTask extends Task {
 					sc  = es.score(fr, st.getLevel());
 				
 				// Write the score and status history
+				tt.mark("score");
 				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
@@ -147,13 +153,16 @@ public class EliteScoringTask extends Task {
 					upd.setAuthorID(p.getID());
 					upd.setDescription(String.format("Reached %s for %d ( %s )", nextLevel.getName(), Integer.valueOf(yr), updR.getDescription()));
 					updwdao.write(upd, ctx.getDB());
+					tt.mark("upgrade");
 				}
 				
 				ctx.commitTX();
 				i.remove();
 				long ms = tt.stop();
-				if (ms > 1250)
+				if (ms > 1250) {
 					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
+					tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
+				}
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
