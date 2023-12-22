@@ -86,7 +86,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			
 			// Get current totals
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
-			YearlyTotal oldTotal = esdao.getEliteTotals(p.getID()).stream().filter(yt -> yt.getYear() == year).findAny().orElse(new YearlyTotal(year, p.getID()));
+			YearlyTotal oldTotal = esdao.getEliteTotals(p.getID(), year);
 			
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
