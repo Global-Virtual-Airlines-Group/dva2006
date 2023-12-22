@@ -98,7 +98,7 @@ public class EliteScoringTask extends Task {
 				pireps.stream().filter(pirep -> !IDs.contains(Integer.valueOf(pirep.getID()))).forEach(es::add);
 				
 				// Get our total and next level
-				YearlyTotal total = esdao.getEliteTotals(p.getID()).stream().filter(yt -> yt.getYear() == yr).findFirst().orElse(new YearlyTotal(yr, p.getID()));
+				YearlyTotal total = esdao.getEliteTotals(p.getID(), yr);
 				EliteLevel nextLevel = lvls.higher(st.getLevel());
 				tt.mark("totals");
 				
