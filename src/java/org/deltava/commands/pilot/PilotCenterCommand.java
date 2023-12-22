@@ -126,10 +126,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					
 				// Get our totals
 				GetEliteStatistics esdao = new GetEliteStatistics(con);
-				List<YearlyTotal> eliteTotals = esdao.getEliteTotals(p.getID());
-				YearlyTotal cyt = eliteTotals.stream().filter(yt -> yt.getYear() == currentYear).findFirst().orElse(new YearlyTotal(currentYear, p.getID()));
+				YearlyTotal cyt = esdao.getEliteTotals(p.getID(), currentYear);
 				ctx.setAttribute("currentEliteTotal", cyt, REQUEST);
-				ctx.setAttribute("eliteTotals", eliteTotals, REQUEST);
 				
 				// Determine if we can do year-end activities
 				boolean rolloverPeriod = (EliteScorer.getStatsYear(now) > currentYear);
