@@ -60,7 +60,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 
-		Pilot p = null;
+		Pilot p = null; IntervalTaskTimer tt = new IntervalTaskTimer();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -75,6 +75,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			access.validate();
 			
 			// Get the Message Template DAO
+			tt.mark("load");
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 
 			// Determine if we can perform the operation in question and set a request attribute
@@ -173,6 +174,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(acchelper::add);
 				NewRelic.addCustomParameter("pilot.flights", Integer.valueOf(pireps.size()));
+				tt.mark("flights");
 
 				// Load accomplishments - only save the ones we haven't obtained yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
@@ -202,6 +204,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				}
 
 				// Log Accomplishments
+				tt.mark("accomplishments");
 				if (!accs.isEmpty())
 					ctx.setAttribute("accomplishments", accs, REQUEST);
 				
@@ -211,6 +214,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
 					TourFlightHelper tfh = new TourFlightHelper(fr, false);
 					tfh.addFlights(pireps);
+					tt.mark("tours");
 					
 					int idx = tfh.isLeg(t);
 					if (idx == 0) {
@@ -238,6 +242,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Get the write DAO and update/dispose of the PIREP
 			wdao.dispose(ctx.getDB(), ctx.getUser(), fr, op);
+			tt.mark("disposal");
 
 			// If this is part of a flight assignment, load it
 			GetAssignment fadao = new GetAssignment(con);
@@ -285,6 +290,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				SetAssignment fawdao = new SetAssignment(con);
 				fawdao.write(newAssign, ctx.getDB());
 				wdao.write(dfr);
+				tt.mark("divert");
 			}
 
 			// If we're approving and have not assigned a Pilot Number yet, assign it
@@ -318,7 +324,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Update PIREP statistics
 			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
 				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
-				fstdao.update(fr);
+				fstdao.addQueueEntry(fr.getID());
+				tt.mark("stats");
 			}
 			
 			// Write status updates (if any)
@@ -377,6 +384,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					}
 				}
 
+				tt.mark("archive");
 				ctx.setAttribute("acarsArchive", Boolean.valueOf(fr instanceof FDRFlightReport), REQUEST);
 			}
 
@@ -400,6 +408,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctx);
 			mailer.send(p);
+		}
+		
+		// Log timings
+		long ms = tt.stop();
+		if (ms > 2750) {
+			log.warn("Disposed Flight Report #{} - {} ms", Integer.valueOf(ctx.getID()), Long.valueOf(ms));
+			tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
 		}
 
 		// Forward to the JSP
