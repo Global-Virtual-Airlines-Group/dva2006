@@ -74,6 +74,8 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
 <content:sysdata var="eliteName" name="econ.elite.name" />
+<content:sysdata var="eliteDistance" name="econ.elite.distance" />
+<content:sysdata var="elitePoint" name="econ.elite.points" />
 <content:sysdata var="charterReqEnabled" name="schedule.charter.requests" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 <content:attr attr="isHROperations" value="true" roles="HR,Operations" />
@@ -186,7 +188,8 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
 </tr>
 <tr>
  <td class="mid"><el:cmd url="eliteinfo" className="bld"><span style="color:#${eliteStatus.level.hexColor}">My ${eliteName}</span></el:cmd></td>
- <td class="data">${eliteYear} Flight Legs: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> | ${eliteYear} Flight Distance: <fmt:distance className="sec bld" value="${currentEliteTotal.distance}" /><br /> 
+ <td class="data">${eliteYear} Flight Totals: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> Legs | <fmt:int className="sec bld" value="${currentEliteTotal.distance}" />&nbsp;${eliteDistance} | 
+ <fmt:int className="bld" value="${currentEliteTotal.points}" />&nbsp;${elitePoints}<br /> 
  Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}.
  <c:if test="${!empty nyLevel}" >
  <br /><br />Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
