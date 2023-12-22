@@ -1,10 +1,11 @@
 // Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
+import java.util.*;
 import java.awt.Color;
-import java.util.Collection;
 
 import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
@@ -36,26 +37,26 @@ class EmbedGenerator {
 	 * @return an EmbedBuilder
 	 */
     static EmbedBuilder createError(String userName, String actionName, Exception ex) {
-    	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
                 .setTitle(":warning: Internal Error")
                 .setColor(Color.RED)
                 .addInlineField("User", userName)
                 .addInlineField("Action", actionName)
                 .addInlineField("Error", ex.getMessage())
-                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
                 .setTimestampToNow();
     }
     
     /**
-	 * Generates an embedded keyword message.
+	 * Generates an keyword warning message.
 	 * @param e the MessageCreateEvent
 	 * @param keywords a Collection of keywords 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createKeyword(MessageCreateEvent e, Collection<String> keywords) {
+    static EmbedBuilder createWarning(MessageCreateEvent e, Collection<String> keywords) {
 
-    	java.util.List<Role> roles = e.getMessageAuthor().asUser().get().getRoles(e.getServer().get());
+    	Optional<User> ou = e.getMessageAuthor().asUser();
+    	List<Role> roles = ou.isEmpty() ? Collections.emptyList() : ou.get().getRoles(e.getServer().get());
         boolean isStaff = roles.stream().anyMatch(r -> r.getName().toLowerCase().contains("staff"));
         return new EmbedBuilder()
                 .setTitle(":warning: Auto-Mod Keyword Detected")
