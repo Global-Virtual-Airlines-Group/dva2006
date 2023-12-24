@@ -1,29 +1,28 @@
-// Copyright 2012, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import org.deltava.beans.EnumDescription;
+import static java.awt.Color.*;
+
+import org.deltava.beans.*;
 
 /**
  * An enumeration of Flight Report scores. 
  * @author Luke
- * @version 9.2
+ * @version 11.1
  * @since 5.1
  */
 
-public enum FlightScore implements EnumDescription {
-	OPTIMAL("green"), ACCEPTABLE("orange"), DANGEROUS("red"), INCOMPLETE("grey");
+public enum FlightScore implements EnumDescription, RGBColor {
+	OPTIMAL(GREEN.getRGB()), ACCEPTABLE(ORANGE.getRGB()), DANGEROUS(RED.getRGB()), INCOMPLETE(GRAY.getRGB());
 	
-	private final String _color;
+	private final int _color;
 
-	FlightScore(String color) {
+	FlightScore(int color) {
 		_color = color;
 	}
 	
-	/**
-	 * Returns the score color.
-	 * @return the color
-	 */
-	public String getColor() {
+	@Override
+	public int getColor() {
 		return _color;
 	}
 	
