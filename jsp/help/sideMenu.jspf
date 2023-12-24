@@ -72,7 +72,7 @@
 <content:filter roles="Pilot">
  <content:subitem><el:cmd url="pilotcenter" className="bld">Pilot Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="logbook" link="${user}">Log Book</el:cmd></content:subitem>
-<c:if test="${eliteEnabled}">
+<c:if test="${eliteEnabled && (user.legs > 0)}">
  <content:subitem><el:cmd url="eliteinfo">My ${elitePoints}</el:cmd></content:subitem>
 </c:if>
 <c:if test="${(user.legs >= 5) && !user.noExams}">
