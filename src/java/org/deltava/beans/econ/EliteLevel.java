@@ -3,7 +3,7 @@ package org.deltava.beans.econ;
 
 import java.time.*;
 
-import org.deltava.beans.Auditable;
+import org.deltava.beans.*;
 
 import org.deltava.util.cache.Cacheable;
 
@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 9.2
  */
 
-public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel>, Cacheable {
+public class EliteLevel implements EliteTotals, RGBColor, Auditable, Comparable<EliteLevel>, Cacheable {
 	
 	/**
 	 * A dummy, empty Elite level.
@@ -123,10 +123,7 @@ public class EliteLevel implements EliteTotals, Auditable, Comparable<EliteLevel
 		return _pointBonus;
 	}
 	
-	/**
-	 * Returns the color used to display this level.
-	 * @return the RGB color code
-	 */
+	@Override
 	public int getColor() {
 		return _color;
 	}

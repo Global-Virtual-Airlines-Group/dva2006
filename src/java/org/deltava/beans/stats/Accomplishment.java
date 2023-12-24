@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 3.2
  */
 
-public class Accomplishment extends DatabaseBean implements ComboAlias, Auditable, ViewEntry {
+public class Accomplishment extends DatabaseBean implements RGBColor, ComboAlias, Auditable, ViewEntry {
 
 	private String _name;
 	private AccomplishUnit _unit;
@@ -80,11 +80,7 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, Auditabl
 		return _value;
 	}
 	
-	/**
-	 * Returns the color used to display this Accomplishment.
-	 * @return the RGB color code
-	 * @see Accomplishment#setColor(int)
-	 */
+	@Override
 	public int getColor() {
 		return _color;
 	}
