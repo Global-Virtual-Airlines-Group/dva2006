@@ -9,13 +9,14 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 8.2
+ * @version 11.1
  * @since 2.6
  */
 
 public class MenuItemTag extends MenuElementTag {
 	
 	private int _width;
+	private int _color;
 	
 	/**
 	 * Sets the width of the menu title.
@@ -26,12 +27,18 @@ public class MenuItemTag extends MenuElementTag {
 	}
 	
 	/**
-	 * Releases the tag's state variables.
+	 * Sets the background color of the menu title.
+	 * @param rgb a 24-bit RGB value
 	 */
+	public void setColor(int rgb) {
+		_color = rgb;
+	}
+	
 	@Override
 	public void release() {
 		super.release();
 		_width = 0;
+		_color = 0;
 	}
 	
 	/**
@@ -64,6 +71,12 @@ public class MenuItemTag extends MenuElementTag {
 						out.print(maxWidth);
 						if (!maxWidth.endsWith("%"))
 							out.print("px");
+					}
+					
+					// Render color if prsent
+					if (_color != 0) {
+						out.print(";color:#");
+						out.print(Integer.toHexString(_color).toLowerCase());
 					}
 					
 					out.print(";\"");
