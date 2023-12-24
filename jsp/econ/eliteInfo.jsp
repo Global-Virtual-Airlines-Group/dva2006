@@ -85,14 +85,11 @@ span.rmbar {
 <tr>
  <td class="label eliteStatus top">${currentYear + 1} Status</td>
  <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate <fmt:int value="${projectedTotal.legs}" /> 
- flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if></td>
-<c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><span class="pri bld">REQUALIFICATION ALERT</span> - You are approaching the requirements for <fmt:elite level="${nextLevel}" className="bld" nameOnly="true" /> status in ${currentYear + 1}. Just a few more flights could qualify you for a higher
- level until the end of next year. It may be a good time for a mileage run!</td>
-</tr>
-</c:if>
+ flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if>
+ <c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
+ <br /><br />
+<span class="pri bld">REQUALIFICATION ALERT</span> - You are approaching the requirements for <fmt:elite level="${nextLevel}" className="bld" nameOnly="true" /> status in ${currentYear + 1}. Just a few more flights could qualify you for a higher
+ level until the end of next year. It may be a good time for a mileage run!</c:if></td>
 </tr>
 <tr>
  <td class="label eliteStatus">Flight Progress</td>
