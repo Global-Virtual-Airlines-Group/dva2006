@@ -3,16 +3,16 @@ package org.deltava.beans.econ;
 
 import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Pilots' Elite status level data. 
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
-public class EliteStatus extends DatabaseBean implements EliteLevelBean {
+public class EliteStatus extends DatabaseBean implements RGBColor, EliteLevelBean {
 	
 	private EliteLevel _lvl;
 	private UpgradeReason _ur = UpgradeReason.NONE;
@@ -31,6 +31,11 @@ public class EliteStatus extends DatabaseBean implements EliteLevelBean {
 	@Override
 	public EliteLevel getLevel() {
 		return _lvl;
+	}
+	
+	@Override
+	public int getColor() {
+		return _lvl.getColor();
 	}
 
 	/**
