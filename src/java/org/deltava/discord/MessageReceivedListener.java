@@ -106,8 +106,8 @@ public class MessageReceivedListener implements MessageCreateListener {
         if (p == null) {
         	log.warn("Cannot find Discord ID {}", msgAuth.getIdAsString());
         	return;
-        } else if (p.getStatus() != PilotStatus.ACTIVE) {
-        	log.warn("{} ({}) Status = {}", p.getName(), p.getPilotCode(), p.getStatus());
+        } else if ((p.getStatus() != PilotStatus.ACTIVE) || p.getNoVoice()) {
+        	log.warn("{} ({}) Status = {}, NoVoice = {}", p.getName(), p.getPilotCode(), p.getStatus(), Boolean.valueOf(p.getNoVoice()));
         	msgAuth.sendMessage(EmbedGenerator.createInsufficientAccess(e));
         	return;
         }
