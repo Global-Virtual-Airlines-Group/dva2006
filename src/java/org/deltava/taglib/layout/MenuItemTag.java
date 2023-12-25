@@ -17,6 +17,7 @@ public class MenuItemTag extends MenuElementTag {
 	
 	private int _width;
 	private int _color;
+	private String _label;
 	
 	/**
 	 * Sets the width of the menu title.
@@ -34,11 +35,20 @@ public class MenuItemTag extends MenuElementTag {
 		_color = rgb;
 	}
 	
+	/**
+	 * Sets the label for the menu item.
+	 * @param l the label text
+	 */
+	protected void setLabel(String l) {
+		_label = l;
+	}
+	
 	@Override
 	public void release() {
 		super.release();
 		_width = 0;
 		_color = 0;
+		_label = null;
 	}
 	
 	/**
@@ -77,9 +87,18 @@ public class MenuItemTag extends MenuElementTag {
 				}
 				
 				out.print("><li");
+				
+				// Write color
 				if (_color != 0) {
 					out.print(" style=\"background-color:#");
 					out.print(Integer.toHexString(_color).toLowerCase());
+					out.print('\"');
+				}
+				
+				// Write label
+				if (_label != null) {
+					out.print(" title=\"");
+					out.print(_label);
 					out.print('\"');
 				}
 				

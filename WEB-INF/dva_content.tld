@@ -679,6 +679,13 @@
 	</tag>
 
 	<tag>
+		<description>User Name Tag, for displaying the logged in user name as a top-level menu item</description>
+		<name>useritem</name>
+		<tag-class>org.deltava.taglib.layout.UserNameTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
+	<tag>
 		<description>SubMenu Tag, for displaying top-level menu items</description>
 		<name>submenu</name>
 		<tag-class>org.deltava.taglib.layout.SubMenuTag</tag-class>
