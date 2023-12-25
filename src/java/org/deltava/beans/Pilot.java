@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.econ.EliteStatus;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 
 import org.deltava.util.StringUtils;
@@ -13,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 10.3
+ * @version 11.1
  * @since 1.0
  */
 
@@ -24,6 +25,8 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	private String _pCodePrefix;
 	private int _pCodeId;
 	private String _ldapID;
+	
+	private EliteStatus _elite;
 
 	private final Collection<String> _ratings = new TreeSet<String>();
 	private final Map<String, Role> _roles = new TreeMap<String, Role>();
@@ -92,6 +95,15 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	@Override
 	public Collection<PushEndpoint> getPushEndpoints() {
 		return _pushAddrs;
+	}
+	
+	/**
+	 * Returns the Pilot's current Elite status. <i>This may not be populated</i>
+	 * @return an EliteStatus, or null if not set
+	 * @see Pilot#setEliteStatus(EliteStatus)
+	 */
+	public EliteStatus getEliteStatus() {
+		return _elite;
 	}
 	
 	/**
@@ -235,7 +247,7 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	public boolean getNoCooler() {
 		return _noCooler;
 	}
-
+	
 	/**
 	 * Returns whether this Pilot cannot be marked Inactive.
 	 * @return TRUE if a permanent account, otherwise FALSE
@@ -550,6 +562,15 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	 */
 	public void setIsPermanent(boolean isPerm) {
 		_isPermanent = isPerm;
+	}
+	
+	/**
+	 * Updates the Pilot's Elite program status.
+	 * @param es an EliteStatus
+	 * @see Pilot#getEliteStatus()
+	 */
+	public void setEliteStatus(EliteStatus es) {
+		_elite = es;
 	}
 	
 	/**
