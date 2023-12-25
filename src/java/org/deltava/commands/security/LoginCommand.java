@@ -1,11 +1,12 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.*;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
@@ -13,6 +14,7 @@ import javax.servlet.http.*;
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.EliteScorer;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 import org.deltava.beans.system.*;
@@ -80,13 +82,13 @@ public class LoginCommand extends AbstractCommand {
 		if (fName != null)
 			ctx.setAttribute("fname", fName, REQUEST);
 		else if (fnc != null)
-			ctx.setAttribute("fname", new String(b64d.decode(fnc.getValue()), StandardCharsets.UTF_8), REQUEST);
+			ctx.setAttribute("fname", new String(b64d.decode(fnc.getValue()), UTF_8), REQUEST);
 		
 		// Save last name
 		if (lName != null)
 			ctx.setAttribute("lname", lName, REQUEST);
 		else if (lnc != null)
-			ctx.setAttribute("lname", new String(b64d.decode(lnc.getValue()), StandardCharsets.UTF_8), REQUEST);
+			ctx.setAttribute("lname", new String(b64d.decode(lnc.getValue()), UTF_8), REQUEST);
 		
 		// Save pilot code
 		if (code != null)
@@ -192,6 +194,12 @@ public class LoginCommand extends AbstractCommand {
 					DatedAccomplishment da = new DatedAccomplishment(p.getID(), accHelper.achieved(acc), acc);
 					pAnvAccs.add(da);
 				}
+			}
+			
+			// Load Elite status
+			if (SystemData.getBoolean("econ.elite.enabled")) {
+				GetElite eldao = new GetElite(con);
+				p.setEliteStatus(eldao.getStatus(p.getID(), EliteScorer.getStatusYear(Instant.now())));
 			}
 
 			// Load online/ACARS totals
@@ -315,11 +323,11 @@ public class LoginCommand extends AbstractCommand {
 			Base64.Encoder b64e = Base64.getEncoder();
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
 
-			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(StandardCharsets.UTF_8)));
+			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(UTF_8)));
 			fnc.setMaxAge(cookieAge);
 			ctx.addCookie(fnc);
 
-			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(StandardCharsets.UTF_8)));
+			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(UTF_8)));
 			lnc.setMaxAge(cookieAge);
 			ctx.addCookie(lnc);
 			

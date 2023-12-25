@@ -3,12 +3,14 @@ package org.deltava.servlet.filter;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Instant;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
+import org.deltava.beans.econ.EliteScorer;
 import org.deltava.beans.system.IPBlock;
 import org.deltava.crypt.*;
 import org.deltava.security.*;
@@ -188,6 +190,12 @@ public class SecurityCookieFilter extends HttpFilter {
 				// Get the person
 				GetPilot dao = new GetPilot(con);
 				p = dao.get(StringUtils.parseHex(cData.getUserID()));
+				
+				// Load elite status
+				if (SystemData.getBoolean("econ.elite.enabled")) {
+					GetElite eldao = new GetElite(con);
+					p.setEliteStatus(eldao.getStatus(p.getID(), EliteScorer.getStatusYear(Instant.now())));
+				}
 				
 				// Populate online/ACARS legs
 				if (p != null) {
