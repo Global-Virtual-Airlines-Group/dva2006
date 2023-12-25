@@ -18,19 +18,18 @@ import org.deltava.beans.econ.EliteStatus;
 
 public class UserNameTag extends MenuItemTag {
 
-	private Principal _user;
-	
 	@Override
 	public int doStartTag() throws JspException {
 		
 		// Get the user object
 		HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
-		_user = req.getUserPrincipal();
-		if (_user == null)
+		Principal user = req.getUserPrincipal();
+		if (user == null)
 			return SKIP_BODY;
 		
 		// Set color if EliteStatus set
-		if (_user instanceof Pilot p) {
+		setWidth(user.getName().length() * 10);
+		if (user instanceof Pilot p) {
 			EliteStatus es = p.getEliteStatus();
 			if (es != null) {
 				setColor(es.getColor());
@@ -38,26 +37,13 @@ public class UserNameTag extends MenuItemTag {
 			}
 		}
 		
-		setWidth(_user.getName().length() * 10);
-		return super.doStartTag();
-	}
-	
-	@Override
-	public int doEndTag() throws JspException {
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print(_user.getName());
-			return super.doEndTag();
+			super.doStartTag();
+			out.print(user.getName());
+			return SKIP_BODY;
 		} catch (Exception e) {
 			throw new JspException(e);
-		} finally {
-			release();
 		}
-	}
-	
-	@Override
-	public void release() {
-		super.release();
-		_user = null;
 	}
 }
