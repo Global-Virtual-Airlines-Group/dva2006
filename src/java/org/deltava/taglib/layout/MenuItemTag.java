@@ -73,16 +73,17 @@ public class MenuItemTag extends MenuElementTag {
 							out.print("px");
 					}
 					
-					// Render color if prsent
-					if (_color != 0) {
-						out.print(";color:#");
-						out.print(Integer.toHexString(_color).toLowerCase());
-					}
-					
-					out.print(";\"");
+					out.print('\"');
 				}
 				
-				out.print("><li><span>");
+				out.print("><li");
+				if (_color != 0) {
+					out.print(" style=\"background-color:#");
+					out.print(Integer.toHexString(_color).toLowerCase());
+					out.print('\"');
+				}
+				
+				out.print("><span>");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);
