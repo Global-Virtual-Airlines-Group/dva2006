@@ -14,12 +14,10 @@
 <content:region id="navmenu">
 <content:menu attr="isSideMenu" maxWidth="15%">
 <c:if test="${!isSideMenu}">
-<content:authUser var="user">
- <content:menuitem color="${user.eliteStatus.color}" width="${user.name.length() * 10}">${user.name}</content:menuitem>
+ <content:useritem />
 <content:superUser var="superUser">
  <content:menuitem width="${superUser.name.length() * 10}">${superUser.name}</content:menuitem>
 </content:superUser>
-</content:authUser>
 </c:if>
 
 <content:submenu title="Online Events" width="170">
