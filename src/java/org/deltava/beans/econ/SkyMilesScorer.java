@@ -100,7 +100,7 @@ public class SkyMilesScorer extends EliteScorer {
 			}
 		}
 		
-		_score.setDistance(fr.getDistance() / 2);
+		_score.setDistance(isACARS ? fr.getDistance() : (fr.getDistance() / 2)); // This is for pending reports - if scored as part of a package it will get overwritten
 		setBase(fr.getDistance(), isACARS ? "ACARS/XACARS/simFDR Base Miles" : "Base Miles");
 		addBonus(250, "Promotion Leg", !fr.getCaptEQType().isEmpty());
 		addBonus(500, "New Aircraft - " + fr.getEquipmentType(), isNewEquipment(fr.getEquipmentType(), fr.getDate()));
