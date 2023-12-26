@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
+
+import com.newrelic.api.agent.NewRelic;
 
 /**
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in that it checks whether a task should be executed once every 60 seconds.
@@ -60,11 +62,10 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 		// Sleep for a while when we start
 		ThreadUtils.sleep(10000);
 		while (!Thread.currentThread().isInterrupted()) {
-			long now = System.currentTimeMillis();
+			TaskTimer ttm = new TaskTimer();
 
 			// Check each task
-			for (Iterator<Task> i = _tasks.values().iterator(); i.hasNext();) {
-				Task t = i.next();
+			for (Task t : _tasks.values()) {
 				log.debug("Checking {}", t.getName());
 
 				// If the task is running, leave it alone. Only execute when it's supposed to
@@ -78,13 +79,10 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 			}
 
 			// Sleep until the next invocation
-			long interval = (System.currentTimeMillis() - now);
-			if (interval < 60000) {
-				try {
-					Thread.sleep(60000 - interval);	
-				} catch (InterruptedException ie) {
-					Thread.currentThread().interrupt();
-				}
+			try {
+				Thread.sleep(Math.max(50, 60000 - ttm.stop()));	
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -109,16 +107,12 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	 */
 	public Collection<TaskInfo> getTaskInfo() {
 		Collection<Task> tasks = new TreeSet<Task>(_tasks.values());
-		return tasks.stream().map(t -> new TaskInfo(t)).collect(Collectors.toList());
+		return tasks.stream().map(TaskInfo::new).collect(Collectors.toList());
 	}
 	
-	/**
-	 * Uncaught Exception handler for task threads.
-	 * @param t the Thread
-	 * @param e the Exception
-	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		log.atError().withThrowable(e).log("Uncaught Exception in {}", t.getName());
+		NewRelic.noticeError(e, false);
 	}
 }
