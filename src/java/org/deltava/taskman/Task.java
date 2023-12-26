@@ -308,6 +308,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     @Override
     public void uncaughtException(Thread t, Throwable e) {
     	log.atError().withThrowable(e).log("Error in child thread {}", t.getName());
+    	NewRelic.noticeError(e, false);
     }
     
     /**
