@@ -27,8 +27,7 @@ import org.deltava.dao.*;
 import org.deltava.util.TaskTimer;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.ConnectionPool;
-import org.gvagroup.jdbc.ConnectionPoolException;
+import org.gvagroup.jdbc.*;
 
 /**
  * The Discord Bot.
@@ -69,12 +68,20 @@ public class Bot {
     	}
         
         log.info("Finding Server");
-        Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
-        if (!srvs.isEmpty()) {
-        	_srv = srvs.iterator().next();
-        	log.warn("Found Server {}", Long.valueOf(_srv.getId()));
+        long id = SystemData.getLong("discord.id", 0);
+        if (id == 0) {
+        	Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
+        	if (!srvs.isEmpty()) {
+        		_srv = srvs.iterator().next();
+        		log.warn("Found Server {}", Long.valueOf(_srv.getId()));
+        	}
         } else
+        	_srv = api.getServerById(id).orElse(null);
+        
+        if (_srv == null) {
         	log.error("Cannot find Discord Server!");
+        	return;
+        }
         
         log.info("Generating Commands");
         Set<SlashCommandBuilder> cmds = new LinkedHashSet<SlashCommandBuilder>();
@@ -86,6 +93,8 @@ public class Bot {
         cmds.add(SlashCommand.with("reloadkeys", "Reloads keyword lists"));
         cmds.forEach(cb -> cb.setDefaultEnabledForPermissions(PermissionType.BAN_MEMBERS, PermissionType.KICK_MEMBERS));
         api.bulkOverwriteServerApplicationCommands(_srv, cmds);
+        SlashCommandBuilder scb = SlashCommand.with("warn", "Send Content Warning", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "msg", "Additional Information")));
+        scb.setDefaultEnabledForEveryone().createForServer(_srv).join();
         
         log.info("Initializing Content Filter");
         try (Connection con = getConnection()) {

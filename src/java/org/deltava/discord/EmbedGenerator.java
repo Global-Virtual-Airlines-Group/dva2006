@@ -62,7 +62,7 @@ class EmbedGenerator {
                 .setTitle(":warning: Auto-Mod Keyword Detected")
                 .setDescription(Bot.findRole("HR").getMentionTag() + " A possible match for the following prohibited word(s) or phrase(s) was detected in the below message: " + StringUtils.listConcat(keywords, ", "))
                 .addField("Message Content", e.getMessageContent())
-                .addField("In channel", "#" + e.getChannel().asServerChannel().get().getName())
+                .addField("Channel", "#" + e.getChannel().asServerChannel().get().getName())
                 .addInlineField("User", e.getMessageAuthor().getDisplayName())
                 .setColor(Color.RED)
                 .setFooter("Prohibited Remarks Detected")
@@ -221,5 +221,23 @@ class EmbedGenerator {
 				.setTimestampToNow()
 				.setFooter("Keyword List")
 				.addInlineField("keywords", buf.toString());
+    }
+
+    /**
+     * Creates a content warning message.
+     * @param author the Author name
+     * @param channel the Channel name
+     * @param msg the warning message
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder createWarning(String author, String channel, String msg) {
+    	return new EmbedBuilder()
+    			.setTitle(":warning: Content Warning")
+    			.setTimestampToNow()
+    			.setColor(Color.RED)
+    			.addField("Channel", "#" + channel)
+    			.addInlineField("Author", author)
+    			.addInlineField("Info", msg)
+    			.setFooter("Content Warning");
     }
 }
