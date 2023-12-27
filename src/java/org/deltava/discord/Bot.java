@@ -11,6 +11,7 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.*;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -69,20 +70,22 @@ public class Bot {
         
         log.info("Finding Server");
         Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
-        if (srvs.isEmpty())
-        	log.error("Cannot find Discord Server!");
-        else
+        if (!srvs.isEmpty()) {
         	_srv = srvs.iterator().next();
+        	log.warn("Found Server {}", Long.valueOf(_srv.getId()));
+        } else
+        	log.error("Cannot find Discord Server!");
         
         log.info("Generating Commands");
-        List<CompletableFuture<?>> cmdFutures = new ArrayList<CompletableFuture<?>>();
-        api.bulkOverwriteServerApplicationCommands(_srv, Collections.emptySet());
-        cmdFutures.add(SlashCommand.with("addkey", "Adds a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to add", true))).createForServer(_srv));
-        cmdFutures.add(SlashCommand.with("dropkey", "Deletes a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to delete", true))).createForServer(_srv));
-        cmdFutures.add(SlashCommand.with("addsafe", "Adds a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to add"))).createForServer(_srv));
-        cmdFutures.add(SlashCommand.with("dropsafe", "Removes a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to delete"))).createForServer(_srv));
-        cmdFutures.add(SlashCommand.with("allkeys", "Displays keyword lists", Collections.emptyList()).createForServer(_srv));
-        cmdFutures.add(SlashCommand.with("reloadkeys", "Reloads keyword lists", Collections.emptyList()).createForServer(_srv));
+        Set<SlashCommandBuilder> cmds = new LinkedHashSet<SlashCommandBuilder>();
+        cmds.add(SlashCommand.with("addkey", "Adds a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to add", true))));
+        cmds.add(SlashCommand.with("dropkey", "Deletes a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to delete", true))));
+        cmds.add(SlashCommand.with("addsafe", "Adds a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to add"))));
+        cmds.add(SlashCommand.with("dropsafe", "Removes a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to delete"))));
+        cmds.add(SlashCommand.with("allkeys", "Displays keyword lists"));
+        cmds.add(SlashCommand.with("reloadkeys", "Reloads keyword lists"));
+        cmds.forEach(cb -> cb.setDefaultEnabledForPermissions(PermissionType.BAN_MEMBERS, PermissionType.KICK_MEMBERS));
+        api.bulkOverwriteServerApplicationCommands(_srv, cmds);
         
         log.info("Initializing Content Filter");
         try (Connection con = getConnection()) {
@@ -97,9 +100,6 @@ public class Bot {
         api.addListener(new CommandListener());
         api.addListener(new ModalListener());
         api.addListener(new MessageReplyListener());
-        
-        // Wait for futures
-        CompletableFuture.allOf(cmdFutures.toArray(new CompletableFuture[0])).join();
     }
     
     /**
