@@ -97,7 +97,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Calculate projections
 			int m = LocalDate.now().getMonthValue();
-			if ((m > 3) && (p.getLegs() > 0)) {
+			if ((m > 3) && (currentStatus != null)) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
 				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
