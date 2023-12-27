@@ -272,6 +272,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		dao.logTaskExecution(getID(), 0);
     	} catch (Exception e) {
     		log.atError().withThrowable(e).log("Cannot log Task start - {}", e.getMessage());
+    		NewRelic.noticeError(e, false);
     	} finally {
     		ctxt.release();
     	}
@@ -280,6 +281,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
         execute(ctxt);
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.toEpochMilli());
         log.info("{} completed - {}ms", getName(), Long.valueOf(_lastRunTime));
+        NewRelic.setProductName(SystemData.get("airline.code"));
         NewRelic.setRequestAndResponse(new SyntheticRequest(_name, (usr == null) ? "SYSTEM" : usr.getPilotCode()), new SyntheticResponse());
         NewRelic.setTransactionName("Task", _name);
         NewRelic.recordResponseTimeMetric(_name, _lastRunTime);
@@ -290,6 +292,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     		dao.logTaskExecution(getID(), _lastRunTime);
     	} catch (Exception e) {
     		log.atError().withThrowable(e).log("Cannot log Task completion - {}", e.getMessage());
+    		NewRelic.noticeError(e, false);
     	} finally {
     		ctxt.release();
     	}
