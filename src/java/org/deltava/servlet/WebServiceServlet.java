@@ -30,9 +30,6 @@ import org.deltava.util.system.SystemData;
 @MultipartConfig
 public class WebServiceServlet extends BasicAuthServlet {
 
-	// Web services realm
-	private static final String WS_REALM = "\"%A Web Services\"";
-
 	private static final Logger log = LogManager.getLogger(WebServiceServlet.class);
 	private final Map<String, WebService> _svcs = new HashMap<String, WebService>();
 
@@ -98,7 +95,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		if (svc.isSecure() && (usr == null)) {
 			usr = authenticate(req);
 			if (usr == null) {
-				challenge(rsp, WS_REALM.replace("%A", SystemData.get("airline.name")));
+				challenge(rsp, String.format("%s Web Services", SystemData.get("airline.name")));
 				return;
 			}
 		}
