@@ -127,6 +127,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 			} else
 				log.atError().withThrowable(e).log("Error executing {} - {}", parser.getName(), e.getMessage());
 
+			NewRelic.noticeError(e, false);
 			try {
 				rsp.sendError(resultCode, e.getMessage());
 			} catch (Exception e2) {
