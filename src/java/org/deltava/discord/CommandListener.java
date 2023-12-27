@@ -49,6 +49,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         		case "flywithme" -> newFlyWithMeRequest(e);
         		case "addsafe" -> addWord(e, true);
         		case "dropsafe" -> dropWord(e, true);
+        		case "warn" -> sendWarning(e);
         		default -> log.info("Ignored command - {}", cmdName);
         	}
         } finally {
@@ -64,7 +65,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         // Get the keyword
     	String key = getOption(sci, keyType + "word");
     	if (StringUtils.isEmpty(key)) {
-    		sci.createImmediateResponder().setContent(String.format("You must supply a %s word to add", keyType)).respond();
+    		sci.createImmediateResponder().setContent(String.format("No %s word specified", keyType)).respond();
     		return;
     	}
     	
@@ -121,7 +122,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     }
     
     private static void showKeys() {
-    	
     	try {
     		ContentFilter cf = Bot.getFilter();
     		Bot.send(ChannelName.ALERTS, EmbedGenerator.showKeys(false, cf.getKeywords()));
@@ -147,10 +147,22 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	}
     }
     
+    private static void sendWarning(SlashCommandCreateEvent e) {
+    	
+    	SlashCommandInteraction sci = e.getSlashCommandInteraction();
+    	String msg = getOption(sci, "msg");
+    	if (StringUtils.isEmpty(msg)) {
+    		sci.createImmediateResponder().setContent("No Message specified").respond();
+    		return;
+    	}
+    	
+    	Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(sci.getUser().getDisplayName(sci.getServer().get()), sci.getChannel().get().toString(), msg));
+    }
+    
     private static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
     	SlashCommandInteraction sci = e.getSlashCommandInteraction();
         sci.respondWithModal("fwm_modal", "Create Fly-With-Me Request", ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
-                ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")), ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
+        		ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")), ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
     }
     
     private static String getOption(SlashCommandInteraction ci, String name) {
