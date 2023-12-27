@@ -299,6 +299,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 			log.log(logLevel, "Error on {}", urlBuf.toString());
 			log.log(logLevel, "{} executing {} - {}", usrName, cmd.getName(), e.getMessage(), logStackDump ? e : null);
+			NewRelic.noticeError(e, false);
 
 			// Redirect to the error page
 			try {
