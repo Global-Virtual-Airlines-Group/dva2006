@@ -310,6 +310,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
 				log.atError().withThrowable(fe).log("Error forwarding - {}", fe.getMessage());
+				NewRelic.noticeError(fe, false);
 				try {
 					rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				} catch (Exception ee) {
@@ -318,6 +319,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 		} finally {
 			long execTime = tt.stop();
+			NewRelic.recordResponseTimeMetric(cmd.getName(), tt.getMillis());
 			if (execTime < MAX_EXEC_TIME)
 				log.debug("{} completed in {} ms", cmd.getID(), Long.valueOf(execTime));
 			else
@@ -339,6 +341,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			return;
 		}
 		
+		NewRelic.noticeError(e, false);
 		_logThread = Thread.ofVirtual().name(SystemData.get("airline.code") + " Command Logger").unstarted(_logger);
 		_logThread.setUncaughtExceptionHandler(this);
 		_logThread.setDaemon(true);
