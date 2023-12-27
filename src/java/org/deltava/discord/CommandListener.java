@@ -156,7 +156,9 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		return;
     	}
     	
+    	
     	Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(sci.getUser().getDisplayName(sci.getServer().get()), sci.getChannel().get().toString(), msg));
+    	sci.createImmediateResponder().setContent("Warning Sent").respond();
     }
     
     private static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
