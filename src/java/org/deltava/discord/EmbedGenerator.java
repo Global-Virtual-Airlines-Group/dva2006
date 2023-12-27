@@ -142,7 +142,7 @@ class EmbedGenerator {
                 .setFooter(String.format("%s Discord New Member Registration", code))
                 .setTimestampToNow()
                 .setColor(new Color(1, 0, 100))
-                .addField("Step 1: Link your Discord and DVA User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
+                .addField("Step 1: Link your Discord and Web site User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
                 .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"done\" when you've completed linking your accounts and your roles will be assigned.")
                 .addField("Didn't work?", String.format("If you follow the above process and are still not able to gain access, open a help desk ticket here: https://%s/helpdesk.do", host));
     }
@@ -196,5 +196,30 @@ class EmbedGenerator {
                 .addInlineField("User", user)
                 .addInlineField("Keyword Created", key)
                 .setColor(Color.GREEN);
+    }
+    
+    /**
+     * Returns a keyword list message. 
+     * @param isSafe TRUE if a safe word list, otherwise FALSE
+     * @param keywords a Collection of keywords
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder showKeys(boolean isSafe, Collection<String> keywords) {
+    	
+    	// Convert keywords
+    	int idx = 0; StringBuilder buf = new StringBuilder();
+    	for (String kw : keywords) {
+    		buf.append(++idx);
+    		buf.append(" - ");
+    		buf.append(kw);
+    		buf.append('\n');
+    	}
+    	
+    	return new EmbedBuilder()
+    			.setTitle(String.format("%s Word List", isSafe? "Accepted" : "Prohibited"))
+    			.setDescription(String.format("This is the list of current %s words", isSafe? "Accepted" : "Prohibited"))
+				.setTimestampToNow()
+				.setFooter("Keyword List")
+				.addInlineField("keywords", buf.toString());
     }
 }

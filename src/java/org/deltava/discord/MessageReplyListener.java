@@ -6,6 +6,8 @@ import org.apache.logging.log4j.*;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.event.message.MessageReplyEvent;
 
+import com.newrelic.api.agent.Trace;
+
 import org.deltava.beans.discord.ChannelName;
 
 /**
@@ -21,6 +23,7 @@ public class MessageReplyListener implements org.javacord.api.listener.message.M
     private static final Logger log = LogManager.getLogger(MessageReplyListener.class);
     
     @Override
+    @Trace(dispatcher=true)
     public void onMessageReply(MessageReplyEvent e) {
     	
         // Only handle the message reply if it is a response to a bot message and in an appropriate channel
