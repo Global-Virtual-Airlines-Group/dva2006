@@ -6,8 +6,8 @@ import java.util.*;
 /**
  * A Content filter for Discord messages.
  * @author Luke
- * @author danielw
- * @version 11.0
+ * @author Danielw
+ * @version 11.1
  * @since 11.0
  */
 
@@ -26,20 +26,40 @@ class ContentFilter {
 		sw.stream().map(String::toLowerCase).forEach(_safewords::add);
 	}
 	
+	/**
+	 * Adds a word to the content filter.
+	 * @param keyword the keyword
+	 * @param isSafe TRUE if an accepted word, otherwise FALSE
+	 * @return TRUE if the word was not present and added, otherwise FALSE
+	 */
 	public boolean add(String keyword, boolean isSafe) {
 		Collection<String> list = isSafe ? _safewords : _keywords;
-		return list.add(keyword);
+		return list.add(keyword.toLowerCase());
 	}
 	
+	/**
+	 * Removes a word from the content filter.
+	 * @param keyword the keyword
+	 * @param isSafe TRUE if an accepted word, otherwise FALSE
+	 * @return TRUE if the word was present and removed, otherwise FALSE
+	 */
 	public boolean delete(String keyword, boolean isSafe) {
 		Collection<String> list = isSafe ? _safewords : _keywords;
-		return list.remove(keyword);
+		return list.remove(keyword.toLowerCase());
 	}
 	
+	/**
+	 * Returns all keywords.
+	 * @return a Collection of keywords
+	 */
 	public Collection<String> getKeywords() {
 		return Collections.unmodifiableCollection(_keywords);
 	}
 
+	/**
+	 * Returns all accepted keywords.
+	 * @return a Collection of accepted keywords
+	 */
 	public Collection<String> getSafewords() {
 		return Collections.unmodifiableCollection(_safewords);
 	}
