@@ -9,6 +9,9 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.Trace;
+
 import java.sql.*;
 import java.util.*;
 import java.sql.Connection;
@@ -17,7 +20,9 @@ import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
+
 import org.deltava.util.EnumUtils;
+import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.ConnectionPoolException;
@@ -35,7 +40,11 @@ public class MessageReceivedListener implements MessageCreateListener {
     private static final Logger log = LogManager.getLogger(MessageReceivedListener.class);
 
     @Override
+    @Trace(dispatcher=true)
     public void onMessageCreate(MessageCreateEvent e) {
+    	
+    	NewRelic.setTransactionName("Discord", "msgCreate");
+        NewRelic.setRequestAndResponse(new SyntheticRequest("msgCreate", "Discord"), new SyntheticResponse());
 
     	String msg = e.getMessageContent();
     	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
@@ -61,7 +70,7 @@ public class MessageReceivedListener implements MessageCreateListener {
                     		u.sendMessage(EmbedGenerator.welcome(e));
                     }
     			} else
-    				registerDVA(e);
+    				register(e);
     		}
         
     		// Check content
@@ -72,12 +81,13 @@ public class MessageReceivedListener implements MessageCreateListener {
     		}
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error on MessageReceive - {}", ex.getMessage());
+    		NewRelic.noticeError(ex, false);
     		ChannelName ch = EnumUtils.parse(ChannelName.class, channelName, ChannelName.LOG);
     		Bot.send(ch, EmbedGenerator.createError(e.getMessageAuthor().getDisplayName(), "Registration", ex));
     	}
     }
 
-    public static void registerDVA(MessageCreateEvent e) {
+    private static void register(MessageCreateEvent e) {
         long UUID = e.getMessageAuthor().getId();
         log.info("Registration request received [ UUID = {}, Name = {} ]", Long.toHexString(UUID), e.getMessageAuthor().getName());
         if (e.getMessageAuthor().asUser().isPresent())

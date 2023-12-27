@@ -67,6 +67,23 @@ public class Bot {
     		return;
     	}
         
+        log.info("Finding Server");
+        Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
+        if (srvs.isEmpty())
+        	log.error("Cannot find Discord Server!");
+        else
+        	_srv = srvs.iterator().next();
+        
+        log.info("Generating Commands");
+        List<CompletableFuture<?>> cmdFutures = new ArrayList<CompletableFuture<?>>();
+        api.bulkOverwriteServerApplicationCommands(_srv, Collections.emptySet());
+        cmdFutures.add(SlashCommand.with("addkey", "Adds a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to add", true))).createForServer(_srv));
+        cmdFutures.add(SlashCommand.with("dropkey", "Deletes a moderation keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to delete", true))).createForServer(_srv));
+        cmdFutures.add(SlashCommand.with("addsafe", "Adds a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to add"))).createForServer(_srv));
+        cmdFutures.add(SlashCommand.with("dropsafe", "Removes a permitted word", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The keyword to delete"))).createForServer(_srv));
+        cmdFutures.add(SlashCommand.with("allkeys", "Displays keyword lists", Collections.emptyList()).createForServer(_srv));
+        cmdFutures.add(SlashCommand.with("reloadkeys", "Reloads keyword lists", Collections.emptyList()).createForServer(_srv));
+        
         log.info("Initializing Content Filter");
         try (Connection con = getConnection()) {
         	GetFilterData dao = new GetFilterData(con);
@@ -75,24 +92,14 @@ public class Bot {
         	log.atError().withThrowable(de).log("Error initializing Content Filter - {}", de.getMessage());
         }
         
-        log.info("Generating Commands");
-        api.bulkOverwriteGlobalApplicationCommands(Collections.emptySet());
-        SlashCommand.with("addkey", "Adds an auto-mod bot keyword", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyword", "The keyword to add", true))).createGlobal(api).join();
-        SlashCommand.with("dropkey", "Deletes a key by keyword or phrase. Must match exact spelling, case insensitive", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "keyphrase", "The keyword or phrase to delete", true))).createGlobal(api).join();
-        SlashCommand.with("addsafe", "Adds a word to the safe list for the auto-mod bot", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The safe word to add."))).createGlobal(api).join();
-        SlashCommand.with("dropsafe", "Removes a word from the safe list for the auto-mod bot", List.of(SlashCommandOption.create(SlashCommandOptionType.STRING, "safeword", "The safe word to delete."))).createGlobal(api).join();
-
         log.info("Adding Listeners");
         api.addListener(new MessageReceivedListener());
         api.addListener(new CommandListener());
         api.addListener(new ModalListener());
         api.addListener(new MessageReplyListener());
-
-        Collection<Server> srvs = api.getServersByName(SystemData.get("discord.serverAddr"));
-        if (srvs.isEmpty())
-        	log.error("Cannot find Discord Server!");
-        else
-        	_srv = srvs.iterator().next();
+        
+        // Wait for futures
+        CompletableFuture.allOf(cmdFutures.toArray(new CompletableFuture[0])).join();
     }
     
     /**

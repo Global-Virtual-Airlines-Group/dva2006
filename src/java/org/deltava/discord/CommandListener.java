@@ -5,20 +5,25 @@ import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
 
+import org.javacord.api.interaction.*;
 import org.javacord.api.entity.message.component.*;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
-import org.javacord.api.interaction.*;
+
+import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.Trace;
 
 import org.deltava.beans.discord.*;
 
-import org.deltava.dao.SetFilterData;
-import org.deltava.util.StringUtils;
+import org.deltava.dao.*;
+
+import org.deltava.util.*;
+import org.deltava.util.log.*;
 
 /**
  * A class to listen for Discord commands.
- * @author danielw
- * @author luke
- * @version 11.0
+ * @author Danielw
+ * @author Luke
+ * @version 11.1
  * @since 11.0
  */
 
@@ -27,22 +32,31 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
 	private static final Logger log = LogManager.getLogger(CommandListener.class); 
 
     @Override
+    @Trace(dispatcher=true)
     public void onSlashCommandCreate(SlashCommandCreateEvent e) {
         SlashCommandInteraction sci = e.getSlashCommandInteraction();
         String cmdName = sci.getCommandName().toLowerCase();
+        NewRelic.setTransactionName("Discord", cmdName);
+        NewRelic.setRequestAndResponse(new SyntheticRequest(cmdName, "Discord"), new SyntheticResponse());
 
-        switch (cmdName) {
-            case "addkey" -> addWord(e, false);
-            case "dropkey" -> dropWord(e, false);
-            case "flywithme" -> newFlyWithMeRequest(e);
-            case "addsafe" -> addWord(e, true);
-            case "dropsafe" -> dropWord(e, true);
-            default -> log.info("Ignored command - {}", cmdName);
+        TaskTimer tt = new TaskTimer();
+        try {
+        	switch (cmdName) {
+        		case "allkeys" -> showKeys();
+        		case "reloadkeys" -> reloadKeys(e);
+        		case "addkey" -> addWord(e, false);
+        		case "dropkey" -> dropWord(e, false);
+        		case "flywithme" -> newFlyWithMeRequest(e);
+        		case "addsafe" -> addWord(e, true);
+        		case "dropsafe" -> dropWord(e, true);
+        		default -> log.info("Ignored command - {}", cmdName);
+        	}
+        } finally {
+        	NewRelic.recordResponseTimeMetric(cmdName, tt.stop());
         }
     }
 
-    @SuppressWarnings("static-method")
-	private void addWord(SlashCommandCreateEvent e, boolean isSafe) {
+	private static void addWord(SlashCommandCreateEvent e, boolean isSafe) {
 
         SlashCommandInteraction sci = e.getSlashCommandInteraction();
         String keyType = isSafe ? "safe" : "key";
@@ -65,10 +79,12 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         try (Connection con = Bot.getConnection()){
         	SetFilterData wdao = new SetFilterData(con);
         	wdao.add(key, isSafe);
+        	Bot.getFilter().add(key, isSafe);
         	sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).respond();
             Bot.send(ChannelName.ALERTS, EmbedGenerator.wordAdded(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
         } catch (Exception ex) {
         	log.atError().withThrowable(ex).log("Error adding {} word - {}", keyType, ex.getMessage());
+        	NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Add %s word", keyType), ex));
         }
     }
@@ -94,17 +110,46 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	try (Connection con = Bot.getConnection()) {
     		SetFilterData wdao = new SetFilterData(con);
     		wdao.delete(key, isSafe);
+    		Bot.getFilter().delete(key, isSafe);
         	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).respond();
            	Bot.send(ChannelName.ALERTS, EmbedGenerator.wordDeleted(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error removing {} word - {}", keyType, ex.getMessage());
+    		NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Remove %s word", keyType), ex));
     	}
     }
-
+    
+    private static void showKeys() {
+    	
+    	try {
+    		ContentFilter cf = Bot.getFilter();
+    		Bot.send(ChannelName.ALERTS, EmbedGenerator.showKeys(false, cf.getKeywords()));
+    		Bot.send(ChannelName.ALERTS, EmbedGenerator.showKeys(true, cf.getSafewords()));
+    	} catch (Exception ex) {
+    		log.atError().withThrowable(ex).log("Error displaying keywords - {}", ex.getMessage());
+    		NewRelic.noticeError(ex, false);
+    	}
+    }
+    
+    private static void reloadKeys(SlashCommandCreateEvent e) {
+    	
+    	SlashCommandInteraction sci = e.getSlashCommandInteraction();
+    	try (Connection con = Bot.getConnection()) {
+    		ContentFilter cf = Bot.getFilter();
+    		GetFilterData dao = new GetFilterData(con);
+    		cf.init(dao.getKeywords(false), dao.getKeywords(true));
+    		sci.createImmediateResponder().setContent("Keyword list reloaded").respond();
+    	} catch (Exception ex) {
+    		log.atError().withThrowable(ex).log("Error reloading keywords - {}", ex.getMessage());
+    		NewRelic.noticeError(ex, false);
+    		Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), "Reload keyword list", ex));
+    	}
+    }
+    
     private static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
     	SlashCommandInteraction sci = e.getSlashCommandInteraction();
-        sci.respondWithModal("fwm_modal", "Create Fly-With-Me Request",ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
+        sci.respondWithModal("fwm_modal", "Create Fly-With-Me Request", ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_dep", "Departure Field")),
                 ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_arr", "Arrival Field")), ActionRow.of(TextInput.create(TextInputStyle.SHORT, "fwm_net", "Requested Network")));
     }
     
