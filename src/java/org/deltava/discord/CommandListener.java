@@ -18,6 +18,7 @@ import org.deltava.dao.*;
 
 import org.deltava.util.*;
 import org.deltava.util.log.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A class to listen for Discord commands.
@@ -36,6 +37,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     public void onSlashCommandCreate(SlashCommandCreateEvent e) {
         SlashCommandInteraction sci = e.getSlashCommandInteraction();
         String cmdName = sci.getCommandName().toLowerCase();
+        NewRelic.setProductName(SystemData.get("airline.code"));
         NewRelic.setTransactionName("Discord", cmdName);
         NewRelic.setRequestAndResponse(new SyntheticRequest(cmdName, "Discord"), new SyntheticResponse());
 
@@ -155,7 +157,6 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		sci.createImmediateResponder().setContent("No Message specified").respond();
     		return;
     	}
-    	
     	
     	Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(sci.getUser().getDisplayName(sci.getServer().get()), sci.getChannel().get().toString(), msg));
     	sci.createImmediateResponder().setContent("Warning Sent").respond();
