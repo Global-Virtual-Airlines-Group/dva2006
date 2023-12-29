@@ -743,7 +743,7 @@
 		<!-- Discord Role names -->
 		<role>
 			<pirep>Staff</pirep>
-			<hr>Senior Staff</hr>
+			<hr>HR</hr>
 			<default>Pilot</default>
 		</role>
 	</discord>
