@@ -81,10 +81,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p.setTotalHours(totalHours);
 			NewRelic.addCustomParameter("pilot.name", p.getName());
 
-			// Stuff the pilot profile in the request and the session
-			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute(HTTPContext.USER_ATTR_NAME, p, SESSION);
-			
 			// Calculate how long we've been a member
 			long pilotAge = (System.currentTimeMillis() - p.getCreatedOn().toEpochMilli()) / 86400000;
 			ctx.setAttribute("pilotAge", Integer.valueOf((int) pilotAge), REQUEST);
@@ -123,6 +119,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				EliteStatus myCurrentStatus = myStatus.getLast();
 				ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
 				ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
+				p.setEliteStatus(myCurrentStatus);
 					
 				// Get our totals
 				GetEliteStatistics esdao = new GetEliteStatistics(con);
@@ -344,6 +341,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Stuff the pilot profile in the request
+		ctx.setAttribute("pilot", p, REQUEST);
+		ctx.setAttribute(HTTPContext.USER_ATTR_NAME, p, SESSION);
 		
 		// Figure out the image to display
 		Map<?, ?> acImgs = (Map<?, ?>) SystemData.getObject("pcImages");
