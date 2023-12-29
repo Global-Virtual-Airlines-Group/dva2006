@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.*;
 
 import org.javacord.api.interaction.*;
+import org.javacord.api.interaction.callback.InteractionImmediateResponseBuilder;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.component.*;
@@ -70,14 +71,14 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         // Get the keyword
     	String key = getOption(sci, keyType + "word");
     	if (StringUtils.isEmpty(key)) {
-    		sci.createImmediateResponder().setContent(String.format("No %s word specified", keyType)).setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, String.format("No %s word specified", keyType), true).respond();
     		return;
     	}
     	
         // Add the keyword
         boolean isAdded = Bot.getFilter().add(key, isSafe);
         if (!isAdded) {
-        	sci.createImmediateResponder().setContent(String.format("%s word already exists", keyType)).setFlags(MessageFlag.EPHEMERAL).respond();
+        	createResponse(sci, String.format("%s word does not exist", keyType), true).respond();
             return;
         }
         
@@ -86,7 +87,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         	SetFilterData wdao = new SetFilterData(con);
         	wdao.add(key, isSafe);
         	Bot.getFilter().add(key, isSafe);
-        	sci.createImmediateResponder().setContent(String.format("%s word %s added", keyType, key)).setFlags(MessageFlag.EPHEMERAL).respond();
+        	createResponse(sci, String.format("%s word %s added", keyType, key), true).respond();
             Bot.send(ChannelName.ALERTS, EmbedGenerator.wordAdded(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
         } catch (Exception ex) {
         	log.atError().withThrowable(ex).log("Error adding {} word - {}", keyType, ex.getMessage());
@@ -102,14 +103,14 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	
     	String key = getOption(sci, keyType + "word");
     	if (StringUtils.isEmpty(key)) {
-    		sci.createImmediateResponder().setContent(String.format("No %s word specified", keyType)).setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, String.format("No %s word specified", keyType), true).respond();
     		return;
     	}
     	
     	// Remove the keyword
     	boolean isDropped = Bot.getFilter().delete(key, isSafe);
     	if (!isDropped) {
-        	sci.createImmediateResponder().setContent(String.format("%s word does not exist", keyType)).setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, String.format("%s word does not exist", keyType), true).respond();
             return;
         }
     	
@@ -117,7 +118,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		SetFilterData wdao = new SetFilterData(con);
     		wdao.delete(key, isSafe);
     		Bot.getFilter().delete(key, isSafe);
-        	sci.createImmediateResponder().setContent(String.format("%s word %s removed", keyType, key)).setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, String.format("%s word %s removed", keyType, key), true).respond();
            	Bot.send(ChannelName.ALERTS, EmbedGenerator.wordDeleted(isSafe, key, sci.getUser().getDisplayName(sci.getServer().get())));
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error removing {} word - {}", keyType, ex.getMessage());
@@ -144,7 +145,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		ContentFilter cf = Bot.getFilter();
     		GetFilterData dao = new GetFilterData(con);
     		cf.init(dao.getKeywords(false), dao.getKeywords(true));
-    		sci.createImmediateResponder().setContent("Keyword list reloaded").setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, "Keyword list reloaded", true).respond();
     	} catch (Exception ex) {
     		log.atError().withThrowable(ex).log("Error reloading keywords - {}", ex.getMessage());
     		NewRelic.noticeError(ex, false);
@@ -157,7 +158,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	SlashCommandInteraction sci = e.getSlashCommandInteraction();
     	String msg = getOption(sci, "msg");
     	if (StringUtils.isEmpty(msg)) {
-    		sci.createImmediateResponder().setContent("No Message specified").setFlags(MessageFlag.EPHEMERAL).respond();
+    		createResponse(sci, "No Message specified", true).respond();
     		return;
     	}
     	
@@ -165,7 +166,7 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     	Optional<TextChannel> tc = sci.getChannel();
     	String channelName = tc.isPresent() ? tc.get().asServerChannel().get().getName() : "UNKNOWN";
     	Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(sci.getUser().getDisplayName(sci.getServer().get()), channelName, msg));
-    	sci.createImmediateResponder().setContent("Warning Sent").setFlags(MessageFlag.EPHEMERAL).respond();
+    	createResponse(sci, "Warning Sent", true).respond();
     }
     
     private static void newFlyWithMeRequest(SlashCommandCreateEvent e) {
@@ -177,5 +178,14 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     private static String getOption(SlashCommandInteraction ci, String name) {
     	SlashCommandInteractionOption opt = ci.getOptionByName(name).orElse(null);
     	return (opt == null) ? null : opt.getStringValue().orElse(null);
+    }
+    
+    private static InteractionImmediateResponseBuilder createResponse(SlashCommandInteraction ci, String msg, boolean isEphemeral) {
+    	InteractionImmediateResponseBuilder rsp = ci.createImmediateResponder();
+    	rsp.setContent(msg);
+    	if (isEphemeral)
+    		rsp.setFlags(MessageFlag.EPHEMERAL);
+    	
+    	return rsp;
     }
 }
