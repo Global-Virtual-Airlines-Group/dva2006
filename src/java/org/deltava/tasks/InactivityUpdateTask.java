@@ -157,7 +157,7 @@ public class InactivityUpdateTask extends Task {
 					
 					// Disable Discord access
 					if (SystemData.getBoolean("discord.bot"))
-						Bot.clearRoles(p);
+						Bot.resetRoles(p);
 					
 					// Remove the user from any destination directories
 					if (auth instanceof MultiAuthenticator) {

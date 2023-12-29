@@ -135,28 +135,20 @@ public class MessageReceivedListener implements MessageCreateListener {
         	return;
         }
         
-        // Determine roles as appropriate
-        Role r = null;
-        if (p.getRoles().contains("HR"))
-        	r = Bot.findRole(SystemData.get("discord.role.hr"));
-        else if (p.getRoles().contains("PIREP") || p.getRoles().contains("Operations"))
-        	r = Bot.findRole(SystemData.get("discord.role.pirep"));
-        if (r == null)
-        	r = Bot.findRole(SystemData.get("discord.role.default"));
-
-        // Set the nickname and role
+        // Set the nickname and roles
         String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
-        msgAuth.addRole(r);
+        Collection<Role> roles = RoleHelper.calculateRoles(p);
+        roles.forEach(msgAuth::addRole);
 
         // Unable to do nicknames longer than 32 chars or less than 1
         if (nickname.length() <= 32) {
         	msgAuth.updateNickname(e.getServer().get(), nickname);
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, r.getName(), nickname));
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, roles, nickname));
     	} else
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, r.getName())); 
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, roles)); 
 
         // Everything went well
-        msgAuth.sendMessage(String.format("Your %s account (%s) has been located and linked to this Discord user profile", SystemData.get("airline.code"), p.getPilotCode()));
+        msgAuth.sendMessage(String.format("Your %s account (%s) has been located and linked to this Discord user profile", SystemData.get("airline.name"), p.getPilotCode()));
         msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://%s/helpdesk.do", SystemData.get("airline.url")));
         log.info("Registered User [ Name = {}, UUID = {} ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId()));
     }

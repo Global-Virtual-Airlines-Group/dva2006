@@ -85,7 +85,7 @@ public class SuspendUserCommand extends AbstractCommand {
 			
 			// Remove Discord access
 			if (SystemData.getBoolean("discord.bot"))
-				Bot.clearRoles(usr);
+				Bot.resetRoles(usr);
 			
 			// Get the authenticator and disable
 			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
