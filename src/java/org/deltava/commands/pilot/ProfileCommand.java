@@ -23,7 +23,7 @@ import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-
+import org.deltava.discord.Bot;
 import org.deltava.security.*;
 import org.deltava.security.command.*;
 
@@ -365,6 +365,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setDescription("Roles removed: " + StringUtils.listConcat(removedRoles, ", "));
 					updates.add(upd);
 				}
+				
+				// Adjust discord roles
+				if (SystemData.getBoolean("discord.bot") && !CollectionUtils.isEmpty(CollectionUtils.union(addedRoles, removedRoles)))
+					Bot.resetRoles(p);
 			}
 
 			// Turn off auto-commit

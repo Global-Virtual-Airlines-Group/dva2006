@@ -90,31 +90,35 @@ class EmbedGenerator {
 	 * Generates a nickname message.
 	 * @param e the MessageCreateEvent
 	 * @param p the Pilot
-	 * @param roleName the Discord security role
+	 * @param roles the Discord security Roles
 	 * @param nickName the nickname 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, String roleName, String nickName) {
-    	return new EmbedBuilder().setColor(Color.BLUE)
+    static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, Collection<Role> roles, String nickName) {
+    	EmbedBuilder eb = new EmbedBuilder().
+    			setColor(Color.BLUE)
                 .setFooter("Nickname Assignment")
                 .setTitle(":exclamation: Nickname Assigned")
+                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
                 .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
                 .addInlineField("User", e.getMessageAuthor().getDisplayName())
                 .addInlineField("Name", nickName)
-                .addInlineField("Permissions Level", roleName)
                 .setTimestampToNow();
+    	
+    	roles.forEach(r -> eb.addInlineField("Server Role", r.getName()));
+    	return eb;
     }
     
     /**
 	 * Generates an embedded nickname error message.
 	 * @param e the MessageCreateEvent
 	 * @param p the Pilot
-	 * @param roleName the Discord security role 
+	 * @param roles the Discord security Roles 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createNicknameError(MessageCreateEvent e, Pilot p, String roleName) {
+    static EmbedBuilder createNicknameError(MessageCreateEvent e, Pilot p, Collection<Role> roles) {
     	String code = SystemData.get("airline.code");
-    	return new EmbedBuilder()
+    	EmbedBuilder eb = new EmbedBuilder()
         .setColor(Color.RED)
         .setTitle("Unable to Assign Nickname")
         .setFooter("User Creation Error")
@@ -122,8 +126,10 @@ class EmbedGenerator {
         .setDescription(String.format("%s I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with %s policy.", Bot.findRole("administrator").getMentionTag(), code))
         .addInlineField("User", e.getMessageAuthor().getDiscriminatedName())
         .addInlineField("Name", p.getName())
-        .addInlineField("Pilot ID", p.getPilotCode())
-        .addInlineField("Role", roleName);
+        .addInlineField("Pilot ID", p.getPilotCode());
+    	
+    	roles.forEach(r -> eb.addInlineField("Server Role", r.getName()));
+    	return eb;
     }
     
     /**

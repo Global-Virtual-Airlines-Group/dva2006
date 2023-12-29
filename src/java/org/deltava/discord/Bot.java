@@ -17,6 +17,8 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.*;
 
+import com.newrelic.api.agent.NewRelic;
+
 import okhttp3.OkHttpClient;
 
 import org.deltava.beans.*;
@@ -203,7 +205,7 @@ public class Bot {
      * Removes a Pilot's Discord roles.
      * @param p the Pilot
      */
-    public static void clearRoles(Pilot p) {
+    public static void resetRoles(Pilot p) {
     	if (!p.hasID(ExternalID.DISCORD)) return;
     	
     	// Lookup user
@@ -215,11 +217,17 @@ public class Bot {
     		}
     	
     		// Remove roles
-    		List<Role> roles = usr.getRoles(_srv);
+    		Collection<Role> roles = RoleHelper.getManagedRoles();
     		roles.forEach(usr::removeRole);
     		log.info("Removed Discord roles {} from {} ({})", roles, p.getName(), p.getPilotCode());
+    		
+    		// Add new roles
+    		roles = RoleHelper.calculateRoles(p);
+    		roles.forEach(usr::addRole);
+    		log.info("Added Discord roles {} to {} ({})", roles, p.getName(), p.getPilotCode());
     	} catch (ExecutionException ee) {
     		log.atError().withThrowable(ee).log(ee.getMessage());
+    		NewRelic.noticeError(ee, false);
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted removing Discord roles from {} ({})", p.getName(), p.getPilotCode());
     	}
