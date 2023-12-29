@@ -72,6 +72,10 @@ public class MessageReceivedListener implements MessageCreateListener {
     			} else
     				register(e);
     		}
+    		
+    		// Check if bot generated
+    		if (e.getMessageAuthor().isBotUser())
+    			return;
         
     		// Check content
     		FilterResults fr = Bot.getFilter().search(msg);
