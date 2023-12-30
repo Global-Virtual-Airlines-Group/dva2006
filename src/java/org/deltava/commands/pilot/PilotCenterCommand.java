@@ -2,9 +2,8 @@
 package org.deltava.commands.pilot;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import com.newrelic.api.agent.NewRelic;
@@ -128,7 +127,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("currentEliteRO", esdao.getRollover(p.getID(), currentYear), REQUEST);
 				
 				// Determine if we can do year-end activities
-				boolean rolloverPeriod = (EliteScorer.getStatsYear(now) > currentYear);
+				boolean rolloverPeriod = (EliteScorer.getStatsYear(now.plusSeconds(Duration.ofDays(14).toSeconds())) > currentYear);
 				ctx.setAttribute("eliteRollover", Boolean.valueOf(rolloverPeriod), REQUEST);
 				TreeSet<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
 				if (rolloverPeriod) {
