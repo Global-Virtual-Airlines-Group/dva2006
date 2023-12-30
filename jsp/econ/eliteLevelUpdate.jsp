@@ -58,15 +58,15 @@ The <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> status re
 <c:forEach var="lvlName" items="${oldLevels.keySet()}">
 <c:set var="ol" value="${oldLevels[lvlName]}" scope="page" />
 <c:set var="nl" value="${newLevels[lvlName]}" scope="page" />
-<fmt:elite level="${lvl}" className="bld" nameOnly="true" /><br />
+<fmt:elite level="${nl}" className="bld" nameOnly="true" /><br />
 <br />
 <span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br />
 <span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br />
 Legs: <fmt:dec value="${(nl.legs - ol.legs) * 1.0 / ol.legs}" fmt="##0.0%" className="bld" forceSign="true" />, ${distUnit}&nbsp;<fmt:dec value="${(nl.distance - ol.distance) * 1.0 / ol.distance}" className="sec bld" fmt="##0.0%" forceSign="true" />, 
-${pointUnit }&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><hr />
+${pointUnit}&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><br /><hr />
 <br />
 </c:forEach>
-<c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span><br />
+<c:if test="${!isPersisted}"><br /><span class="sec ita bld">These changes have not been written to the database.</span><br />
 <br /></c:if>
 </c:when>
 <c:when test="${isRollover}">
