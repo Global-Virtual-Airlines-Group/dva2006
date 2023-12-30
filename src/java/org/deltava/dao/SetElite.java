@@ -29,7 +29,7 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EliteLevel lvl) throws DAOException {
-		try (PreparedStatement ps = prepare("INSERT INTO ELITE_LEVELS (NAME, YR, STAT_START, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS N ON DUPLICATE KEY UPDATE "
+		try (PreparedStatement ps = prepare("INSERT INTO ELITE_LEVELS (NAME, YR, STAT_START, LEGS, DISTANCE, POINTS, BONUS, COLOR, TARGET_PCT, VISIBLE) VALUES (?,?,?,?,?,?,?,?,?,?) AS N ON DUPLICATE KEY UPDATE "
 			+ "STAT_START=N.STAT_START, LEGS=N.LEGS, DISTANCE=N.DISTANCE, POINTS=N.POINTS, BONUS=N.BONUS, COLOR=N.COLOR, TARGET_PCT=N.TARGET_PCT, VISIBLE=N.VISIBLE")) {
 			ps.setString(1, lvl.getName());
 			ps.setInt(2, lvl.getYear());
@@ -55,7 +55,7 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EliteStatus es) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_STATUS (PILOT_ID, NAME, YR, CREATED, UPD_REASON) VALUES (?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_STATUS (PILOT_ID, NAME, YR, CREATED, UPD_REASON) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, es.getID());
 			ps.setString(2, es.getLevel().getName());
 			ps.setInt(3, es.getLevel().getYear());
@@ -66,6 +66,23 @@ public class SetElite extends EliteDAO {
 			throw new DAOException(se);
 		} finally {
 			_stCache.remove(es.cacheKey());
+		}
+	}
+	
+	/**
+	 * Rolls over flight legs and distance into a new Elite year.
+	 * @param yt a YearlyTotal bean with the amounts to be rolled over
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void rollover(YearlyTotal yt) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_ROLLOVER (ID, YEAR, LEGS, DISTANCE) VALUES (?,?,?,?)")) {
+			ps.setInt(1, yt.getID());
+			ps.setInt(2, yt.getYear());
+			ps.setInt(3, yt.getLegs());
+			ps.setInt(4, yt.getDistance());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 	

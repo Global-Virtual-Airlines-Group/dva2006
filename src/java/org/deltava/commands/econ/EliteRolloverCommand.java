@@ -5,11 +5,14 @@ import java.util.*;
 import java.time.*;
 import java.sql.Connection;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
@@ -19,6 +22,8 @@ import org.deltava.dao.*;
  */
 
 public class EliteRolloverCommand extends AbstractCommand {
+	
+	private static final Logger log = LogManager.getLogger(EliteRolloverCommand.class);
 
 	/**
 	 * Executes the command.
@@ -34,6 +39,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 
 			// Get upcoming year's levels
 			GetElite eldao = new GetElite(con);
+			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year);
 			if (lvls.isEmpty())
 				throw notFoundException("No Elite status levels for " + year);
@@ -49,31 +55,55 @@ public class EliteRolloverCommand extends AbstractCommand {
 			List<String> msgs = new ArrayList<String>();
 			
 			// Get highest status from last year
-			SetElite elwdao = new SetElite(con);
-			SetStatusUpdate updwdao = new SetStatusUpdate(con);
 			for (Pilot p : pilots.values()) {
 				ctx.startTX();
 				List<EliteStatus> status = eldao.getAllStatus(p.getID(), (year - 1));
 				status.removeIf(es -> es.getUpgradeReason().isRollover());
 				EliteStatus st = status.getLast();
 				
+				// Load totals for the year
+				YearlyTotal lyt = esdao.getEliteTotals(p.getID(), (year - 1));
+				if (!lyt.matches(st.getLevel())) {
+					log.warn("{} has {}, totals are {} / {}", p.getName(), st.getLevel().getName(), Integer.valueOf(lyt.getLegs()), Integer.valueOf(lyt.getDistance()));
+					continue;
+				}
+				
 				// Calcualte new level
 				EliteLevel newLevel = lvls.stream().filter(lv -> lv.matches(st.getLevel())).findFirst().orElse(lvls.first());
 				UpgradeReason ur = (newLevel.compareTo(st.getLevel()) == 0) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
 				msgs.add(String.format("Rolling over %s status for %s in %d / %s", newLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription()));
+				log.info("Rolling over {} status for {} in {} / {}", newLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription());
+				
+				// Calculate rollover for next year
+				YearlyTotal rt = new YearlyTotal(year, p.getID());
+				rt.addLegs(Math.max(0, lyt.getLegs() - newLevel.getLegs()), Math.max(0, lyt.getDistance() - newLevel.getDistance()), 0);
+				log.info("{} rollover = {} legs, {} miles", p.getName(), Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()));
 				
 				// Write the status
+				SetElite elwdao = new SetElite(con);
 				EliteStatus newStatus = new EliteStatus(p.getID(), newLevel);
 				newStatus.setEffectiveOn(LocalDateTime.of(year, 2, 1, 12, 0, 0).toInstant(ZoneOffset.UTC));
 				newStatus.setUpgradeReason(ur);
 				elwdao.write(newStatus);
+				elwdao.rollover(rt);
 				
-				// Write a status update
+				// Write status updates
+				SetStatusUpdate updwdao = new SetStatusUpdate(con);
+				Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
 				upd.setDate(Instant.now());
 				upd.setAuthorID(p.getID());
 				upd.setDescription(String.format("Reached %s for %d ( %s )", newLevel.getName(), Integer.valueOf(year), ur.getDescription()));
-				updwdao.write(upd, ctx.getDB());
+				upds.add(upd);
+				if (!rt.isZero()) {
+					upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
+					upd.setDate(Instant.now());
+					upd.setAuthorID(p.getID());
+					upd.setDescription(String.format("Rolled over %d legs / %d %s", Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()), SystemData.get("econ.elite.distance")));
+					upds.add(upd);	
+				}
+				
+				updwdao.write(upds);
 				ctx.commitTX();
 			}
 			

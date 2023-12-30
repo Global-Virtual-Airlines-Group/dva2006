@@ -32,7 +32,7 @@ public class GetEliteStatistics extends EliteDAO {
 	/**
 	 * Returns Elite status totals for a particiular year.
 	 * @param pilotID the Pilot's database ID
-	 * @param year the statistics year 
+	 * @param year the statistics year
 	 * @return a YearlyTotals bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -43,21 +43,33 @@ public class GetEliteStatistics extends EliteDAO {
 		CacheableList<YearlyTotal> results = _cache.get(Integer.valueOf(pilotID));
 		if (results != null)
 			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
-		
-		try (PreparedStatement ps = prepare("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
-			+ "AND (P2.STATUS=?) AND ((P2.DATE>=MAKEDATE(?,1)) AND (P2.DATE<MAKEDATE(?,1)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) AND ((P.DATE>=MAKEDATE(?,1)) AND (P.DATE<MAKEDATE(?,1)))")) {
-			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, year);
-			ps.setInt(3, year + 1);
-			ps.setInt(4, pilotID);
-			ps.setInt(5, FlightStatus.OK.ordinal());
-			ps.setInt(6, year);
-			ps.setInt(7, year + 1);
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next())
-					result.addLegs(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+		try {
+			startTransaction();
+			try (PreparedStatement ps = prepare("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
+					+ "AND (P2.STATUS=?) AND ((P2.DATE>=MAKEDATE(?,1)) AND (P2.DATE<MAKEDATE(?,1)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) AND ((P.DATE>=MAKEDATE(?,1)) AND (P.DATE<MAKEDATE(?,1)))")) {
+				ps.setInt(1, FlightStatus.OK.ordinal());
+				ps.setInt(2, year);
+				ps.setInt(3, year + 1);
+				ps.setInt(4, pilotID);
+				ps.setInt(5, FlightStatus.OK.ordinal());
+				ps.setInt(6, year);
+				ps.setInt(7, year + 1);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+						result.addLegs(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+				}
 			}
 			
+			try (PreparedStatement ps = prepare("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?)")) {
+				ps.setInt(1, pilotID);
+				ps.setInt(2, year);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+					result.addLegs(rs.getInt(1), rs.getInt(2), 0);
+				}
+			}
+			
+			rollbackTransaction();
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -105,6 +117,17 @@ public class GetEliteStatistics extends EliteDAO {
 				}
 			}
 			
+			// Load rollover miles
+			try (PreparedStatement ps = prepare("SELECT YEAR, LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?)")) {
+				ps.setInt(1, pilotID);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						YearlyTotal yt = totals.get(Integer.valueOf(rs.getInt(1)));
+						yt.addLegs(rs.getInt(2), rs.getInt(3), 0);
+					}
+				}
+			}
+			
 			rollbackTransaction();
 			results.addAll(totals.values());
 			_cache.add(results);
@@ -115,7 +138,7 @@ public class GetEliteStatistics extends EliteDAO {
 	}
 	
 	/**
-	 * Loads flight/distance/point statistics by Pilot for a one year interval.
+	 * Loads flight/distance/point statistics by Pilot for a one year interval. <i>This excludes rollover legs and distance</i>
 	 * @param sd the start date
 	 * @return a List of YearlyTotal beans
 	 * @throws DAOException if a JDBC error occurs
@@ -153,6 +176,29 @@ public class GetEliteStatistics extends EliteDAO {
 			
 			_cache.add(results);
 			return results.clone();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads a Pilot's rollover totals for a given year.
+	 * @param pilotID the Pilot's database ID
+	 * @param year the year
+	 * @return a YearlyTotal bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public YearlyTotal getRollover(int pilotID, int year) throws DAOException {
+		YearlyTotal yt = new YearlyTotal(year, pilotID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?) LIMIT 1")) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, year);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					yt.addLegs(rs.getInt(1), rs.getInt(2), 0);
+			}
+			
+			return yt;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

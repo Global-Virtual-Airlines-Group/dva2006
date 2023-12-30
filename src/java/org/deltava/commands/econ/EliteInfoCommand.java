@@ -75,6 +75,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
 			totals.putIfAbsent(currentYear, new YearlyTotal(currentYear.intValue(), p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
+			ctx.setAttribute("ro", esdao.getRollover(p.getID(), currentYear.intValue()), REQUEST);
 			
 			// Load unscored flight IDs
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
