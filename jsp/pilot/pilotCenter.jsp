@@ -210,7 +210,7 @@ Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="
 <c:if test="${eliteRollover}">
 <content:filter roles="Operations">
 <tr>
- <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year. Before the end of the rolover
+ <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year. Before the end of the rollover
  period, the requirements for the upcoming status year will need to be calculated and stored in the database, and status from the previous year must be rolled over for eligible Pilots.</td>
 </tr>
 <tr>

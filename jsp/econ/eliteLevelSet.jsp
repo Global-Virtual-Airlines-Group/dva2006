@@ -24,7 +24,7 @@ golgotha.local.validate = function(f) {
 	return true;
 };
 <c:if test="${!isRollover}">
-golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('isCommit')); }};
+golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('isCommit')); });
 </c:if>
 </script>
 </head>
@@ -51,7 +51,7 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <c:if test='${!empty oldLevels}'>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"> <span class="ita">Requirements can only be updated during the ${eliteName} status rollover period.</span></c:if></td>
+ <td class="data"><el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br /><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">QUALIFICATION CHANGES FROM ${year - 1} TO ${year}</td>
