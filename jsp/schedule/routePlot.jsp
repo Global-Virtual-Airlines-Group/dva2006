@@ -24,15 +24,6 @@
 <content:js name="fileSaver" />
 <content:googleAnalytics eventSupport="true" />
 <script>
-golgotha.local.loaders = golgotha.local.loaders || {};
-golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
-golgotha.local.loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-golgotha.local.loaders.series.setData('temp', 0.275, 'wxTemp');
-golgotha.local.loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-golgotha.local.loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-golgotha.local.loaders.series.setData('sat', 0.325, 'wxSat');
-golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
@@ -65,7 +56,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]" value="${flight.airline}" onChange="void this.updateAirlineCode()" />
- <el:text name="airlineCode" size="2" max="3" idx="*" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
+ <el:text name="airlineCode" size="2" max="3" idx="*" value="${flight.airline.code}" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -209,11 +200,6 @@ google.maps.event.addListener(map, 'zoom_changed', function() { document.forms[0
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
