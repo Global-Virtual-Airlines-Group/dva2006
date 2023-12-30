@@ -1,10 +1,10 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 /**
  * An interface to describe beans that store Elite program totals.
  * @author Luke
- * @version 9.2
+ * @version 11.1
  * @since 9.2
  */
 
@@ -27,6 +27,14 @@ public interface EliteTotals {
 	 * @return the number of points
 	 */
 	public int getPoints();
+	
+	/**
+	 * Returns if legs, distance and points are all zero.
+	 * @return TRUE if all are zero, otherwise FALSE
+	 */
+	default boolean isZero() {
+		return (getLegs() == 0) && (getDistance() == 0) && (getPoints() == 0);
+	}
 	
 	/**
 	 * Compares two EliteEotal beans by comparing their legs, distance and points.
