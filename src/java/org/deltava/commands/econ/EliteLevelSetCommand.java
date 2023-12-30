@@ -34,11 +34,11 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		
 		// Get the stats/status years and if we are in the rollover period
 		ZonedDateTime now = ZonedDateTime.now();
-		 int statusYear = EliteScorer.getStatusYear(now.toInstant()); int statsYear = EliteScorer.getStatsYear(now.toInstant());
-		 boolean isRolloverPeriod = (statusYear < statsYear);
-		 ctx.setAttribute("startDate", ZonedDateTime.of(statsYear, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
-		 ctx.setAttribute("year", Integer.valueOf(statusYear + 1), REQUEST);
-		 ctx.setAttribute("isRollover", Boolean.valueOf(isRolloverPeriod), REQUEST);
+		int statusYear = EliteScorer.getStatusYear(now.toInstant()); int statsYear = EliteScorer.getStatsYear(now.toInstant());
+		boolean isRolloverPeriod = (statusYear < statsYear);
+		ctx.setAttribute("startDate", ZonedDateTime.of(isRolloverPeriod ? statusYear : statsYear, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
+		ctx.setAttribute("year", Integer.valueOf(statusYear + 1), REQUEST);
+		ctx.setAttribute("isRollover", Boolean.valueOf(isRolloverPeriod), REQUEST);
 		
 		// Redirect to JSP if needed
 		CommandResult result = ctx.getResult();
@@ -53,12 +53,12 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		ZonedDateTime zsd = ZonedDateTime.ofInstant(startDate, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
 		float factor = 1.0f;
 		if (zsd.isAfter(now.minusYears(1)))  {
-			Duration d = Duration.between(zsd, now);
+			Duration d = Duration.between(zsd, now.minusHours(12)); // assume lag time for PIREP approval
 			int daysInYear = Year.isLeap(now.getYear()) ? 365 : 366;
 			factor = daysInYear * 24f / d.toHours();
 		}
 		  
-		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("doCommit")) && isRolloverPeriod;
+		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("isCommit")) && isRolloverPeriod;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -99,6 +99,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 					ewdao.write(nl);
 				
 				ctx.commitTX();
+				ctx.setAttribute("isPersisted", Boolean.TRUE, REQUEST);
 			}
 			
 			// Save old and new levels
