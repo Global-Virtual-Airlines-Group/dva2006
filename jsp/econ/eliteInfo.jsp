@@ -73,7 +73,10 @@ span.rmbar {
  <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)<br />
  <hr />
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
- <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if></td>
+ <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
+ <c:if test="${((ro.legs > 0) || (ro.distance > 0))}">
+ <br />
+ Rolled over from <span class="pri bld">${currentYear - 1}</span>: <fmt:int value="${ro.legs}" className="bld" /> flight legs, <span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
