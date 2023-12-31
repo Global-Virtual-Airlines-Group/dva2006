@@ -7,6 +7,9 @@
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
+<content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
+<content:sysdata var="eliteName" name="econ.elite.name" />
+<content:sysdata var="elitePoints" name="econ.elite.points" />
 <content:sysdata var="faaChartURL" name="schedule.chart.url.faa" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
@@ -17,7 +20,6 @@
  <content:menuitem width="${superUser.name.length() * 10}">${superUser.name}</content:menuitem>
 </content:superUser>
 </c:if>
-
 <content:submenu title="Flight Schedule" width="170">
  <content:subitem><el:cmd url="airlines">Airlines</el:cmd></content:subitem>
  <content:subitem><el:cmd url="airports">Airports</el:cmd></content:subitem>
@@ -41,7 +43,15 @@
  <c:if test="${!empty faaChartURL}"><content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem></c:if>
 </content:filter>
 </content:submenu>
-
+<c:if test="${eliteEnabled}">
+<content:submenu title="${eliteName}" width="170">
+ <content:subitem><el:cmd url="eliteinfo">My ${elitePoints}</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="elitestats">${elitePoints} Statistics</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="elitelevels">${elitePoints} Levels</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="elitelevelset">Upcoming Requirements</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="eliterollover">Mileage Rollover</el:cmd></content:subitem>
+</content:submenu>
+</c:if>
 <content:submenu title="Our Airline" width="170">
  <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
