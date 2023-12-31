@@ -94,7 +94,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(currentYear);
 			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
-			EliteLevel nyLevel = yt.matches(cyLevels);
+			EliteLevel nyLevel = yt.matches(cyLevels, null);
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
 			
 			// Calculate projections
@@ -102,7 +102,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			if ((m > 3) && (currentStatus != null)) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
-				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
+				ctx.setAttribute("projectedLevel", pt.matches(cyLevels, cyLevels.first()), REQUEST);
 				
 				// Check if almost going to miss
 				if (m > 9) {
