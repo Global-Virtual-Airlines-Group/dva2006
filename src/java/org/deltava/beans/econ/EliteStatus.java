@@ -14,7 +14,7 @@ import org.deltava.beans.*;
 
 public class EliteStatus extends DatabaseBean implements RGBColor, EliteLevelBean {
 	
-	private final EliteLevel _lvl;
+	private EliteLevel _lvl;
 	private UpgradeReason _ur = UpgradeReason.NONE;
 	private Instant _created;
 
@@ -70,13 +70,9 @@ public class EliteStatus extends DatabaseBean implements RGBColor, EliteLevelBea
 		_ur = ur;
 	}
 	
-	/**
-	 * Disabled. The EliteLevel is final and cannot be changed.
-	 * @throws UnsupportedOperationException always
-	 */
 	@Override
 	public void setLevel(EliteLevel lvl) {
-		throw new UnsupportedOperationException();
+		_lvl = lvl;
 	}
 	
 	/**
