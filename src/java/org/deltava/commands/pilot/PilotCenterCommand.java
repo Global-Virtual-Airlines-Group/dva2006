@@ -138,10 +138,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Display next year's level and downgrade potential after Q3
 				if (LocalDate.now().getMonthValue() > 9) {
 					TreeSet<EliteLevel> lvls = nyLevels.isEmpty() ? levels : nyLevels;
-					EliteLevel nextYearLevel = cyt.matches(lvls);
-					if (nextYearLevel == null)
-						nextYearLevel = lvls.first();
-					
+					EliteLevel nextYearLevel = cyt.matches(lvls, lvls.first());
 					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
 					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
 					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
