@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store yearly Pilot Elite status totals.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -128,11 +128,12 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	/**
 	 * Returns the highest level whose requirements match this total.
 	 * @param lvls a Collection of EliteLevels
+	 * @param defaultLevel the default level if none match
 	 * @return an EliteLevel, or null if none match
 	 */
-	public EliteLevel matches(Collection<EliteLevel> lvls) {
+	public EliteLevel matches(Collection<EliteLevel> lvls, EliteLevel defaultLevel) {
 		TreeSet<EliteLevel> levels = new TreeSet<EliteLevel>(lvls);
-		return levels.descendingSet().stream().filter(this::matches).findFirst().orElse(null);
+		return levels.descendingSet().stream().filter(this::matches).findFirst().orElse(defaultLevel);
 	}
 	
 	/**
