@@ -44,6 +44,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			id = ctx.getID();
 		
 		final Integer currentYear = Integer.valueOf(EliteScorer.getStatusYear(Instant.now()));
+		boolean isRollover = currentYear.intValue() < EliteScorer.getStatsYear(Instant.now());
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -120,6 +121,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Save status attributes
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("currentYear", currentYear, REQUEST);
+			ctx.setAttribute("isRollover", Boolean.valueOf(isRollover), REQUEST);
 			ctx.setAttribute("baseLevel", EliteLevel.EMPTY, REQUEST);
 			ctx.setAttribute("levels", yearlyLevels, REQUEST);
 			ctx.setAttribute("currentStatus", currentStatus, REQUEST);
