@@ -77,6 +77,8 @@ ${pointUnit}&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" 
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
 <br />
+<c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span> To persist these changes, <el:cmd url="eliterollover" op="force" className="sec bld">Click Here</el:cmd>.<br />
+<br /></c:if>
 </c:when>
 </c:choose>
 <br />
