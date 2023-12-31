@@ -45,7 +45,7 @@ public class GetEliteStatistics extends EliteDAO {
 			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
 		try {
 			startTransaction();
-			try (PreparedStatement ps = prepare("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
 					+ "AND (P2.STATUS=?) AND ((P2.DATE>=MAKEDATE(?,1)) AND (P2.DATE<MAKEDATE(?,1)))) AS PTS FROM PIREPS P, PIREP_ELITE PE WHERE (P.ID=PE.ID) AND (P.PILOT_ID=?) AND (P.STATUS=?) AND ((P.DATE>=MAKEDATE(?,1)) AND (P.DATE<MAKEDATE(?,1)))")) {
 				ps.setInt(1, FlightStatus.OK.ordinal());
 				ps.setInt(2, year);
@@ -60,7 +60,7 @@ public class GetEliteStatistics extends EliteDAO {
 				}
 			}
 			
-			try (PreparedStatement ps = prepare("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?)")) {
 				ps.setInt(1, pilotID);
 				ps.setInt(2, year);
 				try (ResultSet rs = ps.executeQuery()) {
