@@ -199,7 +199,7 @@ public class ElitePIREPLoader extends TestCase {
 				}
 				
 				// Calculate end of year status
-				EliteLevel eyLevel = yt.matches(lvls, null);
+				EliteLevel eyLevel = yt.matches(lvls);
 				if ((eyLevel != null) && (eyLevel.getLegs() > 0) && (eyLevel.getYear() < 2023)) {
 					UpgradeReason ur = (eyLevel.compareTo(st.getLevel()) == 0) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
 					

@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -128,12 +128,11 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	/**
 	 * Returns the highest level whose requirements match this total.
 	 * @param lvls a Collection of EliteLevels
-	 * @param defaultLevel the default level if none match
-	 * @return an EliteLevel, or null if none match
+	 * @return an EliteLevel, or the first level if none match
 	 */
-	public EliteLevel matches(Collection<EliteLevel> lvls, EliteLevel defaultLevel) {
+	public EliteLevel matches(Collection<EliteLevel> lvls) {
 		TreeSet<EliteLevel> levels = new TreeSet<EliteLevel>(lvls);
-		return levels.descendingSet().stream().filter(this::matches).findFirst().orElse(defaultLevel);
+		return levels.descendingSet().stream().filter(this::matches).findFirst().orElse(levels.first());
 	}
 	
 	/**
