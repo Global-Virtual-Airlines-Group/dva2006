@@ -43,8 +43,6 @@ public class EliteInfoCommand extends AbstractCommand {
 		if ((ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) && (ctx.getID() != 0))
 			id = ctx.getID();
 		
-		final Integer currentYear = Integer.valueOf(EliteScorer.getStatusYear(Instant.now()));
-		boolean isRollover = currentYear.intValue() < EliteScorer.getStatsYear(Instant.now());
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -54,12 +52,25 @@ public class EliteInfoCommand extends AbstractCommand {
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + id);
 			
-			// Get this year and next year's levels
+			// Get all elite levels
 			GetElite eldao = new GetElite(con);
 			Collection<EliteLevel> lvls = eldao.getLevels().stream().filter(lvl -> lvl.getLegs() > 0).collect(Collectors.toList());
-			EliteStatus currentStatus = eldao.getStatus(p.getID(), currentYear.intValue());
 			Map<Integer, Collection<EliteLevel>> yearlyLevels = new HashMap<Integer, Collection<EliteLevel>>();
 			lvls.forEach(lvl -> CollectionUtils.addMapCollection(yearlyLevels, Integer.valueOf(lvl.getYear()), lvl));
+			
+			// Determine the year and whether things are populated
+			final Instant now = Instant.now(); int statsYear = EliteScorer.getStatsYear(now); int statusYear = EliteScorer.getStatusYear(now);
+			boolean isRollover = statsYear > statusYear;
+			boolean hasCurrentLevels = yearlyLevels.containsKey(Integer.valueOf(statsYear));
+			EliteStatus currentStatus = eldao.getStatus(p.getID(), statsYear);
+			
+			// Check if we're ready to start the new year (levels populated and rollover complete)
+			int currentYear = statusYear;
+			if (isRollover && hasCurrentLevels && (currentStatus != null)) {
+				currentYear = statsYear;
+				isRollover = false;
+			} else if (currentStatus == null)
+				currentStatus = eldao.getStatus(p.getID(), statusYear);
 			
 			// Get status history
 			Map<Integer, EliteStatus> yearMax = new TreeMap<Integer, EliteStatus>();
@@ -74,9 +85,9 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Get the Pilot's history
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
-			totals.putIfAbsent(currentYear, new YearlyTotal(currentYear.intValue(), p.getID()));
+			totals.putIfAbsent(Integer.valueOf(currentYear), new YearlyTotal(currentYear, p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
-			ctx.setAttribute("ro", esdao.getRollover(p.getID(), currentYear.intValue()), REQUEST);
+			ctx.setAttribute("ro", esdao.getRollover(p.getID(), currentYear), REQUEST);
 			
 			// Load unscored flight IDs
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
@@ -84,16 +95,17 @@ public class EliteInfoCommand extends AbstractCommand {
 			Collection<Integer> unscoredFlightIDs = frsdao.getUnscoredFlights();
 			
 			// Get and score pending flights
-			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear.intValue(), id);
+			EliteScorer es = EliteScorer.getInstance(); YearlyTotal pndt = new YearlyTotal(currentYear, id);
 			GetFlightReports frdao = new GetFlightReports(con);
+			EliteLevel lvl = currentStatus.getLevel(); final int cy = currentYear;
 			List<FlightReport> pendingFlights = frdao.getLogbookCalendar(p.getID(), ctx.getDB(), Instant.now().minusSeconds(Duration.ofDays(30).toSeconds()), 30);
-			pendingFlights.removeIf(fr -> !isPending(fr, currentYear.intValue(), unscoredFlightIDs));
-			pendingFlights.stream().map(fr -> { fr.setStatus(FlightStatus.OK); return es.score(fr, currentStatus.getLevel()); }).forEach(pndt::add);
+			pendingFlights.removeIf(fr -> !isPending(fr, cy, unscoredFlightIDs));
+			pendingFlights.stream().map(fr -> { fr.setStatus(FlightStatus.OK); return es.score(fr, lvl); }).forEach(pndt::add);
 			ctx.setAttribute("pending", pndt, REQUEST);
 			
 			// Calculate next year's status
-			YearlyTotal yt = totals.get(currentYear);
-			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
+			YearlyTotal yt = totals.get(Integer.valueOf(currentYear));
+			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(Integer.valueOf(currentYear)));
 			EliteLevel nyLevel = yt.matches(cyLevels);
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
 			
@@ -106,7 +118,7 @@ public class EliteInfoCommand extends AbstractCommand {
 				
 				// Check if almost going to miss
 				if (m > 9) {
-					EliteLevel nl = cyLevels.stream().filter(lv -> (lv.compareTo(currentStatus.getLevel()) > 0)).findFirst().orElse(null);
+					EliteLevel nl = cyLevels.stream().filter(lv -> (lv.compareTo(lvl) > 0)).findFirst().orElse(null);
 					if (nl != null) {
 						YearlyTotal pd = pt.delta(nl);	
 						float ld = Math.max(0, pd.getLegs() * 1f / yt.getLegs());
@@ -120,7 +132,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Save status attributes
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("currentYear", currentYear, REQUEST);
+			ctx.setAttribute("currentYear", Integer.valueOf(currentYear), REQUEST);
 			ctx.setAttribute("isRollover", Boolean.valueOf(isRollover), REQUEST);
 			ctx.setAttribute("baseLevel", EliteLevel.EMPTY, REQUEST);
 			ctx.setAttribute("levels", yearlyLevels, REQUEST);
