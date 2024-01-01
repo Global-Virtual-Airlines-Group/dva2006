@@ -87,9 +87,9 @@ span.rmbar {
 </tr>
 <tr>
  <td class="label eliteStatus top">${currentYear + 1} Status</td>
-<c:if test="${!sRollover}">
+<c:if test="${isRollover}">
  <td class="data">The ${currentYear}&nbsp;${eliteName} status year has completed and no further flights will be credited towards your ${currentYear + 1} status. Your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td></c:if>
-<c:if test="${sRollover}">
+<c:if test="${!isRollover}">
  <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate <fmt:int value="${projectedTotal.legs}" /> 
  flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if>
  <c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
