@@ -6,6 +6,8 @@
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
+<content:sysdata var="discordEnabled" name="discord.enabled" />
+<content:sysdata var="discordURL" name="discord.url" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
 <content:menu attr="isSideMenu" maxWidth="15%">
@@ -129,6 +131,9 @@
 <content:filter roles="Pilot">
 <c:if test="${helpDeskEnabled}">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<c:if test="${discordEnabled}">
+ <content:subitem><el:link url="${discordURL}" target="discord" external="true">Discord</el:link></content:subitem>
 </c:if>
 </content:filter>
 <content:filter roles="Anonymous,HR">
