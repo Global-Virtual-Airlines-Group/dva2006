@@ -37,26 +37,26 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <el:form action="eliterollover.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline />&nbsp;${eliteName} ROLLOVER RESULTS FOR ${year}</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;${eliteName}&nbsp;</span>ROLLOVER RESULTS FOR ${year}</td>
 </tr>
 <c:if test="${!empty msgs}">
 <tr>
- <td class="label">&nbsp;</td>
+ <td class="label top">Operations Log</td>
  <td class="data"><c:forEach var="msg" items="${msgs}" varStatus="msgStatus">${msg}<c:if test="${!msgStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 <c:if test="${!isPersisted}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data bld caps"><span class="sec">These changes have not been written to the database</span></td>
+ <td class="data"><fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br /> 
+<span class="sec bld caps">These changes have not been written to the database</span></td>
 </tr>
 </c:if>
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noPointRollover" value="true" className="small ita" label="Do not rollover based on ${elitePoints} attainment" checked="${param.noPointRollover}" /><br />
+ <td class="data"><el:box name="allowPointRollover" value="true" className="small ita" label="Allow rollover based on ${elitePoints} attainment" checked="${param.allowPointRollover}" /><br />
 <el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br /><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
 </tr>
-
 </el:table>
 
 <!-- Button Bar -->
