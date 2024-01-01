@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -43,6 +43,13 @@ public class GetEliteStatistics extends EliteDAO {
 		CacheableList<YearlyTotal> results = _cache.get(Integer.valueOf(pilotID));
 		if (results != null)
 			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
+		
+		// Load single year
+		Long cacheKey = Long.valueOf(((long)year << 32) | pilotID);
+		results = _cache.get(cacheKey);
+		if (results != null)
+			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
+		
 		try {
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST, (SELECT SUM(PEE.SCORE) FROM PIREP_ELITE_ENTRIES PEE, PIREPS P2 WHERE (PEE.ID=P2.ID) AND (P.PILOT_ID=P2.PILOT_ID) "
@@ -70,6 +77,9 @@ public class GetEliteStatistics extends EliteDAO {
 			}
 			
 			rollbackTransaction();
+			results = new CacheableList<YearlyTotal>(cacheKey);
+			results.add(result);
+			_cache.add(results);
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
