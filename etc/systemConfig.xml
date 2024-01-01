@@ -713,6 +713,7 @@
 	<!-- Discord data -->
 	<discord>
 		<bot type="Boolean">false</bot>
+		<enabled type="Boolean">true</enabled>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
 		<url>https://discord.gg/ZXAnsajh8j</url>
 

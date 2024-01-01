@@ -8,6 +8,9 @@
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
 <content:sysdata var="elitePoints" name="econ.elite.points" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
+<content:sysdata var="discordEnabled" name="discord.enabled" />
+<content:sysdata var="discordURL" name="discord.url" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
 <content:menu attr="isSideMenu" maxWidth="14%">
@@ -138,7 +141,12 @@
  <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
  <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
 <content:filter roles="Pilot">
+<c:if test="${helpDeskEnabled}">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<c:if test="${discordEnabled}">
+ <content:subitem><el:link url="${discordURL}" target="discord" external="true">Discord</el:link></content:subitem>
+</c:if>
 </content:filter>
 <content:filter roles="Anonymous,HR">
  <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
