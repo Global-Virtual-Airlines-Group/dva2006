@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -94,7 +94,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(currentYear);
 			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(currentYear));
-			EliteLevel nyLevel = yt.matches(cyLevels, null);
+			EliteLevel nyLevel = yt.matches(cyLevels);
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
 			
 			// Calculate projections
@@ -102,7 +102,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			if ((m > 3) && (currentStatus != null)) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
-				ctx.setAttribute("projectedLevel", pt.matches(cyLevels, cyLevels.first()), REQUEST);
+				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
 				
 				// Check if almost going to miss
 				if (m > 9) {

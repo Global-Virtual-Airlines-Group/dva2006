@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -138,7 +138,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Display next year's level and downgrade potential after Q3
 				if (LocalDate.now().getMonthValue() > 9) {
 					TreeSet<EliteLevel> lvls = nyLevels.isEmpty() ? levels : nyLevels;
-					EliteLevel nextYearLevel = cyt.matches(lvls, lvls.first());
+					EliteLevel nextYearLevel = cyt.matches(lvls);
 					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
 					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
 					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
