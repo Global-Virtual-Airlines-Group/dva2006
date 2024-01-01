@@ -77,6 +77,7 @@ ${pointUnit}&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" 
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
 <br />
+<fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br /><br />
 <c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span> To persist these changes, <el:cmd url="eliterollover" op="force" className="sec bld">Click Here</el:cmd>.<br />
 <br /></c:if>
 </c:when>
