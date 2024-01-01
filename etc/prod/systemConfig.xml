@@ -738,6 +738,7 @@
 			<role>PIREP</role>		
 			<role>HR</role>
 			<role>Operations</role>
+			<role>Pilot</role>
 		</list>
 
 		<!-- Discord Role names -->
