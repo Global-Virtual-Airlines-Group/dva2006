@@ -729,6 +729,7 @@
 	<!-- Discord data -->
 	<discord>
 		<bot type="Boolean">true</bot>
+		<enabled type="Boolean">true</enabled>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
 		<id type="Long">1066046019269312553</id>
 		<url>https://discord.gg/ZXAnsajh8j</url>
