@@ -38,17 +38,22 @@ public class GetEliteStatistics extends EliteDAO {
 	 */
 	public YearlyTotal getEliteTotals(int pilotID, int year) throws DAOException {
 		
-		// Check the cache
+		// Load single year from cache
 		YearlyTotal result = new YearlyTotal(year, pilotID);
-		CacheableList<YearlyTotal> results = _cache.get(Integer.valueOf(pilotID));
+		Long cacheKey = Long.valueOf(((long)year << 32) | pilotID);
+		CacheableList<YearlyTotal> results = _cache.get(cacheKey);
 		if (results != null)
 			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
 		
-		// Load single year
-		Long cacheKey = Long.valueOf(((long)year << 32) | pilotID);
-		results = _cache.get(cacheKey);
-		if (results != null)
-			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
+		// Check the cache for multi-year; if found then add this year
+		results = _cache.get(Integer.valueOf(pilotID));
+		if (results != null) {
+			YearlyTotal yt2 = results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
+			CacheableList<YearlyTotal> r2 = new CacheableList<YearlyTotal>(cacheKey);
+			r2.add(yt2);
+			_cache.add(r2);
+			return yt2;
+		}
 		
 		try {
 			startTransaction();
