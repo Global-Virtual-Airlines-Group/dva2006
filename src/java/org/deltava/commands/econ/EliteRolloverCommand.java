@@ -44,9 +44,9 @@ public class EliteRolloverCommand extends AbstractCommand {
 			// Get upcoming year's levels
 			GetElite eldao = new GetElite(con);
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
-			TreeSet<EliteLevel> lvls = eldao.getLevels(year);
+			TreeSet<EliteLevel> lvls = eldao.getLevels(year - 1);
 			if (lvls.isEmpty())
-				throw notFoundException("No Elite status levels for " + year);
+				throw notFoundException("No Elite status levels for " + (year - 1));
 			
 			// Disable point rollover
 			if (!allowPointRollover)
@@ -55,8 +55,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 			// Load Pilots from last year
 			GetPilot pdao = new GetPilot(con);
 			Collection<Integer> IDs = new TreeSet<Integer>();
-			TreeSet<EliteLevel> pyLevels = eldao.getLevels(year -1);
-			for (EliteLevel lvl : pyLevels)
+			for (EliteLevel lvl : lvls)
 				IDs.addAll(eldao.getPilots(lvl));
 			
 			//IDs.clear(); IDs.addAll(Set.of(8027, 0x966bc, 0x972c7, 0x2142, 0x92862, 0x9349a, 0x1fdc));
@@ -74,15 +73,12 @@ public class EliteRolloverCommand extends AbstractCommand {
 				// Load status for past year, including rollover from year - 2
 				List<EliteStatus> status = eldao.getAllStatus(p.getID(), (year - 1));
 				boolean hasRollover = status.stream().anyMatch(es -> es.getUpgradeReason().isRollover());
-				EliteLevel rlvl = hasRollover ? status.stream().filter(es -> es.getUpgradeReason().isRollover()).findFirst().orElse(null).getLevel() : pyLevels.first();
-				EliteLevel lvl = status.isEmpty() ? pyLevels.getFirst() : status.getLast().getLevel(); // last level including rollover
+				EliteLevel rlvl = hasRollover ? status.stream().filter(es -> es.getUpgradeReason().isRollover()).findFirst().orElse(null).getLevel() : lvls.first();
+				EliteLevel lvl = status.isEmpty() ? lvls.getFirst() : status.getLast().getLevel(); // last level including rollover
 				
 				// Get upcoming year's status
 				YearlyTotal lyt = esdao.getEliteTotals(p.getID(), (year - 1));
-				EliteLevel newLevel = lyt.matches(lvls);
-				
-				// Earned level from last year rollover
-				EliteLevel pyLevel = lyt.matches(pyLevels);
+				EliteLevel pyLevel = lyt.matches(lvls);
 				if (!pyLevel.matches(lvl) && !hasRollover)
 					msgs.add(String.format("%s should be %s for %d, Rollover = %s, Actual = %s", p.getName(), pyLevel.getName(), Integer.valueOf(year), rlvl.getName(), lvl.getName()));
 				
@@ -90,7 +86,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 				if ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)) {
 					msgs.add(String.format("%s status = %s, no rollover", p.getName(), p.getStatus().getDescription()));
 					continue;
-				} else if (newLevel.matches(lvl) && newLevel.matches(lvls.getFirst())) {
+				} else if (pyLevel.matches(lvl) && pyLevel.matches(lvls.getFirst())) {
 					msgs.add(String.format("%s remains as %s for %d", p.getName(), lvl.getName(), Integer.valueOf(year)));
 					continue;
 				} 
@@ -102,28 +98,28 @@ public class EliteRolloverCommand extends AbstractCommand {
 				upd.setAuthorID(p.getID());
 				
 				// Calcualte new level
-				UpgradeReason ur = newLevel.matches(lvl) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
+				UpgradeReason ur = pyLevel.matches(lvl) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
 				if (ur == UpgradeReason.ROLLOVER) {
-					msgs.add(String.format("Rolling over %s status for %s in %d / %s", newLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription()));
-					log.info("Rolling over {} status for {} in {} / {}", newLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription());
-					upd.setDescription(String.format("Rolled over %s for %d", newLevel.getName(), Integer.valueOf(year)));
+					msgs.add(String.format("Rolling over %s status for %s in %d / %s", pyLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription()));
+					log.info("Rolling over {} status for {} in {} / {}", pyLevel.getName(), p.getName(), Integer.valueOf(year), ur.getDescription());
+					upd.setDescription(String.format("Rolled over %s for %d", pyLevel.getName(), Integer.valueOf(year)));
 					upds.add(upd);
 					rolloverCount++;
 				} else {
-					msgs.add(String.format("%s downgraded from %s to %s in %d / %s", p.getName(), lvl.getName(), newLevel.getName(), Integer.valueOf(year), ur.getDescription()));
-					log.info("{} downgraded from {} to {} in {} / {}", p.getName(), lvl.getName(), newLevel.getName(), Integer.valueOf(year), ur.getDescription());
-					upd.setDescription(String.format("Downgraded from %s to %s for %d", lvl.getName(), newLevel.getName(), Integer.valueOf(year)));
+					msgs.add(String.format("%s downgraded from %s to %s in %d / %s", p.getName(), lvl.getName(), pyLevel.getName(), Integer.valueOf(year), ur.getDescription()));
+					log.info("{} downgraded from {} to {} in {} / {}", p.getName(), lvl.getName(), pyLevel.getName(), Integer.valueOf(year), ur.getDescription());
+					upd.setDescription(String.format("Downgraded from %s to %s for %d", lvl.getName(), pyLevel.getName(), Integer.valueOf(year)));
 					upds.add(upd);
 					downgradeCount++;
 				}
 				
 				// Calculate rollover for next year
 				YearlyTotal rt = new YearlyTotal(year, p.getID());
-				rt.addLegs(Math.max(0, lyt.getLegs() - newLevel.getLegs()), Math.max(0, lyt.getDistance() - newLevel.getDistance()), 0);
+				rt.addLegs(Math.max(0, lyt.getLegs() - pyLevel.getLegs()), Math.max(0, lyt.getDistance() - pyLevel.getDistance()), 0);
 				log.info("{} rollover = {} legs, {} miles", p.getName(), Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()));
 				
 				// Write the status
-				EliteStatus newStatus = new EliteStatus(p.getID(), newLevel);
+				EliteStatus newStatus = new EliteStatus(p.getID(), pyLevel);
 				newStatus.setEffectiveOn(LocalDateTime.of(year, 2, 1, 12, 0, 0).toInstant(ZoneOffset.UTC));
 				newStatus.setUpgradeReason(ur);
 				elwdao.write(newStatus);
