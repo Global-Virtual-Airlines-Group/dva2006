@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.time.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to automatically calulate Elite levels for an upcoming year.
  * @author Luke
- * @version 11.0
+ * @version 11.1
  * @since 9.2
  */
 
@@ -59,6 +59,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		}
 		  
 		boolean isCommit = Boolean.parseBoolean(ctx.getParameter("isCommit")) && isRolloverPeriod;
+		boolean calcPoints = Boolean.parseBoolean(ctx.getParameter("calcPoints"));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -85,7 +86,8 @@ public class EliteLevelSetCommand extends AbstractCommand {
 					lvl.setTargetPercentile((targetPct > 0) ? targetPct : oldLevel.getTargetPercentile());
 					lvl.setLegs(EliteLevel.round(lst.getLegs(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.leg", 5)));
 					lvl.setDistance(EliteLevel.round(dst.getDistance(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.distance", 5000)));
-					lvl.setPoints(EliteLevel.round(pst.getPoints(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.points", 5000)));
+					if (calcPoints)
+						lvl.setPoints(EliteLevel.round(pst.getPoints(lvl.getTargetPercentile()) * factor, SystemData.getInt("econ.elite.round.points", 5000)));
 				}
 				
 				newLevels.put(lvl.getName(), lvl);
