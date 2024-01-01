@@ -47,6 +47,10 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
  <td class="data"><el:text name="startDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(startDate, user.dateFormat)}" />&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
 &nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${user.dateFormat})</span></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="calcPoints" value="true" checked="${param.calcPoints}" className="small ita" label="Calculate ${pointUnit} thresholds in addition to Legs and ${distUnit}" /></td>
+</tr>
 <c:if test='${!empty oldLevels}'>
 <tr>
  <td class="label">&nbsp;</td>
