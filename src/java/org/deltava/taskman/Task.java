@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -296,6 +296,16 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	} finally {
     		ctxt.release();
     	}
+    }
+    
+    /**
+     * Error logger, sends error details to Log4J and NewRelic.
+     * @param msg the message preface
+     * @param t a Throwable
+     */
+    protected void logError(String msg, Throwable t) {
+    	log.atError().withThrowable(t).log("{} - {}", msg, t.getMessage());
+    	NewRelic.noticeError(t, false);
     }
     
     @Override
