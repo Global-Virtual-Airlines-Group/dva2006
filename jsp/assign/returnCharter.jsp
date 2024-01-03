@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -51,11 +51,11 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" value="${lastFlight.equipmentType}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" required="true" options="${eqTypes}" value="${lastFlight.equipmentType}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" value="${lastFlight.airline}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" required="true" options="${airlines}" value="${lastFlight.airline}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Flight</td>
