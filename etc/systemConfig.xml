@@ -641,6 +641,7 @@
 			<maxDays type="Integer">1</maxDays>
 			<minDays type="Integer">5</minDays>
 			<maxHeld type="Integer">3</maxHeld>
+			<max_hold_days type="Integer">7</max_hold_days>
 			<pad_hours type="Double">0.5</pad_hours>
 			<assign_purge type="Integer">14</assign_purge>
 			<draft_purge type="Integer">30</draft_purge>

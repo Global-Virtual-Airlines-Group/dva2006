@@ -300,6 +300,18 @@
 		</time>
 	</task>
 
+	<!-- Held Flight Report warning and auto-rejection -->
+	<task id="heldflightwarn" enabled="false">
+		<class>org.deltava.tasks.HeldFlightTask</class>
+		<time>
+			<min>20</min>
+			<hour>12</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
 	<!-- Push Endpoint removal -->
 	<task id="invalidpush" enabled="true">
 		<class>org.deltava.tasks.PushInvalidationTask</class>
