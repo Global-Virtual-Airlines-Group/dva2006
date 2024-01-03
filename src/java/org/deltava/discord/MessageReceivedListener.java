@@ -1,10 +1,11 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import org.apache.logging.log4j.*;
 
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
@@ -50,9 +51,12 @@ public class MessageReceivedListener implements MessageCreateListener {
     	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
     	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
     	try {
-    		if (msg.equalsIgnoreCase("done")) {
+    		if ("done".equalsIgnoreCase(msg) && sch.isPresent()) {
     			e.getMessage().delete("Auto delete interaction message");
     			assignRoles(e);
+    			return;
+    		} else if (!sch.isPresent()) {
+    			log.warn("No server channel - {}", msg);
     			return;
     		}
         
@@ -105,7 +109,8 @@ public class MessageReceivedListener implements MessageCreateListener {
     	// Make sure user is stil here
     	if (e.getMessageAuthor().asUser().isEmpty()) return;
         User msgAuth = e.getMessageAuthor().asUser().get();
-        log.info("User requested access [ Name = {}, UUID = {} ]", msgAuth.getName(), Long.toHexString(msgAuth.getId()));
+        Server srv = e.getServer().orElse(null);
+        log.info("User requested access [ Name = {}, UUID = {}, Server = {} ]", msgAuth.getName(), Long.toHexString(msgAuth.getId()), srv);
         
         Pilot p = null;
         try (Connection con = Bot.getConnection()) {
@@ -142,7 +147,7 @@ public class MessageReceivedListener implements MessageCreateListener {
 
         // Unable to do nicknames longer than 32 chars or less than 1
         if (nickname.length() <= 32) {
-        	msgAuth.updateNickname(e.getServer().get(), nickname);
+        	msgAuth.updateNickname(srv, nickname);
         	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, roles, nickname));
     	} else
         	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, roles)); 
