@@ -72,6 +72,11 @@ public class EliteInfoCommand extends AbstractCommand {
 			} else if (currentStatus == null)
 				currentStatus = eldao.getStatus(p.getID(), statusYear);
 			
+			// Get this year's levels
+			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(Integer.valueOf(currentYear)));
+			if (currentStatus == null)
+				currentStatus = new EliteStatus(p.getID(), cyLevels.first());
+			
 			// Get status history
 			Map<Integer, EliteStatus> yearMax = new TreeMap<Integer, EliteStatus>();
 			Map<Integer, Collection<EliteStatus>> yearlyStatusUpdates = new TreeMap<Integer, Collection<EliteStatus>>();
@@ -105,13 +110,12 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(Integer.valueOf(currentYear));
-			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(Integer.valueOf(currentYear)));
 			EliteLevel nyLevel = yt.matches(cyLevels);
 			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
 			
 			// Calculate projections
 			int m = LocalDate.now().getMonthValue();
-			if ((m > 3) && (currentStatus != null)) {
+			if (m > 3) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
 				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
