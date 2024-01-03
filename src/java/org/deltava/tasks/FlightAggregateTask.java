@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.sql.Connection;
@@ -61,7 +61,7 @@ public class FlightAggregateTask extends Task {
 			
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.atError().withThrowable(de).log(de.getMessage());
+			logError("Error aggregating flights", de);
 		} finally {
 			ctx.release();
 		}
