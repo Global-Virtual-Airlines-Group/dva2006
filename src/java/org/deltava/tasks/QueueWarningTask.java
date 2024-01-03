@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public class QueueWarningTask extends Task {
 				}
 			}
 		} catch (DAOException de) {
-			log.atError().withThrowable(de).log(de.getMessage());
+			logError("Error sending Queue notice", de);
 		} finally {
 			ctx.release();
 		}

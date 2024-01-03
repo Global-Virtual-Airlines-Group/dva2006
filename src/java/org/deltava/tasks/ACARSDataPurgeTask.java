@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -67,7 +67,7 @@ public class ACARSDataPurgeTask extends Task {
 			// Purge old takeoffs
 			log.warn("Purged {} takeoff/landing entries", Integer.valueOf(pwdao.purgeTakeoffs(flightPurge)));
 		} catch (DAOException de) {
-			log.atError().withThrowable(de).log(de.getMessage());
+			logError("Error purging ACARS data", de);
 		} finally {
 			ctx.release();
 		}
