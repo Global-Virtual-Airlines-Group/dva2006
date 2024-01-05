@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -183,10 +183,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				
 				// Log warning
 				ms = MILLISECONDS.convert(tt.mark("scoreEnd") - tt.getInterval("scoreStsart"), NANOSECONDS);
-				if (ms > 1250) {
-					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
-					tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
-				}
+				if (ms > 1250)
+					log.warn("Scored Flight Report #{} - {} pts {}", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), tt);
 			}
 			
 			// Commit
