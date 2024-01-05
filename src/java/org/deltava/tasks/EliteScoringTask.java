@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -158,11 +158,8 @@ public class EliteScoringTask extends Task {
 				
 				ctx.commitTX();
 				i.remove();
-				long ms = tt.stop();
-				if (ms > 1250) {
-					log.warn("Scored Flight Report #{} - {} pts ({} ms)", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), Long.valueOf(ms));
-					tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
-				}
+				if (tt.stop() > 1250)
+					log.warn("Scored Flight Report #{} - {} pts {}", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), tt);
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
