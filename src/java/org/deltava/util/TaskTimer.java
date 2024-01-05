@@ -1,4 +1,4 @@
-// Copyright 2012, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -68,19 +68,11 @@ public class TaskTimer {
 	}
 	
 	/**
-	 * Returns the currently elapsed time without stopping the timer.
+	 * Returns the currently elapsed time without stopping the timer, if running.
 	 * @return the execution time in nanoseconds
 	 */
 	public long getInterval() {
-		return System.nanoTime() - _start;
-	}
-	
-	/**
-	 * Returns the execution time in nanoseconds.
-	 * @return the execution time
-	 */
-	public long getNanos() {
-		return _interval;
+		return isRunning() ? System.nanoTime() - _start : _interval;
 	}
 	
 	/**
@@ -88,6 +80,22 @@ public class TaskTimer {
 	 * @return the execution time
 	 */
 	public long getMillis() {
-		return MILLISECONDS.convert(_interval, NANOSECONDS);
+		return MILLISECONDS.convert(getInterval(), NANOSECONDS);
+	}
+	
+	/**
+	 * Returns if the timer is currently running.
+	 * @return TRUE if running, otherwise FALSE
+	 */
+	public boolean isRunning() {
+		return (_end == 0);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder("[ ");
+		buf.append(getMillis());
+		buf.append("ms ]");
+		return buf.toString();
 	}
 }
