@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -411,11 +411,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		}
 		
 		// Log timings
-		long ms = tt.stop();
-		if (ms > 2750) {
-			log.warn("Disposed Flight Report #{} - {} ms", Integer.valueOf(ctx.getID()), Long.valueOf(ms));
-			tt.getMarkerNames().forEach(mrk -> log.warn("{} - {}ms", mrk, Long.valueOf(tt.getInterval(mrk))));
-		}
+		if (tt.stop()> 2750)
+			log.warn("Disposed Flight Report #{} - {}", Integer.valueOf(ctx.getID()), tt);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
