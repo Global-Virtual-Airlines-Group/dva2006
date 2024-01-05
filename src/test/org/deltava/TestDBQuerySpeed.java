@@ -81,9 +81,9 @@ public class TestDBQuerySpeed extends TestCase {
 					}
 
 					tt.stop();
-					totalTime += tt.getNanos();
-					maxTime = Math.max(maxTime, tt.getNanos());
-					minTime = Math.min(minTime, tt.getNanos());
+					totalTime += tt.getInterval();
+					maxTime = Math.max(maxTime, tt.getInterval());
+					minTime = Math.min(minTime, tt.getInterval());
 				}
 			} catch (SQLException se) {
 				throw new RuntimeException(se);

@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -74,5 +74,24 @@ public class IntervalTaskTimer extends TaskTimer {
 		
 		long execTime = mrk.longValue() - getStart();
 		return NANOSECONDS.toMillis(execTime); 
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder(" [");
+		buf.append(getMillis());
+		buf.append("ms - ");
+		for (Iterator<Map.Entry<String, Long>> i = _intervals.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, Long> me = i.next();
+			buf.append(me.getKey());
+			buf.append('=');
+			buf.append(me.getValue().longValue());
+			buf.append("ms");
+			if (i.hasNext())
+				buf.append(',');
+		}
+		
+		buf.append(" ]");
+		return buf.toString();
 	}
 }
