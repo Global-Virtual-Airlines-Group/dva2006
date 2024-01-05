@@ -16,13 +16,15 @@ import com.newrelic.api.agent.Trace;
 import java.sql.*;
 import java.util.*;
 import java.sql.Connection;
+import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.EnumUtils;
+import org.deltava.util.*;
 import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
 
@@ -55,13 +57,8 @@ public class MessageReceivedListener implements MessageCreateListener {
     			e.getMessage().delete("Auto delete interaction message");
     			assignRoles(e);
     			return;
-    		} else if (!sch.isPresent()) {
-    			log.warn("No server channel - {}", msg);
+    		} else if (!sch.isPresent() || channelName.equals(ChannelName.INTERACTIONS.getName()) || e.getMessageAuthor().isBotUser()) 
     			return;
-    		}
-        
-    		// Ignore everything in #bot-interactions or sent by a bot
-    		if (channelName.equals(ChannelName.INTERACTIONS.getName()) || e.getMessageAuthor().isBotUser()) return;
 
     		// Check if this is a message requesting roles
     		if (channelName.equals(ChannelName.WELCOME.getName())) {
@@ -73,14 +70,12 @@ public class MessageReceivedListener implements MessageCreateListener {
                     	if (u.getRoles(e.getServer().get()).isEmpty())
                     		u.sendMessage(EmbedGenerator.welcome(e));
                     }
-    			} else
+    			} else {
     				register(e);
+    				return;
+    			}
     		}
     		
-    		// Check if bot generated
-    		if (e.getMessageAuthor().isBotUser())
-    			return;
-        
     		// Check content
     		FilterResults fr = Bot.getFilter().search(msg);
     		if (!fr.isOK()) {
@@ -143,18 +138,25 @@ public class MessageReceivedListener implements MessageCreateListener {
         // Set the nickname and roles
         String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
         Collection<Role> roles = RoleHelper.calculateRoles(p);
-        roles.forEach(msgAuth::addRole);
-
-        // Unable to do nicknames longer than 32 chars or less than 1
+        IntervalTaskTimer tt = new IntervalTaskTimer();
+        CompletableFuture<?>[] fs = roles.stream().map(msgAuth::addRole).collect(Collectors.toList()).toArray(new CompletableFuture[roles.size()]);
+        CompletableFuture.allOf(fs).join();
+        tt.mark("roles");
+        
+        // Unable to do nicknames longer than 32 chars
         if (nickname.length() <= 32) {
-        	msgAuth.updateNickname(srv, nickname);
+        	msgAuth.updateNickname(srv, nickname).join();
+        	tt.mark("nickname");
         	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, roles, nickname));
-    	} else
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, roles)); 
-
+    	} else {
+    		log.warn("Cannot set nickname {} to {} ({})", nickname, msgAuth.getDisplayName(srv), Integer.valueOf(nickname.length()));
+        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, roles));
+    	}
+        
         // Everything went well
+        long ms = tt.stop();
         msgAuth.sendMessage(String.format("Your %s account (%s) has been located and linked to this Discord user profile", SystemData.get("airline.name"), p.getPilotCode()));
         msgAuth.sendMessage(String.format("If you feel that a mistake has been made, submit a ticket here: https://%s/helpdesk.do", SystemData.get("airline.url")));
-        log.info("Registered User [ Name = {}, UUID = {} ]", p.getName(), Long.toHexString(e.getMessageAuthor().getId()));
+        log.log((ms > 1500) ? Level.WARN : Level.INFO, "Registered User [ Name = {}, UUID = {} ] - {}", p.getName(), Long.toHexString(e.getMessageAuthor().getId()), tt);
     }
 }
