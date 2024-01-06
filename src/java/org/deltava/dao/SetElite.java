@@ -1,9 +1,10 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.econ.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -83,6 +84,8 @@ public class SetElite extends EliteDAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(yt.getID()));
 		}
 	}
 	
