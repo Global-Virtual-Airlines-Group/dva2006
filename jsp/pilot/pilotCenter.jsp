@@ -220,7 +220,7 @@ Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="
 <c:if test="${!empty nyLevels}">
 <tr>
  <td class="mid"><el:cmd url="eliterollover" className="bld">Roll Over ${eliteName} Status</el:cmd></td>
- <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rollved over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.</td> 
+ <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rolled over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.</td> 
 </tr>
 </c:if>
 </content:filter>
