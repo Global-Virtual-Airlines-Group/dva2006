@@ -57,7 +57,7 @@
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="7"><view:legend width="95" labels="Active,Inactive,Academy" classes=" ,warn,opt2" /></td>
+ <td colspan="8"><view:legend width="95" labels="Active,Inactive,Academy" classes=" ,warn,opt2" /></td>
 </tr>
 </view:table>
 <content:copyright />
