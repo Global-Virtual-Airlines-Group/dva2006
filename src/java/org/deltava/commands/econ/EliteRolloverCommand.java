@@ -41,12 +41,17 @@ public class EliteRolloverCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get upcoming year's levels
+			// Get previous year's levels
 			GetElite eldao = new GetElite(con);
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year - 1);
 			if (lvls.isEmpty())
 				throw notFoundException("No Elite status levels for " + (year - 1));
+			
+			// Load current year's levels
+			TreeSet<EliteLevel> nyLevels = eldao.getLevels(year);
+			if (nyLevels.isEmpty())
+				throw notFoundException("No Elite status levels for " + year);
 			
 			// Disable point rollover
 			if (!allowPointRollover)
@@ -66,9 +71,6 @@ public class EliteRolloverCommand extends AbstractCommand {
 			// Get highest status from last year
 			int rolloverCount = 0; int downgradeCount = 0;
 			for (Pilot p : pilots.values()) {
-				ctx.startTX();
-				SetElite elwdao = new SetElite(con);
-				SetStatusUpdate updwdao = new SetStatusUpdate(con);
 				
 				// Load status for past year, including rollover from year - 2
 				List<EliteStatus> status = eldao.getAllStatus(p.getID(), (year - 1));
@@ -118,8 +120,21 @@ public class EliteRolloverCommand extends AbstractCommand {
 				rt.addLegs(Math.max(0, lyt.getLegs() - pyLevel.getLegs()), Math.max(0, lyt.getDistance() - pyLevel.getDistance()), 0);
 				log.info("{} rollover = {} legs, {} miles", p.getName(), Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()));
 				
+				// Get next year's level for rollover
+				EliteLevel nyLevel = nyLevels.stream().filter(lv -> lv.matches(pyLevel)).findFirst().orElse(null);
+				if (nyLevel == null) {
+					msgs.add(String.format("Cannot find %d equivalent for %s for %s", Integer.valueOf(year), pyLevel, p.getName()));
+					log.warn("Cannot find %d equivalent for %s for %s", Integer.valueOf(year), pyLevel, p.getName());
+					continue;
+				}
+				
+				// Start transaction
+				ctx.startTX();
+				SetElite elwdao = new SetElite(con);
+				SetStatusUpdate updwdao = new SetStatusUpdate(con);
+					
 				// Write the status
-				EliteStatus newStatus = new EliteStatus(p.getID(), pyLevel);
+				EliteStatus newStatus = new EliteStatus(p.getID(), nyLevel); // needs to be current year level here
 				newStatus.setEffectiveOn(LocalDateTime.of(year, 2, 1, 12, 0, 0).toInstant(ZoneOffset.UTC));
 				newStatus.setUpgradeReason(ur);
 				elwdao.write(newStatus);
