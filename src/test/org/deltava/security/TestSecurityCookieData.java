@@ -17,7 +17,7 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
-        _cData = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
+        _cData = new SecurityCookieData("cn=Luke,ou=dva,o=gva");
         setBean(_cData);
     }
 
@@ -28,7 +28,7 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
     }
 
     public void testProperties() throws InterruptedException {
-        assertEquals("cn=Luke,ou=dva,o=sce", _cData.getUserID());
+        assertEquals("cn=Luke,ou=dva,o=gva", _cData.getUserID());
         assertFalse(_cData.isExpired());
         checkProperty("expiryDate", Long.valueOf(System.currentTimeMillis()));
         checkProperty("loginDate", Long.valueOf(System.currentTimeMillis()));
