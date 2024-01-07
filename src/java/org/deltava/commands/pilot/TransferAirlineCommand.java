@@ -149,7 +149,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 				// Clone the Pilot and update the ID
 				newUser = p.cloneExceptID();
-				p.setPilotCode(aInfo.getCode() + "0");
+				newUser.setPilotCode(aInfo.getCode() + "0");
 				
 				// Get new ratings
 				newRatings.addAll(newEQ.getRatings());
@@ -157,24 +157,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 				newUser.addRatings(newEQ.getRatings());
 				
 				// Change LDAP DN and assign a new password
-				newUser.setDN("cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce");
+				newUser.setDN("cn=" + p.getName() + "," + SystemData.get("security.baseDN"));
 
 				// Create a new UserData record
 				ud = new UserData(aInfo.getDB(), "PILOTS", aInfo.getDomain());
 				ud.addID(p.getID());
 
-				// Write the user data record
+				// Write the user data record and get the ID
 				SetUserData udao = new SetUserData(con);
 				udao.write(ud);
-
-				// Get the ID property from the UserData object and stuff it into the existing Pilot object
 				newUser.setID(ud.getID());
 			}
 			
 			// Change status at old airline to Transferred if we're actually moving
 			boolean keepActive = Boolean.parseBoolean(ctx.getParameter("keepActive"));
-			ctx.setAttribute("isMove", Boolean.valueOf(keepActive), REQUEST);
-			if (keepActive) {
+			ctx.setAttribute("isMove", Boolean.valueOf(!keepActive), REQUEST);
+			if (!keepActive) {
 				p.setStatus(PilotStatus.TRANSFERRED);
 				wdao.setStatus(p.getID(), PilotStatus.TRANSFERRED);
 			}
