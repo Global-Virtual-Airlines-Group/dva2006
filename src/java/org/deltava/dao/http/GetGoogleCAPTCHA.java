@@ -1,9 +1,10 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 
 import org.json.*;
 
@@ -27,8 +28,9 @@ public class GetGoogleCAPTCHA extends DAO {
 	 * @param remoteAddr the client IP address
 	 * @return a CAPTCHAResult bean
 	 * @throws DAOException if an error occurs
+	 * @throws IOException if the operation times out
 	 */
-	public CAPTCHAResult validate(String response, String remoteAddr) throws DAOException {
+	public CAPTCHAResult validate(String response, String remoteAddr) throws IOException, DAOException {
 		
 		// Build the payload
 		POSTBuilder pb = new POSTBuilder();
@@ -58,6 +60,8 @@ public class GetGoogleCAPTCHA extends DAO {
 				
 				return result;
 			}
+		} catch (SocketTimeoutException te) {
+			throw new IOException(te);
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
