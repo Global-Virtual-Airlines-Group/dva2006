@@ -19,7 +19,7 @@ public class TestMigrationAuthenticator extends TestCase {
 	}
 
 	public void testSrcAuthenticationAndCopy() {
-		Person usr2 = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=afv,o=sce");
+		Person usr2 = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=afv,o=gva");
 		assertFalse(_auth.getDestination().isEmpty());
 		Authenticator dst = _auth.getDestination().iterator().next();
 		assertFalse(dst.contains(usr2));
@@ -31,7 +31,7 @@ public class TestMigrationAuthenticator extends TestCase {
 
 	public void testAddRemove() throws Exception {
 		assertFalse(_auth.getDestination().isEmpty());
-		Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
+		Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=gva");
 		_auth.add(usr2, "test");
 		assertTrue(_auth.contains(usr2));
 		assertTrue(_auth.getDestination().iterator().next().contains(usr2));

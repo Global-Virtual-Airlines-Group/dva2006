@@ -345,7 +345,7 @@
 		</list>
 		
 		<auth>org.deltava.security.LDAPAuthenticator</auth>
-		<baseDN>ou=dva,o=sce</baseDN>
+		<baseDN>ou=dva,o=gva</baseDN>
 	</security>
 	
 	<cache>
