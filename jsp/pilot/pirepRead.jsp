@@ -418,23 +418,40 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 </c:if>
 </c:if>
 <content:authUser>
-<c:if test="${!empty eliteScore}">
+<content:sysdata var="eliteEnabled" name="econ.elite.enabled" />
 <content:sysdata var="eliteName" name="econ.elite.name" />
-<content:sysdata var="pointUnit" name="econ.elite.points" />
-<content:sysdata var="distanceUnit" name="econ.elite.distance" />
+<c:if test="${(eliteEnabled && pirep.status.isComplete) || (!empty eliteScore)}">
 <tr class="title caps">
  <td class="eliteStatus" colspan="2"><content:airline />&nbsp;${eliteName} INFORMATION</td>
 </tr>
+</c:if>
+<c:choose>
+<c:when test="${!empty eliteScore}">
+<content:sysdata var="pointUnit" name="econ.elite.points" />
+<content:sysdata var="distanceUnit" name="econ.elite.distance" />
 <tr>
  <td class="label eliteStatus top">Mileage Information</td>
  <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown as <fmt:elite className="bld" level="${eliteLevel}"  nameOnly="true" /><br />
-<c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
+<c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg is not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
 <hr />
 <span class="small"><c:forEach var="esEntry" items="${eliteScore.entries}" varStatus="esStatus">
 <fmt:int className="pri bld" value="${esEntry.points}" /> - ${esEntry.message}<c:if test="${esEntry.bonus}">&nbsp;<span class="ita">( BONUS )</span></c:if>
 <c:if test="${!esStatus.isLast()}"><br /></c:if></c:forEach></span></td> 
 </tr>
-</c:if>
+</c:when>
+<c:when test="${eliteEnabled && (pirep.status == 'OK')}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data">${eliteName} Mileage accrual for this Flight has not yet been calculated.</td>
+</tr>
+</c:when>
+<c:when test="${eliteEnabled && (pirep.status != 'OK')}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><span class="small error bld">This Flight Leg is not eligible for Milage accrual in the ${eliteName} Program</span>
+</tr>
+</c:when>
+</c:choose>
 </content:authUser>
 <content:browser human="true">
 <tr class="title">
