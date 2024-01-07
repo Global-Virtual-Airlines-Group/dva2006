@@ -448,7 +448,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <c:when test="${eliteEnabled && pirep.status.isComplete && (pirep.status != 'OK')}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small caps bld"><span class="error">This Flight Leg is not eligible for Milage accrual in the ${eliteName} Program</span>
+ <td class="data small caps bld"><span class="error">This Flight Leg is not eligible for Mileage accrual in the ${eliteName} Program</span>
 </tr>
 </c:when>
 </c:choose>
