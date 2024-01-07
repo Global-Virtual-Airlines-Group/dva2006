@@ -28,7 +28,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 		SecurityCookieGenerator.init(new AESEncryptor(_aesKey.getBytes(), iv));
 
 		Instant now = Instant.now();
-	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
+	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=gva");
 	    d1.setRemoteAddr("127.0.0.1");
 	    d1.setLoginDate(now.minusSeconds(10));
 	    d1.setExpiryDate(now);
@@ -47,7 +47,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 		SecurityCookieGenerator.init(new AESEncryptor(_aes256Key));
 
 		Instant now = Instant.now();
-	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
+	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=gva");
 	    d1.setRemoteAddr("127.0.0.1");
 	    d1.setLoginDate(now.minusSeconds(10));
 	    d1.setSignatureAlgorithm("SHA-1");
@@ -67,7 +67,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	    SecurityCookieGenerator.init(new AESEncryptor(_aesKey));
 
 	    Instant now = Instant.now();
-	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
+	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=gva");
 	    d1.setRemoteAddr("127.0.0.1");
 	    d1.setLoginDate(now.minusSeconds(10));
 	    d1.setExpiryDate(now);

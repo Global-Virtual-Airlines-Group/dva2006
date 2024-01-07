@@ -22,12 +22,12 @@ public class TestFileAuthenticator extends TestCase {
         assertNotNull(_auth);
         
         // Test authentication
-        Person usr2 = new AuthPerson("Terry", "Eshenour", "cn=Terry Eshenour,ou=dva,o=sce");
+        Person usr2 = new AuthPerson("Terry", "Eshenour", "cn=Terry Eshenour,ou=dva,o=gva");
         _auth.authenticate(usr2, "terry");
         
         // Test bad password exception - this also tests case sensitivity
         try {
-        	usr2 = new AuthPerson("David", "Schaum", "cn=David Schaum,ou=dva,o=sce");
+        	usr2 = new AuthPerson("David", "Schaum", "cn=David Schaum,ou=dva,o=gva");
             _auth.authenticate(usr2, "David");
             fail("SecurityException expected");
         } catch (SecurityException se) {
