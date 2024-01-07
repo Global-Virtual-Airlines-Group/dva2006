@@ -7,6 +7,7 @@
 <title><content:airline /> Pilot Transfer Complete</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,6 +23,8 @@
 <div class="updateHdr">PILOT AIRLINE TRANSFER COMPLETE</div>
 <br />
 ${pilot.name} has been successfully transferred to <span class="sec bld">${airline.name}</span>.<br />
+<br />
+To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

@@ -12,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.dbName, t:'Airline Name'});
@@ -20,6 +20,12 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.onDOMReady(function() {
+	const f = document.forms[0];
+	f.keepActive.enabled = ${currentAirline.allowMultiAirline};
+	return true;
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -28,6 +34,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
+<content:sysdata var="airlineName" name="airline.name" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -47,7 +54,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${!empty eqTypes}">
 <tr>
  <td class="label top">Equipment Program</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT ]" /><br />
+ <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT PROGRAM ]" /><br />
 <c:forEach var="eqType" items="${eqTypes}">
 ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </c:forEach></td>
@@ -60,7 +67,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /><br />
-<el:box name="keepActive" idx="*" value="true" checked="${currentAirline.allowMultiAirline}" label="Keep Pilot active after transfer" /></td>
+<el:box name="keepActive" idx="*" value="true" checked="${currentAirline.allowMultiAirline}" label="Keep Pilot active at ${airlineName} after transfer" /></td>
 </tr>
 </el:table>
 
