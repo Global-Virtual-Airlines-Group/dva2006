@@ -85,10 +85,10 @@ public class IntervalTaskTimer extends TaskTimer {
 			Map.Entry<String, Long> me = i.next();
 			buf.append(me.getKey());
 			buf.append('=');
-			buf.append(me.getValue().longValue());
+			buf.append(NANOSECONDS.toMillis(me.getValue().longValue()));
 			buf.append("ms");
 			if (i.hasNext())
-				buf.append(',');
+				buf.append(", ");
 		}
 		
 		buf.append(" ]");
