@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 10.2
+ * @version 11.1
  * @since 1.0
  */
 
@@ -120,6 +120,9 @@ public class EventSaveCommand extends AbstractCommand {
 			
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			if (e.getStartTime() == null)
+				throw new CommandException(String.format("Invalid Event start time - %s - %s", ctx.getParameter("startDate"), ctx.getParameter("startTime")), false);
+			
 			e.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close", SystemData.get("time.date_format"), "HH:mm") : e.getStartTime());
 			
