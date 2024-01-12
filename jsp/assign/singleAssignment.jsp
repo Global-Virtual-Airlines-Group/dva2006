@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8"  trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -17,6 +17,8 @@
 <content:favicon />
 <content:js name="common" />
 <script async>
+golgotha.local.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
+golgotha.local.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.submit(f);
@@ -40,7 +42,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Equipment</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${pilot.ratings}" value="${criteria.equipmentType}" onRightClick="return golgotha.form.resetCombo()"  /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${pilot.ratings}" value="${param.equipmentType}" onChange="void golgotha.local.updateEQ(this)" onRightClick="return golgotha.form.resetCombo()" /><span class="nophone"> - family
+ <el:combo name="family" size="1" firstEntry="-" options="${allFamily}" value="${eqFamily}" onChange="void golgotha.local.updateFamily(this)" /></span></td>
  <td class="label">Flight Legs</td>
  <td class="data"><el:text name="legs" idx="*" size="1" max="1" value="${totalLegs}" /></td>
 </tr>
@@ -48,8 +51,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" onRightClick="return golgotha.form.resetCombo()"  /></td>
  <td class="label">Maximum Distnce</td>
- <td class="data"><el:text name="maxLength" idx="*" size="4" max="4" value="${(criteria.distance < 1) ? '' : criteria.distance}" />
- +/- <el:text name="maxLengthRange" idx="*" size="3" max="4" value="${(criteria.distance < 1) ? '' : criteria.distanceRange}" /> miles</td>
+ <td class="data"><el:text name="maxLength" idx="*" size="4" max="4" value="${(criteria.distance < 1) ? '' : criteria.distance}" /> +/- <el:text name="maxLengthRange" idx="*" size="3" max="4" value="${(criteria.distance < 1) ? '' : criteria.distanceRange}" /> miles</td>
 </tr>
 <tr>
  <td class="label top">Search Options</td>
@@ -95,7 +97,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button type="submit" label="SEARCH FOR FLIGHTS" />&nbsp;<el:cmdbutton url="singlebuild" label="BUILD FLIGHT ASSIGNMENT" /></td>
+ <td><el:button type="submit" label="FLIGHT SCHEDULE SEARCH" />&nbsp;<el:cmdbutton url="singlebuild" label="BUILD FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </el:form>
