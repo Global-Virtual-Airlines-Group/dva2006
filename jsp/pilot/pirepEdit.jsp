@@ -32,7 +32,8 @@ golgotha.util.display('dateLimits', false);
 golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
 golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
 golgotha.form.validate({f:f.eq, t:'Equipment Type'});
-golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});
+<c:if test="${pirep.status != 'DRAFT'}">
+golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});</c:if>
 golgotha.form.validate({f:f.network, min:1, t:'Online Network'});
 golgotha.form.validate({f:f.fsVersion, t:'Simulator Version'});
 <c:if test="${!isAssign}">

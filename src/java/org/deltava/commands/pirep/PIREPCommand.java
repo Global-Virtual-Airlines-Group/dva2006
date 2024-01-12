@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -193,7 +193,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
 				fr.setLength((int) (fTime * 10));
 			} catch (NumberFormatException nfe) {
-				throw new CommandException("Invalid Flight Time", false);
+				if (fr.getStatus() != FlightStatus.DRAFT)
+					throw new CommandException("Invalid Flight Time", false);
 			}
 
 			// Calculate the date
