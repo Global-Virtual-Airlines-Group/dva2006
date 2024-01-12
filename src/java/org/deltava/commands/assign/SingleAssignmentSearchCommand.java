@@ -1,9 +1,10 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
-import java.sql.Connection;
 import java.time.Instant;
+import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.Inclusion;
 import org.deltava.beans.assign.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 2.2
  */
 
@@ -72,13 +73,21 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Save the user
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 			ctx.setAttribute("airlines", SystemData.getAirlines(), REQUEST);
+			
+			// Get the equipment families
+			GetAircraft acdao = new GetAircraft(con);
+			Collection<Aircraft> allEQ = acdao.getAircraftTypes().stream().filter(ac -> !ac.getAcademyOnly()).collect(Collectors.toList());
+			ctx.setAttribute("allFamily", allEQ.stream().map(Aircraft::getFamily).filter(Objects::nonNull).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 
 			// Get additional parameters if we are redoing a search
+			final String f = ctx.getParameter("family");
 			criteria.setAirportD(ofr.get().getAirportA());
-			if (ctx.getParameter("eqType") != null) {
+			criteria.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
+			if (!StringUtils.isEmpty(f) && !"-".equals(f)) {
+				criteria.setEquipmentTypes(allEQ.stream().filter(ac -> f.equalsIgnoreCase(ac.getFamily())).map(Aircraft::getName).collect(Collectors.toSet()));
+				ctx.setAttribute("eqFamily", f, REQUEST);
+			} else if (ctx.getParameter("eqType") != null)
 				criteria.setEquipmentType(ctx.getParameter("eqType"));
-				criteria.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
-			}
 			
 			// Define Variables
 			int oldDistance = criteria.getDistance();
