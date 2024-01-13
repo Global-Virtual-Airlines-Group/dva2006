@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -42,8 +42,7 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getTrackID(int pilotID, OnlineNetwork net, java.time.Instant dt, Airport aD, Airport aA) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND (OT.AIRPORT_A=?) "
-					+ "AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) ORDER BY OT.ID DESC LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND (OT.AIRPORT_A=?) AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) ORDER BY OT.ID DESC LIMIT 1")) {
 			ps.setInt(1, pilotID);
 			ps.setString(2, aD.getICAO());
 			ps.setString(3, aA.getICAO());
@@ -110,7 +109,7 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean hasTrack(int pirepID) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PIREP_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1")) {
 			ps.setInt(1, pirepID);
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() && (rs.getInt(1) != 0);
@@ -126,7 +125,7 @@ public class GetOnlineTrack extends DAO {
 	 * @return a Collection of PositionData beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<PositionData> get(int pirepID) throws DAOException {
+	public SequencedCollection<PositionData> get(int pirepID) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM ONLINE_TRACK WHERE (PIREP_ID=?) ORDER BY DATE")) {
 			ps.setInt(1, pirepID);
 			
