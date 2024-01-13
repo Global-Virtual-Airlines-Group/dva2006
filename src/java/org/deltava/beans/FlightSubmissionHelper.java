@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -110,7 +110,7 @@ public class FlightSubmissionHelper {
 	 * @return TRUE if track data is present with a non-zero track ID, otherwise FALSE
 	 */
 	public boolean hasTrackData() {
-		return ((_trackID !=0) && (_otData.size() > 0));
+		return ((_trackID != 0) && (_otData.size() > 0));
 	}
 	
 	/**
@@ -207,12 +207,11 @@ public class FlightSubmissionHelper {
 		}
 		
 		// Load track data
-		int trackID = 0;
 		if (_fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) {
 			GetOnlineTrack tdao = new GetOnlineTrack(_c); 
-			trackID = tdao.getTrackID(_fr.getDatabaseID(DatabaseID.PILOT), _fr.getNetwork(), _fr.getSubmittedOn(), _fr.getAirportD(), _fr.getAirportA());
-			if (trackID != 0) {
-				_otData.addAll(tdao.getRaw(trackID));
+			_trackID = tdao.getTrackID(_fr.getDatabaseID(DatabaseID.PILOT), _fr.getNetwork(), _fr.getSubmittedOn(), _fr.getAirportD(), _fr.getAirportA());
+			if (_trackID != 0) {
+				_otData.addAll(tdao.getRaw(_trackID));
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Loaded %s online track data (%d positions)", _fr.getNetwork(), Integer.valueOf(_otData.size())));	
 			}
 		}
