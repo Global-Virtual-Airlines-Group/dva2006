@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,6 +10,8 @@ import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.OperatingSystem;
+
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -20,6 +22,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetACARSData extends DAO {
+	
+	private static final Cache<ArchiveMetadata> _mdCache = CacheManager.get(ArchiveMetadata.class, "ArchiveMeta");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -35,11 +39,16 @@ public class GetACARSData extends DAO {
 	 * @return an ArchiveMetadata bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public ArchiveMetadata getArchiveInfo(int flightID) throws DAOException {
+		
+		// Check the cache
+		ArchiveMetadata md = _mdCache.get(Integer.valueOf(flightID));
+		if (md != null)
+			return md;
+		
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED, FMT FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1")) {
 			ps.setInt(1, flightID);
-			
-			ArchiveMetadata md = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					md = new ArchiveMetadata(flightID);
@@ -51,6 +60,7 @@ public class GetACARSData extends DAO {
 					md.setBucket(ArchiveHelper.getBucket(flightID));
 				}
 				
+				_mdCache.add(md);
 				return md;
 			}
 		} catch (SQLException se) {

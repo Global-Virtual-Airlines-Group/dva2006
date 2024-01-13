@@ -49,6 +49,7 @@
 	<cache id="simFDRFlightID" remote="true" expires="3600" />
 	<cache id="ACARSTrackCAS" max="16" expires="3600" />
 	<cache id="TaxiTime" remote="true" expires="86400" />
+	<cache id="ArchiveMeta" remote="true" expires="7200" />
 
 	<!-- Statistics caches -->
 	<cache id="GreasedLandings" max="16" expires="1800" />
