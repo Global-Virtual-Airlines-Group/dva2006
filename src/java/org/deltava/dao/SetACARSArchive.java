@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -11,6 +11,8 @@ import org.deltava.beans.acars.*;
 
 import org.deltava.dao.file.SetSerializedPosition;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
@@ -20,6 +22,8 @@ import org.deltava.dao.file.SetSerializedPosition;
 
 public class SetACARSArchive extends DAO {
 
+	private static final Cache<ArchiveMetadata> _mdCache = CacheManager.get(ArchiveMetadata.class, "ArchiveMeta");
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -94,6 +98,8 @@ public class SetACARSArchive extends DAO {
 		} catch (SQLException | IOException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			_mdCache.remove(Integer.valueOf(flightID));
 		}
 	}
 
@@ -113,6 +119,8 @@ public class SetACARSArchive extends DAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			_mdCache.remove(md.cacheKey());
 		}
 	}
 	
@@ -127,6 +135,8 @@ public class SetACARSArchive extends DAO {
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			_mdCache.remove(Integer.valueOf(flightID));
 		}
 	}
 }
