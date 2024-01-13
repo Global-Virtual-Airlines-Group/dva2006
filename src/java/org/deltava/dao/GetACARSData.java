@@ -39,7 +39,6 @@ public class GetACARSData extends DAO {
 	 * @return an ArchiveMetadata bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	@Deprecated
 	public ArchiveMetadata getArchiveInfo(int flightID) throws DAOException {
 		
 		// Check the cache
