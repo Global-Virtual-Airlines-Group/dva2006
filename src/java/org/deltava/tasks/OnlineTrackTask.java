@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -69,7 +69,6 @@ public class OnlineTrackTask extends Task {
 				// Loop through the pilots
 				int flightCount = 0;
 				GetOnlineTrack otdao = new GetOnlineTrack(con);
-				SetOnlineTrack otwdao = new SetOnlineTrack(con);
 				for (Pilot p : info.getPilots()) {
 					if (!networkIDs.containsKey(String.valueOf(p.getID())))
 						continue;
@@ -80,6 +79,7 @@ public class OnlineTrackTask extends Task {
 					
 					// Check if we've already opened a flight track for this Pilot
 					ctx.startTX();
+					SetOnlineTrack otwdao = new SetOnlineTrack(con);
 					int trackID = otdao.getTrackID(p.getPilotID(), network, info.getValidDate(), p.getAirportD(), p.getAirportA());
 					if (trackID == 0) {
 						String rt = p.getRoute();
@@ -105,6 +105,7 @@ public class OnlineTrackTask extends Task {
 				log.info("Saved {} {} position records", Integer.valueOf(flightCount), network);
 				
 				// Purge old flight entries
+				SetOnlineTrack otwdao = new SetOnlineTrack(con);
 				int purgeCount = otwdao.purgeAll(72);
 				log.info("Purged {} old flight tracks after 72 hours", Integer.valueOf(purgeCount));
 			} catch (DAOException de) {
