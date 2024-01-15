@@ -11,7 +11,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="fileSaver" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
 	const srcs = [];
@@ -56,10 +56,11 @@ golgotha.local.validate = function(f) {
 <script async>
 golgotha.local.download = function(srcs) {
 	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 15500;
+	xmlreq.timeout = 27500;
 	xmlreq.open('post', '/schedexport.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
+	xmlreq.ontimeout = function () { alert('Timed out exporting schedule data'); return true; };
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		const ct = xmlreq.getResponseHeader('Content-Type');
