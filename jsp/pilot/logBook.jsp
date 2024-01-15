@@ -29,6 +29,7 @@ golgotha.local.export = function(cb) {
 	xmlreq.open('post', '/mylogbook.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
+	xmlreq.ontimeout = function() { alert('Timed out exporting logbook'); return true; };
 	xmlreq.onreadystatechange = function() {
 		if (xmlreq.readyState != 4) return false;
 		golgotha.form.clear(f);
