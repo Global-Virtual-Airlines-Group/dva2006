@@ -55,19 +55,15 @@ golgotha.form.submit();
 
 // Build the XML Requester
 const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 4500;
+xmlreq.timeout = 7500;
 xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
+xmlreq.ontimeout = function() { f.showAll.checked = false; golgotha.form.clear(); return true; };
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
 	js.items.forEach(function(wp) {
 		if (wp.code == '${param.navaidCode}') return;
-		var mrk;
-		if (wp.pal)
-			mrk = new golgotha.maps.IconMarker({pal:wp.pal, icon:wp.icon, info:wp.info}, wp.ll);
-		else
-			mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, label:wp.code}, wp.ll);
-
+		const mrk = new golgotha.maps.IconMarker((wp.pal) ? {pal:wp.pal,icon:wp.icon,info:wp.info} : {color:wp.color,info:wp.info,label:wp.code}, wp.ll);;
 		mrk.minZoom = 6; mrk.code = wp.code;
 		if (wp.type == 'Airport')
 			mrk.minZoom = 7;
@@ -143,11 +139,11 @@ return true;
 </content:page>
 <div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-const mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:true, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:golgotha.local.mapC,minZoom:6,zoom:8,scrollwheel:true,streetViewControl:false,clickableIcons:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
