@@ -6,16 +6,16 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightStatus;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.EnumUtils;
 
 /**
- * A Data Access Object to load VATSIM/IVAO data tracks. This DAO can load from the ONLINE_TRACKS table
- * in each Airline's database, which stores track data already associated with a Flight Report. It can also load "raw" metadta
- * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
- * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
+ * A Data Access Object to load VATSIM/IVAO data tracks. This DAO can load from the ONLINE_TRACKS table in each Airline's database, which stores track data 
+ * already associated with a Flight Report. It can also load "raw" metadta from the online track database which contains information for all Airlines populated 
+ * from the ServInfo feed by the {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
  * @version 11.1
  * @since 2.4
@@ -191,6 +191,28 @@ public class GetOnlineTrack extends DAO {
 			}
 			
 			return networks;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the Flight Report IDs for any disposed Flight Reports with an entry in the track table.
+	 * @return a Collection of Flight Report IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getDisposedPIREPs() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT OT.PIREP_ID, P.STATUS FROM ONLINE_TRACK OT LEFT JOIN PIREPS P ON (OT.PIREP_ID=P.ID) WHERE ((P.STATUS=?) OR (P.STATUS=?))")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, FlightStatus.REJECTED.ordinal());
+			
+			Collection<Integer> IDs = new TreeSet<Integer>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
+			return IDs;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
