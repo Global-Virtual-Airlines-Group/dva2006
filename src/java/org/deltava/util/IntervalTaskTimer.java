@@ -78,20 +78,20 @@ public class IntervalTaskTimer extends TaskTimer {
 	
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder(" [");
+		StringBuilder buf = new StringBuilder('[');
 		buf.append(getMillis());
 		buf.append("ms - ");
-		for (Iterator<Map.Entry<String, Long>> i = _intervals.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry<String, Long> me = i.next();
-			buf.append(me.getKey());
+		for (Iterator<String> i = _intervals.keySet().iterator(); i.hasNext(); ) {
+			String key = i.next();
+			buf.append(key);
 			buf.append('=');
-			buf.append(NANOSECONDS.toMillis(me.getValue().longValue()));
+			buf.append(getInterval(key));
 			buf.append("ms");
 			if (i.hasNext())
 				buf.append(", ");
 		}
 		
-		buf.append(" ]");
+		buf.append(']');
 		return buf.toString();
 	}
 }
