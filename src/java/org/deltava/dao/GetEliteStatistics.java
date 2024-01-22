@@ -39,9 +39,8 @@ public class GetEliteStatistics extends EliteDAO {
 	public YearlyTotal getEliteTotals(int pilotID, int year) throws DAOException {
 		
 		// Load single year from cache
-		YearlyTotal result = new YearlyTotal(year, pilotID);
-		Long cacheKey = Long.valueOf(((long)year << 32) | pilotID);
-		CacheableList<YearlyTotal> results = _cache.get(cacheKey);
+		RolloverYearlyTotal result = new RolloverYearlyTotal(year, pilotID);
+		CacheableList<YearlyTotal> results = _cache.get(result.cacheKey());
 		if (results != null)
 			return results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
 		
@@ -49,7 +48,7 @@ public class GetEliteStatistics extends EliteDAO {
 		results = _cache.get(Integer.valueOf(pilotID));
 		if (results != null) {
 			YearlyTotal yt2 = results.stream().filter(yt -> yt.getYear() == year).findFirst().orElse(result);
-			CacheableList<YearlyTotal> r2 = new CacheableList<YearlyTotal>(cacheKey);
+			CacheableList<YearlyTotal> r2 = new CacheableList<YearlyTotal>(result.cacheKey());
 			r2.add(yt2);
 			_cache.add(r2);
 			return yt2;
@@ -77,12 +76,12 @@ public class GetEliteStatistics extends EliteDAO {
 				ps.setInt(2, year);
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next())
-					result.addLegs(rs.getInt(1), rs.getInt(2), 0);
+						result.addRollover(rs.getInt(1), rs.getInt(2), 0);
 				}
 			}
 			
 			rollbackTransaction();
-			results = new CacheableList<YearlyTotal>(cacheKey);
+			results = new CacheableList<YearlyTotal>(result.cacheKey());
 			results.add(result);
 			_cache.add(results);
 			return result;

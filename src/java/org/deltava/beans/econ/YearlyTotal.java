@@ -22,7 +22,7 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 
 	/**
 	 * Creates the bean.
-	 * @param year the program year;
+	 * @param year the program year
 	 * @param pilotID the Pilot's Database ID
 	 */
 	public YearlyTotal(int year, int pilotID) {
@@ -31,28 +31,16 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 		reset(year);
 	}
 	
-	/**
-	 * Returns the accumulated legs for the year.
-	 * @return the number of legs
-	 */
 	@Override
 	public int getLegs() {
 		return _legs;
 	}
 	
-	/**
-	 * Returns the accumulated distance for the year.
-	 * @return the distance in miles
-	 */
 	@Override
 	public int getDistance() {
 		return _distance;
 	}
 	
-	/**
-	 * Returns the accumulated points for the year.
-	 * @return the number of points
-	 */
 	@Override
 	public int getPoints() {
 		return _pts;
@@ -166,6 +154,11 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 			return UpgradeReason.UNITS;
 
 		return UpgradeReason.NONE;
+	}
+	
+	@Override
+	public Object cacheKey() {
+		return Long.valueOf(((long)_year << 32) | getID());
 	}
 	
 	@Override
