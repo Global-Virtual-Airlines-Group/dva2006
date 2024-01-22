@@ -1,6 +1,6 @@
 #!/bin/bash
 # Database backup script
-# (c) 2005 - 2023 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005 - 2024 Global Virtual Airlines Group. All Rights Reserved.
 
 echo 'Starting'
 
@@ -101,9 +101,10 @@ fi
 
 # Dump ACARS data
 echo 'Writing ACARS data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars BANDWIDTH CONS ERRORS LIVERIES SIMINFO TAXI_TIMES VERSION_INFO WARNINGS | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars BANDWIDTH CONS ERRORS LIVERIES SIMINFO VERSION_INFO WARNINGS | $arc_util > acars.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POSITIONS POSITION_ATC | $arc_util > acars_positions.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars TAXI_TIMES | $arc_util > acars_taxi.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars FLIGHTS ARCHIVE DISPATCH_LOG FLIGHT_DISPATCH FLIGHT_DISPATCH_LOG FLIGHT_DISPATCHER FLIGHT_LOAD FLIGHT_SIDSTAR FLIGHT_SIDSTAR_WP GATEDATA ROUTES ROUTE_WP RWYDATA TOLAND PERFINFO FRAMERATES | $arc_util > acars_flights.sql.bz2
 
 # Write help desk
