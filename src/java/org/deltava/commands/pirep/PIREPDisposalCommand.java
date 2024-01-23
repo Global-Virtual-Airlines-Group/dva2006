@@ -347,10 +347,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 				// Write the online track data
 				GetOnlineTrack tdao = new GetOnlineTrack(con);
-				boolean hasTrack = fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && tdao.hasTrack(fr.getID());
-				if (hasTrack) {
-					SetOnlineTrack twdao = new SetOnlineTrack(con);
-					Collection<PositionData> onlineEntries = tdao.get(fr.getID());
+				if (tdao.hasTrack(fr.getID())) {
+					SequencedCollection<PositionData> onlineEntries = tdao.get(fr.getID());
 					try (OutputStream os = new BufferedOutputStream(new FileOutputStream(ArchiveHelper.getOnline(fr.getID())))) {
 						SetSerializedOnline owdao = new SetSerializedOnline(os);
 						owdao.archive(fr.getID(), onlineEntries);
@@ -358,6 +356,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 						throw new DAOException(ie);
 					}
 
+					SetOnlineTrack twdao = new SetOnlineTrack(con);
 					twdao.purge(fr.getID());
 					ctx.setAttribute("onlineArchive", Boolean.TRUE, REQUEST);
 				}
