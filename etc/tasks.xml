@@ -36,18 +36,6 @@
 		</time>
 	</task>
 
-	<!-- Update Taxi Times -->
-	<task id="taxitimes" enabled="false">
-		<class>org.deltava.tasks.TaxiUpdateTask</class>
-		<time>
-			<min>40</min>
-			<hour>9</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-		</time>
-	</task>
-
 	<!-- Download NAT Track data -->
 	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
