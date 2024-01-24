@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,33 +12,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 10.6
+ * @version 11.2
  * @since 8.6
  */
 
 public class GetACARSTaxiTimes extends DAO {
 
 	private static final Cache<TaxiTime> _cache = CacheManager.get(TaxiTime.class, "TaxiTime");
-	
-	private static class TaxiTotal implements Comparable<TaxiTotal> {
-		private final String _icao;
-		private final int _year;
-		private long _outTotal;
-		private long _inTotal;
-		private int _outCount;
-		private int _inCount;
-		
-		TaxiTotal(String icao, int year) {
-			_icao = icao;
-			_year = year;
-		}
-		
-		@Override
-		public int compareTo(TaxiTotal tt) {
-			int tmpResult = _icao.compareTo(tt._icao);
-			return (tmpResult == 0) ? Integer.compare(_year, tt._year) : tmpResult;
-		}
-	}
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -56,25 +36,46 @@ public class GetACARSTaxiTimes extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TaxiTime getTaxiTime(Airport a, int year) throws DAOException {
-		TaxiTime tt = new TaxiTime(a.getICAO(), year);
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) AND (YEAR>=?) GROUP BY ICAO, YEAR ORDER BY YEAR DESC")) {
-			ps.setString(1, a.getICAO());
-			ps.setInt(2, year - 1);
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					tt.setYear(rs.getInt(1));
-					int inCount = rs.getInt(4); int outCount = rs.getInt(5);
-					tt.setInboundTime((inCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(2) / inCount));
-					tt.setOutboundTime((outCount == 0) ? Duration.ZERO : Duration.ofSeconds(rs.getLong(3) / outCount));
-				} else {
-					tt.setInboundTime(Duration.ZERO);
-					tt.setOutboundTime(Duration.ZERO);
+		
+		// Check the cache
+		TaxiTime t = new TaxiTime(a.getICAO(), year);
+		TaxiTime tt = _cache.get(t.cacheKey());
+		if (tt != null)
+			return tt;
+		
+		try {
+			startTransaction();
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID), IFNULL(AVG(TAXITIME),0), IFNULL(STDDEV(TAXITIME),0) FROM acars.TAXI_TIMES WHERE (IATA=?) AND (IS_DEPARTURE=?) AND (YEAR=?)")) {
+				ps.setString(1, a.getICAO());
+				ps.setBoolean(2, true);
+				ps.setInt(3, year);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						t.setInboundCount(rs.getInt(1));
+						t.setInboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setInboundStdDev(Duration.ofSeconds(rs.getInt(3)));
+					}
 				}
 			}
 			
-			return tt;
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID), IFNULL(AVG(TAXITIME),0), IFNULL(STDDEV(TAXITIME),0) FROM acars.TAXI_TIMES WHERE (IATA=?) AND (IS_DEPARTURE=?) AND (YEAR=?)")) {
+				ps.setString(1, a.getICAO());
+				ps.setBoolean(2, false);
+				ps.setInt(3, year);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						t.setOutboundCount(rs.getInt(1));
+						t.setOutboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setOutboundStdDev(Duration.ofSeconds(rs.getInt(3)));
+					}
+				}
+			}
+			
+			return t;
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			rollbackTransaction();
 		}
 	}
 	
@@ -87,30 +88,60 @@ public class GetACARSTaxiTimes extends DAO {
 	public TaxiTime getTaxiTime(Airport a) throws DAOException {
 		
 		// Check the cache
-		TaxiTime tt = _cache.get(a.getICAO());
+		TaxiTime t = new TaxiTime(a.getICAO(), 0);
+		TaxiTime tt = _cache.get(t.cacheKey());
 		if (tt != null)
 			return tt;
 		
-		TaxiTotal t = new TaxiTotal(a.getICAO(), 0);
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT YEAR, SUM(TAXI_IN*TOTAL_IN), SUM(TAXI_OUT*TOTAL_OUT), SUM(TOTAL_IN), SUM(TOTAL_OUT) FROM acars.TAXI_TIMES WHERE (ICAO=?) GROUP BY ICAO, YEAR ORDER BY YEAR")) {
-			ps.setString(1, a.getICAO());
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					t._inTotal += rs.getLong(2);
-					t._outTotal += rs.getLong(3);
-					t._inCount += rs.getInt(4);
-					t._outCount += rs.getInt(5);
+		try {
+			startTransaction();
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID), AVG(TAXITIME), STDDEV(TAXITIME) FROM acars.TAXI_TIMES WHERE (IATA=?) AND (IS_DEPARTURE=?)")) {
+				ps.setString(1, a.getIATA());
+				ps.setBoolean(2, false);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						t.setInboundCount(rs.getInt(1));
+						t.setInboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setInboundStdDev(Duration.ofSeconds(rs.getInt(3)));
+					}
+				}
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID), AVG(TAXITIME), STDDEV(TAXITIME) FROM acars.TAXI_TIMES WHERE (IATA=?) AND (IS_DEPARTURE=?)")) {
+				ps.setString(1, a.getIATA());
+				ps.setBoolean(2, true);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						t.setOutboundCount(rs.getInt(1));
+						t.setOutboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setOutboundStdDev(Duration.ofSeconds(rs.getInt(3)));
+					}
 				}
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			rollbackTransaction();
 		}
 		
-		// Aggregate the totals
-		tt = new TaxiTime(a.getICAO(), 0);
-		tt.setInboundTime((t._inCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._inTotal / t._inCount));
-		tt.setOutboundTime((t._outCount == 0) ? Duration.ZERO : Duration.ofSeconds(t._outTotal / t._outCount));
-		_cache.add(tt);
-		return tt;
+		_cache.add(t);
+		return t;
+	}
+
+	/**
+	 * Returns whether a given ACARS flight has logged taxi times.
+	 * @param id the ACARS Flight ID
+	 * @return TRUE if taxi times have been logged, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean hasTimes(int id) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM acars.TAXI_TIMES WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) > 0);
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

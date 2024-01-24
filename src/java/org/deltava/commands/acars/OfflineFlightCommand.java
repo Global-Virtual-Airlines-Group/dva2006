@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 2.4
  */
 
@@ -347,6 +347,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			awdao.writeRunways(inf.getID(), inf.getRunwayD(), inf.getRunwayA());
+			awdao.writeTaxi(inf, flight.getTaxiInTime(), flight.getTaxiOutTime());
 			awdao.writeGates(inf);
 			if (inf.getDispatcher() == DispatchType.DISPATCH)
 				awdao.writeDispatch(inf.getID(), inf.getDispatcherID(), inf.getRouteID());
