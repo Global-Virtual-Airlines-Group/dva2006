@@ -314,7 +314,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			fsh.checkRefuel();
 
 			// Calculate average frame rate
-			afr.setAverageFrameRate(positions.stream().mapToInt(ACARSRouteEntry::getFrameRate).average().getAsDouble());
+			afr.setAverageFrameRate(positions.stream().mapToInt(ACARSRouteEntry::getFrameRate).average().orElse(0));
 				
 			// Validate the dispatch route ID
 			if (inf.getRouteID() != 0) {

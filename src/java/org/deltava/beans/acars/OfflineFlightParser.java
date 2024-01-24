@@ -171,7 +171,7 @@ public final class OfflineFlightParser {
 					pos.setN2(parse(pe.getChildTextTrim("n2")));
 					pos.setAOA(parse(pe.getChildTextTrim("aoa")));
 					pos.setG(parse(pe.getChildTextTrim("g")));
-					pos.setCG(Double.parseDouble(pe.getChildTextTrim("cg")));
+					pos.setCG(parse(pe.getChildTextTrim("cg")));
 					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
 					pos.setPhase(FlightPhase.fromString(pe.getChildTextTrim("phase")));
 					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
