@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.comparators.CalendarEntryComparator;
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 2.4
  * @param <T> the FlightReport type 
  * @param <P> the RotueEntry type
@@ -23,6 +23,9 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	
 	private String _sid;
 	private String _star;
+	
+	private int _taxiInTime;
+	private int _taxiOutTime;
 
 	private T _pirep;
 	
@@ -69,6 +72,24 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	 */
 	public String getSTAR() {
 		return _star;
+	}
+	
+	/**
+	 * Returns the inbound taxi time.
+	 * @return the taxi time in seconds
+	 * @see OfflineFlight#setTaxiTimes(int, int)
+	 */
+	public int getTaxiInTime() {
+		return _taxiInTime;
+	}
+	
+	/**
+	 * Returns the outbound taxi time.
+	 * @return the taxi time in seconds
+	 * @see OfflineFlight#setTaxiTimes(int, int)
+	 */
+	public int getTaxiOutTime() {
+		return _taxiOutTime;
 	}
 	
 	/**
@@ -121,5 +142,15 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	public void setEquipment(String eqType) {
 		_flight.setEquipmentType(eqType);
 		_pirep.setEquipmentType(eqType);
+	}
+	
+	/**
+	 * Updates the inbound and outbound taxi durations.
+	 * @param taxiIn the inbound taxi time in seconds
+	 * @param taxiOut the outbound taxi time in seconds
+	 */
+	public void setTaxiTimes(int taxiIn, int taxiOut) {
+		_taxiInTime = Math.max(0, taxiIn);
+		_taxiOutTime = Math.max(0, taxiOut);
 	}
 }
