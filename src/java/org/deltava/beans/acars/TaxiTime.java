@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Duration;
@@ -8,17 +8,21 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store average taxi times for an Airport.
  * @author Luke
- * @version 10.0
+ * @version 11.2
  * @since 10.0
  */
 
 public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	
 	private final String _icao;
-	private int _year;
+	private final int _year;
 	
+	private int _inCount;
 	private Duration _taxiIn;
+	private Duration _stdDevIn;
+	private int _outCount;
 	private Duration _taxiOut;
+	private Duration _stdDevOut;
 
 	/**
 	 * Creates the bean.
@@ -47,11 +51,35 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	}
 	
 	/**
-	 * Returns the average inbound tax time.
+	 * Returns the number of inbound flights used to calculate the data.
+	 * @return the number of flights
+	 */
+	public int getInboundCount() {
+		return _inCount;
+	}
+	
+	/**
+	 * Returns the average inbound taxi time.
 	 * @return the Duration
 	 */
 	public Duration getInboundTime() {
 		return _taxiIn;
+	}
+	
+	/**
+	 * Returns the standard deviation of inbound taxi times.
+	 * @return the deviation as a Duration
+	 */
+	public Duration getInboundStdDev() {
+		return _stdDevIn;
+	}
+	
+	/**
+	 * Returns the number of outbound flights used to calculate the data.
+	 * @return the number of flights
+	 */
+	public int getOutboundCount() {
+		return _outCount;
 	}
 
 	/**
@@ -60,6 +88,14 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	 */
 	public Duration getOutboundTime() {
 		return _taxiOut;
+	}
+	
+	/**
+	 * Returns the standard deviation of outbound taxi times.
+	 * @return the deviation as a Duration
+	 */
+	public Duration getOutboundStdDev() {
+		return _stdDevOut;
 	}
 	
 	/**
@@ -75,6 +111,22 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	}
 	
 	/**
+	 * Updates the inbound taxi time standard deviation.
+	 * @param d the deviation as a Duration
+	 */
+	public void setInboundStdDev(Duration d) {
+		_stdDevIn = d.isNegative() ? d.negated() : d;
+	}
+	
+	/**
+	 * Updates the number of inbound fligts used to calculate the data.
+	 * @param cnt the number of flights
+	 */
+	public void setInboundCount(int cnt) {
+		_inCount = Math.max(0, cnt);
+	}
+	
+	/**
 	 * Updates the average outbound taxi time.
 	 * @param d the Duration
 	 * @throws IllegalArgumentException if d is negative
@@ -87,11 +139,19 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	}
 	
 	/**
-	 * Updates the year.
-	 * @param yr the year, or zero for all
+	 * Updates the outbound taxi time standard deviation.
+	 * @param d the deviation as a Duration
 	 */
-	public void setYear(int yr) {
-		_year = yr;
+	public void setOutboundStdDev(Duration d) {
+		_stdDevOut = d.isNegative() ? d.negated() : d;
+	}
+	
+	/**
+	 * Updates the number of outbound fligts used to calculate the data.
+	 * @param cnt the number of flights
+	 */
+	public void setOutboundCount(int cnt) {
+		_outCount = Math.max(0, cnt);
 	}
 	
 	@Override
@@ -103,7 +163,7 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 
 	@Override
 	public Object cacheKey() {
-		return _icao;
+		return toString();
 	}
 	
 	@Override

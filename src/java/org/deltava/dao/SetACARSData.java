@@ -1,7 +1,8 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
@@ -11,7 +12,7 @@ import org.deltava.beans.navdata.*;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
@@ -90,7 +91,7 @@ public class SetACARSData extends DAO {
 			
 			// Write the dispatcher
 			if (dispatcherID != 0) {
-				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_DISPATCHER (ID, DISPATCHER_ID) VALUES (?, ?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_DISPATCHER (ID, DISPATCHER_ID) VALUES (?,?)")) {
 					ps.setInt(1, flightID);
 					ps.setInt(2, dispatcherID);
 					executeUpdate(ps, 0);
@@ -99,7 +100,7 @@ public class SetACARSData extends DAO {
 			
 			// Write the route
 			if (routeID > 0) {
-				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_DISPATCH (ID, ROUTE_ID) VALUES (?, ?)")) {
+				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_DISPATCH (ID, ROUTE_ID) VALUES (?,?)")) {
 					ps.setInt(1, flightID);
 					ps.setInt(2, routeID);
 					executeUpdate(ps, 0);
@@ -126,13 +127,51 @@ public class SetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeLoad(FlightInfo info) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_LOAD (ID, PAX, SEATS, LOADTYPE, LOADFACTOR) VALUES (?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_LOAD (ID, PAX, SEATS, LOADTYPE, LOADFACTOR) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, info.getID());
 			ps.setInt(2, info.getPassengers());
 			ps.setInt(3, info.getSeats());
 			ps.setInt(4, info.getLoadType().ordinal());
 			ps.setDouble(5, info.getLoadFactor());
 			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes taxi time data for a flight to the database.
+	 * @param inf the FlightData object
+	 * @param taxiIn the inbound taxi time in seconds
+	 * @param taxiOut the outbound taxi time in seconds
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeTaxi(FlightInfo inf, int taxiIn, int taxiOut) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.TAXI_TIMES (ID, IS_DEPARTURE, IATA, YEAR, TAXITIME) VALUES (?,?,?,?,?)")) {
+			ps.setInt(1, inf.getID());
+			ps.setInt(4, ZonedDateTime.ofInstant(inf.getDate(), ZoneOffset.UTC).getYear());
+			int cnt = 0;
+				
+			// Write outbound
+			if ((taxiOut > 40) && (taxiOut < 2700)) {
+				ps.setBoolean(2, true);
+				ps.setString(3, inf.getAirportD().getIATA());
+				ps.setInt(5, taxiOut);
+				ps.addBatch();
+				cnt++;
+			}
+				
+			// Write inbound
+			if ((taxiIn > 40) && (taxiOut < 2700)) {
+				ps.setBoolean(2, false);
+				ps.setString(3, inf.getAirportA().getIATA());
+				ps.setInt(5, taxiIn);
+				ps.addBatch();
+				cnt++;
+			}
+			
+			if (cnt > 0)
+				executeUpdate(ps, 1, cnt);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -146,7 +185,7 @@ public class SetACARSData extends DAO {
 	 */
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, CG, GFORCE, FRAMERATE, NET_CONNECTED, SIM_TIME, VAS, WEIGHT, GNDFLAGS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, CG, GFORCE, FRAMERATE, NET_CONNECTED, SIM_TIME, VAS, WEIGHT, GNDFLAGS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
 			ps.setInt(1, flightID);
 			for (ACARSRouteEntry re: entries) {
 				ps.setTimestamp(2, createTimestamp(re.getDate()));
@@ -222,7 +261,7 @@ public class SetACARSData extends DAO {
 			startTransaction();
 
 			// Write the Route
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, RUNWAY) VALUES (?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, RUNWAY) VALUES (?,?,?,?,?)")) {
 				ps.setInt(1, id);
 				ps.setInt(2, tr.getType().ordinal());
 				ps.setString(3, tr.getName());
@@ -232,7 +271,7 @@ public class SetACARSData extends DAO {
 			}
 
 			// Write the route data
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION) VALUES (?,?,?,?,?,?,?,?)")) {
 				ps.setInt(1, id);
 				ps.setInt(2, tr.getType().ordinal());
 				LinkedList<NavigationDataBean> wps = tr.getWaypoints();
@@ -267,7 +306,7 @@ public class SetACARSData extends DAO {
 			startTransaction();
 			
 			// Write the livery
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.LIVERIES (AIRLINE, LIVERY, NAME, ISDEFAULT) VALUES (?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.LIVERIES (AIRLINE, LIVERY, NAME, ISDEFAULT) VALUES (?,?,?,?)")) {
 				ps.setString(1, l.getAirline().getCode());
 				ps.setString(2, l.getCode());
 				ps.setString(3, l.getDescription());
