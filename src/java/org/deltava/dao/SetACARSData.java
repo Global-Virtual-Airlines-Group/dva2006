@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
@@ -17,7 +18,7 @@ import org.deltava.beans.navdata.*;
  */
 
 public class SetACARSData extends DAO {
-
+	
 	private static final String ISQL = "INSERT INTO acars.FLIGHTS (AIRLINE, FLIGHT, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP, FDR, "
 			+ "REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, IS64, ACARS64, APTYPE, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String USQL = "UPDATE acars.FLIGHTS SET AIRLINE=?, FLIGHT=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, FSVERSION=?, "
@@ -174,6 +175,10 @@ public class SetACARSData extends DAO {
 				executeUpdate(ps, 1, cnt);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			int year = inf.getEndTime().atOffset(ZoneOffset.UTC).getYear();
+			CacheManager.invalidate("TaxiTime", new TaxiTime(inf.getAirportD().getICAO(), year).cacheKey());
+			CacheManager.invalidate("TaxiTime", new TaxiTime(inf.getAirportA().getICAO(), year).cacheKey());
 		}
 	}
 	
