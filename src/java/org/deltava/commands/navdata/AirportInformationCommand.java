@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 6.3
  */
 
@@ -141,7 +141,8 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Save taxi times
 			ctx.setAttribute("taxiTime", ttAvg, REQUEST);
-			ctx.setAttribute("taxiTimeCY", ttYr, REQUEST);
+			if (!ttYr.isEmpty())
+				ctx.setAttribute("taxiTimeCY", ttYr, REQUEST);
 			
 			// Save operations
 			GetRawSchedule rsdao = new GetRawSchedule(con);

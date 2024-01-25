@@ -99,6 +99,14 @@ public class TaxiTime implements Cacheable, Comparable<TaxiTime> {
 	}
 	
 	/**
+	 * Returns if the inbound and outbound taxi times are both zero.
+	 * @return TRUE if both are zero, otherwise FALSE
+	 */
+	public boolean isEmpty() {
+		return _taxiOut.equals(Duration.ZERO) && _taxiIn.equals(Duration.ZERO); 
+	}
+	
+	/**
 	 * Updates the average inbound taxi time.
 	 * @param d the Duration
 	 * @throws IllegalArgumentException if d is negative
