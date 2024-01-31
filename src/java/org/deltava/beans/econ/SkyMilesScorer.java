@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 11.0
  */
 
@@ -41,6 +41,7 @@ public class SkyMilesScorer extends EliteScorer {
 	@Override
 	public void add(FlightReport fr) {
 		super.add(fr);
+		if (fr.hasAttribute(FlightReport.ATTR_ACARS)) return;
 		Integer k = getNonACARSKey(fr.getDate());
 		MutableInteger i = _nonACARSCounts.getOrDefault(k, new MutableInteger(0));
 		i.inc();
