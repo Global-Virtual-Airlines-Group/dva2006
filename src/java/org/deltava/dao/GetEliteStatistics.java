@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Elite program-related statistics.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 9.2
  */
 
@@ -209,16 +209,40 @@ public class GetEliteStatistics extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public YearlyTotal getRollover(int pilotID, int year) throws DAOException {
-		YearlyTotal yt = new YearlyTotal(year, pilotID);
+		RolloverYearlyTotal yt = new RolloverYearlyTotal(year, pilotID);
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?) LIMIT 1")) {
 			ps.setInt(1, pilotID);
 			ps.setInt(2, year);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
-					yt.addLegs(rs.getInt(1), rs.getInt(2), 0);
+					yt.addRollover(rs.getInt(1), rs.getInt(2), 0);
 			}
 			
 			return yt;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all rollover totals for a given year.
+	 * @param year the year
+	 * @return a Collection of YearlyTotal beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<RolloverYearlyTotal> getRollover(int year) throws DAOException {
+		List<RolloverYearlyTotal> results = new ArrayList<RolloverYearlyTotal>();
+		try (PreparedStatement ps = prepare("SELECT ID, SUM(LEGS), SUM(DISTANCE FROM ELITE_ROLLOVER WHERE (YEAR=?) GROUP BY ID")) {
+			ps.setInt(1, year);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					RolloverYearlyTotal yt = new RolloverYearlyTotal(year, rs.getInt(1));
+					yt.addRollover(rs.getInt(2), rs.getInt(3), 0);
+					results.add(yt);
+				}
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
