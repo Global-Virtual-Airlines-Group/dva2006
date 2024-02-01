@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -536,7 +536,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			pwdao.write(p, ctx.getDB());
 			
 			// If we're marking Inactive/Retired, purge any Inactivity/Address Update records and remove from Child Authenticators
-			if ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)) {
+			if (!p.getStatus().isActive()) {
 				SetInactivity idao = new SetInactivity(con);
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				idao.delete(p.getID());

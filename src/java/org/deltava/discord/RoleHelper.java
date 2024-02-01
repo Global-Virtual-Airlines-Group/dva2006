@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to calculate Discord roles for a given Pilot. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 11.1
  */
 
@@ -32,7 +32,7 @@ class RoleHelper {
 	static Collection<Role> calculateRoles(Pilot p) {
 		
 		List<Role> results = new ArrayList<Role>();
-		if (p.getNoVoice() || ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)))
+		if (p.getNoVoice() || !p.getStatus().isActive())
 			return results;
 		
 		results.add(Bot.findRole(SystemData.get("discord.role.default")));

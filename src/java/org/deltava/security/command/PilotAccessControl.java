@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2019, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 10.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -75,7 +75,7 @@ public class PilotAccessControl extends AccessControl {
 		_canTakeLeave = (status == PilotStatus.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
 		_canTransfer = _canChangeStatus && (status != PilotStatus.TRANSFERRED) && !_p.getIsForgotten();
-		_canInactivate = _canChangeStatus && !_isOurs && ((status == PilotStatus.ACTIVE) || (status == PilotStatus.ONLEAVE));
+		_canInactivate = _canChangeStatus && !_isOurs && status.isActive();
 		_canActivate = _canChangeStatus && ((status == PilotStatus.INACTIVE) || (status == PilotStatus.RETIRED) || (status == PilotStatus.SUSPENDED) || (status == PilotStatus.TRANSFERRED)) && !_p.getIsForgotten();
 
 		// Check Promotion access

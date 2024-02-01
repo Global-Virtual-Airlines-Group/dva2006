@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 11.0
  */
 
@@ -85,7 +85,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 					msgs.add(String.format("%s should be %s for %d, Rollover = %s, Actual = %s", p.getName(), pyLevel.getName(), Integer.valueOf(year), rlvl.getName(), lvl.getName()));
 				
 				// Compare totals for the year
-				if ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)) {
+				if (!p.getStatus().isActive()) {
 					msgs.add(String.format("%s status = %s, no rollover", p.getName(), p.getStatus().getDescription()));
 					continue;
 				} else if (pyLevel.matches(lvl) && pyLevel.matches(lvls.getFirst())) {
