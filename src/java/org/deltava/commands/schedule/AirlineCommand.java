@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 1.0
  */
 
@@ -56,6 +56,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 				a = new Airline(ctx.getParameter("code"), ctx.getParameter("name")); 
 			
 			// Update the airline from the request
+			a.setICAO(ctx.getParameter("icao"));
 			a.setActive(Boolean.parseBoolean(ctx.getParameter("active")));
 			a.setApps(ctx.getParameters("airlines"));
 			a.setColor(ctx.getParameter("color"));

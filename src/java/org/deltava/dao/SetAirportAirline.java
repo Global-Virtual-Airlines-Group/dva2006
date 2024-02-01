@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Airport and Airline information.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 8.0
  */
 
@@ -37,18 +37,19 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINES (CODE, NAME, ICAO, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?,?,?,?,?,?,?)")) {
 				ps.setString(1, al.getCode());
 				ps.setString(2, al.getName());
-				ps.setString(3, al.getColor());
-				ps.setBoolean(4, al.getActive());
-				ps.setBoolean(5, al.getScheduleSync());
-				ps.setBoolean(6, al.getHistoric());
+				ps.setString(3, al.getICAO());
+				ps.setString(4, al.getColor());
+				ps.setBoolean(5, al.getActive());
+				ps.setBoolean(6, al.getScheduleSync());
+				ps.setBoolean(7, al.getHistoric());
 				executeUpdate(ps, 1);
 			}
 			
 			// Write the alternate codes
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?,?)")) {
 				ps.setString(1, al.getCode());
 				for (String code : al.getCodes()) {
 					if (!code.equals(al.getCode())) {
@@ -61,7 +62,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Write the webapp data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?,?)")) {
 				ps.setString(1, al.getCode());
 				for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
 					ps.setString(2, i.next());
@@ -101,19 +102,20 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Write the airline data
-			try (PreparedStatement ps = prepare("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)")) {
+			try (PreparedStatement ps = prepare("UPDATE common.AIRLINES SET NAME=?, ICAO=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)")) {
 				ps.setString(1, al.getName());
-				ps.setString(2, al.getColor());
-				ps.setBoolean(3, al.getActive());
-				ps.setString(4, al.getCode());
-				ps.setBoolean(5, al.getScheduleSync());
-				ps.setBoolean(6, al.getHistoric());
-				ps.setString(7, oldCode);
+				ps.setString(2, al.getICAO());
+				ps.setString(3, al.getColor());
+				ps.setBoolean(4, al.getActive());
+				ps.setString(5, al.getCode());
+				ps.setBoolean(6, al.getScheduleSync());
+				ps.setBoolean(7, al.getHistoric());
+				ps.setString(8, oldCode);
 				executeUpdate(ps, 1);
 			}
 			
 			// Write the alternate codes
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?,?)")) {
 				ps.setString(1, al.getCode());
 				for (String code : al.getCodes()) {
 					if (!code.equals(al.getCode())) {
@@ -126,7 +128,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Write the webapp data
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?,?)")) {
 				ps.setString(1, al.getCode());
 				for (String code : al.getApplications()) {
 					ps.setString(2, code);
