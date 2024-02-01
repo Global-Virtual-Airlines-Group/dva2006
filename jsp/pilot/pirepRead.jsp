@@ -693,7 +693,7 @@ golgotha.simbrief.acType = '${acInfo.ICAO}';
 <el:text name="orig" type="hidden" value="${pirep.airportD.ICAO}" />
 <el:text name="dest" type="hidden" value="${pirep.airportA.ICAO}" />
 <el:text name="type" type="hidden" value="${acInfo.ICAO}" />
-<el:text name="airline" type="hidden"  value="${pirep.airline.code}" />
+<el:text name="airline" type="hidden"  value="${pirep.airline.ICAO}" />
 <el:text name="fltnum" type="hidden" value="${pirep.flightNumber}" />
 <el:text name="callsign" type="hidden" value="${pirep.shortCode}" />
 <el:text name="reg" type="hidden" value="" />
