@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2014, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010, 2014, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class PersonFunctions {
 	 * @return TRUE if an Active or On Leave Pilot, otherwise FALSE
 	 */
 	public static boolean isActive(Person usr) {
-		return (usr instanceof Pilot p) && ((p.getStatus() == PilotStatus.ACTIVE) || (p.getStatus() == PilotStatus.ONLEAVE));
+		return (usr instanceof Pilot p) && p.getStatus().isActive();
 	}
 	
 	/**
