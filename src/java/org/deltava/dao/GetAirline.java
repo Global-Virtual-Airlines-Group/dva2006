@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to load Airline codes and names.
  * @author Luke
- * @version 9.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -77,10 +77,11 @@ public class GetAirline extends DAO {
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Airline a = new Airline(rs.getString(1), rs.getString(2));
-				a.setColor(rs.getString(3));
-				a.setActive(rs.getBoolean(4));
-				a.setScheduleSync(rs.getBoolean(5));
-				a.setHistoric(rs.getBoolean(6));
+				a.setICAO(rs.getString(3));
+				a.setColor(rs.getString(4));
+				a.setActive(rs.getBoolean(5));
+				a.setScheduleSync(rs.getBoolean(6));
+				a.setHistoric(rs.getBoolean(7));
 				results.put(a.getCode(), a);
 			}
 		}
@@ -97,7 +98,7 @@ public class GetAirline extends DAO {
 		}
 		
 		// Load web app information
-		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT UCASE(CODE), UCASE(APPCODE) FROM common.APP_AIRLINES")) {
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT CODE, APPCODE FROM common.APP_AIRLINES")) {
 			try (ResultSet rs = ps2.executeQuery()) {
 				while (rs.next()) {
 					Airline a = results.get(rs.getString(1).trim());

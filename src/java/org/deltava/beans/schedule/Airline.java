@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2017, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	private static final long serialVersionUID = -3414064162790178546L;
 	
 	private String _code;
+	private String _icao;
 	private String _name;
 	private String _color;
 	private boolean _active = true;
@@ -33,7 +34,7 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	
 	/**
 	 * Create a new Airline using a code and a name.
-	 * @param code the Airline code
+	 * @param code the Airline IATA code
 	 * @param name the Airline name
 	 * @throws NullPointerException If either the name or the code are null
 	 * @see Airline#getCode()
@@ -47,11 +48,20 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	}
 	
 	/**
-	 * Returns the airline code.
-	 * @return the airline code
+	 * Returns the airline's IATA code.
+	 * @return the IATA code
 	 */
 	public String getCode() {
 		return _code;
+	}
+	
+	/**
+	 * Returns the airline's ICAO code.
+	 * @return the ICAO code
+	 * @see Airline#setICAO(String)
+	 */
+	public String getICAO() {
+		return _icao;
 	}
 	
 	/**
@@ -127,6 +137,16 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	 */
 	public void setActive(boolean active) {
 	    _active = active;
+	}
+	
+	/**
+	 * Updates the airline's ICAO code.
+	 * @param icao the ICAO code
+	 * @throws NullPointerException if code is null
+	 * @see Airline#getICAO()
+	 */
+	public void setICAO(String icao) {
+		_icao = icao.trim().toUpperCase();
 	}
 	
 	/**

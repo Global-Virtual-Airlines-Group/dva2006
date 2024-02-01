@@ -12,26 +12,27 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 <fmt:jsarray var="golgotha.local.airlines" items="${autoAppCodes}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:6, t:'Airline Name'});
-	golgotha.form.validate({f:f.code, l:2, t:'Airline Code'});
+	golgotha.form.validate({f:f.code, l:2, t:'IATA Code'});
+	golgotha.form.validate({f:f.icao, l:3, t:'ICAO Code'});
 	golgotha.form.validate({f:f.color, t:'Airline Google Map Color'});
 	golgotha.form.submit(f);
 	return true;
 };
 
-golgotha.local.makeReadOnly = function() {
+golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	f.airlines.forEach(function(cb) { cb.disabled = golgotha.local.airlines.contains(cb.value); });
 	return true;
-};
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.makeReadOnly()">
+<body>
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
@@ -49,8 +50,12 @@ golgotha.local.makeReadOnly = function() {
  <td class="data"><el:text name="name" idx="*" className="pri bld" required="true" size="24" max="32" value="${airline.name}" /></td>
 </tr>
 <tr>
- <td class="label">Airline Code</td>
+ <td class="label">IATA Code</td>
  <td class="data"><el:text name="code" idx="*" className="bld" required="true" size="3" max="3" value="${airline.code}" /></td>
+</tr>
+<tr>
+ <td class="label">ICAO Code</td>
+ <td class="data"><el:text name="icao" idx="*" className="sec bld" required="true" size="3" max="3" value="${airline.ICAO}" /></td>
 </tr>
 <tr>
  <td class="label">Map Color</td>
