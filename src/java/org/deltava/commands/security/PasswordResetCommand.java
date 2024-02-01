@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -106,7 +106,7 @@ public class PasswordResetCommand extends AbstractCommand {
 		}
 
 		// Check user status
-		if ((usr.getStatus() != PilotStatus.ACTIVE) && (usr.getStatus() != PilotStatus.ONLEAVE)) {
+		if (!usr.getStatus().isActive()) {
 			ctx.setMessage("Cannot reset password for " + usr.getName() + "(" + usr.getPilotCode() + ") - status=" + usr.getStatus().getDescription());
 			return;
 		}
