@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -14,9 +14,9 @@ import org.deltava.security.command.PIREPAccessControl;
 import org.deltava.util.StringUtils;
 
 /**
- * A Web Site Command to update Flght Tours linked to a Flight Report.
+ * A Web Site Command to update Flight Tours linked to a Flight Report.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 10.2
  */
 
@@ -62,6 +62,7 @@ public class UpdateTourCommand extends AbstractCommand {
 				if (leg == 0) {
 					ctx.setAttribute("tour", t, REQUEST);
 					ctx.setAttribute("pirep", fr, REQUEST);
+					ctx.setAttribute("msgs", tfh.getMessages(), REQUEST);
 					result.setURL("/jsp/pilot/invalidTour.jsp");
 					result.setSuccess(true);
 					return;
