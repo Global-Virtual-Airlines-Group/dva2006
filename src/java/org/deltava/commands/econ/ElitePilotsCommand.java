@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.PilotStatus;
 import org.deltava.beans.econ.*;
 
 import org.deltava.comparators.YearlyTotalComparator;
@@ -20,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display Pilots at a particular Elite status level. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 11.0
  */
 
@@ -44,9 +43,20 @@ public class ElitePilotsCommand extends AbstractCommand {
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year);
 			lvls.removeIf(el -> (el.getLegs() == 0));
 			
-			// Load Pilot totals and sort
+			// Load Pilot totals for current year and rollover
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
-			List<YearlyTotal> totals = esdao.getPilotTotals(LocalDate.of(year, 1, 1));
+			List<YearlyTotal> yearTotals = esdao.getPilotTotals(LocalDate.of(year, 1, 1));
+			Map<Integer, RolloverYearlyTotal> totalMap = CollectionUtils.createMap(esdao.getRollover(year), YearlyTotal::getID);
+			
+			// Add yearly totals to rollover
+			List<RolloverYearlyTotal> totals = new ArrayList<RolloverYearlyTotal>();
+			for (YearlyTotal yt : yearTotals) {
+				RolloverYearlyTotal rt = totalMap.getOrDefault(Integer.valueOf(yt.getID()), new RolloverYearlyTotal(year, yt.getID()));
+				rt.merge(yt);
+				totals.add(rt);
+			}
+			
+			// Sort the merged totals
 			Collections.sort(totals, new YearlyTotalComparator(YearlyTotalComparator.LEGS).reversed());
 			
 			// Load the pilots and totals
@@ -59,8 +69,9 @@ public class ElitePilotsCommand extends AbstractCommand {
 				// Get the Pilots - remove inactive if previous year
 				Map<Integer, Pilot> lvPilots = pdao.getByID(IDs, "PILOTS");
 				if (year == currentYear) {
-					Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE))).map(Pilot::getID).collect(Collectors.toSet());
-					IDs.removeAll(inactiveIDs); lvPilots.keySet().removeAll(inactiveIDs);
+					Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> !p.getStatus().isActive()).map(Pilot::getID).collect(Collectors.toSet());
+					IDs.removeAll(inactiveIDs); 
+					lvPilots.keySet().removeAll(inactiveIDs);
 				}
 				
 				List<YearlyTotal> lt = totals.stream().filter(yt -> IDs.contains(Integer.valueOf(yt.getID()))).collect(Collectors.toList());

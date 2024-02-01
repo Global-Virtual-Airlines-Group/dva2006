@@ -4,7 +4,7 @@ package org.deltava.beans.econ;
 /**
  * A bean to store yearly totals with rollover amounts.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 11.1
  */
 
@@ -58,6 +58,18 @@ public class RolloverYearlyTotal extends YearlyTotal {
 		_legs += legs;
 		_distance += distance;
 		_pts += pts;
+	}
+
+	/**
+	 * Merges a yearly total into this bean.
+	 * @param yt a YearlyTotal bean
+	 */
+	public void merge(YearlyTotal yt) {
+		if (yt instanceof RolloverYearlyTotal rt) {
+			addRollover(rt._legs, rt._distance, rt._pts);
+			addLegs(rt.getLegs() - rt._legs, rt.getDistance() - rt._distance, rt.getPoints() - rt._pts);
+		} else
+			addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
 	}
 	
 	@Override
