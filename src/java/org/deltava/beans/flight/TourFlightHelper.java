@@ -1,4 +1,4 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to calculate Flight Tour eligibility.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 10.0
  */
 
@@ -29,7 +29,7 @@ public class TourFlightHelper {
 
 	/**
 	 * Initializes the Helper.
-	 * @param fr the FlightData to calculate eligbility for
+	 * @param fr the FlightData to calculate eligibility for
 	 * @param allowSubmitted TRUE to allow submitted previous flights to count for eligibility, otherwise FALSE
 	 */
 	public TourFlightHelper(FlightData fr, boolean allowSubmitted) {
@@ -93,7 +93,10 @@ public class TourFlightHelper {
 		
 		// Check that we match the tour
 		int idx = t.getLegIndex(_fr);
-		if (idx < 1) return 0;
+		if (idx < 1) {
+			_msgs.add(String.format("No leg matches %s-%s (matchLeg=%s)", _fr.getAirportD().getICAO(), _fr.getAirportA().getICAO(), Boolean.valueOf(t.getMatchLeg())));
+			return 0;
+		}
 		
 		// Check if Tour is active
 		if (!t.isActiveOn(_fr.getDate())) {
