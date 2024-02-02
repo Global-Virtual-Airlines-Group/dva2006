@@ -434,12 +434,13 @@ public class FlightSubmissionHelper {
 			return Duration.ZERO;
 		}
 		
-		Duration ft = avgHours.getFlightTime();
+		Duration bt = _fr.getDuration(); Duration ft = avgHours.getFlightTime();
 		Duration minTime = Duration.ofSeconds((long)(ft.toSeconds() * 0.75 - 1800));
 		Duration maxTime = Duration.ofSeconds((long)(ft.toSeconds() * 1.15 + 1800));
+		if ((bt.compareTo(minTime) < 0) || (bt.compareTo(maxTime) > 0))
+			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, !isEvent && !isTour);
 			
 		// Determine flight length, use block time if ACARS/simFDR
-		Duration bt = _fr.getDuration();
 		if (_isACARS) {
 			ACARSFlightReport afr = (ACARSFlightReport) _fr;
 			bt = bt.minusSeconds(afr.getBoardTime().toSeconds() + afr.getDeboardTime().toSeconds());
@@ -447,22 +448,24 @@ public class FlightSubmissionHelper {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, "Boarding/Deboarding Time exceeds Flight Time");
 				bt = Duration.ofMinutes(12);
 			}
+			
+			// Calculate timeliness of flight
+			if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT)) {
+				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(_db);
+				ssc.setAirportD(_fr.getAirportD()); ssc.setAirportA(_fr.getAirportA());
+				ssc.setExcludeHistoric(_fr.getAirline().getHistoric() ? Inclusion.INCLUDE : Inclusion.EXCLUDE);
+				OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
+				if (!oth.hasFlights()) {
+					GetFlightReports frdao = new GetFlightReports(_c);
+					Collection<FlightReport> pireps = frdao.getDraftReports(_fr.getAuthorID(), _fr, _db);
+					pireps.stream().filter(DraftFlightReport.class::isInstance).map(DraftFlightReport.class::cast).forEach(oth::add);
+				}
+				
+				afr.setOnTime(oth.validate(afr));
+				_onTimeEntry = oth.getScheduleEntry();
+			}
 		}
 			
-		if ((bt.compareTo(minTime) < 0) || (bt.compareTo(maxTime) > 0))
-			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, !isEvent && !isTour);
-			
-		// Calculate timeliness of flight
-		if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT) && _isACARS) {
-			ACARSFlightReport afr = (ACARSFlightReport) _fr;
-			ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(_db);
-			ssc.setAirportD(_fr.getAirportD()); ssc.setAirportA(_fr.getAirportA());
-			ssc.setExcludeHistoric(_fr.getAirline().getHistoric() ? Inclusion.INCLUDE : Inclusion.EXCLUDE);
-			OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
-			afr.setOnTime(oth.validate(afr));
-			_onTimeEntry = oth.getScheduleEntry();
-		}
-		
 		return ft;
 	}
 	
