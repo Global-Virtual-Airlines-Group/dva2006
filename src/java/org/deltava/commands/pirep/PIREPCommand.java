@@ -562,14 +562,14 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("tourIdx", Integer.valueOf(t.getLegIndex(fr)), REQUEST);
 				}
 			} else if (ctx.isUserInRole("Operations") || ctx.isUserInRole("Event")) {
-				Instant dt = isACARS ? ((FDRFlightReport)fr).getTakeoffTime() : fr.getDate(); // Non-ACARS should be 12:00 already
+				Instant dt = (fr instanceof ACARSFlightReport afr) ? afr.getTakeoffTime() : fr.getDate(); // Non-ACARS should be 12:00 already
 				
 				// Make sure we haven't flown this leg already
 				List<Tour> possibleTours = trdao.findLeg(fr, dt, ctx.getDB()); final RoutePair rp = fr;
 				for (Iterator<Tour> i = possibleTours.iterator(); i.hasNext(); ) {
 					Tour t = i.next();
 					Collection<FlightReport> tourFlights = dao.getByTour(fr.getAuthorID(), t.getID(), ctx.getDB());
-					if (tourFlights.stream().anyMatch(tf -> rp.matches(tf)))
+					if (tourFlights.stream().anyMatch(rp::matches))
 						i.remove();
 				}
 				
