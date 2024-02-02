@@ -76,7 +76,8 @@ span.rmbar {
  <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
  <c:if test="${((ro.legs > 0) || (ro.distance > 0))}">
  <br />
- Rolled over from <span class="pri bld">${currentYear - 1}</span>: <fmt:int value="${ro.legs}" className="bld" /> flight legs, <span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></td>
+ Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.legs > 0}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.distance > 0}">, </c:if></c:if>
+<c:if test="${ro.distance > 0}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
 </tr>
 <tr class="title caps">
  <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
@@ -193,8 +194,7 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 </c:if>
 
 <!-- Bottom Bar -->
-<tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" />
-<c:if test="${isOps}">&nbsp;<el:button type="submit" label="RECALCULATE ${eliteName} STATUS" /></c:if></td></tr>
+<tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" /><c:if test="${isOps}">&nbsp;<el:button type="submit" label="RECALCULATE ${eliteName} STATUS" /></c:if></td></tr>
 </el:table>
 </el:form>
 <br />
