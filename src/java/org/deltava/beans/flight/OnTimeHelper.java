@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 8.4
  */
 
@@ -52,6 +52,31 @@ public class OnTimeHelper {
 	 */
 	public ScheduleEntry getScheduleEntry() {
 		return _entry;
+	}
+	
+	/**
+	 * Returns if the helper has any flights to check against.
+	 * @return TRUE if flights or schedule entries have been loaded, otherwise FALSE
+	 */
+	public boolean hasFlights() {
+		return (_flights.size() > 0);
+	}
+	
+	/**
+	 * Adds a Draft Flight Report to calculate timeliness. This is used for situations where a Flight Assignment was generated on a different
+	 * day and the schedule no longer contains the same flights. 
+	 * @param dfr a DraftFlightReport
+	 */
+	public void add(DraftFlightReport dfr) {
+		if (!dfr.hasTimes()) return;
+		ScheduleEntry se = new ScheduleEntry(dfr.getAirline(), dfr.getFlightNumber(), dfr.getLeg());
+		se.setEquipmentType(dfr.getEquipmentType());
+		se.setAirportD(dfr.getAirportD());
+		se.setAirportA(dfr.getAirportA());
+		se.setTimeD(dfr.getTimeD().toLocalDateTime());
+		se.setTimeA(dfr.getTimeA().toLocalDateTime());
+		se.setSource(ScheduleSource.CUSTOM);
+		_flights.add(se);
 	}
 	
 	/**
