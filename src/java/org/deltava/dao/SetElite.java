@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Elite status level definitions.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 9.2
  */
 
@@ -76,11 +76,12 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void rollover(YearlyTotal yt) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_ROLLOVER (ID, YEAR, LEGS, DISTANCE) VALUES (?,?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_ROLLOVER (ID, YEAR, LEGS, DISTANCE, PTS) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, yt.getID());
 			ps.setInt(2, yt.getYear());
 			ps.setInt(3, yt.getLegs());
 			ps.setInt(4, yt.getDistance());
+			ps.setInt(5, yt.getPoints());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
