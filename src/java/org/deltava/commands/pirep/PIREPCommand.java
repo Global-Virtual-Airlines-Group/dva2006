@@ -450,9 +450,22 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Load taxi times
 			if (ac.getCanUseSimBrief() || isACARS) {
-				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con); int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
-				ctx.setAttribute("avgTaxiInTime", ttdao.getTaxiTime(fr.getAirportA(), year), REQUEST);
-				ctx.setAttribute("avgTaxiOutTime", ttdao.getTaxiTime(fr.getAirportD(), year), REQUEST);
+				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
+				int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
+				TaxiTime ttA = ttdao.getTaxiTime(fr.getAirportA(), year);
+				TaxiTime ttD = ttdao.getTaxiTime(fr.getAirportD(), year);
+				if (ttA.isEmpty())
+					ttA = ttdao.getTaxiTime(fr.getAirportA());
+				if (ttD.isEmpty())
+					ttD = ttdao.getTaxiTime(fr.getAirportD());
+				
+				// Display airport taxi times
+				ctx.setAttribute("avgTaxiInTime", ttA, REQUEST);
+				ctx.setAttribute("avgTaxiOutTime", ttD, REQUEST);
+				
+				// Load PIREP taxi time
+				if (isACARS)
+					ctx.setAttribute("taxiTime", ttdao.getTaxiTime(fr.getDatabaseID(DatabaseID.ACARS)), REQUEST);
 			}
 			
 			// Check for SimBrief package

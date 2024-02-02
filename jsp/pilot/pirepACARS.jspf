@@ -41,10 +41,12 @@
 </c:if>
 <c:if test="${!isXACARS}">
 <content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
+<c:if test="${fn:hasFDE(pirep) || !empty pirep.aircraftCode || !empty pirep.author}">
 <tr>
  <td class="label">Aircraft Data</td>
  <td class="data" colspan="${cspan}"><c:if test="${fn:hasFDE(pirep)}">${pirep.FDE}&nbsp;</c:if><c:if test="${!empty pirep.aircraftCode}">IATA: ${pirep.aircraftCode}</c:if><c:if test="${!empty pirep.author}"><span class="small ita nophone">&nbsp;Author: ${pirep.author}</span></c:if></td>
 </tr>
+</c:if>
 </content:filter>
 <c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
 <tr>
@@ -83,7 +85,7 @@
 <fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.timeD}" tz="${pirep.airportD.TZ}" className="bld" /></span></c:if></td>
 </tr>
-<c:if test="${!isXACARS && (pirep.boardTime.toSeconds() > 0)}" >
+<c:if test="${!isXACARS && !pirep.boardTime.isEmpty()}" >
 <tr>
  <td class="label">Loading Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.boardTime}" long="true" /></td>
@@ -94,10 +96,11 @@
  <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" /> total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
  <span class="small bld">(<fmt:weight value="${pirep.taxiWeight - acInfo.maxWeight}" /> overweight)</span></c:if></td>
 </tr>
-<c:if test="${!empty avgTaxiOutTime && !empty pirep.taxiOutTime}">
+<c:set var="taxiOutTime" value="${empty taxiTime.outboundTime ? pirep.taxiOutTime : taxiTime.outboundTime}" scope="page" />
+<c:if test="${!empty avgTaxiOutTime && !empty taxiOutTime}">
 <tr>
  <td class="label">Outbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${pirep.taxiOutTime}" long="true" /><c:if test="${!empty avgTaxiOutTime.outboundTime}"><span class="ita nophone"> (${avgTaxiOutTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiOutTime}" long="true" /><c:if test="${!avgTaxiOutTime.outboundTime.isZero()}"><span class="ita nophone"> (${avgTaxiOutTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -207,10 +210,11 @@
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.timeA}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
 </tr>
 </c:if>
-<c:if test="${!empty avgTaxiInTime && !empty pirep.taxiInTime}">
+<c:set var="taxiInTime" value="${empty taxiTime.inboundTime ? pirep.taxiInTime : taxiTime.inboundTime}" scope="page" />
+<c:if test="${!empty avgTaxiInTime && !empty taxiInTime}">
 <tr>
  <td class="label">Inbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${pirep.taxiInTime}" long="true" /><c:if test="${!empty avgTaxiInTime.inboundTime}"><span class="ita nophone"> (${avgTaxiInTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiInTime}" long="true" /><c:if test="${!avgTaxiInTime.inboundTime.isZero()}"><span class="ita nophone"> (${avgTaxiInTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
@@ -223,7 +227,7 @@
 <c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom <span class="nophone">to Gate</span></a></c:if></td>
 </tr>
 </c:if>
-<c:if test="${!isXACARS && (pirep.deboardTime.toSeconds() > 0)}">
+<c:if test="${!isXACARS && !pirep.deboardTime.isEmpty()}">
 <tr>
  <td class="label">Unloading Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.deboardTime}" long="true" /></td>
