@@ -210,12 +210,12 @@ public class GetEliteStatistics extends EliteDAO {
 	 */
 	public YearlyTotal getRollover(int pilotID, int year) throws DAOException {
 		RolloverYearlyTotal yt = new RolloverYearlyTotal(year, pilotID);
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT LEGS, DISTANCE FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?) LIMIT 1")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT LEGS, DISTANCE, PTS FROM ELITE_ROLLOVER WHERE (ID=?) AND (YEAR=?) LIMIT 1")) {
 			ps.setInt(1, pilotID);
 			ps.setInt(2, year);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
-					yt.addRollover(rs.getInt(1), rs.getInt(2), 0);
+					yt.addRollover(rs.getInt(1), rs.getInt(2), rs.getInt(3));
 			}
 			
 			return yt;
@@ -232,12 +232,12 @@ public class GetEliteStatistics extends EliteDAO {
 	 */
 	public List<RolloverYearlyTotal> getRollover(int year) throws DAOException {
 		List<RolloverYearlyTotal> results = new ArrayList<RolloverYearlyTotal>();
-		try (PreparedStatement ps = prepare("SELECT ID, SUM(LEGS), SUM(DISTANCE FROM ELITE_ROLLOVER WHERE (YEAR=?) GROUP BY ID")) {
+		try (PreparedStatement ps = prepare("SELECT ID, SUM(LEGS), SUM(DISTANCE), SUM(PTS) FROM ELITE_ROLLOVER WHERE (YEAR=?) GROUP BY ID")) {
 			ps.setInt(1, year);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RolloverYearlyTotal yt = new RolloverYearlyTotal(year, rs.getInt(1));
-					yt.addRollover(rs.getInt(2), rs.getInt(3), 0);
+					yt.addRollover(rs.getInt(2), rs.getInt(3), rs.getInt(4));
 					results.add(yt);
 				}
 			}
