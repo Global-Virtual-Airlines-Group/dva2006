@@ -138,7 +138,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dv
 
 # Write DVA Flight data
 echo 'Writing DVA Flight data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY PIREP_ELITE PIREP_ELITE_ENTRIES ACARS_METADATA PIREP_SIMBRIEF ONLINE_TRACK PIREP_AGGERGATE_QUEUE | $arc_util > dva_pireps.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY PIREP_ELITE PIREP_ELITE_ENTRIES ACARS_METADATA PIREP_SIMBRIEF ONLINE_TRACK PIREP_AGGREGATE_QUEUE | $arc_util > dva_pireps.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva ONLINE_TRACK | $arc_util > dva_online_track.sql.bz2 
 
 # Dump AFV database
@@ -156,7 +156,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > af
 
 # Write AFV Flight data
 echo 'Writing AFV Flight data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY ACARS_METADATA PIREP_SIMBRIEF ONLINE_TRACK PIREP_AGGERGATE_QUEUE | $arc_util > afv_pireps.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv PIREPS ACARS_PIREPS ACARS_ONTIME PIREP_COMMENT PIREP_ROUTE PIREP_DRAFT PROMO_EQ PIREP_STATUS_HISTORY ACARS_METADATA PIREP_SIMBRIEF ONLINE_TRACK PIREP_AGGREGATE_QUEUE | $arc_util > afv_pireps.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv ONLINE_TRACK | $arc_util > afv_online_track.sql.bz2
 
 # Dump Galleries if we're doing a full backup
