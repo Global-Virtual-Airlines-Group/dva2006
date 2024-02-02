@@ -127,6 +127,34 @@ public class GetACARSTaxiTimes extends DAO {
 		_cache.add(t);
 		return t;
 	}
+	
+	/**
+	 * Retrieves the taxi times for a flight.
+	 * @param flightID the ACARS Flight ID
+	 * @return a TaxiTime
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public TaxiTime getTaxiTime(int flightID) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT IS_DEPARTURE, TAXITIME FROM acars.TAXI_TIMES WHERE (ID=?)")) {
+			ps.setInt(1, flightID);
+			TaxiTime t = new TaxiTime(String.valueOf(flightID), 0);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					if (rs.getBoolean(1)) {
+						t.setOutboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setOutboundCount(1);
+					} else {
+						t.setInboundTime(Duration.ofSeconds(rs.getInt(2)));
+						t.setInboundCount(1);
+					}	
+				}
+			}
+
+			return t;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns whether a given ACARS flight has logged taxi times.
