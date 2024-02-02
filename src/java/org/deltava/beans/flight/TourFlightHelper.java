@@ -2,6 +2,7 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.time.Instant;
 import java.util.stream.*;
 
 import org.deltava.beans.*;
@@ -99,8 +100,9 @@ public class TourFlightHelper {
 		}
 		
 		// Check if Tour is active
-		if (!t.isActiveOn(_fr.getDate())) {
-			_msgs.add(String.format("Tour %s not active on %s", t.getName(), StringUtils.format(_fr.getDate(), "MMM-dd-YYYY")));
+		Instant dt = (_fr instanceof ACARSFlightReport afr) ? afr.getTakeoffTime() : _fr.getDate();
+		if (!t.isActiveOn(dt)) {
+			_msgs.add(String.format("Tour %s not active on %s", t.getName(), StringUtils.format(dt, "MMM-dd-YYYY HH:mm")));
 			return 0;
 		}
 		
@@ -111,7 +113,7 @@ public class TourFlightHelper {
 		}
 		
 		// Check online network
-		if (!t.getAllowOffline() && !t.getNetworks().isEmpty()) { // FIXME: What happens if allowOffline is false but network is different?
+		if (!t.getAllowOffline() && !t.getNetworks().isEmpty()) {
 			if ((_fr.getNetwork() == null) || !t.getNetworks().contains(_fr.getNetwork())) {
 				_msgs.add(String.format("Tour %s requires %s", t.getName(), t.getNetworks()));
 				return 0;
