@@ -130,9 +130,9 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 */
 	public YearlyTotal delta(EliteLevel el) {
 		YearlyTotal result = new YearlyTotal(_year, getID());
-		result._legs = Math.max(0, el.getLegs() - _legs);
-		result._distance = Math.max(0,  el.getDistance() - _distance);
-		result._pts = Math.max(0,  el.getPoints() - _pts);
+		result._legs = Math.max(0, el.getLegs() - getLegs());
+		result._distance = Math.max(0,  el.getDistance() - getDistance());
+		result._pts = Math.max(0,  el.getPoints() - getPoints());
 		return result;
 	}
 	
