@@ -108,18 +108,6 @@
 		</time>
 	</task>
 
-	<!-- Update Taxi Times -->
-	<task id="taxitimes" enabled="true">
-		<class>org.deltava.tasks.TaxiUpdateTask</class>
-		<time>
-			<min>40</min>
-			<hour>9</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-		</time>
-	</task>
-
 	<!-- Purge unfinished ACARS flight entries -->
 	<task id="acarspurge" enabled="true">
 		<class>org.deltava.tasks.ACARSDataPurgeTask</class>
