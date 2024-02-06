@@ -27,9 +27,10 @@
 <tr class="title caps">
  <td style="width:15%">CERTIFICATION</td>
  <td style="width:5%">CODE</td>
- <td style="width:6%">STAGE</td>
- <td style="width:17%">PREREQUISITES</td>
- <td style="width:10%">REQUIREMENTS</td>
+ <td style="width:5%">STAGE</td>
+ <td style="width:14%">PREREQUISITES</td>
+ <td style="width:8%">REQUIREMENTS</td>
+ <td style="width:10%">AIRLINES</td>
  <td class="left">EXAMINATIONS</td>
 </tr>
 
@@ -41,13 +42,14 @@
  <td class="bld"><fmt:int value="${cert.stage}" /></td>
  <td class="sec bld">${cert.reqs.description}</td>
  <td><fmt:int value="${cert.reqCount}" /></td>
+ <td class="sec small"><c:forEach var="al" items="${cert.airlines}" varStatus="alNext">${al.name}<c:if test="${!alNext.last}"><br /></c:if></c:forEach></td>
  <td class="left"><fmt:list value="${cert.examNames}" delim=", " empty="NONE" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="6"> <c:if test="${access.canCreate}"><el:cmd url="cert" op="edit">NEW CERTIFICATION</el:cmd></c:if></td>
+ <td colspan="7"> <c:if test="${access.canCreate}"><el:cmd url="cert" op="edit">NEW CERTIFICATION</el:cmd></c:if></td>
 </tr>
 </el:table>
 <br />
