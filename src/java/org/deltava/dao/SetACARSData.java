@@ -148,9 +148,10 @@ public class SetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeTaxi(FlightInfo inf, int taxiIn, int taxiOut) throws DAOException {
+		int year = inf.getDate().atOffset(ZoneOffset.UTC).getYear();
 		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.TAXI_TIMES (ID, IS_DEPARTURE, IATA, YEAR, TAXITIME) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, inf.getID());
-			ps.setInt(4, ZonedDateTime.ofInstant(inf.getDate(), ZoneOffset.UTC).getYear());
+			ps.setInt(4, year);
 			int cnt = 0;
 				
 			// Write outbound
@@ -176,7 +177,6 @@ public class SetACARSData extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			int year = inf.getEndTime().atOffset(ZoneOffset.UTC).getYear();
 			CacheManager.invalidate("TaxiTime", new TaxiTime(inf.getAirportD().getICAO(), year).cacheKey());
 			CacheManager.invalidate("TaxiTime", new TaxiTime(inf.getAirportA().getICAO(), year).cacheKey());
 		}
