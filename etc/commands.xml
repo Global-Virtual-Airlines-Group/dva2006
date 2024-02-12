@@ -267,6 +267,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="cookiedata">
+		<name>Cookie Data Display</name>
+		<class>org.deltava.commands.security.CookieDataCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="login">
 		<name>User Login</name>
 		<class>org.deltava.commands.security.LoginCommand</class>

@@ -973,6 +973,10 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="metadata">System Metadata</el:cmd></td>
  <td class="data">You can view system-generated metadata for the <content:airline /> web site.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url=cookiedata">Security Cookie Data</el:cmd></td>
+ <td class="data">You can view and validate security cookie data.</td>
+</tr>
 </content:filter>
 <content:filter roles="Developer,Operations">
 <tr>
