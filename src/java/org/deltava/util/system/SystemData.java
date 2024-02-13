@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -162,9 +162,7 @@ public final class SystemData implements Serializable {
 	 * @param value the property value
 	 */
 	public static void add(String pName, Object value) {
-		if (log.isDebugEnabled())
-			log.debug("Adding value {}", pName);
-
+		log.debug("Adding value {}", pName);
 		_properties.put(pName, value);
 	}
 
@@ -176,13 +174,11 @@ public final class SystemData implements Serializable {
 	 * @see SystemData#getAirports()
 	 */
 	public static Airport getAirport(String airportCode) {
-		if (airportCode == null)
-			return null;
-
-		if (!_properties.containsKey("airports"))
-			throw new IllegalStateException("Airports not Loaded");
-
+		if (airportCode == null) return null;
 		Map<?, ?> airports = (Map<?, ?>) getObject("airports");
+		if (airports == null)
+			throw new IllegalStateException("Airports not Loaded");
+		
 		return (Airport) airports.get(airportCode.toUpperCase());
 	}
 	
@@ -205,23 +201,19 @@ public final class SystemData implements Serializable {
 	public static Airline getAirline(String airlineCode) {
 		if (airlineCode == null)
 			return null;
-		else if (!_properties.containsKey("airlines"))
+		
+		Map<?, ?> airlines = (Map<?, ?>) getObject("airlines");
+		if (airlines == null)
 			throw new IllegalStateException("Airlines not Loaded");
 
 		// Search based on primary code
-		Map<?, ?> airlines = (Map<?, ?>) getObject("airlines");
-		Airline a = (Airline) airlines.get(airlineCode.trim().toUpperCase());
+		String c = airlineCode.trim().toUpperCase();
+		Airline a = (Airline) airlines.get(c);
 		if (a != null)
 			return a;
 		
 		// Search based on secondary codes
-		for (Iterator<?> i = airlines.values().iterator(); i.hasNext(); ) {
-			a = (Airline) i.next();
-			if (a.getCodes().contains(airlineCode.toUpperCase()))
-				return a;
-		}
-		
-		return null;
+		return airlines.values().stream().map(Airline.class::cast).filter(al -> (al.getCodes().contains(c) || c.equals(al.getICAO()))).findFirst().orElse(null);
 	}
 	
 	/**
@@ -244,10 +236,10 @@ public final class SystemData implements Serializable {
 	 */
 	public static AirlineInformation getApp(String airlineCode) {
 		String code = StringUtils.isEmpty(airlineCode) ? get("airline.code") : airlineCode;
-	   if (!_properties.containsKey("apps"))
+		Map<?, ?> apps = (Map<?, ?>) getObject("apps");
+		if (apps == null)
 			throw new IllegalStateException("Applications not Loaded");
 	   
-	   Map<?, ?> apps = (Map<?, ?>) getObject("apps");
 	   return (AirlineInformation) apps.get(code.trim().toUpperCase());
 	}
 	
@@ -256,10 +248,10 @@ public final class SystemData implements Serializable {
 	 * @return a Collection of AirlineInformation beans
 	 */
 	public static Collection<AirlineInformation> getApps() {
-		if (!_properties.containsKey("apps"))
+		Map<?, ?> apps = (Map<?, ?>) getObject("apps");
+		if (apps == null)
 			throw new IllegalStateException("Applications not Loaded");
 		
-		Map<?, ?> apps = (Map<?, ?>) getObject("apps");
 		Collection<AirlineInformation> results = new LinkedHashSet<AirlineInformation>();
 		AirlineInformation thisAirline = getApp(get("airline.code"));
 		if (thisAirline != null)
