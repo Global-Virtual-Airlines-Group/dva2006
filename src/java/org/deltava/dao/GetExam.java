@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,12 +8,13 @@ import org.deltava.beans.testing.*;
 import org.deltava.comparators.TestComparator;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.Tuple;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Acces Object for loading Examination/Check Ride data.
+ * A Data Access Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 10.6
+ * @version 11.2
  * @since 1.0
  */
 
@@ -423,6 +424,27 @@ public class GetExam extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the minimum and maximum time available to take Examinations.
+	 * @param isAcademy TRUE for Flight Academy examinations, FALSE for non-Academy
+	 * @return a Tuple with the minimum and maximum times, in minutes
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Tuple<Integer, Integer> getExamTimes(boolean isAcademy) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT MIN(TIME), MAX(TIME) FROM exams.EXAMINFO WHERE (ACTIVE=?) AND (ACADEMY-?)")) {
+			ps.setBoolean(1, true);
+			ps.setBoolean(2, isAcademy);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return Tuple.create(Integer.valueOf(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
+			}
+			
+			return Tuple.create(Integer.valueOf(0), Integer.valueOf(0));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
