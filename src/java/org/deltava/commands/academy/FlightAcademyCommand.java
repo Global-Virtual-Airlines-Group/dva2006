@@ -52,6 +52,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			// Check if we have an examination open
 			GetExam exdao = new GetExam(con);
 			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
+			ctx.setAttribute("examTimes", exdao.getExamTimes(true), REQUEST);
 
 			// Remove all examinations that we have passed or require a higher stage than us
 			if (activeExamID != 0) {
