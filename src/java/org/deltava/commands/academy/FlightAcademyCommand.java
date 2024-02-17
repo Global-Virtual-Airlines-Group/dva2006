@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Flight Academy.
  * @author Luke
- * @version 7.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -60,20 +60,12 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 				ctx.setAttribute("examActive", Integer.valueOf(activeExamID), REQUEST);
 			} else {
 				academyHistory.setDebug(ctx.isSuperUser());
-				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
-					ExamProfile ep = i.next();
-					if (!academyHistory.canWrite(ep))
-						i.remove();
-				}
+				allExams.removeIf(ep -> !academyHistory.canWrite(ep));
 			}
 
 			// Remove all of the certs that we cannot take
 			Collection<Certification> allCerts = new LinkedHashSet<Certification>(academyHistory.getCertifications());
-			for (Iterator<Certification> i = allCerts.iterator(); i.hasNext();) {
-				Certification cert = i.next();
-				if (!academyHistory.canTake(cert))
-					i.remove();
-			}
+			allCerts.removeIf(cert -> !academyHistory.canTake(cert));
 			
 			// Load Instructors
 			Collection<Integer> IDs = academyHistory.getCourses().stream().map(Course::getInstructorID).collect(Collectors.toSet());
