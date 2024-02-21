@@ -33,7 +33,7 @@ public class CSVTokens {
 			} else {
 				int ofs = entry.indexOf(',', x);
 				if (ofs == -1) {
-					_tkns.add(entry.substring(x + 1));
+					_tkns.add(entry.substring(x));
 					x = entry.length();
 				} else {
 					_tkns.add(entry.substring(x, ofs));
