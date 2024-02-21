@@ -21,12 +21,7 @@ public class TestStringUtils extends TestCase {
         assertEquals("T", StringUtils.properCase("t"));
         assertEquals("Jesse David Hollington", StringUtils.properCase("jesse david hollington"));
         assertEquals("Marc-Andre Fleury", StringUtils.properCase("Marc-andre fleury"));
-        try {
-            assertNull(StringUtils.properCase(null));
-            fail("NullPointerException expected");
-        } catch (NullPointerException npe) {
-        	// empty
-        }
+        assertNull(StringUtils.properCase(null));
     }
     
     public void testStripInllineHTML() {
@@ -49,6 +44,14 @@ public class TestStringUtils extends TestCase {
     	assertEquals("Foo", StringUtils.removeCSVQuotes("\"Foo\""));
     	assertEquals("Foo\"", StringUtils.removeCSVQuotes("Foo\""));
     	assertEquals("\"Foo", StringUtils.removeCSVQuotes("\"Foo"));
+    }
+    
+    public void testCSVTokens() {
+    	CSVTokens csv = StringUtils.parseCSV("\"foo\",\"bar\"");
+    	assertNotNull(csv);
+    	assertEquals(2, csv.size());
+    	assertEquals("foo", csv.get(0));
+    	assertEquals("bar", csv.get(1));
     }
     
     public void testIntParse() {
