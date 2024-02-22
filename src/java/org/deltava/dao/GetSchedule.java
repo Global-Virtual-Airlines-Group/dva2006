@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -382,16 +382,16 @@ public class GetSchedule extends DAO {
 	protected List<ScheduleEntry> execute(PreparedStatement ps) throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 16);
-			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 18);
+			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 17);
+			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 19);
 			while (rs.next()) {
 				ScheduleEntry entry = null;
 				if (hasDispatch) {
 					ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-					sse.setDispatchRoutes(rs.getInt(17));
+					sse.setDispatchRoutes(rs.getInt(18));
 					if (hasRouteCounts) {
-						sse.setFlightCount(rs.getInt(18));
-						sse.setLastFlownOn(toInstant(rs.getTimestamp(19)));
+						sse.setFlightCount(rs.getInt(19));
+						sse.setLastFlownOn(toInstant(rs.getTimestamp(20)));
 					}
 					
 					entry = sse;
@@ -407,6 +407,7 @@ public class GetSchedule extends DAO {
 				// DST adjust is 14
 				entry.setSource(ScheduleSource.values()[rs.getInt(15)]);
 				entry.setCodeShare(rs.getString(16));
+				entry.setRemarks(rs.getString(17));
 				int adjustArrivalDays = rs.getInt(11);
 				
 				ScheduleSourceInfo info = getSource(entry.getSource());

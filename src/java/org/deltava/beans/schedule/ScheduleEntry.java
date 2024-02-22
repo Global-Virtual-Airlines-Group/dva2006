@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private ScheduleSource _src;
 	private String _codeShare;
+	private String _remarks;
 	
 	private boolean _historic;
 	private boolean _academy;
@@ -164,6 +165,14 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public int getArrivalPlusDays() {
 		return _arrivalPlusDays;
 	}
+	
+	/**
+	 * Returns any operator notes for this flight.
+	 * @return the remarks
+	 */
+	public String getRemarks() {
+		return _remarks;
+	}
 
 	/**
 	 * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
@@ -270,6 +279,14 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	}
 	
 	/**
+	 * Updates any notes (usually about codehsare operator) for this flight.
+	 * @param remarks the remarks
+	 */
+	public void setRemarks(String remarks) {
+		_remarks = remarks;
+	}
+	
+	/**
 	 * Updates the source of this entry.
 	 * @param src the ScheduleSource
 	 */
@@ -281,7 +298,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public String getRowClassName() {
 		if (_academy)
 			return "opt3";
-		else if (_historic)
+		if (_historic)
 			return "opt2";
 		
 		return null;

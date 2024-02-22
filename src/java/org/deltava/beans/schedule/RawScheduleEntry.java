@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Flight;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 8.0
  */
 
@@ -209,6 +209,7 @@ public class RawScheduleEntry extends ScheduleEntry {
 		se.setHistoric(getHistoric());
 		se.setSource(getSource());
 		se.setCodeShare(getCodeShare());
+		se.setRemarks(getRemarks());
 		return se;
 	}
 }
