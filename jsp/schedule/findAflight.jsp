@@ -207,9 +207,11 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <c:forEach var="flight" items="${fafResults}">
 <c:set var="srcInfo" value="${scheduleSources[flight.source]}" scope="page" />
 <c:set var="srcDate" value="${fn:dateFmt(srcInfo.effectiveDate, 'MM/dd/yyyy')}" scope="page" />
+<c:set var="srcFlightInfo" value="${srcInfo.source.description}, ${srcDate}" scope="page" />
+<c:if test="${!empty flight.remarks}"><c:set var="srcFlightInfo" value="${srcFlightInfo} - ${flight.remarks}" scope="page" /></c:if>
 <view:row entry="${flight}">
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
- <td class="pri bld" title="${srcInfo.source.description}, ${srcDate}">${flight.flightCode}</td>
+ <td class="pri bld" title="${srcFlightInfo}">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small"><span class="nophone">${flight.airportD.name}&nbsp;(</span><el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd><span class="nophone">)</span> -
 <span class="nophone">${flight.airportA.name}&nbsp;(</span><el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd><span class="nophone">)</span></td>
