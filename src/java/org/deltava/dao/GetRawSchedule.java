@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load raw schedule entries and tail codes.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 8.0
  */
 
@@ -286,6 +286,7 @@ public class GetRawSchedule extends DAO {
 				se.setUpdated(rs.getBoolean(16));
 				se.setAcademy(rs.getBoolean(17));
 				se.setCodeShare(rs.getString(18));
+				se.setRemarks(rs.getString(19));
 				results.add(se);
 			}
 		}

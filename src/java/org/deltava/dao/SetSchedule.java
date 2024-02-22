@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, PLUSDAYS, HISTORIC, ACADEMY, DST_ADJUST, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, PLUSDAYS, HISTORIC, ACADEMY, DST_ADJUST, SRC, CODESHARE, REMARKS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, entry.getAirline().getCode());
@@ -58,6 +58,7 @@ public class SetSchedule extends DAO {
 			ps.setBoolean(14, entry.getHasDSTAdjustment());
 			ps.setInt(15, entry.getSource().ordinal());
 			ps.setString(16, entry.getCodeShare());
+			ps.setString(17, entry.getRemarks());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -74,7 +75,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, PLUSDAYS, FORCE_INCLUDE, ISUPDATED, ACADEMY, CODESHARE, REMARKS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, rse.getSource().ordinal());
@@ -95,6 +96,7 @@ public class SetSchedule extends DAO {
 			ps.setBoolean(16, rse.getUpdated());
 			ps.setBoolean(17, rse.getAcademy());
 			ps.setString(18, rse.getCodeShare());
+			ps.setString(19, rse.getRemarks());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -177,7 +179,7 @@ public class SetSchedule extends DAO {
 				executeUpdate(ps, 0);
 			}
 			
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE, ISAUTO, ISACTIVE) VALUES (?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_DATES (SRC, EFFDATE, IMPORTDATE, ISAUTO, ISACTIVE) VALUES (?,?,?,?,?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
 				ps.setTimestamp(3, createTimestamp(src.getDate()));
@@ -186,7 +188,7 @@ public class SetSchedule extends DAO {
 				executeUpdate(ps, 1);
 			}
 			
-			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_HISTORY (SRC, EFFDATE, IMPORTDATE, EXEC_TIME, LEGS, SKIPPED, ADJUSTED, PURGED, AIRLINES, USER_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO RAW_SCHEDULE_HISTORY (SRC, EFFDATE, IMPORTDATE, EXEC_TIME, LEGS, SKIPPED, ADJUSTED, PURGED, AIRLINES, USER_ID) VALUES (?,?,?,?,?,?,?,?,?,?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				ps.setTimestamp(2, createTimestamp(src.getEffectiveDate().atStartOfDay().toInstant(ZoneOffset.UTC)));
 				ps.setTimestamp(3, createTimestamp(src.getDate()));
@@ -200,7 +202,7 @@ public class SetSchedule extends DAO {
 				executeUpdate(ps, 1);
 			}
 		
-			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE_AIRLINES (SRC, AIRLINE) VALUES (?, ?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE_AIRLINES (SRC, AIRLINE) VALUES (?,?)")) {
 				ps.setInt(1, src.getSource().ordinal());
 				for (Airline a : src.getAirlines()) {
 					ps.setString(2, a.getCode());
