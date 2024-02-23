@@ -38,7 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.20.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javacord-api-3.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/okhttp-4.11.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-annotations-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
@@ -49,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-8.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/junixsocket-common-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.25.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
