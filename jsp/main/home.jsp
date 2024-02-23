@@ -90,7 +90,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td class="sec bld" title="${inf.ID}">${inf.flightCode}</td>
  <td class="nophone small bld">${inf.equipmentType}</td>
  <td class="nophone small ter">${inf.simulator}</td>
- <td class="nophone small sec">${con.flightPhase}</td>
+ <td class="nophone small sec">${con.flightPhase.name}</td>
  <td class="nophone bld"><fmt:duration duration="${inf.duration}" t="HH:mm" /></td>
  <td class="small">${inf.airportD.name} (<fmt:airport airport="${inf.airportD}" />) - ${inf.airportA.name} (<fmt:airport airport="${inf.airportA}" />)</td>
 </c:when>
@@ -138,7 +138,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </c:if>
 <c:if test="${!empty toursCompleted}">
 <!-- Recently Completed Flight Tours -->
-<el:table className="view mid" style="width:100%; max-width:510px;">
+<el:table className="view mid" style="width:100%; max-width:600px;">
 <tr class="title caps left">
  <td colspan="2">RECENTLY COMPLETED FLIGHT TOURS</td>
 </tr>
