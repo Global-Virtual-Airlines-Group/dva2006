@@ -87,7 +87,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
 <c:choose>
 <c:when test="${!empty inf.flightCode && empty inf.endTime}">
- <td class="sec bld" title="${inf.ID}">${inf.flightCode}</td>
+ <td class="sec bld" title="ACARS Flight ${inf.ID}">${inf.flightCode}</td>
  <td class="nophone small bld">${inf.equipmentType}</td>
  <td class="nophone small ter">${inf.simulator}</td>
  <td class="nophone small sec">${con.flightPhase.name}</td>
