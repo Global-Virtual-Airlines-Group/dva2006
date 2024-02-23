@@ -34,7 +34,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 11.1
+ * @version 11.2
  * @since 11.0
  */
 
@@ -50,14 +50,21 @@ public class MessageReceivedListener implements MessageCreateListener {
         NewRelic.setRequestAndResponse(new SyntheticRequest("msgCreate", "Discord"), new SyntheticResponse());
 
     	String msg = e.getMessageContent();
+    	Server srv = e.getServer().get();
     	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
     	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
     	try {
+    		// Check for bot
+    		boolean isBot = (e.getMessageAuthor().isBotUser() || e.getMessageAuthor().isBotOwner());
+    		User usr = e.getMessageAuthor().asUser().orElse(null);
+    		if (!isBot && (usr != null))
+    			isBot = usr.getRoles(srv).stream().anyMatch(r -> r.getName().equalsIgnoreCase("Bot"));
+    		
     		if ("done".equalsIgnoreCase(msg) && sch.isPresent()) {
     			e.getMessage().delete("Auto delete interaction message");
     			assignRoles(e);
     			return;
-    		} else if (!sch.isPresent() || channelName.equals(ChannelName.INTERACTIONS.getName()) || e.getMessageAuthor().isBotUser()) 
+    		} else if (!sch.isPresent() || channelName.equals(ChannelName.INTERACTIONS.getName()) || isBot) 
     			return;
 
     		// Check if this is a message requesting roles
@@ -67,7 +74,7 @@ public class MessageReceivedListener implements MessageCreateListener {
                     Optional<User> uo = e.getMessageAuthor().asUser();
                     if (uo.isPresent()) {
                     	User u = uo.get();
-                    	if (u.getRoles(e.getServer().get()).isEmpty())
+                    	if (u.getRoles(srv).isEmpty())
                     		u.sendMessage(EmbedGenerator.welcome(e));
                     }
     			} else {
@@ -79,6 +86,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     		// Check content
     		FilterResults fr = Bot.getFilter().search(msg);
     		if (!fr.isOK()) {
+    			log.warn("Bot = {}, {}, {}", Boolean.valueOf(e.getMessageAuthor().isBotOwner()), Boolean.valueOf(e.getMessageAuthor().isBotUser()), Boolean.valueOf(isBot));
     			log.warn("Content warning from {} - {} [{}]", e.getMessageAuthor().getDisplayName(), msg, fr.getFlaggedResults());
     			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(e, fr.getFlaggedResults()));
     		}
