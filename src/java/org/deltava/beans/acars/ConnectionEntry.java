@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 9.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -28,12 +28,11 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    private ConnectionStats _udpStats;
    
    private FlightInfo _fInfo;
-   private String _flightPhase;
+   private FlightPhase _flightPhase = FlightPhase.UNKNOWN;
    private boolean _isHidden;
    private boolean _isVoice; 
    
    private class LocalConnectionStats extends ConnectionStats {
-	   
 	   LocalConnectionStats(ConnectionStats cs) {
 		   super(cs);
 	   }
@@ -177,10 +176,10 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    
    /**
     * Returns the flight phase.
-    * @return the phase of flight
-    * @see ConnectionEntry#setFlightPhase(String)
+    * @return the FlightPhase
+    * @see ConnectionEntry#setFlightPhase(FlightPhase)
     */
-   public String getFlightPhase() {
+   public FlightPhase getFlightPhase() {
 	   return _flightPhase;
    }
    
@@ -259,10 +258,10 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    
    /**
     * Sets the flight phase
-    * @param phase the phase of flight
+    * @param phase the FlightPhase
     * @see ConnectionEntry#getFlightPhase()
     */
-   public void setFlightPhase(String phase) {
+   public void setFlightPhase(FlightPhase phase) {
 	   _flightPhase = phase;
    }
    
