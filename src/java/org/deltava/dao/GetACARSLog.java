@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019, 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 10.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -151,7 +151,7 @@ public class GetACARSLog extends GetACARSData {
 			}
 		}
 
-		buf.append(" ORDER BY F.CREATED");
+		buf.append(" ORDER BY F.CREATED DESC");
 
 		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
