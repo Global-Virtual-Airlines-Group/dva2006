@@ -1,4 +1,4 @@
-// Copyright 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to handle XML translation for the {@link XMLClientDataService}.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 10.0
  */
 
@@ -126,6 +126,8 @@ class XMLFormatter {
 			rwe.setAttribute("isHardSfc", String.valueOf(r.getSurface().isHard()));
 			rwe.setAttribute("magVar", String.valueOf(r.getMagVar()));
 			rwe.setAttribute("isNewCode", String.valueOf(r.isAltNew()));
+			if (r.getThresholdLength() > 0)
+				rwe.setAttribute("threshold", String.valueOf(r.getThresholdLength()));
 			XMLUtils.addIfPresent(rwe, XMLUtils.createIfPresent("oldCode", r.getAlternateCode()));
 			if ((r.getFrequency() != null) && (!"-".equals(r.getFrequency())))
 				rwe.addContent(XMLUtils.createElement("freq", r.getFrequency()));
