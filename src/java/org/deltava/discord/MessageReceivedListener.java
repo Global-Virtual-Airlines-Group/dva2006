@@ -50,7 +50,10 @@ public class MessageReceivedListener implements MessageCreateListener {
         NewRelic.setRequestAndResponse(new SyntheticRequest("msgCreate", "Discord"), new SyntheticResponse());
 
     	String msg = e.getMessageContent();
-    	Server srv = e.getServer().get();
+    	Server srv = e.getServer().orElse(null);
+    	if (srv == null) // bot-generated messages
+    		return;
+
     	Optional<ServerChannel> sch = e.getChannel().asServerChannel();
     	String channelName = sch.isPresent() ? sch.get().getName() : "UNKNOWN";
     	try {
