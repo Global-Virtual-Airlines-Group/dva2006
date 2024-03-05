@@ -50,7 +50,7 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="100" labels="Time Expired,Submitted" classes="opt2,opt1" /></td>
+<view:legend width="100" labels="Time Expired,Submitted" classes="opt3,opt1" /></td>
 </tr>
 </view:table>
 <content:copyright />
