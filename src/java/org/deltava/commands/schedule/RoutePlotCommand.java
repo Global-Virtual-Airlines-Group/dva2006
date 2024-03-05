@@ -57,6 +57,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
 				ctx.setAttribute("airportsD", getAirports(dfr.getAirportD()), REQUEST);
 				ctx.setAttribute("airportsA", getAirports(dfr.getAirportA()), REQUEST);
+				ctx.setAttribute("alSize", Integer.valueOf(dfr.getAirline().getCode().length()), REQUEST);
 				sim = dfr.getSimulator();
 				
 				// Get aircraft profile and SID runways
