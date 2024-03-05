@@ -23,7 +23,7 @@
 <content:js name="routePlot" />
 <content:js name="fileSaver" />
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
@@ -56,7 +56,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]" value="${flight.airline}" onChange="void this.updateAirlineCode()" />
- <el:text name="airlineCode" size="2" max="3" idx="*" value="${flight.airline.code}" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
+ <el:text name="airlineCode" size="2" max="${alSize > 0 ? alSize : 3}" idx="*" value="${flight.airline.code}" autoComplete="false" className="caps" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
