@@ -48,6 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.25.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.16.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20240205.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-5.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
