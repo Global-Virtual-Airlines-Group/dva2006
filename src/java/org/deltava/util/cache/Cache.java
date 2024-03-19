@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.*;
  * An an abstract class to store common cache operations. These caches can store null
  * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 7.2
+ * @version 11.2
  * @since 1.0
  * @param <T> the cacheable object type
  */
@@ -38,7 +38,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @param entries a Collection of Cacheable entries
 	 */
 	public void addAll(Collection<? extends T> entries) {
-		entries.forEach(e -> addEntry(e));
+		entries.forEach(this::addEntry);
 		checkOverflow();
 	}
 
@@ -155,6 +155,15 @@ public abstract class Cache<T extends Cacheable> {
 	@SuppressWarnings("static-method")
 	public long getErrors() {
 		return 0;
+	}
+	
+	/**
+	 * Returns if the cache is a remote cache.
+	 * @return TRUE if remote, otherwise FALSE
+	 */
+	@SuppressWarnings("static-method")
+	public boolean isRemote() {
+		return false;
 	}
 	
 	/**

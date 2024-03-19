@@ -21,13 +21,14 @@ public class TestAgingCache extends TestCase {
   }
    
    @Override
-protected void setUp() throws Exception {
+   protected void setUp() throws Exception {
       super.setUp();
       _cache = new AgingCache<Cacheable>(2);
+      assertFalse(_cache.isRemote());
    }
 
    @Override
-protected void tearDown() throws Exception {
+   protected void tearDown() throws Exception {
       _cache = null;
       super.tearDown();
    }

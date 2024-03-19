@@ -41,6 +41,7 @@ public class TestRedisCache extends TestCase {
 		RedisUtils.init("192.168.0.2", 6379, 2, "JUnit");
 		_cache = new RedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);
+		assertTrue(_cache.isRemote());
 	}
 
 	@Override
