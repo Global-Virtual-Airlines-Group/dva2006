@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2017, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2018, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 5.0
  */
 
@@ -79,7 +79,7 @@ public class CacheManager {
 		}
 		
 		cache.clear();
-		if (sendEvent && (cache instanceof RedisCache))
+		if (sendEvent && cache.isRemote())
 			EventDispatcher.send(new IDEvent(EventType.CACHE_FLUSH, id));
 	}
 	

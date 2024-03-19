@@ -36,6 +36,7 @@ public class TestExpiringCache extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		_cache = new ExpiringCache<Cacheable>(2, 1);
+		assertFalse(_cache.isRemote());
 	}
 
 	@Override
