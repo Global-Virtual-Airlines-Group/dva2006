@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -62,6 +62,11 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	public long getErrors() {
 		return _errors.longValue();
+	}
+	
+	@Override
+	public boolean isRemote() {
+		return true;
 	}
 
 	@Override
