@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import com.enterprisedt.net.ftp.FTPException;
@@ -8,21 +8,24 @@ import org.deltava.dao.DAOException;
 /**
  * A class to treat FTP exceptions as a DAO exception.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
 public class FTPClientException extends DAOException {
 	
-	private int _resultCode;
+	private final boolean _dumpStack;
+	private final int _resultCode;
 
 	/**
 	 * Creates a new FTP exception from another exception.
+	 * @param dumpStack TRUE to dump the stack trace, otherwise FALSE
 	 * @param t the root exception
 	 */
-	FTPClientException(Throwable t) {
+	FTPClientException(Throwable t, boolean dumpStack) {
 		super(t);
-		if (t instanceof FTPException fe) _resultCode = fe.getReplyCode();
+		_dumpStack = dumpStack;
+		_resultCode = (t instanceof FTPException fe) ? fe.getReplyCode() : 0;
 	}
 	
 	/**
@@ -31,6 +34,8 @@ public class FTPClientException extends DAOException {
 	 */
 	FTPClientException(String msg) {
 		super(msg);
+		_dumpStack = true;
+		_resultCode = 0;
 	}
 	
 	/**
@@ -42,10 +47,10 @@ public class FTPClientException extends DAOException {
 	}
 	
 	/**
-	 * Sets the FTP error code.
-	 * @param code the error code
+	 * Returns whether the exception handler should display the stack trace.
+	 * @return TRUE to display the stack trace, otherwise FALSE
 	 */
-	public void setResultCode(int code) {
-		_resultCode = code;
+	public boolean getDumpStack() {
+		return _dumpStack;
 	}
 }
