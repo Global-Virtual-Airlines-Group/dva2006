@@ -15,10 +15,11 @@ public class TestFTPClientException extends TestCase {
 	public void testCause() {
         Exception e = new NullPointerException();
         try {
-            throw new FTPClientException(e);
+            throw new FTPClientException(e, true);
         } catch (FTPClientException de) {
             assertEquals(e.getMessage(), de.getMessage());
             assertEquals(e, de.getCause());
+            assertTrue(de.getDumpStack());
         }
     }
 }
