@@ -1,4 +1,4 @@
-// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 5.2
  */
 
@@ -75,7 +75,12 @@ public class GFSDownloadTask extends Task {
 				} else
 					log.warn("GRIB not ready yet");
 			}
-		} catch (FTPClientException | IOException e) {
+		} catch (FTPClientException fte) {
+			if (fte.getDumpStack())
+				log.atError().withThrowable(fte).log("Error processing GFS data - {}", fte.getMessage());
+			else
+				log.error("Error processing GFS data - {}", fte.getMessage());
+		} catch (IOException e) {
 			log.atError().withThrowable(e).log("Error processing GFS data - {}", e.getMessage());
 			return;
 		}
