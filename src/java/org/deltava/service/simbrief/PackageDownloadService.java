@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to download a SimBrief briefing package.
  * @author Luke
- * @version 10.4
+ * @version 11.2
  * @since 10.3
  */
 
@@ -44,7 +44,7 @@ public class PackageDownloadService extends WebService {
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
-			if (!ac.getCanUseSimBrief())
+			if (!ac.getCanViewSimBrief())
 				throw error(SC_FORBIDDEN, "Cannot view SimBrief package for Flight " + fr.getID(), false);
 			
 			// Load the package
