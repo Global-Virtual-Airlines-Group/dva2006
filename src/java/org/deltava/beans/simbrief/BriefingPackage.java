@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 10.3
  */
 
@@ -46,6 +46,10 @@ public class BriefingPackage extends DatabaseBean {
 	private int _taxiFuel;
 	private int _enrouteFuel;
 	private int _altFuel;
+	
+	private int _pax;
+	private int _bagWeight;
+	private int _cargoWeight;
 	
 	private String _baseFPURL;
 	private final Collection<FlightPlan> _plans = new TreeSet<FlightPlan>();
@@ -272,6 +276,30 @@ public class BriefingPackage extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the number of passengers booked for this flight.
+	 * @return the number of passengers
+	 */
+	public int getPax() {
+		return _pax;
+	}
+	
+	/**
+	 * Returns the total baggage weight for this flight.
+	 * @return the weight in pounds
+	 */
+	public int getBaggageWeight() {
+		return _bagWeight;
+	}
+	
+	/**
+	 * Returns the additional cargo weight for this flight.
+	 * @return the weight in pounds
+	 */
+	public int getCargoWeight() {
+		return _cargoWeight;
+	}
+	
+	/**
 	 * Adds a flight plan to the briefing package.
 	 * @param fp a FlightPlan
 	 */
@@ -453,5 +481,29 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setAlternateFuel(int fuel) {
 		_altFuel = fuel;
+	}
+
+	/**
+	 * Updates the number of passengers booked on this flight.
+	 * @param pax the number of passengers
+	 */
+	public void setPax(int pax) {
+		_pax = pax;
+	}
+	
+	/**
+	 * Updates the total baggage weight for this flight.
+	 * @param wt the weight in pounds
+	 */
+	public void setBaggageWeight(int wt) {
+		_bagWeight = wt;
+	}
+	
+	/**
+	 * Updates the additional cargo weight for this flight.
+	 * @param wt the weight in pounds
+	 */
+	public void setCargoWeight(int wt) {
+		_cargoWeight = wt;
 	}
 }
