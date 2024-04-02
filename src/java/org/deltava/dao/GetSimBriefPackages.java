@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.simbrief.*;
 /**
  * A Data Access Object to load SimBrief briefing package data.
  * @author Luke
- * @version 10.4
+ * @version 11.2
  * @since 10.4
  */
 
@@ -35,7 +35,7 @@ public class GetSimBriefPackages extends DAO {
 		
 		StringBuilder sqlBuf = new StringBuilder("SELECT SIMBRIEF_ID, XML FROM ");
 		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".	PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
+		sqlBuf.append(".PIREP_SIMBRIEF WHERE (ID=?) LIMIT 1");
 		
 		BriefingPackage sbdata = null;
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {

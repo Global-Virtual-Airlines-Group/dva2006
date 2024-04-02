@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A parser for SimBrief XML dispatch packages.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 10.3
  */
 
@@ -54,7 +54,7 @@ public class SimBriefParser {
 		
 		// Validate XML elements
 		Element re = doc.getRootElement();
-		validateElements(re, "params", "general", "origin", "destination", "alternate", "files", "fuel", "atc", "aircraft");
+		validateElements(re, "params", "general", "origin", "destination", "alternate", "files", "fuel", "atc", "aircraft", "weights");
 		
 		// Create the bean
 		Element pe = re.getChild("params");
@@ -77,7 +77,7 @@ public class SimBriefParser {
 		sb.setXML(doc);
 		
 		// Parse route
-		List<String> wps = StringUtils.split(XMLUtils.getChildText(re, "general", "route_navigraph"),  " ");
+		List<String> wps = StringUtils.split(XMLUtils.getChildText(re, "general", "route_navigraph"), " ");
 		while (wps.contains("DCT")) wps.remove("DCT");
 		sb.setRoute(StringUtils.listConcat(wps, " "));
 		
@@ -88,9 +88,14 @@ public class SimBriefParser {
 		
 		// Load fuel
 		sb.setBaseFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "reserve"), 0) + StringUtils.parse(XMLUtils.getChildText(re, "fuel", "contingency"), 0), wt));
-		sb.setTaxiFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "taxi"), 0), wt));
-		sb.setEnrouteFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "enroute_burn"), 0), wt));
-		sb.setAlternateFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re,  "fuel", "alternate_burn"), 0), wt));
+		sb.setTaxiFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "taxi"), 0), wt));
+		sb.setEnrouteFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "enroute_burn"), 0), wt));
+		sb.setAlternateFuel(parseWeight(StringUtils.parse(XMLUtils.getChildText(re, "fuel", "alternate_burn"), 0), wt));
+		
+		// Load payload
+		sb.setPax(StringUtils.parse(XMLUtils.getChildText(re, "weights", "pax_count_actual"), 0));
+		sb.setBaggageWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_count_actual"), 0) * StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_weight"), 55));
+		sb.setCargoWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "freight_added"), 0));
 		
 		// Check for ETOPS
 		Element ee = re.getChild("etops");
