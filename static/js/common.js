@@ -12,6 +12,7 @@ golgotha.charts.bg = golgotha.util.darkMode ? '#000021' : '#efefef';
 golgotha.charts.tx =  golgotha.util.darkMode ? '#efefef' : '#00002f';
 golgotha.charts.lgStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:9};
 golgotha.charts.ttStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:11};
+golgotha.charts.dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
 golgotha.charts.buildOptions = function(opts) {
 	const o = opts || {};
 	const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
