@@ -64,11 +64,17 @@ exceed the maximum range of the ${pirep.equipmentType}.</span> This may cause a 
 </c:if>
 </c:if>
 <c:if test="${calcLoadFactor}">
-<div class="updateHdr">Pre-Flight Load Factor Calculated</div>
+<c:set var="loadUpdated" value="${oldLoadFactor > 0}" scope="page" />
+<div class="updateHdr">Pre-Flight Load Factor ${loadUpdate ? 'Updated' : 'Calculated'}</div>
 <br />
-A pre-flight load factor of <fmt:dec value="${pirep.loadFactor * 100}" fmt="##0.00" />% has been calculated for this flight. If the flight is flown in the ${pirep.equipmentType}, <fmt:int value="${pirep.passengers}" /> passengers will be boarded. 
-For dispatch purposes, <content:airline /> assumes a passenger weight of <fmt:weight value="${175}" /> and baggage of <fmt:weight value="${30}" /> per passenger.<br />
+A pre-flight load factor of <span class="pri bld"><fmt:dec value="${pirep.loadFactor}" fmt="##0.00%" /></span> has been calculated for this flight. <c:if test="${loadUpdated}">This updates the previously calculated 
+load factor of <span class="sec bld"><fmt:dec value="${oldLoadFactor}" fmt="##0.00%" /></span>.</c:if> If the flight is flown in the ${pirep.equipmentType}, <fmt:int value="${pirep.passengers}" /> passengers will 
+be boarded.<br />
 <br />
+For dispatch purposes, <content:airline /> assumes a per-passenger weight of <fmt:weight value="${175}" /> and per-passenger baggage weight of <fmt:weight value="${30}" />.<br />
+<br />
+<content:filter roles="PIREP.Operations">The target load factor for <fmt:date date="${pirep.date}" fmt="d" className="sec bld" /> is <span class="bld"><fmt:dec value="${targetLoad}" fmt="##0.00%" /></span>.<br />
+<br /></content:filter>
 </c:if>
 <c:if test="${isApprove}">
 <div class="updateHdr">Flight Report Approved</div>
