@@ -292,10 +292,9 @@ xmlreq.onreadystatechange = function() {
 
 	// Massage data and init charts
 	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};
-	const dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
-	golgotha.local.data.calendar.forEach(dateTX); golgotha.local.data.calendarHours.forEach(dateTX); golgotha.local.data.calendarDistance.forEach(dateTX);
-	golgotha.local.data.simCalendar.forEach(dateTX); golgotha.local.data.simCalendarHours.forEach(dateTX); golgotha.local.data.simCalendarDistance.forEach(dateTX);
-	golgotha.local.data.landingCalendar.forEach(dateTX); golgotha.local.data.landingCalendarHours.forEach(dateTX); golgotha.local.data.landingCalendarDistance.forEach(dateTX);
+	golgotha.local.data.calendar.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarDistance.forEach(golgotha.charts.dateTX);
+	golgotha.local.data.simCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarDistance.forEach(golgotha.charts.dateTX);
+	golgotha.local.data.landingCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarDistance.forEach(golgotha.charts.dateTX);
 	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
 	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
 	golgotha.local.charts.landRating = new google.visualization.ColumnChart(document.getElementById('landingRatingStats'));
