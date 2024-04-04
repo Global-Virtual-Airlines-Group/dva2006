@@ -100,7 +100,8 @@
 <c:if test="${!empty avgTaxiOutTime && !empty taxiOutTime}">
 <tr>
  <td class="label">Outbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiOutTime}" long="true" /><c:if test="${!avgTaxiOutTime.outboundTime.isZero()}"><span class="ita nophone"> (${avgTaxiOutTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiOutTime}" long="true" /><c:if test="${!avgTaxiOutTime.outboundTime.isZero()}"><span class="ita nophone"> (<c:if test="${avgTaxiOutTime.year > 0}">${avgTaxiOutTime.year} </c:if>average:
+ <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -214,7 +215,8 @@
 <c:if test="${!empty avgTaxiInTime && !empty taxiInTime}">
 <tr>
  <td class="label">Inbound Taxi Time</td>
- <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiInTime}" long="true" /><c:if test="${!avgTaxiInTime.inboundTime.isZero()}"><span class="ita nophone"> (${avgTaxiInTime.year} average: <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiInTime}" long="true" /><c:if test="${!avgTaxiInTime.inboundTime.isZero()}"><span class="ita nophone"> (<c:if test="${avgTaxiInTime.year > 0}">${avgTaxiInTime.year} </c:if>average:
+ <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
