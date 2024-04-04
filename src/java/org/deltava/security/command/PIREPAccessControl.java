@@ -1,5 +1,7 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
+
+import java.time.*;
 
 import org.deltava.beans.ExternalID;
 import org.deltava.beans.acars.Restriction;
@@ -10,7 +12,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
@@ -82,9 +84,13 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean isDisposedByMe = _ctx.isAuthenticated() && (disposalID == _ctx.getUser().getID());
 		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && isDisposedByMe || (disposalID == 0));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
-
+		
+		// Check if we can calculate load factor
+		Instant today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC);
+		boolean isPast = _pirep.getDate().isBefore(today);
+		_canCalculateLoad = isDraft && _ourPIREP && (isPast || (_pirep.getLoadFactor() <= 0));
+		
 		// Check if we can submit/hold/approve/reject/edit the PIREP
-		_canCalculateLoad = isDraft && _ourPIREP && (_pirep.getLoadFactor() <= 0);
 		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR) && !noManual;
 		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightStatus.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
