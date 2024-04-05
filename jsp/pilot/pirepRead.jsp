@@ -402,6 +402,11 @@ table.form td.eliteStatus {
  <td class="label">Fuel Load</td>
  <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate <span class="ita">(<fmt:weight value="${sbPackage.totalFuel}" /> total)</span></td>
 </tr>
+<tr class="sbData">
+ <td class="label">Payload</td>
+ <td class="data"><fmt:int value="${sbPackage.pax}" /> passengers - <fmt:weight value="${sbPackage.baggageWeight}" /> baggage<c:if test="${sbPackage.cargoWeight > 0}">, <fmt:weight value="${sbPackage.cargoWeight}" /> additional cargo 
+ <span class="ita">(<fmt:weight value="${sbPackage.baggageWeight + sbPackage.cargoWeight}" /> total)</span></c:if></td>
+</tr>
 <c:if test="${!empty sbPackage.alternates}">
 <tr class="sbData">
 <td class="label top">Alternates</td>
