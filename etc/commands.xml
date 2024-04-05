@@ -68,6 +68,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="loadstats">
+		<name>Load / On-Time Statistics</name>
+		<class>org.deltava.commands.stats.LoadInfoCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
+
 	<command id="mynewairports">
 		<name>Pilot Missed Airports</name>	
 		<class>org.deltava.commands.stats.NewAirportListCommand</class>
