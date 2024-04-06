@@ -94,7 +94,8 @@ public class SimBriefParser {
 		
 		// Load payload
 		sb.setPax(StringUtils.parse(XMLUtils.getChildText(re, "weights", "pax_count_actual"), 0));
-		sb.setBaggageWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_count_actual"), 0) * StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_weight"), 55));
+		sb.setBagWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_weight"), 55));
+		sb.setBaggageWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "bag_count_actual"), 0) * sb.getBagWeight());
 		sb.setCargoWeight(StringUtils.parse(XMLUtils.getChildText(re, "weights", "freight_added"), 0));
 		
 		// Check for ETOPS
