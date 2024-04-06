@@ -45,9 +45,7 @@ public class TestLoadFactorCalculator extends TestCase {
 		EconomyInfo info = new EconomyInfo(TARGET_LOAD, .12d);
 		info.setStartDate(zdt.toInstant());
 		info.setMinimumLoad(.125);
-		info.setHourlyFactor(.1);
-		info.setYearlyCycleLength(272);
-		info.setHourlyCycleLength(14 * 24);
+		info.setCycleLength(272);
 		
 		LoadFactor lf = new LoadFactor(info);
 		try (PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\sine.csv"))) {

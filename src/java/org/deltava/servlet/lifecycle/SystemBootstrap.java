@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -36,7 +36,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -207,9 +207,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			EconomyInfo econInfo = new EconomyInfo(SystemData.getDouble("econ.targetLoad", 0.8d), SystemData.getDouble("econ.targetAmplitude", 0.125));
 			econInfo.setMinimumLoad(SystemData.getDouble("econ.minimumLoad", 0.25));
 			econInfo.setStartDate(AirlineTotals.BIRTHDATE);
-			econInfo.setHourlyFactor(SystemData.getDouble("econ.hourlyFactor", 0.0));
-			econInfo.setYearlyCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
-			econInfo.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));
+			econInfo.setCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
 			SystemData.add(SystemData.ECON_DATA, econInfo);
 			SharedData.addData(SharedData.ECON_DATA + code, econInfo);
 			log.info("Loaded Economic parameters");

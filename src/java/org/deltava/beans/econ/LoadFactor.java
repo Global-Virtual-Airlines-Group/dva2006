@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.Random;
@@ -13,7 +13,7 @@ import java.time.Instant;
  * factor which moves in 360-minute cycles.
  *  
  * @author Luke
- * @version 10.1
+ * @version 11.2
  * @since 3.7
  */
 
@@ -46,18 +46,10 @@ public class LoadFactor {
 		long hoursSinceStart = (dt.toEpochMilli() - _info.getStartDate().toEpochMilli()) / MS_PER_HOUR;
 		long daysSinceStart = hoursSinceStart / 24;
 		
-		// Calculate the factor per day/hour
+		// Calculate the daily factor
 		double daysPerCycle = 365d / _info.getCyclesPerYear();
-		double hoursPerCycle = 1 / _info.getCyclesPerHour();
 		double dFreq = 2* Math.PI / daysPerCycle;
-		double hFreq = 2 * Math.PI / hoursPerCycle;
-		
-		// Calculate the daily and hourly factors
-		double dFactor = (Math.sin(daysSinceStart * dFreq) * _info.getAmplitude()) + _info.getTargetLoad();
-		double hFactor = (Math.cos(hoursSinceStart * hFreq) * _info.getAmplitude()) + _info.getTargetLoad();
-		
-		// Combine the factors and return
-		return (hFactor * _info.getHourlyFactor()) + (dFactor * (1 - _info.getHourlyFactor()));
+		return (Math.sin(daysSinceStart * dFreq) * _info.getAmplitude()) + _info.getTargetLoad();
 	}
 	
 	/**
