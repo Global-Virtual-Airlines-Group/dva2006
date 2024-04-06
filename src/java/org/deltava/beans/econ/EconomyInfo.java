@@ -1,13 +1,15 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A bean to store information about simulated economic cycles.
  * @author Luke
- * @version 7.0
+ * @version 11.2
  * @since 3.7
  */
 
@@ -16,10 +18,7 @@ public class EconomyInfo implements java.io.Serializable {
 	private double _targetLoad;
 	private double _minLoad = 0.125d;
 	private double _amp;
-	
-	private double _hourlyFactor = .1d;
 	private double _yearHZ;
-	private double _hourHZ;
 	
 	private Instant _startDate = ZonedDateTime.of(2001, 6, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant();
 
@@ -61,14 +60,6 @@ public class EconomyInfo implements java.io.Serializable {
 	}
 	
 	/**
-	 * Sets the weighting of the hourly wave versus the daily wave.
-	 * @return the factor to apply from 0 to 1
-	 */
-	public double getHourlyFactor() {
-		return _hourlyFactor;
-	}
-	
-	/**
 	 * Returns the airline start date.
 	 * @return the start date
 	 */
@@ -85,11 +76,11 @@ public class EconomyInfo implements java.io.Serializable {
 	}
 	
 	/**
-	 * Returns the frequency of the hourly oscilation.
-	 * @return the number of cycles per hour
+	 * Returns the cycle length in days.
+	 * @return the cycle length
 	 */
-	public double getCyclesPerHour() {
-		return _hourHZ;
+	public int getCycleLength() {
+		return (int)Math.round(365d / _yearHZ);
 	}
 	
 	/**
@@ -109,14 +100,6 @@ public class EconomyInfo implements java.io.Serializable {
 	}
 	
 	/**
-	 * Sets the weighting of the hourly wave versus the daily wave.
-	 * @param f the factor to apply from 0 to 1
-	 */
-	public void setHourlyFactor(double f) {
-		_hourlyFactor = Math.max(0d, Math.min(1d, f));
-	}
-	
-	/**
 	 * Sets the frequency of the yearly oscilation.
 	 * @param hz the number of cycles per year
 	 */
@@ -128,23 +111,18 @@ public class EconomyInfo implements java.io.Serializable {
 	 * Sets the yearly cycle length.
 	 * @param days the number of days per cycle
 	 */
-	public void setYearlyCycleLength(int days) {
+	public void setCycleLength(int days) {
 		setCyclesPerYear(365d / Math.max(1, days));
 	}
-
-	/**
-	 * Sets the frequency of the hourly oscilation.
-	 * @param hz the number of cycles per hour
-	 */
-	public void setCyclesPerHour(double hz) {
-		_hourHZ = Math.max(.000001d, hz);
-	}
-
-	/**
-	 * Sets the hourly cycle length.
-	 * @param hours the number of hours per cycle
-	 */
-	public void setHourlyCycleLength(int hours) {
-		setCyclesPerHour(1d / Math.max(1, hours));
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("tgt=").append(_targetLoad);
+		buf.append(",amp=").append(_amp);
+		buf.append(",min=").append(_minLoad);
+		buf.append(",yearHZ=").append(_yearHZ);
+		buf.append(",sd=").append(StringUtils.format(_startDate, "MM/dd/yyyy"));
+		return buf.toString();
 	}
 }

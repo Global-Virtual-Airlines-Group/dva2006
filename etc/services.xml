@@ -73,6 +73,7 @@
 	<service id="elitestats" class="org.deltava.service.stats.EliteStatsService" />
 	<service id="onlinestats" class="org.deltava.service.stats.OnlineStatsService" />
 	<service id="loadstats" class="org.deltava.service.stats.LoadStatsService" />
+	<service id="lfmodel" class="org.deltava.service.stats.LoadModelService" />
 	<service id="otstats" class="org.deltava.service.stats.OnTimeStatsService" />
 
 	<!-- Pilot Data Services -->

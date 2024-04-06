@@ -20,6 +20,8 @@ golgotha.local.update = function(cb) {
 	const days = golgotha.form.getCombo(cb);
 	return golgotha.local.load(days);
 };
+
+golgotha.local.revert = function() { golgotha.util.display('revertLink', false); return golgotha.local.loadModel(golgotha.local.defaultModel); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +36,7 @@ golgotha.local.update = function(cb) {
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>ON-TIME / LOAD FACTOR DASHBOARD</td>
- <td class="right" style="width:20%;"><span class="nophone">TIME PERIOD &nbsp;</span><el:combo name="daysBack" size="1" idx="*" firstEntry="[ SELECT ]" value="${days}" options="${dayOpts}" onChange="void golgotha.local.update(this)" /></td>
+ <td class="right" style="width:20%;"><span class="nophone">TIME PERIOD&nbsp;</span><el:combo name="daysBack" size="1" idx="*" firstEntry="[ SELECT ]" value="${days}" options="${dayOpts}" onChange="void golgotha.local.update(this)" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="3">LOAD FACTOR STATISICS</td>
@@ -44,15 +46,36 @@ golgotha.local.update = function(cb) {
 </tr>
 <tr>
  <td class="label">Target Load Factor</td>
- <td class="data" colspan="2"><fmt:dec value="${targetLoad}" fmt="##0.00%" className="pri bld" /><span class="small ita nophone"> (This is constant from day to day.)</span></td>
+ <td class="data" colspan="2"><fmt:dec value="${econ.targetLoad}" fmt="##0.00%" className="pri bld" /><span class="small ita nophone"> (This is constant from day to day.)</span></td>
 </tr>
 <tr>
  <td class="label">Daily Target Load</td>
- <td class="data" colspan="2"><fmt:dec value="${targetLoad}" fmt="##0.00%" className="bld" /><span class="small ita nophone"> (This is the target load factor for <fmt:date date="${today}" fmt="d" />)</span>
+ <td class="data" colspan="2"><fmt:dec value="${dailyTargetLoad}" fmt="##0.00%" className="bld" /><span class="small ita nophone"> (This is the target load factor for <fmt:date date="${today}" fmt="d" />)</span>
 </tr>
 <tr>
  <td class="label">Minimum Load Factor</td>
  <td class="data" colspan="2"><fmt:dec value="${minimumLoad}" fmt="##0.00%" className="ter bld" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">LOAD FACTOR MODELING</td>
+ <td class="right"><span class="nophone">TIME PERIOD&nbsp;</span><el:combo name="modelDays" size="1" idx="*" firstEntry="[ SELECT ]" value="${days}" options="${modelOpts}" />
+ <el:button label="CALCULATE" onClick="void golgotha.local.model()" /></td>
+</tr>
+<tr id="lfmDiv" style="display:none;">
+ <td colspan="3"><div id="lfmChart" style="width:100%; height:360px;"></div></td>
+</tr>
+<tr>
+ <td class="label">Target Load</td>
+ <td class="data" colspan="2"><el:text name="targetLoad" size="4" max="6" required="true" idx="*" className="pri bld" value="${econ.targetLoad}" />, Amplitude: <el:text name="targetAmp" size="4" max="6" required="true" idx="*" value="${econ.amplitude}" />
+<span id="revertLink" style="display:none;"> - <a href="javascript:void golgotha.local.revert()">REVERT</a></span></td>
+</tr>
+<tr>
+ <td class="label">Cycle Length</td>
+ <td class="data" colspan="2"><el:text name="cycleLength" size="3" max="4" idx="*" value="${econ.cycleLength}" /> days</td>
+</tr>
+<tr>
+ <td class="label">Minimum Load</td>
+ <td class="data" colspan="2"><el:text name="minLoad" size="4" max="5" required="true" idx="*" className="sec bld" value="${econ.minimumLoad}" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="3">ON TIME STATISTICS</td>
@@ -132,6 +155,49 @@ golgotha.local.load = function(days) {
 	
 	xreq1.send(null);
 	xreq2.send(null);
+	return true;
+};
+
+golgotha.local.model = function() {
+	const f = document.forms[0];
+	const xreq = new XMLHttpRequest();
+	xreq.timeout = 2500;
+	xreq.open('post', 'lfmodel.ws', true);
+	xreq.onreadystatechange = function() {
+		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
+		
+		const d = JSON.parse(xreq.responseText);
+		d.data.forEach(golgotha.charts.dateTX);
+		golgotha.local.defaultModel = d.defaultModel;
+		const c = new google.visualization.LineChart(document.getElementById('lfmChart'));
+		const data = new google.visualization.DataTable();		
+		data.addColumn('date', 'Month');
+		data.addColumn('number', 'Actual');
+		data.addColumn('number', 'Model');
+		data.addRows(d.data);
+		
+		const vA = {title:'Load Factor',maxValue:1,gridlines:{count:10},textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle,format:'percent'};
+		const hA = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+		const o = golgotha.charts.buildOptions({title:'Modeled vs. Actual Load Factor',width:'100%',colors:['blue','grey','green'],hAxis:hA,vAxes:[vA]});
+		golgotha.util.display('lfmDiv', true);
+		golgotha.util.display('revertLink', true);
+		c.draw(data, o);
+		golgotha.local.loadModel(d.model);
+		return true;
+	};
+	
+	// Build parameters
+	const fd = new FormData(f);
+	fd.set('daysBack', fd.get('modelDays'));
+	xreq.send(fd);
+	return true;
+};
+
+golgotha.local.loadModel = function(m) {
+	const f = document.forms[0];
+	f.targetLoad.value = m.targetLoad;
+	f.targetAmp.value = m.targetAmp;
+	f.cycleLength.value = Math.round(365 / m.yearHZ);
 	return true;
 };
 
