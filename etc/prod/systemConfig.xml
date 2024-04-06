@@ -755,11 +755,7 @@
 		<targetLoad type="Double">0.885</targetLoad>
 		<targetAmplitude type="Double">0.105</targetAmplitude>
 		<minimumLoad type="Double">0.195</minimumLoad>
-		
-		<!-- Weighting of hourly cycle versus yearly cycle -->
-		<hourlyFactor type="Double">0.155</hourlyFactor>
 		<yearlyCycleLength type="Integer">1420</yearlyCycleLength>
-		<hourlyCycleLength type="Integer">24</hourlyCycleLength>
 
 		<!-- Frequent Pilot / Elite program -->
 		<elite>

@@ -22,6 +22,7 @@ import org.deltava.util.system.SystemData;
 public class LoadInfoCommand extends AbstractCommand {
 	
 	private static final Collection<ComboAlias> DAY_OPTS = ComboUtils.fromArray(new String[] { "90 Days", "180 Days", "1 Year", "2 Years"}, new String[] {"90", "180", "365", "720"});
+	private static final Collection<ComboAlias> MODEL_OPTS = ComboUtils.fromArray(new String[] { "15 Days", "30 Days", "60 Days", "90 Days", "180 Days", "1 Year", "2 Years"}, new String[] {"15", "30", "60", "90", "180", "365", "720"});
 
 	/**
 	 * Executes the command.
@@ -38,14 +39,15 @@ public class LoadInfoCommand extends AbstractCommand {
 
 		// Save parameters
 		ctx.setAttribute("dayOpts", DAY_OPTS, REQUEST);
+		ctx.setAttribute("modelOpts", MODEL_OPTS, REQUEST);
 		ctx.setAttribute("days", "365", REQUEST);
-		ctx.setAttribute("targetLoad", Double.valueOf(SystemData.getDouble("econ.targetLoad", 0d)), REQUEST);
 		ctx.setAttribute("minimumLoad", Double.valueOf(SystemData.getDouble("econ.minimumLoad", 0d)), REQUEST);
 		
 		// Get today's target load factor
 		Instant now = Instant.now();
 		LoadFactor lf = new LoadFactor(eInfo);
 		ctx.setAttribute("today", now, REQUEST);
+		ctx.setAttribute("econ", eInfo, REQUEST);
 		ctx.setAttribute("dailyTargetLoad", Double.valueOf(lf.getTargetLoad(now)), REQUEST);
 		
 		// Fowrard to JSP
