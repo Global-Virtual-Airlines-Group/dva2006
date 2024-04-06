@@ -48,6 +48,7 @@ public class BriefingPackage extends DatabaseBean {
 	private int _altFuel;
 	
 	private int _pax;
+	private int _baggageWeight;
 	private int _bagWeight;
 	private int _cargoWeight;
 	
@@ -288,6 +289,14 @@ public class BriefingPackage extends DatabaseBean {
 	 * @return the weight in pounds
 	 */
 	public int getBaggageWeight() {
+		return _baggageWeight;
+	}
+	
+	/**
+	 * Returns the per-passenger baggage weight for this flight.
+	 * @return the weight in pounds
+	 */
+	public int getBagWeight() {
 		return _bagWeight;
 	}
 	
@@ -496,6 +505,14 @@ public class BriefingPackage extends DatabaseBean {
 	 * @param wt the weight in pounds
 	 */
 	public void setBaggageWeight(int wt) {
+		_baggageWeight = wt;
+	}
+	
+	/**
+	 * Updates the per-passenger baggage weight for this flight.
+	 * @param wt the weight in pounds
+	 */
+	public void setBagWeight(int wt) {
 		_bagWeight = wt;
 	}
 	
