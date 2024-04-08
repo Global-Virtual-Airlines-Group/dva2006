@@ -266,7 +266,7 @@ public class SetFlightReport extends DAO {
 	 */
 	public void updateLandingScore(int pirepID, double score) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("UPDATE ACARS_PIREPS SET LANDING_SCORE=? WHERE (ID=?) LIMIT 1")) {
-			ps.setDouble(1, score);
+			ps.setInt(1, (int)Math.round(score * 100));
 			ps.setInt(2, pirepID);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
