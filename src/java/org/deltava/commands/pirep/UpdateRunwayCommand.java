@@ -119,8 +119,10 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				
 				SetFlightReport frwdao = new SetFlightReport(con);
 				frwdao.writeHistory(afr.getStatusUpdates(), ctx.getDB());
-				if (isScoreUpdated)
+				if (isScoreUpdated) {
 					frwdao.updateLandingScore(afr.getID(), afr.getLandingScore());
+					frwdao.deleteElite(afr);
+				}
 				
 				SetAggregateStatistics stdao = new SetAggregateStatistics(con);
 				stdao.updateLanding(afr);
