@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 3.0
  */
 
@@ -65,7 +65,7 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			Runway rA = (aRwy == null) ? null : navdao.getRunway(afr.getAirportA(), aRwy.get(1), afr.getSimulator());
 			
 			// Check if we've changed anything
-			boolean isUpdated = false;
+			boolean isUpdated = false; boolean isScoreUpdated = false;
 			if (rD != null) {
 				GeoLocation rw = (rD.getThresholdLength() > 0) ? rD.getThreshold() : rD;
 				int dist = rD.distanceFeet(afr.getTakeoffLocation()) - rD.getThresholdLength();
@@ -100,6 +100,14 @@ public class UpdateRunwayCommand extends AbstractCommand {
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated arrival Runway to %s", info.getRunwayA().getName()));
 					else if (Math.abs(dist - oldDistance) > 200)
 						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Updated touchdown distance from %d to %d feet", Integer.valueOf(oldDistance), Integer.valueOf(dist)));
+
+					// See if landing score changes
+					double score = LandingScorer.score(afr.getLandingVSpeed(), dist);
+					if (Math.abs(score - afr.getLandingScore()) > 0.5) {
+						isScoreUpdated = true;
+						afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, String.format("Adjusted landing score from %.2f to %.2f", Double.valueOf(afr.getLandingScore()), Double.valueOf(score)));
+						afr.setLandingScore(score);
+					}
 				}
 			}
 					
@@ -109,11 +117,14 @@ public class UpdateRunwayCommand extends AbstractCommand {
 				SetACARSRunway awdao = new SetACARSRunway(con);
 				awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
 				
+				SetFlightReport frwdao = new SetFlightReport(con);
+				frwdao.writeHistory(afr.getStatusUpdates(), ctx.getDB());
+				if (isScoreUpdated)
+					frwdao.updateLandingScore(afr.getID(), afr.getLandingScore());
+				
 				SetAggregateStatistics stdao = new SetAggregateStatistics(con);
 				stdao.updateLanding(afr);
 				
-				SetFlightReport frwdao = new SetFlightReport(con);
-				frwdao.writeHistory(afr.getStatusUpdates(), ctx.getDB());
 				ctx.commitTX();
 			}
 			
