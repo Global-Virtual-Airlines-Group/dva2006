@@ -72,8 +72,10 @@ public class SkyMilesScorer extends EliteScorer {
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
 			} else if (_score.getYear() <= 2023)
 				_score.setDistance(Math.max(MIN_DISTANCE, ffr.getDistance()));
-			else
+			else {
+				ffr.addStatusUpdate(0, HistoryType.ELITE, String.format("Time Acceleration %d%%, limiting Distance credit to %d%%", Long.valueOf(accPct), Long.valueOf(100 - accPct)));
 				_score.setDistance(Math.max(MIN_DISTANCE, Math.round(ffr.getDistance() * (1f - (accPct / 100f)))));
+			}
 			
 			// Calculate on-time bonus
 			addBonus(Math.round(ffr.getDistance() * 0.4f), "Early Arrival", (afr.getOnTime() == OnTime.EARLY));
