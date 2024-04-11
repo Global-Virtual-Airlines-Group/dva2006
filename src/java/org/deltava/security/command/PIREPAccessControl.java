@@ -39,6 +39,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canAdjustEvents;
 	private boolean _canUseSimBrief;
 	private boolean _canViewSimBrief;
+	private boolean _canEliteRescore;
 
 	/**
 	 * Initializes the controller.
@@ -104,6 +105,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canAdjustEvents = _canApprove || _canReject || _canHold /*isPirep && !_ourPIREP && !isDraft && (_ctx.isUserInRole("Event") || isHR) */;
 		_canUseSimBrief = isDraft && _ourPIREP && _ctx.getUser().hasID(ExternalID.NAVIGRAPH);
 		_canViewSimBrief = (_ourPIREP || isPirep) && _pirep.hasAttribute(FlightReport.ATTR_SIMBRIEF);
+		_canEliteRescore = (status == FlightStatus.OK) && _ctx.isUserInRole("Operations");
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -285,5 +287,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanViewSimBrief() {
 		return _canViewSimBrief;
+	}
+	
+	/**
+	 * Returns if the user can recalculate the Elite program score for this Flight Report.
+	 * @return TRUE if Elite score can be recalculated, otherwise FALSE
+	 */
+	public boolean getCanEliteRescore() {
+		return _canEliteRescore;
 	}
 }
