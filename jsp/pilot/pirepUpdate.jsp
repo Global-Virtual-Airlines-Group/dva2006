@@ -20,6 +20,7 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:sysdata var="eliteName" name="econ.elite.name" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -126,8 +127,14 @@ This Flight Report has been succesfully deleted from the database.<br />
 <content:airline /> ACARS data for this Flight Report has been succesfully deleted from the database.<br />
 <br />
 </c:if>
+<c:if test="${isEliteScore}">
+<content:sysdata var="pointName" name="econ.elite.points" />
+<div class="updateHdr">Flight Report ${eliteName} Data Recalculated</div>
+<br />
+<content:airline />&nbsp;<span class="pri bld">${eliteName}</span> data associated with this Flight Report has been recalculated. <fmt:int value="${score.points}" />&nbsp;${pointName} have now been awared for this flight.<br />
+<br />
+</c:if>
 <c:if test="${eliteDataCleared}">
-<content:sysdata var="eliteName" name="econ.elite.name" />
 <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> data associated with this Flight Report has been cleared.<br />
 <br /></c:if>
 <content:filter roles="PIREP"><c:if test="${isApprove || isReject || isHold || isDeleted}">

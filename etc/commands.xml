@@ -1260,6 +1260,12 @@
 		<roles>PIREP</roles>
 	</command>
 	
+	<command id="eliterescore">
+		<name>Elite Rescore Flight Report</name>
+		<class>org.deltava.commands.pirep.PIREPEliteScoreCommand</class>
+		<roles>Operations</roles>
+	</command>
+
 	<command id="disposedpireps">
 		<name>Rejected Flight Reports</name>
 		<class>org.deltava.commands.pirep.DisposedFlightsCommand</class>
