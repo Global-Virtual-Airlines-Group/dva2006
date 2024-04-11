@@ -436,7 +436,8 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <content:sysdata var="distanceUnit" name="econ.elite.distance" />
 <tr>
  <td class="label eliteStatus top">Mileage Information</td>
- <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown as <fmt:elite className="bld" level="${eliteLevel}"  nameOnly="true" /><br />
+ <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown 
+ as <fmt:elite className="bld" level="${eliteLevel}" nameOnly="true" /><c:if test="${access.canEliteRescore}"> - <el:cmd url="eliterescore" link="${pirep}" className="pri bld">RECACLCULATE</el:cmd></c:if><br />
 <c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg is not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
 <hr />
 <span class="small"><c:forEach var="esEntry" items="${eliteScore.entries}" varStatus="esStatus">
