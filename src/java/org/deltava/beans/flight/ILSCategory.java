@@ -1,15 +1,15 @@
-// Copyright 2011, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * An enumeration for ILS categories. 
  * @author Luke
- * @version 10.5
+ * @version 11.2
  * @since 4.1
  */
 
 public enum ILSCategory {
-	NONE(2500, 3500), CATI(200, 2400), CATII(100, 1150), CATIIIa(50, 660), CATIIIb(25, 250), CATIIIc(10, 50);
+	NONE(1500, 3500), CATI(200, 2400), CATII(100, 1150), CATIIIa(50, 660), CATIIIb(25, 250), CATIIIc(10, 50);
 
 	private final int _ceiling;
 	private final int _viz;
