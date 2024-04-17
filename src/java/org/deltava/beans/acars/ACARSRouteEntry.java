@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -719,7 +719,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			warns.add(Warning.BANK);
 		if (Math.abs(_pitch) > 35)
 			warns.add(Warning.PITCH);
-		if (Math.abs(1 - _gForce) >= 0.333)
+		if ((Math.abs(1 - _gForce) >= 0.333) && !isFlagSet(ACARSFlags.ONGROUND))
 			warns.add(Warning.GFORCE);
 		if ((getGroundSpeed() > 35) && ((getPhase() == FlightPhase.TAXIIN) || (getPhase() == FlightPhase.TAXIOUT)))
 			warns.add(Warning.TAXISPEED);
