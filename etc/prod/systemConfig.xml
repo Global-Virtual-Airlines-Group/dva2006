@@ -266,7 +266,7 @@
 
 		<purge>
 			<messages type="Integer">96</messages>
-			<flights type="Integer">48</flights>
+			<flights type="Integer">80</flights>
 			<cons type="Integer">60</cons>
 			<acars_stats type="Integer">48</acars_stats>
 			<cmds type="Integer">10</cmds>
