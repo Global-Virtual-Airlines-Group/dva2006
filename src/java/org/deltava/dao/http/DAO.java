@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
  * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only
  * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 2.4
  */
 
@@ -156,10 +156,15 @@ abstract class DAO {
 	 * Returns the HTTP response code for this request.
 	 * @return the response code
 	 * @throws IOException if an error occured
+	 * @throws HTTPDAOException if the read times out, with stack dump disabled
 	 */
-	protected int getResponseCode() throws IOException {
+	protected int getResponseCode() throws IOException, HTTPDAOException {
 		checkConnected();
-		return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getResponseCode() : 0;
+		try {
+			return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getResponseCode() : 0;
+		} catch (SocketTimeoutException se) {
+			throw new HTTPDAOException(String.format("Socket timeout - %s (%dms)", _urlcon.getURL().toExternalForm(), Integer.valueOf(_urlcon.getReadTimeout())), 0) {{ setLogStackDump(false); }};
+		}
 	}
 
 	/**
