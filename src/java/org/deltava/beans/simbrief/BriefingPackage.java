@@ -24,6 +24,7 @@ public class BriefingPackage extends DatabaseBean {
 	private final PackageFormat _fmt;
 	private String _sbID;
 	private String _sbUserID;
+	private String _sbReqID;
 	private int _releaseVersion;
 	private Instant _createdOn;
 	private String _tailCode;
@@ -82,6 +83,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public String getSimBriefUserID() {
 		return _sbUserID;
+	}
+	
+	/**
+	 * Returns the SimBrief request ID.
+	 * @return the SimBrief request ID
+	 */
+	public String getRequestID() {
+		return _sbReqID;
 	}
 	
 	/**
@@ -346,6 +355,14 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setSimBriefUserID(String id) {
 		_sbUserID = id;
+	}
+	
+	/**
+	 * Updates the SimBrief request ID.
+	 * @param id the SimBrief request ID
+	 */
+	public void setRequestID(String id) {
+		_sbReqID = id;
 	}
 	
 	/**

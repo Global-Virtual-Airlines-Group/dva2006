@@ -62,6 +62,7 @@ public class SimBriefParser {
 		WeightUnit wt = EnumUtils.parse(WeightUnit.class, wtu.substring(0, wtu.length() - 1), WeightUnit.LB);
 		PackageFormat fmt = PackageFormat.parse(pe.getChildTextTrim("ofp_layout"), PackageFormat.LIDO); 
 		BriefingPackage sb = new BriefingPackage(StringUtils.parse(pe.getChildTextTrim("static_id"), 0), fmt);
+		sb.setRequestID(pe.getChildTextTrim("request_id"));
 		sb.setReleaseVersion(StringUtils.parse(XMLUtils.getChildText(re, "general", "release"), 0));
 		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
