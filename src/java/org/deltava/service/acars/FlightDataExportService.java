@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 10.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -50,7 +50,8 @@ public class FlightDataExportService extends WebService {
 				routeData.addAll(dao.getXACARSEntries(id));
 			else {
 				final AutopilotType apType = info.getAutopilotType();
-				dao.getRouteEntries(id, info.getArchived()).stream().forEach(re -> { re.setAutopilotType(apType); routeData.add(re); });
+				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
+				routeData.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(re -> { re.setAutopilotType(apType); });
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
