@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.OnlineNetwork;
 
@@ -10,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -21,10 +22,10 @@ public class Controller extends ConnectedUser {
 	 */
 	public static final String OBS_FREQ = "199.998";
    
-   private Facility _type = Facility.OBS;
-   private int _range;
+	private Facility _type = Facility.OBS;
+	private int _range;
    
-   private final SortedSet<RadioPosition> _freqs = new TreeSet<RadioPosition>();
+	private final SortedSet<RadioPosition> _freqs = new TreeSet<RadioPosition>();
 
     /**
      * Initializes the bean with a particular user ID.
@@ -67,10 +68,26 @@ public class Controller extends ConnectedUser {
     	return (_range <= 0) ? _type.getRange() : _range;
     }
     
+    /**
+     * Returns all of the radio positions for this Controller.
+     * @return a Collection of RadioPosition beans
+     */
     public Collection<RadioPosition> getRadios() {
     	return _freqs;
     }
     
+    /**
+     * Returns all of the radio frequencies for this Controller.
+     * @return a Collection of frequencies
+     */
+    public Collection<String> getFrequencies() {
+    	return _freqs.stream().map(RadioPosition::getFrequency).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+    
+    /**
+     * Adds a radio position for this Controller.
+     * @param rp a RadioPosition
+     */
     public void addPosition(RadioPosition rp) {
     	if (_freqs.isEmpty())
     		super.setPosition(rp.getLatitude(), rp.getLongitude());
@@ -173,7 +190,15 @@ public class Controller extends ConnectedUser {
 		buf.append(r.toString());
 		buf.append(")<br /><br />Facility Type: ");
 		buf.append(_type.getName());
-		buf.append("</span></div>");
+		buf.append("</span>");
+		if (!_freqs.isEmpty()) {
+			buf.append("<br />Frequenc");	
+			buf.append(_freqs.size() > 1 ? "ies" : "y");
+			buf.append(": ");
+			buf.append(StringUtils.listConcat(getFrequencies(), ", "));
+		}
+		
+		buf.append("</div>");
 		return buf.toString();
     }
 }
