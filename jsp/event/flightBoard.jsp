@@ -33,9 +33,14 @@ golgotha.local.setNetwork = function(combo) {
 <el:form action="flightboard.do" method="get" validate="return false">
 <view:table cmd="flightboard">
 <tr class="title">
- <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" /></td>
+ <td colspan="4" class="left">${netInfo.network} ONLINE DATA<span class="nophone"> - VALID AS OF <fmt:date date="${netInfo.validDate}" /></span></td>
  <td><el:cmd url="flightboardmap" linkID="${network}">FLIGHT MAP</el:cmd></td>
- <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${network}" /></td>
+ <td colspan="2" class="right">NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${network}" /></td>
+</tr>
+
+<!-- Pilot Data Header -->
+<tr class="title caps">
+ <td class="left" colspan="7"><fmt:int value="${netInfo.pilots.size()}" /> ONLINE PILOTS - ${netInfo.network}<span id="ctrToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pilot')">COLLAPSE</span></td>
 </tr>
 
 <!-- Pilot Title Bar -->
@@ -51,7 +56,7 @@ golgotha.local.setNetwork = function(combo) {
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${netInfo.pilots}">
-<view:row entry="${pilot}">
+<view:row entry="${pilot}" className="pilot">
  <td class="pri bld">${pilot.callsign}</td>
  <td>${pilot.ID}</td>
  <td class="bld">${pilot.name}</td>
@@ -61,23 +66,37 @@ golgotha.local.setNetwork = function(combo) {
  <td class="small bld">${pilot.groundSpeed} knots</td>
 </view:row>
 </c:forEach>
-<tr class="title left caps">
- <td colspan="7">ONLINE CONTROLLERS - ${netInfo.network}</td>
+
+<!-- Controller Data Header -->
+<tr class="title caps">
+ <td class="left" colspan="7"><fmt:int value="${netInfo.controllers.size()}" /> ONLINE CONTROLLERS - ${netInfo.network}<span id="ctrToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'ctr')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Controller Data -->
 <c:forEach var="ctr" items="${netInfo.controllers}">
-<view:row entry="${ctr}">
+<c:set var="freqs" value="${ctr.frequencies}" scope="page" />
+<view:row entry="${ctr}" className="ctr">
  <td class="pri">${ctr.callsign}</td>
  <td>${ctr.ID}</td>
  <td class="bld">${ctr.name}</td>
  <td class="sec">${ctr.facility.name}</td>
+<c:choose>
+<c:when test="${freqs.isEmpty()}">
+ <td class="ter bld">NOT SET</td>
+</c:when>
+<c:when test="${(freqs.size() > 1) && !ctr.isObserver()}">
+ <td class="bld" title="<fmt:list value="${freqs}" delim=", " />">${ctr.frequency} + <fmt:int value="${freqs.size() - 1}" /></td>
+</c:when>
+<c:otherwise>
  <td class="bld">${ctr.frequency}</td>
+</c:otherwise>
+</c:choose>
  <td class="nophone" colspan="2">${ctr.rating.name} (${ctr.rating})</td>
 </view:row>
 </c:forEach>
 </view:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
