@@ -1,4 +1,4 @@
-// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports needed to complete Accomplishments. 
  * @author Luke
- * @version 10.4
+ * @version 11.2
  * @since 7.2
  */
 
@@ -120,6 +120,9 @@ public class AccomplishmentAirportMapCommand extends AbstractCommand {
 			
 			// Map the missing airports to the accomplishments
 			accs.stream().filter(Accomplishment::getActive).forEach(a -> missingAirports.put(a.getComboAlias(), helper.missing(a).stream().map(ap -> new AirportMapEntry((Airport) ap)).collect(Collectors.toList())));
+			
+			// Remove completed Accomplishments
+			accs.removeIf(a -> (helper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET));
 			
 			// Save in request
 			ctx.setAttribute("accs", accs, REQUEST);
