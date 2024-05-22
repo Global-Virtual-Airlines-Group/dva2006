@@ -190,7 +190,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
  (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
  <td><fmt:distance value="${dst}" /></td>
  <td class="pri bld"><fmt:int value="${entry.flights}" /> (<fmt:dec value="${entry.flights * 100.0 / totalLegs}" />%)</td>
- <td class="bld"><fmt:int value="${entry.ACARSFlights}" /> (<fmt:dec value="${entry.ACARSFlights * 100.0 / entry.flights}" /> %)</td>
+ <td class="bld"><fmt:int value="${entry.ACARSFlights}" /> (<fmt:dec value="${entry.ACARSFlights * 100.0 / entry.flights}" />%)</td>
  <td class="nophone"><fmt:date date="${entry.lastFlight}"  fmt="d" /></td>
 </tr>
 </c:forEach>
