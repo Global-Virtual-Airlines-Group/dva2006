@@ -1,15 +1,15 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.json.*;
 
-import org.deltava.beans.flight.FlightReport;
-import org.deltava.beans.simbrief.Airframe;
+import org.deltava.beans.flight.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display SimBrief custom airframe data.
  * @author Luke
- * @version 10.4
+ * @version 11.2
  * @since 10.4
  */
 
@@ -35,7 +35,7 @@ public class CustomAirframeService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		Collection<Airframe> results = new ArrayList<Airframe>();
-		Collection<String> tailCodes = new LinkedHashSet<String>();
+		Collection<Airframe> frResults = new LinkedHashSet<Airframe>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -54,14 +54,15 @@ public class CustomAirframeService extends WebService {
 			// Load the airframes / tail codes
 			GetSimBriefPackages sbdao = new GetSimBriefPackages(con);
 			results.addAll(sbdao.getAirframes(fr.getEquipmentType(), fr.getAirline(), fr.getAuthorID()));
-			tailCodes.addAll(frdao.getTailCodes(fr.getEquipmentType(), fr.getAirline(), fr.getAuthorID()));
+			frResults.addAll(frdao.getAirframes(fr.getEquipmentType(), fr.getAirline(), fr.getAuthorID()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
 		
-		// Remove air frames without tail code
+		// Remove SimBrief air frames without tail code from a PIREP
+		Collection<String> tailCodes = frResults.stream().map(Airframe::getTailCode).collect(Collectors.toSet());
 		results.removeIf(a -> !tailCodes.contains(a.getTailCode()));
 		
 		// Create the JSON object for airframes with SB data
@@ -69,22 +70,25 @@ public class CustomAirframeService extends WebService {
 		for (Airframe a : results) {
 			JSONObject ao = new JSONObject();
 			ao.put("tailCode", a.getTailCode());
+			ao.put("sdk", a.getSDK());
 			ao.put("useCount", a.getUseCount());
 			ao.put("lastUsed", JSONUtils.formatDate(a.getLastUse()));
-			if (!StringUtils.isEmpty(a.getID())) {
+			if (!StringUtils.isEmpty(a.getSimBriefID())) {
 				ao.put("isCustom", true);
-				ao.put("id", a.getID());
+				ao.put("id", a.getSimBriefID());
 			}
 			
 			ja.put(ao);
-			tailCodes.remove(a.getTailCode());
+			frResults.removeIf(af -> af.getTailCode().equals(a.getTailCode())); // slow but these are small lists
 		}
 		
 		// Add tail codes
-		for (String tc : tailCodes) {
+		for (Airframe a : frResults) {
 			JSONObject ao = new JSONObject();
-			ao.put("tailCode", tc);
-			ao.put("useCount", 0);
+			ao.put("tailCode", a.getTailCode());
+			ao.put("sdk", a.getSDK());
+			ao.put("useCount", a.getUseCount());
+			ao.put("lastUsed", JSONUtils.formatDate(a.getLastUse()));
 			ja.put(ao);
 		}
 		
