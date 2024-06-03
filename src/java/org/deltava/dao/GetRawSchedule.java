@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object to load raw schedule entries and tail codes.
+ * A Data Access Object to load raw schedule entries.
  * @author Luke
  * @version 11.2
  * @since 8.0
