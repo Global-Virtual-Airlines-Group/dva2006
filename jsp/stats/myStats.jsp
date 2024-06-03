@@ -195,7 +195,33 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 </tr>
 </c:forEach>
 </el:table>
+<c:if test="${!empty airframes}">
+<!-- Airframe Data -->
+<el:table className="view">
+<tr class="title">
+ <td colspan="5" class="left caps">FREQUENTLY USED AIRCRAFT<span id="airFrameToggle" class="und nophone" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'airframe')">COLLAPSE</span></td>
+</tr>
+<tr class="title caps mid airframe">
+ <td>#</td>
+ <td>REGISTRATION</td>
+ <td>TYPE</td>
+ <td>USED</td>
+ <td class="nophone">LAST FLIGHT</td>
+</tr>
 
+<c:set var="entryNumber" value="0" scope="page" />
+<c:forEach var="entry" items="${airframes}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
+<tr class="mid airframe">
+ <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
+ <td class="pri bld">${entry.tailCode}</td>
+ <td class="bld">${entry.equipmentType}</td>
+ <td><fmt:int value="${entry.useCount}" /></td>
+ <td class="small pri nophone"><fmt:date date="${entry.lastUse}" fmt="d" /></td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
 <!-- Charts -->
 <c:set var="uiScheme" value="${empty user.UIScheme ? 'legacy' : user.UIScheme.toLowerCase().replace(' ', '_')}" scope="page" />
 <el:table className="form nophone">
