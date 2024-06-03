@@ -78,6 +78,9 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
 			ctx.setAttribute("eqLandingSortData", landingStats.stream().map(MyFlightStatsCommand::toJSON).collect(Collectors.toList()), REQUEST);
 			
+			// Load airframe statistics
+			ctx.setAttribute("airframes", frdao.getAirframes(null, null, userID), REQUEST);
+			
 			// Get popular route pairs
 			stdao.setQueryMax(30);
 			Collection<RouteStats> popRoutes = stdao.getPopularRoutes(userID);

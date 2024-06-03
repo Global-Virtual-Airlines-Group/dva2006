@@ -7,7 +7,6 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
-import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
@@ -37,10 +36,10 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<Airframe> getAirframes(String eqType, Airline a, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		boolean hasEQ = !StringUtils.isEmpty(eqType);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.TAILCODE, AP.SDK, COUNT(P.ID) AS CNT, MAX(P.DATE) AS LU FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.STATUS=?) AND (P.AIRLINE=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.TAILCODE, AP.SDK, COUNT(P.ID) AS CNT, MAX(P.DATE) AS LU FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.STATUS=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
+		if (a != null) sqlBuf.append("AND (P.AIRLINE=?) ");
 		if (pilotID != 0) sqlBuf.append("AND (P.PILOT_ID=?) ");
-		if (hasEQ) sqlBuf.append("AND (P.EQTYPE=?)" );
+		if (eqType != null) sqlBuf.append("AND (P.EQTYPE=?)" );
 		sqlBuf.append("GROUP BY AP.TAILCODE ORDER BY ");
 		sqlBuf.append((pilotID != 0) ? "CNT" : "LU");
 		sqlBuf.append(" DESC");
@@ -48,11 +47,11 @@ public class GetFlightReportACARS extends GetFlightReports {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
 			ps.setInt(++pos, FlightStatus.OK.ordinal());
-			ps.setString(++pos, a.getCode());
 			ps.setInt(++pos, 4);
 			ps.setInt(++pos, 9);
+			if (a != null) ps.setString(++pos, a.getCode());
 			if (pilotID != 0) ps.setInt(++pos, pilotID);
-			if (hasEQ) ps.setString(++pos, eqType);
+			if (eqType != null) ps.setString(++pos, eqType);
 			
 			List<Airframe> results = new ArrayList<Airframe>();
 			try (ResultSet rs = ps.executeQuery()) {
