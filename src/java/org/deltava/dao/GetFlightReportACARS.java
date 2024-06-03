@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,11 +7,12 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
@@ -26,34 +27,42 @@ public class GetFlightReportACARS extends GetFlightReports {
 	}
 	
 	/**
-	 * Returns all aircraft tail codes used for flights in a given Equipment Type and Airline.
+	 * Returns all airframes used for flights in a given Equipment Type and Airline. This will not have populated SimBrief custom airframe IDs.
 	 * @param eqType the Equipment Type
 	 * @param a the Airline
 	 * @param pilotID the Pilot database ID, or zero for all Pilots
 	 * @return a List of tail codes, order by descending popularity
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<String> getTailCodes(String eqType, Airline a, int pilotID) throws DAOException {
+	public List<Airframe> getAirframes(String eqType, Airline a, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AP.TAILCODE, COUNT(P.ID) AS CNT FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.EQTYPE=?) AND (P.STATUS=?) AND (P.AIRLINE=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
+		boolean hasEQ = !StringUtils.isEmpty(eqType);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.TAILCODE, AP.SDK, COUNT(P.ID) AS CNT, MAX(P.DATE) AS LU FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.STATUS=?) AND (P.AIRLINE=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
 		if (pilotID != 0) sqlBuf.append("AND (P.PILOT_ID=?) ");
+		if (hasEQ) sqlBuf.append("AND (P.EQTYPE=?)" );
 		sqlBuf.append("GROUP BY AP.TAILCODE ORDER BY ");
-		sqlBuf.append((pilotID != 0) ? "CNT" : "P.SUBMITTED");
+		sqlBuf.append((pilotID != 0) ? "CNT" : "LU");
 		sqlBuf.append(" DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setString(1, eqType);
-			ps.setInt(2, FlightStatus.OK.ordinal());
-			ps.setString(3, a.getCode());
-			ps.setInt(4, 4);
-			ps.setInt(5, 9);
-			if (pilotID != 0) ps.setInt(6, pilotID);
+			int pos = 0;
+			ps.setInt(++pos, FlightStatus.OK.ordinal());
+			ps.setString(++pos, a.getCode());
+			ps.setInt(++pos, 4);
+			ps.setInt(++pos, 9);
+			if (pilotID != 0) ps.setInt(++pos, pilotID);
+			if (hasEQ) ps.setString(++pos, eqType);
 			
-			List<String> results = new ArrayList<String>();
+			List<Airframe> results = new ArrayList<Airframe>();
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					results.add(rs.getString(1));
+				while (rs.next()) {
+					Airframe af = new Airframe(rs.getString(1), rs.getString(2), null);
+					af.setSDK(rs.getString(3));
+					af.setUseCount(rs.getInt(4));
+					af.setLastUse(toInstant(rs.getTimestamp(5)));
+					results.add(af);
+				}
 			}
 			
 			return results;

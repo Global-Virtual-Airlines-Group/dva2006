@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.flight.Airframe;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.simbrief.*;
 
@@ -62,17 +63,20 @@ public class GetSimBriefPackages extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Airframe> getAirframes(String eqType, Airline a, int pilotID) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT SB.TAILCODE, MAX(SB.AIRFRAME_ID), COUNT(SB.ID), MAX(SB.CREATED) FROM PIREP_SIMBRIEF SB, PIREPS P WHERE (P.ID=SB.ID) AND (P.PILOT_ID=?) AND (P.EQTYPE=?) AND (P.AIRLINE=?) GROUP BY SB.TAILCODE ORDER BY SB.CREATED DESC")) {
-			ps.setInt(1, pilotID);
-			ps.setString(2, eqType);
-			ps.setString(3, a.getCode());
+		try (PreparedStatement ps = prepare("SELECT SB.TAILCODE, MAX(SB.AIRFRAME_ID), IFNULL(AP.SDK,?), COUNT(SB.ID), MAX(SB.CREATED) FROM PIREP_SIMBRIEF SB, PIREPS P LEFT JOIN ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.ID=SB.ID) AND (P.PILOT_ID=?) "
+			+ "AND (P.EQTYPE=?) AND (P.AIRLINE=?) GROUP BY SB.TAILCODE ORDER BY SB.CREATED DESC")) {
+			ps.setString(1, "Generic");
+			ps.setInt(2, pilotID);
+			ps.setString(3, eqType);
+			ps.setString(4, a.getCode());
 			
 			List<Airframe> results = new ArrayList<Airframe>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Airframe af = new Airframe(rs.getString(1), rs.getString(2));
-					af.setUseCount(rs.getInt(3));
-					af.setLastUse(toInstant(rs.getTimestamp(4)));
+					Airframe af = new Airframe(eqType, rs.getString(1), rs.getString(2));
+					af.setSDK(rs.getString(3));
+					af.setUseCount(rs.getInt(4));
+					af.setLastUse(toInstant(rs.getTimestamp(5)));
 					results.add(af);
 				}
 			}
