@@ -3,7 +3,7 @@ package org.deltava.beans.flight;
 
 import java.time.Instant;
 
-import org.deltava.beans.UseCount;
+import org.deltava.beans.*;
 
 /**
  * A bean to store airframe information.
@@ -12,7 +12,7 @@ import org.deltava.beans.UseCount;
  * @since 10.4
  */
 
-public class Airframe implements java.io.Serializable, UseCount, Comparable<Airframe> {
+public class Airframe implements java.io.Serializable, UseCount, ComboAlias, Comparable<Airframe> {
 	
 	private final String _eqType;
 	private final String _tailCode;
@@ -102,6 +102,23 @@ public class Airframe implements java.io.Serializable, UseCount, Comparable<Airf
 	 */
 	public void setLastUse(Instant dt) {
 		_lastUse = dt;
+	}
+	
+	@Override
+	public String getComboName() {
+		StringBuilder buf = new StringBuilder(_tailCode);
+		if (_useCount > 0) {
+			buf.append(" (");
+			buf.append(_useCount);
+			buf.append(" flights)");
+		}
+		
+		return buf.toString();
+	}
+	
+	@Override
+	public String getComboAlias() {
+		return _tailCode;
 	}
 	
 	@Override
