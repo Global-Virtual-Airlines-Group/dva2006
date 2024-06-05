@@ -51,7 +51,7 @@ golgotha.simbrief.loadAirframes = function() {
 		cb.options.length = js.length + 1;
 		for (var x = 0; x < js.length; x++) {
 			const ac = js[x];
-			cb.options[x + 1] = new Option(ac.tailCode);
+			cb.options[x + 1] = new Option(ac.tailCode + ' (' + ac.useCount + ' flights)', ac.tailCode);
 			golgotha.simbrief.airframes[ac.tailCode] = ac;
 		}
 
