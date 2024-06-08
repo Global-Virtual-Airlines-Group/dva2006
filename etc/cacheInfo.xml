@@ -4,6 +4,7 @@
 	<cache id="UserData" remote="true" expires="4d" />
 	<cache id="Pilots" remote="true" expires="2d" />
 	<cache id="PilotExternalID" max="64" expires="4h" />
+	<cache id="Logbook" expires="10m" remote="true" />
 
 	<!-- Image caches -->
 	<cache id="Signature" max="640" />

@@ -112,7 +112,9 @@ public class SetFlightReport extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		} finally {
-			CacheManager.invalidate("Pilots", Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT)));
+			Integer pKey = Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT));
+			CacheManager.invalidate("Pilots", pKey);
+			CacheManager.invalidate("Logbook", pKey);
 			CacheManager.invalidate("OnTimeRoute", RouteOnTime.createKey(pirep, db));
 		}
 	}
