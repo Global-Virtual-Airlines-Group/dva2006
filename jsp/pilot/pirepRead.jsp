@@ -48,6 +48,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.loadLogbook = function() {
+	const d = new Date();
 	const xreq = new XMLHttpRequest();
 	xreq.timeout = 8500;
 	xreq.open('get', 'logpreload.ws?id=${pirep.authorID}', true);
@@ -57,9 +58,10 @@ golgotha.local.loadLogbook = function() {
 			console.log('Error ' + xreq.status + ' preloading Log Book');
 			return false;
 		}
-		
-		const isHit = (xreq.getResponeHeader('X-Cache-Hit') == '1');
-		console.log('Preloaded ' + xreq.getResponseHeader('X-Logbook-Size') + ' Flights, hit=' + isHit);
+
+		const d2 = new Date(); const ms = d2.getTime() - d.getTime();
+		const isHit = (xreq.getResponseHeader('X-Cache-Hit') == '1');
+		console.log('Preloaded ' + xreq.getResponseHeader('X-Logbook-Size') + ' Flights, hit=' + isHit + ' (' + ms + 'ms)');
 		return true;
 	};
 
@@ -67,7 +69,7 @@ golgotha.local.loadLogbook = function() {
 	return true;
 };
 
-golgotha.onDOMReady(golgotha.local.loadLogBook);
+golgotha.onDOMReady(golgotha.local.loadLogbook);
 <c:if test="${hasDelay}">
 golgotha.local.enableButtons = function() {
 	const btns = golgotha.util.getElementsByClass('timedButton','input',document.forms[0]);
