@@ -1,5 +1,5 @@
 // Copyright 2011, 2015, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service.stats;
+package org.deltava.service.logbook;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -13,7 +13,6 @@ import org.deltava.beans.flight.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
 import org.deltava.util.StringUtils;
 
 /**
