@@ -46,6 +46,28 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.local.loadLogbook = function() {
+	const xreq = new XMLHttpRequest();
+	xreq.timeout = 8500;
+	xreq.open('get', 'logpreload.ws?id=${pirep.authorID}', true);
+	xreq.onreadystatechange = function() {
+		if (xreq.readyState != 4) return false;
+		if (xreq.status != 200) {
+			console.log('Error ' + xreq.status + ' preloading Log Book');
+			return false;
+		}
+		
+		const isHit = (xreq.getResponeHeader('X-Cache-Hit') == '1');
+		console.log('Preloaded ' + xreq.getResponseHeader('X-Logbook-Size') + ' Flights, hit=' + isHit);
+		return true;
+	};
+
+	xreq.send(null);
+	return true;
+};
+
+golgotha.onDOMReady(golgotha.local.loadLogBook);
 <c:if test="${hasDelay}">
 golgotha.local.enableButtons = function() {
 	const btns = golgotha.util.getElementsByClass('timedButton','input',document.forms[0]);
@@ -70,7 +92,7 @@ golgotha.local.zoomTo = function(lat, lng, zoom) {
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
-</content:filter> 
+</content:filter>
 </script></c:if>
 <c:if test="${!empty eliteLevel}">
 <style type="text/css">

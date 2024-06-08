@@ -62,7 +62,7 @@
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
-	<service id="mylogbook" class="org.deltava.service.stats.LogbookService" />
+	<service id="mylogbook" class="org.deltava.service.logbook.LogbookService" />
 	<service id="allstats" class="org.deltava.service.stats.AllFlightsService" />
 	<service id="bwstats" class="org.deltava.service.stats.BandwidthInfoService" />
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
@@ -75,6 +75,7 @@
 	<service id="loadstats" class="org.deltava.service.stats.LoadStatsService" />
 	<service id="lfmodel" class="org.deltava.service.stats.LoadModelService" />
 	<service id="otstats" class="org.deltava.service.stats.OnTimeStatsService" />
+	<service id="logpreload" class="org.deltava.service.logbook.LogbookPreloadService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
