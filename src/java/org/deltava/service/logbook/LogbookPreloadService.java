@@ -58,14 +58,11 @@ public class LogbookPreloadService extends WebService {
 				return SC_OK;
 			}
 			
-			// Load the log book
+			// Load the log book and add to cache
 			GetFlightReports rdao = new GetFlightReports(con);
 			List<FlightReport> pireps = rdao.getByPilot(p.getID(), new LogbookSearchCriteria(null, ctx.getDB()));
-			rdao.loadCaptEQTypes(p.getID(), data, ctx.getDB());
-			
-			// Add to cache
-			data = new CacheableList<FlightReport>(p.cacheKey(), pireps);
-			_cache.add(data);
+			rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
+			_cache.add(new CacheableList<FlightReport>(p.cacheKey(), pireps));
 			
 			// Set response data
 			ctx.setHeader("X-Cache-Hit", 0);
