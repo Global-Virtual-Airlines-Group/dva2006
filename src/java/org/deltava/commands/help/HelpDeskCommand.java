@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2015, 2016, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.RoleUtils;
 /**
  * A Web Site Command to display the Help Desk.
  * @author Luke
- * @version 9.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class HelpDeskCommand extends AbstractViewCommand {
 			myIssues = myIssues.stream().filter(i -> (i.getStatus() != IssueStatus.CLOSED)).collect(Collectors.toList());
 			
 			// Add Active issues
-			Collection<Issue> allIssues = new HashSet<Issue>(myIssues);
+			Collection<Issue> allIssues = new LinkedHashSet<Issue>(myIssues);
 			if (RoleUtils.hasAccess(ctx.getRoles(), ADMIN_ROLES)) {
 				ViewContext<Issue> vctx = initView(ctx, Issue.class);
 				idao.setQueryStart(vctx.getStart());
