@@ -1,5 +1,5 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service.stats;
+package org.deltava.service.logbook;
 
 import java.time.Instant;
 
