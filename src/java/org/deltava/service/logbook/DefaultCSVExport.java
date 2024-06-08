@@ -1,8 +1,7 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service.stats;
+package org.deltava.service.logbook;
 
 import org.deltava.beans.flight.FlightReport;
-
 import org.deltava.util.StringUtils;
 
 /**
