@@ -27,19 +27,21 @@ import org.deltava.mail.*;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.cache.CacheManager;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
 public class PIREPDisposalCommand extends AbstractCommand {
 
 	private static final Logger log = LogManager.getLogger(PIREPDisposalCommand.class);
+	
+	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
 
 	/**
 	 * Executes the command.
@@ -169,8 +171,16 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Load the flights for accomplishment purposes
 			if (op == FlightStatus.OK) {
-				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
-				rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
+				CacheableCollection<FlightReport> pireps = _cache.get(p.cacheKey());
+				if (pireps == null) {
+					Collection<FlightReport> data = rdao.getByPilot(p.getID(), null);
+					rdao.loadCaptEQTypes(p.getID(), data, ctx.getDB());
+					
+					// Add to cache
+					pireps = new CacheableList<FlightReport>(p.cacheKey(), data);
+					_cache.add(pireps);
+				}
+				
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(acchelper::add);
 				NewRelic.addCustomParameter("pilot.flights", Integer.valueOf(pireps.size()));
