@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,15 +21,18 @@ import org.deltava.mail.*;
 import org.deltava.security.command.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.*;
 
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
 public class CheckRidePIREPApprovalCommand extends AbstractCommand {
+	
+	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
 
 	/**
 	 * Executes the command.
@@ -130,8 +133,14 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Load the flights for accomplishment purposes
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			if (fr.getStatus() == FlightStatus.OK) {
-				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
-				rdao.loadCaptEQTypes(p.getID(), flights, ctx.getDB());
+				CacheableCollection<FlightReport> flights = _cache.get(p.cacheKey());
+				if (flights == null) {
+					Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
+					rdao.loadCaptEQTypes(p.getID(), pireps, ctx.getDB());
+					flights = new CacheableList<FlightReport>(p.cacheKey(), pireps);
+					_cache.add(flights);
+				}
+				
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				flights.forEach(acchelper::add);
 			
