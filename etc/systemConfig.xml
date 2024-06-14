@@ -224,7 +224,7 @@
 
 	<!-- Redis data configuration -->
 	<redis>
-		<addr>/run/redis/redis.sock</addr>
+		<addr>/run/valkey/valkey.sock</addr>
 		<port type="Integer">6379</port>
 		<db type="Integer">0</db>
 	</redis>
