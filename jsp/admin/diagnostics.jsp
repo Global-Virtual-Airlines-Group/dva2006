@@ -9,6 +9,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="discordEnabled" name="discord.bot" />
 <head>
 <title><content:airline /> System Diagnostics</title>
 <content:css name="main" />
@@ -119,6 +120,12 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
 <fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec<br />
 Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
+</tr>
+</c:if>
+<c:if test="${discordEnabled}">
+<tr>
+ <td class="label">Discord Status</td>
+ <td class="data"><span class="pri bld">BOT ENABLED</span> - <span class="pri ${discordOK ? 'ter' : 'error'}">${discordOK ? 'OPERATIONAL' : 'NOT INITIALIZED'}</span></td>
 </tr>
 </c:if>
 <tr>
