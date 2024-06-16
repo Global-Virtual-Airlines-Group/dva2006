@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.beans.stats.HTTPCompressionInfo;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
+import org.deltava.discord.Bot;
 import org.deltava.taskman.TaskScheduler;
 
 import org.deltava.util.*;
@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -129,6 +129,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
 		ctx.setAttribute("httpCompression", HTTPCompressionInfo.getInfo(), REQUEST);
 		ctx.setAttribute("redisStatus", RedisUtils.getStatus(), REQUEST);
+		
+		// Get Discord connection
+		ctx.setAttribute("discordOK", Boolean.valueOf(Bot.isInitialized()), REQUEST);
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);
