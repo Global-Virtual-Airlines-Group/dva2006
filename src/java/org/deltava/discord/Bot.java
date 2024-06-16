@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import org.gvagroup.jdbc.*;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 11.1
+ * @version 11.2
  * @since 11.0
  */
 
@@ -154,6 +154,7 @@ public class Bot {
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted waiting for threads to terminate");
     	} finally {
+    		_srv = null;
     		_disconnectLock.release();
     	}
     }
@@ -202,11 +203,23 @@ public class Bot {
     }
     
     /**
+     * Checks if the Discord bot has been initialized.
+     * @return TRUE if initialized and connected to the Discord server, otherwise FALSE
+     */
+    public static boolean isInitialized() {
+    	return (_srv != null);
+    }
+    
+    /**
      * Removes a Pilot's Discord roles.
      * @param p the Pilot
      */
     public static void resetRoles(Pilot p) {
     	if (!p.hasID(ExternalID.DISCORD)) return;
+    	if (!isInitialized()) {
+    		log.error("Bot not initialized - Cannot remove roles from %s", p.getName());
+    		return;
+    	}
     	
     	// Lookup user
     	try {
