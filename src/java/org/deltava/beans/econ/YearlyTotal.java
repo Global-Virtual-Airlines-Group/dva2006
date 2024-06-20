@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store yearly Pilot Elite status totals.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 9.2
  */
 
@@ -146,11 +146,11 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 		if ((el == null) || matches(el))
 			return UpgradeReason.NONE;
 		
-		if (!sc.getScoreOnly() && ((_legs + 1) >= el.getLegs()) && (_legs < el.getLegs())) 
+		if (!sc.getScoreOnly() && ((getLegs() + 1) >= el.getLegs()) && (_legs < el.getLegs())) 
 			return UpgradeReason.LEGS;
-		if (!sc.getScoreOnly() && ((_distance + sc.getDistance()) >= el.getDistance()) && (_distance < el.getDistance()))
+		if (!sc.getScoreOnly() && ((getDistance() + sc.getDistance()) >= el.getDistance()) && (_distance < el.getDistance()))
 			return UpgradeReason.DISTANCE;
-		if ((_pts + sc.getPoints()) >= el.getPoints() && (_pts < el.getPoints()) && (el.getPoints() > 0))
+		if ((getPoints() + sc.getPoints()) >= el.getPoints() && (_pts < el.getPoints()) && (el.getPoints() > 0))
 			return UpgradeReason.UNITS;
 
 		return UpgradeReason.NONE;
