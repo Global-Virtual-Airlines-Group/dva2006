@@ -24,6 +24,15 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	public RolloverYearlyTotal(int year, int pilotID) {
 		super(year, pilotID);
 	}
+	
+	/**
+	 * Converts a YearlyTotal bean to one supporting rollover.
+	 * @param yt a YearlyTotal bean
+	 */
+	public RolloverYearlyTotal(YearlyTotal yt) {
+		super(yt.getYear(), yt.getID());
+		addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
+	}
 
 	@Override
 	public int getLegs() {
