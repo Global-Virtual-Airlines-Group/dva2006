@@ -1,6 +1,8 @@
 // Copyright 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
+import java.time.LocalDate;
+
 /**
  * A bean to store yearly totals with rollover amounts.
  * @author Luke
@@ -58,6 +60,25 @@ public class RolloverYearlyTotal extends YearlyTotal {
 		_legs += legs;
 		_distance += distance;
 		_pts += pts;
+	}
+	
+	/**
+	 * Projects year to date totals over a full year. This will have no effect on totals for a prior year. This calls the superclass
+	 * to extrapolate earned totals across the year, and then adds the previous year's rollover totals to reflect the fact that they
+	 * are one-time totals, not to be extrapolated across the entire year.
+	 * @param ld the date to project from
+	 * @return a YearlyTotal bean
+	 */
+	@Override
+	public YearlyTotal adjust(LocalDate ld) {
+		YearlyTotal yt = super.adjust(ld);
+		if (yt == this) return yt;
+		
+		// Add rollovers
+		RolloverYearlyTotal rt = new RolloverYearlyTotal(yt.getYear(), getID());
+		rt.addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
+		rt.addRollover(_legs, _distance, _pts);
+		return rt;
 	}
 
 	/**
