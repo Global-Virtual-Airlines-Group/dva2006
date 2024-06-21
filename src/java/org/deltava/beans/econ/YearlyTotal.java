@@ -110,7 +110,7 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 */
 	public boolean matches(EliteLevel el) {
 		if (el == null) return false;
-		return ((el.getLegs() > 0) && (_legs >= el.getLegs())) || ((el.getDistance() > 0) && (_distance >= el.getDistance())) || ((el.getPoints() > 0) && (_pts >= el.getPoints()));
+		return ((el.getLegs() > 0) && (getLegs() >= el.getLegs())) || ((el.getDistance() > 0) && (getDistance() >= el.getDistance())) || ((el.getPoints() > 0) && (getPoints() >= el.getPoints()));
 	}
 	
 	/**
@@ -163,6 +163,6 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	
 	@Override
 	public String toString() {
-		return "[" + _legs + "/" + _distance + "/" + _pts + "]";
+		return "[" + getLegs() + "/" + getDistance() + "/" + getPoints() + "]";
 	}
 }
