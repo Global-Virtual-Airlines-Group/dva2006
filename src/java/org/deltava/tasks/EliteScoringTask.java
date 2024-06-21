@@ -6,6 +6,7 @@ import static java.util.concurrent.TimeUnit.*;
 import java.io.*;
 import java.util.*;
 import java.time.*;
+import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 9.2
  */
 
@@ -41,7 +42,8 @@ public class EliteScoringTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Determine lookback interval
-		log.info("Scoring flights approved in the past 31 days");
+		int daysBack = Math.max(31, LocalDate.now().get(ChronoField.DAY_OF_YEAR));
+		log.info("Scoring flights approved in the past {} days", Integer.valueOf(daysBack));
 		
 		Collection<Integer> pilotIDs = new HashSet<Integer>();
 		try {
@@ -62,7 +64,7 @@ public class EliteScoringTask extends Task {
 			// Get the Flight Reports
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
-			frsdao.setDayFilter(31);
+			frsdao.setDayFilter(daysBack);
 			Collection<Integer> IDs = frsdao.getUnscoredFlights();
 			log.warn("Scoring {} flights", Integer.valueOf(IDs.size()));
 			
