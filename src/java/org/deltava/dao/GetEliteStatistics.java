@@ -137,13 +137,16 @@ public class GetEliteStatistics extends EliteDAO {
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						int year = rs.getInt(1);
-						YearlyTotal yt = totals.get(Integer.valueOf(year));
+						YearlyTotal yt = totals.get(Integer.valueOf(year)); RolloverYearlyTotal ryt = null;
 						if (yt == null) { // Right after rollover, we may have rollover miles/legs but no logged flights yet
-							yt = new YearlyTotal(year, pilotID);
-							totals.put(Integer.valueOf(year), yt);
+							ryt = new RolloverYearlyTotal(year, pilotID);
+							totals.put(Integer.valueOf(year), ryt);
+						} else {
+							ryt = new RolloverYearlyTotal(yt);
+							totals.put(Integer.valueOf(year), ryt);
 						}
 						
-						yt.addLegs(rs.getInt(2), rs.getInt(3), 0);
+						ryt.addRollover(rs.getInt(2), rs.getInt(3), 0);
 					}
 				}
 			}
