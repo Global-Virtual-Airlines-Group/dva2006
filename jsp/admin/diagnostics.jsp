@@ -125,7 +125,7 @@ Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize va
 <c:if test="${discordEnabled}">
 <tr>
  <td class="label">Discord Status</td>
- <td class="data"><span class="pri bld">BOT ENABLED</span> - <span class="pri ${discordOK ? 'ter' : 'error'}">${discordOK ? 'OPERATIONAL' : 'NOT INITIALIZED'}</span></td>
+ <td class="data"><span class="pri bld">BOT ENABLED</span> - <span class="bld ${discordOK ? 'ter' : 'error'}">${discordOK ? 'OPERATIONAL' : 'NOT INITIALIZED'}</span></td>
 </tr>
 </c:if>
 <tr>
