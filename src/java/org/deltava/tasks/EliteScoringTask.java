@@ -9,6 +9,8 @@ import java.time.*;
 import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
+import org.apache.logging.log4j.Level;
+
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
@@ -156,12 +158,15 @@ public class EliteScoringTask extends Task {
 					upd.setDescription(String.format("Reached %s for %d ( %s )", nextLevel.getName(), Integer.valueOf(yr), updR.getDescription()));
 					updwdao.write(upd, ctx.getDB());
 					tt.mark("upgrade");
+				} else if (nextLevel != null) {
+					YearlyTotal nlt = new YearlyTotal(nextLevel.getYear(), p.getID());
+					nlt.addLegs(nextLevel.getLegs(), nextLevel.getDistance(), nextLevel.getPoints());
+					log.warn("{} does not reach {} - {} < {}", p.getName(), nextLevel.getName(), total, nlt);
 				}
 				
 				ctx.commitTX();
 				i.remove();
-				if (tt.stop() > 1250)
-					log.warn("Scored Flight Report #{} - {} pts {}", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), tt);
+				log.log((tt.stop() > 1250) ? Level.WARN : Level.INFO, "Scored Flight Report #{} - {} pts {}", Integer.valueOf(fr.getID()), Integer.valueOf(sc.getPoints()), tt);
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
