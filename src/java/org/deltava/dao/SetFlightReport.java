@@ -76,6 +76,8 @@ public class SetFlightReport extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
+			YearlyTotal yt = new YearlyTotal(EliteScorer.getStatsYear(fr.getDate()), fr.getAuthorID());
+			CacheManager.invalidate("EliteYearlyTotal", yt.cacheKey());
 			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(fr.getAuthorID()));
 		}
 	}
@@ -377,6 +379,8 @@ public class SetFlightReport extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		} finally {
+			YearlyTotal yt = new YearlyTotal(sc.getYear(), sc.getAuthorID());
+			CacheManager.invalidate("EliteYearlyTotal", yt.cacheKey());
 			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(sc.getAuthorID()));
 		}
 	}
