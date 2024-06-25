@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 10.3
  */
 
@@ -40,7 +40,7 @@ public class GetSimBrief extends DAO {
 	/*
 	 * Downloads the content in the URL.
 	 */
-	private String download() throws IOException {
+	private String download() throws IOException, HTTPDAOException {
 		try (InputStream in = getIn(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			byte[] buffer = new byte[16384];
 			int bytesRead = in.read(buffer);

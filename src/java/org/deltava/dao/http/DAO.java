@@ -180,9 +180,10 @@ abstract class DAO {
 	/**
 	 * Retrieves an input stream to the URL.
 	 * @return an InputStream to the data
+	 * @throws HTTPDAOException if the read times out, with stack dump disabled
 	 * @throws IOException if an error occurs
 	 */
-	protected InputStream getIn() throws IOException {
+	protected InputStream getIn() throws IOException, HTTPDAOException {
 		checkConnected();
 
 		try {
@@ -203,6 +204,8 @@ abstract class DAO {
 			};
 			
 			return new CountingInputStream(is, _stats::updateTotal);
+		} catch (SocketTimeoutException se) {
+			throw new HTTPDAOException(String.format("Socket timeout - %s (%dms)", _urlcon.getURL().toExternalForm(), Integer.valueOf(_urlcon.getReadTimeout())), 0) {{ setLogStackDump(false); }};
 		} catch (IOException ie) {
 			if (_getErrorStream)
 				return (_urlcon instanceof HttpURLConnection urlcon) ? urlcon.getErrorStream() : null;
