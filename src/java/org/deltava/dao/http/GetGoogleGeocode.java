@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2019, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -20,13 +20,13 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
  * URL is https://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 2.3
  */
 
 public class GetGoogleGeocode extends DAO {
 	
-	private InputStream getStream(GeoLocation loc) throws IOException {
+	private InputStream getStream(GeoLocation loc) throws IOException, HTTPDAOException {
 		setCompression(Compression.GZIP);
 		StringBuilder buf = new StringBuilder("https://maps.googleapis.com/maps/api/geocode/xml?sensor=false&oe=utf-8&key=");
 		buf.append(SystemData.get("security.key.google"));
