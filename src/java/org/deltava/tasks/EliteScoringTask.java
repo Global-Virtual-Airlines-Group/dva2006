@@ -161,7 +161,7 @@ public class EliteScoringTask extends Task {
 				} else if (nextLevel != null) {
 					YearlyTotal nlt = new YearlyTotal(nextLevel.getYear(), p.getID());
 					nlt.addLegs(nextLevel.getLegs(), nextLevel.getDistance(), nextLevel.getPoints());
-					log.warn("{} does not reach {} - {} < {}", p.getName(), nextLevel.getName(), total, nlt);
+					log.info("{} does not reach {} - {} < {}", p.getName(), nextLevel.getName(), total, nlt);
 				}
 				
 				ctx.commitTX();
