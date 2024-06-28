@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -12,15 +12,18 @@ import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.cache.*;
 
 /**
  * A Web Site Command to check eligibility for particular Accomplishments.
  * @author Luke
- * @version 9.1
+ * @version 11.2
  * @since 3.2
  */
 
 public class AccomplishmentEligibilityCommand extends AbstractCommand {
+	
+	private static final Cache<CacheableCollection<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "Logbook");
 
 	public class EligibilityMessage implements ViewEntry {
 		private final boolean _isOK;
@@ -52,7 +55,7 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 		}
 		
 		public Class<?> getMissingClass() {
-			return _missing.isEmpty() ? null : _missing.get(0).getClass();
+			return _missing.isEmpty() ? null : _missing.getFirst().getClass();
 		}
 		
 		public Collection<?> getMissing() {
@@ -92,10 +95,18 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
 			
 			// Load the Pilot's Flight Reports
-			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
-			frdao.getCaptEQType(flights);
-			flights.forEach(fr -> helper.add(fr));
+			CacheableCollection<FlightReport> flights = _cache.get(p.cacheKey());
+			if (flights == null) {
+				GetFlightReports frdao = new GetFlightReports(con);	
+				Collection<FlightReport> data = frdao.getByPilot(p.getID(), null);
+				frdao.loadCaptEQTypes(p.getID(), data, ctx.getDB());
+				
+				// Add to cache
+				flights = new CacheableList<FlightReport>(p.cacheKey(), data);
+				_cache.add(flights);
+			}
+			
+			flights.forEach(helper::add);
 			
 			// Load the Pilot's dispatch connections
 			GetACARSLog acdao = new GetACARSLog(con);
