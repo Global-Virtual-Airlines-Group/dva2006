@@ -54,7 +54,8 @@ public class WindowsVersionTag extends TagSupport {
 			case "10.0":
 			case "11.0":
 				String[] vers = s.split("[[.]]");
-				out.print("10.");
+				out.print(vers[0]);
+				out.print('.');
 				out.print(vers[1]);
 				if (vers.length > 2) {
 					out.print(" (Build ");
