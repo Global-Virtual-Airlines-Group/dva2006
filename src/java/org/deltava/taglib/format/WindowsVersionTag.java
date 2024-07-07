@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to format Microsoft Windows version strings.
  * @author Luke
- * @version 7.3
+ * @version 11.2
  * @since 7.3
  */
 
@@ -52,6 +52,7 @@ public class WindowsVersionTag extends TagSupport {
 			String ver = s.substring(0, pos);
 			switch (ver) {
 			case "10.0":
+			case "11.0":
 				String[] vers = s.split("[[.]]");
 				out.print("10.");
 				out.print(vers[1]);
