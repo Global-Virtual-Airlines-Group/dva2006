@@ -35,10 +35,9 @@ public class HelpDeskCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the DAO and my issue list
+			// Get the DAO and my active issue list
 			GetHelp idao = new GetHelp(con);
 			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false, true);
-			myIssues.removeIf(i -> (i.getStatus() == IssueStatus.CLOSED));
 			
 			// Add Active issues
 			Collection<Issue> allIssues = new LinkedHashSet<Issue>(myIssues);
