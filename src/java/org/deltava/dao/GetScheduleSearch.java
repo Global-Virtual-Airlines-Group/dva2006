@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
@@ -201,7 +201,7 @@ public class GetScheduleSearch extends GetSchedule {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ScheduleEntry> search(ScheduleSearchCriteria ssc) throws DAOException {
-		return (ssc.getFlightsPerRoute() > 0) ? searchRoutePairs(ssc) : searchRoutes(ssc);
+		return (ssc.getFlightsPerRoute() > -1) ? searchRoutePairs(ssc) : searchRoutes(ssc);
 	}
 
 	private List<ScheduleEntry> searchRoutes(ScheduleSearchCriteria ssc) throws DAOException {
