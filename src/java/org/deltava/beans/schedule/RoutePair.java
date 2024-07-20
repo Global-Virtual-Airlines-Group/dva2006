@@ -1,4 +1,4 @@
-// Copyright 2009, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.flight.FlightType;
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 10.6
+ * @version 11.2
  * @since 2.6
  */
 
@@ -31,9 +31,27 @@ public interface RoutePair {
 		public Airport getAirportD() {
 			return _aD;
 		}
+		
 		@Override
 		public Airport getAirportA() {
 			return _aA;
+		}
+		
+		@Override
+		public int hashCode() {
+			return toString().hashCode();
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder buf = new StringBuilder("[");
+			if (_aD != null)
+				buf.append(_aD.getICAO());
+			buf.append('-');
+			if (_aA != null)
+				buf.append(_aA.getICAO());
+			buf.append(']');
+			return buf.toString();
 		}
 	}
 
