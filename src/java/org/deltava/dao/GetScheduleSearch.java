@@ -292,12 +292,9 @@ public class GetScheduleSearch extends GetSchedule {
 				ps.setString(++ofs, p);
 			
 			// Execute the query
-			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					RoutePair fr = new ScheduleRoute(al, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
-					rts.add(fr);
-				}
+				while (rs.next())
+					rts.add(RoutePair.of(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2))));
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -322,7 +319,7 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 
 		buf.append(" LIMIT ");
-		buf.append(ssc.getFlightsPerRoute());
+		buf.append(Math.max(1, ssc.getFlightsPerRoute()));
 
 		// Prepare the satement and execute the query
 		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
