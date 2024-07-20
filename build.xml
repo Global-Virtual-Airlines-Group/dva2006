@@ -361,7 +361,7 @@
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF" port="${webapp.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${webapp.dev.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -371,7 +371,7 @@
 		</scp>
 		
 		<!-- Upload the common JAR files to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}" port="${webapp.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${webapp.dev.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -381,7 +381,7 @@
 		</scp>
 
 		<!-- Upload the JAR files to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib" port="${webapp.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${webapp.dev.key}">
 	 		<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 	 			<include name="golgotha_web.jar" />
@@ -394,7 +394,7 @@
 		</scp>
 		
 		<!-- Upload the config file to the app server -->
-		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc" port="${webapp.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${webapp.dev.key}">
 			<fileset dir="etc" includes="*.*">
 				<exclude name="log4j2.xml" />
 				<exclude name="log4j2-test.xml" />
@@ -407,7 +407,7 @@
 		</scp>
 
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" port="${http.dev.port}" verbose="yes" trust="yes" keyfile="${http.dev.key}">
+		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" port="${http.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${http.dev.key}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -436,6 +436,7 @@
 	<target name="put_scripts" description="Deploy bash scripts to production">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
+		<property name="webapp.ssh.hosts" value="${user.home}/.ssh/known_hosts" />
 		<property name="mail.ssh.port" value="22" />
 		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
 			<classpath id="lc.classpath">
@@ -448,7 +449,7 @@
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the scripts to web server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www" port="${webapp.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${webapp.ssh.key}">
 			<fileset dir="scripts/pri">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -458,7 +459,7 @@
 		</scp>
 
 		<!-- Upload the scripts to services server -->
-        <scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/sbin/www" port="${mail.ssh.port}" verbose="yes" trust="yes" keyfile="${mail.ssh.key}">
+        <scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/sbin/www" port="${mail.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${mail.ssh.key}">
             <fileset dir="scripts/sec">
                 <modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
                     <param name="algorithm.algorithm" value="MD5" />
@@ -472,6 +473,7 @@
 	<target name="prod_deploy" depends="jspc,minify" description="Deploy to Production environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
+		<property name="webapp.ssh.hosts" value="${user.home}/.ssh/known_hosts" />
 		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
 			<classpath id="lc.classpath">
 				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
@@ -484,7 +486,7 @@
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}" port="${webapp.ssh.port}" knownhosts="${webapp.ssh.hosts}" keyfile="${webapp.ssh.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -494,7 +496,7 @@
 		</scp>
 		
 		<!-- Upload the common JAR files to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}" port="${webapp.ssh.port}" knownhosts="${webapp.ssh.hosts}" keyfile="${webapp.ssh.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -504,7 +506,7 @@
 		</scp>
 
 		<!-- Upload the JAR files to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib" port="${webapp.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${webapp.ssh.key}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 				<include name="golgotha_web.jar" />
@@ -523,7 +525,7 @@
 		</scp>
 		
 		<!-- Upload the config file to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc" port="${webapp.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${webapp.ssh.key}">
 			<fileset dir="etc">
 				<include name="commands.xml" />
 				<include name="services.xml" />
@@ -544,7 +546,7 @@
 		</scp>
 		
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}" port="${http.ssh.port}" verbose="yes" trust="yes" keyfile="${http.ssh.key}">
+		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}" port="${http.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${http.ssh.key}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
@@ -630,9 +632,10 @@
 		<!-- Upload to the web site -->
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="golgotha.ssh.port" value="22" />
+		<property name="golgotha.ssh.hosts" value="${user.home}/.ssh/known_hosts" />
 		<lower value="${user.name}" property="golgotha.ssh.user" />
 		
-		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes" port="${golgotha.ssh.port}" trust="yes" keyfile="${golgotha.ssh.key}">
+		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes" port="${golgotha.ssh.port}" knownhosts="${golgotha.ssh.hosts}" keyfile="${golgotha.ssh.key}">
 			<fileset dir="${java.io.tmpdir}/src">
 				<include name="*.tar.gz" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
@@ -648,7 +651,7 @@
 
 	    <!-- Compile the code -->
 	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
-	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.20" target="1.20" compiler="modern" fork="true">
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.22" target="1.22" compiler="modern" fork="true">
 	    	<include name="org/deltava/acars/*.java" />
 	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	        <classpath id="javac.classpath">
