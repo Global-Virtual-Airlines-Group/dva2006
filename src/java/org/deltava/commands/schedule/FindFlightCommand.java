@@ -131,7 +131,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ssc.setCheckDispatchRoutes(Boolean.parseBoolean(ctx.getParameter("checkDispatch")));
 		ssc.setExcludeHistoric(EnumUtils.parse(Inclusion.class, ctx.getParameter("historicOnly"), Inclusion.ALL));
 		ssc.setDispatchOnly(EnumUtils.parse(Inclusion.class, ctx.getParameter("dispatchOnly"), Inclusion.ALL));
-		ssc.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
+		ssc.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), -1));
 		ssc.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
 		ssc.setPilotID(ctx.getUser().getID());
 		ssc.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
