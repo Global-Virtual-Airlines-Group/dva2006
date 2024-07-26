@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
 
@@ -20,6 +22,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetScheduleSearch extends GetSchedule {
+	
+	private static final Logger log = LogManager.getLogger(GetScheduleSearch.class);
 	
 	private static enum ParamTypes {
 		BASE, HAVING, ALL
@@ -201,10 +205,12 @@ public class GetScheduleSearch extends GetSchedule {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ScheduleEntry> search(ScheduleSearchCriteria ssc) throws DAOException {
-		return (ssc.getFlightsPerRoute() > -1) ? searchRoutePairs(ssc) : searchRoutes(ssc);
+		log.warn("Flights Per Route = {}, Max Reuslts = {}", Integer.valueOf(ssc.getRouteLegs()), Integer.valueOf(ssc.getMaxResults()));
+		return (ssc.getRouteLegs() > -1) ? searchRoutePairs(ssc) : searchRoutes(ssc);
 	}
 
 	private List<ScheduleEntry> searchRoutes(ScheduleSearchCriteria ssc) throws DAOException {
+		log.warn("Searching Schedule entries {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
 		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
@@ -250,6 +256,7 @@ public class GetScheduleSearch extends GetSchedule {
 	}
 	
 	private List<ScheduleEntry> searchRoutePairs(ScheduleSearchCriteria ssc) throws DAOException {
+		log.warn("Searching Route pairs {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
 		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
@@ -318,8 +325,8 @@ public class GetScheduleSearch extends GetSchedule {
 				buf.append(" AND ");
 		}
 
-		buf.append(" LIMIT ");
-		buf.append(Math.max(1, ssc.getFlightsPerRoute()));
+		if (ssc.getFlightsPerRoute() > 0)
+			buf.append(" LIMIT ").append(ssc.getFlightsPerRoute());
 
 		// Prepare the satement and execute the query
 		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
@@ -343,20 +350,20 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Iterate through each collection of route pairs, adding flights until we hit the max
-		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>(_queryMax + 2);
+		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>(_queryMax + 2); int rtMax = Math.max(1, ssc.getFlightsPerRoute());
 		for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
-			List<ScheduleEntry> entryList = i.next();
+			Collection<ScheduleEntry> entryList = i.next();
 			int flightsAdded = -1;
-			for (Iterator<ScheduleEntry> ei = entryList.iterator(); ei.hasNext() && (flightsAdded < ssc.getFlightsPerRoute()); flightsAdded++)
+			for (Iterator<ScheduleEntry> ei = entryList.iterator(); ei.hasNext() && (flightsAdded < rtMax) && (results.size() < _queryMax); flightsAdded++)
 				results.add(ei.next());
 		}
 
 		// Do a sort - check for descending sort
-		String sort = ssc.getSortBy().replace(" DESC", "");
+		boolean isDesc = ssc.getSortBy().endsWith("DESC"); String sort = ssc.getSortBy().replace(" DESC", "");
 		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sort, 0);
 		if (sortType > 0) {
 			Comparator<ScheduleEntry> cmp = new ScheduleEntryComparator(sortType);
-			results.sort(ssc.getSortBy().endsWith("DESC") ? cmp.reversed() : cmp);
+			results.sort(isDesc ? cmp.reversed() : cmp);
 		} else
 			Collections.shuffle(results);
 
