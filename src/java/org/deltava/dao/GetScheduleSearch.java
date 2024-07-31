@@ -205,12 +205,11 @@ public class GetScheduleSearch extends GetSchedule {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ScheduleEntry> search(ScheduleSearchCriteria ssc) throws DAOException {
-		log.warn("Flights Per Route = {}, Max Reuslts = {}", Integer.valueOf(ssc.getRouteLegs()), Integer.valueOf(ssc.getMaxResults()));
 		return (ssc.getRouteLegs() > -1) ? searchRoutePairs(ssc) : searchRoutes(ssc);
 	}
 
 	private List<ScheduleEntry> searchRoutes(ScheduleSearchCriteria ssc) throws DAOException {
-		log.warn("Searching Schedule entries {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
+		log.info("Searching Schedule entries {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
 		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
@@ -256,7 +255,7 @@ public class GetScheduleSearch extends GetSchedule {
 	}
 	
 	private List<ScheduleEntry> searchRoutePairs(ScheduleSearchCriteria ssc) throws DAOException {
-		log.warn("Searching Route pairs {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
+		log.info("Searching Route pairs {}", RoutePair.of(ssc.getAirportD(), ssc.getAirportA()));
 		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
