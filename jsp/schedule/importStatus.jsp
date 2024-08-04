@@ -28,7 +28,7 @@
 <c:forEach var="st" items="${importStatus}">
 <c:set var="stats" value="${sourceStats[st.source]}" scope="page" />
 <tr class="title caps">
- <td colspan="2">${st.source.description} - <span class="und" onclick="javascript:void golgotha.util.toggleExpand(this, 'import-${st.source}')">COLLAPSE</span></td>
+ <td colspan="2">${st.source.description}<span class="toggle" onclick="javascript:void golgotha.util.toggleExpand(this, 'import-${st.source}')">COLLAPSE</span></td>
 </tr>
 <tr class="import-${st.source}">
  <td class="label">Status</td>

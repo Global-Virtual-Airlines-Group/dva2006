@@ -231,7 +231,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
  <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
 </tr>
 <tr class="title caps">
- <td colspan="3">AIRPORT MAP<span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'airportMap')">COLLAPSE</span></td>
+ <td colspan="3">AIRPORT MAP<span id="mapToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'airportMap')">COLLAPSE</span></td>
 </tr>
 <tr class="airportMap">
  <td class="label">Gate Legend</td>
@@ -247,7 +247,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
  <td colspan="3"><map:div ID="googleMap" height="570" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="3"><span id="gateType">DEPARTURE</span> GATE DATA<span class="nophone"> (<span id="gateUsageDays"><fmt:int value="${gateUsageDays}" /></span> DAYS)</span><span id="gateToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'gateInfo')">COLLAPSE</span>
+ <td colspan="3"><span id="gateType">DEPARTURE</span> GATE DATA<span class="nophone"> (<span id="gateUsageDays"><fmt:int value="${gateUsageDays}" /></span> DAYS)</span><span id="gateToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'gateInfo')">COLLAPSE</span>
 </tr>
 <tr class="gateInfo" id="gateInfoHdr">
  <td class="label">Airports</td>
