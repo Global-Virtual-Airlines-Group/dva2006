@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -641,16 +641,18 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("acarsTimerInfo", apdao.getTimers(info.getID()), REQUEST);
 						ctx.setAttribute("acarsFrames", apdao.getFrames(info.getID()), REQUEST);
 						ctx.setAttribute("acarsPerfCtrs", apdao.getCounters(info.getID()), REQUEST);
-						if (info.getArchived())
+						if (info.getArchived()) {
 							ctx.setAttribute("archiveMetadata", ardao.getArchiveInfo(info.getID()), REQUEST);
+							File f = ArchiveHelper.getPositions(info.getID());
+							ctx.setAttribute("archiveOK", Boolean.valueOf(f.exists()), REQUEST);
+						}
 					}
 					
 					// Load the dispatcher if there is one
 					if (info.getDispatcherID() != 0) {
 						GetUserData uddao = new GetUserData(con);
 						UserData ud = uddao.get(info.getDispatcherID());
-						if (ud != null)
-							ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
+						ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
 					}
 					
 					// Load the dispatch log entry
