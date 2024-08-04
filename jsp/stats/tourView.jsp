@@ -146,7 +146,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </c:forEach>
 <content:browser human="true">
 <tr class="title caps">
- <td colspan="6">FLIGHT LEG MAP <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
+ <td colspan="6">FLIGHT LEG MAP<span id="historyToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
 </tr>
 <tr class="tourMap">
  <td colspan="6"><map:div ID="googleMap" height="475" /></td>

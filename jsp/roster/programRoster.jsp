@@ -36,8 +36,7 @@
  <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" /></span> <el:button type="submit" label="UPDATE" /></td>
 </tr>
 <tr class="title">
- <td colspan="7" class="left caps">PROGRAM ROSTER - <fmt:int value="${viewContext.start+1}" /> TO <fmt:int value="${viewContext.end}" /> OF
- <fmt:int value="${eqType.size}" /> PILOTS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgRoster')">COLLAPSE</span></td>
+ <td colspan="7" class="left caps">PROGRAM ROSTER - <fmt:int value="${viewContext.start+1}" /> TO <fmt:int value="${viewContext.end}" /> OF <fmt:int value="${eqType.size}" /> PILOTS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'prgRoster')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -72,7 +71,7 @@
 <c:if test="${!empty examQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${examQueue.size()}" /> EXAMS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgExamQueue')">COLLAPSE</span></td>
+ <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${examQueue.size()}" /> EXAMS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'prgExamQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgExamQueue">
@@ -101,7 +100,7 @@
 <c:if test="${!empty crQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${crQueue.size()}" /> CHECK RIDES - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgRideQueue')">COLLAPSE</span></td>
+ <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${crQueue.size()}" /> CHECK RIDES<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'prgRideQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgRideQueue">
@@ -133,7 +132,7 @@
 <c:if test="${!empty txQueue}">
 <view:table cmd="prgroster">
 <tr class="title">
- <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${txQueue.size()}" /> TRANSFERS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
+ <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${txQueue.size()}" /> TRANSFERS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -166,7 +165,7 @@
 <c:if test="${!empty promoQueue}">
 <view:table cmd="prgroster">
 <tr class="title">
- <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${promoQueue.size()}" /> PILOTS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
+ <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${promoQueue.size()}" /> PILOTS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgPromoQueue">
@@ -203,7 +202,7 @@
 <!-- Check Ride Statistics -->
 <view:table cmd="prgroster">
 <tr class="title caps">
- <td class="left" colspan="7">CHECK RIDE STATISTICS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'crStats')">COLLAPSE</span></td>
+ <td class="left" colspan="7">CHECK RIDE STATISTICS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'crStats')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -235,8 +234,7 @@
 <!-- Flight Report Statistics -->
 <el:table className="view">
 <tr class="title caps">
- <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)
- - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'frStats')">COLLAPSE</span></td>
+ <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'frStats')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps frStats">
