@@ -1,4 +1,4 @@
-// Copyright 2006, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2015, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,14 +7,18 @@ import static javax.servlet.http.HttpServletResponse.*;
  * An exception class to define a common singure for exceptions handled by the Command
  * Controller servlet.
  * @author Luke
- * @version 6.0
+ * @version 11.2
  * @since 1.0
  */
 
 public abstract class ControllerException extends Exception {
+	
+	private enum ErrorLogLevel {
+		ERROR, WARNING, NONE
+	}
 
 	private boolean _logStackDump = true;
-	private boolean _isWarn;
+	private ErrorLogLevel _level = ErrorLogLevel.ERROR;
 	private int _statusCode = SC_INTERNAL_SERVER_ERROR;
 	private String _fwdURL;
 	
@@ -68,7 +72,16 @@ public abstract class ControllerException extends Exception {
 	 * @see ControllerException#setWarning(boolean)
 	 */
 	public boolean isWarning() {
-		return _isWarn;
+		return (_level == ErrorLogLevel.WARNING);
+	}
+	
+	/**
+	 * Returns whether this exception should not be logged.
+	 * @return TRUE if not logged, otherwise FALSE
+	 * @see ControllerException#setSuppressed(boolean)
+	 */
+	public boolean isSuppressed() {
+		return (_level == ErrorLogLevel.NONE);
 	}
 	
 	/**
@@ -104,7 +117,16 @@ public abstract class ControllerException extends Exception {
 	 * @see ControllerException#isWarning()
 	 */
 	public void setWarning(boolean isWarn) {
-		_isWarn = isWarn;
+		_level = isWarn ? ErrorLogLevel.WARNING : ErrorLogLevel.ERROR;
+	}
+	
+	/**
+	 * Sets this exception to not be logged.
+	 * @param isSuppress TRUE if suppressed, otherwise FALSE
+	 * @see ControllerException#isSuppressed()
+	 */
+	public void setSuppressed(boolean isSuppress) {
+		_level = isSuppress ? ErrorLogLevel.NONE : ErrorLogLevel.ERROR;
 	}
 	
 	/**

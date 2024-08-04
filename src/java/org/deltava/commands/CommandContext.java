@@ -73,7 +73,7 @@ public class CommandContext extends HTTPContext {
 			return Integer.decode(s).intValue();
 		} catch (Exception e) {
 			if (s.length() > 20) s = s.substring(0, 20);
-			throw new CommandException(String.format("Invalid Database ID - %s", StringUtils.stripInlineHTML(s)), false) {{ setStatusCode(400); setWarning(true); }};
+			throw new CommandException(String.format("Invalid Database ID - %s", StringUtils.stripInlineHTML(s)), false) {{ setStatusCode(400); setSuppressed(true); }};
 		}
 	}
 }
