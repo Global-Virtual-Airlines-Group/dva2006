@@ -1,5 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,7 +30,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -198,7 +200,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "Command not found");
 			log.warn("Command not found - {} {}", req.getRequestURI(), referer);
-			rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			rsp.setStatus(SC_NOT_FOUND);
 			rd.forward(req, rsp);
 			return;
 		}
@@ -207,7 +209,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		if (req.getAttribute(CommandContext.INVALIDREQ_ATTR_NAME) != null) {
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "HTTP Upload Timed Out");
-			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			rsp.setStatus(SC_BAD_REQUEST);
 			rd.forward(req, rsp);
 			return;
 		}
@@ -219,13 +221,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			NewRelic.setUserName(req.getUserPrincipal().getName());
 		try {
 			// Validate command access
-			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles())) {
-				ControllerException ce = new CommandException("Not Authorized to execute", false);
-				ce.setForwardURL("/jsp/error/securityViolation.jsp");
-				ce.setWarning(true);
-				ce.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
-				throw ce;
-			}
+			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
+				throw new CommandException("Not Authorized to execute", false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(SC_FORBIDDEN); }};
 
 			// If we are not executing the redirection command, clear the redirection state data in the session
 			if (!(cmd instanceof RedirectCommand))
@@ -238,13 +235,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			result.complete();
 
 			// Check for empty result
-			if (result.getURL() == null) {
-				ControllerException ce = new CommandException(String.format("Null result URL from %s", req.getRequestURI()), false);
-				ce.setForwardURL("/home.do");
-				ce.setStatusCode(HttpServletResponse.SC_OK);
-				ce.setWarning(true);
-				throw ce;
-			}
+			if (result.getURL() == null)
+				throw new CommandException(String.format("Null result URL from %s", req.getRequestURI()), false) {{ setForwardURL("/home.do"); setStatusCode(SC_OK); setWarning(true); }};
 
 			// Redirect/forward/send status code
 			switch (result.getType()) {
@@ -280,6 +272,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				logStackDump = ce.getLogStackDump();
 				if (ce.isWarning())
 					logLevel = Level.WARN;
+				else if (ce.isSuppressed())
+					logLevel = Level.INFO;
 			}
 			
 			// Don't log bot notfound/SecurityErrors
@@ -312,7 +306,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				log.atError().withThrowable(fe).log("Error forwarding - {}", fe.getMessage());
 				NewRelic.noticeError(fe, false);
 				try {
-					rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					rsp.sendError(SC_INTERNAL_SERVER_ERROR);
 				} catch (Exception ee) {
 					log.error("Error sending error code - {}", ee.getMessage());
 				}
