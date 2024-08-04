@@ -56,7 +56,7 @@ td.requal-${lvl.name} {
 <c:set var="idx" value="0" scope="page" />
 <!-- ${lvl.name} -->
 <tr class="mid title caps" style="background-color:#${lvl.hexColor};">
- <td colspan="8" ><span title="${lvl.legs} flights, ${lvl.distance} miles">${lvl.name}</span> - <fmt:int value="${lvlTotals.size()}"  /> PILOTS<c:if test="${lvlTotals.size() > 0}"><span id="elite-${lvl.name}-Toggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'elite-${lvl.name}')">COLLAPSE</span></c:if></td>
+ <td colspan="8" ><span title="${lvl.legs} flights, ${lvl.distance} miles">${lvl.name}</span> - <fmt:int value="${lvlTotals.size()}"  /> PILOTS<c:if test="${lvlTotals.size() > 0}"><span id="elite-${lvl.name}-Toggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'elite-${lvl.name}')">COLLAPSE</span></c:if></td>
 </tr>
 <tr class="mid title caps elite-${lvl.name}" style="background-color:#${lvl.hexColor};">
  <td>#</td>

@@ -229,7 +229,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <c:if test="${!empty acarsClientInfo}">
 <!-- ACARS client system data -->
 <tr class="title">
- <td colspan="${cspan + 1}">ACARS CLIENT SYSTEM INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'acarsClient')">EXPAND</span></td>
+ <td colspan="${cspan + 1}">ACARS CLIENT SYSTEM INFORMATION<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsClient')">EXPAND</span></td>
 </tr>
 <c:if test="${!empty acarsClientInfo.bridgeInfo}">
 <tr class="acarsClient" style="display:none;">

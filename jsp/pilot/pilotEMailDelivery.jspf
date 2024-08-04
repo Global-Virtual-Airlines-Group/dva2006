@@ -8,7 +8,7 @@
 <!-- Pilot E-Mail History -->
 <tr class="title caps">
  <td colspan="${cspan + 1}">EMAIL DELIVERY STATUS
-<c:if test="${showDeliveryToggle}"> - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'emailDeliver')">${toggleLabel}</span></c:if></td>
+<c:if test="${showDeliveryToggle}"><span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'emailDeliver')">${toggleLabel}</span></c:if></td>
 </tr>
 <tr class="title mid caps emailDeliver"<c:if test="${deliveryCollapse}"> style="display:none;"</c:if>>
  <td>TYPE</td>

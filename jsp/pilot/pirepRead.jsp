@@ -102,8 +102,7 @@ table.form td.eliteStatus {
 	color: #ffffff;
 	background-color: #${eliteLevel.hexColor};
 }
-</style>
-</c:if>
+</style></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -380,7 +379,7 @@ table.form td.eliteStatus {
 <content:enum var="sbFmts" className="org.deltava.beans.simbrief.PackageFormat" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <tr class="title caps">
- <td colspan="2">SimBrief DISPATCH SETTINGS<span id="sbToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
+ <td colspan="2">SimBrief DISPATCH SETTINGS<span id="sbToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
 </tr>
 <tr class="sbData">
  <td class="label">Package Format</td>
@@ -405,7 +404,7 @@ table.form td.eliteStatus {
 </c:if>
 <c:if test="${(access.ourFlight || (access.canViewSimBrief && fn:isDraft(pirep))) && (!empty sbPackage)}">
 <tr class="title caps">
- <td colspan="2">SimBrief BRIEFING PACKAGE INFORMATION<span id="sbToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
+ <td colspan="2">SimBrief BRIEFING PACKAGE INFORMATION<span id="sbToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'sbData')">COLLAPSE</span></td>
 </tr>
 <tr class="sbData">
  <td class="label">SimBrief Package</td>
@@ -452,14 +451,14 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <content:sysdata var="eliteName" name="econ.elite.name" />
 <c:if test="${(eliteEnabled && pirep.status.isComplete) || (!empty eliteScore)}">
 <tr class="title caps">
- <td class="eliteStatus" colspan="2"><content:airline />&nbsp;${eliteName} INFORMATION</td>
+ <td class="eliteStatus" colspan="2"><content:airline />&nbsp;${eliteName} INFORMATION<span id="elToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'elData')">COLLAPSE</span></td>
 </tr>
 </c:if>
 <c:choose>
 <c:when test="${!empty eliteScore}">
 <content:sysdata var="pointUnit" name="econ.elite.points" />
 <content:sysdata var="distanceUnit" name="econ.elite.distance" />
-<tr>
+<tr class="elData">
  <td class="label eliteStatus top">Mileage Information</td>
  <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown 
  as <fmt:elite className="bld" level="${eliteLevel}" nameOnly="true" /><c:if test="${access.canEliteRescore}"> - <el:cmd url="eliterescore" link="${pirep}" className="pri bld">RECACLCULATE</el:cmd></c:if><br />
@@ -471,13 +470,13 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 </tr>
 </c:when>
 <c:when test="${eliteEnabled && (pirep.status == 'OK')}">
-<tr>
+<tr class="elData">
  <td class="label">&nbsp;</td>
  <td class="data">${eliteName} Mileage accrual for this Flight has not yet been calculated.</td>
 </tr>
 </c:when>
 <c:when test="${eliteEnabled && pirep.status.isComplete && (pirep.status != 'OK')}">
-<tr>
+<tr class="elData">
  <td class="label">&nbsp;</td>
  <td class="data small caps bld"><span class="error">This Flight Leg is not eligible for Mileage accrual in the ${eliteName} Program</span>
 </tr>
@@ -486,7 +485,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 </content:authUser>
 <content:browser human="true">
 <tr class="title">
- <td colspan="2">ROUTE MAP<c:if test="${filedETOPS.result.time > 75}"> - ${filedETOPS.result}</c:if><span id="mapToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
+ <td colspan="2">ROUTE MAP<c:if test="${filedETOPS.result.time > 75}"> - ${filedETOPS.result}</c:if><span id="mapToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsMapData')">COLLAPSE</span></td>
 </tr>
 <c:choose>
 <c:when test="${googleMap}">
@@ -522,7 +521,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:choose>
 <c:if test="${isACARS}">
 <tr id="flightDataLabel" class="title caps">
- <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
+ <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
 <tr class="flightDataChart">
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
@@ -534,7 +533,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:browser>
 <c:if test="${!empty statusHistory}">
 <tr class="title caps">
- <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY <span id="historyToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pirepHistory')">COLLAPSE</span></td>
+ <td colspan="2"><span class="nophone">FLIGHT REPORT </span>STATUS HISTORY<span id="historyToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'pirepHistory')">COLLAPSE</span></td>
 </tr>
 <c:forEach var="upd" items="${statusHistory}">
 <c:set var="updAuthor" value="${statusHistoryUsers[upd.authorID]}" scope="page" />

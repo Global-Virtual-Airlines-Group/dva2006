@@ -40,7 +40,7 @@ golgotha.local.setNetwork = function(combo) {
 
 <!-- Pilot Data Header -->
 <tr class="title caps">
- <td class="left" colspan="7"><fmt:int value="${netInfo.pilots.size()}" /> ONLINE PILOTS - ${netInfo.network}<span id="ctrToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'pilot')">COLLAPSE</span></td>
+ <td class="left" colspan="7"><fmt:int value="${netInfo.pilots.size()}" /> ONLINE PILOTS - ${netInfo.network}<span id="ctrToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'pilot')">COLLAPSE</span></td>
 </tr>
 
 <!-- Pilot Title Bar -->
@@ -69,7 +69,7 @@ golgotha.local.setNetwork = function(combo) {
 
 <!-- Controller Data Header -->
 <tr class="title caps">
- <td class="left" colspan="7"><fmt:int value="${netInfo.controllers.size()}" /> ONLINE CONTROLLERS - ${netInfo.network}<span id="ctrToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'ctr')">COLLAPSE</span></td>
+ <td class="left" colspan="7"><fmt:int value="${netInfo.controllers.size()}" /> ONLINE CONTROLLERS - ${netInfo.network}<span id="ctrToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'ctr')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Controller Data -->

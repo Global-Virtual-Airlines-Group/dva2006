@@ -18,7 +18,7 @@ golgotha.local.toggleEllipsis = function(tc) {
 <!-- Pilot Status History -->
 <tr class="title caps">
  <td colspan="${cspan + 1}">PROMOTION / STATUS HISTORY
-<c:if test="${showStatusToggle}"> - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'statusUpd')">${toggleLabel}</span></c:if></td>
+<c:if test="${showStatusToggle}"><span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'statusUpd')">${toggleLabel}</span></c:if></td>
 </tr>
 <tr class="title mid caps statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td>DATE</td>

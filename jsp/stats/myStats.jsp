@@ -96,7 +96,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <!-- Touchdown statistics -->
 <el:table className="view">
 <tr class="title">
- <td colspan="9" class="left caps">TOUCHDOWN STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS<span id="tdStatsToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'tdStats')">COLLAPSE</span></td>
+ <td colspan="9" class="left caps">TOUCHDOWN STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS<span id="tdStatsToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'tdStats')">COLLAPSE</span></td>
 </tr>
 <tr id="eqLandingLabel" class="title mid caps tdStats">
  <td>#</td>
@@ -136,7 +136,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 
 <!-- Best Landings -->
 <tr class="title">
- <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="topLandingToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
+ <td colspan="9" class="left caps">BEST LANDINGS USING ACARS SINCE <fmt:date date="${bestLandingSince}" fmt="d" /><span id="topLandingToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'topLanding')">COLLAPSE</span></td>
 </tr>
 <tr id="topLandingLabel" class="title mid caps topLanding">
  <td>#</td>
@@ -169,7 +169,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <!-- Popular Routes -->
 <el:table className="view">
 <tr class="title">
- <td colspan="6" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="popRouteToggle" class="und" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'popRoute')">COLLAPSE</span></span></td>
+ <td colspan="6" class="left caps">TOP <fmt:int value="${popularRoutes.size()}" /> FREQUENT FLIGHT ROUTES<span class="nophone"> (<fmt:dec value="${popularTotal * 100.0 / totalLegs}" />% OF TOTAL)<span id="popRouteToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'popRoute')">COLLAPSE</span></span></td>
 </tr>
 <tr id="popRouteLabel" class="title mid caps popRoute">
  <td>#</td>
@@ -199,7 +199,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <!-- Airframe Data -->
 <el:table className="view">
 <tr class="title">
- <td colspan="5" class="left caps">FREQUENTLY USED AIRCRAFT<span id="airFrameToggle" class="und nophone" style="float:right;" onclick="void golgotha.util.toggleExpand(this, 'airframe')">COLLAPSE</span></td>
+ <td colspan="5" class="left caps">FREQUENTLY USED AIRCRAFT<span id="airFrameToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'airframe')">COLLAPSE</span></td>
 </tr>
 <tr class="title caps mid airframe">
  <td>#</td>

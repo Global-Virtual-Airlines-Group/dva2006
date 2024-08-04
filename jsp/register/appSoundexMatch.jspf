@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- Soundex Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${soundexUsers.size()}" /> POTENTIAL MATCHING USERS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'soundexUser')">EXPAND</span></td>
+ <td colspan="2"><fmt:int value="${soundexUsers.size()}" /> POTENTIAL MATCHING USERS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'soundexUser')">EXPAND</span></td>
 </tr>
 <c:forEach var="person" items="${soundexUsers}">
 <c:set var="personLoc" value="${userData[person.ID]}" scope="page" />

@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- TCP/IP network mask Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${netmaskUsers.size()}" /> USERS REGISTERED FROM ${addrInfo} - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'netMaskUser')">EXPAND</span></td>
+ <td colspan="2"><fmt:int value="${netmaskUsers.size()}" /> USERS REGISTERED FROM ${addrInfo}<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'netMaskUser')">EXPAND</span></td>
 </tr>
 <c:forEach var="person" items="${netmaskUsers}">
 <tr class="netMaskUser" style="display:none;">
