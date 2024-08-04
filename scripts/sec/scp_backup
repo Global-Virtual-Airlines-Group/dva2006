@@ -11,7 +11,7 @@ if [ "$2" != "" ]; then
         USER="$2"
 fi
 
-OPTS="-avr --delete --progress --preallocate --bwlimit=20480"
+OPTS="-avr --delete --timeout=30 --preallocate --bwlimit=20480"
 
 # Back up base files
 cd /home/backup
