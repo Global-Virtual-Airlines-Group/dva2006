@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void init(String id, String cmdName) {
 		if (_name != null)
-			throw new IllegalStateException(_name + " Command already initialized");
+			throw new IllegalStateException(String.format("%s Command already initialized", _name));
 
 		_id = id.trim();
 		_name = cmdName.trim();
@@ -44,19 +44,15 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected static CommandException securityException(String msg) {
-		CommandException ce = new CommandException("Security Error - " + msg, false);
-		ce.setForwardURL("/jsp/error/securityViolation.jsp");
-		ce.setWarning(true);
-		ce.setStatusCode(SC_FORBIDDEN);
-		return ce;
+		return new CommandException(String.format("Security Error - %s", msg), false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(SC_FORBIDDEN); }}; 
 	}
 	
+	/**
+	 * Helper method to generate a content blocked exception.
+	 * @return a CommandException
+	 */
 	protected static CommandException forgottenException() {
-		CommandException ce = new CommandException("Blocked for Legal Reasons", false);
-		ce.setForwardURL("/jsp/error/securityViolation.jsp");
-		ce.setWarning(true);
-		ce.setStatusCode(451);
-		return ce;
+		return new CommandException("Blocked for Legal Reasons", false) {{ setWarning(true); setStatusCode(451); }};
 	}
 
 	/**
@@ -65,10 +61,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected static CommandException notFoundException(String msg) {
-		CommandException ce = new CommandException(msg, false);
-		ce.setWarning(true);
-		ce.setStatusCode(SC_NOT_FOUND);
-		return ce;
+		return new CommandException(msg, false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); }};
 	}
 
 	@Override
@@ -106,7 +99,7 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public final void setRoles(Collection<String> roles) {
 		if (!_roles.isEmpty())
-			throw new IllegalStateException("Roles for " + getName() + " already set");
+			throw new IllegalStateException(String.format("Roles for %s already set", getName()));
 
 		_roles.addAll(roles);
 	}
