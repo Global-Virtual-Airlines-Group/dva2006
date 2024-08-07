@@ -18,7 +18,7 @@
 <tr>
  <td class="label">Archive Information</td>
  <td class="data" colspan="${cspan}"><span class="pri bld">${archiveMetadata.format}</span> Location <span class="bld">${archiveMetadata.bucket}/${archiveMetadata.hexID.substring(2)}</span> <span class="small nophone">Size = <fmt:fileSize value="${archiveMetadata.size}" />, 
- <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span><c:if test="${!archiveOK}">&nbsp;<span class="error bld">NOT PRESENT</span></c:if></td>
+ <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span>&nbsp;<span id="archiveOK" style="display:none" class="bld ter">OK</span><span id="archiveError" style="display:none" class="error bld"></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">

@@ -641,11 +641,8 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("acarsTimerInfo", apdao.getTimers(info.getID()), REQUEST);
 						ctx.setAttribute("acarsFrames", apdao.getFrames(info.getID()), REQUEST);
 						ctx.setAttribute("acarsPerfCtrs", apdao.getCounters(info.getID()), REQUEST);
-						if (info.getArchived()) {
+						if (info.getArchived())
 							ctx.setAttribute("archiveMetadata", ardao.getArchiveInfo(info.getID()), REQUEST);
-							File f = ArchiveHelper.getPositions(info.getID());
-							ctx.setAttribute("archiveOK", Boolean.valueOf(f.exists()), REQUEST);
-						}
 					}
 					
 					// Load the dispatcher if there is one
