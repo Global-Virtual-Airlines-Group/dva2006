@@ -1,14 +1,14 @@
-// Copyright 2015, 2016, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store ACARS position archive metadata.
  * @author Luke
- * @version 10.5
+ * @version 11.2
  * @since 6.2
  */
 
@@ -19,6 +19,7 @@ public class ArchiveMetadata extends DatabaseBean {
 	private long _crc;
 	private int _size;
 	private SerializedDataVersion _fmt;
+	private Compression _cmp = Compression.NONE;
 	
 	private String _bucket;
 
@@ -80,6 +81,14 @@ public class ArchiveMetadata extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the compression used on this archive. This may be {@link Compression#NONE} if unknown.
+	 * @return a Compression enum
+	 */
+	public Compression getCompression() {
+		return _cmp;
+	}
+	
+	/**
 	 * Updates the CRC32 value for the archived data.
 	 * @param crc the CRC32
 	 */
@@ -125,5 +134,13 @@ public class ArchiveMetadata extends DatabaseBean {
 	 */
 	public void setBucket(String b) {
 		_bucket = b;
+	}
+	
+	/**
+	 * Updates the compression method used for this archive.
+	 * @param c a Compression enum
+	 */
+	public void setCompression(Compression c) {
+		_cmp = c;
 	}
 }
