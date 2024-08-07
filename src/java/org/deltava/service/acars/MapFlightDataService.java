@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -39,8 +39,8 @@ public class MapFlightDataService extends WebService {
       
 		// Get the DAO and the route data
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		Collection<? extends GeospaceLocation> routePoints = null; FlightInfo info = null;
-		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
+		Collection<? extends GeospaceLocation> routePoints = Collections.emptyList(); FlightInfo info = null;
+		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>(); String validationMsg = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -48,7 +48,7 @@ public class MapFlightDataService extends WebService {
 			GetACARSPositions dao = new GetACARSPositions(con);
 			info = dao.getInfo(id);
 			if (info == null)
-				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID", false);
+				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID - " + id, false);
 			if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routePoints = dao.getXACARSEntries(id);
 			else
@@ -66,6 +66,8 @@ public class MapFlightDataService extends WebService {
 						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
 				}
 			}
+		} catch (ArchiveValidationException ave) {
+			validationMsg = ave.getMessage();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -84,6 +86,7 @@ public class MapFlightDataService extends WebService {
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
 		JSONObject jo = new JSONObject();
 		jo.put("id", id);
+		jo.putOpt("error", validationMsg);
 		for (GeoLocation entry : routePoints) {
 			JSONObject eo = new JSONObject(); 
 			eo.put("ll", JSONUtils.format(entry));
@@ -129,8 +132,10 @@ public class MapFlightDataService extends WebService {
 		}
 		
 		// Write departure/arrival runway disatnces
-		jo.putOpt("runwayD", formatRunway(info.getRunwayD()));
-		jo.putOpt("runwayA", formatRunway(info.getRunwayA()));
+		if (info != null) {
+			jo.putOpt("runwayD", formatRunway(info.getRunwayD()));
+			jo.putOpt("runwayA", formatRunway(info.getRunwayA()));
+		}
 		
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "positions", "airspace");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 4.1
  */
 
@@ -166,21 +166,25 @@ public class GetACARSPositions extends GetACARSData {
 		}
 	}
 	
-	private List<GeospaceLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
-		
+	/**
+	 * Loads and validates a position archive. This will modify the supplied metadata bean with compression data for subsequent parsing.
+	 */
+	private static byte[] load(ArchiveMetadata md) throws ArchiveValidationException {
+
 		// Get archive metadata and file pointer
-		ArchiveMetadata md = getArchiveInfo(flightID);
-		File f = ArchiveHelper.getPositions(flightID);
-		if ((md == null) || !f.exists())
-			return Collections.emptyList();
-		
+		if (md == null) return null;
+		File f = ArchiveHelper.getPositions(md.getID());
+		if (!f.exists())
+			throw new ArchiveValidationException(String.format("%s not found", f.getAbsolutePath()));
+
 		// Validate size
 		if ((md.getSize() > 0) && (f.length() != md.getSize()))
-			throw new DAOException("Flight " + flightID + " Invalid file size, expected " + md.getSize() + ", got " + f.length() + " bytes");
-		
-		// Validate CRC-32
+			throw new ArchiveValidationException(String.format("Invalid file size, expected %d, actual %d", Integer.valueOf(md.getSize()), Long.valueOf(f.length())));
+
+		// Validate CRC-32 and compression mechanism
 		byte[] rawData = null; CRC32 crc = new CRC32();
-		try (InputStream is = new BufferedInputStream(new FileInputStream(f)); ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384); ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+			md.setCompression(Compression.detect(f));
 			int b = is.read();
 			while (b != -1) {
 				crc.update(b);
@@ -190,17 +194,27 @@ public class GetACARSPositions extends GetACARSData {
 				
 			rawData = out.toByteArray();
 		} catch (IOException ie) {
-			throw new DAOException(ie);
+			throw new ArchiveValidationException(ie);
 		}
-		
+
 		if ((md.getCRC32() != 0) && (md.getCRC32() != crc.getValue()))
-			throw new DAOException("Flight " + flightID + " Invalid CRC32, expected " + Long.toHexString(md.getCRC32()) + ", got " + Long.toHexString(crc.getValue()));
+			throw new ArchiveValidationException(String.format("Invalid CRC32, expected %s, actual %s", Long.toHexString(md.getCRC32()), Long.toHexString(crc.getValue())));
 		
-		// Deserialize and validate
+		return rawData;
+	}
+	
+	private List<GeospaceLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
+		
+		// Get archive metadata
+		ArchiveMetadata md = getArchiveInfo(flightID);
+		if (md == null)
+			throw new ArchiveValidationException(String.format("No metadata for Flight %d", Integer.valueOf(flightID)));
+		
+		// Validate and Deserialize
 		List<GeospaceLocation> results = new ArrayList<GeospaceLocation>();
 		try {
-			Compression c = Compression.detect(f);
-			try (InputStream is = c.getStream(new ByteArrayInputStream(rawData))) {
+			byte[] rawData = load(md);
+			try (InputStream is = md.getCompression().getStream(new ByteArrayInputStream(rawData))) {
 				GetSerializedPosition psdao = new GetSerializedPosition(is);
 				Collection<? extends RouteEntry> entries = psdao.read();
 				for (RouteEntry entry : entries) {
