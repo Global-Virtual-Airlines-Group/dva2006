@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -17,6 +17,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.flightplan.*;
 import org.deltava.util.system.SystemData;
@@ -24,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 2.2
  */
 
@@ -124,6 +126,8 @@ public class RoutePlanService extends WebService {
 			// If we're saving a draft PIREP
 			String newRoute = rteBuf.toString(); 
 			if (saveDraft) {
+				boolean doPax = Boolean.parseBoolean(ctx.getParameter("precalcPax"));
+				
 				GetAircraft acdao = new GetAircraft(con);
 				Aircraft ac = acdao.get(ctx.getParameter("eqType"));
 				if (ac == null)
@@ -168,6 +172,10 @@ public class RoutePlanService extends WebService {
 						ai.addAssignment(new AssignmentLeg(dfr));
 						ai.addFlight(dfr);
 					}
+				} else {
+					PIREPAccessControl acc = new PIREPAccessControl(ctx, dfr);
+					acc.validate();
+					doPax &= acc.getCanCalculateLoad();
 				}
 					
 				dfr.setSimulator(sim);
@@ -178,8 +186,8 @@ public class RoutePlanService extends WebService {
 					dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Updated Route via Route Plotter");
 				
 				// Calculate load factor if requested
-				boolean doPax = Boolean.parseBoolean(ctx.getParameter("precalcPax"));
 				if (doPax) {
+					boolean hasPax = (dfr.getPassengers() > 0);
 					EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 					AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
 					if ((eInfo != null) && (opts != null)) {
@@ -187,7 +195,8 @@ public class RoutePlanService extends WebService {
 						double loadFactor = lf.generate(dfr.getDate());
 						dfr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 						dfr.setLoadFactor(loadFactor);
-						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Requested pre-flight Load Factor");
+						dfr.setDate(Instant.now()); // update load calculation date
+						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, (hasPax ? "Updated" : "Requested") + " pre-flight Load Factor");
 					}
 				}
 				
@@ -208,6 +217,12 @@ public class RoutePlanService extends WebService {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
+		}
+		
+		// No download override
+		if (Boolean.parseBoolean(ctx.getParameter("noDL"))) {
+			ctx.setHeader("X-Plan-Empty", 1);
+			return SC_OK;
 		}
 
 		// Flush the output buffer

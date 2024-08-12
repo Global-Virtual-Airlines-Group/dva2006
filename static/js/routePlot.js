@@ -20,6 +20,7 @@ o.saveDraft = ((f.saveDraft) && f.saveDraft.checked);
 o.allSID = ((f.allSID) && f.allSID.checked);
 o.allGates = ((f.allGates) && f.allGates.checked);
 o.precalcPax = ((f.precalcPax) && !f.precalcPax.disabled && f.precalcPax.checked);
+o.noDL = ((f.noDL) && f.noDL.checked);
 o.getInactive = golgotha.routePlot.getInactive;
 o.etopsCheck = golgotha.routePlot.etopsCheck;
 for (var j = 0; ((f.simVersion) && (j < f.simVersion.length)); j++) {
@@ -401,6 +402,13 @@ golgotha.routePlot.download = function() {
 			alert('Error ' + xmlreq.statusText + ' generating flight plan');
 			btn.disabled = false;
 			return false;
+		}
+
+		const noFP = (xmlreq.getResponseHeader('X-Plan-Empty') == 1);
+		if (noFP) {
+			alert('Draft Flight Report Updated');
+			btn.disabled = false;
+			return true;
 		}
 
 		const ct = xmlreq.getResponseHeader('Content-Type');
