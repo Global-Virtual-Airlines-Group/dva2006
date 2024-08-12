@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -16,13 +16,16 @@ import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -59,6 +62,11 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airportsA", getAirports(dfr.getAirportA()), REQUEST);
 				ctx.setAttribute("alSize", Integer.valueOf(dfr.getAirline().getCode().length()), REQUEST);
 				sim = dfr.getSimulator();
+				
+				// Check if load can be calculated
+				PIREPAccessControl ac = new PIREPAccessControl(ctx, dfr);
+				ac.validate();
+				ctx.setAttribute("allowLoad", Boolean.valueOf(ac.getCanCalculateLoad()), REQUEST);
 				
 				// Get aircraft profile and SID runways
 				GetNavRoute navdao = new GetNavRoute(con);
