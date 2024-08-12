@@ -1,14 +1,12 @@
-// Copyright 2005, 2006, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2011, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.*;
 
-import org.deltava.beans.system.*;
-
 /**
  * An abstract JSP tag to support the generation of HTML single-option checkboxes or radio buttons.
  * @author Luke
- * @version 7.2
+ * @version 11.2
  * @since 1.0
  */
 
@@ -70,18 +68,22 @@ public abstract class SingleTag extends FormElementTag {
 	}
 	
 	/**
+     * Marks this button as disabled.
+     * @param disabled TRUE if disabled, otherwise FALSE
+     */
+    public void setDisabled(boolean disabled) {
+    	if (disabled)
+    		_data.setAttribute("disabled", "true");
+    }
+	
+	/**
 	 * Sets the JavaScript <i>onChange</i> event for these checkboxes/radio buttons.
 	 * @param jsEvent the JavaScript event code
 	 */
 	public final void setOnChange(String jsEvent) {
-		HTTPContextData bctxt = getBrowserContext();
-		boolean isIE6 = (bctxt != null) && (bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 7);
-		_data.setAttribute(isIE6 ? "onclick" : "onchange", jsEvent);
+		_data.setAttribute("onchange", jsEvent);
 	}
 
-	/**
-	 * Releases the tag's state data.
-	 */
 	@Override
 	public void release() {
 		super.release();
