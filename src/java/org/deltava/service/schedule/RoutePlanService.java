@@ -175,7 +175,10 @@ public class RoutePlanService extends WebService {
 				} else {
 					PIREPAccessControl acc = new PIREPAccessControl(ctx, dfr);
 					acc.validate();
-					doPax &= acc.getCanCalculateLoad();
+					boolean canRecalcLoad = acc.getCanCalculateLoad();
+					doPax &= canRecalcLoad;
+					if (!canRecalcLoad)
+						ctx.setHeader("X-Plan-No-Recalc", 1);
 				}
 					
 				dfr.setSimulator(sim);
@@ -197,6 +200,8 @@ public class RoutePlanService extends WebService {
 						dfr.setLoadFactor(loadFactor);
 						dfr.setDate(Instant.now()); // update load calculation date
 						dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, (hasPax ? "Updated" : "Requested") + " pre-flight Load Factor");
+						ctx.setHeader("X-Plan-No-Recalc", 1); // cannot recalculate again today
+						ctx.setHeader("X-Plan-Pax", dfr.getPassengers());
 					}
 				}
 				
