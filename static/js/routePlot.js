@@ -404,6 +404,8 @@ golgotha.routePlot.download = function() {
 			return false;
 		}
 
+		const noRecalc = (xmlreq.getResponseHeader('X-Plan-No-Recalc') == 1);
+		golgotha.util.disable(f.precalcPax, noRecalc);
 		const noFP = (xmlreq.getResponseHeader('X-Plan-Empty') == 1);
 		if (noFP) {
 			alert('Draft Flight Report Updated');

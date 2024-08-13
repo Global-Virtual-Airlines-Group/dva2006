@@ -149,7 +149,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" onChange="void golgotha.routePlot.togglePax()" /><br />
+ <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br />
 <c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br /></c:if>
 <el:box name="noDL" value="true" idx="*" label="Do not download Flight Plan file" /></td>
 </tr>
