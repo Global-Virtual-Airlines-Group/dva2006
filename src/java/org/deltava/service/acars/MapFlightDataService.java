@@ -49,10 +49,15 @@ public class MapFlightDataService extends WebService {
 			info = dao.getInfo(id);
 			if (info == null)
 				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID - " + id, false);
-			if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
-				routePoints = dao.getXACARSEntries(id);
-			else
+			
+			if (info.getArchived()) {
+				ArchiveMetadata md = dao.getArchiveInfo(id);
+				dao.load(md); // triggers validation
+				routePoints = dao.getRouteEntries(id, false, true);
+			} else if (info.getFDR() != Recorder.XACARS)
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
+			else
+				routePoints = dao.getXACARSEntries(id);
 				
 			// Check airspace
 			for (GeospaceLocation rt : routePoints) {
