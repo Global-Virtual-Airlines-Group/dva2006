@@ -79,7 +79,7 @@ golgotha.local.enableButtons = function() {
 
 golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons, ${(fn:hasSDK(pirep) || !isACARS) ? 1250 : reviewDelay}); });</c:if>
 </script></c:if>
-<c:if test="${isACARS}">
+<c:if test="${isACARS && googleMap}">
 <content:googleJS module="charts" />
 <content:js name="acarsFlightMap" />
 <script async>
@@ -519,7 +519,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 </c:when>
 </c:choose>
-<c:if test="${isACARS}">
+<c:if test="${isACARS && googleMap}">
 <tr id="flightDataLabel" class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
@@ -658,7 +658,7 @@ map.addMarkers(golgotha.maps.acarsFlight.sbMrks);</c:if>
 <map:marker var="golgotha.maps.acarsFlight.gmD" point="${pirep.airportD}" />
 golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgotha.maps.acarsFlight.gmD];
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
-<c:if test="${isACARS}">
+<c:if test="${isACARS && googleMap}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xreq = new XMLHttpRequest();
