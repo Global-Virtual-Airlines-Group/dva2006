@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import static org.deltava.beans.acars.SerializedDataVersion.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 4.1
  */
 
@@ -57,7 +57,11 @@ public class GetSerializedPosition extends DAO {
 	 */
 	public SequencedCollection<? extends RouteEntry> read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(getStream())) {
-			_v = SerializedDataVersion.fromCode(in.readShort());
+			short version = in.readShort();
+			_v = SerializedDataVersion.fromCode(version);
+			if (_v == null)
+				throw new IOException("Unknown Archive format - " + version);
+				
 			in.readInt(); // flight ID
 			return _v.isXACARS() ? loadXACARS(in) : loadACARS(in);
 		} catch (IOException ie) {
@@ -118,8 +122,7 @@ public class GetSerializedPosition extends DAO {
 				if (_v.atLeast(ACARSv5))
 					re.setWeight(in.readInt());
 			} else
-				re.setSimUTC(re.getDate()); // ensure non-null
-			
+				re.setSimUTC(re.getDate()); // ensure non-null			
 			// Load NAV1/NAV2
 			if (_v.atLeast(ACARSv2)) {
 				String n1 = in.readUTF();
