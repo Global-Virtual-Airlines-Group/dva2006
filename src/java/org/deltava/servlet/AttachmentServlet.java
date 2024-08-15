@@ -1,4 +1,4 @@
-// Copyright 2017, 2020, 2021, 2023, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021, 2023, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -28,7 +28,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 7.3
  */
 
@@ -236,9 +236,9 @@ public class AttachmentServlet extends DownloadServlet {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
-				log.warn("Error retrieving image - {}", ce.getMessage());
+				log.warn("Error retrieving attachment - {}", ce.getMessage());
 			else
-				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
+				log.error("Error retrieving attachment - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {
