@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2015, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2015, 2019, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -11,12 +11,13 @@ import org.gvagroup.jdbc.ConnectionPool;
 import org.deltava.security.SecurityContext;
 
 import org.deltava.util.ControllerException;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 10.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -92,5 +93,18 @@ abstract class GenericServlet extends HttpServlet {
 	 */
 	protected static ConnectionPool getConnectionPool() {
 		return (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+	}
+	
+	/**
+	 * Returns the full URL requested.
+	 * @param req the HttpServletRequest
+	 * @return the URL
+	 */
+	protected static String getURL(HttpServletRequest req) {
+		StringBuilder urlBuf = new StringBuilder(req.getRequestURI());
+		if (!StringUtils.isEmpty(req.getQueryString()))
+			urlBuf.append('?').append(req.getQueryString());
+		
+		return urlBuf.toString();
 	}
 }

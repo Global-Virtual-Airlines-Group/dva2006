@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 1.0
  */
 
@@ -117,12 +117,15 @@ public class WebServiceServlet extends BasicAuthServlet {
 			int resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 			if (e instanceof ServiceException se) {
 				resultCode = se.getCode();
-				if (se.isWarning())
+				if (!se.isWarning()) {
+					log.error("Error on {}", getURL(req));
+					log.error("Error executing Web Service - {}", e.getMessage(), se.getLogStackDump() ? e : null);
+				}
 					log.warn("Error executing Web Service - {}", e.getMessage());
-				else
-					log.error("Error executing Web Service - {}", e.getMessage(), se.getLogStackDump() ? e : null);	
-			} else
+			} else {
+				log.error("Error on {}", getURL(req));
 				log.atError().withThrowable(e).log("Error executing {} - {}", parser.getName(), e.getMessage());
+			}
 
 			NewRelic.noticeError(e, false);
 			try {
