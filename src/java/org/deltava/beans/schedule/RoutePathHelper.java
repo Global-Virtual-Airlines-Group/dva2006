@@ -126,7 +126,7 @@ public final class RoutePathHelper {
 				continue;
 			}
 			
-			Collection<ScheduleRoute> links = _links.get(u.getAirport());
+			Collection<ScheduleRoute> links = _links.getOrDefault(u.getAirport(), Collections.emptyList());
 			for (ScheduleRoute srt : links) {
 				Vertex vN = uvA.get(srt.getAirportA());
 				if (vN == null) continue;
