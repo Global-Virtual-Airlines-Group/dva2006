@@ -151,14 +151,14 @@ golgotha.local.validate = function(f) {
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br />
 <c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br /></c:if>
-<el:box name="noDL" value="true" idx="*" label="Do not download Flight Plan file" /></td>
+<el:box name="noDL" value="true" idx="*" label="Do not download Flight Plan file" onChange="void golgotha.routePlot.updateSave(this.checked)" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button onClick="void golgotha.routePlot.plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="SaveButton" type="submit" label="SAVE / DOWNLOAD FLIGHT PLAN" /></td>
+ <td><el:button onClick="void golgotha.routePlot.plotMap()" label="UPDATE ROUTE MAP" />&nbsp;<el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>
