@@ -60,7 +60,7 @@ public class GetSerializedPosition extends DAO {
 			short version = in.readShort();
 			_v = SerializedDataVersion.fromCode(version);
 			if (_v == null)
-				throw new IOException("Unknown Archive format - " + version);
+				throw new ArchiveValidationException("Unknown Archive format - " + version);
 				
 			in.readInt(); // flight ID
 			return _v.isXACARS() ? loadXACARS(in) : loadACARS(in);

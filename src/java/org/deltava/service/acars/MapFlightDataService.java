@@ -52,7 +52,7 @@ public class MapFlightDataService extends WebService {
 			
 			if (info.getArchived()) {
 				ArchiveMetadata md = dao.getArchiveInfo(id);
-				dao.load(md); // triggers validation
+				ArchiveHelper.load(md);
 				routePoints = dao.getRouteEntries(id, false, true);
 			} else if (info.getFDR() != Recorder.XACARS)
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());

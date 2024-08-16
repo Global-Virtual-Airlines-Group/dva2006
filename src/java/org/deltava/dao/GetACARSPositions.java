@@ -4,7 +4,6 @@ package org.deltava.dao;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.util.zip.CRC32;
 
 import org.apache.logging.log4j.*;
 
@@ -26,8 +25,6 @@ import org.deltava.dao.file.GetSerializedPosition;
 public class GetACARSPositions extends GetACARSData {
 	
 	private static final Logger log = LogManager.getLogger(GetACARSPositions.class);
-	
-	private byte[] _rawData;
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -172,47 +169,6 @@ public class GetACARSPositions extends GetACARSData {
 		}
 	}
 	
-	/**
-	 * Loads and validates a position archive. This will modify the supplied metadata bean with compression data for subsequent parsing.
-	 * @param md an ArchiveMetadata bean
-	 * @return TRUE if validation succeeded, otherwise FALSE
-	 * @throws ArchiveValidationException if validation fails
-	 */
-	public boolean load(ArchiveMetadata md) throws ArchiveValidationException {
-
-		// Get archive metadata and file pointer
-		if (md == null) return false;
-		if (_rawData != null) return true;
-		File f = ArchiveHelper.getPositions(md.getID());
-		if (!f.exists())
-			throw new ArchiveValidationException(String.format("%s not found", f.getAbsolutePath()));
-
-		// Validate size
-		if ((md.getSize() > 0) && (f.length() != md.getSize()))
-			throw new ArchiveValidationException(String.format("Invalid file size, expected %d, actual %d", Integer.valueOf(md.getSize()), Long.valueOf(f.length())));
-
-		// Validate CRC-32 and compression mechanism
-		CRC32 crc = new CRC32();
-		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384); ByteArrayOutputStream out = new ByteArrayOutputStream(Math.min((int)f.length(), 65536))) {
-			md.setCompression(Compression.detect(f));
-			int b = is.read();
-			while (b != -1) {
-				crc.update(b);
-				out.write(b);
-				b = is.read();
-			}
-				
-			_rawData = out.toByteArray();
-		} catch (IOException ie) {
-			throw new ArchiveValidationException(ie);
-		}
-
-		if ((md.getCRC32() != 0) && (md.getCRC32() != crc.getValue()))
-			throw new ArchiveValidationException(String.format("Invalid CRC32, expected %s, actual %s", Long.toHexString(md.getCRC32()), Long.toHexString(crc.getValue())));
-		
-		return true;
-	}
-	
 	private List<GeospaceLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
 		
 		// Get archive metadata
@@ -223,8 +179,9 @@ public class GetACARSPositions extends GetACARSData {
 		// Validate and Deserialize
 		List<GeospaceLocation> results = new ArrayList<GeospaceLocation>();
 		try {
-			if (!load(md)) return Collections.emptyList();
-			try (InputStream is = md.getCompression().getStream(new ByteArrayInputStream(_rawData))) {
+			byte[] data = ArchiveHelper.load(md);
+			if (data == null) return Collections.emptyList();
+			try (InputStream is = new ByteArrayInputStream(data)) {
 				GetSerializedPosition psdao = new GetSerializedPosition(is);
 				Collection<? extends RouteEntry> entries = psdao.read();
 				for (RouteEntry entry : entries) {
@@ -235,7 +192,7 @@ public class GetACARSPositions extends GetACARSData {
 				}
 			}
 		} catch (ArchiveValidationException ave) {
-			log.warn("Flight %d failed validation - %s", Integer.valueOf(flightID), ave.getMessage());
+			log.warn("Flight {} failed validation - {} [{} / {}]", Integer.valueOf(flightID), ave.getMessage(), md.getBucket(), md.getHexID());
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
