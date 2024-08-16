@@ -1,11 +1,11 @@
 package org.deltava.dao.file;
 
 import java.io.*;
+import java.time.*;
 import java.util.Collection;
 
 import org.deltava.beans.Compression;
-import org.deltava.beans.acars.RouteEntry;
-import org.deltava.beans.acars.SerializedDataVersion;
+import org.deltava.beans.acars.*;
 
 import junit.framework.TestCase;
 
@@ -212,6 +212,34 @@ public class TestSerializedPositions extends TestCase {
 			assertNotNull(entries);
 			assertFalse(entries.isEmpty());
 			assertEquals(SerializedDataVersion.ACARSv92, posdao.getFormat());
+		}
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testValidation() throws Exception {
+
+		File f = new File("data/acars/ACARSv9.dat");
+		assertTrue(f.exists());
+		
+		// Create metadata for validation
+		ArchiveMetadata md = new ArchiveMetadata(1577051);
+		md.setArchivedOn(LocalDateTime.of(2020, 10, 19, 15, 3, 50).toInstant(ZoneOffset.UTC));
+		md.setCRC32(3503369910L);
+		md.setPositionCount(780);
+		md.setSize(51105);
+		md.setFormat(SerializedDataVersion.ACARSv9);
+		
+		// Validate
+		byte[] data = ArchiveHelper.load(md, f);
+		assertNotNull(data);
+		
+		try (InputStream in = new ByteArrayInputStream(data)) {
+			GetSerializedPosition posdao = new GetSerializedPosition(in);
+			Collection<? extends RouteEntry> entries = posdao.read();
+			assertNotNull(entries);
+			assertFalse(entries.isEmpty());
+			assertEquals(SerializedDataVersion.ACARSv9, posdao.getFormat());
+			assertEquals(md.getPositionCount(), entries.size());
 		}
 	}
 }
