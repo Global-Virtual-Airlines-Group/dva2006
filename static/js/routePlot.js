@@ -388,6 +388,12 @@ golgotha.routePlot.togglePax = function() {
 	return isOK && f.saveDraft.checked;
 };
 
+golgotha.routePlot.updateSave = function(isSave) {
+	const btn = document.getElementById('SaveButton');
+	btn.textContent = (isSave ? 'SAVE' : 'DOWNLOAD') + ' FLIGHT PLAN';
+	return true;
+};
+
 golgotha.routePlot.download = function() {
 	if (!golgotha.form.wrap(golgotha.local.validate, document.forms[0])) return false;
 	const btn = document.getElementById('SaveButton');
