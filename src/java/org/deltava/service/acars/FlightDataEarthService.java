@@ -75,52 +75,59 @@ public class FlightDataEarthService extends GoogleEarthService {
 			GetAirspace asdao = new GetAirspace(con);
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 				int id = i.next().intValue();
-				FlightInfo info = dao.getInfo(id); Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
-				if (info != null) {
-					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived()); 
-					GeoLocation lastLoc = info.getAirportD();
-					for (RouteEntry rt : routeData) {
-						int distance = (rt.getRadarAltitude() < 2500) ? 2 : (rt.getGroundSpeed() / 120);
-						if ((lastLoc == null) || (rt.distanceTo(lastLoc) > distance)) {
-							airspaces.addAll(asdao.find(rt));
-							airspaces.addAll(Airspace.findRestricted(rt, (rt.getGroundSpeed() / 90)));
-							lastLoc = rt;
-						}
-					}
-					
-					info.setRouteData(routeData);
-					if (showRoute) {
-						List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
-						NavigationDataMap navaids = navdao.getByID(routeEntries);
-						GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
-						int distance = lastWaypoint.distanceTo(info.getAirportA());
-						Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
-						
-						// Load the SID waypoints if we have one
-						if (info.getSID() != null)
-							routeInfo.addAll(info.getSID().getWaypoints());
-						
-						// Filter out navaids and put them in the correct order
-						for (String navCode : routeEntries) {
-							NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
-							if (wPoint == null) continue;
-							if (lastWaypoint.distanceTo(wPoint) < distance) {
-								routeInfo.add(wPoint);
-								lastWaypoint.setLatitude(wPoint.getLatitude());
-								lastWaypoint.setLongitude(wPoint.getLongitude());
-							}
-						}
-						
-						// Load the STAR waypoints if we have one
-						if (info.getSTAR() != null)
-							routeInfo.addAll(info.getSTAR().getWaypoints());
-
-						info.setPlanData(routeInfo);
-					}
-					
-					flights.put(info, airspaces);
-				} else
+				FlightInfo info = dao.getInfo(id);
+				if (info == null) {
 					log.warn("Cannot find ACARS flight {}", Integer.valueOf(id));
+					continue;
+				} else if (info.getArchived() && (dao.getArchiveInfo(id) == null)) {
+					log.warn("No Archive metadata for ACARS Flight {}", Integer.valueOf(id));
+					continue;
+				}
+				
+				Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
+				Collection<? extends RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived());
+				GeoLocation lastLoc = info.getAirportD();
+				for (RouteEntry rt : routeData) {
+					int distance = (rt.getRadarAltitude() < 2500) ? 2 : (rt.getGroundSpeed() / 120);
+					if ((lastLoc == null) || (rt.distanceTo(lastLoc) > distance)) {
+						airspaces.addAll(asdao.find(rt));
+						airspaces.addAll(Airspace.findRestricted(rt, (rt.getGroundSpeed() / 90)));
+						lastLoc = rt;
+					}
+				}
+
+				info.setRouteData(routeData);
+				if (showRoute) {
+					List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
+					NavigationDataMap navaids = navdao.getByID(routeEntries);
+					GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
+					int distance = lastWaypoint.distanceTo(info.getAirportA());
+					Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
+
+					// Load the SID way points if we have one
+					if (info.getSID() != null)
+						routeInfo.addAll(info.getSID().getWaypoints());
+
+					// Filter out navaids and put them in the correct order
+					for (String navCode : routeEntries) {
+						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
+						if (wPoint == null)
+							continue;
+						if (lastWaypoint.distanceTo(wPoint) < distance) {
+							routeInfo.add(wPoint);
+							lastWaypoint.setLatitude(wPoint.getLatitude());
+							lastWaypoint.setLongitude(wPoint.getLongitude());
+						}
+					}
+
+					// Load the STAR way points if we have one
+					if (info.getSTAR() != null)
+						routeInfo.addAll(info.getSTAR().getWaypoints());
+
+					info.setPlanData(routeInfo);
+				}
+
+				flights.put(info, airspaces);
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -177,11 +184,11 @@ public class FlightDataEarthService extends GoogleEarthService {
 		try {
 			if (noCompress) {
 				ctx.setContentType("application/vnd.google-earth.kml+xml");
-				ctx.setHeader("Content-disposition", "attachment; filename=" + prefix + ".kml");
+				ctx.setHeader("Content-disposition", String.format("attachment; filename=%s.kml", prefix));
 				ctx.print(XMLUtils.format(doc, "UTF-8"));
 				ctx.commit();
 			} else {
-				ctx.setHeader("Content-disposition", "attachment; filename=" + prefix + ".kmz");
+				ctx.setHeader("Content-disposition", String.format("attachment; filename=%s.kmz", prefix));
 				ctx.setContentType("application/vnd.google-earth.kmz kmz");
 			
 				// Create the ZIP output stream
