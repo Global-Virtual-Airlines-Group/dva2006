@@ -57,7 +57,7 @@ public class CachedRouteUpdateTask extends Task {
 			for (Iterator<ScheduleRoute> i = routes.iterator(); i.hasNext() && (routesLoaded < maxRoutes); ) {
 				ScheduleRoute rp = i.next();
 				if (rp.getFlights() < 2) {
-					log.warn("{} Flights between {} and {}, terminating", rp.getAirportD().getICAO(), rp.getAirportA().getICAO());
+					log.warn("{} Flights between {} and {}, terminating", rp.getAirportD(), rp.getAirportA());
 					break;
 				}
 				
