@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.jdom2.*;
@@ -7,15 +7,13 @@ import org.jdom2.output.*;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 10.3
+ * @version 11.2
  * @since 1.0
  */
 
 public class XMLUtils {
 
-	/**
-	 * Private singleton constructor. <i>Not implemented</i>
-	 */ 
+	// singleton
 	protected XMLUtils() {
 		super();
 	}
@@ -131,21 +129,10 @@ public class XMLUtils {
 	 * @param doc the document
 	 * @param encoding the string encoding
 	 * @return the formatted XML document
-	 * @see XMLUtils#format(Document)
 	 */
 	public static String format(Document doc, String encoding) {
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding(encoding));
 		return xmlOut.outputString(doc);
-	}
-	
-	/**
-	 * Converts an XML document into text using UTF-8.
-	 * @param doc the document
-	 * @return the formatted XML document
-	 * @see XMLUtils#format(Document, String)
-	 */
-	public static String format(Document doc) {
-		return format(doc, "UTF-8");
 	}
 	
 	/**
