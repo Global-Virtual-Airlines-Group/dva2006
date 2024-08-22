@@ -133,7 +133,7 @@ public class ChartLoader extends TestCase {
 		File out = new File(System.getProperty("java.io.tmpdir"), "charts.xml");
 		if (!out.exists()) {
 			try (PrintWriter pw = new PrintWriter(new FileOutputStream(out))) {
-				pw.println(XMLUtils.format(_doc));
+				pw.println(XMLUtils.format(_doc, "UTF-8"));
 				pw.flush();
 			}
 
