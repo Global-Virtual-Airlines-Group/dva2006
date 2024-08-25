@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 6.1
  */
 
@@ -58,10 +58,8 @@ public class RedisUtils {
 	
 	/**
 	 * Helper method to deserialize an object and swallow exceptions.
-	 * @param data the serialized data
-	 * @return the Object
 	 */
-	public static Object read(byte[] data) {
+	private static Object read(byte[] data) {
 		try (ByteArrayInputStream bi = new ByteArrayInputStream(data); ObjectInputStream oi = new ObjectInputStream(bi)) {
 			return oi.readObject();
 		} catch (ClassNotFoundException cnfe) {
@@ -102,9 +100,9 @@ public class RedisUtils {
 			JedisPoolConfig config = new JedisPoolConfig();
 			config.setMaxIdle(1); config.setMinIdle(1);
 			config.setJmxEnabled(true);
-			config.setJmxNamePrefix("redis-" + poolName.toLowerCase());
-			config.setMaxWait(Duration.ofMillis(50));
-			config.setMaxTotal(12);
+			config.setJmxNamePrefix(String.format("redis-%s", poolName.toLowerCase()));
+			config.setMaxWait(Duration.ofMillis(25));
+			config.setMaxTotal(4);
 			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
