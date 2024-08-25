@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to update a Help Desk Issue.
  * @author Luke
- * @version 10.2
+ * @version 11.2
  * @since 1.0
  */
 
@@ -72,11 +72,11 @@ public class IssueUpdateCommand extends AbstractCommand {
 
 			// Determine what item to make the FAQ answer
 			Collection<String> faqIDs = ctx.getParameters("faqID");
-			if (CollectionUtils.isEmpty(faqIDs)) {
+			if (CollectionUtils.isEmpty(faqIDs))
 				wdao.markFAQ(i.getID(), null);
-			} else if (faqIDs.size() > 1) {
-				throw new CommandException("Multiple FAQ answers specified!");
-			} else {
+			else if (faqIDs.size() > 1)
+				throw new CommandException("Multiple FAQ answers specified - " + faqIDs);
+			else {
 				Long commentID = Long.valueOf(faqIDs.iterator().next());
 				if (comments.containsKey(commentID))
 					wdao.markFAQ(i.getID(), Instant.ofEpochMilli(commentID.longValue()));
