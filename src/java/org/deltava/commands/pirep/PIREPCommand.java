@@ -606,12 +606,15 @@ public class PIREPCommand extends AbstractFormCommand {
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
 					if (hasClientOnlineTime || (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS))) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
-						Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
-						positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
+						ArchiveMetadata md = posdao.getArchiveInfo(info.getID());
+						if (md != null) {
+							Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
+							positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
 						
-						// Get online data if we can
-						Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
-						onlineTime = OnlineTime.calculate(entries, otMaxGap);
+							// Get online data if we can
+							Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
+							onlineTime = OnlineTime.calculate(entries, otMaxGap);
+						}
 					}
 					
 					FlightScore score = FlightScorer.score(pkg);
