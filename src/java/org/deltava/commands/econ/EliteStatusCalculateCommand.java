@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 9.2
  */
 
@@ -73,6 +73,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			if (st.getEffectiveOn() == null)
 				st.setEffectiveOn(LocalDate.of(year, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
 			
+			log.info("{} is {} as of {} - {}", p.getName(), st.getLevel().getName(), StringUtils.format(st.getEffectiveOn(), "MM/dd/yyyy"), st.getUpgradeReason());
+			
 			// Track status throughout the year
 			SortedMap<Instant, EliteStatus> myStatus = new TreeMap<Instant, EliteStatus>();
 			myStatus.put(st.getEffectiveOn(), st);
@@ -82,11 +84,15 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			if (!pyStatus.isEmpty()) {
 				EliteStatus lyStatus = pyStatus.getLast();
 				myStatus.put(lyStatus.getEffectiveOn(), lyStatus);
+				log.info("Previous Year status is {} as of {}", lyStatus.getLevel().getName(), StringUtils.format(lyStatus.getEffectiveOn(), "MM/dd/yyyy"));
 			}
 			
-			// Get current totals
+			// Get current totals and rollover
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			YearlyTotal oldTotal = esdao.getEliteTotals(p.getID(), year);
+			YearlyTotal total = esdao.getRollover(p.getID(), year);
+			if (!total.isZero())
+				log.info("{} Rollover totals - {} legs, {} miles", Integer.valueOf(total.getYear()), Integer.valueOf(total.getLegs()), Integer.valueOf(total.getDistance()));
 			
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -103,9 +109,9 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			// Load elite scoring data
 			tt.start(); Map<Integer, FlightEliteScore> scores = new HashMap<Integer, FlightEliteScore>();
 			for (FlightReport fr : pireps) {
-				FlightEliteScore sc = frdao.getElite(fr.getID());
-				if (sc != null)
-					scores.put(Integer.valueOf(fr.getID()), sc);
+				FlightEliteScore nsc = frdao.getElite(fr.getID());
+				if (nsc != null)
+					scores.put(Integer.valueOf(fr.getID()), nsc);
 			}
 			
 			ms = MILLISECONDS.convert(tt.mark("totals"), NANOSECONDS);
@@ -125,7 +131,6 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			
 			// Score the Flight Reports
 			FlightEliteScore sc = null; 
-			YearlyTotal total = new YearlyTotal(year, p.getID());
 			Collection<String> msgs = new ArrayList<String>(); Map<Integer, String> updatedScores = new LinkedHashMap<Integer, String>();
 			AirlineInformation ai = SystemData.getApp(null);
 			for (FlightReport fr : pireps) {
@@ -155,12 +160,15 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				
 				// Check if the score has changed
 				FlightEliteScore oldScore = scores.getOrDefault(Integer.valueOf(fr.getID()), new FlightEliteScore(fr.getID()));
-				if (!sc.equals(oldScore) && (oldScore.getPoints() > 0))
-					updatedScores.put(Integer.valueOf(fr.getID()), String.format("Was %d / %d, now %d / %d", Integer.valueOf(oldScore.getDistance()), Integer.valueOf(oldScore.getPoints()), Integer.valueOf(sc.getDistance()), Integer.valueOf(sc.getPoints())));
+				boolean scoreChanged = (!sc.equals(oldScore) && (oldScore.getPoints() > 0));
 				
 				// Write the score
 				tt.mark("acarsData");
-				frwdao.writeElite(sc, ai.getDB());
+				if (scoreChanged) {
+					Integer k = Integer.valueOf(fr.getID());
+					updatedScores.put(k, String.format("Flight %d was %d / %d, now %d / %d", k, Integer.valueOf(oldScore.getDistance()), Integer.valueOf(oldScore.getPoints()), Integer.valueOf(sc.getDistance()), Integer.valueOf(sc.getPoints())));
+					frwdao.writeElite(sc, ai.getDB());
+				}
 				
 				// Determine the next level
 				EliteLevel nextLevel = lvls.higher(st.getLevel());
@@ -173,8 +181,12 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					newSt.setEffectiveOn(ZonedDateTime.ofInstant(fr.getDate(), ZoneOffset.UTC).plusDays(1).truncatedTo(ChronoUnit.DAYS).toInstant());
 					newSt.setUpgradeReason(updR);
 					myStatus.put(newSt.getEffectiveOn(), newSt);
-					elwdao.write(st);
+					elwdao.write(newSt);
+					st = newSt;
 					tt.mark("upgrade");
+				} else if (nextLevel != null) {
+					YearlyTotal dt = total.delta(nextLevel);
+					log.info("Difference from {} = {} legs, {} miles", nextLevel.getName(), Integer.valueOf(dt.getLegs()), Integer.valueOf(dt.getDistance()));
 				}
 				
 				// Update the totals
@@ -225,8 +237,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				GetSerializedPosition psdao = new GetSerializedPosition(is);
 				return psdao.read();
 			}
-		} catch (DAOException | IOException ie) {
-			log.atError().withThrowable(ie).log("Error reading positions for Flight {} - {}", id, ie.getMessage());
+		} catch (DAOException | IOException | ArchiveValidationException e) {
+			log.atError().withThrowable(e).log("Error reading positions for Flight {} - {}", id, e.getMessage());
 			return Collections.emptyList();
 		}		
 	}
