@@ -6,15 +6,15 @@ import java.time.*;
 import java.sql.Connection;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
 
 import org.deltava.comparators.YearlyTotalComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Pilots at a particular Elite status level. 
@@ -24,6 +24,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class ElitePilotsCommand extends AbstractCommand {
+	
+	private static final List<ComboAlias> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Legs", SystemData.get("econ.elite.distance")}, new String[] {"0", "1"});
 
 	/**
 	 * Executes the command.
@@ -57,7 +59,7 @@ public class ElitePilotsCommand extends AbstractCommand {
 			}
 			
 			// Sort the merged totals
-			Collections.sort(totals, new YearlyTotalComparator(YearlyTotalComparator.LEGS).reversed());
+			Collections.sort(totals, new YearlyTotalComparator(StringUtils.parse(ctx.getParameter("sortType"), YearlyTotalComparator.LEGS)).reversed());
 			
 			// Load the pilots and totals
 			GetPilot pdao = new GetPilot(con);
@@ -102,6 +104,7 @@ public class ElitePilotsCommand extends AbstractCommand {
 			yrs.add(Integer.valueOf(y));
 		
 		ctx.setAttribute("years", yrs, REQUEST);
+		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
 			
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

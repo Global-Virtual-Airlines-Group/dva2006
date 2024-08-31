@@ -16,9 +16,16 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
-golgotha.local.updateYear = function(cb) {
-	self.location = '/elitepilots.do?year=' + golgotha.form.getCombo(cb);	
+golgotha.local.update = function() {
+	const f = document.forms[0];
+	self.location = '/elitepilots.do?year=' + golgotha.form.getCombo(f.year) + '&sortType=' + f.sortType.value;
 	return true;
+};
+
+golgotha.local.setSort = function(st) {
+	const f = document.forms[0];
+	f.sortType.value = st;
+	return golgotha.local.update();
 };
 </script>
 <style type="text/css">
@@ -44,10 +51,10 @@ td.requal-${lvl.name} {
 <el:table className="form">
 <tr class="title caps">
  <td colspan="6"><content:airline />&nbsp;${eliteName} MEMBERSHIP</td>
- <td colspan="2" class="right">YEAR <el:combo name="year" options='${years}' size="1" idx="*" value="${year}" onChange="void golgotha.local.updateYear(this)" /></td>
+ <td colspan="2" class="right">YEAR <el:combo name="year" options='${years}' size="1" idx="*" value="${year}" onChange="void golgotha.local.update()" /></td>
 </tr>
 <tr>
- <td colspan="7" class="mid"><span class="pri bld">${eliteName}</span> is <content:airline/>'s Pilot loyalty program. It recognizes those Pilots who operate flights in the top percentiles of our Pilot population. Listed below are the Pilots who have demonstrated a sustained
+ <td colspan="8" class="mid"><span class="pri bld">${eliteName}</span> is <content:airline/>'s Pilot loyalty program. It recognizes those Pilots who operate flights in the top percentiles of our Pilot population. Listed below are the Pilots who have demonstrated a sustained
  commitment to <content:airline /> through their participation in our flight operations.</td>
 </tr>
 <c:forEach var="lvl" items="${totals.keySet()}">
@@ -64,9 +71,9 @@ td.requal-${lvl.name} {
  <td>PILOT ID</td>
  <td>RANK</td>
  <td>EQUIPMENT</td>
- <td>${year} FLIGHTS</td>
- <td>${year}&nbsp;${distUnit}</td>
- <td>${year}&nbsp;${pointUnit}</td>
+ <td><a href="javascript:void golgotha.local.setSort(0)">${year} FLIGHTS</a></td>
+ <td><a href="javascript:void golgotha.local.setSort(1)">${year}&nbsp;${distUnit}</a></td>
+ <td><a href="javascript:void golgotha.local.setSort(2)">${year}&nbsp;${pointUnit}</a></td>
 </tr>
 <c:forEach var="yt" items="${lvlTotals}">
 <c:set var="idx" value="${idx + 1}" scope="page" />
@@ -92,6 +99,7 @@ td.requal-${lvl.name} {
 <!-- Bottom bar -->
 <tr class="title"><td colspan="8">&nbsp;</td></tr>
 </el:table>
+<el:text type="hidden" name="sortType" value="${param.sortType}" />
 </el:form>
 <br />
 <content:copyright />
