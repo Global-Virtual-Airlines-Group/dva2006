@@ -167,7 +167,9 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				if (scoreChanged) {
 					Integer k = Integer.valueOf(fr.getID());
 					updatedScores.put(k, String.format("Flight %d was %d / %d, now %d / %d", k, Integer.valueOf(oldScore.getDistance()), Integer.valueOf(oldScore.getPoints()), Integer.valueOf(sc.getDistance()), Integer.valueOf(sc.getPoints())));
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 					frwdao.writeElite(sc, ai.getDB());
+					frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				}
 				
 				// Determine the next level
