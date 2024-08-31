@@ -45,10 +45,14 @@ Flight Report <el:cmd url="pirep" linkID="${flightID}" className="sec bld">${fli
 </c:if>
 <fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} and <fmt:int value="${total.points}" />&nbsp;${pointUnit} in ${total.year}.<br />
 <c:if test="${isDifferent}">
-<span class="ita"> Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span></c:if>
+<span class="ita">Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span><br /></c:if>
+<br />
+<c:if test="${!empty msgs}">
+<span class="pri bld caps">STATUS UPDATES</span><br />
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
+</c:if>
 </c:when>
 <c:when test="${isLevelSet}">
 <div class="updateHdr">${eliteName} Requirements Calculated</div>
@@ -84,7 +88,7 @@ ${msg}<br /></c:forEach>
 </c:choose>
 <br />
 To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br />
-<c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="bld">Click Here</el:cmd>.<br />
+<c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
