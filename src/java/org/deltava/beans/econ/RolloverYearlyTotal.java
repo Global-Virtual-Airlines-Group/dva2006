@@ -12,9 +12,9 @@ import java.time.LocalDate;
 
 public class RolloverYearlyTotal extends YearlyTotal {
 	
-	private int _legs;
-	private int _distance;
-	private int _pts;
+	private int _roLegs;
+	private int _roDistance;
+	private int _roPts;
 
 	/**
 	 * Creates the bean
@@ -36,17 +36,17 @@ public class RolloverYearlyTotal extends YearlyTotal {
 
 	@Override
 	public int getLegs() {
-		return super.getLegs() + _legs;
+		return super.getLegs() + _roLegs;
 	}
 	
 	@Override
 	public int getDistance() {
-		return super.getDistance() + _distance;
+		return super.getDistance() + _roDistance;
 	}
 	
 	@Override
 	public int getPoints() {
-		return super.getPoints() + _pts;
+		return super.getPoints() + _roPts;
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	 */
 	public YearlyTotal getRollover() {
 		YearlyTotal yt = new YearlyTotal(getYear(), getID());
-		yt.addLegs(_legs, _distance, _pts);
+		yt.addLegs(_roLegs, _roDistance, _roPts);
 		return yt;
 	}
 
@@ -66,9 +66,9 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	 * @param pts the points
 	 */
 	public void addRollover(int legs, int distance, int pts) {
-		_legs += legs;
-		_distance += distance;
-		_pts += pts;
+		_roLegs += legs;
+		_roDistance += distance;
+		_roPts += pts;
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class RolloverYearlyTotal extends YearlyTotal {
 		// Add rollovers
 		RolloverYearlyTotal rt = new RolloverYearlyTotal(yt.getYear(), getID());
 		rt.addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
-		rt.addRollover(_legs, _distance, _pts);
+		rt.addRollover(_roLegs, _roDistance, _roPts);
 		return rt;
 	}
 
@@ -96,8 +96,8 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	 */
 	public void merge(YearlyTotal yt) {
 		if (yt instanceof RolloverYearlyTotal rt) {
-			addRollover(rt._legs, rt._distance, rt._pts);
-			addLegs(rt.getLegs() - rt._legs, rt.getDistance() - rt._distance, rt.getPoints() - rt._pts);
+			addRollover(rt._roLegs, rt._roDistance, rt._roPts);
+			addLegs(rt.getLegs() - rt._roLegs, rt.getDistance() - rt._roDistance, rt.getPoints() - rt._roPts);
 		} else
 			addLegs(yt.getLegs(), yt.getDistance(), yt.getPoints());
 	}
@@ -105,8 +105,8 @@ public class RolloverYearlyTotal extends YearlyTotal {
 	@Override
 	public void reset(int year) {
 		super.reset(year);
-		_legs = 0;
-		_distance = 0;
-		_pts = 0;
+		_roLegs = 0;
+		_roDistance = 0;
+		_roPts = 0;
 	}
 }
