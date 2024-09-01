@@ -39,6 +39,15 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 	
 	private static final Logger log = LogManager.getLogger(EliteStatusCalculateCommand.class);
 	
+	private class LogMessages extends ArrayList<String> {
+		
+		@Override
+		public boolean add(String msg) {
+			log.info(msg);
+			return super.add(msg);
+		}
+	}
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -73,7 +82,8 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			if (st.getEffectiveOn() == null)
 				st.setEffectiveOn(LocalDate.of(year, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
 			
-			log.info("{} is {} as of {} - {}", p.getName(), st.getLevel().getName(), StringUtils.format(st.getEffectiveOn(), "MM/dd/yyyy"), st.getUpgradeReason());
+			Collection<String> msgs = new LogMessages(); 
+			msgs.add(String.format("%s is %s as of %s - %s", p.getName(), st.getLevel().getName(), StringUtils.format(st.getEffectiveOn(), "MM/dd/yyyy"), st.getUpgradeReason()));
 			
 			// Track status throughout the year
 			SortedMap<Instant, EliteStatus> myStatus = new TreeMap<Instant, EliteStatus>();
@@ -81,10 +91,11 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			
 			// We also want to load previous year's status for January flights
 			List<EliteStatus> pyStatus = edao.getAllStatus(p.getID(), year - 1);
+			pyStatus.removeIf(pst -> EliteScorer.getStatsYear(pst.getEffectiveOn()) == year);
 			if (!pyStatus.isEmpty()) {
 				EliteStatus lyStatus = pyStatus.getLast();
 				myStatus.put(lyStatus.getEffectiveOn(), lyStatus);
-				log.info("Previous Year status is {} as of {}", lyStatus.getLevel().getName(), StringUtils.format(lyStatus.getEffectiveOn(), "MM/dd/yyyy"));
+				msgs.add(String.format("%d status was %s, effective %s", Integer.valueOf(lyStatus.getLevel().getYear()), lyStatus.getLevel().getName(), StringUtils.format(lyStatus.getEffectiveOn(), "MM/dd/yyyy")));
 			}
 			
 			// Get current totals and rollover
@@ -92,7 +103,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			YearlyTotal oldTotal = esdao.getEliteTotals(p.getID(), year);
 			YearlyTotal total = esdao.getRollover(p.getID(), year);
 			if (!total.isZero())
-				log.info("{} Rollover totals - {} legs, {} miles", Integer.valueOf(total.getYear()), Integer.valueOf(total.getLegs()), Integer.valueOf(total.getDistance()));
+				msgs.add(String.format("%d Rollover totals - %d legs, %d miles", Integer.valueOf(total.getYear()), Integer.valueOf(total.getLegs()), Integer.valueOf(total.getDistance())));
 			
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -131,11 +142,12 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			
 			// Score the Flight Reports
 			FlightEliteScore sc = null; 
-			Collection<String> msgs = new ArrayList<String>(); Map<Integer, String> updatedScores = new LinkedHashMap<Integer, String>();
+			Map<Integer, String> updatedScores = new LinkedHashMap<Integer, String>();
 			AirlineInformation ai = SystemData.getApp(null);
 			for (FlightReport fr : pireps) {
 				tt.mark("scoreStart");
-				st = myStatus.getOrDefault(myStatus.headMap(fr.getSubmittedOn()).lastKey(), myStatus.get(myStatus.firstKey()));
+				SortedMap<Instant, EliteStatus> hm = myStatus.headMap(fr.getSubmittedOn());
+				st = myStatus.getOrDefault(hm.lastKey(), myStatus.get(myStatus.firstKey()));
 				
 				if (fr instanceof FDRFlightReport ffr) {
 					Aircraft a = acdao.get(fr.getEquipmentType());
@@ -176,9 +188,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 				EliteLevel nextLevel = lvls.higher(st.getLevel());
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc);
 				if ((nextLevel != null) && (updR != UpgradeReason.NONE)) {
-					String msg = String.format("%s reaches %s for %d on %s / %s", p.getName(), nextLevel.getName(), Integer.valueOf(year), StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat()), updR.getDescription());
-					log.info(msg);
-					msgs.add(msg);
+					msgs.add(String.format("%s reaches %s for %d on %s / %s", p.getName(), nextLevel.getName(), Integer.valueOf(year), StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat()), updR.getDescription()));
 					EliteStatus newSt = new EliteStatus(p.getID(), nextLevel);
 					newSt.setEffectiveOn(ZonedDateTime.ofInstant(fr.getDate(), ZoneOffset.UTC).plusDays(1).truncatedTo(ChronoUnit.DAYS).toInstant());
 					newSt.setUpgradeReason(updR);

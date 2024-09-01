@@ -48,7 +48,7 @@ Flight Report <el:cmd url="pirep" linkID="${flightID}" className="sec bld">${fli
 <span class="ita">Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span><br /></c:if>
 <br />
 <c:if test="${!empty msgs}">
-<span class="pri bld caps">STATUS UPDATES</span><br />
+<div class="updateHdr">${eliteName} CALCULATION STATUS UPDATES</div>
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br /></c:forEach>
@@ -90,6 +90,7 @@ ${msg}<br /></c:forEach>
 To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
+To view a list of <content:airline /> Pilots in the ${eliteName} Program, <el:cmd url="elitepilots" className="sec bld">Click Here</el:cmd>.<br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
