@@ -37,7 +37,7 @@
 <!--  Chart Header Bar -->
 <tr class="title caps">
  <td colspan="6" class="left">SIMULATOR VERSION CHART</td>
- <td colspan="5"><span class="und" onclick="golgotha.local.showChart(); golgotha.util.toggleExpand(this, 'chartRow');">EXPAND</span></td>
+ <td colspan="5"><span class="toggle" onclick="golgotha.local.showChart(); golgotha.util.toggleExpand(this, 'chartRow');">EXPAND</span></td>
 </tr>
 <tr class="chartRow" style="display:none;">
  <td colspan="11"><div id="flightStats" style="height:345px;"></div></td>
