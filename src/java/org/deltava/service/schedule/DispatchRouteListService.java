@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2017, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -8,19 +8,21 @@ import java.io.IOException;
 
 import org.json.*;
 
+import org.deltava.beans.UseCount;
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 10.6
+ * @version 11.2
  * @since 2.2
  */
 
@@ -109,6 +111,9 @@ public class DispatchRouteListService extends WebService {
 			ro.put("external", isExternal);
 			ro.put("waypoints", rt.getRoute());
 			ro.put("comments", rt.getComments());
+			if (rt instanceof UseCount urt)
+				ro.put("useCount", urt.getUseCount());
+			
 			if (rt.getSID() != null) {
 				String sid = rt.getSID();
 				if (sid.endsWith(".ALL") && (rwy != null))
