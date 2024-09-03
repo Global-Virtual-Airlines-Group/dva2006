@@ -50,7 +50,7 @@ public class GetFARoutes extends FlightAwareDAO {
             	rt.setAirportD(rp.getAirportD());
             	rt.setAirportA(rp.getAirportA());
             	rt.setCreatedOn(Instant.now());
-            	rt.setCount(dto.optInt("count"));
+            	rt.setUseCount(dto.optInt("count"));
             	rt.setCruiseAltitude((alt < 1000) ? "FL" + String.valueOf(alt) : String.valueOf(alt));
             	rt.setComments(String.format("Loaded from FlightAware on %s", StringUtils.format(rt.getCreatedOn(), "MM/dd/yyyy")));
             	
