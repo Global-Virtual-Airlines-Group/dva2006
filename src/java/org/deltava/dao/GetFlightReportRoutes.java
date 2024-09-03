@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014, 2016, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2016, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,12 +9,11 @@ import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 11.1
+ * @version 11.2
  * @since 3.3
  */
 
@@ -28,16 +27,6 @@ public class GetFlightReportRoutes extends DAO {
 		super(c);
 	}
 
-	/**
-	 * Loads Flight Routes from Flight Reports in the current database.
-	 * @param rp the RoutePair
-	 * @return a Collection of FlightRoutes
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<? extends FlightRoute> getRoutes(RoutePair rp) throws DAOException {
-		return getRoutes(rp, SystemData.get("airline.db"));
-	}
-	
 	/**
 	 * Loads Flight Routes from Flight Reports.
 	 * @param rp the RoutePair
