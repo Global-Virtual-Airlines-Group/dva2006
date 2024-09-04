@@ -1,4 +1,4 @@
-golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], hasBlob:false};
+golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], aRwys:[], hasBlob:false};
 golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
 golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
 golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
@@ -322,7 +322,7 @@ try {
 	f.route.value = opt.value;
 	f.comments.value = opt.comments || '';
 	golgotha.form.setCombo(f.sid, opt.SID);
-	golgotha.form.setCombo(f.star, opt.STAR);
+	golgotha.routePlot.setTR(f.star, opt.STAR);
 	if (f.routeID)
 		f.routeID.value = opt.routeID;
 } catch (err) {
@@ -333,6 +333,36 @@ golgotha.util.disable('RouteSaveButton', false);
 golgotha.routePlot.plotMap();
 golgotha.event.beacon('Route Plotter', 'Set Route');
 return true;
+};
+
+golgotha.routePlot.setTR = function(cb, v) {
+	if ((!cb) || (!v)) return false;
+	let rwyIdx = 999;
+	console.log('Input is ' + v);
+	const hasRwys = (golgotha.routePlot.aRwys.length > 0);
+	if (v.indexOf('.') < v.lastIndexOf('.')) {
+		v = v.substring(0, v.lastIndexOf('.'));
+		console.log('Adjusted to ' + v);
+	}
+
+	cb.selectedIndex = -1;
+	for (var x = 0; x < cb.options.length; x++) {
+		const ov = cb.options[x].value;
+		if (!ov.startsWith(v)) continue;
+		const rw = ov.substring(ov.lastIndexOf('.') + 3);
+		const idx = golgotha.routePlot.aRwys.indexOf(rw);
+
+		// Get index of rwy name in aRwys, and save one with highest index
+		if ((idx > -1) && (idx < rwyIdx)) {
+			rwyIdx = idx;
+			cb.selectedIndex = x;
+		} else if (!hasRwys) { // if no arrival runways, ¯\_(ツ)_/¯
+			cb.selectedIndex = x;
+			return true;
+		}
+	}
+	
+	return false;
 };
 
 golgotha.routePlot.updateRoute = function(airportsChanged, rwyChanged)
@@ -390,7 +420,8 @@ golgotha.routePlot.togglePax = function() {
 
 golgotha.routePlot.updateSave = function(isSave) {
 	const btn = document.getElementById('SaveButton');
-	btn.textContent = (isSave ? 'SAVE' : 'DOWNLOAD') + ' FLIGHT PLAN';
+	const msg = (isSave ? 'SAVE' : 'DOWNLOAD') + ' FLIGHT PLAN';
+	btn.textContent = msg; btn.value = msg; 
 	return true;
 };
 
