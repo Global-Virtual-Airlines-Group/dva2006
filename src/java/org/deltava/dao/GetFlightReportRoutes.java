@@ -38,17 +38,14 @@ public class GetFlightReportRoutes extends DAO {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PRT.ROUTE, PR.SUBMITTED, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) "
-				+ "AS PNAME, APR.ACARS_ID, F.CRUISE_ALT, COUNT(APR.ACARS_ID) AS CNT FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PRT.ROUTE, MAX(PR.SUBMITTED) AS LF, F.CRUISE_ALT, COUNT(APR.ACARS_ID) AS CNT FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_ROUTE PRT, ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) WHERE (PR.ID=PRT.ID) AND (P.ID=PR.PILOT_ID) AND (PR.AIRPORT_D=?) AND "
-			+ "(PR.AIRPORT_A=?) AND (PR.STATUS=?) AND (F.CRUISE_ALT IS NOT NULL) GROUP BY PRT.ROUTE ORDER BY CNT DESC, PR.SUBMITTED");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) WHERE (PR.ID=PRT.ID) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.STATUS=?) "
+			+ "AND (F.CRUISE_ALT IS NOT NULL) GROUP BY PRT.ROUTE HAVING (LF>DATE_SUB(CURDATE(), INTERVAL 2 YEAR)) ORDER BY CNT DESC, LF DESC");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, rp.getAirportD().getIATA());
@@ -65,11 +62,10 @@ public class GetFlightReportRoutes extends DAO {
 					rt.setAirportD(rp.getAirportD());
 					rt.setAirportA(rp.getAirportA());
 					rt.setCreatedOn(rs.getTimestamp(2).toInstant());
-					rt.setCruiseAltitude(rs.getString(5));
-					int useCount = rs.getInt(6);
-					maxCount = Math.max(maxCount, useCount);
-					rt.setComments("ACARS Flight #" + StringUtils.format(rs.getInt(4), "#,##0") + " by " + rs.getString(3) + " on " + 
-						StringUtils.format(rt.getCreatedOn(), "dd-MMM-yyyy"));
+					rt.setCruiseAltitude(rs.getString(3));
+					rt.setUseCount(rs.getInt(4));
+					rt.setComments(String.format("%d ACARS Flight%s, last on %s", Integer.valueOf(rt.getUseCount()), (rt.getUseCount() > 1) ? "s" : "", StringUtils.format(rt.getCreatedOn(), "dd-MMM-yyyy")));
+					maxCount = Math.max(maxCount, rt.getUseCount());
 				
 					// Get the SID/STAR out of the route
 					String rawRoute = rs.getString(1);
@@ -83,7 +79,7 @@ public class GetFlightReportRoutes extends DAO {
 						String last = wps.getLast();
 						if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
 							rt.setSTAR(last + "." + wps.get(wps.size() - 2));
-							wps.remove(wps.size() - 1);
+							wps.remove(wps.getLast());
 						}
 					
 						rt.setRoute(StringUtils.listConcat(wps, " "));
@@ -91,7 +87,7 @@ public class GetFlightReportRoutes extends DAO {
 						rt.setRoute(rawRoute);
 
 					// Restrict to routes tht are at least 25% as popular as the most popular route, and we have at least 4
-					doMore = (useCount >= (maxCount >> 2)) && (results.size() < 4);
+					doMore = (rt.getUseCount() >= (maxCount >> 2)) || (results.size() < 5);
 					if (doMore)
 						results.add(rt);
 				}
