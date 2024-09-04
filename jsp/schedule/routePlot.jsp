@@ -176,6 +176,7 @@ golgotha.airportLoad.config.airline = 'all';
 golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
 f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
 golgotha.airportLoad.setText(f.airline);
+<fmt:jsarray var="golgotha.routePlot.aRwys" items="${aRwyNames}" />
 golgotha.routePlot.validateBlob(f);
 golgotha.routePlot.togglePax();
 golgotha.local.mapInit = function() {
@@ -190,7 +191,7 @@ golgotha.local.mapInit = function() {
 };
 
 // Create the map
-const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
@@ -209,8 +210,8 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
 
 // Build gates marker managers
-golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:17});
-golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
+golgotha.routePlot.dGates = new MarkerManager(map,{maxZoom:17});
+golgotha.routePlot.aGates = new MarkerManager(map,{maxZoom:17});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {

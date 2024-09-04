@@ -10,9 +10,6 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RunwayUsage;
-import org.deltava.beans.wx.METAR;
-
-import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -68,12 +65,6 @@ public class RoutePlotCommand extends AbstractCommand {
 				ac.validate();
 				ctx.setAttribute("allowLoad", Boolean.valueOf(ac.getCanCalculateLoad()), REQUEST);
 				
-				// Get aircraft profile and SID runways
-				GetNavRoute navdao = new GetNavRoute(con);
-				Aircraft a = acdao.get(dfr.getEquipmentType());
-				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
-				Collection<String> sidRwys = navdao.getSIDRunways(dfr.getAirportD());
-				
 				// Load gates
 				GetGates gdao = new GetGates(con);
 				Gate gD = gdao.getGate(dfr.getAirportD(), dfr.getGateD());
@@ -81,26 +72,41 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("gatesD", CollectionUtils.nonNull(gD), REQUEST);
 				ctx.setAttribute("gatesA", CollectionUtils.nonNull(gA), REQUEST);
 				
-				// Get departure runways
-				GetRunwayUsage rwdao = new GetRunwayUsage(con);
-				RunwayUsage ru = rwdao.getPopularRunways(dfr, true);
-				List<RunwayUse> rwys = ru.apply(navdao.getRunways(dfr.getAirportD(), Simulator.P3Dv4));
-				List<Runway> runways = rwys.stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.stream().anyMatch(sr -> r.matches(sr))).collect(Collectors.toList());
+				// Get aircraft profile
+				Aircraft a = acdao.get(dfr.getEquipmentType());
+				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 				
-				// Sort based on wind
+				// Initialize the runway helper
+				RunwayHelper rh = new RunwayHelper(dfr, opts);
+				GetNavRoute navdao = new GetNavRoute(con);
+				rh.addSIDs(navdao.getRoutes(dfr.getAirportD(), TerminalRoute.Type.SID));
+				rh.addSTARs(navdao.getRoutes(dfr.getAirportA(), TerminalRoute.Type.STAR));
+				
+				// Get popular runways
+				GetRunwayUsage rwdao = new GetRunwayUsage(con);
+				RunwayUsage dru = rwdao.getPopularRunways(dfr, true);
+				RunwayUsage aru = rwdao.getPopularRunways(dfr, false);
+				List<RunwayUse> dr = dru.apply(navdao.getRunways(dfr.getAirportD(), Simulator.P3Dv4));
+				List<RunwayUse> ar = aru.apply(navdao.getRunways(dfr.getAirportA(), Simulator.P3Dv4));
+				rh.addRunways(dr, ar);
+
+				// Get weather data
 				GetWeather wxdao = new GetWeather(con);
-				METAR wxD = wxdao.getMETAR(dfr.getAirportD());
-				if ((wxD != null) && (wxD.getWindSpeed() > 0))
-					runways.sort(new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed(), true));
+				rh.setMETAR(wxdao.getMETAR(dfr.getAirportD()), wxdao.getMETAR(dfr.getAirportA()));
+				
+				// Get runways
+				List<RunwayUse> dRwys = rh.getRunways(true); 
+				List<RunwayUse> aRwys = rh.getRunways(false);
 				
 				// Save runways and best runway
-				Runway rwyD = runways.isEmpty() ? null : runways.get(0);
-				ctx.setAttribute("dRwys", runways, REQUEST);
+				Runway rwyD = dRwys.isEmpty() ? null : dRwys.getFirst();
+				ctx.setAttribute("dRwys", dRwys, REQUEST);
+				ctx.setAttribute("aRwyNames", aRwys.stream().map(Runway::getName).collect(Collectors.toList()), REQUEST);
 				ctx.setAttribute("rwy", rwyD, REQUEST);
 				
-				// Load SID/STARs
-				ctx.setAttribute("sids", navdao.getRoutes(dfr.getAirportD(), TerminalRoute.Type.SID), REQUEST);
-				ctx.setAttribute("stars", navdao.getRoutes(dfr.getAirportA(), TerminalRoute.Type.STAR), REQUEST);
+				// Save SID/STARs
+				ctx.setAttribute("sids", rh.getSIDs(), REQUEST);
+				ctx.setAttribute("stars", rh.getSTARs(), REQUEST);
 				
 				// Load up route
 				if (!StringUtils.isEmpty(dfr.getRoute())) {
