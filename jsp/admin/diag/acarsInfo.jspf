@@ -6,9 +6,9 @@
 <c:if test="${!empty acarsBW}">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">ACARS SERVER BANDWIDTH USAGE</td>
+ <td colspan="2">ACARS SERVER BANDWIDTH USAGE<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsBW')">COLLAPSE</span></td>
 </tr>
-<tr>
+<tr class="acarsBW">
  <td class="label">Last Minute</td>
  <td class="data"><fmt:int value="${acarsBW.connections}" /> connections,
  <fmt:int value="${acarsBW.bytesIn}" /> bytes (<fmt:dec value="${acarsBW.bytesIn / 60}" /> bytes/sec) in,
@@ -17,7 +17,7 @@
  <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.
 <c:if test="${acarsBW.errors > 0}"><span class="error bld"><fmt:int value="${acarsBW.errors}" /> errors.</span></c:if></td>
 </tr>
-<tr>
+<tr class="acarsBW">
  <td class="label top">Bandwidth Graph</td>
  <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
@@ -56,11 +56,11 @@ return true;
 <c:if test="${!empty acarsPool}">
 <el:table className="view">
 <tr class="title">
- <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${acarsPool.size()} CONNECTIONS / <fmt:int value="${acarsSelectCount}" /> SELECTS</td>
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL - ${acarsPool.size()} CONNECTIONS / <fmt:int value="${acarsSelectCount}" /> SELECTS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsPool')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar-->
-<tr class="title">
+<tr class="title acarsPool">
  <td style="width:10%">ID</td>
  <td style="width:16%">USER</td>
  <td>REMOTE ADDRESS</td>
@@ -73,7 +73,7 @@ return true;
 <c:set var="tcp" value="${con.TCPStatistics}" scope="request" />
 <c:set var="udp" value="${con.UDPStatistics}" scope="request" />
 <content:defaultMethod var="isResolved" object="${con}" method="isResolved" />
-<view:row entry="${con}">
+<view:row entry="${con}" className="acarsPool">
  <td class="priB"><fmt:hex value="${con.connectionID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
  <td class="small">${con.remoteAddr}<c:if test="${isResolved}"> (${con.remoteHost})</c:if>
@@ -88,7 +88,7 @@ return true;
 </c:otherwise>
 </c:choose>
 </view:row>
-<view:row entry="${con}">
+<view:row entry="${con}" className="acarsPool">
  <td class="small"><fmt:int value="${tcp.msgsIn}" /> in, <fmt:int value="${tcp.msgsOut}" /> out</td>
  <td class="small"><fmt:fileSize value="${tcp.bytesIn}" /> in, <fmt:fileSize value="${tcp.bytesOut}" /> out
 <c:if test="${tcp.bytesSaved != 0}">, <span class="ita"><fmt:fileSize value="${tcp.bytesSaved}" />K saved</span></c:if></td>
@@ -101,7 +101,7 @@ Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, <fmt:dec value="${tcp.byte
 </td>
 </view:row>
 <c:if test="${!empty udp}">
-<view:row entry="${con}">
+<view:row entry="${con}" className="acarsPool">
  <td class="small"><fmt:int value="${udp.msgsIn}" /> in, <fmt:int value="${udp.msgsOut}" /> out</td>
  <td class="small"><fmt:fileSize value="${udp.bytesIn}" /> in, <fmt:fileSize value="${udp.bytesOut}" /> out</td>
  <td colspan="4" class="small">Buffer: <fmt:int value="${udp.bufferReads}" /> reads, 
@@ -118,11 +118,11 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 <!-- ACARS Server Worker threads -->
 <el:table className="view">
 <tr class="title">
- <td class="left caps" colspan="4">ACARS WORKER THREAD INFORMATION</td>
+ <td class="left caps" colspan="4">ACARS WORKER THREADS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsWorker')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar-->
-<tr class="title">
+<tr class="title acarsWorker">
  <td style="width:30%">THREAD NAME</td>
  <td style="width:15%">THREAD STATUS</td>
  <td style="width:10%">COUNT</td>
@@ -131,7 +131,7 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 
 <!-- Table Thread Data -->
 <c:forEach var="worker" items="${workers}">
-<view:row entry="${worker}">
+<view:row entry="${worker}" className="acarsWorker">
  <td class="pri bld">${worker}</td>
  <td class="sec">${worker.status.name}</td>
  <td><fmt:int value="${worker.executionCount}" /></td>
@@ -144,11 +144,11 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 <!-- ACARS Command Statistics -->
 <el:table className="view">
 <tr class="title">
- <td class="left caps" colspan="4">ACARS COMMAND STATISTICS</td>
+ <td class="left caps" colspan="4">ACARS COMMAND STATISTICS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsCmd')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar -->
-<tr class="title">
+<tr class="title acarsCmd">
  <td style="width:45%">COMMAND NAME</td> 
  <td style="width:15%">INVOCATIONS</td>
  <td style="width:20%">AVERAGE TIME</td>
@@ -157,7 +157,7 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
  
  <!-- Table Command Data -->
  <c:forEach var="cmd" items="${acarsCmdStats}">
-<view:row entry="${cmd}">
+<view:row entry="${cmd}" className="acarsCmd">
  <td class="bld">${cmd.name}</td>
  <td class="pri bld"><fmt:int value="${cmd.count}"  /> / <fmt:int value="${cmd.successCount}" /></td> 
  <td class="sec bld"><fmt:int value="${cmd.avgTime}" /> ms (<fmt:int value="${cmd.avgBackEndTime}" /> ms db)</td>

@@ -431,6 +431,12 @@ golgotha.util.toggleExpand = function(lnk, className) {
 	return true;
 };
 
+golgotha.util.isExpanded = function(className) {
+	const rows = golgotha.util.getElementsByClass(className);
+	if (rows.length == 0) return false;
+	return (rows[0].style.display == '');
+};
+
 golgotha.nav.toggleMenu = function(e, force) {
 	const nv = document.getElementById('nav');
 	if (!golgotha.util.hasClass(nv, 'navside')) return false;
