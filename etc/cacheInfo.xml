@@ -13,9 +13,9 @@
 	<cache id="UploadState" expires="4h" max="32" />
 	
 	<!-- SkyMiles caches -->
-	<cache id="EliteLevel" max="16" expires="24h" />
+	<cache id="EliteLevel" max="32" expires="24h" />
 	<cache id="EliteStatus" expires="24h" remote="true" />
-	<cache id="EliteYearlyTotal" expires="4h" remote="true" />
+	<cache id="EliteYearlyTotal" expires="8h" remote="true" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />
