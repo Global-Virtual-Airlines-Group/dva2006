@@ -114,7 +114,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <c:set var="rawUptime" value="${redisStatus['uptime_in_seconds']}" scope="page" />
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
- <td class="label top">Redis Status</td>
+ <td class="label top">Valkey Status</td>
  <td class="data">Server version: <span class="bld">${redisStatus['redis_version']}</span><br />
  Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
 Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
