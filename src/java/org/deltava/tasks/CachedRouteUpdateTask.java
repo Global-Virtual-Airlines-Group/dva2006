@@ -92,7 +92,7 @@ public class CachedRouteUpdateTask extends Task {
 						rt.setComments("Auto-generated dummy route");
 						rt.setCruiseAltitude("35000");
 						rt.setCreatedOn(Instant.now());
-						rt.setRoute(String.format("% - %s", rp.getAirportD().getICAO(), rp.getAirportA().getICAO()));
+						rt.setRoute(String.format("%s - %s", rp.getAirportD().getICAO(), rp.getAirportA().getICAO()));
 						rcwdao.write(Collections.singleton(rt));
 					}
 					
