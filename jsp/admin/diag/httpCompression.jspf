@@ -5,11 +5,11 @@
 <!-- HTTP Compression Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="6" class="left">HTTP COMPRESSION INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'httpCompressionEntry')">COLLAPSE</span></td>
+ <td colspan="6" class="left">HTTP COMPRESSION INFORMATION<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'httpCompressionEntry')">COLLAPSE</span></td>
 </tr>
 
 <!-- HTTP Compression Data Title Bar -->
-<tr class="title caps">
+<tr class="title caps httpCompressionEntry">
  <td style="width:30%">DAO NAME</td>
  <td style="width:10%">REQUESTS</td>
  <td style="width:15%">COMPRESSED BYTES</td>
