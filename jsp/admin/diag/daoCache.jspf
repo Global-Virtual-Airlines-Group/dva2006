@@ -1,16 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
-<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_diag.tld" prefix="diag" %>
 <!-- DAO Cache Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left">DATA CACHE INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'daoCacheEntry')">COLLAPSE</span></td>
+ <td colspan="8" class="left">DATA ACCESS CACHES<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'daoCache')">COLLAPSE</span></td>
 </tr>
 
 <!-- DAO Cache Title Bar -->
-<tr class="title caps" id="cacheTitleBar">
+<tr class="title caps daoCache" id="cacheTitleBar">
  <td style="width:20%">CACHE ID</td>
  <td style="width:15%">CACHE TYPE</td>
  <td style="width:10%">SIZE</td>
@@ -38,7 +36,7 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 		const jsData = JSON.parse(xmlreq.responseText);
         jsData.caches.forEach(function(c) {
 			const r = document.createElement('tr');
-			r.setAttribute('class', 'daoCacheEntry');
+			r.setAttribute('class', 'daoCache daoCacheEntry');
 			const ic = golgotha.util.createElement('td',c.id, 'pri bld'); ic.cacheID = c.id;
 			ic.addEventListener('dblclick', function() { golgotha.local.cacheClear(this.cacheID); });
 			r.appendChild(ic);
@@ -69,7 +67,12 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 	    return true;
 	};
 
-	xmlreq.send(null);
+	// Only refresh if expanded
+	if (golgotha.util.isExpanded('daoCache'))
+		xmlreq.send(null);
+	else if (updateInterval > 0)
+		window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
+
 	return true;
 };
 
@@ -78,10 +81,10 @@ golgotha.local.cacheClear = function(id) {
 	xmlreq.open('post', 'cacheclear.ws?id=' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		alert('Cleared "' + id + '" cache');
+		alert(id + ' - Cleared cache');
 		return true;
 	};
-	
+
 	xmlreq.send(null);
 	return true;
 };
