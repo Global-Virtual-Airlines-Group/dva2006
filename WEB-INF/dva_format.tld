@@ -538,6 +538,7 @@
 			<name>object</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.EnumDescription</type>
 		</attribute>
 	</tag>
 
