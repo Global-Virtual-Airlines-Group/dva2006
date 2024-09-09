@@ -63,12 +63,13 @@ public class DefaultMethodValueTag extends TagSupport {
 	protected Object getValue() throws Exception {
 		
 		// Get proper method name
-		if (!_methodName.endsWith("()"))
-			_methodName = StringUtils.getPropertyMethod(_methodName);
+		String mn = _methodName;
+		if (!mn.endsWith("()"))
+			mn = StringUtils.getPropertyMethod(_methodName);
 		
-		Method m = _o.getClass().getMethod(_methodName);
+		Method m = _o.getClass().getMethod(mn);
 		if (m == null)
-			throw new IllegalArgumentException("Cannot find " + _o.getClass().getName() + "#" + _methodName);
+			throw new IllegalArgumentException("Cannot find " + _o.getClass().getName() + "#" + mn);
 		
 		return m.invoke(_o);
 	}
