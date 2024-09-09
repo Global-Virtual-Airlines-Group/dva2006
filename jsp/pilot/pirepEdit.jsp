@@ -183,7 +183,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec"><fmt:defaultMethod object="${pirep.status}" method="description" empty="NEW" /><c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
+ <td class="data bld sec"><fmt:edesc object="${pirep.status}" /><c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
 <c:choose>
 <c:when test="${!isAssign}">

@@ -70,7 +70,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Applicant Status</td>
- <td class="data caps"><span class="sec bld"><fmt:defaultMethod object="${applicant.status}" method="description" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
+ <td class="data caps"><span class="sec bld"><fmt:edesc object="${applicant.status}" /></span><c:if test="${applicant.hasCAPTCHA}"> - <span class="ter bld">CAPTCHA VERIFIED</span></c:if></td>
 </tr>
 <c:if test="${!applicant.hasCAPTCHA || applicant.autoReject}">
 <tr>
