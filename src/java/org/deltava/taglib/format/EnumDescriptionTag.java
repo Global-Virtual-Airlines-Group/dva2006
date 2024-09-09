@@ -34,7 +34,7 @@ public class EnumDescriptionTag extends DefaultMethodValueTag {
 		try {
 			Object v = getValue();
 			if (v != null)
-				pageContext.getOut().write(String.valueOf(getValue()));
+				pageContext.getOut().write(String.valueOf(v));
 			return EVAL_PAGE;
 		} catch (Exception e) {
 			throw new JspException(e);
