@@ -58,9 +58,9 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="small"><el:cmd url="issue" link="${issue}"><fmt:text value="${issue.subject}" /></el:cmd></td>
- <td class="pri bld small"><fmt:defaultMethod object="${issue.priority}" method="description" /></td>
- <td class="bld small nophone"><fmt:defaultMethod object="${issue.area}" method="description" /></td>
- <td class="sec bld small nophone"><fmt:defaultMethod object="${issue.type}" method="description" /></td>
+ <td class="pri bld small"><fmt:edesc object="${issue.priority}" /></td>
+ <td class="bld small nophone"><fmt:edesc object="${issue.area}" /></td>
+ <td class="sec bld small nophone"><fmt:edesc object="${issue.type}" /></td>
  <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="nophone"><fmt:int value="${issue.commentCount}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>

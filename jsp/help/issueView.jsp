@@ -94,7 +94,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><span class="sec bld"><fmt:defaultMethod object="${issue.status}" method="description" /></span>
+ <td class="data"><span class="sec bld"><fmt:edesc object="${issue.status}" /></span>
 <c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <c:if test="${access.canUpdateContent && (issue.comments.size() > 1)}">

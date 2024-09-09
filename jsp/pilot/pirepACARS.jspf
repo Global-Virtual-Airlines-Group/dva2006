@@ -290,7 +290,7 @@
 
 <tr>
  <td class="label top">On-Time Performance</td>
- <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld"><fmt:defaultMethod object="${pirep.onTime}" method="description" /></span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
+ <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld caps"><fmt:edesc object="${pirep.onTime}" /></span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
  <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${onTimeEntry.timeD}" />, arrives <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${onTimeEntry.timeA}" />)</span>
 <c:if test="${!empty onTimeRoute}"><span class="phone">&nbpsp;</span><span class="small">All <content:airline /> Flights: <fmt:int className="bld" value="${onTimeRoute.totalLegs}" /> Flights, <fmt:int className="pri bld" value="${onTimeRoute.onTimeLegs}" /> On Time
  <span class="${otClass} bld">(<fmt:dec value="${otPct}" fmt="##0.0%" />)</span></span></c:if>

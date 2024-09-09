@@ -57,7 +57,7 @@
 <content:defaultMethod var="flightType" object="${chreq}" method="flightType" />
 <tr>
  <td class="label">Flight Information</td>
- <td class="data"><fmt:distance value="${dst}" className="bld" />, Flight type: <span class="sec bld"><fmt:defaultMethod object="${flightType}" method="description" /></span></td> 
+ <td class="data"><fmt:distance value="${dst}" className="bld" />, Flight type: <span class="sec bld"><fmt:edesc object="${flightType}" /></span></td> 
 </tr>
 <tr>
  <td class="label">Equipment Type</td>

@@ -83,7 +83,7 @@ golgotha.local.validate = function(f) {
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
- <td class="sec bld small nophone"><fmt:defaultMethod object="${issue.status}" method="description" /></td>
+ <td class="sec bld small nophone"><fmt:edesc object="${issue.status}" /></td>
  <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></td>
  <td class="nophone"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
