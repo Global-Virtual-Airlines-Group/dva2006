@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.searchStr, l:5, t:'Search Term'});
@@ -94,9 +94,9 @@ golgotha.local.validate = function(f) {
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="small"><el:cmd url="issue" link="${issue}">${issue.subject}</el:cmd></td>
-  <td class="pri bld small"><fmt:defaultMethod object="${issue.priority}" method="description" /></td>
- <td class="bld small nophone"><fmt:defaultMethod object="${issue.area}" method="description" /></td>
- <td class="sec bld small nophone"><fmt:defaultMethod object="${issue.type}" method="description" /></td>
+  <td class="pri bld small"><fmt:edesc object="${issue.priority}" /></td>
+ <td class="bld small nophone"><fmt:edesc object="${issue.area}" /></td>
+ <td class="sec bld small nophone"><fmt:edesc object="${issue.type}" /></td>
  <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
  <td class="bld nophone"><fmt:date fmt="d" date="${issue.resolvedOn}" default="-" /></td>

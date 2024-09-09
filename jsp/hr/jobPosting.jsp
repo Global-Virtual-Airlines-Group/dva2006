@@ -50,7 +50,7 @@ golgotha.local.validate = function(f) {
 </script>
 </c:when>
 <c:otherwise>
-<script>
+<script async>
 golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
@@ -119,7 +119,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Posting Status</td>
- <td class="data"><span class="pri bld"><fmt:defaultMethod object="${job.status}" method="description" /></span>
+ <td class="data"><span class="pri bld"><fmt:edesc object="${job.status}" /></span>
 <c:if test="${job.staffOnly}">
 <br />
 <span class="sec bld caps">This Job Posting is visible to <content:airline /> Staff members only</span></c:if></td>

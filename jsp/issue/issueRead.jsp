@@ -63,7 +63,7 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Issue Status</td>
- <td class="data"><span class="sec bld"><fmt:defaultMethod object="${issue.status}" method="description" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
+ <td class="data"><span class="sec bld"><fmt:edesc object="${issue.status}" /></span><c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <c:if test="${!empty hdIssue}">
 <tr>
@@ -73,7 +73,7 @@ golgotha.local.toggleCheckbox = function() {
 </c:if>
 <tr>
  <td class="label">Issue Priority</td>
- <td class="data pri bld"><fmt:defaultMethod object="${issue.priority}" method="description" /></td>
+ <td class="data pri bld"><fmt:edesc object="${issue.priority}" /></td>
 </tr>
 <tr>
  <td class="label">Airlines</td>
@@ -81,15 +81,15 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Security</td>
- <td class="data"><fmt:defaultMethod object="${issue.security}" method="description" /></td>
+ <td class="data"><fmt:edesc object="${issue.security}" /></td>
 </tr>
 <tr>
  <td class="label">Area</td>
- <td class="data"><fmt:defaultMethod object="${issue.area}" method="description" /></td>
+ <td class="data"><fmt:edesc object="${issue.area}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data sec"><fmt:defaultMethod object="${issue.type}" method="description" /></td>
+ <td class="data sec"><fmt:edesc object="${issue.type}" /></td>
 </tr>
 <c:if test="${issue.majorVersion > 0}">
 <tr>
