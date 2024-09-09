@@ -530,6 +530,18 @@
 	</tag>
 
 	<tag>
+		<description>EnumDescription tag, for rendering Enum descriptions via inteface default method</description>
+		<name>edesc</name>
+		<tag-class>org.deltava.taglib.format.EnumDescriptionTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>object</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Airport tag, used to display ICAO/IATA codes depending on user preferences</description>
 		<name>airport</name>
 		<tag-class>org.deltava.taglib.format.AirportFormatTag</tag-class>
