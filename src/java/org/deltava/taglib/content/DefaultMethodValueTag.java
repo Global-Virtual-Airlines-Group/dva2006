@@ -1,4 +1,4 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.lang.reflect.Method;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to call default interface methods since EL is stupid.
  * @author Luke
- * @version 10.0
+ * @version 11.2
  * @since 10.0
  */
 
@@ -61,6 +61,7 @@ public class DefaultMethodValueTag extends TagSupport {
 	 * @throws Exception if an error occurs
 	 */
 	protected Object getValue() throws Exception {
+		if (_o == null) return null;
 		
 		// Get proper method name
 		String mn = _methodName;
