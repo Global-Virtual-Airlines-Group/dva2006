@@ -1,14 +1,14 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
  * An enumeration of development issue security levels.
  * @author Luke
- * @version 9.0
+ * @version 11.2
  * @since 9.0
  */
 
-public enum IssueSecurity implements org.deltava.beans.ComboAlias {
+public enum IssueSecurity implements org.deltava.beans.EnumDescription {
 	PUBLIC("Public"), USERS("Users Only"), STAFF("Staff Only");
 	
 	private final String _desc;
@@ -21,21 +21,8 @@ public enum IssueSecurity implements org.deltava.beans.ComboAlias {
 		_desc = desc;
 	}
 	
-	/**
-	 * Returns a propercased description.
-	 * @return the description
-	 */
+	@Override
 	public String getDescription() {
 		return _desc;
-	}
-	
-	@Override
-	public String getComboAlias() {
-		return name();
-	}
-
-	@Override
-	public String getComboName() {
-		return getDescription();
 	}
 }
