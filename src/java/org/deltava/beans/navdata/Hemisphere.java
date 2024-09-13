@@ -1,10 +1,10 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * An enumeration to store lat/long conversion factors for Hemispheres on the Earth.
  * @author Luke
- * @version 7.2
+ * @version 11.2
  * @since 2.6
  */
 
@@ -33,5 +33,14 @@ public enum Hemisphere {
 	 */
 	public int getLongitudeFactor() {
 		return _lngFactor;
+	}
+	
+	/**
+	 * Returns whether a character is a valid direction.
+	 * @param c a char
+	 * @return TRUE if a valid direction, otherwise FALSE
+	 */
+	public static boolean isDirection(char c) {
+		return ("NSEW".indexOf(c) > -1);
 	}
 }

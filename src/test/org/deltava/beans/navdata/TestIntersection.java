@@ -61,6 +61,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52E"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("48N030W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("N46W015"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("485823N0302231W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("5430N02000W"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
@@ -170,6 +171,16 @@ protected void tearDown() throws Exception {
 	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
 	   
 	   i = Intersection.parse("5730N100W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
+	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   gp = new GeoPosition();
+	   gp.setLatitude(46, 0, 0);
+	   gp.setLongitude(-15, 0, 0);
+	   
+	   i = Intersection.parse("N46W015");
 	   assertNotNull(i);
 	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
