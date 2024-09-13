@@ -101,13 +101,13 @@ public class RedisUtils {
 			config.setMaxIdle(1); config.setMinIdle(1);
 			config.setJmxEnabled(true);
 			config.setJmxNamePrefix(String.format("redis-%s", poolName.toLowerCase()));
-			config.setMaxWait(Duration.ofMillis(25));
+			config.setMaxWait(Duration.ofMillis(50));
 			config.setMaxTotal(4);
 			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
-			config.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
+			config.setTimeBetweenEvictionRuns(Duration.ofSeconds(60));
 			
 			// Check for domain socket
 			String host = StringUtils.isEmpty(addr) ? "localhost" : addr;
