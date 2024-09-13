@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 11.0
+ * @version 11.2
  * @since 1.0
  */
 
@@ -252,7 +252,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
-
+	
 	/**
 	 * Creates a bean from a type, latitude and longitude.
 	 * @param type the navigation aid type
@@ -295,11 +295,12 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	 * @return TRUE if in XXYYN format or XXNYYYE format, otherwise FALSE
 	 */
 	public static CodeType isCoordinates(String code) {
-		if (StringUtils.isEmpty(code))
+		if (StringUtils.isEmpty(code)) return CodeType.CODE;
+		
+		boolean isPrefixDirection = Hemisphere.isDirection(code.charAt(0));
+		if (!isPrefixDirection && !Character.isDigit(code.charAt(0)))
 			return CodeType.CODE;
-		if (!Character.isDigit(code.charAt(0)))
-			return CodeType.CODE;
-		if ("NSEW".indexOf(code.charAt(code.length() - 1)) == -1)
+		if (!isPrefixDirection && !Hemisphere.isDirection(code.charAt(code.length() - 1)))
 			return CodeType.CODE;
 		
 		// Check for slash
@@ -312,7 +313,8 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		for (int x = 1; x < code.length() - 1; x++) {
 			if (Character.isLetter(code.charAt(x))) {
 				ltrCount++;
-				if ((ltrCount > 1) || ((x != 2) && (x != 4) && (x != 6)))
+				boolean invalidOfs = isPrefixDirection ? (x != 3) : ((x != 2) && (x != 4) && (x != 6));
+				if ((ltrCount > 1) || invalidOfs)
 					return CodeType.CODE;
 			}
 		}

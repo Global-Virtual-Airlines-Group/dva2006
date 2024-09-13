@@ -126,17 +126,20 @@ public class Intersection extends NavigationDataBean {
 		CodeType ct = NavigationDataBean.isCoordinates(code);
 		switch (ct) {
 			case FULL:
+				boolean isPrefixDirection = Hemisphere.isDirection(code.charAt(0));
+				
 				// Find where the lat ends
-				int pos = 0;
+				int pos = isPrefixDirection ? 1 : 0;
 				while ((pos < code.length()) && Character.isDigit(code.charAt(pos)))
 					pos++;
 				
-				String latDir = code.substring(pos, pos + 1).toUpperCase();
-				String lngDir = code.substring(code.length() - 1).toUpperCase();
+				String latDir = isPrefixDirection ? code.substring(0, 1) : code.substring(pos, pos + 1);
+				String lngDir = isPrefixDirection ? code.substring(pos, pos+1) : code.substring(code.length() - 1);
 				try {
-					Hemisphere hLat = Hemisphere.valueOf(latDir); Hemisphere hLng = Hemisphere.valueOf(lngDir);
-					double lat = Double.parseDouble(code.substring(0, pos)) ;
-					double lng = Double.parseDouble(code.substring(pos + 1, code.length() - 1));
+					Hemisphere hLat = Hemisphere.valueOf(latDir.toUpperCase());
+					Hemisphere hLng = Hemisphere.valueOf(lngDir.toUpperCase());
+					double lat = Double.parseDouble(isPrefixDirection ? code.substring(1, pos) : code.substring(0, pos));
+					double lng = Double.parseDouble(isPrefixDirection ? code.substring(pos+1) : code.substring(pos + 1, code.length() - 1));
 					return new Intersection(code, parseDMSLatitude(lat) * hLat.getLatitudeFactor(), parseDMSLongitude(lng) * hLng.getLongitudeFactor());
 				} catch (Exception e) {
 					log.warn("Invalid full waypoint code - {}", code);
