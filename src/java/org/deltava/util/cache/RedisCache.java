@@ -4,9 +4,12 @@ package org.deltava.util.cache;
 import java.util.Collection;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.util.RedisUtils;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * An object cache using Redis as its backing store.
@@ -17,6 +20,8 @@ import redis.clients.jedis.*;
  */
 
 public class RedisCache<T extends Cacheable> extends Cache<T> {
+	
+	private static Logger log = LogManager.getLogger(RedisCache.class);
 	
 	private final String _bucket;
 	private final int _expiryTime;
@@ -90,6 +95,8 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 			}
 			
 			jp.sync();
+		} catch (JedisException je) {
+			log.error("Cannot write to Jedis - {}", je.getMessage());
 		}
 	}
 
