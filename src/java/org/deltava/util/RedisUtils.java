@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 import java.time.Duration;
 
+import org.apache.commons.pool2.impl.DefaultPooledObjectInfo;
+
 import org.apache.logging.log4j.*;
 
 import redis.clients.jedis.*;
@@ -186,7 +188,7 @@ public class RedisUtils {
 			jc.expireAt(rawKey, expTime);
 			jp.sync();
 		} catch (JedisException je) {
-			log.error("Error writing to Jedis - {}", je.getMessage());
+			log.error("{} error writing to Jedis - {}", _poolName, je.getMessage());
 		}
 	}
 
@@ -202,7 +204,7 @@ public class RedisUtils {
 			if ((maxLength > 0) && (len > maxLength))
 				jc.ltrim(key, (len - maxLength), len);
 		} catch (JedisException je) {
-			log.error("Error writing to Jedis - {}", je.getMessage());
+			log.error("{} error writing to Jedis - {}", _poolName, je.getMessage());
 		}
 	}
 
@@ -217,6 +219,8 @@ public class RedisUtils {
 				jc.del(encodeKey(k));
 			
 			jp.sync();
+		} catch (JedisException je) {
+			log.error("{} error deleting from Jedis - {}", je.getMessage());
 		}
 	}
 	
@@ -240,6 +244,7 @@ public class RedisUtils {
 		Jedis jc = _client.getResource();
 		int poolSize = _client.getNumActive();
 		jc.select(_db);
+		jc.clientSetname(_poolName);
 		if (poolSize >= MAX_POOL_SIZE)
 			log.warn("{} pool size={}, max={}", _poolName, Integer.valueOf(poolSize), Integer.valueOf(MAX_POOL_SIZE));
 			
@@ -275,5 +280,13 @@ public class RedisUtils {
 		results.put("idle", Long.valueOf(_client.getNumIdle()));
 		results.put("active", Long.valueOf(_client.getNumActive()));
 		return results;
+	}
+
+	/**
+	 * Returns the status of all connection pool entries.
+	 * @return a Collection of DefaultPooledObjectInfo beans
+	 */
+	public static synchronized Collection<DefaultPooledObjectInfo> getPoolStatus() {
+		return (_client == null) ? Collections.emptySet() : _client.listAllObjects();
 	}
 }
