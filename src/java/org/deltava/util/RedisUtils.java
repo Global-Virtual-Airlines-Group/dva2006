@@ -109,7 +109,9 @@ public class RedisUtils {
 			config.setJmxNamePrefix(String.format("redis-%s", poolName.toLowerCase()));
 			config.setMaxWait(Duration.ofMillis(75));
 			config.setMaxTotal(MAX_POOL_SIZE);
+			config.setMinEvictableIdleDuration(Duration.ZERO);
 			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
+			config.setNumTestsPerEvictionRun(MAX_POOL_SIZE);
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
