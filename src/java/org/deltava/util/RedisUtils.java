@@ -21,6 +21,8 @@ public class RedisUtils {
 	private static final Logger log = LogManager.getLogger(RedisUtils.class);
 	private static final List<String> INFO_KEYS = List.of("redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
+	private static final int MAX_POOL_SIZE = 4;
+	
 	/**
 	 * Key used for round-trip latency tests.
 	 */
@@ -101,8 +103,8 @@ public class RedisUtils {
 			config.setMaxIdle(1); config.setMinIdle(1);
 			config.setJmxEnabled(true);
 			config.setJmxNamePrefix(String.format("redis-%s", poolName.toLowerCase()));
-			config.setMaxWait(Duration.ofMillis(50));
-			config.setMaxTotal(4);
+			config.setMaxWait(Duration.ofMillis(75));
+			config.setMaxTotal(MAX_POOL_SIZE);
 			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
@@ -229,7 +231,11 @@ public class RedisUtils {
 	public static Jedis getConnection() {
 		checkConnection();
 		Jedis jc = _client.getResource();
+		int poolSize = _client.getNumActive();
 		jc.select(_db);
+		if (poolSize >= (MAX_POOL_SIZE-1))
+			log.warn("Jedis pool size={}, max={}", Integer.valueOf(poolSize), Integer.valueOf(MAX_POOL_SIZE));
+			
 		return jc;
 	}
 	
