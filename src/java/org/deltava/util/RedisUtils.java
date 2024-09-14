@@ -8,6 +8,7 @@ import java.time.Duration;
 import org.apache.logging.log4j.*;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * A utility class for Redis operations.
@@ -184,6 +185,8 @@ public class RedisUtils {
 			jc.set(rawKey, data);
 			jc.expireAt(rawKey, expTime);
 			jp.sync();
+		} catch (JedisException je) {
+			log.error("Error writing to Jedis - {}", je.getMessage());
 		}
 	}
 
@@ -198,6 +201,8 @@ public class RedisUtils {
 			long len = jc.rpush(key, value);
 			if ((maxLength > 0) && (len > maxLength))
 				jc.ltrim(key, (len - maxLength), len);
+		} catch (JedisException je) {
+			log.error("Error writing to Jedis - {}", je.getMessage());
 		}
 	}
 
