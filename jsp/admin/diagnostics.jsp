@@ -111,6 +111,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${daoUsageCount / execTime.toMinutes() }" /> per minute)</td>
 </tr>
 <c:if test="${!empty redisStatus}">
+<c:set var="id" value="0" scope="page" />
 <c:set var="rawUptime" value="${redisStatus['uptime_in_seconds']}" scope="page" />
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
@@ -119,7 +120,11 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
 Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
 <fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec<br />
-Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
+Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" />
+<c:if test="${!empty redisPool}"><br /><br />
+<c:forEach var="pe" items="${redisPool}" varStatus="hasNext">
+<c:set var="id" value="${id + 1}" scope="page" />Connection <span class="pri bld">${id}</span> - created ${pe.createTimeFormatted}, <fmt:int value="${pe.borrowedCount}" /> reservations, last on ${pe.lastBorrowTimeFormatted}<c:if test="${!asNext.last}"><br /></c:if></c:forEach></c:if>
+ </td>
 </tr>
 </c:if>
 <c:if test="${discordEnabled}">
