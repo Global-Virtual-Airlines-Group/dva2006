@@ -21,7 +21,7 @@ public class RedisUtils {
 	private static final Logger log = LogManager.getLogger(RedisUtils.class);
 	private static final List<String> INFO_KEYS = List.of("redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
-	private static final int MAX_POOL_SIZE = 4;
+	private static final int MAX_POOL_SIZE = 6;
 	
 	/**
 	 * Key used for round-trip latency tests.
@@ -30,6 +30,7 @@ public class RedisUtils {
 	
 	private static JedisPool _client;
 	private static int _db;
+	private static String _poolName;
 
 	private static class DefaultJedisConfig implements JedisClientConfig {
 		private DefaultJedisConfig() {
@@ -121,8 +122,9 @@ public class RedisUtils {
 				_client = new JedisPool(config, host, port);	
 			
 			_db = Math.max(0, db);
+			_poolName = poolName;
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
-			log.info("Initialized using database {}", Integer.valueOf(_db));
+			log.info("{} initialized using database {}", _poolName, Integer.valueOf(_db));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -233,8 +235,8 @@ public class RedisUtils {
 		Jedis jc = _client.getResource();
 		int poolSize = _client.getNumActive();
 		jc.select(_db);
-		if (poolSize >= (MAX_POOL_SIZE-1))
-			log.warn("Jedis pool size={}, max={}", Integer.valueOf(poolSize), Integer.valueOf(MAX_POOL_SIZE));
+		if (poolSize >= MAX_POOL_SIZE)
+			log.warn("{} pool size={}, max={}", _poolName, Integer.valueOf(poolSize), Integer.valueOf(MAX_POOL_SIZE));
 			
 		return jc;
 	}
