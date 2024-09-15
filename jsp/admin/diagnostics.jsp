@@ -116,18 +116,18 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
  <td class="label top">Valkey Status</td>
- <td class="data">Server version: <span class="bld">${redisStatus['redis_version']}</span><br />
- Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
+ <td class="data">Server version: <span class="bld">${redisStatus['redis_version']}</span> Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
 Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
-<fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec<br />
-Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
+<fmt:int value="${redisStatus['useCount']}" /> used, <fmt:int value="${redisStatus['createCount']}" /> opened, <fmt:int value="${redisStatus['destroyCount']}" /> closed<br />
+<fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec, Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty redisPool}">
 <tr>
  <td class="label top">Valkey Pool</td>
  <td class="data"><c:forEach var="pe" items="${redisPool}" varStatus="hasNext">
-<c:set var="id" value="${id + 1}" scope="page" />Connection <span class="pri bld">${id}</span> - created ${pe.createTimeFormatted}, <fmt:int value="${pe.borrowedCount}" /> reservations, last on ${pe.lastBorrowTimeFormatted}<c:if test="${!asNext.last}"><br /></c:if></c:forEach>
+<c:set var="id" value="${id + 1}" scope="page" />Connection <span class="pri bld">${id}</span> (<span class="sec bld">${pe.isActive() ? 'IN USE' : 'IDLE'}</span>) - created <fmt:date date="${pe.created}" />, <fmt:int value="${pe.borrowCount}" /> reservations, 
+ last on <fmt:date date="${pe.lastBorrowed}" /><c:if test="${!asNext.last}"><br /></c:if></c:forEach>
  </td>
 </tr>
 </c:if>

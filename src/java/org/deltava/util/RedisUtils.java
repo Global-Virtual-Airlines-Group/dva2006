@@ -5,8 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.time.Duration;
 
-import org.apache.commons.pool2.impl.DefaultPooledObjectInfo;
-
+import org.apache.commons.pool2.impl.*;
 import org.apache.logging.log4j.*;
 
 import redis.clients.jedis.*;
@@ -15,7 +14,7 @@ import redis.clients.jedis.exceptions.JedisException;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 6.1
  */
 
@@ -24,7 +23,7 @@ public class RedisUtils {
 	private static final Logger log = LogManager.getLogger(RedisUtils.class);
 	private static final List<String> INFO_KEYS = List.of("redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
-	private static final int MAX_POOL_SIZE = 6;
+	private static final int POOL_MAX_SIZE = 6;
 	
 	/**
 	 * Key used for round-trip latency tests.
@@ -108,10 +107,10 @@ public class RedisUtils {
 			config.setJmxEnabled(true);
 			config.setJmxNamePrefix(String.format("redis-%s", poolName.toLowerCase()));
 			config.setMaxWait(Duration.ofMillis(75));
-			config.setMaxTotal(MAX_POOL_SIZE);
+			config.setMaxTotal(POOL_MAX_SIZE);
 			config.setMinEvictableIdleDuration(Duration.ZERO);
 			config.setSoftMinEvictableIdleDuration(Duration.ofMillis(5000));
-			config.setNumTestsPerEvictionRun(MAX_POOL_SIZE);
+			config.setNumTestsPerEvictionRun(config.getMaxTotal());
 			config.setTestOnBorrow(false);
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
@@ -125,7 +124,15 @@ public class RedisUtils {
 				JedisSocketFactory sf = new JedisDomainSocketFactory(host);
 				_client = new JedisPool(config, sf, new DefaultJedisConfig());
 			} else
-				_client = new JedisPool(config, host, port);	
+				_client = new JedisPool(config, host, port);
+			
+			// Configure abandoned connection handling
+			AbandonedConfig acfg = new AbandonedConfig();
+			acfg.setLogAbandoned(true);
+			acfg.setRemoveAbandonedOnBorrow(true);
+			acfg.setRemoveAbandonedOnMaintenance(false);
+			acfg.setRemoveAbandonedTimeout(Duration.ofMillis(3500));
+			_client.setAbandonedConfig(acfg);
 			
 			_db = Math.max(0, db);
 			_poolName = poolName;
@@ -248,8 +255,8 @@ public class RedisUtils {
 		int poolSize = _client.getNumActive();
 		jc.select(_db);
 		jc.clientSetname(_poolName);
-		if (poolSize >= MAX_POOL_SIZE)
-			log.warn("{} pool size={}, max={}", _poolName, Integer.valueOf(poolSize), Integer.valueOf(MAX_POOL_SIZE));
+		if (poolSize >= POOL_MAX_SIZE)
+			log.warn("{} pool size={}, max={}", _poolName, Integer.valueOf(poolSize), Integer.valueOf(POOL_MAX_SIZE));
 			
 		return jc;
 	}
@@ -281,6 +288,9 @@ public class RedisUtils {
 		}
 		
 		// Get connection pool info
+		results.put("useCount", Long.valueOf(_client.getBorrowedCount()));
+		results.put("createCount", Long.valueOf(_client.getCreatedCount()));
+		results.put("destroyCount", Long.valueOf(_client.getDestroyedCount()));
 		results.put("maxWait", Long.valueOf(_client.getMaxBorrowWaitDuration().toMillis()));
 		results.put("meanWait", Long.valueOf(_client.getMeanBorrowWaitDuration().toMillis()));
 		results.put("idle", Long.valueOf(_client.getNumIdle()));
@@ -290,9 +300,16 @@ public class RedisUtils {
 
 	/**
 	 * Returns the status of all connection pool entries.
-	 * @return a Collection of DefaultPooledObjectInfo beans
+	 * @return a Collection of PoolConnectionInfo beans
 	 */
-	public static synchronized Collection<DefaultPooledObjectInfo> getPoolStatus() {
-		return (_client == null) ? Collections.emptySet() : _client.listAllObjects();
+	public static synchronized Collection<PoolConnectionInfo> getPoolStatus() {
+		if (_client == null) return Collections.emptySet(); 
+		
+		List<PoolConnectionInfo> results = new ArrayList<PoolConnectionInfo>();
+		Collection<DefaultPooledObjectInfo> data = _client.listAllObjects(); int idx = 0;
+		for (DefaultPooledObjectInfo inf : data)
+			results.add(new PoolConnectionInfo(++idx, inf));
+		
+		return results; 
 	}
 }
