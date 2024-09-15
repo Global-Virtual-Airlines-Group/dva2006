@@ -116,6 +116,7 @@ public class RedisUtils {
 			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
 			config.setTimeBetweenEvictionRuns(Duration.ofSeconds(60));
+			config.setLifo(false);
 			
 			// Check for domain socket
 			String host = StringUtils.isEmpty(addr) ? "localhost" : addr;
@@ -274,6 +275,9 @@ public class RedisUtils {
 					}
 				}
 			}
+		} catch (JedisException je) {
+			log.warn("{} cannot load Jedis status - {}", _poolName, je.getMessage());
+			return results;
 		}
 		
 		// Get connection pool info
