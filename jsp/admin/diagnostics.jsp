@@ -111,7 +111,6 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${daoUsageCount / execTime.toMinutes() }" /> per minute)</td>
 </tr>
 <c:if test="${!empty redisStatus}">
-<c:set var="id" value="0" scope="page" />
 <c:set var="rawUptime" value="${redisStatus['uptime_in_seconds']}" scope="page" />
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
@@ -123,11 +122,12 @@ Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value
 </tr>
 </c:if>
 <c:if test="${!empty redisPool}">
+<c:set var="id" value="0" scope="page" />
 <tr>
  <td class="label top">Valkey Pool</td>
  <td class="data"><c:forEach var="pe" items="${redisPool}" varStatus="hasNext">
 <c:set var="id" value="${id + 1}" scope="page" />Connection <span class="pri bld">${id}</span> (<span class="sec bld">${pe.isActive() ? 'IN USE' : 'IDLE'}</span>) - created <fmt:date date="${pe.created}" />, <fmt:int value="${pe.borrowCount}" /> reservations, 
- last on <fmt:date date="${pe.lastBorrowed}" /><c:if test="${!asNext.last}"><br /></c:if></c:forEach>
+ last on <fmt:date date="${pe.lastBorrowed}" />, returned on <fmt:date date="${pe.lastReturned}" default="NEVER" /><c:if test="${!asNext.last}"><br /></c:if></c:forEach>
  </td>
 </tr>
 </c:if>
