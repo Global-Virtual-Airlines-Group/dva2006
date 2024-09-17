@@ -40,6 +40,15 @@ public class RedisUtils {
 		}
 	}
 	
+	private static class PoolInfoComparator implements Comparator<DefaultPooledObjectInfo> {
+
+		@Override
+		public int compare(DefaultPooledObjectInfo o1, DefaultPooledObjectInfo o2) {
+			int tmpResult = Long.compare(o1.getCreateTime(), o2.getCreateTime());
+			return (tmpResult == 0) ? Long.compare(o1.getLastBorrowTime(), o2.getLastBorrowTime()) : tmpResult;
+		}
+	}
+	
 	// static class
 	private RedisUtils() {
 		super();
@@ -305,8 +314,8 @@ public class RedisUtils {
 	public static synchronized Collection<PoolConnectionInfo> getPoolStatus() {
 		if (_client == null) return Collections.emptySet(); 
 		
-		List<PoolConnectionInfo> results = new ArrayList<PoolConnectionInfo>();
-		Collection<DefaultPooledObjectInfo> data = _client.listAllObjects(); int idx = 0;
+		Collection<DefaultPooledObjectInfo> data = CollectionUtils.sort(_client.listAllObjects(), new PoolInfoComparator());
+		List<PoolConnectionInfo> results = new ArrayList<PoolConnectionInfo>(); int idx = 0;
 		for (DefaultPooledObjectInfo inf : data)
 			results.add(new PoolConnectionInfo(++idx, inf));
 		
