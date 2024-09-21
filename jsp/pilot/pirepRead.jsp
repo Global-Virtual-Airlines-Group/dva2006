@@ -319,7 +319,7 @@ table.form td.eliteStatus {
  <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime.toSeconds() > 0}">&nbsp;<span class="ita">(average time: <fmt:duration duration="${avgTime}" t="HH:mm" /> hours)</span></c:if></td>
 </tr>
 </c:if>
-<c:if test="${!empty onlineTrack}">
+<c:if test="${!empty onlineTime}">
 <c:set var="onlinePct" value="${onlineTime.seconds * 100 / (pirep.length * 360)}" scope="page" />
 <c:set var="onlinePct" value="${(onlinePct > 100) ? 100 : onlinePct}" scope="page" />
 <c:set var="onlinePctClass" value="${(onlinePct < 50) ? 'warn bld' : 'visible'}" scope="page" />
