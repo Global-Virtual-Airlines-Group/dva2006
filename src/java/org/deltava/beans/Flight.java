@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017, 2019, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
         super();
         setAirline(a);
         setFlightNumber(fNumber);
-        setLeg((leg == 0) ? 1 : leg);
+        setLeg(Math.max(1, leg));
     }
 
     /**
@@ -67,6 +67,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
      * @see Flight#getShortCode()
      * @see Flight#getLegCode()
      * @see Flight#toString()
+     * @see Flight#getCallsign()
      */
     public String getFlightCode() {
         StringBuilder buf = new StringBuilder(_airline.getCode());
@@ -78,11 +79,24 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
      * Returns the Flight code without the leg.
      * @return the flight code
      * @see Flight#getFlightCode()
+     * @see Flight#getCallsign()
      */
     public String getShortCode() {
     	StringBuilder buf = new StringBuilder(_airline.getCode());
         buf.append(df.format(_flightNumber));
         return buf.toString();
+    }
+    
+    /**
+     * Returns the flight code as a callsign, using the Airline ICAO code.
+     * @return the callsign
+     * @see Flight#getFlightCode()
+     * @see Flight#getShortCode()
+     */
+    public String getCallsign() {
+    	StringBuilder buf = new StringBuilder(_airline.getICAO());
+    	buf.append(df.format(_flightNumber));
+    	return buf.toString();
     }
     
     /**
