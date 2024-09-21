@@ -1,0 +1,29 @@
+#!/bin/bash
+# IP Range blocking script
+# (c) 2024 Global Virtual Airlines Group. All Rights Reserved.
+
+# Check for arguments
+if [ "$1" == "" ]
+then
+	echo "block_range <addr list> ..."
+	exit 1
+fi
+
+# Check for file
+if [ ! -f "$1" ]; then
+	echo "Cannot find $1"
+	exit 2
+fi
+
+# Read ranges into array
+IFS=$'\r\n'
+ADDRS=($(cat $1))
+
+# Block each range in the array
+for addr in "${ADDRS[@]}"
+do
+    echo "Blocking $addr"
+	iptables -A INPUT -j DROP -s $addr
+done
+
+exit 0
