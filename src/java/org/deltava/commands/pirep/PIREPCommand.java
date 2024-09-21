@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  */
 
@@ -607,7 +607,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					if (hasClientOnlineTime || (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS))) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						ArchiveMetadata md = posdao.getArchiveInfo(info.getID());
-						if (md != null) {
+						if (!info.getArchived() || (md != null)) {
 							Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
 							positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
 						
