@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * A class to listen for Discord commands.
  * @author Danielw
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 11.0
  */
 
@@ -83,7 +83,9 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         }
         
         // Write to the database
-        try (Connection con = Bot.getConnection()){
+        Connection con = null;
+        try {
+        	con = Bot.getConnection();
         	SetFilterData wdao = new SetFilterData(con);
         	wdao.add(key, isSafe);
         	Bot.getFilter().add(key, isSafe);
@@ -93,6 +95,8 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
         	log.atError().withThrowable(ex).log("Error adding {} word - {}", keyType, ex.getMessage());
         	NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Add %s word", keyType), ex));
+        } finally {
+        	Bot.release(con);
         }
     }
 
@@ -114,7 +118,9 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
             return;
         }
     	
-    	try (Connection con = Bot.getConnection()) {
+    	Connection con = null;
+    	try {
+    		con = Bot.getConnection();
     		SetFilterData wdao = new SetFilterData(con);
     		wdao.delete(key, isSafe);
     		Bot.getFilter().delete(key, isSafe);
@@ -124,6 +130,8 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		log.atError().withThrowable(ex).log("Error removing {} word - {}", keyType, ex.getMessage());
     		NewRelic.noticeError(ex, false);
         	Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), String.format("Remove %s word", keyType), ex));
+    	} finally {
+    		Bot.release(con);
     	}
     }
     
@@ -141,7 +149,9 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     private static void reloadKeys(SlashCommandCreateEvent e) {
     	
     	SlashCommandInteraction sci = e.getSlashCommandInteraction();
-    	try (Connection con = Bot.getConnection()) {
+    	Connection con = null;
+    	try {
+    		con = Bot.getConnection();
     		ContentFilter cf = Bot.getFilter();
     		GetFilterData dao = new GetFilterData(con);
     		cf.init(dao.getKeywords(false), dao.getKeywords(true));
@@ -150,6 +160,8 @@ public class CommandListener implements org.javacord.api.listener.interaction.Sl
     		log.atError().withThrowable(ex).log("Error reloading keywords - {}", ex.getMessage());
     		NewRelic.noticeError(ex, false);
     		Bot.send(ChannelName.LOG, EmbedGenerator.createError(sci.getUser().getDisplayName(sci.getServer().get()), "Reload keyword list", ex));
+    	} finally {
+    		Bot.release(con);
     	}
     }
     
