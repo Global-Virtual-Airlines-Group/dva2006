@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2013, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.time.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 10.1
+ * @version 11.3
  * @since 7.0
  */
 
@@ -103,6 +103,12 @@ public class DurationFormatTag extends UserSettingsTag {
 			if (_d == null)
 				out.print(_nullData);
 			else if (!_isLong) {
+				long d = _d.toDays();
+				if (d > 0) {
+					out.print(d);
+					out.print(':');
+				}
+				
 				DateTimeFormatter df = DateTimeFormatter.ofPattern(_timeFormat);
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochSecond(_d.getSeconds()), ZoneId.of("Z"));
 				out.print(df.format(zdt));
