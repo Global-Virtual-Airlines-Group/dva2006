@@ -25,9 +25,10 @@
 <c:forEach var="appName" items="${appNames}">
 <c:set var="pool" value="${jdbcPools[appName]}" scope="page" />
 <tr class="title caps jdbcPool">
- <td colspan="8" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
- <fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.waitCount}" /> WAITS, 
- <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
+ <td colspan="8" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
+<c:if test="${pool.waitCount > 0}">, <fmt:int value="${pool.waitCount}" /> WAITS</c:if>
+<c:if test="${pool.fullCount > 0}">, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</c:if>
+<c:if test="${pool.errorCount > 0}">, <fmt:int value="${pool.errorCount}" /> STATE ERRORS</c:if></td>
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
@@ -37,7 +38,7 @@
 <c:forEach var="con" items="${pool.poolInfo}">
 <view:row entry="${con}" className="jdbcPool">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
- <td class="sec">${con.typeName}</td>
+ <td class="sec bld">${con.typeName}</td>
  <td class="bld"><c:choose><c:when test="${con.inUse}">In Use</c:when>
 <c:when test="${con.dynamic && !con.connected}">Inactive</c:when>
 <c:otherwise>Available</c:otherwise></c:choose></td>
@@ -46,7 +47,7 @@
  <td><fmt:int value="${con.totalUse}" /> ms</td>
  <td><fmt:int value="${con.currentUse}" /> ms</td>
 <c:if test="${!empty con.lastUsed}">
- <td><fmt:date date="${con.lastUsed}" /></td>
+ <td><span title="${con.stackInfo.caller}"><fmt:date date="${con.lastUsed}" /></span></td>
 </c:if>
 <c:if test="${empty con.lastUsed}">
  <td>NEVER</td>
