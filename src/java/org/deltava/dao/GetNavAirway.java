@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -120,12 +120,12 @@ public class GetNavAirway extends GetNavData {
 	public TerminalRoute getRoute(ICAOAirport a, TerminalRoute.Type t, String name, boolean ignoreVersion) throws DAOException {
 
 		// Check the cache
+		if (name == null) return null;
 		TerminalRoute tr = _rCache.get(name);
 		if (tr != null) {
 			if ((tr.getType() == t) && (tr.getICAO().equals(a.getICAO())))
 				return tr;
-		} else if (name == null)
-			return null;
+		}
 		
 		// Split the name
 		List<String> parts = StringUtils.split(name, ".");
@@ -240,6 +240,7 @@ public class GetNavAirway extends GetNavData {
 			}
 
 			// Fetch the route itself
+			if (code == null) return null;
 			log.info("Found {}", code);
 			return getRoute(a, t, code);
 		} catch (SQLException se) {
