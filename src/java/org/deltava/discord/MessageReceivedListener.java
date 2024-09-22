@@ -13,7 +13,6 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
 
-import java.sql.*;
 import java.util.*;
 import java.sql.Connection;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 11.2
+ * @version 11.3
  * @since 11.0
  */
 
@@ -118,14 +117,17 @@ public class MessageReceivedListener implements MessageCreateListener {
         Server srv = e.getServer().orElse(null);
         log.info("User requested access [ Name = {}, UUID = {}, Server = {} ]", msgAuth.getName(), Long.toHexString(msgAuth.getId()), srv);
         
-        Pilot p = null;
-        try (Connection con = Bot.getConnection()) {
+        Pilot p = null; Connection con = null;
+        try {
+        	con = Bot.getConnection();
         	GetPilotDirectory pdao = new GetPilotDirectory(con);
         	p = pdao.getByIMAddress(msgAuth.getIdAsString());
         } catch (ConnectionPoolException cpe) {
         	log.error("Connection Pool Full, Aborting");
-        } catch (DAOException | SQLException de) {
+        } catch (DAOException de) {
         	log.atError().withThrowable(de).log(de.getMessage());
+        } finally {
+        	Bot.release(con);
         }
         
         if (p == null) {

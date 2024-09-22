@@ -35,7 +35,7 @@ import org.gvagroup.jdbc.*;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 11.2
+ * @version 11.3
  * @since 11.0
  */
 
@@ -99,11 +99,15 @@ public class Bot {
         scb.setDefaultEnabledForEveryone().createForServer(_srv).join();
         
         log.info("Initializing Content Filter");
-        try (Connection con = getConnection()) {
+        Connection con = null;
+        try {
+        	con = getConnection();
         	GetFilterData dao = new GetFilterData(con);
         	_filter.init(dao.getKeywords(false), dao.getKeywords(true));
-        } catch (ConnectionPoolException | DAOException | SQLException de) {
+        } catch (ConnectionPoolException | DAOException de) {
         	log.atError().withThrowable(de).log("Error initializing Content Filter - {}", de.getMessage());
+        } finally {
+        	Bot.release(con);
         }
         
         log.info("Adding Listeners");
@@ -196,6 +200,11 @@ public class Bot {
     static Connection getConnection() throws ConnectionPoolException {
     	ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
     	return jdbcPool.getConnection();
+    }
+    
+    static void release(Connection c) {
+    	ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+    	jdbcPool.release(c);
     }
     
     static ContentFilter getFilter() {
