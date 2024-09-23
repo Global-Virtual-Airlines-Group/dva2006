@@ -4,8 +4,6 @@ import java.nio.file.*;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 
-import org.gvagroup.tile.*;
-
 import junit.framework.TestCase;
 
 public class TestWindPalette extends TestCase {
