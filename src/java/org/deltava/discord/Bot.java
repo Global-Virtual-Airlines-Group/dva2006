@@ -29,7 +29,7 @@ import org.deltava.dao.*;
 import org.deltava.util.TaskTimer;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * The Discord Bot.
@@ -198,12 +198,12 @@ public class Bot {
     }
     
     static Connection getConnection() throws ConnectionPoolException {
-    	ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+    	ConnectionPool<Connection> jdbcPool = SystemData.getJDBCPool();
     	return jdbcPool.getConnection();
     }
     
     static void release(Connection c) {
-    	ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+    	ConnectionPool<Connection> jdbcPool = SystemData.getJDBCPool();
     	jdbcPool.release(c);
     }
     

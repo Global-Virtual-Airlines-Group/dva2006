@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -8,15 +8,13 @@ import java.util.Map;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.*;
-import org.deltava.util.tile.SeriesWriter;
+import org.deltava.util.tile.*;
 import org.deltava.util.system.SystemData;
-
-import org.gvagroup.tile.*;
 
 /**
  * A Data Access Object to write map tiles to the filesystem.
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 10.0
  */
 

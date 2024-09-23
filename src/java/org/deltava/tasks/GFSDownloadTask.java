@@ -20,12 +20,10 @@ import org.deltava.util.ftp.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.tile.*;
-
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 5.2
  */
 

@@ -11,7 +11,7 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.redis.GetTiles;
-import org.gvagroup.tile.PNGTile;
+import org.deltava.util.tile.PNGTile;
 
 /**
  * A servlet to fetch weather quadtree tiles.

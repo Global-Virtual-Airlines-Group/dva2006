@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -13,12 +13,12 @@ import org.deltava.dao.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 2.6
  */
 
@@ -64,10 +64,10 @@ public class SignatureServlet extends GenericServlet {
 		
 		// Get the connection pool
 		
-		ConnectionPool jdbcPool = getConnectionPool();
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 		java.time.Instant lastMod = null; Connection c = null;
 		try {
-			c = jdbcPool.getConnection();
+			c = pool.getConnection();
 
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
@@ -80,7 +80,7 @@ public class SignatureServlet extends GenericServlet {
 			else
 				log.error("Error retrieving image data - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 		} finally {
-			jdbcPool.release(c);
+			pool.release(c);
 		}
 
 		return (lastMod == null) ? -1 : lastMod.toEpochMilli();
@@ -118,13 +118,13 @@ public class SignatureServlet extends GenericServlet {
 		}
 
 		// Get the connection pool
-		ConnectionPool jdbcPool = getConnectionPool();
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 
 		byte[] imgBuffer = null;
 		log.debug("Getting signature image ID {}", String.valueOf(imgID));
 		Connection c = null;
 		try {
-			c = jdbcPool.getConnection();
+			c = pool.getConnection();
 
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
@@ -137,7 +137,7 @@ public class SignatureServlet extends GenericServlet {
 			else
 				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 		} finally {
-			jdbcPool.release(c);
+			pool.release(c);
 		}
 
 		// If we got nothing, then throw an error

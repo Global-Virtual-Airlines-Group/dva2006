@@ -12,8 +12,9 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.GetImage;
 import org.deltava.util.ControllerException;
+import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * A servlet to display ACARS track tiles.
@@ -45,15 +46,15 @@ public class TrackTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		org.gvagroup.tile.TileAddress addr = getTileAddress(req.getRequestURI(), false);
+		org.deltava.util.tile.TileAddress addr = getTileAddress(req.getRequestURI(), false);
 		byte[] data = EMPTY;
 		if (addr.getLevel() < 14) {
 		
 			// Get the connection pool
-			ConnectionPool jdbcPool = getConnectionPool();
+			ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 			Connection c = null; 
 			try {
-				c = jdbcPool.getConnection();
+				c = pool.getConnection();
 				GetImage dao = new GetImage(c);
 				data = dao.getTile(addr);
 				if (data == null)
@@ -66,7 +67,7 @@ public class TrackTileServlet extends TileServlet {
 				else
 					log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			} finally {
-				jdbcPool.release(c);
+				pool.release(c);
 			}
 		}
 

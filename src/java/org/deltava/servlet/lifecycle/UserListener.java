@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -14,13 +14,13 @@ import org.deltava.dao.SetPilotLogin;
 import org.deltava.commands.*;
 
 import org.deltava.util.system.SystemData;
-import org.gvagroup.jdbc.ConnectionPool;
-import org.gvagroup.jdbc.ConnectionPoolException;
+
+import org.gvagroup.pool.*;
 
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class UserListener implements HttpSessionListener {
 		log.info("{} logged out", p.getName());
 
 		// Get the JDBC connection pool and a system connection
-		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		JDBCPool jdbcPool = (JDBCPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
 		try {
 			// Update the user's last login date

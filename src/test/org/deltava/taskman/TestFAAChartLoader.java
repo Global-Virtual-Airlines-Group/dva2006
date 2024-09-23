@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 import org.deltava.tasks.FAAChartLoaderTask;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.pool.JDBCPool;
 
 public class TestFAAChartLoader extends TestCase {
 	
@@ -38,7 +38,7 @@ public class TestFAAChartLoader extends TestCase {
 		SystemData.add("schedule.chart.url.faa", "file:///C:/users/luke/desktop");
 		
 		// Initialize the connection pool
-		ConnectionPool jdbcPool = new ConnectionPool(10, "DVA");
+		JDBCPool jdbcPool = new JDBCPool(10, "DVA");
 		jdbcPool.setProperties((Map<?, ?>) SystemData.getObject("jdbc.connectProperties"));
 		jdbcPool.setCredentials("luke", "14072");
 		jdbcPool.setURL(SystemData.get("jdbc.url"));

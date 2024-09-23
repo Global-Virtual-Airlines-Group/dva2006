@@ -9,8 +9,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.dao.*;
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
-
-import org.gvagroup.tile.TileAddress;
+import org.deltava.util.tile.TileAddress;
 
 @SuppressWarnings("javadoc")
 abstract class PlotMap {

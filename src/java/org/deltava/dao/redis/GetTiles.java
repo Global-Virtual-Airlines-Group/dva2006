@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2015, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import java.util.*;
@@ -8,14 +8,12 @@ import java.util.stream.Collectors;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.RedisUtils;
-import org.deltava.util.tile.SeriesReader;
-
-import org.gvagroup.tile.*;
+import org.deltava.util.tile.*;
 
 /**
  * A Data Access Object to read tiles from Redis. 
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 5.0
  */
 

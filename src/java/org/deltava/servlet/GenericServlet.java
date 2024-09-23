@@ -7,17 +7,14 @@ import javax.servlet.http.*;
 
 import org.deltava.beans.Pilot;
 
-import org.gvagroup.jdbc.ConnectionPool;
 import org.deltava.security.SecurityContext;
 
-import org.deltava.util.ControllerException;
-import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
+import org.deltava.util.*;
 
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  */
 
@@ -87,14 +84,6 @@ abstract class GenericServlet extends HttpServlet {
 		}
 	}
 
-	/**
-	 * A helper method to get the JDBC Connection Pool.
-	 * @return the JDBC Connection Pool
-	 */
-	protected static ConnectionPool getConnectionPool() {
-		return (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-	}
-	
 	/**
 	 * Returns the full URL requested.
 	 * @param req the HttpServletRequest

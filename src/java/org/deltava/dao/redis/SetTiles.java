@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import java.util.*;
@@ -9,14 +9,12 @@ import redis.clients.jedis.*;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.RedisUtils;
-import org.deltava.util.tile.SeriesWriter;
-
-import org.gvagroup.tile.*;
+import org.deltava.util.tile.*;
 
 /**
  * A Data Access Object to write map tiles to Redis. 
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 5.0
  */
 
