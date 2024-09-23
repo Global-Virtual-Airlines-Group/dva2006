@@ -5,8 +5,6 @@ import java.io.*;
 
 import junit.framework.TestCase;
 
-import org.gvagroup.tile.*;
-
 public class TestPNGTile extends TestCase {
 
 	@SuppressWarnings("static-method")

@@ -8,7 +8,7 @@ package org.deltava.util.tile;
  * @since 5.0
  */
 
-public interface RasterTile extends org.gvagroup.tile.Tile {
+public interface RasterTile extends org.deltava.util.tile.Tile {
 
 	/**
 	 * Returns the rendered image.

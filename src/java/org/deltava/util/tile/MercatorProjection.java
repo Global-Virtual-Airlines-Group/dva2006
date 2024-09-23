@@ -53,7 +53,7 @@ public class MercatorProjection implements Projection {
 	 * @return the TileAddress of the Tile containing this point at the current zoom level
 	 */
 	@Override
-	public org.gvagroup.tile.TileAddress getAddress(GeoLocation loc) {
+	public org.deltava.util.tile.TileAddress getAddress(GeoLocation loc) {
 		Point p = getPixelAddress(loc);
 
 		// Normalize
@@ -62,7 +62,7 @@ public class MercatorProjection implements Projection {
 		while (p.y >= _yScale)
 			p.y -= _yScale;
 		
-		return new org.gvagroup.tile.TileAddress(p.x >> 8, p.y >> 8, _zoomLevel);
+		return new org.deltava.util.tile.TileAddress(p.x >> 8, p.y >> 8, _zoomLevel);
 	}
 	
     private static double fromMercator(double lat) {   

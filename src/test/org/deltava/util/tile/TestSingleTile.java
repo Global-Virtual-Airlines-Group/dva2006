@@ -7,8 +7,6 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.gvagroup.tile.*;
-
 public class TestSingleTile extends TestCase {
 	
 	private SingleTile _tile;
