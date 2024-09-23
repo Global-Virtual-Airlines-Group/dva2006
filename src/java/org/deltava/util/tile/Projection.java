@@ -23,7 +23,7 @@ public interface Projection {
 	 * @param loc the GeoLocation
 	 * @return the TileAddress of the Tile containing this point at the current zoom level
 	 */
-	public org.gvagroup.tile.TileAddress getAddress(GeoLocation loc);
+	public org.deltava.util.tile.TileAddress getAddress(GeoLocation loc);
 	
 	/**
 	 * Returns the pixel address of the provided point on the global canvas.

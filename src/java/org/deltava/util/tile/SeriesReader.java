@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.time.Instant;
@@ -6,12 +6,10 @@ import java.util.Collection;
 
 import org.deltava.dao.DAOException;
 
-import org.gvagroup.tile.*;
-
 /**
  * An interface to describe Data Access Objects to read ImageSeries beans.  
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 10.0
  */
 

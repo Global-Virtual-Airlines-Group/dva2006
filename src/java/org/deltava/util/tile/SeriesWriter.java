@@ -2,7 +2,6 @@
 package org.deltava.util.tile;
 
 import org.deltava.dao.DAOException;
-import org.gvagroup.tile.ImageSeries;
 
 /**
  * An interface to describe Data Access Objects to write ImageSeries beans. 
