@@ -1,25 +1,25 @@
-// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
+import java.util.*;
 import java.sql.Connection;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
-import org.gvagroup.jdbc.*;
 import org.deltava.security.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.pool.*;
+
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ abstract class BasicAuthServlet extends GenericServlet {
 			return null;
 
 		// Get the JDBC Connection Pool
-		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 
 		Connection con = null;
 		Pilot p = null;

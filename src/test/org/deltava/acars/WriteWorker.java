@@ -10,8 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.*;
-
-import org.gvagroup.tile.TileAddress;
+import org.deltava.util.tile.TileAddress;
 
 public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 

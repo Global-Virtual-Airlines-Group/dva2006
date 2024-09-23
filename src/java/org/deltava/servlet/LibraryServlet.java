@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -22,12 +22,12 @@ import org.deltava.util.TaskTimer;
 import org.deltava.util.URLParser;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -58,10 +58,10 @@ public class LibraryServlet extends GenericServlet {
 		LibraryEntry entry = null;
 
 		// Get the connection pool
-		ConnectionPool jdbcPool = getConnectionPool();
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 		Connection c = null;
 		try {
-			c = jdbcPool.getConnection();
+			c = pool.getConnection();
 
 			// Get the airline data
 			Map<?, ?> airlines = (Map<?, ?>) SystemData.getObject("apps");
@@ -114,7 +114,7 @@ public class LibraryServlet extends GenericServlet {
 			entry = null;
 			rsp.sendError(ce.getStatusCode());
 		} finally {
-			jdbcPool.release(c);
+			pool.release(c);
 		}
 
 		// Abort if we got an error

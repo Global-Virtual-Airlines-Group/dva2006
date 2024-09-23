@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -20,12 +20,12 @@ import org.deltava.dao.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -95,13 +95,13 @@ public class ImageServlet extends DownloadServlet {
 		}
 
 		// Get the connection pool
-		ConnectionPool jdbcPool = getConnectionPool();
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 
 		byte[] imgBuffer = null;
 		log.debug("Getting {} image ID {}", imgType.name(), String.valueOf(imgID));
 		Connection c = null;
 		try {
-			c = jdbcPool.getConnection();
+			c = pool.getConnection();
 
 			// Get the retrieve image DAO and execute the right method
 			GetImage dao = new GetImage(c);
@@ -225,7 +225,7 @@ public class ImageServlet extends DownloadServlet {
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {
-			jdbcPool.release(c);
+			pool.release(c);
 		}
 
 		// If we got nothing, abort

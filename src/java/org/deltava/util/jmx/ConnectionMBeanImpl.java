@@ -1,14 +1,14 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.time.Instant;
 
-import org.gvagroup.jdbc.ConnectionInfo;
+import org.gvagroup.pool.ConnectionInfo;
 
 /**
  * A JMX bean for JDBC connection information.
  * @author Luke
- * @version 10.2
+ * @version 11.3
  * @since 10.2
  */
 

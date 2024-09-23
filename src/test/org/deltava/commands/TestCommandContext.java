@@ -5,7 +5,7 @@ import java.sql.Connection;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
-import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.pool.JDBCPool;
 import org.hansel.CoverageDecorator;
 
 import javax.servlet.http.*;
@@ -103,7 +103,7 @@ public class TestCommandContext extends TestCase {
     	_ctxt.release();
     	
     	// Intialize a connection pool
-    	ConnectionPool pool = new ConnectionPool(1, "test");
+    	JDBCPool pool = new JDBCPool(1, "test");
     	SystemData.init();
     	SystemData.add(SystemData.JDBC_POOL, pool);
     	
