@@ -6,14 +6,14 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.pool.JDBCPool;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.*;
 
 public abstract class SQLTestCase extends TestCase {
 
-	private ConnectionPool _jdbcPool;
+	private JDBCPool _jdbcPool;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -28,7 +28,7 @@ public abstract class SQLTestCase extends TestCase {
         props.load(new FileInputStream("data/jdbc.properties"));
 
 		// Init the connection Pool
-		_jdbcPool = new ConnectionPool(1, "test");
+		_jdbcPool = new JDBCPool(1, "test");
         _jdbcPool.setProperties(props);
         _jdbcPool.setCredentials(props.getProperty("user"), props.getProperty("password"));
         _jdbcPool.setDriver(props.getProperty("driver"));

@@ -1,13 +1,13 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.time.Instant;
 import java.util.*;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
- * A JMX bean to export JDBC Connection Pool statistics.
+ * A JMX bean to export Connection Pool statistics.
  * @author Luke
  * @version 10.3
  * @since 10.2
@@ -15,7 +15,7 @@ import org.gvagroup.jdbc.*;
 
 public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 	
-	private final ConnectionPool _pool;
+	private final ConnectionPool<?> _pool;
 	private final String _code;
 	private final Collection<? super ConnectionMBean> _info = new ArrayList<ConnectionMBean>();
 	
@@ -31,7 +31,7 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 	 * @param code the application code
 	 * @param pool the JDBC connection pool
 	 */
-	public JMXConnectionPool(String code, ConnectionPool pool) {
+	public JMXConnectionPool(String code, ConnectionPool<?> pool) {
 		super();
 		_code = code;
 		_pool = pool;

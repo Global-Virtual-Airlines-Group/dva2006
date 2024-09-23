@@ -13,7 +13,7 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.GetTiles;
-import org.gvagroup.tile.PNGTile;
+import org.deltava.util.tile.PNGTile;
 
 /**
  * A servlet to fetch non-temporal quadtree tiles.

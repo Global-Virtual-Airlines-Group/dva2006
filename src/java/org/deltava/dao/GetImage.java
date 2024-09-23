@@ -5,8 +5,7 @@ import java.sql.*;
 import java.time.Instant;
 
 import org.deltava.util.cache.*;
-
-import org.gvagroup.tile.TileAddress;
+import org.deltava.util.tile.TileAddress;
 
 /**
  * A Data Access Object to retrieve image data from the database.

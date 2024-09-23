@@ -23,14 +23,14 @@ import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 import com.newrelic.api.agent.NewRelic;
 
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  */
 
@@ -81,7 +81,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				if ((_cmdLogPool.size() >= _maxSize) || Thread.currentThread().isInterrupted()) {
 					Collection<CommandLog> entries = new ArrayList<CommandLog>();
 					_cmdLogPool.drainTo(entries);
-					ConnectionPool pool = getConnectionPool();
+					ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 					Connection c = null;
 					try {
 						c = pool.getConnection();

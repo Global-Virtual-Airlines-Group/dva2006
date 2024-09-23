@@ -23,12 +23,12 @@ import org.deltava.security.command.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 7.3
  */
 
@@ -118,13 +118,13 @@ public class AttachmentServlet extends DownloadServlet {
 		}
 		
 		// Get the connection pool
-		ConnectionPool jdbcPool = getConnectionPool();
+		ConnectionPool<Connection> pool = SystemData.getJDBCPool();
 
 		byte[] buffer = null;
 		log.debug("Getting {} attachment ID {}", fType.name(), Integer.valueOf(dbID));
 		Connection c = null;
 		try {
-			c = jdbcPool.getConnection();
+			c = pool.getConnection();
 			
 			SecurityContext sctx = new ServletSecurityContext(req);
 			switch (fType) {
@@ -242,7 +242,7 @@ public class AttachmentServlet extends DownloadServlet {
 			
 			rsp.sendError(ce.getStatusCode());
 		} finally {
-			jdbcPool.release(c);
+			pool.release(c);
 		}
 
 		// If we got nothing, abort

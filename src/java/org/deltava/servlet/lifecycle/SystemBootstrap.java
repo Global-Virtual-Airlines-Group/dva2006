@@ -28,7 +28,7 @@ import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.*;
 
 import org.gvagroup.common.*;
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 import org.gvagroup.tomcat.SharedWorker;
 
 import com.newrelic.api.agent.NewRelic;
@@ -44,7 +44,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 	private static final Logger log = LogManager.getLogger(SystemBootstrap.class);
 
-	private ConnectionPool _jdbcPool;
+	private JDBCPool _jdbcPool;
 	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();
 
 	@Override
@@ -81,6 +81,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 		
 		// Init Redis
+		// TODO: Create a Jedis Pool
 		RedisUtils.init(SystemData.get("redis.addr"), SystemData.getInt("redis.port", 6379), SystemData.getInt("redis.db", 0), code);
 		
 		// Load caches into JMX
@@ -90,7 +91,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
-		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size", 2), code);
+		_jdbcPool = new JDBCPool(SystemData.getInt("jdbc.pool_max_size", 2), code);
 		_jdbcPool.setProperties((Map<?, ?>) SystemData.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setURL(SystemData.get("jdbc.url"));

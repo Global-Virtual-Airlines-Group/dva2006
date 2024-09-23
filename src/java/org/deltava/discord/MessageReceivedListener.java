@@ -27,7 +27,7 @@ import org.deltava.util.*;
 import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.ConnectionPoolException;
+import org.gvagroup.pool.ConnectionPoolException;
 
 /**
  * A Discord message receiver.

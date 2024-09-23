@@ -18,8 +18,6 @@ import org.deltava.util.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
 
-import org.gvagroup.tile.*;
-
 public class TestGetWAFSData extends TestCase {
 
 	Logger log;

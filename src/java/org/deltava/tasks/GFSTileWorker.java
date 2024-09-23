@@ -1,4 +1,4 @@
-// Copyright 2013, 2014, 2015, 2016, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.awt.image.BufferedImage;
@@ -8,12 +8,11 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.util.tile.*;
-import org.gvagroup.tile.*;
 
 /**
  * A worker thread to generate GFS jet stream tiles.
  * @author Luke
- * @version 10.0
+ * @version 11.3
  * @since 10.0
  */
 

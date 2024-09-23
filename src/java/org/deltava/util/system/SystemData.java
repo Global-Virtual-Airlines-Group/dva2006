@@ -11,12 +11,16 @@ import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 import org.deltava.comparators.AirlineComparator;
 import org.deltava.util.StringUtils;
+import org.gvagroup.pool.ConnectionPool;
+import org.gvagroup.pool.JDBCPool;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  */
 
@@ -25,9 +29,12 @@ public final class SystemData implements Serializable {
 	private static final Logger log = LogManager.getLogger(SystemData.class);
 
 	public static final String AUTHENTICATOR = "security.auth.obj";
-	public static final String JDBC_POOL = "jdbc.pool";
+	
 	public static final String TASK_POOL = "tasks.pool";
 	public static final String ECON_DATA = "econ.info";
+	
+	public static final String JDBC_POOL = "jdbc.pool";
+	public static final String JEDIS_POOL ="jedis.pool";
 
 	public static final String CFG_NAME = "$CONFIGNAME$";
 	public static final String LOADER_NAME = "$LOADERCLASS$";
@@ -261,5 +268,13 @@ public final class SystemData implements Serializable {
 			results.add((AirlineInformation) i.next());
 		
 		return results;
+	}
+	
+	public static ConnectionPool<java.sql.Connection> getJDBCPool() {
+		return (JDBCPool) getObject(JDBC_POOL);
+	}
+	
+	public static ConnectionPool<Jedis> getJedisPool() {
+		return (ConnectionPool<Jedis>) getObject(JEDIS_POOL);
 	}
 }

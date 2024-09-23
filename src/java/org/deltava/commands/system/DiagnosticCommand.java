@@ -22,7 +22,7 @@ import org.deltava.taskman.TaskScheduler;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.*;
+import org.gvagroup.pool.*;
 import org.gvagroup.acars.ACARSAdminInfo;
 import org.gvagroup.ipc.PoolWorkerInfo;
 import org.gvagroup.common.SharedData;
@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  */
 
@@ -96,10 +96,10 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Get JDBC Connection Pool data
 		Collection<String> appNames = SharedData.getApplications();
-		Map<String, ConnectionPool> pools = new HashMap<String, ConnectionPool>();
+		Map<String, ConnectionPool<?>> pools = new HashMap<String, ConnectionPool<?>>();
 		for (String appName : appNames) {
 			Serializable rawPool = SharedData.get(SharedData.JDBC_POOL + appName);
-			ConnectionPool jdbcPool = (ConnectionPool) IPCUtils.reserialize(rawPool);
+			ConnectionPool<?> jdbcPool = (ConnectionPool<?>) IPCUtils.reserialize(rawPool);
 			pools.put(appName, jdbcPool);
 		}
 		
