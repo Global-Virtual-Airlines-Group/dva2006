@@ -157,6 +157,8 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
+				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
 				<attribute name="Specification-Vendor" value="Global Virtual Airlines Group" />
@@ -254,6 +256,8 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_jsp_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
+				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha JSP" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
 				<attribute name="Specification-Vendor" value="Global Virtual Airlines Group" />
