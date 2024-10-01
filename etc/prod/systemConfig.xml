@@ -239,14 +239,19 @@
 		<auto_commit type="Boolean">true</auto_commit>
 		<log_stack type="Boolean">true</log_stack>
 	</jdbc>
-	
-	<!-- Redis data configuration -->
-	<redis>
-		<addr>/run/valkey/valkey.sock</addr>
-		<port type="Integer">6379</port>
-		<db type="Integer">0</db>
-	</redis>
-	
+
+	<!-- Jedis data configuration -->
+	<jedis>
+		<pool_size type="Integer">1</pool_size>
+		<pool_max_size type="Integer">4</pool_max_size>
+		<log_stack type="Boolean">true</log_stack>
+		<map name="connectProperties">
+			<addr>/run/valkey/valkey.sock</addr>
+			<db type="Integer">0</db>
+			<poolName>DVA</poolName>
+		</map>
+	</jedis>
+
 	<html>
 		<table>
 			<viewSize type="Integer">60</viewSize>
