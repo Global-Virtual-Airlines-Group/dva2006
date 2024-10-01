@@ -96,21 +96,18 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Get JDBC Connection Pool data
 		Collection<String> appNames = SharedData.getApplications();
-		Map<String, ConnectionPool<?>> pools = new HashMap<String, ConnectionPool<?>>();
+		Map<String, ConnectionPool<?>> pools = new TreeMap<String, ConnectionPool<?>>();
 		for (String appName : appNames) {
 			Serializable rawDBPool = SharedData.get(SharedData.JDBC_POOL + appName);
 			Serializable rawJedisPool = SharedData.get(SharedData.JEDIS_POOL + appName);
 			ConnectionPool<?> jdbcPool = (ConnectionPool<?>) IPCUtils.reserialize(rawDBPool);
 			ConnectionPool<?> jedisPool = (ConnectionPool<?>) IPCUtils.reserialize(rawJedisPool);
-			pools.put(appName + "$JDBC", jdbcPool);
-			pools.put(appName + "$JEDIS", jedisPool);
+			pools.put("JDBC$" + appName, jdbcPool);
+			pools.put("JEDIS$" + appName, jedisPool);
 		}
 		
 		// Save connection pool data
-		if (!pools.isEmpty()) {
-			ctx.setAttribute("appNames", appNames, REQUEST);
-			ctx.setAttribute("pools", pools, REQUEST);
-		}
+		ctx.setAttribute("pools", pools, REQUEST);
 		
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
