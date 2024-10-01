@@ -4,15 +4,15 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <content:sysdata var="jdbcStackLog" name="jdbc.log_stack" />
-<!-- JDBC Connection Pool Data Table -->
+<!-- Connection Pool Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left">JDBC CONNECTION POOLS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'jdbcPool')">COLLAPSE</span></td>
+ <td colspan="8" class="left">CONNECTION POOLS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'cPool')">COLLAPSE</span></td>
 </tr>
 
 <c:if test="${!empty jdbcPools}">
 <!-- JDBC Data Title Bar -->
-<tr class="title caps jdbcPool">
+<tr class="title caps cPool">
  <td style="width:10%">ID</td>
  <td style="width:15%">CONNECTION TYPE</td>
  <td style="width:12%">STATUS</td>
@@ -23,8 +23,8 @@
  <td>LAST USED ON</td>
 </tr>
 <c:forEach var="appName" items="${appNames}">
-<c:set var="pool" value="${jdbcPools[appName]}" scope="page" />
-<tr class="title caps jdbcPool">
+<c:set var="pool" value="${pools[appName]}" scope="page" />
+<tr class="title caps cPool">
  <td colspan="8" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
 <c:if test="${pool.waitCount > 0}">, <fmt:int value="${pool.waitCount}" /> WAITS</c:if>
 <c:if test="${pool.fullCount > 0}">, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</c:if>
@@ -32,11 +32,11 @@
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
- <td colspan="8" class="left jdbcPool"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last on <fmt:date date="${pool.lastValidation}" /></td>
+ <td colspan="8" class="left cPool"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last on <fmt:date date="${pool.lastValidation}" /></td>
 </tr>
 </c:if>
 <c:forEach var="con" items="${pool.poolInfo}">
-<view:row entry="${con}" className="jdbcPool">
+<view:row entry="${con}" className="cPool">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
  <td class="sec bld">${con.typeName}</td>
  <td class="bld"><c:choose><c:when test="${con.inUse}">In Use</c:when>
@@ -54,7 +54,7 @@
 </c:if>
 </view:row>
 <c:if test="${jdbcStackLog && con.connected && (con.inUse || (con.currentUse > 1500))}">
-<view:row entry="${con}" className="jdbcPool">
+<view:row entry="${con}" className="cPool">
  <td class="left small" colspan="8"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
 </c:if>
