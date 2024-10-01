@@ -11,10 +11,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 import org.deltava.comparators.AirlineComparator;
 import org.deltava.util.StringUtils;
-import org.gvagroup.pool.ConnectionPool;
-import org.gvagroup.pool.JDBCPool;
 
-import redis.clients.jedis.Jedis;
+import org.gvagroup.pool.*;
 
 /**
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
@@ -274,7 +272,7 @@ public final class SystemData implements Serializable {
 		return (JDBCPool) getObject(JDBC_POOL);
 	}
 	
-	public static ConnectionPool<Jedis> getJedisPool() {
-		return (ConnectionPool<Jedis>) getObject(JEDIS_POOL);
+	public static JedisPool getJedisPool() {
+		return (JedisPool) getObject(JEDIS_POOL);
 	}
 }

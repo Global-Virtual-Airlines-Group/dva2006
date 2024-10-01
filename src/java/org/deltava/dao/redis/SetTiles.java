@@ -9,6 +9,7 @@ import redis.clients.jedis.*;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.RedisUtils;
+import org.deltava.util.system.SystemData;
 import org.deltava.util.tile.*;
 
 /**
@@ -33,7 +34,7 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
-		try (Jedis j = RedisUtils.getConnection()) {
+		try (Jedis j = SystemData.getJedisPool().getConnection()) {
 			RedisUtils.write("$ME", _expiry, Boolean.TRUE);
 			RedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
 			RedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
@@ -45,6 +46,8 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 			}
 			
 			jp.sync();
+		} catch (Exception e) {
+			throw new DAOException(e);
 		}
 	}
 	
@@ -63,7 +66,7 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		
 			Collection<?> keys = (Collection<?>) RedisUtils.get(createKey("$KEYS"));
 			if (keys != null) {
-				try (Jedis j = RedisUtils.getConnection()) {
+				try (Jedis j = SystemData.getJedisPool().getConnection()) {
 					Pipeline jp = j.pipelined();
 					j.del(RedisUtils.encodeKey(createKey("$SIZE")));
 					j.del(RedisUtils.encodeKey(createKey("$KEYS")));
