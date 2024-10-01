@@ -48,6 +48,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-io-2.16.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-j-9.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-5.1.5.jar" sourcepath="lib/src/jedis-5.1.5.zip"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.99.jar" sourcepath="/IPC"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.00.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
