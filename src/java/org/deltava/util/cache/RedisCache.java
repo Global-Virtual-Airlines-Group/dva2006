@@ -9,12 +9,11 @@ import org.apache.logging.log4j.*;
 import org.deltava.util.RedisUtils;
 
 import redis.clients.jedis.*;
-import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -95,8 +94,8 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 			}
 			
 			jp.sync();
-		} catch (JedisException je) {
-			log.error("Cannot write to Jedis - {}", je.getMessage());
+		} catch (Exception e) {
+			log.error("Cannot write to Jedis - {}", e.getMessage());
 		}
 	}
 

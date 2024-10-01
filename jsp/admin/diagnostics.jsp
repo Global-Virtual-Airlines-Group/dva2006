@@ -110,25 +110,13 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="label">Database Transactions</td>
  <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${daoUsageCount / execTime.toMinutes() }" /> per minute)</td>
 </tr>
-<c:if test="${!empty redisStatus}">
-<c:set var="rawUptime" value="${redisStatus['uptime_in_seconds']}" scope="page" />
+<c:if test="${!empty vkStatus}">
+<c:set var="rawUptime" value="${vkStatus['uptime_in_seconds']}" scope="page" />
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
  <td class="label top">Valkey Status</td>
- <td class="data">Server version: <span class="bld">${redisStatus['redis_version']}</span> Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
-Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean<br />
-<fmt:int value="${redisStatus['useCount']}" /> used, <fmt:int value="${redisStatus['createCount']}" /> opened, <fmt:int value="${redisStatus['destroyCount']}" /> closed<br />
-<fmt:int value="${redisStatus['instantaneous_ops_per_sec']}" /> operations/sec, Memory <fmt:fileSize value="${redisStatus['used_memory']}" /> / <fmt:fileSize value="${redisStatus['maxmemory']}" /></td>
-</tr>
-</c:if>
-<c:if test="${!empty redisPool}">
-<c:set var="id" value="0" scope="page" />
-<tr>
- <td class="label top">Valkey Pool</td>
- <td class="data"><c:forEach var="pe" items="${redisPool}" varStatus="hasNext">
-<c:set var="id" value="${id + 1}" scope="page" />Connection <span class="pri bld">${id}</span> (<span class="sec bld">${pe.isActive() ? 'IN USE' : 'IDLE'}</span>) - created <fmt:date date="${pe.created}" />, <fmt:int value="${pe.borrowCount}" /> reservations, 
- last on <fmt:date date="${pe.lastBorrowed}" />, returned on <fmt:date date="${pe.lastReturned}" default="NEVER" /><c:if test="${!asNext.last}"><br /></c:if></c:forEach>
- </td>
+ <td class="data">Server version: <span class="bld">${vkStatus['valkey_version']}</span> Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
+<fmt:int value="${vkStatus['instantaneous_ops_per_sec']}" /> operations/sec, Memory <fmt:fileSize value="${vkStatus['used_memory']}" /> / <fmt:fileSize value="${vkStatus['maxmemory']}" /></td>
 </tr>
 </c:if>
 <c:if test="${discordEnabled}">

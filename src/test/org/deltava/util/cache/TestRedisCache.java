@@ -11,11 +11,13 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.util.*;
+import org.gvagroup.pool.JedisPool;
 
 public class TestRedisCache extends TestCase {
 	
 	private Logger log;
 
+	private JedisPool _jedisPool;
 	private RedisCache<Cacheable> _cache;
 	
 	private static class ExpiringCacheableLong extends CacheableLong implements ExpiringCacheable {
@@ -38,7 +40,14 @@ public class TestRedisCache extends TestCase {
 		super.setUp();
 		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		log = LogManager.getLogger(TestRedisCache.class);
-		RedisUtils.init("192.168.0.2", 6379, 2, "JUnit");
+		
+		Properties p = new Properties();
+		p.setProperty("addr", "192.168.0.2");
+		_jedisPool = new JedisPool(1, "TEST");
+		_jedisPool.setProperties(p);
+		_jedisPool.setLogStack(true);
+		_jedisPool.connect(1);
+		RedisUtils.init(_jedisPool);
 		_cache = new RedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);
 		assertTrue(_cache.isRemote());
@@ -46,8 +55,8 @@ public class TestRedisCache extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		_jedisPool.close();
 		_cache = null;
-		RedisUtils.shutdown();
 		super.tearDown();
 	}
 

@@ -98,15 +98,18 @@ public class DiagnosticCommand extends AbstractCommand {
 		Collection<String> appNames = SharedData.getApplications();
 		Map<String, ConnectionPool<?>> pools = new HashMap<String, ConnectionPool<?>>();
 		for (String appName : appNames) {
-			Serializable rawPool = SharedData.get(SharedData.JDBC_POOL + appName);
-			ConnectionPool<?> jdbcPool = (ConnectionPool<?>) IPCUtils.reserialize(rawPool);
-			pools.put(appName, jdbcPool);
+			Serializable rawDBPool = SharedData.get(SharedData.JDBC_POOL + appName);
+			Serializable rawJedisPool = SharedData.get(SharedData.JEDIS_POOL + appName);
+			ConnectionPool<?> jdbcPool = (ConnectionPool<?>) IPCUtils.reserialize(rawDBPool);
+			ConnectionPool<?> jedisPool = (ConnectionPool<?>) IPCUtils.reserialize(rawJedisPool);
+			pools.put(appName + "$JDBC", jdbcPool);
+			pools.put(appName + "$JEDIS", jedisPool);
 		}
 		
 		// Save connection pool data
 		if (!pools.isEmpty()) {
 			ctx.setAttribute("appNames", appNames, REQUEST);
-			ctx.setAttribute("jdbcPools", pools, REQUEST);
+			ctx.setAttribute("pools", pools, REQUEST);
 		}
 		
 		// Get Virtual Machine properties
@@ -128,8 +131,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Calculate DAO usage count and redis statistics
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
 		ctx.setAttribute("httpCompression", HTTPCompressionInfo.getInfo(), REQUEST);
-		ctx.setAttribute("redisStatus", RedisUtils.getStatus(), REQUEST);
-		ctx.setAttribute("redisPool", RedisUtils.getPoolStatus(), REQUEST);
+		ctx.setAttribute("vkStatus", RedisUtils.getStatus(), REQUEST);
 		
 		// Get Discord connection
 		ctx.setAttribute("discordOK", Boolean.valueOf(Bot.isInitialized()), REQUEST);
