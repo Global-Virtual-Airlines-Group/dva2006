@@ -3,14 +3,13 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<content:sysdata var="jdbcStackLog" name="jdbc.log_stack" />
 <!-- Connection Pool Data Table -->
 <el:table className="view">
 <tr class="title caps">
  <td colspan="8" class="left">CONNECTION POOLS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'cPool')">COLLAPSE</span></td>
 </tr>
 
-<c:if test="${!empty jdbcPools}">
+<c:if test="${!empty pools}">
 <!-- JDBC Data Title Bar -->
 <tr class="title caps cPool">
  <td style="width:10%">ID</td>
@@ -22,10 +21,9 @@
  <td style="width:12%">LAST/CURRENT USE</td>
  <td>LAST USED ON</td>
 </tr>
-<c:forEach var="appName" items="${appNames}">
-<c:set var="pool" value="${pools[appName]}" scope="page" />
+<c:forEach var="pool" items="${pools.values()}">
 <tr class="title caps cPool">
- <td colspan="8" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
+ <td colspan="8" class="left">${pool.name}&nbsp;${pool.type} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
 <c:if test="${pool.waitCount > 0}">, <fmt:int value="${pool.waitCount}" /> WAITS</c:if>
 <c:if test="${pool.fullCount > 0}">, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</c:if>
 <c:if test="${pool.errorCount > 0}">, <fmt:int value="${pool.errorCount}" /> STATE ERRORS</c:if></td>
@@ -53,7 +51,7 @@
  <td>NEVER</td>
 </c:if>
 </view:row>
-<c:if test="${jdbcStackLog && con.connected && (con.inUse || (con.currentUse > 1500))}">
+<c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse > 1500))}">
 <view:row entry="${con}" className="cPool">
  <td class="left small" colspan="8"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
@@ -62,9 +60,9 @@
 </c:forEach>
 </c:if>
 
-<c:if test="${empty jdbcPools}">
+<c:if test="${empty pools}">
 <!-- JDBC Connection Data not available -->
-<tr class="jdbcPool">
+<tr class="cPool">
  <td class="pri bld" colspan="6">JDBC CONNECTION POOL DATA IS NOT AVAILABLE</td>
 </tr>
 </c:if>
