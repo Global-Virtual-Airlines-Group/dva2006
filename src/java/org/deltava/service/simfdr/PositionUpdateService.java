@@ -1,4 +1,4 @@
-// Copyright 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to receive simFDR position updates.
  * @author Luke
- * @version 10.3
+ * @version 11.3
  * @since 8.3
  */
 
@@ -144,7 +144,7 @@ public class PositionUpdateService extends SimFDRService {
 		
 		// Save the position update and return
 		SetTrack twdao = new SetTrack();
-		twdao.write(false, flightID.toString(), result);
+		twdao.write(List.of(new TrackUpdate(false, flightID.toString(), result)));
 		_simFDRFlightCache.add(trackIDs);
 		return SC_OK;
 	}
