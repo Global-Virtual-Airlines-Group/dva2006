@@ -34,10 +34,10 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
+		RedisUtils.write("$ME", _expiry, Boolean.TRUE);
+		RedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
+		RedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
 		try (Jedis j = SystemData.getJedisPool().getConnection()) {
-			RedisUtils.write("$ME", _expiry, Boolean.TRUE);
-			RedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
-			RedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
 			Pipeline jp = j.pipelined();
 			for (Map.Entry<TileAddress, PNGTile> me : is.entrySet()) {
 				byte[] k = RedisUtils.encodeKey(createKey(me.getKey().getName()));
