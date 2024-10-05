@@ -287,9 +287,12 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				usrName = req.getUserPrincipal().getName();
 			
-			log.log(logLevel, "Error on {}", getURL(req));
-			log.log(logLevel, "{} executing {} - {}", usrName, cmd.getName(), e.getMessage(), logStackDump ? e : null);
 			NewRelic.noticeError(e, false);
+			if (logStackDump)
+				log.atLevel(logLevel).withThrowable(e).log("{} executing {} ({}) - {}", usrName, cmd.getName(), getURL(req), e.getMessage());
+			else
+				log.log(logLevel, "{} executing {} ({}) - {}", usrName, cmd.getName(), getURL(req), e.getMessage());
+			
 
 			// Redirect to the error page
 			try {
