@@ -10,7 +10,7 @@ import org.deltava.beans.GeoLocation;
  * @since 10.3
  */
 
-public class TrackUpdate {
+public class TrackUpdate implements GeoLocation {
 	
 	private final boolean _isACARS;
 	private final String _flightID;
@@ -51,5 +51,15 @@ public class TrackUpdate {
 	 */
 	public GeoLocation getLocation() {
 		return _loc;
+	}
+
+	@Override
+	public double getLatitude() {
+		return _loc.getLatitude();
+	}
+
+	@Override
+	public double getLongitude() {
+		return _loc.getLongitude();
 	}
 }
