@@ -71,7 +71,7 @@
 	<cache id="ServInfoData" remote="true" expires="300" />
 
 	<!-- System caches -->
-	<cache id="AircraftInfo" max="128" expires="7200" />
+	<cache id="AircraftInfo" max="192" expires="7200" />
 	<cache id="AircraftInfoALL" max="6" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
 	<cache id="Accomplishments" max="192" expires="3600" />
