@@ -33,6 +33,7 @@ public class SetTrack extends RedisDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public void write(Collection<TrackUpdate> upds) {
+		long now = System.currentTimeMillis();
 		for (TrackUpdate upd : upds) {
 			setBucket("track", upd.isACARS() ? "acars" : "simFDR");
 			String key = createKey(upd.getFlightID());
@@ -53,7 +54,7 @@ public class SetTrack extends RedisDAO {
 				Pipeline jp = j.pipelined();
 				j.del(rawKey);
 				j.set(rawKey, RedisUtils.write(data));
-				j.expireAt(rawKey, 3600);
+				j.expireAt(rawKey, now + 3600);
 				jp.sync();
 			} catch (Exception e) {
 				log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
