@@ -45,7 +45,7 @@ public class SetTrack extends RedisDAO {
 			// Check to make sure position has changed
 			int distance = data.isEmpty() ? Integer.MAX_VALUE : upd.getLocation().distanceFeet(data.getLast());
 			if (distance > 10)
-					data.add(new GeoPosition(upd.getLocation()));
+				data.add(new GeoPosition(upd.getLocation()));
 
 			_casCache.add(data);
 			byte[] rawKey = RedisUtils.encodeKey(key);
