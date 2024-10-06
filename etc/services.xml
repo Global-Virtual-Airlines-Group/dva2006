@@ -15,7 +15,8 @@
 	<!-- Help Desk Services -->
 	<service id="hdrsptmp" class="org.deltava.service.IssueTemplateService" />
 
-	<!-- Cache Services -->
+	<!-- Cache/Diag Services -->
+	<service id="poolinfo" class="org.deltava.service.PoolInfoService" />
 	<service id="cacheinfo" class="org.deltava.service.CacheInfoService" />
 	<service id="cacheclear" class="org.deltava.service.CacheClearService" />
 
