@@ -51,7 +51,7 @@
  <td>NEVER</td>
 </c:if>
 </view:row>
-<c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse > 1500))}">
+<c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse > 1250))}">
 <view:row entry="${con}" className="cPool">
  <td class="left small" colspan="8"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
@@ -63,7 +63,7 @@
 <c:if test="${empty pools}">
 <!-- JDBC Connection Data not available -->
 <tr class="cPool">
- <td class="pri bld" colspan="6">JDBC CONNECTION POOL DATA IS NOT AVAILABLE</td>
+ <td class="pri bld" colspan="6">CONNECTION POOL DATA IS NOT AVAILABLE</td>
 </tr>
 </c:if>
 </el:table>
