@@ -155,7 +155,7 @@ public class ImageServlet extends DownloadServlet {
 						access.updateContext(mt, ch);
 						access.validate();
 						if (!access.getCanRead())
-							throw new ForbiddenException("Cannot view Image - Cannot read Message Thread " + mt.getID());
+							throw new ForbiddenException(String.format("Cannot view Image - %s cannot read Message Thread %d", req.getRemoteHost(), Integer.valueOf(mt.getID())));
 					}
 					
 					// Serve the image
