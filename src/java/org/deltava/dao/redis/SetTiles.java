@@ -8,7 +8,7 @@ import redis.clients.jedis.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.RedisUtils;
+import org.deltava.util.JedisUtils;
 import org.deltava.util.system.SystemData;
 import org.deltava.util.tile.*;
 
@@ -34,13 +34,13 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
-		RedisUtils.write("$ME", _expiry, Boolean.TRUE);
-		RedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
-		RedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
+		JedisUtils.write("$ME", _expiry, Boolean.TRUE);
+		JedisUtils.write("$SIZE", _expiry, Integer.valueOf(is.size()));
+		JedisUtils.write("$ME", _expiry, new ArrayList<TileAddress>(is.keySet()));
 		try (Jedis j = SystemData.getJedisPool().getConnection()) {
 			Pipeline jp = j.pipelined();
 			for (Map.Entry<TileAddress, PNGTile> me : is.entrySet()) {
-				byte[] k = RedisUtils.encodeKey(createKey(me.getKey().getName()));
+				byte[] k = JedisUtils.encodeKey(createKey(me.getKey().getName()));
 				j.set(k, me.getValue().getData());
 				j.expireAt(k, _expiry);
 			}
@@ -61,17 +61,17 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().toEpochMilli());
 		try {
 			setBucket("mapTiles", is.getType(), seriesDate);
-			boolean hasSeries = (RedisUtils.get(createKey("$ME")) != null);
+			boolean hasSeries = (JedisUtils.get(createKey("$ME")) != null);
 			if (!hasSeries) return;
 		
-			Collection<?> keys = (Collection<?>) RedisUtils.get(createKey("$KEYS"));
+			Collection<?> keys = (Collection<?>) JedisUtils.get(createKey("$KEYS"));
 			if (keys != null) {
 				try (Jedis j = SystemData.getJedisPool().getConnection()) {
 					Pipeline jp = j.pipelined();
-					j.del(RedisUtils.encodeKey(createKey("$SIZE")));
-					j.del(RedisUtils.encodeKey(createKey("$KEYS")));
-					j.del(RedisUtils.encodeKey(createKey("$ME")));
-					keys.forEach(k -> j.del(RedisUtils.encodeKey(createKey(((TileAddress)k).getName()))));
+					j.del(JedisUtils.encodeKey(createKey("$SIZE")));
+					j.del(JedisUtils.encodeKey(createKey("$KEYS")));
+					j.del(JedisUtils.encodeKey(createKey("$ME")));
+					keys.forEach(k -> j.del(JedisUtils.encodeKey(createKey(((TileAddress)k).getName()))));
 					jp.sync();
 				}
 			}
@@ -85,7 +85,7 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 	 */
 	private void addImageType(String type) {
 		setBucket("mapTiles");
-		RedisUtils.push(createKey("types"), type, 0);
+		JedisUtils.push(createKey("types"), type, 0);
 	}
 
 	/*
@@ -94,6 +94,6 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 	private void addImageDate(String type, Instant effDate) {
 		if (effDate == null) return;
 		setBucket("mapTiles", type);
-		RedisUtils.push(createKey("dates"), String.valueOf(effDate.toEpochMilli()), 10);
+		JedisUtils.push(createKey("dates"), String.valueOf(effDate.toEpochMilli()), 10);
 	}
 }

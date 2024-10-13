@@ -88,7 +88,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		_jedisPool.setLogStack(SystemData.getBoolean("jedis.log_stack"));
 		try {
 			_jedisPool.connect(SystemData.getInt("jedis.pool_size"));
-			RedisUtils.init(_jedisPool);
+			JedisUtils.init(_jedisPool);
 			JMXConnectionPool jmxpool = new JMXConnectionPool(code, _jedisPool);
 			JMXUtils.register("org.gvagroup:type=JedisPool,name=" + code, jmxpool);
 			SharedWorker.register(new JMXRefreshTask(jmxpool, 60000));
