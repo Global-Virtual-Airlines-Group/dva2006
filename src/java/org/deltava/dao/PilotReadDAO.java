@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -139,44 +139,31 @@ abstract class PilotReadDAO extends DAO {
 		String dbName = (ofs == -1) ? SystemData.get("airline.db").toLowerCase() : formatDBName(tableName);
 		String table = (ofs != -1) ? tableName.substring(ofs + 1) : tableName;
 
-		List<Pilot> results = new ArrayList<Pilot>(ids.size());
+		List<Pilot> results = new ArrayList<Pilot>(ids.size() + 2);
 		log.debug("Raw set size = {}", Integer.valueOf(ids.size()));
 
-		// Init the prepared statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append('.');
-		sqlBuf.append(table);
-		sqlBuf.append(" P LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID IN (");
-
 		// Add the pilot IDs to the set
-		int querySize = 0;
-		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
-			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((IDBean) rawID).getID());
-
-			// Pull from the cache if at all possible; this is an evil query
-			Pilot p = _cache.get(id);
-			if (p != null) {
-				results.add(p);
-			} else {
-				querySize++;
-				sqlBuf.append(id.toString());
-				if (i.hasNext())
-					sqlBuf.append(',');
-			}
-		}
-
+		Collection<Integer> keys = toID(ids);
+		
+		// Batch query the cache
+		Map<Object, Pilot> pilots = _cache.getAll(keys);
+		results.addAll(pilots.values());
+		keys.removeAll(pilots.keySet());
+		
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		if (querySize > 0) {
-			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-				sqlBuf.setLength(sqlBuf.length() - 1);
-
+		if (keys.size() > 0) {
+			StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
+			sqlBuf.append(dbName);
+			sqlBuf.append('.');
+			sqlBuf.append(table);
+			sqlBuf.append(" P LEFT JOIN ");
+			sqlBuf.append(dbName);
+			sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
+			sqlBuf.append(dbName);
+			sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID IN (");
+			sqlBuf.append(StringUtils.listConcat(keys, ","));
 			sqlBuf.append(")) GROUP BY P.ID");
+			
 			List<Pilot> uncached = null;
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setInt(1, FlightStatus.OK.ordinal());
@@ -190,7 +177,6 @@ abstract class PilotReadDAO extends DAO {
 				loadAccomplishments(ucMap, dbName);
 				loadPushEndpoints(ucMap, dbName);
 			} catch (SQLException se) {
-				log.error("Query = {}", sqlBuf);
 				throw new DAOException(se);
 			}
 
