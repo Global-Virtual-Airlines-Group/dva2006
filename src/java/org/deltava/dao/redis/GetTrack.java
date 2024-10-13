@@ -1,4 +1,4 @@
-// Copyright 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2018, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import java.util.*;
@@ -6,12 +6,12 @@ import java.util.*;
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.dao.DAOException;
-import org.deltava.util.RedisUtils;
+import org.deltava.util.JedisUtils;
 
 /**
  * A Data Access Object to get unpersisted ACARS track data from Redis.
  * @author Luke
- * @version 8.3
+ * @version 11.3
  * @since 7.0
  */
 
@@ -28,7 +28,7 @@ public class GetTrack extends RedisDAO {
 		setBucket("track", isACARS ? "acars" : "simFDR");
 		try {
 			@SuppressWarnings("unchecked")
-			Collection<GeoLocation> results = (Collection<GeoLocation>) RedisUtils.get(createKey(flightID));
+			Collection<GeoLocation> results = (Collection<GeoLocation>) JedisUtils.get(createKey(flightID));
 			return (results == null) ? new HashSet<GeoLocation>() : results;
 		} catch (Exception e) {
 			throw new DAOException(e);
