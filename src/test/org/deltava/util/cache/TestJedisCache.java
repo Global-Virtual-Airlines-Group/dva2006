@@ -13,12 +13,12 @@ import org.deltava.beans.schedule.Airline;
 import org.deltava.util.*;
 import org.gvagroup.pool.JedisPool;
 
-public class TestRedisCache extends TestCase {
+public class TestJedisCache extends TestCase {
 	
 	private Logger log;
 
 	private JedisPool _jedisPool;
-	private RedisCache<Cacheable> _cache;
+	private JedisCache<Cacheable> _cache;
 	
 	private static class ExpiringCacheableLong extends CacheableLong implements ExpiringCacheable {
 		
@@ -39,7 +39,7 @@ public class TestRedisCache extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
-		log = LogManager.getLogger(TestRedisCache.class);
+		log = LogManager.getLogger(TestJedisCache.class);
 		
 		Properties p = new Properties();
 		p.setProperty("addr", "192.168.0.2");
@@ -47,8 +47,8 @@ public class TestRedisCache extends TestCase {
 		_jedisPool.setProperties(p);
 		_jedisPool.setLogStack(true);
 		_jedisPool.connect(1);
-		RedisUtils.init(_jedisPool);
-		_cache = new RedisCache<Cacheable>("test", 1);
+		JedisUtils.init(_jedisPool);
+		_cache = new JedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);
 		assertTrue(_cache.isRemote());
 	}
@@ -103,6 +103,19 @@ public class TestRedisCache extends TestCase {
 		_cache.addNull("DVA");
 		assertTrue(_cache.contains("DVA"));
 		assertNull(_cache.get("DVA"));
+	}
+	
+	public void testGetAll() {
+		_cache.add(new Airline("AF", "Air France"));
+		_cache.add(new Airline("DVA", "Delta Virtual"));
+		assertTrue(_cache.contains("AF"));
+		assertTrue(_cache.contains("DVA"));
+		
+		Map<Object, Cacheable> results = _cache.getAll(List.of("AF", "DVA"));
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		assertTrue(results.containsKey("AF"));
+		assertTrue(results.containsKey("DVA"));
 	}
 
 	public void testLargeCache() throws Exception {

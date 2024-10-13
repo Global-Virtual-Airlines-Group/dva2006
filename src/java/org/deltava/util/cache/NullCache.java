@@ -1,12 +1,14 @@
-// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
+
+import java.util.*;
 
 import org.deltava.beans.GeoLocation;
 
 /**
  * A cache implementation that does no caching. This is used to ensure that CacheManager never returns null. 
  * @author Luke
- * @version 7.4
+ * @version 11.3
  * @since 5.0
  * @param <T> the Cacheable object type
  */
@@ -69,7 +71,12 @@ public class NullCache<T extends Cacheable> extends Cache<T> implements GeoCache
 	public T get(GeoLocation loc) {
 		return null;
 	}
-
+	
+	@Override
+	public Map<Object, T> getAll(Collection<?> keys) {
+		return Collections.emptyMap();
+	}
+	
 	@Override
 	public void remove(GeoLocation loc) {
 		// empty

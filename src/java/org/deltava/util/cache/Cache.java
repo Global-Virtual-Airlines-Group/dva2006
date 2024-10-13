@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.*;
  * An an abstract class to store common cache operations. These caches can store null
  * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 1.0
  * @param <T> the cacheable object type
  */
@@ -204,4 +204,21 @@ public abstract class Cache<T extends Cacheable> {
 	 * @return the cache entry, or null if the key is not present or the entry is invalid
 	 */
 	public abstract T get(Object key);
+	
+	/**
+	 * Returns multiple objects from the cache.
+	 * @param keys the cache keys
+	 * @return a Map of results keyed by cache key
+	 */
+	public Map<Object, T> getAll(Collection<?> keys) {
+		if (keys == null) return Collections.emptyMap();
+		Map<Object, T> results = new HashMap<Object, T>();
+		for (Object k : keys) {
+			T v = get(k);
+			if (v != null)
+				results.put(k, v);
+		}
+		
+		return results;
+	}
 }
