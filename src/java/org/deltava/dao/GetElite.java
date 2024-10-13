@@ -102,26 +102,26 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String db) throws DAOException {
-		Collection<Integer> dbIDs = new HashSet<Integer>();
 		
 		// Load from the cache
+		Collection<Integer> keys = toID(IDs);
 		Collection<EliteStatus> results = new ArrayList<EliteStatus>();
-		for (Iterator<?> i = IDs.iterator(); i.hasNext();) {
-			Integer id = toID(i.next());
+		for (Iterator<Integer> i = keys.iterator(); i.hasNext();) {
+			Integer id = i.next();
 			Long cacheKey = EliteStatus.generateKey(year, id.intValue());
 			EliteStatus st = _stCache.get(cacheKey);
 			if (st != null )
 				results.add(st);
 			else
-				dbIDs.add(id);
+				i.remove();
 		}
 
-		if (dbIDs.size() > 0) {
+		if (keys.size() > 0) {
 			String dbName = formatDBName(db);
 			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, CREATED, UPD_REASON FROM ");
 			sqlBuf.append(dbName);
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
-			sqlBuf.append(StringUtils.listConcat(dbIDs, ","));
+			sqlBuf.append(StringUtils.listConcat(keys, ","));
 			sqlBuf.append(")) ORDER BY PILOT_ID, CREATED DESC");
 			
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
@@ -135,7 +135,7 @@ public class GetElite extends EliteDAO {
 			// Now filter - at most one per pilot ID
 			for (Iterator<EliteStatus> i = results.iterator(); i.hasNext(); ) {
 				Integer id = Integer.valueOf(i.next().getID());
-				if (!dbIDs.remove(id))
+				if (!keys.remove(id))
 					i.remove();
 			}
 		}
