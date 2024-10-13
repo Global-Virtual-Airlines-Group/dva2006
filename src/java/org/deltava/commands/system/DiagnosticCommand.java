@@ -128,7 +128,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Calculate DAO usage count and redis statistics
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
 		ctx.setAttribute("httpCompression", HTTPCompressionInfo.getInfo(), REQUEST);
-		ctx.setAttribute("vkStatus", RedisUtils.getStatus(), REQUEST);
+		ctx.setAttribute("vkStatus", JedisUtils.getStatus(), REQUEST);
 		
 		// Get Discord connection
 		ctx.setAttribute("discordOK", Boolean.valueOf(Bot.isInitialized()), REQUEST);

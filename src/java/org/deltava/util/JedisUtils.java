@@ -17,9 +17,9 @@ import org.gvagroup.pool.ConnectionPool;
  * @since 6.1
  */
 
-public class RedisUtils {
+public class JedisUtils {
 	
-	private static final Logger log = LogManager.getLogger(RedisUtils.class);
+	private static final Logger log = LogManager.getLogger(JedisUtils.class);
 	private static final List<String> INFO_KEYS = List.of("valkey_version", "redis_version", "uptime_in_seconds", "connected_clients", "used_memory", "maxmemory", "instantaneous_ops_per_sec", "db0");
 	
 	private static ConnectionPool<Jedis> _pool;
@@ -30,7 +30,7 @@ public class RedisUtils {
 	public static final String LATENCY_KEY = "$LATENCYTEST";
 	
 	// static class
-	private RedisUtils() {
+	private JedisUtils() {
 		super();
 	}
 	
@@ -43,7 +43,7 @@ public class RedisUtils {
 	}
 	
 	/**
-	 * Obtains a connection from the Jedis connection pool. <i>This exists for {@link org.deltava.util.cache.RedisCache}, and is ugly</i>
+	 * Obtains a connection from the Jedis connection pool. <i>This exists for {@link org.deltava.util.cache.JedisCache}, and is ugly</i>
 	 * @return a Jedis connection
 	 * @throws Exception if the connection pool is full or not yet loaded
 	 */

@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import org.deltava.beans.GeospaceLocation;
@@ -6,12 +6,12 @@ import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.RedisUtils;
+import org.deltava.util.JedisUtils;
 
 /**
  * A Data Access Object to load winds aloft data from Redis.
  * @author Luke
- * @version 7.1
+ * @version 11.3
  * @since 5.4
  */
 
@@ -33,7 +33,7 @@ public class GetWinds extends RedisDAO {
 		
 		try {
 			setBucket("winds", lvl.toString());
-			return (WindData) RedisUtils.get(createKey(key));
+			return (WindData) JedisUtils.get(createKey(key));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}

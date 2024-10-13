@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.RedisUtils;
+import org.deltava.util.JedisUtils;
 import org.deltava.util.tile.*;
 
 /**
@@ -23,7 +23,7 @@ public class GetTiles extends RedisDAO implements SeriesReader {
 	public Collection<String> getTypes() throws DAOException {
 		setBucket("mapTiles");
 		try {
-			Collection<?> results = (Collection<?>) RedisUtils.get(createKey("types"));
+			Collection<?> results = (Collection<?>) JedisUtils.get(createKey("types"));
 			return (results == null) ? Collections.emptySet() : results.stream().map(String::valueOf).collect(Collectors.toSet());
 		} catch (Exception e) {
 			throw new DAOException(e);
@@ -34,7 +34,7 @@ public class GetTiles extends RedisDAO implements SeriesReader {
 	public Collection<Instant> getDates(String type) throws DAOException {
 		setBucket("mapTiles", type);
 		try {
-			Collection<?> rawDates = (Collection<?>) RedisUtils.get(createKey("dates"));
+			Collection<?> rawDates = (Collection<?>) JedisUtils.get(createKey("dates"));
 			if (rawDates == null)
 				return Collections.emptySet();
 			
@@ -43,7 +43,7 @@ public class GetTiles extends RedisDAO implements SeriesReader {
 			for (Object dt : rawDates) {
 				setBucket("mapTiles", type, dt);
 				try {
-					Object o = RedisUtils.get(createKey("$ME"));
+					Object o = JedisUtils.get(createKey("$ME"));
 					if (o != null) dates.add(Instant.ofEpochMilli(Long.parseLong(String.valueOf(dt))));
 				} catch (Exception e) {
 					// empty
@@ -60,7 +60,7 @@ public class GetTiles extends RedisDAO implements SeriesReader {
 	public PNGTile getTile(String imgType, Instant effDate, TileAddress addr) throws DAOException {
 		setBucket("mapTiles", imgType, (effDate == null) ? null : String.valueOf(effDate.toEpochMilli()));
 		try {
-			return (PNGTile) RedisUtils.get(createKey(addr.getName()));
+			return (PNGTile) JedisUtils.get(createKey(addr.getName()));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}

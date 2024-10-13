@@ -35,19 +35,19 @@ public class SetWinds extends RedisDAO {
 			setBucket("winds", me.getKey().toString());
 			Collection<WindData> wd = me.getValue();
 			Collection<Object> keys = new ArrayList<Object>();
-			RedisUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
+			JedisUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
+			JedisUtils.write("$KEYS", _expiry, keys);
+			JedisUtils.write("$SIZE", _expiry, Integer.valueOf(keys.size()));
 			try (Jedis j = SystemData.getJedisPool().getConnection()) {
 				Pipeline jp = j.pipelined();
 				for (WindData w : wd) {
-					byte[] key = RedisUtils.encodeKey(createKey(w.cacheKey()));
-					j.set(key, RedisUtils.write(w));
+					byte[] key = JedisUtils.encodeKey(createKey(w.cacheKey()));
+					j.set(key, JedisUtils.write(w));
 					j.expireAt(key, _expiry);
 					keys.add(key);
 				}
 				
 				jp.sync();
-				RedisUtils.write("$KEYS", _expiry, keys);
-				RedisUtils.write("$SIZE", _expiry, Integer.valueOf(keys.size()));
 			} catch (Exception e) {
 				throw new DAOException(e);
 			}

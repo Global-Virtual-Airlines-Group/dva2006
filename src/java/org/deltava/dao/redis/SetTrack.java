@@ -39,7 +39,7 @@ public class SetTrack extends RedisDAO {
 			String key = createKey(upd.getFlightID());
 			CacheableList<GeoLocation> data = _casCache.get(key);
 			if (data == null)
-				data = (CacheableList<GeoLocation>) RedisUtils.get(key);
+				data = (CacheableList<GeoLocation>) JedisUtils.get(key);
 			if (data == null)
 				data = new CacheableList<GeoLocation>(key);
 		
@@ -49,11 +49,11 @@ public class SetTrack extends RedisDAO {
 				data.add(new GeoPosition(upd));
 
 			_casCache.add(data);
-			byte[] rawKey = RedisUtils.encodeKey(key);
+			byte[] rawKey = JedisUtils.encodeKey(key);
 			try (Jedis j = SystemData.getJedisPool().getConnection()) {
 				Pipeline jp = j.pipelined();
 				j.del(rawKey);
-				j.set(rawKey, RedisUtils.write(data));
+				j.set(rawKey, JedisUtils.write(data));
 				j.expireAt(rawKey, now + 3600);
 				jp.sync();
 			} catch (Exception e) {
@@ -70,7 +70,7 @@ public class SetTrack extends RedisDAO {
 	public void clear(boolean isACARS, String flightID) {
 		try {
 			setBucket("track", isACARS ? "acars" : "simFDR");
-			RedisUtils.delete(createKey(flightID));
+			JedisUtils.delete(createKey(flightID));
 		} catch (Exception e) {
 			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
 		} finally {
