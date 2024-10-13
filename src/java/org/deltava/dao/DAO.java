@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.time.Instant;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
@@ -13,7 +14,7 @@ import org.deltava.beans.*;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 
@@ -91,6 +92,15 @@ public abstract class DAO {
 		if (o instanceof Integer i) return i;
 		if (o instanceof IDBean idb) return Integer.valueOf(idb.getID());
 		return null;
+	}
+	
+	/**
+	 * Converts a collection of Objects into Integer IDs.
+	 * @param ids a Collection of Objects
+	 * @return an array of Integers
+	 */
+	protected static Collection<Integer> toID(Collection<?> ids) {
+		return ids.stream().map(DAO::toID).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
 	/**
