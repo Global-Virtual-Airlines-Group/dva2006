@@ -64,9 +64,11 @@ public class RedisUtils {
 	}
 	
 	/**
-	 * Helper method to deserialize an object and swallow exceptions.
+	 * Deserializes an object and swallows exceptions.
+	 * @param data the raw data
+	 * @return the deserialized data
 	 */
-	private static Object read(byte[] data) {
+	public static Object read(byte[] data) {
 		try (ByteArrayInputStream bi = new ByteArrayInputStream(data); ObjectInputStream oi = new ObjectInputStream(bi)) {
 			return oi.readObject();
 		} catch (ClassNotFoundException cnfe) {
