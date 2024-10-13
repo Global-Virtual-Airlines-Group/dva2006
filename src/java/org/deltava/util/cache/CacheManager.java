@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 11.2
+ * @version 11.3
  * @since 5.0
  */
 
@@ -20,8 +20,8 @@ public class CacheManager {
 	private static final Logger log = LogManager.getLogger(CacheManager.class);
 	
 	private static final ReentrantReadWriteLock _rw = new ReentrantReadWriteLock(true);
-	private static final ReentrantReadWriteLock.ReadLock _r = _rw.readLock();
-	private static final ReentrantReadWriteLock.WriteLock _w = _rw.writeLock();
+	private static final Lock _r = _rw.readLock();
+	private static final Lock _w = _rw.writeLock();
 	
 	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>();
 	
@@ -123,11 +123,11 @@ public class CacheManager {
 			return registerNull(cfg.getID());
 		
 		if (cfg.isGeo() && cfg.isRemote()) {
-			cache = new RedisGeoCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime(), cfg.getPrecision());
-			log.info("Registered GeoRedis cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
+			cache = new JedisGeoCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime(), cfg.getPrecision());
+			log.info("Registered GeoJedis cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
 		} else if (cfg.isRemote()) {
-			cache = new RedisCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime());
-			log.info("Registered Redis cache {}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()));
+			cache = new JedisCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime());
+			log.info("Registered Jedis cache {}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()));
 		} else if (cfg.isGeo()) {
 			cache = new ExpiringGeoCache<T>(cfg.getMaxSize(), cfg.getExpiryTime(), cfg.getPrecision());
 			log.info("Registered Geo cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));

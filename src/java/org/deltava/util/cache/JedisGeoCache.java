@@ -1,19 +1,19 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import org.deltava.beans.GeoLocation;
 
-import org.deltava.util.RedisUtils;
+import org.deltava.util.JedisUtils;
 
 /**
  * A cache to store geographic lookups in Redis. Lat/long coordinates are automatically reduced to a set number of decimal places. 
  * @author Luke
- * @version 7.4
+ * @version 11.3
  * @since 7.3
  * @param <T> the Cacheable object type
  */
 
-public class RedisGeoCache<T extends Cacheable> extends RedisCache<T> implements GeoCache<T> {
+public class JedisGeoCache<T extends Cacheable> extends JedisCache<T> implements GeoCache<T> {
 
 	private final double _roundAmt;
 	
@@ -23,7 +23,7 @@ public class RedisGeoCache<T extends Cacheable> extends RedisCache<T> implements
 	 * @param expiry the expirty time in seconds
 	 * @param roundAmt the rounding factot to apply to latitude/longitude
 	 */
-	public RedisGeoCache(String bucket, int expiry, double roundAmt) {
+	public JedisGeoCache(String bucket, int expiry, double roundAmt) {
 		super(bucket, expiry);
 		_roundAmt = Math.max(0.000001, roundAmt);
 	}
@@ -41,7 +41,7 @@ public class RedisGeoCache<T extends Cacheable> extends RedisCache<T> implements
 	@Override
 	public void add(GeoLocation loc, T data) {
 		if (data == null) return;
-		RedisUtils.write(createKey(createGeoKey(loc)), getExpiryTime(data), new RemoteCacheEntry<T>(data));
+		JedisUtils.write(createKey(createGeoKey(loc)), getExpiryTime(data), new RemoteCacheEntry<T>(data));
 	}
 	
 	/**
