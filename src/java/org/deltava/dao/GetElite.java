@@ -1,8 +1,9 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.econ.*;
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Elite status levels. 
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 9.2
  */
 
@@ -101,20 +102,15 @@ public class GetElite extends EliteDAO {
 	 * @return a Map of EliteStatus beans for the specified year, keyed by Pilot database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String db) throws DAOException {
 		
 		// Load from the cache
-		Collection<Integer> keys = toID(IDs);
 		Collection<EliteStatus> results = new ArrayList<EliteStatus>();
-		for (Iterator<Integer> i = keys.iterator(); i.hasNext();) {
-			Integer id = i.next();
-			Long cacheKey = EliteStatus.generateKey(year, id.intValue());
-			EliteStatus st = _stCache.get(cacheKey);
-			if (st != null )
-				results.add(st);
-			else
-				i.remove();
-		}
+		Collection<Long> keys = toID(IDs).stream().map(id -> EliteStatus.generateKey(year, id.intValue())).collect(Collectors.toSet());
+		Map<Object, EliteStatus> ce = _stCache.getAll(keys);
+		results.addAll(ce.values());
+		keys.remove(ce.keySet());
 
 		if (keys.size() > 0) {
 			String dbName = formatDBName(db);
