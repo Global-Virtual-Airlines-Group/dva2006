@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2017, 2018, 2019, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,18 +7,14 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.Continent;
 import org.deltava.beans.schedule.Country;
 
-import org.deltava.util.cache.*;
-
 /**
  * A Data Access Object to load ISO-3316 country codes and perform geolocation.
  * @author Luke
- * @version 9.0
+ * @version 11.3
  * @since 3.2
  */
 
 public class GetCountry extends DAO {
-	
-	private static final GeoCache<CacheableString> _cache = CacheManager.getGeo(CacheableString.class, "GeoCountry");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -58,28 +54,20 @@ public class GetCountry extends DAO {
 	 * @see Country#INTL
 	 */
 	public Country find(GeoLocation loc, boolean isAirspace) throws DAOException {
-		
-		// Check the cache
-		CacheableString id = _cache.get(loc);
-		if (id != null)
-			return Country.get(id.getValue());
-		
+
+		String id = null;
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM common.COUNTRY_GEO WHERE ST_Contains(DATA, ST_PointFromText(?,?)) LIMIT 1")) {
 			ps.setString(1, formatLocation(loc));
 			ps.setInt(2, WGS84_SRID);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
-					id = new CacheableString(rs.getString(1), rs.getString(1));
+					id = rs.getString(1);
 			}
 
-			// Add to cache
-			if (id != null) {
-				_cache.add(loc, id);
-				return Country.get(id.getValue());
-			} else if (isAirspace) {
-				_cache.add(loc, new CacheableString("", Country.INTL.getCode()));
+			if (id != null)
+				return Country.get(id);
+			else if (isAirspace)
 				return Country.INTL;
-			}
 
 			return null;
 		} catch (SQLException se) {
