@@ -29,7 +29,6 @@ import org.deltava.util.cache.*;
 public class PositionUpdateService extends SimFDRService {
 	
 	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
-	private static final GeoCache<CacheableString> _geoCache = CacheManager.getGeo(CacheableString.class, "GeoCountry");
 
 	/**
 	 * Executes the Web Service.
@@ -81,12 +80,8 @@ public class PositionUpdateService extends SimFDRService {
 			}
 			
 			// Get airspace
-			CacheableString countryCode = _geoCache.get(re);
-			if (countryCode == null) {
-				GetCountry cdao = new GetCountry(con);
-				c = cdao.find(re, true);
-			} else
-				c = Country.get(countryCode.getValue());
+			GetCountry cdao = new GetCountry(con);
+			c = cdao.find(re, true);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
