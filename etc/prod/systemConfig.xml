@@ -242,8 +242,8 @@
 
 	<!-- Jedis data configuration -->
 	<jedis>
-		<pool_size type="Integer">1</pool_size>
-		<pool_max_size type="Integer">4</pool_max_size>
+		<pool_size type="Integer">2</pool_size>
+		<pool_max_size type="Integer">8</pool_max_size>
 		<log_stack type="Boolean">true</log_stack>
 		<map name="connectProperties">
 			<addr>/run/valkey/valkey.sock</addr>
