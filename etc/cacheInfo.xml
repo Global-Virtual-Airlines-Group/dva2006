@@ -36,7 +36,6 @@
     <cache id="Alternates" remote="true" expires="3d" />
 	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
-    <cache id="GeoCountry" remote="true" geo="true" expires="864000" precision="0.01" />
     <cache id="ATIS" remote="true" expires="900" />
     <cache id="ATISCodes" max="4" expires="3600" />
     <cache id="XMLMetadata" remote="true" expires="4d" />
