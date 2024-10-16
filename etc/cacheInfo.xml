@@ -73,7 +73,7 @@
 	<cache id="AircraftInfo" max="192" expires="7200" />
 	<cache id="AircraftInfoALL" max="6" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
-	<cache id="Accomplishments" max="192" expires="3600" />
+	<cache id="Accomplishments" max="256" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
 	<cache id="ScheduleSource" remote="true" expires="3600" />
 	<cache id="ExamProfiles" expires="14400" max="3" />
