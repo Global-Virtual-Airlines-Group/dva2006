@@ -30,7 +30,7 @@ golgotha.local.validate = function(f) {
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
 	const cfg = golgotha.airportLoad.config;
-	cfg.doICAO = ${useICAO}; cfg.useSchedule = false;
+	cfg.doICAO = ${useICAO}; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.setText([f.airline,f.airportD,f.airportA]);
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
