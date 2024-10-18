@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -13,14 +13,14 @@ import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.Recorder;
 
 import org.deltava.dao.*;
-import org.deltava.dao.redis.GetTrack;
+import org.deltava.dao.jedis.GetTrack;
 import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 1.0
  */
 

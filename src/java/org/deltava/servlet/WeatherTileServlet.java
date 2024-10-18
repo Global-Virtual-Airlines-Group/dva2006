@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.IOException;
@@ -10,13 +10,13 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.redis.GetTiles;
+import org.deltava.dao.jedis.GetTiles;
 import org.deltava.util.tile.PNGTile;
 
 /**
  * A servlet to fetch weather quadtree tiles.
  * @author Luke
- * @version 11.1
+ * @version 11.3
  * @since 5.0
  */
 
