@@ -11,6 +11,9 @@ import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
+
+import redis.clients.jedis.*;
 
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
@@ -30,22 +33,33 @@ public class SetTrack extends JedisDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public void write(Collection<TrackUpdate> upds) {
-		for (TrackUpdate upd : upds) {
-			setBucket("track", upd.isACARS() ? "acars" : "simFDR");
-			String key = createKey(upd.getFlightID());
-			CacheableList<GeoLocation> data = _casCache.get(String.valueOf(upd.getFlightID()));
-			if (data == null)
-				data = (CacheableList<GeoLocation>) JedisUtils.get(key);
-			if (data == null)
-				data = new CacheableList<GeoLocation>(key);
-		
-			// Check to make sure position has changed
-			int distance = data.isEmpty() ? Integer.MAX_VALUE : upd.getLocation().distanceFeet(data.getLast());
-			if (distance > 10)
-				data.add(new GeoPosition(upd));
+		try (Jedis j = SystemData.getJedisPool().getConnection()) {
+			Pipeline jp = j.pipelined();
+			for (TrackUpdate upd : upds) {
+				setBucket("track", upd.isACARS() ? "acars" : "simFDR");
+				String key = createKey(upd.getFlightID());
+				
+				// Try L1 cache
+				CacheableList<GeoLocation> data = _casCache.get(String.valueOf(upd.getFlightID()));
+				if (data == null)
+					data = (CacheableList<GeoLocation>) JedisUtils.get(key);
+				if (data == null)
+					data = new CacheableList<GeoLocation>(key);
+			
+				// Check to make sure position has changed
+				int distance = data.isEmpty() ? Integer.MAX_VALUE : upd.getLocation().distanceFeet(data.getLast());
+				if (distance > 10)
+					data.add(new GeoPosition(upd));
 
-			_casCache.add(data);
-			JedisUtils.write(key, 3600, data);
+				byte[] rawKey = JedisUtils.encodeKey(key);
+				_casCache.add(data);
+				j.set(rawKey, JedisUtils.write(data));
+				j.expire(rawKey, 3600);
+			}
+			
+			jp.sync();
+		} catch (Exception e) {
+			log.error("Error flushing positions - {}", e.getMessage());
 		}
 	}
 
