@@ -6,7 +6,7 @@
 <!-- Connection Pool Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left">CONNECTION POOLS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'cPool')">COLLAPSE</span></td>
+ <td colspan="9" class="left">CONNECTION POOLS<span class="toggle" onclick="void golgotha.util.toggleExpand(this, 'cPool')">COLLAPSE</span></td>
 </tr>
 
 <c:if test="${!empty pools}">
@@ -14,23 +14,24 @@
 <tr class="title caps cPool">
  <td style="width:10%">ID</td>
  <td style="width:15%">CONNECTION TYPE</td>
- <td style="width:12%">STATUS</td>
- <td style="width:12%">USE COUNT</td>
- <td style="width:12%">AVERAGE USE</td>
- <td style="width:12%">TOTAL USE</td>
- <td style="width:12%">LAST/CURRENT USE</td>
+ <td style="width:10%">STATUS</td>
+ <td style="width:10%">USE COUNT</td>
+ <td style="width:10%">AVERAGE USE</td>
+ <td style="width:10%">TOTAL USE</td>
+ <td style="width:10%">MAX USE</td>
+ <td style="width:10%">LAST/CURRENT USE</td>
  <td>LAST USED ON</td>
 </tr>
 <c:forEach var="pool" items="${pools.values()}">
 <tr class="title caps cPool">
- <td colspan="8" class="left">${pool.name}&nbsp;${pool.type} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
+ <td colspan="9" class="left">${pool.name}&nbsp;${pool.type} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS,  <fmt:int value="${pool.expandCount}" /> EXPANSIONS
 <c:if test="${pool.waitCount > 0}">, <fmt:int value="${pool.waitCount}" /> WAITS</c:if>
 <c:if test="${pool.fullCount > 0}">, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</c:if>
 <c:if test="${pool.errorCount > 0}">, <fmt:int value="${pool.errorCount}" /> STATE ERRORS</c:if></td>
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
- <td colspan="8" class="left cPool"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last on <fmt:date date="${pool.lastValidation}" /></td>
+ <td colspan="9" class="left cPool"><fmt:int value="${pool.validations}" /> Pool Monitor validation runs, last on <fmt:date date="${pool.lastValidation}" /></td>
 </tr>
 </c:if>
 <c:forEach var="con" items="${pool.poolInfo}">
@@ -43,6 +44,7 @@
  <td><fmt:int value="${con.useCount}" /></td>
  <td class="bld"><fmt:dec value="${con.totalUse / con.useCount}" /> ms</td>
  <td><fmt:int value="${con.totalUse}" /> ms</td>
+ <td class="sec"><fmt:int value="${con.maxUse}" />ms</td>
  <td><fmt:int value="${con.currentUse}" /> ms</td>
 <c:if test="${!empty con.lastUsed}">
  <td><span title="${con.stackInfo.caller}"><fmt:date date="${con.lastUsed}" /></span></td>
@@ -53,7 +55,7 @@
 </view:row>
 <c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse > 1250))}">
 <view:row entry="${con}" className="cPool">
- <td class="left small" colspan="8"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
+ <td class="left small" colspan="9"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
 </c:if>
 </c:forEach>
@@ -63,7 +65,7 @@
 <c:if test="${empty pools}">
 <!-- JDBC Connection Data not available -->
 <tr class="cPool">
- <td class="pri bld" colspan="6">CONNECTION POOL DATA IS NOT AVAILABLE</td>
+ <td class="pri bld" colspan="9">CONNECTION POOL DATA IS NOT AVAILABLE</td>
 </tr>
 </c:if>
 </el:table>
