@@ -102,37 +102,39 @@ public class GetElite extends EliteDAO {
 	 * @return a Map of EliteStatus beans for the specified year, keyed by Pilot database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String db) throws DAOException {
 		
 		// Load from the cache
 		Collection<EliteStatus> results = new ArrayList<EliteStatus>();
-		Collection<Long> keys = toID(IDs).stream().map(id -> EliteStatus.generateKey(year, id.intValue())).collect(Collectors.toSet());
+		Collection<Integer> dbKeys = toID(IDs);
+		Collection<Long> keys = dbKeys.stream().map(id -> EliteStatus.generateKey(year, id.intValue())).collect(Collectors.toSet());
 		Map<Object, EliteStatus> ce = _stCache.getAll(keys);
 		results.addAll(ce.values());
-		keys.remove(ce.keySet());
+		ce.values().stream().map(es -> Integer.valueOf(es.getID())).forEach(dbKeys::remove);
 
-		if (keys.size() > 0) {
+		if (dbKeys.size() > 0) {
 			String dbName = formatDBName(db);
 			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, CREATED, UPD_REASON FROM ");
 			sqlBuf.append(dbName);
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
-			sqlBuf.append(StringUtils.listConcat(keys, ","));
+			sqlBuf.append(StringUtils.listConcat(dbKeys, ","));
 			sqlBuf.append(")) ORDER BY PILOT_ID, CREATED DESC");
-			
+	
+			Collection<EliteStatus> dbResults = new ArrayList<EliteStatus>();
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, dbName);
 				ps.setInt(2, year);
-				results.addAll(executeStatus(ps));
+				dbResults.addAll(executeStatus(ps));
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
 			
 			// Now filter - at most one per pilot ID
-			for (Iterator<EliteStatus> i = results.iterator(); i.hasNext(); ) {
-				Integer id = Integer.valueOf(i.next().getID());
-				if (!keys.remove(id))
-					i.remove();
+			for (Iterator<EliteStatus> i = dbResults.iterator(); i.hasNext(); ) {
+				EliteStatus es = i.next();
+				Integer id = Integer.valueOf(es.getID());
+				if (!dbKeys.remove(id))
+					results.add(es);
 			}
 		}
 		
