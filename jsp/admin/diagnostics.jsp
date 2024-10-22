@@ -107,6 +107,10 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="data">${timeZone.id} - ${tzName}</td>
 </tr>
 <tr>
+ <td class="label">MySQL Version</td>
+ <td class="data pri bld">${dbVersion}</td>
+</tr>
+<tr>
  <td class="label">Database Transactions</td>
  <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${daoUsageCount / execTime.toMinutes() }" /> per minute)</td>
 </tr>

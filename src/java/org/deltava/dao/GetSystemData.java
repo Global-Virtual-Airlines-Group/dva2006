@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 9.0
+ * @version 11.3
  * @since 1.0
  */
 
@@ -28,6 +28,19 @@ public class GetSystemData extends DAO {
 	 */
 	public GetSystemData(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Retrieves the database software version.
+	 * @return the version string
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public String getDBVersion() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT VERSION()"); ResultSet rs = ps.executeQuery()) {
+			return rs.next() ? rs.getString(1) : null;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**

@@ -66,7 +66,8 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
 		
 		// Get ACARS server data
-		if (SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS")) {
+		boolean hasACARS = SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS");
+		if (hasACARS) {
 			// Get the ACARS Connection pool data and save in the request
 			ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);
 			ctx.setAttribute("acarsSelectCount", Integer.valueOf(acarsPool.getSelectCount()), REQUEST);
@@ -81,17 +82,6 @@ public class DiagnosticCommand extends AbstractCommand {
 			List<CommandStats> cmdStatsInfo = cmdStats.values().stream().map(CommandStats.class::cast).filter(st -> (st.getCount() > 0)).collect(Collectors.toList());
 			cmdStatsInfo.sort(null); Collections.reverse(cmdStatsInfo);
 			ctx.setAttribute("acarsCmdStats", cmdStatsInfo, REQUEST);
-
-			// Save the ACARS statistics in the request
-			try {
-				Connection con = ctx.getConnection();
-				GetACARSBandwidth bwdao = new GetACARSBandwidth(con);
-				ctx.setAttribute("acarsBW", bwdao.getLatest(), REQUEST);
-			} catch (DAOException de) {
-				log.atError().withThrowable(de).log("Error loading ACARS bandwidth - {}", de.getMessage());
-			} finally {
-				ctx.release();
-			}
 		}
 		
 		// Get JDBC Connection Pool data
@@ -108,6 +98,22 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Save connection pool data
 		ctx.setAttribute("pools", pools, REQUEST);
+		
+		// Get database version and ACARS bandwidth
+		try {
+			Connection con = ctx.getConnection();
+			GetSystemData sysdao = new GetSystemData(con);
+			ctx.setAttribute("dbVersion", sysdao.getDBVersion(), REQUEST);
+			
+			if (hasACARS) {
+				GetACARSBandwidth bwdao = new GetACARSBandwidth(con);
+				ctx.setAttribute("acarsBW", bwdao.getLatest(), REQUEST);
+			}
+		} catch (DAOException de) {
+			log.atError().withThrowable(de).log("Error fetching databsae version - {}", de.getMessage());
+		} finally {
+			ctx.release();
+		}
 		
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
