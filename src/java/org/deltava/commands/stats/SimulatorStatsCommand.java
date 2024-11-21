@@ -1,4 +1,4 @@
-// Copyright 2008, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2015, 2016, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Web Site Command to display flight simulator version statistics.
  * @author Luke
- * @version 10.2
+ * @version 11.4
  * @since 2.2
  */
 
@@ -51,7 +51,7 @@ public class SimulatorStatsCommand extends AbstractViewCommand {
 		Collection<Simulator> sims = vc.getResults().stream().map(FlightStatsEntry::getSimulators).flatMap(Collection::stream).collect(Collectors.toSet());
 		ctx.setAttribute("hasP3D", Boolean.valueOf(sims.contains(Simulator.P3D) || sims.contains(Simulator.P3Dv4)), REQUEST);
 		ctx.setAttribute("hasFSX", Boolean.valueOf(sims.contains(Simulator.FSX)), REQUEST);
-		ctx.setAttribute("hasMSFS", Boolean.valueOf(sims.contains(Simulator.FS2020)), REQUEST);
+		ctx.setAttribute("hasMSFS", Boolean.valueOf(sims.contains(Simulator.FS2020) || sims.contains(Simulator.FS2024)), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

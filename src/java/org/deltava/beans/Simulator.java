@@ -4,7 +4,7 @@ package org.deltava.beans;
 /**
  * An enumeration of Simulator versions.
  * @author Luke
- * @version 10.2
+ * @version 11.4
  * @since 5.1
  */
 
@@ -13,7 +13,7 @@ public enum Simulator implements ComboAlias {
 	FS2002(2002, "Microsoft Flight Simulator 2002"),	FS9(2004, "Microsoft Flight Simulator 2004"), 
 	FSX(2006, "Microsoft Flight Simulator X"), P3D(2008, "Lockheed-Martin Prepar3D"), P3Dv4(2017, "Lockheed-Martin Prepar3D/64"),
 	XP9(100, "Laminar Research X-Plane 9"), XP10(101, "Laminar Research X-Plane 10"), XP11(102, "Laminar Research X-Plane 11"),
-	FS2020(2020, "Microsoft Flight Simulator 2020"), XP12(103, "Laminar Research X-Plane 12");
+	FS2020(2020, "Microsoft Flight Simulator 2020"), XP12(103, "Laminar Research X-Plane 12"), FS2024(2024, "Microsoft Flight Simulator 2024");
 
 	private final String _name;
 	private final int _code;
