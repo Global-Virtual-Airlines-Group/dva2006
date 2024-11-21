@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.deltava.beans.stats.GateUsage.GATE_USAGE_YEARS;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 6.2
  */
 
@@ -140,7 +140,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
 			+ "SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=?,1,0)) AS XP12, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) HAVING (PILOT_ID IS NOT NULL))")) {
+			+ "SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=?,1,0)) AS FS24, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) HAVING (PILOT_ID IS NOT NULL))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_VATSIM);
 			ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -158,8 +158,9 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(15, Simulator.XP11.getCode());
 			ps.setInt(16, Simulator.XP12.getCode());
 			ps.setInt(17, Simulator.FS2020.getCode());
-			ps.setInt(18, FlightStatus.OK.ordinal());
-			ps.setInt(19, pilotID);
+			ps.setInt(18, Simulator.FS2024.getCode());
+			ps.setInt(19, FlightStatus.OK.ordinal());
+			ps.setInt(20, pilotID);
 			executeUpdate(ps, 0);
 		}
 	}
@@ -214,7 +215,8 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
 			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO, ? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) HAVING (ACARS IS NOT NULL))")) {
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=?,1,0)) AS FS24, SUM(IF(FSVERSION=0,1,0)) AS FSO, ? FROM PIREPS WHERE (STATUS=?) AND (" 
+			+ apColumn + "=?) HAVING (ACARS IS NOT NULL))")) {
 			ps.setString(1, a.getIATA());
 			ps.setInt(2, FlightReport.ATTR_ACARS);
 			ps.setInt(3, FlightReport.ATTR_VATSIM);
@@ -233,9 +235,10 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(16, Simulator.XP11.getCode());
 			ps.setInt(17, Simulator.XP12.getCode());
 			ps.setInt(18, Simulator.FS2020.getCode());
-			ps.setBoolean(19, isDeparture);
-			ps.setInt(20, FlightStatus.OK.ordinal());
-			ps.setString(21, a.getIATA());
+			ps.setInt(19, Simulator.FS2024.getCode());
+			ps.setBoolean(20, isDeparture);
+			ps.setInt(21, FlightStatus.OK.ordinal());
+			ps.setString(22, a.getIATA());
 			executeUpdate(ps, 0);
 		}
 	}
@@ -248,7 +251,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
 			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)))")) {
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=?,1,0)) AS FS24, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (DATE=DATE(?)))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_VATSIM);
 			ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -266,8 +269,9 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(15, Simulator.XP11.getCode());
 			ps.setInt(16, Simulator.XP12.getCode());
 			ps.setInt(17, Simulator.FS2020.getCode());
-			ps.setInt(18, FlightStatus.OK.ordinal());
-			ps.setTimestamp(19, createTimestamp(dt));
+			ps.setInt(18, Simulator.FS2024.getCode());
+			ps.setInt(19, FlightStatus.OK.ordinal());
+			ps.setTimestamp(20, createTimestamp(dt));
 			executeUpdate(ps, 0);
 		}
 	}
@@ -280,7 +284,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(IF((ATTR & ?) > 0, 1, 0)) AS SB, SUM(IF(TOUR_ID > 0, 1, 0)) AS TOUR, SUM(DISTANCE) AS MILES, "
 			+ "SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?) HAVING (EQTYPE IS NOT NULL))")) {
+			+ "SUM(IF(FSVERSION=?,1,0)) AS XP12, SUM(IF(FSVERSION=?,1,0)) AS FS20, SUM(IF(FSVERSION=?,1,0)) AS FS24, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?) HAVING (EQTYPE IS NOT NULL))")) {
 			ps.setInt(1, FlightReport.ATTR_ACARS);
 			ps.setInt(2, FlightReport.ATTR_VATSIM);
 			ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -298,8 +302,9 @@ public class SetAggregateStatistics extends DAO {
 			ps.setInt(15, Simulator.XP11.getCode());
 			ps.setInt(16, Simulator.XP12.getCode());
 			ps.setInt(17, Simulator.FS2020.getCode());
-			ps.setInt(18, FlightStatus.OK.ordinal());
-			ps.setString(19, eqType);
+			ps.setInt(18, Simulator.FS2024.getCode());
+			ps.setInt(19, FlightStatus.OK.ordinal());
+			ps.setString(20, eqType);
 			executeUpdate(ps, 0);
 		}
 	}

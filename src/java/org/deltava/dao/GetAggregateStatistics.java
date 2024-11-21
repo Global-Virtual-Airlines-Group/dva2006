@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 6.2
  */
 
@@ -56,8 +56,8 @@ public class GetAggregateStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
-			+ "SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS PAX, AVG(LOADFACTOR) AS LF, "
-			+ "AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
+			+ "SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(FS24) AS SMSFS24, SUM(OTHER_SIM), SUM(PAX) AS PAX, "
+			+ "AVG(LOADFACTOR) AS LF, AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
 		if ("F.EQTYPE".equals(grp.getSQL()))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else if (grp.isPilotGroup())
@@ -83,9 +83,10 @@ public class GetAggregateStatistics extends DAO {
 					entry.setFSVersionLegs(Simulator.XP11, rs.getInt(12));
 					entry.setFSVersionLegs(Simulator.XP12, rs.getInt(13));
 					entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(14));
-					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(15));
-					entry.setPax(rs.getInt(16));
-					entry.setLoadFactor(rs.getDouble(17));
+					entry.setFSVersionLegs(Simulator.FS2024, rs.getInt(15));
+					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(16));
+					entry.setPax(rs.getInt(17));
+					entry.setLoadFactor(rs.getDouble(18));
 					results.add(entry);
 				}
 			}
@@ -108,7 +109,7 @@ public class GetAggregateStatistics extends DAO {
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, "
 			+ "SUM(TOURS) AS TLEGS, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
-			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, "
+			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(FS24) AS SMSFS24, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, "
 			+ "SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, "
 			+ "common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
 		if (apType == 1)
@@ -190,7 +191,7 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, SUM(SIMBRIEF) AS SBL, SUM(TOURS) AS TLEGS, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, "
-			+ "SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
+			+ "SUM(XP10) AS SXP, SUM(XP11) AS SXP11, SUM(XP12) AS SXP12, SUM(FS20) AS SMSFS, SUM(FS24) AS SMSFS24, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
 		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
 			sqlBuf.append("0 AS PIDS");
 		else
@@ -244,10 +245,11 @@ public class GetAggregateStatistics extends DAO {
 				entry.setFSVersionLegs(Simulator.XP11, rs.getInt(19));
 				entry.setFSVersionLegs(Simulator.XP12, rs.getInt(20));
 				entry.setFSVersionLegs(Simulator.FS2020, rs.getInt(21));
-				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(22));
-				entry.setPax(rs.getInt(23));
-				entry.setLoadFactor(rs.getDouble(24));
-				entry.setPilotIDs(rs.getInt(25));
+				entry.setFSVersionLegs(Simulator.FS2024, rs.getInt(22));
+				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(23));
+				entry.setPax(rs.getInt(24));
+				entry.setLoadFactor(rs.getDouble(25));
+				entry.setPilotIDs(rs.getInt(26));
 				results.add(entry);
 			}
 			

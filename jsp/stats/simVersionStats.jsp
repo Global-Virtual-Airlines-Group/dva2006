@@ -60,7 +60,7 @@
 </c:if>
  <td>FS2004</td>
 <c:if test="${hasMSFS}">
- <td>FS2020</td>
+ <td>MSFS 20 / 24</td>
 </c:if> 
  <td class="nophone">X-Plane 12 / 11 / 10</td>
 <c:if test="${!hasP3D && !hasMSFS}">
@@ -81,6 +81,7 @@
 <c:set var="hasXP11" value="${eLegs['XP11'] > 0}" scope="page" />
 <c:set var="hasXP10" value="${eLegs['XP10'] > 0}" scope="page" />
 <c:set var="hasFS2K" value="${eLegs['FS2000'] > 0}" scope="page" />
+<c:set var="hasFS24" value="${eLegs['FS2024'] > 0}" scope="page" />
  <td class="sec bld small"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
@@ -94,7 +95,7 @@
 </c:if>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
 <c:if test="${hasMSFS}">
- <td class="small"><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${eLegs['FS2020'] * 100.0 / stat.legs}" />%)</td>
+ <td class="small"><fmt:int value="${eLegs['FS2020']}" /><c:if test="${hasFS24}"> / <fmt:int value="${eLegs['FS2024']}" /></c:if> (<fmt:dec value="${(eLegs['FS2020'] + eLegs['FS2024']) * 100.0 / stat.legs}" />%)</td>
 </c:if>
  <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}">/</c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" className="ita" /></c:if><c:if test="${hasXP11 && hasXP10}">/</c:if>
 <c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11'] + eLegs['XP12']) * 100.0 / stat.legs}" />%)</td>
@@ -125,7 +126,7 @@ google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 2500;
+	xmlreq.timeout = 3500;
 	xmlreq.open('get', 'simstats.ws', true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -142,7 +143,7 @@ golgotha.local.showChart = function() {
 golgotha.local.renderChart = function() {
     const data = new google.visualization.DataTable();
     data.addColumn('string','Month');
-    data.addColumn('number','FS2020');
+    data.addColumn('number','MSFS 20/24');
     data.addColumn('number','X-Plane');
     data.addColumn('number','Prepar3D');
     data.addColumn('number','FSX');
