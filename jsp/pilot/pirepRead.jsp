@@ -178,7 +178,8 @@ table.form td.eliteStatus {
 </tr>
 <tr>
  <td class="label">Departed from</td>
- <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" target="airportInfo" linkID="${pirep.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
+ <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" target="airportInfo" linkID="${pirep.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)
+<c:if test="${fn:isDraft(pirep) && !empty pirep.timeD}"> at <fmt:date date="${pirep.timeD}" fmt="T" t="HH:mm" tz="${pirep.airportD.TZ}" showZone="true" /></c:if></td>
 </tr>
 <c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
@@ -190,7 +191,8 @@ table.form td.eliteStatus {
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" target="airportInfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
-<c:if test="${isDivert}">&nbsp;<span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
+<c:if test="${isDivert}">&nbsp;<span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if>
+<c:if test="${fn:isDraft(pirep) && !empty pirep.timeA}"> at <fmt:date date="${pirep.timeA}" fmt="T" t="HH:mm" tz="${pirep.airportA.TZ}" showZone="true" /></c:if></td>
 </tr>
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
 <tr>
