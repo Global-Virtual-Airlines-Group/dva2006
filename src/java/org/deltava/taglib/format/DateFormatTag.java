@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2012, 2013, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013, 2016, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.time.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 1.0
  */
 
@@ -198,8 +198,11 @@ public class DateFormatTag extends UserSettingsTag {
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
 				out.print(df.format(zdt));
 				if (_showZone) {
-					out.print(' ');
+					out.print("<span title=\"");
+					out.print(_tz);
+					out.print("\">");
 					out.print(_tz.getAbbr());
+					out.print("</span>");
 				}
 			} else
 				out.print(_nullData);
