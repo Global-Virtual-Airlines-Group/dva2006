@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -422,7 +422,10 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
      * @see ACARSFlightReport#getAircraftCode()
      */
     public void setAircraftCode(String code) {
-    	_code = code;
+    	if ((code != null) && (code.length() > 23))
+    		_code = code.substring(0, 23).toUpperCase();
+    	else
+    		_code = code;
     }
     
 	/**
