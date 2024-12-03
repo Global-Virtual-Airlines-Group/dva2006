@@ -56,11 +56,11 @@
  <td>FSX</td>
 </c:if>
 <c:if test="${hasP3D}">
- <td>P3D<span class="nophone"> 64-BIT / 32-BIT</span></td>
+ <td>P3D<span class="nophone"> 64/32-BIT</span></td>
 </c:if>
  <td>FS2004</td>
 <c:if test="${hasMSFS}">
- <td>MSFS 20 / 24</td>
+ <td>MSFS 24 / 20</td>
 </c:if> 
  <td class="nophone">X-Plane 12 / 11 / 10</td>
 <c:if test="${!hasP3D && !hasMSFS}">
@@ -95,7 +95,7 @@
 </c:if>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
 <c:if test="${hasMSFS}">
- <td class="small"><fmt:int value="${eLegs['FS2020']}" /><c:if test="${hasFS24}"> / <fmt:int value="${eLegs['FS2024']}" /></c:if> (<fmt:dec value="${(eLegs['FS2020'] + eLegs['FS2024']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small"><c:if test="${hasFS24}"><fmt:int value="${eLegs['FS2024']}" /> / </c:if><fmt:int value="${eLegs['FS2020']}" /> (<fmt:dec value="${(eLegs['FS2020'] + eLegs['FS2024']) * 100.0 / stat.legs}" />%)</td>
 </c:if>
  <td class="small nophone"><c:if test="${hasXP12}"><fmt:int value="${eLegs['XP12']}" /></c:if><c:if test="${hasXP12 && hasXP11}">/</c:if><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" className="ita" /></c:if><c:if test="${hasXP11 && hasXP10}">/</c:if>
 <c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11'] + eLegs['XP12']) * 100.0 / stat.legs}" />%)</td>
