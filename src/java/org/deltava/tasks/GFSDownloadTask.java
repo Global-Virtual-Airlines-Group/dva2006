@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 11.3
+ * @version 11.4
  * @since 5.2
  */
 
@@ -64,7 +64,7 @@ public class GFSDownloadTask extends Task {
 					if (!outF.exists() || (lm.toEpochMilli() > outF.lastModified())) {
 						log.info("Downloading updated GFS data");
 						TaskTimer tt = new TaskTimer(); 
-						try (InputStream in = con.get(gribPath + "/" + fName, outF)) {
+						try (InputStream _ = con.get(gribPath + "/" + fName, outF)) {
 							log.info("Downloaded GFS data - {}", Long.valueOf(outF.length()));
 							outF.setLastModified(lm.toEpochMilli());
 							log.info("Download completed in {}ms", Long.valueOf(tt.stop()));
