@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -432,7 +432,7 @@ public final class AcademyHistoryHelper {
 	 */
 	public int getFlightTotals(String eqProgram, boolean isHours) {
 		final Collection<String> primaryTypes = StringUtils.isEmpty(eqProgram) ? Collections.emptySet() : _primaryTypes.getOrDefault(eqProgram, Collections.emptySet());
-		Predicate<FlightReport> filterFunc = CollectionUtils.isEmpty(primaryTypes) ? fr -> true : fr -> primaryTypes.contains(fr.getEquipmentType()); 
+		Predicate<FlightReport> filterFunc = CollectionUtils.isEmpty(primaryTypes) ? _ -> true : fr -> primaryTypes.contains(fr.getEquipmentType()); 
 		return _flights.stream().filter(filterFunc).mapToInt(fr -> (isHours ? getAdjustedHours(fr) : 1)).sum();
 	}
 }

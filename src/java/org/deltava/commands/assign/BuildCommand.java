@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 11.2
+ * @version 11.4
  * @since 1.0
  */
 
@@ -118,7 +118,7 @@ public class BuildCommand extends AbstractCommand {
 			
 			// If we have a leg, find the last one and update airline and src airport
 			if ((info != null) && (criteria != null)) {
-				DraftFlightReport lastLeg = info.getFlights().stream().filter(DraftFlightReport.class::isInstance).map(DraftFlightReport.class::cast).reduce((fst, snd) -> snd).orElse(null);
+				DraftFlightReport lastLeg = info.getFlights().stream().filter(DraftFlightReport.class::isInstance).map(DraftFlightReport.class::cast).reduce((_, snd) -> snd).orElse(null);
 				if (lastLeg != null) {
 					criteria.setAirline(lastLeg.getAirline());
 					criteria.setAirportD(lastLeg.getAirportA());
