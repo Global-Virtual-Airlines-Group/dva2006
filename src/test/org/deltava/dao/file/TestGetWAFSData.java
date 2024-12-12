@@ -97,7 +97,7 @@ public class TestGetWAFSData extends TestCase {
 		String host = "ftp.ncep.noaa.gov"; ImageSeries is = null;
 		try (FTPConnection con = new FTPConnection(host)) {
 			con.connect("anonymous", "webmaster@deltava.org");
-			log.info("Connected to " + host);
+			log.info("Connected to {}", host);
 		
 			// Find the latest GFS run and get the latest GFS file
 			String path = "/pub/data/nccf/com/gfs/prod";
@@ -114,8 +114,8 @@ public class TestGetWAFSData extends TestCase {
 			assertNotNull(is.getDate());
 		
 			// Download
-			try (InputStream in = con.get(path + "/" + dir + "/" + fName, outF)) {
-				log.info("Downloaded GFS data - " + outF.length());
+			try (InputStream _ = con.get(path + "/" + dir + "/" + fName, outF)) {
+				log.info("Downloaded GFS data - {}", Long.valueOf(outF.length()));
 				outF.setLastModified(lm.toEpochMilli());
 			}
 		}
@@ -141,7 +141,7 @@ public class TestGetWAFSData extends TestCase {
 			wMax = Math.max(wMax, wd.getJetStreamSpeed());
 		}
 		
-		log.info("Jet Stream max = " +wMax +", min = " + wMin);
+		log.info("Jet Stream max = {}, min = {}", Integer.valueOf(wMax), Integer.valueOf(wMin));
 		assertFalse(true);
 		
 		// Get threads
