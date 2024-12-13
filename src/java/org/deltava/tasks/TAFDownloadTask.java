@@ -1,9 +1,8 @@
-// Copyright 2009, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.time.ZonedDateTime;
-
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
@@ -15,11 +14,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download TAF data.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 2.7
  */
 
 public class TAFDownloadTask extends Task {
+	
+	private static int PURGE_AGE = 490;
 
 	/**
 	 * Initializes the Task.
@@ -43,14 +44,12 @@ public class TAFDownloadTask extends Task {
 			ctx.startTX();
 			
 			// Purge the data
-			wxwdao.purgeTAF(490);
+			int purgeCount = wxwdao.purgeTAF(PURGE_AGE);
+			log.info("Purged {} TAF entries older than {} minutes", Integer.valueOf(purgeCount), Integer.valueOf(PURGE_AGE));
 			
 			// Save the TAFs
 			log.info("Saving TAF cycle - {} entries", Integer.valueOf(tafs.size()));
-			for (TAF t : tafs.values())
-				wxwdao.write(t);
-			
-			// Commit
+			wxwdao.writeTAF(tafs.values());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
