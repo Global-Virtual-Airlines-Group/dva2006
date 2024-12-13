@@ -17,11 +17,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 2.7
  */
 
 public class METARDownloadTask extends Task {
+	
+	private static int PURGE_AGE = 270;
 
 	/**
 	 * Initializes the Task.
@@ -48,19 +50,20 @@ public class METARDownloadTask extends Task {
 			SetWeather wxwdao = new SetWeather(con);
 			ctx.startTX();
 			
-			// Purge the data
-			wxwdao.purgeMETAR(270);
-			
-			// Save the METARs
-			log.info("Saving METAR cycle - {} entries", Integer.valueOf(data.size()));
+			// Get airport location
 			for (METAR m : data.values()) {
 				AirportLocation al = nddao.getAirport(m.getCode());
 				if (al != null)
 					m.setAirport(al);
-					
-				wxwdao.write(m);
 			}
 			
+			// Purge the data
+			int purgeCount = wxwdao.purgeMETAR(270);
+			log.info("Purged {} METAR entries older than {} minutes", Integer.valueOf(purgeCount), Integer.valueOf(PURGE_AGE));
+			
+			// Save the METARs
+			log.info("Saving METAR cycle - {} entries", Integer.valueOf(data.size()));
+			wxwdao.writeMETAR(data.values());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
