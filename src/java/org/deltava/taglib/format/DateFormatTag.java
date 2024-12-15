@@ -198,7 +198,7 @@ public class DateFormatTag extends UserSettingsTag {
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
 				out.print(df.format(zdt));
 				if (_showZone) {
-					out.print("<span title=\"");
+					out.print(" <span title=\"");
 					out.print(_tz);
 					out.print("\">");
 					out.print(_tz.getAbbr());
