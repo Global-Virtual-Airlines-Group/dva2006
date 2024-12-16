@@ -35,7 +35,7 @@ import org.gvagroup.pool.*;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 11.3
+ * @version 11.4
  * @since 11.0
  */
 
@@ -152,7 +152,7 @@ public class Bot {
     		log.warn("Shutdown in {}ms", Long.valueOf(tt.stop()));
     		
     		// Wait for threads to shut down
-    		Thread.sleep(8000);
+    		Thread.sleep(4000);
     	} catch (CompletionException ce) {
     		log.atError().withThrowable(ce).log("Error disconnecting from Discord API - {}", ce.getMessage());
     	} catch (InterruptedException ie) {
