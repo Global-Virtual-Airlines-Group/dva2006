@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.Simulator;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 1.0
  */
 
@@ -81,16 +81,25 @@ public class FlightReportFunctions {
 	 * @return TRUE if this flight used ACARS, otherwise FALSE
 	 */
 	public static boolean isACARS(FlightReport fr) {
-		return (fr instanceof ACARSFlightReport) || (fr.hasAttribute(FlightReport.ATTR_ACARS));
+		return (fr instanceof ACARSFlightReport) || fr.hasAttribute(FlightReport.ATTR_ACARS);
 	}
 
 	/**
 	 * Returns if this Flight was logged using ACARS.
 	 * @param fr the Flight Report
-	 * @return TRUE if this flight used ACARS, otherwise FALSE
+	 * @return TRUE if this flight used XACARS, otherwise FALSE
 	 */
 	public static boolean isXACARS(FlightReport fr) {
-		return (fr instanceof XACARSFlightReport) || (fr.hasAttribute(FlightReport.ATTR_XACARS));
+		return (fr instanceof XACARSFlightReport) || fr.hasAttribute(FlightReport.ATTR_XACARS);
+	}
+	
+	/**
+	 * Returns if this Flight was logged using Microsoft Flight Simulator 2020 or above.
+	 * @param fr the Flight Report
+	 * @return TRUE if this flight used MSFS2020 or 2024, otherwise FALSE
+	 */
+	public static boolean isMSFS(FlightReport fr) {
+		return (fr != null) && ((fr.getSimulator() == Simulator.FS2020) || (fr.getSimulator() == Simulator.FS2024));
 	}
 
 	/**
@@ -352,8 +361,8 @@ public class FlightReportFunctions {
 	 * @return TRUE if an SDK was detected, otherwise FALSE
 	 */
 	public static boolean hasSDK(FlightReport fr) {
-		if (!(fr instanceof ACARSFlightReport)) return false;
-		String sdk = ((ACARSFlightReport) fr).getSDK();
+		if (!(fr instanceof ACARSFlightReport afr)) return false;
+		String sdk = afr.getSDK();
 		return !StringUtils.isEmpty(sdk) && !"Generic".equalsIgnoreCase(sdk);
 	}
 }

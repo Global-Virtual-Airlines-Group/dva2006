@@ -150,6 +150,13 @@
 		<function-signature>boolean isXACARS(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for MSFS2020 or MSFS2024 -->
+	<function>
+		<name>isMSFS</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isMSFS(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Draft Flight Report -->
 	<function>
 		<name>isDraft</name>

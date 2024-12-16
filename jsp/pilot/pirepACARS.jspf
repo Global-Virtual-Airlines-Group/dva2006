@@ -42,10 +42,11 @@
 </c:if>
 <c:if test="${!isXACARS}">
 <content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
-<c:if test="${fn:hasFDE(pirep) || !empty pirep.aircraftCode || !empty pirep.author}">
+<c:if test="${fn:hasFDE(pirep) || !empty pirep.aircraftCode || !empty pirep.author || fn:isMSFS(pirep)}">
 <tr>
  <td class="label">Aircraft Data</td>
- <td class="data" colspan="${cspan}"><c:if test="${fn:hasFDE(pirep)}">${pirep.FDE}&nbsp;</c:if><c:if test="${!empty pirep.aircraftCode}">IATA: ${pirep.aircraftCode}</c:if><c:if test="${!empty pirep.author}"><span class="small ita nophone">&nbsp;Author: ${pirep.author}</span></c:if></td>
+ <td class="data" colspan="${cspan}"><c:if test="${fn:hasFDE(pirep)}">${pirep.FDE}&nbsp;</c:if><c:if test="${!empty pirep.aircraftCode}">IATA: ${pirep.aircraftCode}</c:if><c:if test="${!empty pirep.author}"><span class="small ita nophone">&nbsp;Author: ${pirep.author}</span></c:if>
+<c:if test="${!empty pirep.aircraftPath}"><span class="small nophone">&nbsp;Path: ${pirep.aircraftPath}</span></c:if></td>
 </tr>
 </c:if>
 </content:filter>
