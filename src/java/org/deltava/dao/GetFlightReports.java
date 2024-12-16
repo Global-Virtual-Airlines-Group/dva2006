@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -97,13 +97,9 @@ public class GetFlightReports extends DAO {
 
 			// Execute the query, if nothing returned then give back null
 			FlightReport fr = execute(ps).stream().findFirst().orElse(null);
-
-			// Check that it's really an ACARSFlightReport object
-			if (!(fr instanceof FDRFlightReport))
-				return null;
+			if (!(fr instanceof FDRFlightReport afr)) return null;
 
 			// Get the primary equipment types
-			FDRFlightReport afr = (FDRFlightReport) fr;
 			afr.setCaptEQType(getCaptEQType(afr.getID(), dbName));
 			afr.setRoute(getRoute(afr.getID(), dbName));
 			return afr;
