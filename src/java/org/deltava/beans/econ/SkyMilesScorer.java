@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 11.2
+ * @version 11.4
  * @since 11.0
  */
 
@@ -97,13 +97,13 @@ public class SkyMilesScorer extends EliteScorer {
 			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).intValue();
 			if (cnt >= MAX_NON_ACARS) {
 				setBase(fr.getDistance() / 2, String.format("Non-ACARS (%d) Base Miles", Integer.valueOf(cnt)));
-				_score.setDistance(fr.getDistance());
+				_score.setDistance(Math.max(MIN_DISTANCE, fr.getDistance()));
 				_score.setScoreOnly(true);
 				return _score;
 			}
 		}
 		
-		_score.setDistance(isACARS ? fr.getDistance() : (fr.getDistance() / 2)); // This is for pending reports - if scored as part of a package it will get overwritten
+		_score.setDistance(Math.max(MIN_DISTANCE, isACARS ? fr.getDistance() : (fr.getDistance() / 2))); // This is for pending reports - if scored as part of a package it will get overwritten
 		setBase(fr.getDistance(), isACARS ? "ACARS/XACARS/simFDR Base Miles" : "Base Miles");
 		addBonus(250, "Promotion Leg", !fr.getCaptEQType().isEmpty());
 		addBonus(500, "New Aircraft - " + fr.getEquipmentType(), isNewEquipment(fr.getEquipmentType(), fr.getDate()));
