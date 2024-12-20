@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012, 2014, 2015, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.apache.logging.log4j.*;
@@ -6,7 +6,7 @@ import org.apache.logging.log4j.*;
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -116,9 +116,13 @@ public class Intersection extends NavigationDataBean {
 			return parse(code.substring(0, 2) + code.substring(3) + "N");
 		else if ((spos > 0) && (code.length() > 6)) {
 			if (!Character.isLetter(code.charAt(spos - 1)) && !Character.isLetter(code.charAt(code.length() - 1))) {
-				double lat = Double.parseDouble(code.substring(0, spos));
-				double lng = Double.parseDouble(code.substring(spos + 1));
-				return new Intersection(code, parseDMSLatitude(lat), -parseDMSLongitude(lng));
+				try {
+					double lat = Double.parseDouble(code.substring(0, spos));
+					double lng = Double.parseDouble(code.substring(spos + 1));
+					return new Intersection(code, parseDMSLatitude(lat), -parseDMSLongitude(lng));
+				} catch (NumberFormatException nfe) {
+					log.warn("Unparseable waypoint - {} / {}", code, nfe.getMessage());
+				}
 			}
 		}
 	
