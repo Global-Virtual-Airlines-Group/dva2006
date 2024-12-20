@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -48,13 +48,21 @@ public class GetNavData extends DAO {
 			return result;
 		
 		// Look for coordinates
-		if ((c.length() > 11) || (NavigationDataBean.isCoordinates(c) == CodeType.FULL)) {
+		CodeType ct = NavigationDataBean.isCoordinates(c);
+		if ((c.length() > 11) || (ct == CodeType.FULL)) {
 			Intersection i = Intersection.parse(c);
 			if (i != null) {
 				result = new NavigationDataMap();
 				result.add(i);
 				return result;
 			}
+		}
+		
+		// If we're a code with a slash, strip past the slash
+		if (ct == CodeType.CODE) {
+			int spos = c.indexOf('/');
+			if ((spos > 1) && (c.length() > 6))
+				c = c.substring(0, spos);
 		}
 		
 		// If we're too long, then try looking for a bearing and range
