@@ -69,6 +69,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("17VOR"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("70TJE"));
 	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("65N20"));
    }
    
    public void testParse() {
@@ -185,5 +186,14 @@ protected void tearDown() throws Exception {
 	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(gp.getLatitude(), i.getLatitude(), 0.001);
 	   assertEquals(gp.getLongitude(), i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("65N20");
+	   assertNull(i);
+	   
+	   i = Intersection.parse("65N20/N0476F370");
+	   assertNull(i);
+	   
+	   i = Intersection.parse("YIN/K0952S0890");
+	   assertNull(i);
    }
 }
