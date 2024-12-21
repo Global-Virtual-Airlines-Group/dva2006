@@ -737,7 +737,7 @@
 		<enabled type="Boolean">true</enabled>
 		<serverAddr>Delta Virtual Airlines | www.deltava.org</serverAddr>
 		<id type="Long">1066046019269312553</id>
-		<url>https://discord.gg/vWDaufh3</url>
+		<url>https://discord.gg/ZXAnsajh8j</url>
 
 		<!-- DVA roles required to join -->
 		<list name="requiredRoles" attr="role" unique="true">
