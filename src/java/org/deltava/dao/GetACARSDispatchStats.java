@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 9.0
+ * @version 11.4
  * @since 3.2
  */
 
@@ -107,7 +107,7 @@ public class GetACARSDispatchStats extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<DateRange> getDispatchRanges() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT MONTH(F.CREATED), YEAR(F.CREATED) FROM acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FD WHERE (F.ID=FD.ID) ORDER BY F.CREATED")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT MONTH(C.DATE), YEAR(C.DATE) FROM acars.CONS C ORDER BY C.DATE")) {
 			ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
 			Collection<DateRange> years = new TreeSet<DateRange>(Collections.reverseOrder());
 			List<DateRange> results = new ArrayList<DateRange>();
