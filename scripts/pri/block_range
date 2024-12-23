@@ -22,8 +22,9 @@ ADDRS=($(cat $1))
 # Block each range in the array
 for addr in "${ADDRS[@]}"
 do
-    echo "Blocking $addr"
-	iptables -A INPUT -j DROP -s $addr
+    cidr=${addr%%,*}
+    echo "Blocking $cidr"
+	iptables -A INPUT -j DROP -s $cidr
 done
 
 exit 0
