@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,12 +6,12 @@ import java.util.*;
 /**
  * An enumeration to store browser family data.
  * @author Luke
- * @version 10.2
+ * @version 11.4
  * @since 3.7
  */
 
 public enum BrowserType {
-	IE("MSIE", "Trident"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), CHROME("Chrome"), OPERA("Opera"), SPIDER("Bot", "bot", "Baiduspider", "Yahoo! Slurp", "Bytespider", "Turnitin", "Barkrowler", "internetnl"), UNKNOWN;
+	IE("MSIE", "Trident"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), CHROME("Chrome"), OPERA("Opera"), SPIDER("Bot", "bot", "Baiduspider", "Yahoo! Slurp", "Bytespider", "Turnitin", "Barkrowler", "internetnl", "meta-externalagent"), UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new ArrayList<String>(4);
 	
