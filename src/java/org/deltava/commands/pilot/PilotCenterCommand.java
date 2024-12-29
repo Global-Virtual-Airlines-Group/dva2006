@@ -127,7 +127,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("currentEliteRO", esdao.getRollover(p.getID(), currentYear), REQUEST);
 				
 				// Determine if we can do year-end activities
-				boolean rolloverPeriod = (EliteScorer.getStatsYear(now.plusSeconds(Duration.ofDays(14).toSeconds())) > currentYear);
+				boolean rolloverPeriod = (EliteScorer.getStatusYear(now.plusSeconds(Duration.ofDays(14).toSeconds())) > currentYear);
 				ctx.setAttribute("eliteRollover", Boolean.valueOf(rolloverPeriod), REQUEST);
 				TreeSet<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
 				if (rolloverPeriod) {
