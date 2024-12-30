@@ -8,7 +8,7 @@ import org.gvagroup.pool.ConnectionInfo;
 /**
  * A JMX bean for JDBC connection information.
  * @author Luke
- * @version 11.3
+ * @version 11.4
  * @since 10.2
  */
 
@@ -33,7 +33,7 @@ public class ConnectionMBeanImpl implements ConnectionMBean {
 		_isDynamic = Boolean.valueOf(inf.getDynamic());
 		_inUse = Boolean.valueOf(inf.getInUse());
 		_useCount = Long.valueOf(inf.getUseCount());
-		_totalUse = Long.valueOf(inf.getTotalUse());
+		_totalUse = Long.valueOf(inf.getTotalUse().toMillis());
 		_lastUse = inf.getLastUsed();
 	}
 
