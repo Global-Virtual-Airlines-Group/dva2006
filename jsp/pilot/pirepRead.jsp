@@ -571,7 +571,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr>
  <td class="caps">
 <c:if test="${access.canSubmit}">
-&nbsp;<el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" /></c:if>
+<el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" /></c:if>
 <c:if test="${access.canApprove && !scoreCR}">
 &nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="approve" post="true" disabled="${hasDelay}" label="APPROVE" /></c:if>
 <c:if test="${access.canHold}">
