@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Pilot loyalty status level definitions for a particular year. 
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 9.2
  */
 
@@ -134,18 +134,6 @@ public class EliteLevel implements EliteTotals, RGBColor, Auditable, Comparable<
 	 */
 	public int getTargetPercentile() {
 		return _targetPercentile;
-	}
-	
-	/**
-	 * Returns the color used to display this level in a CSS-friendly format.
-	 * @return the RGB color code
-	 */
-	public String getHexColor() {
-		StringBuilder buf = new StringBuilder(Integer.toHexString(_color).toLowerCase());
-		while (buf.length() < 6)
-			buf.insert(0, '0');
-		
-		return buf.toString();
 	}
 	
 	/**
