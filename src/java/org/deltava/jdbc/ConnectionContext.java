@@ -13,7 +13,7 @@ import org.gvagroup.pool.*;
 /**
  * A Context object that allows fetching of connections from a JDBC connection pool.
  * @author Luke
- * @version 11.3
+ * @version 11.4
  * @since 1.0
  */
 
@@ -149,7 +149,7 @@ public abstract class ConnectionContext {
         if ((_pool == null) || (_con == null))
             return 0;
 
-        long timeUsed = _pool.release(_con);
+        long timeUsed = _pool.release(_con).toMillis();
         _con = null;
         return timeUsed;
     }
