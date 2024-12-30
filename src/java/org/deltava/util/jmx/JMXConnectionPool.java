@@ -9,7 +9,7 @@ import org.gvagroup.pool.*;
 /**
  * A JMX bean to export Connection Pool statistics.
  * @author Luke
- * @version 10.3
+ * @version 11.4
  * @since 10.2
  */
 
@@ -75,8 +75,8 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 		_lastUpdated = Instant.now();
 		_size = (int) info.stream().filter(ConnectionInfo::getConnected).count();
 		_reqs = Math.max(0, _pool.getTotalRequests() - _reqs);
-		_maxBorrowTime = (int) _pool.getMaxBorrowTime();
-		_maxWaitTime = (int) _pool.getMaxWaitTime();
+		_maxBorrowTime = (int) _pool.getMaxBorrowTime().toMillis();
+		_maxWaitTime = (int) _pool.getMaxWaitTime().toMillis();
 		_pool.resetMaxTimes();
 	}
 	

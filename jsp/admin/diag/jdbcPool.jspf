@@ -42,10 +42,10 @@
 <c:when test="${con.dynamic && !con.connected}">Inactive</c:when>
 <c:otherwise>Available</c:otherwise></c:choose></td>
  <td><fmt:int value="${con.useCount}" /></td>
- <td class="bld"><fmt:dec value="${con.totalUse / con.useCount}" /> ms</td>
- <td><fmt:int value="${con.totalUse}" /> ms</td>
- <td class="sec"><fmt:int value="${con.maxUse}" />ms</td>
- <td><fmt:int value="${con.currentUse}" /> ms</td>
+ <td class="bld">${avgUse} <fmt:interval duration="${con.avgUse}" unit="ms" /></td>
+ <td><fmt:interval duration="${con.totalUse}" unit="s" /></td>
+ <td class="sec"><fmt:interval duration="${con.maxUse}" unit="ms" /></td>
+ <td><fmt:interval duration="${con.currentUse}" unit="ms" /></td>
 <c:if test="${!empty con.lastUsed}">
  <td><span title="${con.stackInfo.caller}"><fmt:date date="${con.lastUsed}" /></span></td>
 </c:if>
@@ -53,7 +53,7 @@
  <td>NEVER</td>
 </c:if>
 </view:row>
-<c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse > 1250))}">
+<c:if test="${pool.logStack && con.connected && (con.inUse || (con.currentUse.toMillis() > 1250))}">
 <view:row entry="${con}" className="cPool">
  <td class="left small" colspan="9"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
