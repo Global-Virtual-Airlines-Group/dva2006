@@ -50,7 +50,7 @@ golgotha.local.drawGraphs = function(d) {
 	golgotha.local.data.ratings.forEach(function(s) { data.addColumn('number', s); });
 	data.addRows(d[2]);
 	const o3 = golgotha.charts.buildOptions({isStacked:true,width:'100%',colors:['red','orange','green','blue','purple']});
-	o3.title = d[3] +  ' by Date/Rating';
+	o3.title = d[3] +  ' by Date/Landing Rating';
 	o3.vAxis.title= 'Flight ' + d[3];
 	golgotha.local.charts.landRating.draw(data,o3);
 	return true;
