@@ -61,15 +61,22 @@ public class IntervalFormatTag extends DecimalFormatTag {
 	@Override
 	public int doStartTag() {
 		if (_d == null) _d = Duration.ZERO;
-		long v = _u.convert(_d);
-		if ((Math.abs(v) < 5) && (_u != TimeUnit.NANOSECONDS)) { // If we get a low number, move to the next unit down
+		long v = _u.convert(_d); long av = Math.abs(v);
+		if ((av < 100) && (_u != TimeUnit.NANOSECONDS)) { // If we get a low number, move to the next unit down
 			TimeUnit u2 = TimeUnit.values()[_u.ordinal() - 1];
 			long v2 = u2.convert(_d);
 			double scale = _u.toNanos(1) / u2.toNanos(1);
 			setValue(Double.valueOf(v2 / scale));
-			setFmt((v == 0) ? "#0.000" : "#0.00");
-		} else
+			if (v == 0)
+				setFmt("#0.000");
+			else if (av < 10)
+				setFmt("#0.00");
+			else
+				setFmt("#0.0");
+		} else {
 			setValue(Long.valueOf(v));
+			setFmt("#00");
+		}
 			
 		return SKIP_BODY;
 	}
