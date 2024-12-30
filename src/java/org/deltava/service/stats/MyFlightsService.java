@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 2.1
  */
 
@@ -111,7 +111,6 @@ public class MyFlightsService extends WebService {
 		// Go through landing statistics
 		int[] qualCount = new int[] {0, 0, 0};
 		for (LandingStatistics ls : landings) {
-			JSONArray ea = new JSONArray();
 			FlightScore score = FlightScorer.score(ls);
 			if (score == FlightScore.INCOMPLETE) continue;
 			qualCount[score.ordinal()]++;
@@ -120,6 +119,7 @@ public class MyFlightsService extends WebService {
 			boolean tooSoft = (fpm > -74);
 			
 			// Save touchdown scatter chart
+			JSONArray ea = new JSONArray();
 			ea.put((int) ls.getAverageDistance());
 			ea.put((score == FlightScore.DANGEROUS) ? Integer.valueOf(fpm) : null);
 			ea.put(!tooSoft && (score == FlightScore.ACCEPTABLE) ? Integer.valueOf(fpm) : null);
