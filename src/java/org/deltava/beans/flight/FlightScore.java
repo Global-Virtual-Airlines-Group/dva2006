@@ -18,7 +18,7 @@ public enum FlightScore implements EnumDescription, RGBColor {
 	private final int _color;
 
 	FlightScore(int color) {
-		_color = color;
+		_color = color & 0xFFFFFF; // strip alpha
 	}
 	
 	@Override

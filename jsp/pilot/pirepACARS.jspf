@@ -288,7 +288,6 @@
 </tr>
 </c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty onTimeEntry)}">
-
 <tr>
  <td class="label top">On-Time Performance</td>
  <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld caps"><fmt:edesc object="${pirep.onTime}" /></span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
@@ -298,23 +297,24 @@
 </td>
 </tr>
 </c:if>
-<content:filter roles="PIREP,Operations,Instructor,Examiner,HR">
-<c:if test="${!empty flightScore}">
-<c:set var="warnings" value="${flightScore.warnings}" scope="page" />
-<tr>
- <td class="label">Flight Score</td>
- <td class="data caps" colspan="${cspan}"><span style="color:${flightScore.result.color}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn bld"><fmt:list value="${warnings}" delim=", " /></span></c:if></td>
-</tr>
-<tr>
- <td class="label">Landing Score</td>
- <td class="data bld"><fmt:landscore value="${pirep.landingScore}" /></td>
-</tr>
-</c:if>
-</content:filter>
 <c:if test="${!empty flightInfo.route}">
 <tr>
  <td class="label top">Flight Route</td>
  <td class="data" colspan="${cspan}">${flightInfo.route}</td>
+</tr>
+</c:if>
+<content:attr roles="PIREP,Operations,Instructor,Examiner,HR" attr="showFlightScore" value="true" />
+<c:if test="${(!empty flightScore) && (access.ourFlight || showFlightScore)}">
+<c:set var="warnings" value="${flightScore.warnings}" scope="page" />
+<tr>
+ <td class="label">Landing Score</td>
+ <td class="data bld"><fmt:landscore value="${pirep.landingScore}" /></td>
+</tr>
+<tr>
+ <td class="label top">Flight Score</td>
+ <td class="data" colspan="${cspan}"><span style="color:#${flightScore.result.hexColor}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn caps bld"><fmt:list value="${warnings}" delim=", " /></span></c:if>
+<c:if test="${!empty flightScore.messages}">
+<br /><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br />" /></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">
