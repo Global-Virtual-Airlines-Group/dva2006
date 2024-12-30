@@ -91,15 +91,16 @@ public class FlightScorer {
 		
 		FlightScore fs = scoreRunways(pkg);
 		FDRFlightReport fr = pkg.getFlightReport();
+		int endFuel = (fr.getGateFuel() > 0) ? fr.getGateFuel() : fr.getLandingFuel();
 		if (fr.getTakeoffWeight() > pkg.getAircraft().getMaxTakeoffWeight()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Takeoff weight excteeds MTOW");
 		} else if (fr.getLandingWeight() > pkg.getAircraft().getMaxLandingWeight()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Landing weight exceeds MLW");
-		} else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel()) {
+		} else if (endFuel < pkg.getAircraft().getBaseFuel()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-			pkg.add("Insufficient fuel at Gate");
+			pkg.add(String.format("Insufficient fuel at Gate - %d lbs", Integer.valueOf(endFuel)));
 		} else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getOptions().getTakeoffRunwayLength())) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Insufficient Takeoff Runway length");
