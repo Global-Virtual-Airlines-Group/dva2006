@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2018, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Helper;
@@ -6,10 +6,12 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.stats.LandingStatistics;
 
+import org.deltava.util.Tuple;
+
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 5.1
  */
 
@@ -24,13 +26,15 @@ public class FlightScorer {
 	/*
 	 * Does the actual landing scoring.
 	 */
-	private static FlightScore score(int fpm, double rwyPct) {
-		if ((fpm < -600) || (rwyPct > 0.45))
-			return FlightScore.DANGEROUS;
+	private static Tuple<FlightScore, String> score(int fpm, double rwyPct) {
+		if (fpm < -600)
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
+		else if (rwyPct > 0.45)
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %%.0f%%", Double.valueOf(fpm)));
 		else if ((fpm < -300) || (fpm > -74) || (rwyPct > 0.35) || (rwyPct < 0.075))
-			return FlightScore.ACCEPTABLE;
+			return Tuple.create(FlightScore.ACCEPTABLE, null);
 
-		return FlightScore.OPTIMAL;
+		return Tuple.create(FlightScore.OPTIMAL, null);
 	}
 
 	/**
@@ -43,33 +47,39 @@ public class FlightScorer {
 			return FlightScore.INCOMPLETE;
 		
 		double rwyPct = ls.getAverageDistance() / ls.getDistanceStdDeviation();
-		return score((int) ls.getAverageSpeed(), rwyPct);
+		return score((int) ls.getAverageSpeed(), rwyPct).getLeft();
 	}
 	
-	/**
-	 * Scores a flight.
-	 * @param fr an FDRFlightReport
-	 * @param rD the departure Runway
-	 * @param rA the arrival Runway
-	 * @return a FlightScore
+	/*
+	 * Scores a flight based on runway data.
 	 */
-	public static FlightScore score(FDRFlightReport fr, Runway rD, Runway rA) {
+	private static FlightScore scoreRunways(ScorePackage pkg) {
+
+		Runway rA = pkg.getRunwayA();
 		if (!(rA instanceof RunwayDistance ad))
 			return FlightScore.INCOMPLETE;
 		
 		// If we use too much of the takeoff runway, uh oh
 		FlightScore score = FlightScore.ACCEPTABLE;
+		Runway rD = pkg.getRunwayD();
 		if (rD instanceof RunwayDistance dd) {
-			if ((dd.getLength() - dd.getDistance()) < 500)
+			int rwyRemaining = dd.getLength() - dd.getDistance();
+			if (rwyRemaining < 500) {
+				pkg.add(String.format("Insufficient Takeoff Runway length remaining - %d feet", Integer.valueOf(rwyRemaining)));
 				return FlightScore.DANGEROUS;
-			else if (dd.getLength() - dd.getDistance() > 1500)
+			} else if (rwyRemaining > 1500)
 				score = FlightScore.OPTIMAL;
+			else
+				pkg.add(String.format("Insufficient Takeoff Runway length remaining - %d feet", Integer.valueOf(rwyRemaining)));
 		}
 		
 		// Calculate landing data
 		double rwyPct = (double)ad.getDistance() / ad.getLength();
-		FlightScore ls = score(fr.getLandingVSpeed(), rwyPct);
-		return (ls.compareTo(score) < 0) ? score : ls;
+		Tuple<FlightScore, String> ls = score(pkg.getFlightReport().getLandingVSpeed(), rwyPct);
+		if (ls.getRight() != null)
+			pkg.add(ls.getRight());
+		
+		return (ls.getLeft().compareTo(score) < 0) ? score : ls.getLeft();
 	}
 
 	/**
@@ -79,23 +89,31 @@ public class FlightScorer {
 	 */
 	public static FlightScore score(ScorePackage pkg) {
 		
-		FlightScore fs = score(pkg.getFlightReport(), pkg.getRunwayD(), pkg.getRunwayA());
+		FlightScore fs = scoreRunways(pkg);
 		FDRFlightReport fr = pkg.getFlightReport();
-		if (fr.getTakeoffWeight() > pkg.getAircraft().getMaxTakeoffWeight())
+		if (fr.getTakeoffWeight() > pkg.getAircraft().getMaxTakeoffWeight()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if (fr.getLandingWeight() > pkg.getAircraft().getMaxLandingWeight())
+			pkg.add("Takeoff weight excteeds MTOW");
+		} else if (fr.getLandingWeight() > pkg.getAircraft().getMaxLandingWeight()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel())
+			pkg.add("Landing weight exceeds MLW");
+		} else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel()) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getOptions().getTakeoffRunwayLength()))
+			pkg.add("Insufficient fuel at Gate");
+		} else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getOptions().getTakeoffRunwayLength())) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getOptions().getLandingRunwayLength()))
+			pkg.add("Insufficient Takeoff Runway length");
+		} else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getOptions().getLandingRunwayLength())) {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			pkg.add("Insufficient Landing Runway length");
+		}
 		
 		FlightScore es = FlightScore.OPTIMAL;
 		for (ACARSRouteEntry re : pkg.getData()) {
-			for (Warning w : re.getWarnings())
+			for (Warning w : re.getWarnings()) {
 				es = FlightScore.max(es, w.getScore());
+				pkg.add(String.format("Flight Data Warning - %s", w.getDescription()));
+			}
 		}
 		
 		pkg.setResult(FlightScore.max(fs, es));

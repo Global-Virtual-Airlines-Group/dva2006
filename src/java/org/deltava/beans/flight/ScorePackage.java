@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.navdata.Runway;
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 8.0
  */
 
@@ -26,6 +26,8 @@ public class ScorePackage {
 	private final Collection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
 	
 	private FlightScore _result = FlightScore.INCOMPLETE;
+	
+	private final Collection<String> _msgs = new ArrayList<String>();
 	
 	/**
 	 * Comparator to sort warnings by severity in addition to ordinal.
@@ -63,6 +65,14 @@ public class ScorePackage {
 	public void add(RouteEntry re) {
 		if (re instanceof ACARSRouteEntry are)
 			_data.add(are);
+	}
+	
+	/**
+	 * Adds a message to the scoring package.
+	 * @param msg the message
+	 */
+	public void add(String msg) {
+		_msgs.add(msg);
 	}
 	
 	/**
@@ -114,6 +124,14 @@ public class ScorePackage {
 	}
 	
 	/**
+	 * Returns the scoring package messages.
+	 * @return a Collection of messages
+	 */
+	public Collection<String> getMessages() {
+		return _msgs;
+	}
+	
+	/**
 	 * Returns all warnings from this data set.
 	 * @return a Collection of Warnings
 	 */
@@ -124,7 +142,7 @@ public class ScorePackage {
 	}
 	
 	/**
-	 * Returns the flight's score.
+	 * Returns the flight score.
 	 * @return the FlightScore
 	 */
 	public FlightScore getResult() {
@@ -132,7 +150,7 @@ public class ScorePackage {
 	}
 	
 	/**
-	 * Updates the flight's score.
+	 * Updates the flight score.
 	 * @param fs the FlightScore
 	 */
 	void setResult(FlightScore fs) {
