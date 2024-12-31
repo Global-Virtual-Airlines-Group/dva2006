@@ -1,12 +1,14 @@
 // Copyright 2012, 2016, 2017, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
+import java.util.*;
+
 import org.deltava.beans.Helper;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.stats.LandingStatistics;
 
-import org.deltava.util.Tuple;
+import org.deltava.util.*;
 
 /**
  * A utility class to grade flights.
@@ -30,7 +32,7 @@ public class FlightScorer {
 		if (fpm < -600)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
 		else if (rwyPct > 0.45)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %%.0f%%", Double.valueOf(fpm)));
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %2.0f%%", Double.valueOf(rwyPct)));
 		else if ((fpm < -300) || (fpm > -74) || (rwyPct > 0.35) || (rwyPct < 0.075))
 			return Tuple.create(FlightScore.ACCEPTABLE, null);
 
@@ -109,13 +111,21 @@ public class FlightScorer {
 			pkg.add("Insufficient Landing Runway length");
 		}
 		
+		// Calculate warning count
 		FlightScore es = FlightScore.OPTIMAL;
+		Map<Warning, MutableInteger> warnCount = new TreeMap<Warning, MutableInteger>();
 		for (ACARSRouteEntry re : pkg.getData()) {
 			for (Warning w : re.getWarnings()) {
 				es = FlightScore.max(es, w.getScore());
-				pkg.add(String.format("Flight Data Warning - %s", w.getDescription()));
+				MutableInteger cnt = warnCount.getOrDefault(w, new MutableInteger(0));
+				cnt.inc();
+				warnCount.put(w, cnt);
 			}
 		}
+		
+		// Add to messages
+		for (Map.Entry<Warning, MutableInteger> me : warnCount.entrySet())
+			pkg.add(String.format("Flight Data Warning - %s (x%s)", me.getKey().getDescription(), me.getValue()));
 		
 		pkg.setResult(FlightScore.max(fs, es));
 		return pkg.getResult();
