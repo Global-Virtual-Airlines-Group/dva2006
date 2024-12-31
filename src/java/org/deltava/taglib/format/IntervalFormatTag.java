@@ -73,6 +73,12 @@ public class IntervalFormatTag extends DecimalFormatTag {
 				setFmt("#0.00");
 			else
 				setFmt("#0.0");
+		} else if ((av > 200) && (_u != TimeUnit.DAYS)) {
+			TimeUnit u2 = TimeUnit.values()[_u.ordinal() + 1];
+			long v2 = u2.convert(_d);
+			double scale = _u.toNanos(1) / u2.toNanos(1);
+			setValue(Double.valueOf(v2 / scale));
+			setFmt("#0.00");
 		} else {
 			setValue(Long.valueOf(v));
 			setFmt("#00");
