@@ -27,7 +27,7 @@ public class ScorePackage {
 	
 	private FlightScore _result = FlightScore.INCOMPLETE;
 	
-	private final Collection<String> _msgs = new ArrayList<String>();
+	private final Collection<String> _msgs = new LinkedHashSet<String>();
 	
 	/**
 	 * Comparator to sort warnings by severity in addition to ordinal.
