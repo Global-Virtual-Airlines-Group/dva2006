@@ -76,7 +76,7 @@ public class IntervalFormatTag extends DecimalFormatTag {
 		} else if ((av > 200) && ((_u == TimeUnit.SECONDS) || (_u == TimeUnit.MINUTES))) {
 			TimeUnit u2 = TimeUnit.values()[_u.ordinal() + 1];
 			long v2 = u2.convert(_d);
-			double scale = _u.toNanos(1) / u2.toNanos(1);
+			double scale = _u.toNanos(1) * 1d / u2.toNanos(1);
 			setValue(Double.valueOf(v2 / scale));
 			setFmt("#0.00");
 		} else {
