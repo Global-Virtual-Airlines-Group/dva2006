@@ -84,12 +84,12 @@ span.rmbar {
 </tr>
 <tr>
  <td colspan="2" class="mid">Status in the <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> program is based on your flight activity during the previous year, and requires requalification each year. You can qualify for a given level
- based on the number of flight legs flown, or the total flight distance. If you reach the threshold for a level, you immediately jump to that level and can maintain it throughout the year it was achieved as well as the following year.</td>  
+ based on the number of flight legs flown, or the total flight distance. If you reach the threshold for a level, you immediately jump to that level and can maintain it throughout the year it was achieved as well as the following status year.</td>  
 </tr>
 <tr>
  <td class="label eliteStatus top">${currentYear + 1} Status</td>
 <c:if test="${isRollover}">
- <td class="data">The ${currentYear}&nbsp;${eliteName} status year has completed and no further flights will be credited towards your ${currentYear + 1} status. Your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td></c:if>
+ <td class="data">The ${currentYear}&nbsp;${eliteName} status year has completed and no additional incomplete flights will be credited towards your ${currentYear + 1} status. Your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td></c:if>
 <c:if test="${!isRollover}">
  <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate <fmt:int value="${projectedTotal.legs}" /> 
  flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if>
