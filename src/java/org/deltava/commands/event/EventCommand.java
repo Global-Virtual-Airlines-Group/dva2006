@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 10.2
+ * @version 11.4
  * @since 1.0
  */
 
@@ -128,7 +128,9 @@ public class EventCommand extends AbstractCommand {
 				pireps.addAll(flights);
 				
 				// Load pilots signed up for the event
+				Collection<Integer> flightAuthorIDs = flights.stream().map(AuthoredBean::getAuthorID).filter(id -> !udm.containsKey(id)).collect(Collectors.toSet());
 				Map<Integer, Pilot> evPilots = pdao.getByID(ids, tableName);
+				evPilots.putAll(pdao.getByID(flightAuthorIDs, tableName));
 				
 				// Load pilots who may have logged the flight but not signed up
 				if ((e.getStatus() == Status.COMPLETE) || (e.getStatus() == Status.CLOSED)) {
