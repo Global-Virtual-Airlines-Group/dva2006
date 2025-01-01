@@ -32,8 +32,8 @@ public class FlightScorer {
 		if (fpm < -600)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
 		else if (rwyPct > 0.45)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %2.0f%%", Double.valueOf(rwyPct)));
-		else if ((fpm < -300) || (fpm > -74) || (rwyPct > 0.35) || (rwyPct < 0.075))
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %.1f%%", Double.valueOf(rwyPct * 100)));
+		else if ((fpm < -375) || (fpm > -125) || (rwyPct > 0.35) || (rwyPct < 0.075))
 			return Tuple.create(FlightScore.ACCEPTABLE, null);
 
 		return Tuple.create(FlightScore.OPTIMAL, null);
