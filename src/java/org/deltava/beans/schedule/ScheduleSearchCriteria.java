@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -199,6 +199,14 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public int getMaxResults() {
 		return _maxResults;
+	}
+	
+	/**
+	 * Returns whether this is a search by leg or by route. Route searches as used for limits on flight route legs or number of times flown.
+	 * @return TRUE if limited by legs flown or schedule entries per route pair, otherwise FALSE
+	 */
+	public boolean isRouteSearch() {
+		return (_maxPerRoute > -1) || (_routeLegs > -1);
 	}
 
 	public void setSortBy(String sortBy) {
