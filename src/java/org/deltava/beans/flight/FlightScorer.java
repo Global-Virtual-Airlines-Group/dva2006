@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2018, 2019, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class FlightScorer {
 		else if (rwyPct > 0.45)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %.1f%%", Double.valueOf(rwyPct * 100)));
 		else if ((fpm < -375) || (fpm > -125) || (rwyPct > 0.35) || (rwyPct < 0.075))
-			return Tuple.create(FlightScore.ACCEPTABLE, null);
+			return Tuple.create(FlightScore.ACCEPTABLE, String.format("Sink rate %d feet/min, Runway usage %.1f%%", Integer.valueOf(fpm), Double.valueOf(rwyPct * 100)));
 
 		return Tuple.create(FlightScore.OPTIMAL, null);
 	}
