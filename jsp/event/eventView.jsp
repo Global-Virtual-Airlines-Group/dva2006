@@ -207,7 +207,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <tr class="title caps mid">
  <td>ID</td>
  <td style="max-width:30%">PILOT NAME</td>
- <td class="nophone">EQUIPMENT</td>
+ <td>EQUIPMENT</td>
  <td>${event.network} ID</td>
 <c:if test="${showStats}">
  <td class="nophone">STATISTICS</td>
@@ -238,7 +238,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${!empty pilotCerts}">&nbsp;<span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
 <c:if test="${!empty pilotRatings}">&nbsp;<span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
 </td>
- <td class="sec bld nophone">${signup.equipmentType}</td>
+ <td class="sec bld">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
  <td class="small nophone"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
@@ -261,9 +261,9 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <tr class="title caps">
  <td>DATE</td>
  <td>PILOT NAME</td>
- <td class="nophone">EQUIPMENT</td>
- <td class="nophone">FLIGHT NUMBER</td>
- <td class="nophone" colspan="2">FLIGHT ROUTE</td>
+ <td>EQUIPMENT</td>
+ <td>FLIGHT NUMBER</td>
+ <td colspan="2">FLIGHT ROUTE</td>
 </tr>
 
 <!-- Flight Report data -->
@@ -272,10 +272,10 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td class="bld "><el:cmd domain="${pilotLoc.domain}" url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
- <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
- <td class="sec bld nophone">${pirep.equipmentType}</td>
- <td class="nophone">${pirep.flightCode}</td>
- <td colspan="2" class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
+ <td class="small"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="sec bld">${pirep.equipmentType}</td>
+ <td>${pirep.flightCode}</td>
+ <td colspan="2" class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
 </view:row>
 </c:forEach>
 
