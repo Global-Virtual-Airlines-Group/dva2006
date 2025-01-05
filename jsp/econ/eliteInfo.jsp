@@ -79,6 +79,13 @@ span.rmbar {
  Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.legs > 0}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.distance > 0}">, </c:if></c:if>
 <c:if test="${ro.distance > 0}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
 </tr>
+<c:if test="${isRollover && (!empty ny)}">
+<tr>
+ <td class="label eliteStatus">${currentYear + 1} Flight Progress</td>
+ <td class="data"><fmt:int value="${ny.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ny.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ny.points}" />&nbsp;${elitePoints}</span> -
+<span class="small ita">These totals will be used towards your ${eliteName}&nbsp;${currentYear + 2} requalification progress.</span></td>
+</tr>
+</c:if>
 <tr class="title caps">
  <td class="eliteStatus" colspan="2">${eliteName}&nbsp;${currentYear + 1} REQUALIFICATION PROGRESS</td>
 </tr>
@@ -99,7 +106,7 @@ span.rmbar {
  level until the end of next year. It may be a good time for a mileage run!</c:if></td></c:if>
 </tr>
 <tr>
- <td class="label eliteStatus">Flight Progress</td>
+ <td class="label eliteStatus"><c:if test="${isRollover}">${currentYear}&nbsp;</c:if>Flight Progress</td>
  <td class="data">
  <c:set var="hasPrevLevel" value="true" scope="page" />
  <c:set var="prevLevel" value="${baseLevel}" scope="page" />
@@ -113,7 +120,7 @@ span.rmbar {
 <c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach></td>
 </tr>
 <tr>
- <td class="label eliteStatus">Mileage Progress</td>
+ <td class="label eliteStatus"><c:if test="${isRollover}">${currentYear}&nbsp;</c:if>Mileage Progress</td>
  <td class="data">
  <c:set var="hasPrevLevel" value="true" scope="page" />
  <c:set var="prevLevel" value="${baseLevel}" scope="page" />

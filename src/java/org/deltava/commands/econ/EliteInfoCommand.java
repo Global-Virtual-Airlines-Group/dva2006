@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display a Pilot's Elite status history. 
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 9.2
  */
 
@@ -93,6 +93,8 @@ public class EliteInfoCommand extends AbstractCommand {
 			totals.putIfAbsent(Integer.valueOf(currentYear), new YearlyTotal(currentYear, p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
 			ctx.setAttribute("ro", esdao.getRollover(p.getID(), currentYear), REQUEST);
+			if (isRollover)
+				ctx.setAttribute("ny", totals.get(Integer.valueOf(currentYear + 1)), REQUEST);
 			
 			// Load unscored flight IDs
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
