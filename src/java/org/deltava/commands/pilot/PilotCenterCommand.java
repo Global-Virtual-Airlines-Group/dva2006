@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 1.0
  */
 
@@ -127,7 +127,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("currentEliteRO", esdao.getRollover(p.getID(), currentYear), REQUEST);
 				
 				// Determine if we can do year-end activities
-				boolean rolloverPeriod = (EliteScorer.getStatusYear(now.plusSeconds(Duration.ofDays(14).toSeconds())) > currentYear);
+				boolean rolloverPeriod = EliteScorer.isRollover();
 				ctx.setAttribute("eliteRollover", Boolean.valueOf(rolloverPeriod), REQUEST);
 				TreeSet<EliteLevel> nyLevels = new TreeSet<EliteLevel>();
 				if (rolloverPeriod) {
