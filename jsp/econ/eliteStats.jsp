@@ -61,7 +61,7 @@
  <td colspan="2"><div id="pilotGraph" style="height:500px;"></div>
 </tr>
 <tr class="title caps">
- <td colspan="2">PERCENTILES BY FLIGHT / ACCUMULATION<span id="pctToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'elitePct')">COLLAPSE</span></td>
+ <td colspan="2">${currentYear} PERCENTILES BY FLIGHT / ACCUMULATION<span id="pctToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'elitePct')">COLLAPSE</span></td>
 </tr>
 <c:forEach var="idx" items="${eppse.keys}">
 <c:set var="lvl" value="${targetLvls[idx]}" scope="page" />
