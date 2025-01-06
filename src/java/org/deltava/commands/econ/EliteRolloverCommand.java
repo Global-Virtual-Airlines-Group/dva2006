@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
  * @author Luke
- * @version 11.2
+ * @version 11.4
  * @since 11.0
  */
 
@@ -34,7 +34,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		int year = EliteScorer.getStatusYear(Instant.now()) + 1;
-		boolean isRollover = (EliteScorer.getStatsYear(Instant.now()) == year);
+		boolean isRollover = EliteScorer.isRollover();
 		boolean doCommit = Boolean.parseBoolean(ctx.getParameter("isCommit")) && isRollover;
 		boolean allowPointRollover = Boolean.parseBoolean(ctx.getParameter("allowPointRollover"));
 

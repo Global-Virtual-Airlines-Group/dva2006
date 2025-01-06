@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An interface for classes that calculate elite level point scores to Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 9.2
  */
 
@@ -42,7 +42,7 @@ public abstract class EliteScorer {
 			Class<?> c = Class.forName(className);
 			return (EliteScorer) c.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(String.format("Error creating %s - %s", className, e.getMessage()), e);
 		}
 	}
 	
@@ -93,6 +93,15 @@ public abstract class EliteScorer {
 		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC);
 		ZonedDateTime statusRolloverDate = ZonedDateTime.of(zdt.getYear(), 2, 1, 0, 0, 0, 0, ZoneOffset.UTC); 
 		return zdt.isAfter(statusRolloverDate) ? zdt.getYear() : zdt.getYear() - 1;
+	}
+	
+	/**
+	 * Returns whether we are in the rollover period before the start of the new status year.
+	 * @return TRUE if the statistics year is greater than the status year, otherwise FALSE
+	 */
+	public static final boolean isRollover() {
+		Instant now = Instant.now();
+		return (getStatsYear(now) > getStatusYear(now));
 	}
 		
 	/**

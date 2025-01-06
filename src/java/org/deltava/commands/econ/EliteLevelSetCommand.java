@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.time.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to automatically calulate Elite levels for an upcoming year.
  * @author Luke
- * @version 11.1
+ * @version 11.4
  * @since 9.2
  */
 
@@ -35,7 +35,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 		// Get the stats/status years and if we are in the rollover period
 		ZonedDateTime now = ZonedDateTime.now();
 		int statusYear = EliteScorer.getStatusYear(now.toInstant()); int statsYear = EliteScorer.getStatsYear(now.toInstant());
-		boolean isRolloverPeriod = (statusYear < statsYear);
+		boolean isRolloverPeriod = EliteScorer.isRollover();
 		ctx.setAttribute("startDate", ZonedDateTime.of(isRolloverPeriod ? statusYear : statsYear, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), REQUEST);
 		ctx.setAttribute("year", Integer.valueOf(statusYear + 1), REQUEST);
 		ctx.setAttribute("isRollover", Boolean.valueOf(isRolloverPeriod), REQUEST);
