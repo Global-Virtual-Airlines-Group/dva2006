@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view statistics about the Elite program.
  * @author Luke
- * @version 11.0
+ * @version 11.4
  * @since 9.2
  */
 
@@ -56,10 +56,15 @@ public class EliteStatsCommand extends AbstractCommand {
 				GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
 				List<YearlyTotal> fTotals = frsdao.getPilotTotals(startDate);
 				FlightPercentileHelper fHelper = new FlightPercentileHelper(fTotals, 1);
+				
+				// Check if we're in the rollover period
+				boolean isRollover = EliteScorer.isRollover();
+				ctx.setAttribute("isRollover", Boolean.valueOf(isRollover), REQUEST);
 
 				// Go one year back
-				LocalDate sd = LocalDate.now().minusMonths(12).minusDays(LocalDate.now().getDayOfMonth() - 1);
+				LocalDate sd = isRollover ? startDate : LocalDate.now().minusMonths(12).minusDays(LocalDate.now().getDayOfMonth() - 1);
 				ctx.setAttribute("estimateStart", sd, REQUEST);
+				ctx.setAttribute("estimateEnd", sd.plusYears(1), REQUEST);
 				ctx.setAttribute("estimatedLevels", Boolean.TRUE, REQUEST);
 
 				PercentileStatsEntry lpse = fHelper.getLegs(); PercentileStatsEntry dpse = fHelper.getDistance(); PercentileStatsEntry ppse = fHelper.getPoints();
