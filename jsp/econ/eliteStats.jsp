@@ -39,7 +39,8 @@
  <td class="label top"><c:if test="${estimatedLevels}">Estimated </c:if>${currentYear + 1} Levels</td>
  <td class="data"><c:forEach var="lvl" items="${nyLevels}" varStatus="lvlStatus"><fmt:elite level="${lvl}" className="bld" />&nbsp;<fmt:int value="${lvl.legs}" /> legs, <fmt:int value="${lvl.distance}" />&nbsp;${distUnit}, <fmt:int value="${lvl.targetPercentile}" />%ile
  <c:if test="${!lvStatis.isLast()}"><br /></c:if> </c:forEach>
- <c:if test="${estimatedLevels}"><br /><span class="ita small">Estimated requirements based on current year percentiles and flight activity since <fmt:date date="${estimateStart}" fmt="d" className="bld" tzName="UTC "/>.</span></c:if></td>
+ <c:if test="${estimatedLevels}"><br /><span class="ita small">Estimated requirements based on current year percentiles and flight activity since <fmt:date date="${estimateStart}" fmt="d" className="bld" tzName="UTC "/>
+<c:if test="${isRollover}"> until <fmt:date date="${estimateEnd}" fmt="d" className="bld" tzName="UTC" /></c:if>.</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">${eliteName}&nbsp;Flight Requirements by Year</td>
