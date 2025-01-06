@@ -60,7 +60,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Determine the year and whether things are populated
 			final Instant now = Instant.now(); int statsYear = EliteScorer.getStatsYear(now); int statusYear = EliteScorer.getStatusYear(now);
-			boolean isRollover = statsYear > statusYear;
+			boolean isRollover = EliteScorer.isRollover();
 			boolean hasCurrentLevels = yearlyLevels.containsKey(Integer.valueOf(statsYear));
 			EliteStatus currentStatus = eldao.getStatus(p.getID(), statsYear);
 			
