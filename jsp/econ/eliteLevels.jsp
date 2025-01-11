@@ -44,7 +44,7 @@
  <td style="width:10%">&nbsp;</td>
 </tr>
 
-<!-- Table Airline Data -->
+<!-- Table Level Data -->
 <c:forEach var="lvl" items="${viewContext.results}">
 <tr>
  <td style="color:#ffffff; background-color:#${lvl.hexColor}"><el:cmd url="elitelevel" className="bld" linkID="${lvl.name}-${lvl.year}" op="edit">${lvl.name}</el:cmd></td>
