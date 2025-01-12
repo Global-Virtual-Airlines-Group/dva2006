@@ -33,7 +33,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private boolean _dispatchRouteCounts;
 	private Inclusion _dispatchOnly = Inclusion.ALL;
 	private Inclusion _excludeHistoric = Inclusion.ALL;
-	private int _maxPerRoute;
+	private int _maxPerRoute = -1;
 	
 	private int _pilotID;
 	private boolean _notVisitedD;
@@ -282,7 +282,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param maxFlights the preferred number of entries
 	 */
 	public void setFlightsPerRoute(int maxFlights) {
-		_maxPerRoute = Math.max(0, maxFlights);
+		_maxPerRoute = Math.max(-1, maxFlights);
 	}
 
 	/**
