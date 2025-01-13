@@ -28,6 +28,11 @@ abstract class EliteDAO extends DAO {
 	protected static final Cache<EliteStatus> _stCache = CacheManager.get(EliteStatus.class, "EliteStatus");
 	
 	/**
+	 * The Elite lifetime status cache.
+	 */
+	protected static final Cache<EliteLifetimeStatus> _lstCache = CacheManager.get(EliteLifetimeStatus.class, "EliteLTStatus");
+	
+	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */

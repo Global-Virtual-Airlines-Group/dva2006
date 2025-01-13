@@ -103,6 +103,8 @@ public class SetElite extends EliteDAO {
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			_lstCache.remove(els.cacheKey());
 		}
 	}
 	
