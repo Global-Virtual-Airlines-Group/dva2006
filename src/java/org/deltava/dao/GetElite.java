@@ -316,8 +316,8 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getPilotCount(EliteLifetime el) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM ELITE_LT_STATUS WHERE (NAME=?)")) {
-			ps.setString(1, el.getName());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM ELITE_LT_STATUS WHERE (ABBR=?)")) {
+			ps.setString(1, el.getCode());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}

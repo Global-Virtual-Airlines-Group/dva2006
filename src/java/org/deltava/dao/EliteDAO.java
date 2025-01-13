@@ -72,20 +72,20 @@ abstract class EliteDAO extends DAO {
 	
 	/**
 	 * Returns a lifetime Elite status level.
-	 * @param name the level name
+	 * @param code the level code
 	 * @param dbName the database name
 	 * @return an EliteLifetime, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public EliteLifetime getLifetime(String name, String dbName) throws DAOException {
+	public EliteLifetime getLifetime(String code, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, DATABASE() FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".ELITE_LIFETIME EL WHERE (EL.NAME=?)");
+		sqlBuf.append(".ELITE_LIFETIME EL WHERE (EL.ABBR=?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, name);
+			ps.setString(1, code);
 			List<EliteLifetime> results = executeLifetime(ps);
 			populateLevels(results);
 			return results.isEmpty() ? null : results.getFirst();
