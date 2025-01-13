@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.JSONUtils;
 /**
  * A Web Service to display Elite program statistics.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 9.2
  */
 
@@ -58,9 +58,10 @@ public class EliteStatsService extends WebService {
 			allLevels.stream().filter(lv -> (lv.getYear() == currentYear)).forEach(levelLegend::add);
 			
 			// Load all of the pilot/level/year counts
+			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			for (int yr = EliteLevel.MIN_YEAR; yr <= currentYear; yr++) {
 				yrs.add(Integer.valueOf(yr));
-				allCounts.putAll(eldao.getEliteCounts(yr));
+				allCounts.putAll(esdao.getEliteCounts(yr));
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
