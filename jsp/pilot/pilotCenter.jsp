@@ -190,8 +190,8 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
  <td class="mid"><el:cmd url="eliteinfo" className="bld"><span style="color:#${eliteStatus.level.hexColor}">My ${eliteName}</span></el:cmd></td>
  <td class="data">${eliteYear} Flight Totals: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> Legs | <fmt:int className="sec bld" value="${currentEliteTotal.distance}" />&nbsp;${eliteDistance} | 
  <fmt:int className="bld" value="${currentEliteTotal.points}" />&nbsp;${elitePoints}<br /> 
- Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}.
- <c:if test="${!empty nyLevel}" >
+ Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}<c:if test="${!empty ltStatus}"> based on your lifetime <fmt:ltelite level="${ltStatus}" className="bld" /> status</c:if>.
+ <c:if test="${!empty nyLevel}">
  <br /><br />Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
  <c:if test="${nyDowngrade}"> <span class="sec bld">Your status will be downgraded at the end of the year.</span></c:if></c:if>
  <c:if test="${((currentEliteRO.legs > 0) || (currentEliteRO.distance > 0))}">

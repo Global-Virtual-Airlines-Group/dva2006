@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 1.0
  */
 
@@ -116,6 +116,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				
 				// Get current status
 				EliteStatus myCurrentStatus = myStatus.getLast();
+				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
+				if (myCurrentStatus.overridenBy(els)) {
+					myCurrentStatus = els.toStatus();
+					ctx.setAttribute("ltStatus", els.getLifetimeStatus(), REQUEST);
+				}
+				
 				ctx.setAttribute("eliteStatus", myCurrentStatus, REQUEST);
 				ctx.setAttribute("nextEliteLevel", levels.higher(myCurrentStatus.getLevel()), REQUEST);
 				p.setEliteStatus(myCurrentStatus);
@@ -138,9 +144,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Display next year's level and downgrade potential after Q3
 				if (LocalDate.now().getMonthValue() > 9) {
 					TreeSet<EliteLevel> lvls = nyLevels.isEmpty() ? levels : nyLevels;
-					EliteLevel nextYearLevel = cyt.matches(lvls);
-					boolean isDowngrade = (nextYearLevel.compareTo(myCurrentStatus.getLevel()) < 0);
-					ctx.setAttribute("nyLevel", nextYearLevel, REQUEST);
+					EliteLevel nextYearLevel = cyt.matches(lvls); EliteStatus nyStatus = new EliteStatus(p.getID(), nextYearLevel);
+					if (nyStatus.overridenBy(els))
+						nyStatus = els.toStatus();
+					
+					boolean isDowngrade = (nyStatus.getLevel().compareTo(myCurrentStatus.getLevel()) < 0);
+					ctx.setAttribute("nyLevel", nyStatus.getLevel(), REQUEST);
 					ctx.setAttribute("nyDowngrade", Boolean.valueOf(isDowngrade), REQUEST);
 					if (isDowngrade)
 						ctx.setAttribute("nextEliteLevel", myCurrentStatus.getLevel(), REQUEST);
