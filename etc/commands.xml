@@ -1458,6 +1458,12 @@
 		<roles>Operations,HR</roles>
 	</command>
 
+	<command id="eliteltdelete">
+		<name>Elite Lifetime Delete</name>
+		<class>org.deltava.commands.econ.EliteLifetimeDeleteCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
 	<command id="eliteinfo">
 		<name>Elite Pilot Status</name>
 		<class>org.deltava.commands.econ.EliteInfoCommand</class>

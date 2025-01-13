@@ -30,6 +30,12 @@
 <br />
 The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" className="bld" nameOnly="true" /> status level definition has been updated in the database. This will not make any changes to existing ${eliteName} status levels.<br />
 </c:when>
+<c:when test="${isDeleteLT}">
+<div class="updateHdr">${eliteName} Lifetime Level Deleted</div>
+<br />
+The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:ltelite level="${ltLevel}" className="bld" /> lifetime status level definition has been deleted from the database and has been removed from all <content:airline /> Pilots who had previously 
+attained this lifetime status level.<br />  
+</c:when>
 <c:when test="${isRecalc}">
 <div class="updateHdr">${eliteName} Status Recalculated</div>
 <br />
