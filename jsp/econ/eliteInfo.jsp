@@ -56,6 +56,7 @@ span.rmbar {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="eliteDistance" name="econ.elite.distance" />
 <content:sysdata var="elitePoint" name="econ.elite.points" />
+<content:sysdata var="eliteTDName" name="econ.elite.totalProgram" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -70,7 +71,8 @@ span.rmbar {
 <c:set var="ct" value="${totals[currentYear]}" scope="page" />
 <tr>
  <td class="label eliteStatus top">Current Status</td>
- <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)<br />
+ <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)
+ <c:if test="${isLTHigher}"> - Based on lifetime <span class="bld">${currentLTStatus.lifetimeStatus.name}</span> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br />
  <hr />
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
  <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
@@ -79,6 +81,13 @@ span.rmbar {
  Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.legs > 0}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.distance > 0}">, </c:if></c:if>
 <c:if test="${ro.distance > 0}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
 </tr>
+<c:if test="${!empty eliteTDName && !totalMileage.isZero()}">
+<tr>
+ <td class="label eliteStatus">${eliteTDName} Progress</td>
+ <td class="data"><fmt:int value="${totalMileage.legs}" className="pri bld" /> Legs, <fmt:int value="${totalMileage.distance}" className="sec bld" />&nbsp;${eliteDistance}
+<c:if test="${!empty currentLTStatus && !isLTHigher}"> - <span class="bld" style="color:#${currentLTStatus.hexColor}">${currentLTStatus.lifetimeStatus.name}</span> obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if></td>
+</tr>
+</c:if>
 <c:if test="${isRollover && (!empty ny)}">
 <tr>
  <td class="label eliteStatus">${currentYear + 1} Flight Progress</td>

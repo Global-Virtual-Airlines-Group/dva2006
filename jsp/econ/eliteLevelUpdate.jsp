@@ -54,6 +54,11 @@ Flight Report <el:cmd url="pirep" linkID="${flightID}" className="sec bld">${fli
 ${msg}<br /></c:forEach>
 </c:if>
 </c:when>
+<c:when test="${isLTUpdate}">
+<div class="updateHdr">${eliteName} Lifetime Level Updated</div>
+<br />
+The <span class="pri bld">${eliteName}</span> ${ll.name} lifetime status level definition has been updated in the database. This will not make any changes to any existing ${eliteName} status levels.<br />
+</c:when>
 <c:when test="${isLevelSet}">
 <div class="updateHdr">${eliteName} Requirements Calculated</div>
 <br />
@@ -88,6 +93,7 @@ ${msg}<br /></c:forEach>
 </c:choose>
 <br />
 To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br />
+To return to the list of ${eliteName} Lifetime status levels, <el:cmd url="eliteltlevels" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To view a list of <content:airline /> Pilots in the ${eliteName} Program, <el:cmd url="elitepilots" className="sec bld">Click Here</el:cmd>.<br />

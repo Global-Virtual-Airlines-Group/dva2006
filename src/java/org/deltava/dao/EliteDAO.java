@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Elite program definitions. 
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 9.2
  */
 
@@ -23,10 +23,10 @@ abstract class EliteDAO extends DAO {
 	protected static final Cache<EliteLevel> _lvlCache = CacheManager.get(EliteLevel.class, "EliteLevel");
 	
 	/**
-	 * The EliteStatus cache.
+	 * The Elite status cache.
 	 */
 	protected static final Cache<EliteStatus> _stCache = CacheManager.get(EliteStatus.class, "EliteStatus");
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -46,12 +46,12 @@ abstract class EliteDAO extends DAO {
 	public EliteLevel get(String name, int year, String dbName) throws DAOException {
 		
 		// Check the cache
-		EliteLevel lvl = _lvlCache.get(new EliteLevel(year, name, dbName).cacheKey());
+		String db = formatDBName(dbName);
+		EliteLevel lvl = _lvlCache.get(new EliteLevel(year, name, db).cacheKey());
 		if (lvl != null)
 			return lvl;
 		
 		// Build the SQL statement
-		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ? FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LEVELS EL WHERE (NAME=?) AND (YR=?) LIMIT 1");
@@ -67,7 +67,31 @@ abstract class EliteDAO extends DAO {
 	}
 	
 	/**
-	 * Helper method to parse elite level result sets.
+	 * Returns a lifetime Elite status level.
+	 * @param name the level name
+	 * @param dbName the database name
+	 * @return an EliteLifetime, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public EliteLifetime getLifetime(String name, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, DATABASE() FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".ELITE_LIFETIME EL WHERE (EL.NAME=?)");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, name);
+			List<EliteLifetime> results = executeLifetime(ps);
+			populateLevels(results);
+			return results.isEmpty() ? null : results.getFirst();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Helper method to parse Elite level result sets.
 	 * @param ps the PreparedStatement to execute
 	 * @return a List of EliteLevel beans
 	 * @throws SQLException if a JDBC error occurs
@@ -87,6 +111,28 @@ abstract class EliteDAO extends DAO {
 				lvl.setVisible(rs.getBoolean(10));
 				results.add(lvl);
 				_lvlCache.add(lvl);
+			}
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Helper method to process Elite lifetime level result sets.
+	 * @param ps the PreparedStatement to execute
+	 * @return a List of EliteLifetime beans
+	 * @throws SQLException if a JDBC error occurs
+	 */
+	protected static List<EliteLifetime> executeLifetime(PreparedStatement ps) throws SQLException {
+		List<EliteLifetime> results = new ArrayList<EliteLifetime>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				EliteLifetime el = new EliteLifetime(rs.getString(1));
+				el.setCode(rs.getString(2));
+				el.setDistance(rs.getInt(3));
+				el.setLegs(rs.getInt(4));
+				el.setLevel(new EliteLevel(rs.getInt(6), rs.getString(5), rs.getString(7)));
+				results.add(el);
 			}
 		}
 		

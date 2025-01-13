@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display a Pilot's Elite status history. 
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 9.2
  */
 
@@ -73,9 +73,16 @@ public class EliteInfoCommand extends AbstractCommand {
 				currentStatus = eldao.getStatus(p.getID(), statusYear);
 			
 			// Get this year's levels
+			EliteLifetimeStatus els = eldao.getLifetimeStatus(id, ctx.getDB());
 			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(Integer.valueOf(currentYear)));
 			if (currentStatus == null)
 				currentStatus = new EliteStatus(p.getID(), cyLevels.first());
+			
+			// Check if our lifetime status is higher
+			if (els.exceeds(currentStatus)) {
+				ctx.setAttribute("isLTHigher", Boolean.TRUE, REQUEST);
+				currentStatus = els.toStatus();
+			}
 			
 			// Get status history
 			Map<Integer, EliteStatus> yearMax = new TreeMap<Integer, EliteStatus>();
@@ -92,6 +99,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
 			totals.putIfAbsent(Integer.valueOf(currentYear), new YearlyTotal(currentYear, p.getID()));
 			ctx.setAttribute("totals", totals, REQUEST);
+			ctx.setAttribute("totalMileage", esdao.getLifetimeTotals(id), REQUEST);
 			ctx.setAttribute("ro", esdao.getRollover(p.getID(), currentYear), REQUEST);
 			if (isRollover)
 				ctx.setAttribute("ny", totals.get(Integer.valueOf(currentYear + 1)), REQUEST);
@@ -143,6 +151,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			ctx.setAttribute("baseLevel", EliteLevel.EMPTY, REQUEST);
 			ctx.setAttribute("levels", yearlyLevels, REQUEST);
 			ctx.setAttribute("currentStatus", currentStatus, REQUEST);
+			ctx.setAttribute("currentLTStatus", els, REQUEST);
 			ctx.setAttribute("maxStatus", yearMax, REQUEST);
 			ctx.setAttribute("statusUpdates", yearlyStatusUpdates, REQUEST);
 		} catch (DAOException de) {

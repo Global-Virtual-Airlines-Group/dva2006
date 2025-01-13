@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -77,6 +77,7 @@ public class SetFlightReport extends DAO {
 			throw new DAOException(se);
 		} finally {
 			YearlyTotal yt = new YearlyTotal(EliteScorer.getStatsYear(fr.getDate()), fr.getAuthorID());
+			CacheManager.invalidate("EliteLifetime", Integer.valueOf(fr.getAuthorID()));
 			CacheManager.invalidate("EliteYearlyTotal", yt.cacheKey());
 			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(fr.getAuthorID()));
 		}
@@ -380,6 +381,7 @@ public class SetFlightReport extends DAO {
 			throw new DAOException(se);
 		} finally {
 			YearlyTotal yt = new YearlyTotal(sc.getYear(), sc.getAuthorID());
+			CacheManager.invalidate("EliteLifetimeTotal", Integer.valueOf(sc.getAuthorID()));
 			CacheManager.invalidate("EliteYearlyTotal", yt.cacheKey());
 			CacheManager.invalidate("EliteYearlyTotal", Integer.valueOf(sc.getAuthorID()));
 		}
