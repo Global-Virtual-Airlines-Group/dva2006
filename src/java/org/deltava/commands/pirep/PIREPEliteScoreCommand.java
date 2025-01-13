@@ -67,9 +67,11 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			if (yearStatus.isEmpty())
 				throw notFoundException("No Elite status for " + p.getName());
 			
-			// Check for lifetime status
+			// Check for lifetime status, but only granted before PIREP date
 			EliteStatus st = yearStatus.getLast();
-			EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB()); // FIXME need lifetime status as of date!
+			List<EliteLifetimeStatus> lts = eldao.getAllLifetimeStatus(p.getID(), ctx.getDB());
+			lts.removeIf(els -> els.getEffectiveOn().isAfter(fr.getSubmittedOn()));
+			EliteLifetimeStatus els = lts.isEmpty() ? null : lts.getFirst();
 			if ((els != null) && els.exceeds(st))
 				st = els.toStatus();
 			
