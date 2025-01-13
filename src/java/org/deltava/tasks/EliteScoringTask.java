@@ -89,9 +89,9 @@ public class EliteScoringTask extends Task {
 					elwdao.write(st);
 				}
 				
-				// Check our lfietime status
+				// Check our lifetime status
 				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
-				if ((els != null) && (els.getLevel().compareTo(st.getLevel()) > 0)) {
+				if ((els != null) && els.exceeds(st)) {
 					st = els.toStatus();
 					log.info("Effective Status for {} is {} due to {}", p.getName(), st.getLevel(), els.getLifetimeStatus().getName());
 				}
@@ -183,7 +183,7 @@ public class EliteScoringTask extends Task {
 					EliteLifetimeStatus newLT = new EliteLifetimeStatus(p.getID(), nextLT);
 					newLT.setEffectiveOn(Instant.now());
 					newLT.setUpgradeReason(updR);
-					//elwdao.write(newLT);
+					elwdao.write(newLT);
 					
 					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
 					upd.setDate(Instant.now());
