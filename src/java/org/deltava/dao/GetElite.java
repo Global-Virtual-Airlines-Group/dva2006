@@ -281,7 +281,7 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getPilots(EliteLifetime el) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT DISTINCT PILOT_ID FROM ELITE_LT_STATUS WHERE (ABBR=?)")) {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT ID FROM ELITE_LT_STATUS WHERE (ABBR=?)")) {
 			ps.setString(1, el.getCode());
 			Collection<Integer> results = new HashSet<Integer>();
 			try (ResultSet rs = ps.executeQuery()) {
