@@ -614,7 +614,7 @@
 	</tag>
 
 	<tag>
-		<description>Elite Level tag, use to format Elite lvel names with color</description>
+		<description>Elite Level tag, used to format Elite level names with color</description>
 		<name>elite</name>
 		<tag-class>org.deltava.taglib.format.EliteFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -635,6 +635,24 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Elite Lifetime tag, used to format lifetime Elite level names with color</description>
+		<name>ltelite</name>
+		<tag-class>org.deltava.taglib.format.EliteLifetimeFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>level</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.econ.EliteLifetime</type>
 		</attribute>
 		<attribute>
 			<name>className</name>
