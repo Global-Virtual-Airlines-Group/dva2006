@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store yearly Pilot Elite status totals.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 9.2
  */
 
@@ -108,7 +108,7 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 * @param el the EliteLevel
 	 * @return TRUE if the legs, distance and points all exceed the requirements
 	 */
-	public boolean matches(EliteLevel el) {
+	public boolean matches(EliteTotals el) {
 		if (el == null) return false;
 		return ((el.getLegs() > 0) && (getLegs() >= el.getLegs())) || ((el.getDistance() > 0) && (getDistance() >= el.getDistance())) || ((el.getPoints() > 0) && (getPoints() >= el.getPoints()));
 	}
@@ -142,7 +142,7 @@ public class YearlyTotal extends DatabaseBean implements EliteTotals, Cloneable 
 	 * @param sc the FlightEliteScore for that leg
 	 * @return an UpgradeReason
 	 */
-	public UpgradeReason wouldMatch(EliteLevel el, FlightEliteScore sc) {
+	public UpgradeReason wouldMatch(EliteTotals el, FlightEliteScore sc) {
 		if ((el == null) || matches(el))
 			return UpgradeReason.NONE;
 		
