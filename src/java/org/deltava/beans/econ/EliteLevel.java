@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.*;
@@ -10,11 +10,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Pilot loyalty status level definitions for a particular year. 
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 9.2
  */
 
-public class EliteLevel implements EliteTotals, RGBColor, Auditable, Comparable<EliteLevel>, Cacheable {
+public class EliteLevel implements ComboAlias, EliteTotals, RGBColor, Auditable, Comparable<EliteLevel>, Cacheable {
 	
 	/**
 	 * A dummy, empty Elite level.
@@ -242,6 +242,16 @@ public class EliteLevel implements EliteTotals, RGBColor, Auditable, Comparable<
 	}
 	
 	@Override
+	public String getComboName() {
+		return _name;
+	}
+	
+	@Override
+	public String getComboAlias() {
+		return toString();
+	}
+	
+	@Override
 	public String getAuditID() {
 		return toString();
 	}
@@ -253,9 +263,10 @@ public class EliteLevel implements EliteTotals, RGBColor, Auditable, Comparable<
 	
 	@Override
 	public boolean equals(Object o) {
+		if (o instanceof String id) return id.equals(toString());
 		return (o instanceof EliteLevel el2) && (compareTo(el2) == 0);
 	}
-
+	
 	@Override
 	public Object cacheKey() {
 		return toString();

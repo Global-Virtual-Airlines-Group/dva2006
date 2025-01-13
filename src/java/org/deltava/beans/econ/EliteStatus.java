@@ -1,4 +1,4 @@
-// Copyright 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Pilots' Elite status level data. 
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 9.2
  */
 
-public class EliteStatus extends DatabaseBean implements RGBColor, EliteLevelBean {
+public class EliteStatus extends DatabaseBean implements EliteLevelBean {
 	
 	private EliteLevel _lvl;
 	private UpgradeReason _ur = UpgradeReason.NONE;
