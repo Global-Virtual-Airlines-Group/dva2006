@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 11.0
  */
 
@@ -84,20 +84,39 @@ public class EliteRolloverCommand extends AbstractCommand {
 				if (!pyLevel.matches(lvl) && !hasRollover)
 					msgs.add(String.format("%s should be %s for %d, Rollover = %s, Actual = %s", p.getName(), pyLevel.getName(), Integer.valueOf(year), rlvl.getName(), lvl.getName()));
 				
-				// Compare totals for the year
+				// Check for lifetime status
+				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
+				boolean hasLTStatus = new EliteStatus(p.getID(), lvl).overridenBy(els);
+				boolean hasBaseLevel = pyLevel.matches(lvl) && pyLevel.matches(lvls.getFirst());
+				
+				// Compare totals for the year - break if not rollover eligible or remaining at lowest level
 				if (!p.getStatus().isActive()) {
 					msgs.add(String.format("%s status = %s, no rollover", p.getName(), p.getStatus().getDescription()));
 					continue;
-				} else if (pyLevel.matches(lvl) && pyLevel.matches(lvls.getFirst())) {
+				} else if (hasBaseLevel && !hasLTStatus) {
 					msgs.add(String.format("%s remains as %s for %d", p.getName(), lvl.getName(), Integer.valueOf(year)));
 					continue;
-				} 
+				}
 				
 				// Create status update
 				Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
 				upd.setDate(Instant.now());
 				upd.setAuthorID(p.getID());
+				
+				// Additional log if lifetime status exceeds earned status
+				if (hasLTStatus) {
+					msgs.add(String.format("Lifetime %s status exceeds %s for %s in %d", els.getLifetimeStatus().getName(), lvl.getName(), p.getName(), Integer.valueOf(year)));
+					log.info("Continuing {} status for {} in {}", els.getLifetimeStatus().getName(), p.getName(), Integer.valueOf(year));
+					StatusUpdate upd2 = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
+					upd2.setDate(Instant.now());
+					upd2.setAuthorID(p.getID());
+					upd2.setDescription(String.format("Lifetime %s status exceeds %s for %s in %d", els.getLifetimeStatus().getName(), lvl.getName(), p.getName(), Integer.valueOf(year)));
+					upds.add(upd2);
+				}
+				
+				// Break if retain member level
+				if (hasBaseLevel) continue;
 				
 				// Calcualte new level
 				UpgradeReason ur = pyLevel.matches(lvl) ? UpgradeReason.ROLLOVER : UpgradeReason.DOWNGRADE;
@@ -142,11 +161,11 @@ public class EliteRolloverCommand extends AbstractCommand {
 				// Write status updates
 				if (!rt.isZero()) {
 					elwdao.rollover(rt);
-					upd = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
-					upd.setDate(Instant.now());
-					upd.setAuthorID(p.getID());
-					upd.setDescription(String.format("Rolled over %d legs / %d %s", Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()), SystemData.get("econ.elite.distance")));
-					upds.add(upd);	
+					StatusUpdate upd2 = new StatusUpdate(p.getID(), UpdateType.ELITE_ROLLOVER);
+					upd2.setDate(Instant.now());
+					upd2.setAuthorID(p.getID());
+					upd2.setDescription(String.format("Rolled over %d legs / %d %s", Integer.valueOf(rt.getLegs()), Integer.valueOf(rt.getDistance()), SystemData.get("econ.elite.distance")));
+					upds.add(upd2);	
 				}
 				
 				updwdao.write(upds);
