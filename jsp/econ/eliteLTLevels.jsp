@@ -44,7 +44,7 @@
 <!-- Table Lifetime Level Data -->
 <c:forEach var="lvl" items="${viewContext.results}">
 <tr>
- <td style="color:#ffffff; background-color:#${lvl.hexColor}"><el:cmd url="eliteltlevel" className="bld" linkID="${lvl.name}" op="edit">${lvl.name}</el:cmd></td>
+ <td style="color:#ffffff; background-color:#${lvl.hexColor}"><el:cmd url="eliteltlevel" className="bld" linkID="${lvl.code}" op="edit">${lvl.name}</el:cmd></td>
  <td class="pri bld">${lvl.code}</td>
  <td><fmt:int value="${lvl.legs}" zero="-" /></td>
  <td class="bld"><fmt:int value="${lvl.distance}" zero="-" /><span class="nophone"> ${eliteDistance}</span></td>
