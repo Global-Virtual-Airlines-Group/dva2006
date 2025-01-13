@@ -1444,20 +1444,32 @@
 		<name>Elite Level</name>
 		<class>org.deltava.commands.econ.EliteLevelCommand</class>
 		<roles>Operations,HR</roles>
-	</command>	
+	</command>
+
+	<command id="eliteltlevels">
+		<name>Elite Lifetime Levls</name>
+		<class>org.deltava.commands.econ.EliteLifetimeLevelsCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
+	<command id="eliteltlevel">
+		<name>Elite Lifetime Level</name>
+		<class>org.deltava.commands.econ.EliteLifetimeLevelCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
 
 	<command id="eliteinfo">
 		<name>Elite Pilot Status</name>
 		<class>org.deltava.commands.econ.EliteInfoCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="elitelevelset">
 		<name>Elite Levels Set</name>
 		<class>org.deltava.commands.econ.EliteLevelSetCommand</class>
 		<roles>Operations</roles>
 	</command>
-	
+
 	<command id="eliterecalc">
 		<name>Elite Status Recalculate</name>
 		<class>org.deltava.commands.econ.EliteStatusCalculateCommand</class>

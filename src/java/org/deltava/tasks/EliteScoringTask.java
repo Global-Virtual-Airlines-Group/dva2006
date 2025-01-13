@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 9.2
  */
 
@@ -78,14 +78,22 @@ public class EliteScoringTask extends Task {
 				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
 				final int yr = EliteScorer.getStatusYear(fr.getDate());
 				TreeSet<EliteLevel> lvls = eldao.getLevels(yr);
+				TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
 				
-				// Get the pilot and Elite data - if we have no status see if we need to do a rollover
+				// Get the pilot and Elite data - if we have no status create a dummy
 				Pilot p = pdao.get(fr.getAuthorID());
 				EliteStatus st = eldao.getStatus(p.getID(), yr);
 				if (st == null) {
 					st = new EliteStatus(p.getID(), lvls.first());
 					st.setEffectiveOn(fr.getSubmittedOn());
 					elwdao.write(st);
+				}
+				
+				// Check our lfietime status
+				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
+				if ((els != null) && (els.getLevel().compareTo(st.getLevel()) > 0)) {
+					st = els.toStatus();
+					log.info("Effective Status for {} is {} due to {}", p.getName(), st.getLevel(), els.getLifetimeStatus().getName());
 				}
 				
 				// Load all previous Flight Reports for this Pilot
@@ -103,7 +111,10 @@ public class EliteScoringTask extends Task {
 				
 				// Get our total and next level
 				YearlyTotal total = esdao.getEliteTotals(p.getID(), yr);
+				YearlyTotal lifetime = esdao.getLifetimeTotals(p.getID());
 				EliteLevel nextLevel = lvls.higher(st.getLevel());
+				EliteLifetime lt = ltLvls.descendingSet().stream().filter(el -> lifetime.matches(el)).findFirst().orElse(null);
+				EliteLifetime nextLT = (lt == null) ? (ltLvls.isEmpty() ? null : ltLvls.first()) : ltLvls.higher(lt); // check if empty, if so then get nothing
 				tt.mark("totals");
 				
 				// Calculate the sore
@@ -162,6 +173,23 @@ public class EliteScoringTask extends Task {
 					YearlyTotal nlt = new YearlyTotal(nextLevel.getYear(), p.getID());
 					nlt.addLegs(nextLevel.getLegs(), nextLevel.getDistance(), nextLevel.getPoints());
 					log.info("{} does not reach {} - {} < {}", p.getName(), nextLevel.getName(), total, nlt);
+				}
+				
+				
+				// Check for lifetime status upgrade
+				updR = total.wouldMatch(nextLT, sc);
+				if ((nextLT != null) && (updR != UpgradeReason.NONE)) {
+					log.warn("{} reaches {} / {}", p.getName(), nextLT.getName(), updR.getDescription());
+					EliteLifetimeStatus newLT = new EliteLifetimeStatus(p.getID(), nextLT);
+					newLT.setEffectiveOn(Instant.now());
+					newLT.setUpgradeReason(updR);
+					//elwdao.write(newLT);
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.ELITE_QUAL);
+					upd.setDate(Instant.now());
+					upd.setAuthorID(p.getID());
+					upd.setDescription(String.format("Reached %s ( %s )", nextLT.getName(), updR.getDescription()));
+					tt.mark("upgradeLT");
 				}
 				
 				ctx.commitTX();

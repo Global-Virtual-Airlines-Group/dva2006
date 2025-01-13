@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Elite status level definitions.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 9.2
  */
 
@@ -67,6 +67,42 @@ public class SetElite extends EliteDAO {
 			throw new DAOException(se);
 		} finally {
 			_stCache.remove(es.cacheKey());
+		}
+	}
+	
+	/**
+	 * Writes a lifetime Elite status bean to the database.
+	 * @param el the EliteLifetime bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(EliteLifetime el) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_LIFETIME (NAME, ABBR, DISTANCE, LEGS, LEVELNAME, YR) VALUES (?,?,?,?,?,?)")) {
+			ps.setString(1, el.getName());
+			ps.setString(2, el.getCode());
+			ps.setInt(3, el.getDistance());
+			ps.setInt(4, el.getLegs());
+			ps.setString(5, el.getLevel().getName());
+			ps.setInt(6, el.getLevel().getYear());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a Pilot Elite lifetime status accomplishment bean to the database.
+	 * @param els the EliteLifetimeStatus bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(EliteLifetimeStatus els) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO ELITE_LT_STATUS (ID, ABBR, CREATED, UPD_REASON) VALUES (?,?,?,?)")) {
+			ps.setInt(1, els.getID());
+			ps.setString(2, els.getLifetimeStatus().getCode());
+			ps.setTimestamp(3, createTimestamp(els.getEffectiveOn()));
+			ps.setInt(4, els.getUpgradeReason().ordinal());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 	

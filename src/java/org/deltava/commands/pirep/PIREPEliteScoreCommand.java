@@ -1,4 +1,4 @@
-// Copyright 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate Elite program scoring for a Flight Report.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 11.2
  */
 
@@ -62,9 +62,16 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			
 			// Get elite status for the year
 			GetElite eldao = new GetElite(con);
-			EliteStatus st = eldao.getStatus(fr.getAuthorID(), EliteScorer.getStatusYear(fr.getDate()));
-			if (st == null)
+			List<EliteStatus> yearStatus = eldao.getAllStatus(fr.getAuthorID(), EliteScorer.getStatusYear(fr.getDate()));
+			yearStatus.removeIf(es -> es.getEffectiveOn().isAfter(fr.getDate()));
+			if (yearStatus.isEmpty())
 				throw notFoundException("No Elite status for " + p.getName());
+			
+			// Check for lifetime status
+			EliteStatus st = yearStatus.getLast();
+			EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB()); // FIXME need lifetime status as of date!
+			if ((els != null) && els.exceeds(st))
+				st = els.toStatus();
 			
 			// Get the scorer and previous flight reports 
 			EliteScorer es = EliteScorer.getInstance();

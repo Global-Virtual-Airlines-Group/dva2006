@@ -734,8 +734,9 @@ pilot Certification.</td>
 <c:if test="${hasEliteAccess}">
 <c:set var="upcomingYear" value="${java.time.LocalDate.now().year}" scope="page" />
 <tr>
- <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd></td>
- <td class="data">You can view and update <span class="pri bld">${eliteName}</span> Status levels for previous and current years.</td>
+ <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd><br />
+<el:cmd className="bld" url="eliteltlevels">${eliteName} Lifetime Status levels</el:cmd></td>
+ <td class="data">You can view and update <span class="pri bld">${eliteName}</span> Status levels for previous and current years, as well as cumulative lifetime status levels.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="elitelevelset">Calculate Upcoming ${eliteName} levels</el:cmd></td>

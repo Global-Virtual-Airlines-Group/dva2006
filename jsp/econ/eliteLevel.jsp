@@ -59,7 +59,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">${pointUnit} Bonus</td>
- <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${StrictMath.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any ${pointUnit} calculated for Pilots at this level.</span></td>
+ <td class="data"><el:text name="bonus" idx="*" size="2" max="3" value="${empty lvl ? '' : StrictMath.round(lvl.bonusFactor * 100)}" />% <span class="small nophone">The point bonus is added at the end of any ${pointUnit} calculated for Pilots at this level.</span></td>
 </tr>
 <tr>
  <td class="label">Target Percentile</td>
@@ -88,6 +88,12 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><span class="sec bld caps">Eligibility Requirements calculated using Flight Data from <fmt:date date="${lvl.statisticsStartDate}" fmt="d" /> to <fmt:date date="${lvl.statisticsEndDate}" fmt="d" /></span></td>
+</tr>
+</c:if>
+<c:if test="${isCurrentYear}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data sec bld caps">This ${eliteName} Status Level has been reached by <fmt:int value="${pilotCount}" />&nbsp;<content:airline /> Pilots</td>
 </tr>
 </c:if>
 <%@ include file="/jsp/auditLog.jspf" %>

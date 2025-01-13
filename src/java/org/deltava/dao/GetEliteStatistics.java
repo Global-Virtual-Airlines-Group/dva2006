@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,12 +13,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Elite program-related statistics.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 9.2
  */
 
 public class GetEliteStatistics extends EliteDAO {
 	
+	private static final Cache<YearlyTotal> _ltCache = CacheManager.get(YearlyTotal.class, "EliteLifetimeTotal");
 	private static final Cache<CacheableList<YearlyTotal>> _cache = CacheManager.getCollection(YearlyTotal.class, "EliteYearlyTotal");
 
 	/**
@@ -199,6 +200,36 @@ public class GetEliteStatistics extends EliteDAO {
 			
 			_cache.add(results);
 			return results.clone();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads total elite program mileage for a given Pilot.
+	 * @param pilotID the Pilot's database ID
+	 * @return the total number of miles
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public YearlyTotal getLifetimeTotals(int pilotID) throws DAOException {
+		
+		// Check the cache
+		Integer k = Integer.valueOf(pilotID);
+		YearlyTotal result = _ltCache.get(k);
+		if (result != null)
+			return result;
+		
+		YearlyTotal yt = new YearlyTotal(0, pilotID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(IF(PE.SCORE_ONLY,0,1)) AS LEGS, SUM(IF(PE.SCORE_ONLY,0,PE.DISTANCE)) AS DST FROM PIREPS P LEFT JOIN PIREP_ELITE PE ON (P.ID=PE.ID) WHERE (P.PILOT_ID=?) AND (PE.ID IS NOT NULL)")) {
+			ps.setInt(1, pilotID);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					yt.addLegs(rs.getInt(1), rs.getInt(2), 0);
+					_ltCache.add(yt);
+				}
+			}
+			
+			return yt;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

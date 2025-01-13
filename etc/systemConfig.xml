@@ -752,6 +752,7 @@
 			<name>SkyMiles Medallion</name>
 			<points>SkyMiles</points>
 			<distance>Medallion Miles</distance>
+			<totalProgram>Million Miler</totalProgram>
 			<scorer>org.deltava.beans.econ.SkyMilesScorer</scorer>
 			<maxNonACARS type="Integer">2</maxNonACARS>
 			<round>

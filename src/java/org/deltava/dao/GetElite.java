@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,16 +9,19 @@ import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.econ.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Elite status levels. 
  * @author Luke
- * @version 11.3
+ * @version 11.5
  * @since 9.2
  */
 
 public class GetElite extends EliteDAO {
+	
+	private static final Cache<EliteLifetimeStatus> _lstCache = CacheManager.get(EliteLifetimeStatus.class, "EliteLTStatus");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -51,6 +54,21 @@ public class GetElite extends EliteDAO {
 		try (PreparedStatement ps = prepare("SELECT EL.*, DATABASE() FROM ELITE_LEVELS EL WHERE (YR=?)")) {
 			ps.setInt(1, year);
 			return new TreeSet<EliteLevel>(executeLevel(ps));
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Lifetime status levels.
+	 * @return a TreeSet of EliteLifetime beans, in asecnding order
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public TreeSet<EliteLifetime> getLifetimeLevels() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT EL.*, DATABASE() FROM ELITE_LIFETIME EL ORDER BY LEGS, DISTANCE")) {
+			List<EliteLifetime> results = executeLifetime(ps);
+			populateLevels(results);
+			return new TreeSet<EliteLifetime>(results);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -93,9 +111,48 @@ public class GetElite extends EliteDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Retrieves Elite lifetime program status for a number of Pilots.
+	 * @param IDs a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean} beans
+	 * @param dbName the database name
+	 * @return a Map of EliteLifetimeStatus beans for the specified year, keyed by Pilot database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer,EliteLifetimeStatus> getLifetimeStatus(Collection<?> IDs, String dbName) throws DAOException {
+		
+		// Load from the cache
+		Collection<EliteLifetimeStatus> results = new ArrayList<EliteLifetimeStatus>();
+		Collection<Integer> dbKeys = toID(IDs);
+		Map<Object, EliteLifetimeStatus> ce = _lstCache.getAll(dbKeys);
+		results.addAll(ce.values());
+		ce.values().stream().map(es -> Integer.valueOf(es.getID())).forEach(dbKeys::remove);
+		
+		if (dbKeys.size() > 0) {
+			String db = formatDBName(dbName);
+			StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, DATABASE() FROM ");
+			sqlBuf.append(db);
+			sqlBuf.append(".ELITE_LIFETIME EL, ");
+			sqlBuf.append(db);
+			sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID IN (");
+			sqlBuf.append(StringUtils.listConcat(dbKeys, ","));
+			sqlBuf.append(") ORDER BY ELS.CREATED DESC GROUP BY ELS.ID");
+
+			Collection<EliteLifetimeStatus> dbResults = new ArrayList<EliteLifetimeStatus>();
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				dbResults.addAll(executeLTStatus(ps));
+			} catch (SQLException se) {
+				throw new DAOException(se);
+			}
+		}
+		
+		populateLevels(results);
+		_lstCache.addAll(results);
+		return CollectionUtils.createMap(results, EliteLifetimeStatus::getID);
+	}
 
 	/**
-	 * 
+	 * Retrieves Elite program status for a number of Pilots.
 	 * @param IDs a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean} beans
 	 * @param year the plan year
 	 * @param db the database name
@@ -113,17 +170,15 @@ public class GetElite extends EliteDAO {
 		ce.values().stream().map(es -> Integer.valueOf(es.getID())).forEach(dbKeys::remove);
 
 		if (dbKeys.size() > 0) {
-			String dbName = formatDBName(db);
-			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, CREATED, UPD_REASON FROM ");
-			sqlBuf.append(dbName);
+			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), CREATED, UPD_REASON FROM ");
+			sqlBuf.append(formatDBName(db));
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
 			sqlBuf.append(StringUtils.listConcat(dbKeys, ","));
 			sqlBuf.append(")) ORDER BY PILOT_ID, CREATED DESC");
 	
 			Collection<EliteStatus> dbResults = new ArrayList<EliteStatus>();
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-				ps.setString(1, dbName);
-				ps.setInt(2, year);
+				ps.setInt(1, year);
 				dbResults.addAll(executeStatus(ps));
 			} catch (SQLException se) {
 				throw new DAOException(se);
@@ -141,6 +196,33 @@ public class GetElite extends EliteDAO {
 		populateLevels(results);
 		_stCache.addAll(results);
 		return CollectionUtils.createMap(results, EliteStatus::getID);
+	}
+
+	/**
+	 * Returns the most recent lifetime Elite status for a particular Pilot.
+	 * @param pilotID the Pilot database ID
+	 * @param dbName the database name
+	 * @return an EliteLifetime bean, or null if no status
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public EliteLifetimeStatus getLifetimeStatus(int pilotID, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, DATABASE() FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ELITE_LIFETIME EL, ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED DESC LIMIT 1");
+		
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			List<EliteLifetimeStatus> results = executeLTStatus(ps);
+			populateLevels(results);
+			return results.isEmpty() ? null : results.getFirst();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -207,6 +289,27 @@ public class GetElite extends EliteDAO {
 	}
 	
 	/**
+	 * Loads all Pilots who have obtained a particular lifetime Elite status.
+	 * @param el the EliteLifetime
+	 * @return a Collection of Pilot database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getPilots(EliteLifetime el) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT PILOT_ID FROM ELITE_LT_STATUS WHERE (ABBR=?)")) {
+			ps.setString(1, el.getCode());
+			Collection<Integer> results = new HashSet<Integer>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Counts the number of Pilots who have achieved a given Elite status level.
 	 * @param lvl the EliteLevel
 	 * @return the number of Pilots
@@ -216,6 +319,23 @@ public class GetElite extends EliteDAO {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(PILOT_ID) FROM ELITE_STATUS WHERE (NAME=?) AND (YR=?)")) {
 			ps.setString(1, lvl.getName());
 			ps.setInt(2, lvl.getYear());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Counts the number of Pilots who have achieved a given lifetime Elite status level.
+	 * @param el the EliteLifetime
+	 * @return the number of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getPilotCount(EliteLifetime el) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM ELITE_LT_STATUS WHERE (NAME=?)")) {
+			ps.setString(1, el.getName());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}
@@ -236,6 +356,29 @@ public class GetElite extends EliteDAO {
 				st.setEffectiveOn(toInstant(rs.getTimestamp(5)).plusSeconds(3600 * 12));
 				st.setUpgradeReason(UpgradeReason.values()[rs.getInt(6)]);
 				results.add(st);
+			}
+		}
+		
+		return results;
+	}
+	
+	/*
+	 * Helper method to parse lifetime elite status result sets, this has the raw data not the populated EliteLevel bean.
+	 */
+	private static List<EliteLifetimeStatus> executeLTStatus(PreparedStatement ps) throws SQLException {
+		List<EliteLifetimeStatus> results = new ArrayList<EliteLifetimeStatus>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				EliteLifetime elt = new EliteLifetime(rs.getString(1));
+				elt.setCode(rs.getString(2));
+				elt.setDistance(rs.getInt(3));
+				elt.setLegs(rs.getInt(4));
+				EliteLevel el = new EliteLevel(rs.getInt(6), rs.getString(5), rs.getString(10));
+				elt.setLevel(el);				
+				EliteLifetimeStatus els = new EliteLifetimeStatus(rs.getInt(7), elt);
+				els.setEffectiveOn(toInstant(rs.getTimestamp(8)));
+				els.setUpgradeReason(UpgradeReason.values()[rs.getInt(9)]);
+				results.add(els);
 			}
 		}
 		

@@ -50,6 +50,7 @@
  <content:subitem><el:cmd url="eliteinfo">My ${elitePoints}</el:cmd></content:subitem>
  <content:subitem><el:cmd url="elitestats">${elitePoints} Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="elitelevels">${elitePoints} Levels</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="eliteltlevels">${elitePoints} Lifetime</el:cmd></content:subitem>
  <content:subitem><el:cmd url="elitelevelset">Upcoming Requirements</el:cmd></content:subitem>
  <content:subitem><el:cmd url="eliterollover">Mileage Rollover</el:cmd></content:subitem>
 </content:submenu>
