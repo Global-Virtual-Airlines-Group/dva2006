@@ -5,8 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Compression;
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
