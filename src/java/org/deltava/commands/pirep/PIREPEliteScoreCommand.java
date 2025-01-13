@@ -70,9 +70,11 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			EliteStatus st = yearStatus.getLast();
 			List<EliteLifetimeStatus> lts = eldao.getAllLifetimeStatus(p.getID(), ctx.getDB());
 			lts.removeIf(els -> els.getEffectiveOn().isAfter(fr.getSubmittedOn()));
-			EliteLifetimeStatus els = lts.isEmpty() ? null : lts.getFirst();
-			if ((els != null) && els.exceeds(st))
-				st = els.toStatus();
+			if (!lts.isEmpty()) {
+				EliteLifetimeStatus els = lts.getFirst();
+				if (st.overridenBy(els))
+					st = els.toStatus();
+			}
 			
 			// Get the scorer and previous flight reports 
 			EliteScorer es = EliteScorer.getInstance();

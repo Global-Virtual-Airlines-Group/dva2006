@@ -25,11 +25,11 @@ public interface EliteLevelBean extends RGBColor {
 	public void setLevel(EliteLevel lvl);
 	
 	/**
-	 * Determines whether this bean's Elite status level exceeds that of another EliteLeveBean.
+	 * Determines whether this bean's Elite status level is exceeded by another EliteLeveBean.
 	 * @param el the EliteLevelBean
-	 * @return if the status level is greater than that of the other bean
+	 * @return if the status level is less than that of the other bean
 	 */
-	default boolean exceeds(EliteLevelBean el) {
-		return (el != null) && (getLevel().compareTo(el.getLevel()) > 0);
+	default boolean overridenBy(EliteLevelBean el) {
+		return (el != null) && (getLevel().compareTo(el.getLevel()) < 0);
 	}
 }
