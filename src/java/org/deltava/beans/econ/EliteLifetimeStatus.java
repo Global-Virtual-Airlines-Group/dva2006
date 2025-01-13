@@ -19,6 +19,21 @@ public class EliteLifetimeStatus extends DatabaseBean implements EliteLevelBean 
 	private Instant _created;
 
 	/**
+	 * Helper class to support lifetime Elite status.
+	 */
+	public class LifetimeStatus extends EliteStatus {
+
+		LifetimeStatus(int pilotID, EliteLifetime el) {
+			super(pilotID, el.getLevel());
+		}
+
+		@Override
+		public boolean getIsLifetime() {
+			return true;
+		}
+	}
+
+	/**
 	 * Creates the bean.
 	 * @param pilotID the Pilot's database ID
 	 * @param el the EliteLifetime status achieved
@@ -42,7 +57,7 @@ public class EliteLifetimeStatus extends DatabaseBean implements EliteLevelBean 
 	 * @return an EliteStatus bean
 	 */
 	public EliteStatus toStatus() {
-		EliteStatus es = new EliteStatus(getID(), _el.getLevel());
+		EliteStatus es = new LifetimeStatus(getID(), _el);
 		es.setEffectiveOn(_created);
 		es.setUpgradeReason(_ur);
 		return es;

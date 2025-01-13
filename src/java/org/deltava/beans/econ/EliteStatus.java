@@ -55,6 +55,15 @@ public class EliteStatus extends DatabaseBean implements EliteLevelBean {
 	}
 	
 	/**
+	 * Returns whether this is a lifetime status.
+	 * @return TRUE if a lifetime status, otherwise FALSE
+	 */
+	@SuppressWarnings("static-method")
+	public boolean getIsLifetime() {
+		return false;
+	}
+	
+	/**
 	 * Returns the effective date of this status.
 	 * @param dt the effective date
 	 */
