@@ -181,10 +181,12 @@ return true;
  <td class="label">Pilot Code / Rank</td>
  <td class="data">${pilot.pilotCode} (${pilot.rank.name})</td>
 </tr>
+<c:if test="${!empty pirep}">
 <tr>
  <td class="label">Status</td>
  <td class="data bld sec"><fmt:edesc object="${pirep.status}" /><c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
+</c:if>
 <c:choose>
 <c:when test="${!isAssign}">
 <tr>
