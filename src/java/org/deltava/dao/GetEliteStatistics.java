@@ -8,7 +8,9 @@ import java.util.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.FlightStatus;
 
+import org.deltava.util.MutableInteger;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Elite program-related statistics.
@@ -230,6 +232,44 @@ public class GetEliteStatistics extends EliteDAO {
 			}
 			
 			return yt;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads the number of pilots with Elite status for a given year.
+	 * @param year the program year
+	 * @return a sorted Map of Pilot counts, keyed by EliteLevel
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public SortedMap<EliteLevel, Integer> getEliteCounts(int year) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, (SELECT NAME FROM ELITE_STATUS ES2 WHERE (ES2.PILOT_ID=ES.PILOT_ID) AND (ES2.YR=ES.YR) ORDER BY ES2.CREATED DESC LIMIT 1) AS LVL FROM ELITE_STATUS ES "
+			+ "WHERE (ES.YR=?) GROUP BY ES.PILOT_ID")) {
+			ps.setInt(1, year);
+			
+			Map<String, MutableInteger> rawResults = new TreeMap<String, MutableInteger>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					String levelName = rs.getString(2);
+					MutableInteger cnt = rawResults.get(levelName);
+					if (cnt == null) {
+						cnt = new MutableInteger(0);
+						rawResults.put(levelName, cnt);
+					}
+					
+					cnt.inc();
+				}
+			}
+
+			String db = SystemData.get("airline.db");
+			SortedMap<EliteLevel, Integer> results = new TreeMap<EliteLevel, Integer>();
+			for (Map.Entry<String, MutableInteger> me : rawResults.entrySet()) {
+				EliteLevel lvl = get(me.getKey(), year, db);
+				results.put(lvl, me.getValue().getValue());
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
