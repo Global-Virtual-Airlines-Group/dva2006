@@ -88,7 +88,7 @@ public class GetElite extends EliteDAO {
 		
 		if (dbKeys.size() > 0) {
 			String db = formatDBName(dbName);
-			StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, DATABASE() FROM ");
+			StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, ? FROM ");
 			sqlBuf.append(db);
 			sqlBuf.append(".ELITE_LIFETIME EL, ");
 			sqlBuf.append(db);
@@ -98,6 +98,7 @@ public class GetElite extends EliteDAO {
 
 			Collection<EliteLifetimeStatus> dbResults = new ArrayList<EliteLifetimeStatus>();
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, db); // This needs to be injected when running with acars as the default db
 				dbResults.addAll(executeLTStatus(ps));
 			} catch (SQLException se) {
 				throw new DAOException(se);
@@ -113,11 +114,11 @@ public class GetElite extends EliteDAO {
 	 * Retrieves Elite program status for a number of Pilots.
 	 * @param IDs a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean} beans
 	 * @param year the plan year
-	 * @param db the database name
+	 * @param dbName the database name
 	 * @return a Map of EliteStatus beans for the specified year, keyed by Pilot database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String db) throws DAOException {
+	public Map<Integer,EliteStatus> getStatus(Collection<?> IDs, int year, String dbName) throws DAOException {
 		
 		// Load from the cache
 		Collection<EliteStatus> results = new ArrayList<EliteStatus>();
@@ -128,15 +129,17 @@ public class GetElite extends EliteDAO {
 		ce.values().stream().map(es -> Integer.valueOf(es.getID())).forEach(dbKeys::remove);
 
 		if (dbKeys.size() > 0) {
-			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, DATABASE(), CREATED, UPD_REASON FROM ");
-			sqlBuf.append(formatDBName(db));
+			String db = formatDBName(dbName);
+			StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, NAME, YR, ?, CREATED, UPD_REASON FROM ");
+			sqlBuf.append(db);
 			sqlBuf.append(".ELITE_STATUS WHERE (YR=?) AND (PILOT_ID IN (");
 			sqlBuf.append(StringUtils.listConcat(dbKeys, ","));
 			sqlBuf.append(")) ORDER BY PILOT_ID, CREATED DESC");
 	
 			Collection<EliteStatus> dbResults = new ArrayList<EliteStatus>();
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-				ps.setInt(1, year);
+				ps.setString(1, db); // This needs to be injected when running with acars as the default db
+				ps.setInt(2, year);
 				dbResults.addAll(executeStatus(ps));
 			} catch (SQLException se) {
 				throw new DAOException(se);
@@ -191,14 +194,15 @@ public class GetElite extends EliteDAO {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, DATABASE() FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ELS.ID, ELS.CREATED, ELS.UPD_REASON, ? FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LIFETIME EL, ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, pilotID);
+			ps.setString(1, db); // This needs to be injected when running with acars as the default db
+			ps.setInt(2, pilotID);
 			List<EliteLifetimeStatus> results = executeLTStatus(ps);
 			populateLevels(results);
 			return results;

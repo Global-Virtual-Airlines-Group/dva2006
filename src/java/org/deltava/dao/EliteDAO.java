@@ -57,13 +57,14 @@ abstract class EliteDAO extends DAO {
 			return lvl;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, DATABASE() FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ? FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LEVELS EL WHERE (NAME=?) AND (YR=?) LIMIT 1");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, name);
-			ps.setInt(2, year);
+			ps.setString(1, db); // we cannot use database() when running as the ACARS server
+			ps.setString(2, name);
+			ps.setInt(3, year);
 			return executeLevel(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -80,12 +81,14 @@ abstract class EliteDAO extends DAO {
 	public EliteLifetime getLifetime(String code, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, DATABASE() FROM ");
-		sqlBuf.append(formatDBName(dbName));
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT EL.*, ? FROM ");
+		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LIFETIME EL WHERE (EL.ABBR=?)");
 		
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setString(1, code);
+			ps.setString(1, db);
+			ps.setString(2, code);
 			List<EliteLifetime> results = executeLifetime(ps);
 			populateLevels(results);
 			return results.isEmpty() ? null : results.getFirst();
