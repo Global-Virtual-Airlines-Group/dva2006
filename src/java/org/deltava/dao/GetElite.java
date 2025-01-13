@@ -10,7 +10,6 @@ import org.deltava.beans.econ.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Elite status levels. 
@@ -69,44 +68,6 @@ public class GetElite extends EliteDAO {
 			List<EliteLifetime> results = executeLifetime(ps);
 			populateLevels(results);
 			return new TreeSet<EliteLifetime>(results);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Loads the number of pilots with Elite status for a given year.
-	 * @param year the program year
-	 * @return a sorted Map of Pilot counts, keyed by EliteLevel
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public SortedMap<EliteLevel, Integer> getEliteCounts(int year) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, (SELECT NAME FROM ELITE_STATUS ES2 WHERE (ES2.PILOT_ID=ES.PILOT_ID) AND (ES2.YR=ES.YR) ORDER BY ES2.CREATED DESC LIMIT 1) AS LVL FROM ELITE_STATUS ES "
-			+ "WHERE (ES.YR=?) GROUP BY ES.PILOT_ID")) {
-			ps.setInt(1, year);
-			
-			Map<String, MutableInteger> rawResults = new TreeMap<String, MutableInteger>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					String levelName = rs.getString(2);
-					MutableInteger cnt = rawResults.get(levelName);
-					if (cnt == null) {
-						cnt = new MutableInteger(0);
-						rawResults.put(levelName, cnt);
-					}
-					
-					cnt.inc();
-				}
-			}
-
-			String db = SystemData.get("airline.db");
-			SortedMap<EliteLevel, Integer> results = new TreeMap<EliteLevel, Integer>();
-			for (Map.Entry<String, MutableInteger> me : rawResults.entrySet()) {
-				EliteLevel lvl = get(me.getKey(), year, db);
-				results.put(lvl, me.getValue().getValue());
-			}
-			
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -197,7 +158,7 @@ public class GetElite extends EliteDAO {
 		_stCache.addAll(results);
 		return CollectionUtils.createMap(results, EliteStatus::getID);
 	}
-
+	
 	/**
 	 * Returns the most recent lifetime Elite status for a particular Pilot.
 	 * @param pilotID the Pilot database ID
@@ -206,6 +167,18 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EliteLifetimeStatus getLifetimeStatus(int pilotID, String dbName) throws DAOException {
+		List<EliteLifetimeStatus> results = getAllLifetimeStatus(pilotID, dbName);
+		return results.isEmpty() ? null : results.getFirst();
+	}
+
+	/**
+	 * Returns all lifetime Elite status for a particular Pilot.
+	 * @param pilotID the Pilot database ID
+	 * @param dbName the database name
+	 * @return a List of EliteLifetime beans, sorted by recency
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<EliteLifetimeStatus> getAllLifetimeStatus(int pilotID, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
@@ -213,13 +186,13 @@ public class GetElite extends EliteDAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LIFETIME EL, ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED DESC LIMIT 1");
+		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED DESC");
 		
-		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
 			List<EliteLifetimeStatus> results = executeLTStatus(ps);
 			populateLevels(results);
-			return results.isEmpty() ? null : results.getFirst();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
