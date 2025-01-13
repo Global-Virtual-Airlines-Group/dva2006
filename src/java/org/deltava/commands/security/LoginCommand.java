@@ -14,13 +14,15 @@ import javax.servlet.http.*;
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.econ.EliteScorer;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 import org.deltava.beans.system.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.security.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -199,7 +201,14 @@ public class LoginCommand extends AbstractCommand {
 			// Load Elite status
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
-				p.setEliteStatus(eldao.getStatus(p.getID(), EliteScorer.getStatusYear(Instant.now())));
+				EliteStatus es = eldao.getStatus(p.getID(), EliteScorer.getStatusYear(Instant.now()));
+				if (es != null) {
+					EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
+					if (es.overridenBy(els))
+						es = els.toStatus();
+				
+					p.setEliteStatus(es);
+				}
 			}
 
 			// Load online/ACARS totals
