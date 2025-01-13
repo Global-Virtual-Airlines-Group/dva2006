@@ -9,7 +9,6 @@ import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.econ.*;
 
 import org.deltava.util.*;
-import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load Elite status levels. 
@@ -19,8 +18,6 @@ import org.deltava.util.cache.*;
  */
 
 public class GetElite extends EliteDAO {
-	
-	private static final Cache<EliteLifetimeStatus> _lstCache = CacheManager.get(EliteLifetimeStatus.class, "EliteLTStatus");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -167,8 +164,20 @@ public class GetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EliteLifetimeStatus getLifetimeStatus(int pilotID, String dbName) throws DAOException {
+		
+		// Check the cache
+		EliteLifetimeStatus els = _lstCache.get(Integer.valueOf(pilotID));
+		if (els != null)
+			return els;
+		
+		// Load them all
 		List<EliteLifetimeStatus> results = getAllLifetimeStatus(pilotID, dbName);
-		return results.isEmpty() ? null : results.getFirst();
+		if (results.isEmpty()) return null;
+		
+		// Add to the cache and return
+		els = results.getLast();
+		_lstCache.add(els);
+		return els;
 	}
 
 	/**
@@ -186,7 +195,7 @@ public class GetElite extends EliteDAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ELITE_LIFETIME EL, ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED DESC");
+		sqlBuf.append(".ELITE_LT_STATUS ELS WHERE (ELS.ABBR=EL.ABBR) AND (ELS.ID=?) ORDER BY ELS.CREATED");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
@@ -336,7 +345,7 @@ public class GetElite extends EliteDAO {
 	}
 	
 	/*
-	 * Helper method to parse lifetime elite status result sets, this has the raw data not the populated EliteLevel bean.
+	 * Helper method to parse lifetime Elite status result sets, this has the raw data not the populated EliteLevel bean.
 	 */
 	private static List<EliteLifetimeStatus> executeLTStatus(PreparedStatement ps) throws SQLException {
 		List<EliteLifetimeStatus> results = new ArrayList<EliteLifetimeStatus>();
