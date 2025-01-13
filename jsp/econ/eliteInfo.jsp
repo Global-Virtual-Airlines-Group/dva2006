@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="24kb" autoFlush="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -72,7 +72,7 @@ span.rmbar {
 <tr>
  <td class="label eliteStatus top">Current Status</td>
  <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)
- <c:if test="${isLTHigher}"> - Based on lifetime <span class="bld">${currentLTStatus.lifetimeStatus.name}</span> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br />
+ <c:if test="${currentStatus.isLifetime}"> - Based on lifetime <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br />
  <hr />
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
  <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
@@ -85,7 +85,7 @@ span.rmbar {
 <tr>
  <td class="label eliteStatus">${eliteTDName} Progress</td>
  <td class="data"><fmt:int value="${totalMileage.legs}" className="pri bld" /> Legs, <fmt:int value="${totalMileage.distance}" className="sec bld" />&nbsp;${eliteDistance}
-<c:if test="${!empty currentLTStatus && !isLTHigher}"> - <span class="bld" style="color:#${currentLTStatus.hexColor}">${currentLTStatus.lifetimeStatus.name}</span> obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if></td>
+<c:if test="${!empty currentLTStatus && !currentStatus.isLifetime}"> - <span class="bld" style="color:#${currentLTStatus.hexColor}">${currentLTStatus.lifetimeStatus.name}</span> obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if></td>
 </tr>
 </c:if>
 <c:if test="${isRollover && (!empty ny)}">
@@ -105,10 +105,12 @@ span.rmbar {
 <tr>
  <td class="label eliteStatus top">${currentYear + 1} Status</td>
 <c:if test="${isRollover}">
- <td class="data">The ${currentYear}&nbsp;${eliteName} status year has completed and no additional incomplete flights will be credited towards your ${currentYear + 1} status. Your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.</td></c:if>
+ <td class="data">The ${currentYear}&nbsp;${eliteName} status year has completed and no additional incomplete flights will be credited towards your ${currentYear + 1} status. Your ${eliteName} status will be <fmt:elite level="${nextYearStatus.level}" className="bld" nameOnly="true" />
+<c:if test="${nextYearStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span></c:if>.</td></c:if>
 <c:if test="${!isRollover}">
- <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearLevel}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate <fmt:int value="${projectedTotal.legs}" /> 
- flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedLevel}" className="bld" nameOnly="true" /> status.</c:if>
+ <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearStatus.level}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate 
+ <fmt:int value="${projectedTotal.legs}" /> flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedStatus.level}" className="bld" nameOnly="true" /> status
+<c:if test="${projectedStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span>)</c:if><.</c:if>
  <c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
  <br /><br />
 <span class="pri bld">REQUALIFICATION ALERT</span> - You are approaching the requirements for <fmt:elite level="${nextLevel}" className="bld" nameOnly="true" /> status in ${currentYear + 1}. Just a few more flights could qualify you for a higher
