@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.security.Principal;
@@ -7,12 +7,12 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.econ.EliteStatus;
+import org.deltava.beans.econ.*;
 
 /**
  * A JSP tag to render the logged in User's name in the menu.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 11.1
  */
 
@@ -33,7 +33,10 @@ public class UserNameTag extends MenuItemTag {
 			EliteStatus es = p.getEliteStatus();
 			if (es != null) {
 				setColor(es.getColor());
-				setLabel(es.getLevel().getName());
+				if (es instanceof LifetimeStatus ls)
+					setLabel(String.format("%s (%s)", ls.getLifetimeName(), ls.getLevel().getName()));
+				else
+					setLabel(es.getLevel().getName());
 			}
 		}
 		
