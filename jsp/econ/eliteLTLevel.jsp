@@ -18,7 +18,7 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:3, t:'Level Name'});
-	golgotha.form.validate({f:f.code, l:3, t:'Level Abbreviation'});
+	golgotha.form.validate({f:f.code, l:2, t:'Level Abbreviation'});
 	golgotha.form.validate({f:f.legs, min:0, t:'Minimum Legs'});
 	golgotha.form.validate({f:f.distance, min:0, t:'Minimum Distance'});
 	golgotha.form.validate({f:f.level, t:'${eliteName} Status Level'});
@@ -35,10 +35,10 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eliteltlevel.do" method="post" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="eliteltlevel.do" linkID="${lvl.code}" method="post" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline /> </span>${eliteName} LIFETIME STATUS<c:if test="${!empty lvl}"> - ${lvl.name} (${lvl.year})</c:if></td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>${eliteName} LIFETIME STATUS<c:if test="${!empty lvl}"> - ${lvl.name}</c:if></td>
 </tr>
 <tr>
  <td class="label">Name</td>
@@ -50,7 +50,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">${eliteName} Level</td>
- <td class="data"><el:combo name="level" required="true" idx="*" firstEntry="[ SELECT LEVEL ]" options="${statusLevels}" /></td> 
+ <td class="data"><el:combo name="level" required="true" idx="*" firstEntry="[ SELECT LEVEL ]" options="${statusLevels}" value="${lvl.level}" /></td> 
 </tr>
 <tr class="title caps">
  <td colspan="2">ELIGIBILITY REQUIREMENTS</td>
@@ -73,7 +73,8 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" label="SAVE ${eliteName} LIFETIME PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE ${eliteName} LIFETIME PROFILE" />
+<c:if test="${!empty lvl}">&nbsp;<el:cmdbutton url="eliteltdelete" linkID="${lvl.code}" label="DELETE LIFETIME PROFILE"/></c:if></td>
 </tr>
 </el:table>
 </el:form>
