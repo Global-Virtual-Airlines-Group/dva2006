@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to automatically calulate Elite levels for an upcoming year.
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 9.2
  */
 
@@ -66,6 +66,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 			// Get current year's levels
 			GetElite edao = new GetElite(con);
 			Collection<EliteLevel> cyLevels = edao.getLevels(statusYear);
+			Collection<EliteLifetime> ltLevels = edao.getLifetimeLevels();
 			
 			// Get the PIREP statistics for the year
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
@@ -93,11 +94,27 @@ public class EliteLevelSetCommand extends AbstractCommand {
 				newLevels.put(lvl.getName(), lvl);
 			}
 			
+			// Convert lifetime status levels
+			Collection<EliteLifetime> nlLevels = new ArrayList<EliteLifetime>();
+			for (EliteLifetime oldLevel : ltLevels) {
+				EliteLifetime nl = new EliteLifetime(oldLevel.getName());
+				nl.setCode(oldLevel.getCode());
+				nl.setDistance(oldLevel.getDistance());
+				nl.setLegs(oldLevel.getLegs());
+				Optional<EliteLevel> nel = newLevels.values().stream().filter(lvl -> lvl.matches(oldLevel.getLevel())).findAny();
+				if (nel.isPresent()) {
+					nl.setLevel(nel.get());
+					nlLevels.add(nl);
+				}
+			}
+			
 			// Write levels if needed
 			if (isCommit) {
 				ctx.startTX();
 				SetElite ewdao = new SetElite(con);	
 				for (EliteLevel nl : newLevels.values())
+					ewdao.write(nl);
+				for (EliteLifetime nl : nlLevels)
 					ewdao.write(nl);
 				
 				ctx.commitTX();
