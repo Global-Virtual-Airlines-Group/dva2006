@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Pilots at a particular Elite status level. 
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 11.0
  */
 
@@ -43,7 +43,9 @@ public class ElitePilotsCommand extends AbstractCommand {
 			// Load the levels
 			GetElite eldao = new GetElite(con);
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year);
+			Map<EliteLevel, EliteLifetime> ltLevels = CollectionUtils.createMap(eldao.getLifetimeLevels(), EliteLifetime::getLevel);
 			lvls.removeIf(el -> (el.getLegs() == 0));
+			ltLevels.keySet().removeIf(el -> (el.getLegs() == 0));
 			
 			// Load Pilot totals for current year and rollover
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
@@ -63,12 +65,21 @@ public class ElitePilotsCommand extends AbstractCommand {
 			
 			// Load the pilots and totals
 			GetPilot pdao = new GetPilot(con);
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>(); Collection<Integer> lifetimeIDs = new HashSet<Integer>();
 			Map<EliteLevel, Collection<YearlyTotal>> lvlTotals = new TreeMap<EliteLevel, Collection<YearlyTotal>>(Comparator.reverseOrder());
 			for (EliteLevel lvl : lvls.descendingSet()) {
-				Collection<Integer> IDs = eldao.getPilots(lvl); IDs.removeAll(pilots.keySet());
+				Collection<Integer> IDs = new HashSet<Integer>(eldao.getPilots(lvl));
+				
+				// Load lifetime status
+				EliteLifetime lel = ltLevels.get(lvl);
+				if (lel != null) {
+					Collection<Integer> eltIDs = eldao.getPilots(lel);
+					IDs.addAll(eltIDs);
+					lifetimeIDs.addAll(eltIDs);
+				}
 				
 				// Get the Pilots - remove inactive if previous year
+				IDs.removeAll(pilots.keySet());
 				Map<Integer, Pilot> lvPilots = pdao.getByID(IDs, "PILOTS");
 				if (year == currentYear) {
 					Collection<Integer> inactiveIDs = lvPilots.values().stream().filter(p -> !p.getStatus().isActive()).map(Pilot::getID).collect(Collectors.toSet());
@@ -92,6 +103,8 @@ public class ElitePilotsCommand extends AbstractCommand {
 			ctx.setAttribute("pilots", pilots, REQUEST);
 			ctx.setAttribute("totals", lvlTotals, REQUEST);
 			ctx.setAttribute("year", Integer.valueOf(year), REQUEST);
+			ctx.setAttribute("ltIDs", lifetimeIDs, REQUEST);
+			ctx.setAttribute("ltLevels", ltLevels, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

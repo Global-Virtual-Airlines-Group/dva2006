@@ -59,6 +59,7 @@ td.requal-${lvl.name} {
 <c:forEach var="lvl" items="${totals.keySet()}">
 <c:set var="nl" value="${nyLevels[lvl.name]}" scope="page" />
 <c:set var="lvlTotals" value="${totals[lvl]}" scope="page" />
+<c:set var="ltLevel" value="${ltLevels[lvl]}" scope="page" />
 <c:set var="idx" value="0" scope="page" />
 <!-- ${lvl.name} -->
 <tr class="title caps" style="background-color:#${lvl.hexColor};">
@@ -78,6 +79,7 @@ td.requal-${lvl.name} {
 <c:set var="idx" value="${idx + 1}" scope="page" />
 <c:set var="pilot" value="${pilots[yt.ID]}" scope="page" />
 <c:set var="yd" value="${yt.delta(nl)}"  scope="page" />
+<c:set var="isLT" value="${ltIDs.contains(yt.ID)}" scope="page" />
 <tr class="mid elite-${lvl.name}">
 <c:if test="${isHROperations}">
  <td><el:cmd url="eliteinfo" link="${pilot}" className="sec bld plain">${idx}</el:cmd></td>
@@ -85,7 +87,7 @@ td.requal-${lvl.name} {
 <c:if test="${!isHROperations}">
  <td class="sec bld"><fmt:int value="${idx}" /></td>
 </c:if>
- <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
+ <td <c:if test="${isLT}"> class="requal-${lvl.name}" title="Qualifies for ${nl.name} status based on ${ltLevel.name} lifetime status"</c:if>><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="bld">${pilot.pilotCode}</td>
  <td class="sec bld">${pilot.rank.name}</td>
  <td class="pri bld">${pilot.equipmentType}</td>
