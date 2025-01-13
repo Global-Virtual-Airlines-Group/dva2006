@@ -1,14 +1,16 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
+
+import org.deltava.beans.RGBColor;
 
 /**
  * An interface to mark beans that contain an Elite level.
  * @author Luke
- * @version 9.2
+ * @version 11.5
  * @since 9.2
  */
 
-public interface EliteLevelBean {
+public interface EliteLevelBean extends RGBColor {
 
 	/**
 	 * Returns the Elite status level.
@@ -21,4 +23,13 @@ public interface EliteLevelBean {
 	 * @param lvl the EliteLevel
 	 */
 	public void setLevel(EliteLevel lvl);
+	
+	/**
+	 * Determines whether this bean's Elite status level exceeds that of another EliteLeveBean.
+	 * @param el the EliteLevelBean
+	 * @return if the status level is greater than that of the other bean
+	 */
+	default boolean exceeds(EliteLevelBean el) {
+		return (el != null) && (getLevel().compareTo(el.getLevel()) > 0);
+	}
 }
