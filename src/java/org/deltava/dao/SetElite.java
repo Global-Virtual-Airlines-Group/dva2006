@@ -76,7 +76,8 @@ public class SetElite extends EliteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(EliteLifetime el) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO ELITE_LIFETIME (NAME, ABBR, DISTANCE, LEGS, LEVELNAME, YR) VALUES (?,?,?,?,?,?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO ELITE_LIFETIME (NAME, ABBR, DISTANCE, LEGS, LEVELNAME, YR) VALUES (?,?,?,?,?,?) AS N ON DUPLICATE KEY UPDATE NAME=N.NAME, ABBR=N.ABBR, "
+			+ "DISTANCE=N.DISTANCE, LEGS=N.LEGS, LEVELNAME=N.LEVELNAME, YR=N.YR")) {
 			ps.setString(1, el.getName());
 			ps.setString(2, el.getCode());
 			ps.setInt(3, el.getDistance());
@@ -143,6 +144,20 @@ public class SetElite extends EliteDAO {
 			throw new DAOException(se);
 		} finally {
 			_lvlCache.remove(new EliteLevel(year, name, SystemData.get("airline.code")).cacheKey());
+		}
+	}
+	
+	/**
+	 * Deletes a lifetime Elite level from the database.
+	 * @param code the level code
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(String code) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM ELITE_LIFETIME WHERE (ABBR=?)")) {
+			ps.setString(1, code);
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 	
