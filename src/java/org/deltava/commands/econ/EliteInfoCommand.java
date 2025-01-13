@@ -79,10 +79,8 @@ public class EliteInfoCommand extends AbstractCommand {
 				currentStatus = new EliteStatus(p.getID(), cyLevels.first());
 			
 			// Check if our lifetime status is higher
-			if (els.exceeds(currentStatus)) {
-				ctx.setAttribute("isLTHigher", Boolean.TRUE, REQUEST);
+			if (currentStatus.overridenBy(els))
 				currentStatus = els.toStatus();
-			}
 			
 			// Get status history
 			Map<Integer, EliteStatus> yearMax = new TreeMap<Integer, EliteStatus>();
@@ -120,15 +118,22 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Calculate next year's status
 			YearlyTotal yt = totals.get(Integer.valueOf(currentYear));
-			EliteLevel nyLevel = yt.matches(cyLevels);
-			ctx.setAttribute("nextYearLevel", nyLevel, REQUEST);
+			EliteStatus nyStatus = new EliteStatus(p.getID(), yt.matches(cyLevels));
+			if (nyStatus.overridenBy(els))
+				nyStatus = els.toStatus();
+				
+			ctx.setAttribute("nextYearStatus", nyStatus, REQUEST);
 			
 			// Calculate projections
 			int m = LocalDate.now().getMonthValue();
 			if (m > 3) {
 				YearlyTotal pt = yt.adjust(LocalDate.now());
+				EliteStatus pl = new EliteStatus(p.getID(), pt.matches(cyLevels));
+				if (pl.overridenBy(els))
+					pl = els.toStatus();
+				
 				ctx.setAttribute("projectedTotal", pt, REQUEST);
-				ctx.setAttribute("projectedLevel", pt.matches(cyLevels), REQUEST);
+				ctx.setAttribute("projectedStatus", pl, REQUEST);
 				
 				// Check if almost going to miss
 				if (m > 9) {

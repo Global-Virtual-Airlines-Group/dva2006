@@ -50,10 +50,6 @@ public class EliteLifetimeLevelCommand extends AbstractAuditFormCommand {
 			GetElite dao = new GetElite(con);
 			EliteLifetime oel = dao.getLifetime(ctx.getParameter("id"), ctx.getDB());
 			
-			// Check audit log
-			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oel, el);
-			AuditLog ae = AuditLog.create(el, delta, ctx.getUser().getID());
-			
 			// Get levels for lifetime status
 			String lvlName = ctx.getParameter("level");
 			TreeSet<EliteLevel> lvls = dao.getLevels(yr);
@@ -63,6 +59,10 @@ public class EliteLifetimeLevelCommand extends AbstractAuditFormCommand {
 				throw notFoundException("Unknown Elite level - " + lvlName);
 
 			el.setLevel(lvl);
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oel, el);
+			AuditLog ae = AuditLog.create(el, delta, ctx.getUser().getID());
 			
 			// Start transaction
 			ctx.startTX();

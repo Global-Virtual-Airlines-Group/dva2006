@@ -91,7 +91,7 @@ public class EliteScoringTask extends Task {
 				
 				// Check our lifetime status
 				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
-				if ((els != null) && els.exceeds(st)) {
+				if (st.overridenBy(els)) {
 					st = els.toStatus();
 					log.info("Effective Status for {} is {} due to {}", p.getName(), st.getLevel(), els.getLifetimeStatus().getName());
 				}
