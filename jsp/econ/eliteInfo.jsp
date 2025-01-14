@@ -148,11 +148,11 @@ span.rmbar {
  <td class="data"><c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
 <c:choose>
+<c:when test="${upd.isLifetime}">Achieved <fmt:ltelite className="bld" level="${upd.lifetimeStatus}" /> for lifetime <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> status (Qualified via ${upd.upgradeReason.description})</c:when>
 <c:when test="${upd.upgradeReason == 'ROLLOVER'}">Rolled over <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> achieved in ${upd.level.year - 1} for ${upd.level.year}</c:when>
 <c:when test="${upd.upgradeReason == 'DOWNGRADE'}">Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} mileage achievement</c:when>
 <c:when test="${upd.upgradeReason == 'NONE'}">Initial ${eliteName} credit</c:when>
-<c:otherwise><content:defaultMethod var="urDesc" object="${upd.upgradeReason}" method="description" />
-Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${urDesc})</c:otherwise>
+<c:otherwise>Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason.description})</c:otherwise>
 </c:choose>
 <c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach></td>
 </tr>
@@ -171,11 +171,11 @@ Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
 <c:choose>
+<c:when test="${upd.isLifetime}">Achieved <fmt:ltelite className="bld" level="${upd.lifetimeStatus}" /> for lifetime <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> status (Qualified via ${upd.upgradeReason.description})</c:when>
 <c:when test="${upd.upgradeReason == 'ROLLOVER'}">Rolled over <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> achieved in ${upd.level.year - 1} for ${upd.level.year}</c:when>
 <c:when test="${upd.upgradeReason == 'DOWNGRADE'}">Downgraded to <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> based on ${upd.level.year -1} mileage achievement</c:when>
 <c:when test="${upd.upgradeReason == 'NONE'}">Initial ${eliteName} credit</c:when>
-<c:otherwise><content:defaultMethod var="urDesc" object="${upd.upgradeReason}" method="description" />
-Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${urDesc})</c:otherwise>
+<c:otherwise>Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason.description})</c:otherwise>
 </c:choose>
 <c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
 <hr />

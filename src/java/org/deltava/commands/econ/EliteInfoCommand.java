@@ -92,6 +92,10 @@ public class EliteInfoCommand extends AbstractCommand {
 					yearMax.put(me.getKey(), maxStatus.get());
 			}
 			
+			// Load lifetime status history
+			Collection<EliteLifetimeStatus> allLT = eldao.getAllLifetimeStatus(id, ctx.getDB());
+			allLT.stream().map(EliteLifetimeStatus::toStatus).forEach(est -> CollectionUtils.addMapCollection(yearlyStatusUpdates, Integer.valueOf(EliteScorer.getStatusYear(est.getEffectiveOn())), est));
+			
 			// Get the Pilot's history
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			Map<Integer, YearlyTotal> totals = CollectionUtils.createMap(esdao.getEliteTotals(p.getID()), YearlyTotal::getYear);
