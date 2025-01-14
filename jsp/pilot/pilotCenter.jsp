@@ -733,7 +733,6 @@ pilot Certification.</td>
 </tr>
 </content:filter>
 <c:if test="${hasEliteAccess}">
-<c:set var="upcomingYear" value="${java.time.LocalDate.now().year}" scope="page" />
 <tr>
  <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd><br />
 <el:cmd className="bld" url="eliteltlevels">${eliteName} Lifetime Status levels</el:cmd></td>
@@ -741,7 +740,7 @@ pilot Certification.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="elitelevelset">Calculate Upcoming ${eliteName} levels</el:cmd></td>
- <td class="data">You can calculate the requirements for upcoming ${eliteName} levels for ${upcomingYear}.</td>
+ <td class="data">You can calculate the requirements for upcoming ${eliteName} levels for the upcoming status year.</td>
 </tr>
 </c:if>
 <tr>
