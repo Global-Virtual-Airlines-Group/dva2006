@@ -54,7 +54,7 @@
  <td><fmt:int value="${lvl.points}" />
  <td><fmt:dec value="${lvl.bonusFactor * 100.0}" />%</td>
  <td class="bld">${lvl.targetPercentile}</td>
- <td class="sec bld">${lvl.isVisible ? 'VISIBLE' : 'HIDDEN'}</td>
+ <td class="${lvl.isVisible ? 'ter' : 'sec'} bld">${lvl.isVisible ? 'VISIBLE' : 'HIDDEN'}</td>
 </tr>
 </c:forEach>
 
