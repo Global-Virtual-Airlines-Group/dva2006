@@ -83,7 +83,7 @@ golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.timeout = 7500;
-	xmlreq.open('get', 'elitestats.ws', true);
+	xmlreq.open('get', 'elitestats.ws?year=${statsYear}', true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		const js = JSON.parse(xmlreq.responseText);
