@@ -321,4 +321,21 @@ public class GetEliteStatistics extends EliteDAO {
 			throw new DAOException(se);
 		}
 	}
+
+	/**
+	 * Checks to see whether rollover has been completed for a given Elite status year.
+	 * @param statusYear the status year
+	 * @return TRUE if there are status entries for the year, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean isRolloverComplete(int statusYear) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID FROM ELITE_STATUS WHERE (YR=?) LIMIT 1")) {
+			ps.setInt(1, statusYear);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) > 0);
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
