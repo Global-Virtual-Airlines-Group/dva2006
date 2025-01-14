@@ -39,7 +39,6 @@
 	<classpathentry kind="lib" path="lib/deploy/jackson-core-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jackson-databind-2.15.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20240303.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.17.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.26.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-logging-1.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-io-2.16.1.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.10.jar" sourcepath="/IPC"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.24.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.24.3.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.17.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
