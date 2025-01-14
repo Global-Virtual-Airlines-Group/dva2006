@@ -142,7 +142,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				}
 				
 				// Display next year's level and downgrade potential after Q3
-				if (LocalDate.now().getMonthValue() > 9) {
+				if (rolloverPeriod) {
+					boolean isRolloverComplete = ctx.isUserInRole("Operations") && esdao.isRolloverComplete(currentYear + 1);
+					ctx.setAttribute("eliteRolloverComplete", Boolean.valueOf(isRolloverComplete), REQUEST);
 					TreeSet<EliteLevel> lvls = nyLevels.isEmpty() ? levels : nyLevels;
 					EliteLevel nextYearLevel = cyt.matches(lvls); EliteStatus nyStatus = new EliteStatus(p.getID(), nextYearLevel);
 					if (nyStatus.overridenBy(els))

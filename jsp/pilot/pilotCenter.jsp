@@ -210,9 +210,9 @@ Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="
 <c:if test="${eliteRollover}">
 <content:filter roles="Operations">
 <tr>
- <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year.<br />
-<br />
-Before the end of the rollover period, the requirements for the upcoming status year will need to be calculated and stored in the database, and status from the previous year must be rolled over for eligible Pilots.</td>
+ <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year.
+<c:if test="${empty nyLevels}"><br /><br />
+Before the end of the rollover period, the requirements for the upcoming status year will need to be calculated and stored in the database, and status from the previous year must be rolled over for eligible Pilots.</c:if></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="elitelevelset" className="bld">Upcoming Year Requirements</el:cmd></td>
@@ -221,7 +221,8 @@ Before the end of the rollover period, the requirements for the upcoming status 
 <c:if test="${!empty nyLevels}">
 <tr>
  <td class="mid"><el:cmd url="eliterollover" className="bld">Roll Over ${eliteName} Status</el:cmd></td>
- <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rolled over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.</td> 
+ <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rolled over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.
+ <c:if test="${eliteRolloverComplete}"><br /><br /><span class="ita"><span class="pri bld">${eliteName}</span> status rollover has been completed for the <span class="sec bld">${eliteYear + 1}</span> status year.</span></c:if></td> 
 </tr>
 </c:if>
 </content:filter>
