@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import redis.clients.jedis.*;
 /**
  * An object cache using ValKey as its backing store.
  * @author Luke
- * @version 11.3
+ * @version 11.5
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -157,8 +157,10 @@ public class JedisCache<T extends Cacheable> extends Cache<T> {
 					if (rawValue != null) {
 						@SuppressWarnings("unchecked")
 						RemoteCacheEntry<T> ce = (RemoteCacheEntry<T>) JedisUtils.read(rawValue);
-						results.put(k, ce.get());
-						hit();
+						if (ce != null) {
+							results.put(k, ce.get());
+							hit();
+						}
 					}
 				} catch (Exception e) {
 					log.warn("Error reading {} - {}", k, e.getMessage());
