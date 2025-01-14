@@ -34,4 +34,12 @@ public class LifetimeStatus extends EliteStatus {
 	public String getLifetimeName() {
 		return _lvl.getName();
 	}
+	
+	/**
+	 * Returns the lifetime Elite status level. 
+	 * @return an EliteLifetime bean
+	 */
+	public EliteLifetime getLifetimeStatus() {
+		return _lvl;
+	}
 }
