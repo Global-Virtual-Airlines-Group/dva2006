@@ -14,7 +14,7 @@ import org.deltava.beans.econ.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-import org.deltava.util.JSONUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to display Elite program statistics.
@@ -45,7 +45,7 @@ public class EliteStatsService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		final int currentYear = EliteScorer.getStatusYear(Instant.now());
+		final int year = StringUtils.parse(ctx.getParameter("year"), EliteScorer.getStatusYear(Instant.now()));
 		SortedSet<EliteLevel> allLevels = new TreeSet<EliteLevel>(new EliteLevelComparator()); SortedSet<EliteLevel> levelLegend = new TreeSet<EliteLevel>();
 		Map<EliteLevel, Integer> allCounts = new TreeMap<EliteLevel, Integer>(new EliteLevelComparator());
 		Collection<Integer> yrs = new LinkedHashSet<Integer>(); 
@@ -55,11 +55,10 @@ public class EliteStatsService extends WebService {
 			// Load current levels - assume they have been constant, but we will add if we need to
 			GetElite eldao = new GetElite(con);
 			allLevels.addAll(eldao.getLevels());
-			allLevels.stream().filter(lv -> (lv.getYear() == currentYear)).forEach(levelLegend::add);
+			allLevels.stream().filter(lv -> (lv.getYear() == year)).forEach(levelLegend::add);
 			
-			// Load all of the pilot/level/year counts
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
-			for (int yr = EliteLevel.MIN_YEAR; yr <= currentYear; yr++) {
+			for (int yr = EliteLevel.MIN_YEAR; yr <= year; yr++) {
 				yrs.add(Integer.valueOf(yr));
 				allCounts.putAll(esdao.getEliteCounts(yr));
 			}
@@ -89,7 +88,7 @@ public class EliteStatsService extends WebService {
 		// Create the JSON document and level defintiions/requirements
 		JSONObject jo = new JSONObject();
 		jo.put("years", new JSONArray(yrs));
-		jo.put("currentYear", currentYear);
+		jo.put("currentYear", year);
 		
 		// Write the legend
 		for (EliteLevel el : levelLegend) {
