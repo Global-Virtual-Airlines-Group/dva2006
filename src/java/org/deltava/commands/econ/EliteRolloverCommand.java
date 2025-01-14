@@ -12,6 +12,8 @@ import org.deltava.beans.econ.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -174,6 +176,11 @@ public class EliteRolloverCommand extends AbstractCommand {
 				else
 					ctx.rollbackTX();
 			}
+			
+			// FIXME Clear caches
+			CacheManager.invalidate("EliteLevel");
+			CacheManager.invalidate("EliteStatus");
+			CacheManager.invalidate("EliteYearlyTotal");
 			
 			// Save status attributes
 			ctx.setAttribute("isRollover", Boolean.TRUE, REQUEST);

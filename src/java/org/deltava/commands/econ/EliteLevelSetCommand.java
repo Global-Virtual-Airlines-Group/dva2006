@@ -13,6 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -119,6 +120,7 @@ public class EliteLevelSetCommand extends AbstractCommand {
 				
 				ctx.commitTX();
 				ctx.setAttribute("isPersisted", Boolean.TRUE, REQUEST);
+				CacheManager.invalidate("EliteLevel");
 			}
 			
 			// Save old and new levels
