@@ -70,6 +70,7 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("70TJE"));
 	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("YIN/K0952S0890"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("SOVAT/N0486F320"));
    }
    
    public void testParse() {

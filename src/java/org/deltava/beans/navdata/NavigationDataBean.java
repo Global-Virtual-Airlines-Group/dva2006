@@ -303,8 +303,13 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 		if (!isPrefixDirection && !Hemisphere.isDirection(code.charAt(code.length() - 1)))
 			return CodeType.CODE;
 		
-		// Check for slash
-		int spos = code.indexOf('/');
+		// Check for slash, and code prior to slash
+		int spos = code.indexOf('/'); boolean isCode = true;
+		for (int x = 0; isCode && (x < spos); x++)
+			isCode &= Character.isLetter(code.charAt(x));
+		
+		if (isCode && (spos > 2))
+			return CodeType.CODE;
 		if ((spos > 1) && Character.isLetter(code.charAt(spos - 1)))
 			return CodeType.SLASH;
 		
