@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016,, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.tile.TileAddress;
 /**
  * A servlet to display Quad-tree tiles.
  * @author Luke
- * @version 7.0
+ * @version 11.5
  * @since 5.0
  */
 
@@ -67,7 +67,7 @@ abstract class TileServlet extends GenericServlet {
 	}
 	
 	/**
-	 * Initializes the servlet.
+	 * Initializes the servlet and loads an empty tile buffer.
 	 */
 	@Override
 	public void init() {
@@ -93,8 +93,12 @@ abstract class TileServlet extends GenericServlet {
 		LinkedList<String> pathParts = url.getPath();
 		Collections.reverse(pathParts);
 		
-		long rawDate = getDate? Long.parseLong(pathParts.poll()) : 0;
-		return new TileAddress5D(pathParts.poll(), getDate ? Instant.ofEpochMilli(rawDate) : null, url.getName());
+		try {
+			long rawDate = getDate? Long.parseLong(pathParts.poll()) : 0;
+			return new TileAddress5D(pathParts.poll(), getDate ? Instant.ofEpochMilli(rawDate) : null, url.getName());
+		} catch (NumberFormatException nfe) {
+			return null;
+		}
 	}
 	
 	/**

@@ -1,8 +1,11 @@
-// Copyright 2012, 2013, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.time.Instant;
 import java.util.Collection;
+
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+
 import java.io.IOException;
 
 import javax.servlet.http.*;
@@ -18,7 +21,7 @@ import org.deltava.util.tile.PNGTile;
 /**
  * A servlet to fetch non-temporal quadtree tiles.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 5.2
  */
 
@@ -46,6 +49,10 @@ public class CustomTileServlet extends TileServlet {
 		
 		// Parse the URL and get the tile address
 		TileAddress5D addr = getTileAddress(req.getRequestURI(), false);
+		if (addr == null) {
+			rsp.sendError(SC_BAD_REQUEST);
+			return;
+		}
 		
 		// Get the data
 		byte[] data = EMPTY;
