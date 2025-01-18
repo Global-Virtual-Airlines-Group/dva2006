@@ -1,5 +1,7 @@
-// Copyright 2012, 2013, 2014, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
+
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 import java.io.*;
 import java.sql.Connection;
@@ -12,6 +14,7 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.GetImage;
 import org.deltava.util.ControllerException;
+import org.deltava.util.tile.TileAddress;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.pool.*;
@@ -19,7 +22,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 5.0
  */
 
@@ -46,7 +49,12 @@ public class TrackTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		org.deltava.util.tile.TileAddress addr = getTileAddress(req.getRequestURI(), false);
+		TileAddress addr = getTileAddress(req.getRequestURI(), false);
+		if (addr == null) {
+			rsp.sendError(SC_BAD_REQUEST);
+			return;
+		}
+		
 		byte[] data = EMPTY;
 		if (addr.getLevel() < 14) {
 		
