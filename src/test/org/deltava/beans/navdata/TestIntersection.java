@@ -64,11 +64,16 @@ protected void tearDown() throws Exception {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("N46W015"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("485823N0302231W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("5430N02000W"));
+	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
+   }
+   
+   public void testCode() {
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("17VOR"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("70TJE"));
-	   assertEquals(CodeType.SLASH, NavigationDataBean.isCoordinates("4000N/16000E"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("EX"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("N640A"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("YIN/K0952S0890"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("SOVAT/N0486F320"));
    }

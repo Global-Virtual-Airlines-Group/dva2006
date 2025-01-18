@@ -295,12 +295,15 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	 * @return TRUE if in XXYYN format or XXNYYYE format, otherwise FALSE
 	 */
 	public static CodeType isCoordinates(String code) {
-		if (StringUtils.isEmpty(code)) return CodeType.CODE;
+		if (StringUtils.isEmpty(code) || code.length() < 3) return CodeType.CODE;
 		
-		boolean isPrefixDirection = Hemisphere.isDirection(code.charAt(0));
-		if (!isPrefixDirection && !Character.isDigit(code.charAt(0)))
+		char fc = code.charAt(0); char lc = code.charAt(code.length() - 1);
+		boolean isPrefixDirection = Hemisphere.isDirection(fc);
+		if (!isPrefixDirection && !Character.isDigit(fc))
 			return CodeType.CODE;
-		if (!isPrefixDirection && !Hemisphere.isDirection(code.charAt(code.length() - 1)))
+		if (!isPrefixDirection && !Hemisphere.isDirection(lc))
+			return CodeType.CODE;
+		if (isPrefixDirection && !Character.isDigit(lc) && !Hemisphere.isDirection(lc))
 			return CodeType.CODE;
 		
 		// Check for slash, and code prior to slash
