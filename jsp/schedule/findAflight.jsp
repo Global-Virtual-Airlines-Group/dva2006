@@ -154,7 +154,8 @@ golgotha.onDOMReady(function() {
  <td class="label">Sort Flights by</td>
  <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void golgotha.ff.updateSort(this)" /> <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" autoComplete="false" /> total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" autoComplete="false" /> preferred between airports</td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" autoComplete="false" /> total, 
+ <el:text name="maxFlights" idx="*" size="2" max="2" value="${empty fafCriteria || (fafCriteria.flightsPerRoute < 0) ? '' : fafCriteria.flightsPerRoute}" autoComplete="false" /> preferred between airports</td>
 </tr>
 <tr>
  <td class="label">Frequency</td>
