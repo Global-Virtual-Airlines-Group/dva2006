@@ -1,8 +1,9 @@
-// Copyright 2012, 2013, 2016, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
-import java.io.IOException;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
+import java.io.IOException;
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
@@ -16,7 +17,7 @@ import org.deltava.util.tile.PNGTile;
 /**
  * A servlet to fetch weather quadtree tiles.
  * @author Luke
- * @version 11.3
+ * @version 11.5
  * @since 5.0
  */
 
@@ -44,6 +45,10 @@ public class WeatherTileServlet extends TileServlet {
 		
 		// Parse the URL and get the tile address
 		TileAddress5D addr = getTileAddress(req.getRequestURI(), true);
+		if (addr == null) {
+			rsp.sendError(SC_BAD_REQUEST);
+			return;
+		}
 		
 		// Get the data
 		byte[] data = EMPTY;
