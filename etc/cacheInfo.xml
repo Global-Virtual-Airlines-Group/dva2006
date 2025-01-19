@@ -15,6 +15,7 @@
 	<!-- SkyMiles caches -->
 	<cache id="EliteLevel" max="32" expires="24h" />
 	<cache id="EliteStatus" expires="24h" remote="true" />
+	<cache id="EliteLTStatus" expires="24h" remote="true" />
 	<cache id="EliteLifetimeTotal" expires="8h" remote="true" />
 	<cache id="EliteYearlyTotal" expires="8h" remote="true" />
 
