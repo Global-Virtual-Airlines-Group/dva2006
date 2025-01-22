@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.time.*;
@@ -12,7 +12,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canDelete;
 	private boolean _canOverrideDateRange;
 	private boolean _canViewDiagData;
+	private boolean _canViewScore;
 	private boolean _canViewComments;
 	private boolean _canUpdateComments;
 	private boolean _canPreApprove;
@@ -96,7 +97,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightStatus.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightStatus.OK)));
-		_canRelease = (isHeld && _ctx.isAuthenticated() && canReleaseHold);
+		_canRelease = (isHeld && canReleaseHold);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
 		_canViewDiagData = _ourPIREP || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("Developer");
 		_canViewComments = isHR || isPirep || _ourPIREP;
@@ -106,6 +107,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canUseSimBrief = isDraft && _ourPIREP && _ctx.getUser().hasID(ExternalID.NAVIGRAPH);
 		_canViewSimBrief = (_ourPIREP || isPirep) && _pirep.hasAttribute(FlightReport.ATTR_SIMBRIEF);
 		_canEliteRescore = (status == FlightStatus.OK) && _ctx.isUserInRole("Operations");
+		_canViewScore = (_ourPIREP || isPirep || isHR) && !isDraft;
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -287,6 +289,14 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanViewSimBrief() {
 		return _canViewSimBrief;
+	}
+	
+	/**
+	 * Returns if the user can view the calculated Flight Score.
+	 * @return TRUE if the Flight Score can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewScore() {
+		return _canViewScore;
 	}
 	
 	/**

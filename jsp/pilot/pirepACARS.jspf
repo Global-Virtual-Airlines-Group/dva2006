@@ -303,8 +303,7 @@
  <td class="data" colspan="${cspan}">${flightInfo.route}</td>
 </tr>
 </c:if>
-<content:attr roles="PIREP,Operations,Instructor,Examiner,HR" attr="showFlightScore" value="true" />
-<c:if test="${(!empty flightScore) && (access.ourFlight || showFlightScore)}">
+<c:if test="${(!empty flightScore) && access.canViewScore}">
 <c:set var="warnings" value="${flightScore.warnings}" scope="page" />
 <tr>
  <td class="label">Landing Score</td>

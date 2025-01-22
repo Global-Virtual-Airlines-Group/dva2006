@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.3
+ * @version 11.5
  * @since 1.0
  */
 
@@ -601,10 +601,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					
-					// Get the flight score
+					// Load position data and scoring package - we use package for online time calculations as well
 					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
-					if (hasClientOnlineTime || (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS))) {
+					if ((ac.getCanViewScore() || hasClientOnlineTime) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						ArchiveMetadata md = posdao.getArchiveInfo(info.getID());
 						if (!info.getArchived() || (md != null)) {
@@ -612,14 +612,19 @@ public class PIREPCommand extends AbstractFormCommand {
 							positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
 						
 							// Get online data if we can
-							Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
-							onlineTime = OnlineTime.calculate(entries, otMaxGap);
+							if (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) {
+								Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
+								onlineTime = OnlineTime.calculate(entries, otMaxGap);
+							}
+						}
+
+						// Calculate the score
+						if (ac.getCanViewScore()) {
+							FlightScore score = FlightScorer.score(pkg);
+							if (score != FlightScore.INCOMPLETE)
+								ctx.setAttribute("flightScore", pkg, REQUEST);	
 						}
 					}
-					
-					FlightScore score = FlightScorer.score(pkg);
-					if (score != FlightScore.INCOMPLETE)
-						ctx.setAttribute("flightScore", pkg, REQUEST);
 					
 					// Get the IP address
 					if (ctx.isUserInRole("HR")) {
