@@ -3,7 +3,6 @@ package org.deltava.commands.econ;
 
 import java.util.*;
 import java.time.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -54,7 +53,8 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Get all elite levels
 			GetElite eldao = new GetElite(con);
-			Collection<EliteLevel> lvls = eldao.getLevels().stream().filter(lvl -> lvl.getLegs() > 0).collect(Collectors.toList());
+			Collection<EliteLevel> lvls = eldao.getLevels();
+			lvls.removeIf(lvl -> lvl.getLegs() == 0);
 			Map<Integer, Collection<EliteLevel>> yearlyLevels = new HashMap<Integer, Collection<EliteLevel>>();
 			lvls.forEach(lvl -> CollectionUtils.addMapCollection(yearlyLevels, Integer.valueOf(lvl.getYear()), lvl));
 			
@@ -74,7 +74,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			
 			// Get this year's levels
 			EliteLifetimeStatus els = eldao.getLifetimeStatus(id, ctx.getDB());
-			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(yearlyLevels.get(Integer.valueOf(currentYear)));
+			SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(eldao.getLevels(currentYear)); // This loads Member
 			if (currentStatus == null)
 				currentStatus = new EliteStatus(p.getID(), cyLevels.first());
 			
