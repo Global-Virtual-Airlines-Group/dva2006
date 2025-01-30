@@ -1,4 +1,4 @@
-// Copyright 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.comparators.RunwayComparator;
 /**
  * A helper class to suggest Runway assignments.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 11.2
  */
 
@@ -30,6 +30,14 @@ public class RunwayHelper implements RoutePair{
 	
 	private METAR _wxD;
 	private METAR _wxA;
+	
+	private static class RunwayLengthComparator implements Comparator<Runway> {
+		
+		@Override
+		public int compare(Runway r1, Runway r2) {
+			return Integer.compare(r1.getLength(), r2.getLength());
+		}
+	}
 
 	/**
 	 * Creates the helper.
@@ -121,12 +129,18 @@ public class RunwayHelper implements RoutePair{
 		// Get runways based on terminal routes, and optionally filter based on minimum length
 		Collection<RunwayUse> ru = isDeparture ? _rwysD : _rwysA;
 		List<RunwayUse> rwys = ru.stream().filter(r -> filter(r, tRwys)).collect(Collectors.toList());
-		if (_opts != null)
-			rwys.removeIf(r -> r.getLength() < (isDeparture ? _opts.getTakeoffRunwayLength() : _opts.getLandingRunwayLength()));
-		
-		// If we have no runways, exit
 		if (rwys.isEmpty()) return rwys;
-
+		if ((_opts != null) && !rwys.isEmpty()) { // if all runways are too short (ex. KSNA) just use the longest one(s)
+			Airport a = isDeparture ? _aD : _aA;
+			int minACLength = isDeparture ? _opts.getTakeoffRunwayLength() : _opts.getLandingRunwayLength();
+			if (minACLength < a.getMaximumRunwayLength()) {
+				Collections.sort(rwys, new RunwayLengthComparator());
+				int maxRwyLength = rwys.getFirst().getLength();
+				rwys.removeIf(r -> r.getLength() < maxRwyLength);
+			} else
+				rwys.removeIf(r -> r.getLength() < minACLength);
+		}
+			
 		// Sort based on winds
 		METAR m = isDeparture ? _wxD : _wxA;
 		if ((m != null) && (m.getWindSpeed() > 0))
