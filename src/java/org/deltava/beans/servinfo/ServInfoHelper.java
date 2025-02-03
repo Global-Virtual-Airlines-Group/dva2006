@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 5.4
  */
 
@@ -34,14 +34,12 @@ public class ServInfoHelper {
 	}
 	
 	private static OnlineNetworkDAO getDAO(OnlineNetwork net, boolean isJSON, InputStream s) {
-		switch (net) {
-		case VATSIM:
-			return isJSON ? new GetVATSIMInfo(s) : new GetServInfo(s, net);
-		case IVAO:
-			return isJSON ? new GetIVAOInfo(s) : new GetServInfo(s, net);
-		default:
-			return new GetServInfo(s, net);
-		}
+		return switch (net) {
+			case VATSIM -> isJSON ? new GetVATSIMInfo(s) : new GetServInfo(s, net);
+			case IVAO -> isJSON ? new GetIVAOInfo(s) : new GetServInfo(s, net);
+			case POSCON -> new GetPOSCONInfo(s);
+			default -> new GetServInfo(s, net);
+		};
 	}
 
 	/**
@@ -69,15 +67,24 @@ public class ServInfoHelper {
 			}
 		}
 		
-		try (InputStream fi = new BufferedInputStream(new FileInputStream(SystemData.get("online." + net.toString().toLowerCase() + ".local.info")), 131072)) {
+		// Check for the file on the local filesystem
+		File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
+		if (!f.exists()) {
+			log.warn("Cannot find {}", f.getAbsolutePath());
+			return null;
+		}
+		
+		// Load from filesystem
+		try (InputStream fi = new BufferedInputStream(new FileInputStream(f), 131072)) {
 			OnlineNetworkDAO dao = getDAO(net, isJSON, fi);
 			info = dao.getInfo();
 			if ((info != null) && (info.getValidDate() != null)) {
+				log.info("Loaded {} positions from {} data feed {}", Integer.valueOf(positions.size()), net, f.getAbsolutePath());
 				info.merge(positions);
 				_iCache.add(info);
 			}
 		} catch (Exception e) {
-			log.atError().withThrowable(e).log("Cannot load {} ServInfo feed - {}", net, e.getMessage());
+			log.atError().withThrowable(e).log("Cannot load {} data feed - {}", net, e.getMessage());
 			info = new NetworkInfo(net);
 			info.setValidDate(Instant.now());
 		}
