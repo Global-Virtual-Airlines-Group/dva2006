@@ -126,8 +126,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			Optional<FlightReport> ofr = draftFlights.stream().filter(dfr -> (dfr.getID() == id)).findAny();
 			if (ofr.isPresent())
 				fr = ofr.get();
-			else if (doCreate && !draftFlights.isEmpty())
-				fr = draftFlights.get(0);
+			else if (doCreate && !draftFlights.isEmpty()) {
+				fr = draftFlights.getFirst();
+				fr.addStatusUpdate(0, HistoryType.SYSTEM, "Merged new manual Flight Report");
+			}
 
 			// Create a new PIREP bean if we're creating one, otherwise update the flight code
 			if (fr != null) {
