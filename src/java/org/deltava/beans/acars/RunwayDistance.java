@@ -1,6 +1,7 @@
-// Copyright 2009, 2016, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2019, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import org.deltava.beans.flight.RunwayLengthUsage;
 import org.deltava.beans.navdata.Runway;
 
 /**
@@ -10,7 +11,7 @@ import org.deltava.beans.navdata.Runway;
  * @since 2.6
  */
 
-public class RunwayDistance extends Runway {
+public class RunwayDistance extends Runway implements RunwayLengthUsage {
 	
 	private final int _distance;
 
@@ -35,10 +36,7 @@ public class RunwayDistance extends Runway {
 		_distance = distance;
 	}
 
-	/**
-	 * Returns the distance from the runway threshold that the takeoff/landing took place.
-	 * @return the distance in feet
-	 */
+	@Override
 	public int getDistance() {
 		return _distance;
 	}
