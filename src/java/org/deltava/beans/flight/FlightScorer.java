@@ -13,13 +13,36 @@ import org.deltava.util.*;
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 5.1
  */
 
 @Helper(FlightReport.class)
 public class FlightScorer {
 
+	/*
+	 * Helper class to convert LandingStatistics.
+	 */
+	private static class RunwayLengthUse implements RunwayLengthUsage {
+		private final int _l;
+		private final int _d;
+		
+		RunwayLengthUse(double l, double d) {
+			_l = (int)l;
+			_d = (int)d;
+		}
+
+		@Override
+		public int getLength() {
+			return _l;
+		}
+
+		@Override
+		public int getDistance() {
+			return _d;
+		}
+	}
+	
 	// static class
 	private FlightScorer() {
 		super();
@@ -28,13 +51,17 @@ public class FlightScorer {
 	/*
 	 * Does the actual landing scoring.
 	 */
-	private static Tuple<FlightScore, String> score(int fpm, double rwyPct) {
+	private static Tuple<FlightScore, String> score(int fpm, RunwayLengthUsage rl) {
 		if (fpm < -600)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
-		else if (rwyPct > 0.45)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %.1f%%", Double.valueOf(rwyPct * 100)));
-		else if ((fpm < -375) || (fpm > -125) || (rwyPct > 0.35) || (rwyPct < 0.075))
-			return Tuple.create(FlightScore.ACCEPTABLE, String.format("Sink rate %d feet/min, Runway usage %.1f%%", Integer.valueOf(fpm), Double.valueOf(rwyPct * 100)));
+		if (rl.getDistance() < 100)
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to threshold - %d feet/min", Integer.valueOf(rl.getDistance())));
+		if (rl.getLength() - rl.getDistance() < 1500)
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to threshold - %d feet/min", Integer.valueOf(rl.getLength() - rl.getDistance())));
+		if (rl.getDistance() > 2250)
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %d feet", Integer.valueOf(rl.getDistance())));
+		if ((fpm < -375) || (fpm > -125) || (rl.getDistance() > 1900) || (rl.getDistance() < 600))
+			return Tuple.create(FlightScore.ACCEPTABLE, String.format("Sink rate %d feet/min, Runway usage %d feet", Integer.valueOf(fpm), Integer.valueOf(rl.getDistance())));
 
 		return Tuple.create(FlightScore.OPTIMAL, null);
 	}
@@ -48,8 +75,8 @@ public class FlightScorer {
 		if ((ls.getAverageSpeed() == 0) || (ls.getAverageDistance() == 0))
 			return FlightScore.INCOMPLETE;
 		
-		double rwyPct = ls.getAverageDistance() / ls.getDistanceStdDeviation();
-		return score((int) ls.getAverageSpeed(), rwyPct).getLeft();
+		RunwayLengthUse rl = new RunwayLengthUse(ls.getDistanceStdDeviation(), ls.getAverageDistance());
+		return score((int) ls.getAverageSpeed(), rl).getLeft();
 	}
 	
 	/*
@@ -72,12 +99,11 @@ public class FlightScorer {
 			} else if (rwyRemaining > 1500)
 				score = FlightScore.OPTIMAL;
 			else
-				pkg.add(String.format("Insufficient Takeoff Runway length remaining - %d feet", Integer.valueOf(rwyRemaining)));
+				pkg.add(String.format("Marginal Takeoff Runway length remaining - %d feet", Integer.valueOf(rwyRemaining)));
 		}
 		
 		// Calculate landing data
-		double rwyPct = (double)ad.getDistance() / ad.getLength();
-		Tuple<FlightScore, String> ls = score(pkg.getFlightReport().getLandingVSpeed(), rwyPct);
+		Tuple<FlightScore, String> ls = score(pkg.getFlightReport().getLandingVSpeed(), ad);
 		if (ls.getRight() != null)
 			pkg.add(ls.getRight());
 		
