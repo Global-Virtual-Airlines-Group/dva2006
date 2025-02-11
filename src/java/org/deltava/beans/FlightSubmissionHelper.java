@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 10.0
  */
 
@@ -155,17 +155,21 @@ public class FlightSubmissionHelper {
 	}
 	
 	/**
-	 * Checks for existing draft Flight Reports matching this Airport pair, and whether a predetrmined number of flight reports have been held. 
+	 * Checks for existing draft Flight Reports matching this Airport pair, and whether a predetrmined number of flight reports have been held.
+	 * @return TRUE if an existing flight report should be deleted, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void checkFlightReports() throws DAOException {
+	public boolean checkFlightReports() throws DAOException {
 		
-		// Check for draft flight report 
+		// Check for draft flight report
+		boolean isSaved = (_fr.getID() != 0);
 		GetFlightReports prdao = new GetFlightReports(_c);
 		List<FlightReport> dFlights = prdao.getDraftReports(_p.getID(), _fr, _db);
 		if (!dFlights.isEmpty()) {
-			FlightReport fr = dFlights.get(0);
-			_fr.setID(fr.getID());
+			FlightReport fr = dFlights.getFirst();
+			
+			// If _fr has already been saved then we have a problem, don't adjust the ID
+			if (!isSaved) _fr.setID(fr.getID());
 			_fr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 			_fr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 			_fr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
@@ -186,6 +190,9 @@ public class FlightSubmissionHelper {
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Automatically Held due to %d held Flight Reports", Integer.valueOf(heldPIREPs)));
 			_fr.setStatus(FlightStatus.HOLD);
 		}
+		
+		// Return if the flight had already been saved and we found a matching flight
+		return isSaved && !dFlights.isEmpty();
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			fsh.addPositions(rte);
 			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
-			fsh.checkFlightReports();
+			boolean isReplace = fsh.checkFlightReports();
 			
 			// Check ETOPS on route
 			if (StringUtils.isEmpty(pirep.getRoute())) {
@@ -124,10 +124,21 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Start transaction
 			ctx.startTX();
-
-			// Get the DAO and write the PIREP to the database
+			
+			// If we need to replace, do that
 			SetFlightReport fwdao = new SetFlightReport(con);
-			fwdao.write(pirep);
+			if (isReplace) {
+				List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep, ctx.getDB());
+				dFlights.removeIf(dfr -> dfr.getID() == id);
+				if (!dFlights.isEmpty()) {
+					int draftID = dFlights.getFirst().getID();
+					pirep.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Replaced existing draft Flight Report %d", Integer.valueOf(draftID)));
+					fwdao.delete(draftID);
+				}
+			}
+
+			// Write the PIREP to the database
+			fwdao.write(pirep, ctx.getDB());
 			if (fwdao.updatePaxCount(pirep.getID()))
 				log.warn("Update Passenger count for PIREP #{}", Integer.valueOf(pirep.getID()));
 			
