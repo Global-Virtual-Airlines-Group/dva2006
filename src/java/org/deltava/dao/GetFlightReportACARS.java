@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019, 2020, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<Airframe> getAirframes(String eqType, Airline a, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.TAILCODE, AP.SDK, COUNT(P.ID) AS CNT, MAX(P.DATE) AS LU FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.STATUS=?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.TAILCODE, AP.SDK, COUNT(P.ID) AS CNT, MAX(P.DATE) AS LU FROM ACARS_PIREPS AP, PIREPS P WHERE (P.ID=AP.ID) AND (P.STATUS<>?) AND (LENGTH(AP.TAILCODE)>?) AND (LENGTH(AP.TAILCODE)<?) ");
 		if (a != null) sqlBuf.append("AND (P.AIRLINE=?) ");
 		if (pilotID != 0) sqlBuf.append("AND (P.PILOT_ID=?) ");
 		if (eqType != null) sqlBuf.append("AND (P.EQTYPE=?)" );
@@ -46,7 +46,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
-			ps.setInt(++pos, FlightStatus.OK.ordinal());
+			ps.setInt(++pos, FlightStatus.DRAFT.ordinal());
 			ps.setInt(++pos, 4);
 			ps.setInt(++pos, 9);
 			if (a != null) ps.setString(++pos, a.getCode());
