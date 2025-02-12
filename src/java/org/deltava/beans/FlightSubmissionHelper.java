@@ -470,6 +470,8 @@ public class FlightSubmissionHelper {
 				
 				afr.setOnTime(oth.validate(afr));
 				_onTimeEntry = oth.getScheduleEntry();
+				if (_onTimeEntry != null)
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Retrieved schedule times from %s", _onTimeEntry.getSource().getDescription()));
 			}
 		}
 			
