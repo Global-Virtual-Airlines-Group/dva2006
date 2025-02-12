@@ -24,7 +24,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:enum var="sources" className="org.deltava.beans.schedule.ScheduleSource" />
+<content:enum var="sources" className="org.deltava.beans.schedule.ScheduleSource" exclude="DRAFT" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

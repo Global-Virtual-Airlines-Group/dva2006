@@ -13,7 +13,7 @@
 <content:js name="resumable" />
 <content:js name="progress" />
 <script async>
-golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2'];
+golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2','xz'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.schedType, t:'Schedule Type'});
@@ -45,7 +45,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" />
+<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" exclude="DRAFT" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
