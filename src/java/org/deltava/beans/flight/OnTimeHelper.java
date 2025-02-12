@@ -1,4 +1,4 @@
-// Copyright 2018, 2019, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 8.4
  */
 
@@ -75,7 +75,7 @@ public class OnTimeHelper {
 		se.setAirportA(dfr.getAirportA());
 		se.setTimeD(dfr.getTimeD().toLocalDateTime());
 		se.setTimeA(dfr.getTimeA().toLocalDateTime());
-		se.setSource(ScheduleSource.CUSTOM);
+		se.setSource(ScheduleSource.DRAFT);
 		_flights.add(se);
 	}
 	
