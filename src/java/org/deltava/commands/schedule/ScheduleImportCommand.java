@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 1.0
  */
 
@@ -132,10 +132,11 @@ public class ScheduleImportCommand extends AbstractCommand {
 					
 				case LEGACY:
 				case MANUAL:
+					boolean isUTC = Boolean.parseBoolean(ctx.getParameter("isUTC"));
 					GetRawSchedule rsdao = new GetRawSchedule(con);
 					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
 					try (InputStream is = new FileInputStream(f)) {
-						GetSchedule dao = new GetSchedule(ss, is);
+						GetSchedule dao = new GetSchedule(ss, is, isUTC);
 						dao.setAircraft(acdao.getAircraftTypes());
 						dao.setAirlines(adao.getActive().values());
 						srcs.forEach(ssi -> dao.setMaxLine(ssi.getSource(), ssi.getMaxLineNumber()));

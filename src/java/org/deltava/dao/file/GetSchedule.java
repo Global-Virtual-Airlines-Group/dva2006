@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -10,14 +10,14 @@ import java.time.temporal.ChronoField;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.util.EnumUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 10.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -27,14 +27,18 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	private final Map<ScheduleSource, Integer> _srcMaxLines = new HashMap<ScheduleSource, Integer>();
+	
+	private final boolean _isUTC;
 		
 	/**
 	 * Initializes the Data Access Object.
 	 * @param src the ScheduleSource
 	 * @param is the input stream to read
+	 * @param isUTC TRUE if departure/arrival times are UTC, otherwise FALSE
 	 */
-	public GetSchedule(ScheduleSource src, InputStream is) {
+	public GetSchedule(ScheduleSource src, InputStream is, boolean isUTC) {
 		super(src, is);
+		_isUTC = isUTC;
 	}
 
 	/*
@@ -44,7 +48,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 		Airport a = SystemData.getAirport(code);
 		if (a == null) {
 			_status.addInvalidAirport(code.toUpperCase());
-			_status.addMessage("Unknown Airport at Line " + line + " - " + code);
+			_status.addMessage(String.format("Unknown Airport at Line %d - %s", Integer.valueOf(line), code));
 		}
 
 		return a;
@@ -110,7 +114,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						String aCode = tkns.nextToken();
 						Airline a = SystemData.getAirline(aCode);
 						if (a == null)
-							throw new IllegalArgumentException("Invalid Airline Code - " + aCode);
+							throw new IllegalArgumentException(String.format("Invalid Airline Code - %s", aCode));
 
 						// Build the flight number and equipment type
 						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
@@ -122,12 +126,27 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setStartDate(sd);
 						entry.setEndDate(ed);
 						days.forEach(entry::addDayOfWeek);
-						entry.setAirportD(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeD(LocalDateTime.of(today, LocalTime.parse(tkns.nextToken(), _tf)));
-						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeA(LocalDateTime.of(today, LocalTime.parse(tkns.nextToken(), _tf)));
+						
+						// Load tokens and airports from parser
+						String aD = tkns.nextToken(); String tD = tkns.nextToken();
+						String aA = tkns.nextToken(); String tA = tkns.nextToken();
+						entry.setAirportD(getAirport(aD, br.getLineNumber()));
+						entry.setAirportA(getAirport(aA, br.getLineNumber()));
 						if (!entry.isPopulated())
-							throw new IllegalArgumentException("Invalid Airport Code");
+							throw new IllegalArgumentException(String.format("Invalid Airport Code - %s / %s", aD, aA));
+
+						// Load departure/arrival times
+						if (_isUTC) {
+							Instant iD = ZonedDateTime.of(today, LocalTime.parse(tD, _tf), ZoneOffset.UTC).toInstant();
+							Instant iA = ZonedDateTime.of(today, LocalTime.parse(tA, _tf), ZoneOffset.UTC).toInstant();
+							ZonedDateTime zD = ZonedDateTime.ofInstant(iD, entry.getAirportD().getTZ().getZone());
+							ZonedDateTime zA = ZonedDateTime.ofInstant(iA, entry.getAirportA().getTZ().getZone());
+							entry.setTimeD(zD.toLocalDateTime());
+							entry.setTimeA(zA.toLocalDateTime());
+						} else {
+							entry.setTimeD(LocalDateTime.of(today, LocalTime.parse(tD, _tf)));
+							entry.setTimeA(LocalDateTime.of(today, LocalTime.parse(tA, _tf)));
+						}
 
 						// Discard distance, load historic
 						tkns.nextToken();
@@ -136,7 +155,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setAcademy(Boolean.parseBoolean(tkns.nextToken()));
 						results.add(entry);
 					} catch (Exception e) {
-						_status.addMessage("Error on line " + br.getLineNumber() + " - " + e.getMessage());
+						_status.addMessage(String.format("Error on line %d - %s", Integer.valueOf(br.getLineNumber()), e.getMessage()));
 					}
 				}
 			}
