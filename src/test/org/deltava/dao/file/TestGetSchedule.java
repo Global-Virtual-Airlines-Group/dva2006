@@ -53,7 +53,7 @@ public class TestGetSchedule extends TestCase {
 		assertTrue(f.exists());
 		
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 16384)) {
-			GetSchedule sdao = new GetSchedule(ScheduleSource.MANUAL, is);
+			GetSchedule sdao = new GetSchedule(ScheduleSource.MANUAL, is, false);
 			sdao.setAirlines(_airlines);
 			sdao.setAircraft(_acTypes);
 			
