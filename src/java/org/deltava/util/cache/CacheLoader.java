@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to register caches from an XML file.
  * @author Luke
- * @version 10.2
+ * @version 11.5
  * @since 5.0
  */
 
@@ -31,27 +31,31 @@ public class CacheLoader {
 	 */
 	public static void load(InputStream in) throws IOException {
 		
-		Document doc = null;
 		try {
-			doc = new SAXBuilder().build(in);
+			Document doc = new SAXBuilder().build(in);
+		
+			// Parse the entries
+			Element re = doc.getRootElement();
+			CacheManager.init(re.getAttributeValue("id", "???"));
+			for (Element ce : doc.getRootElement().getChildren("cache")) {
+				CacheConfig cfg = new CacheConfig(ce.getAttributeValue("id"));
+				cfg.setMaxSize(StringUtils.parse(ce.getAttributeValue("max", "0"), 10));
+				cfg.setExpiryTime(parseExpiration(ce.getAttributeValue("expires", "-1")));
+				cfg.setGeo(Boolean.parseBoolean(ce.getAttributeValue("geo", "false")));
+				cfg.setRemote(Boolean.parseBoolean(ce.getAttributeValue("remote", "false")));
+				if (cfg.isGeo())
+					cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 0.01));
+			
+				CacheManager.register(Cacheable.class, cfg);
+			}
 		} catch (JDOMException je) {
 			throw new IOException(je);
 		}
-		
-		// Parse the entries
-		for (Element ce : doc.getRootElement().getChildren("cache")) {
-			CacheConfig cfg = new CacheConfig(ce.getAttributeValue("id"));
-			cfg.setMaxSize(StringUtils.parse(ce.getAttributeValue("max", "0"), 10));
-			cfg.setExpiryTime(parseExpiration(ce.getAttributeValue("expires", "-1")));
-			cfg.setGeo(Boolean.parseBoolean(ce.getAttributeValue("geo", "false")));
-			cfg.setRemote(Boolean.parseBoolean(ce.getAttributeValue("remote", "false")));
-			if (cfg.isGeo())
-				cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 0.01));
-			
-			CacheManager.register(Cacheable.class, cfg);
-		}
 	}
 	
+	/*
+	 * Helper method to parse human-readable expiration intervals.
+	 */
 	private static int parseExpiration(String v) {
 		char c = Character.toLowerCase(v.charAt(v.length() - 1));
 		int factor = switch (c) {
