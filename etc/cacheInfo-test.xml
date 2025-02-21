@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<caches>
+<caches id="TEST">
 	<!-- Pilot data caches -->
 	<cache id="UserData" expires="4d" />
 	<cache id="Pilots" expires="2d" />
