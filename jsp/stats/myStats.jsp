@@ -278,7 +278,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');
 	data.addRows(golgotha.local.data.eqCount);
 	golgotha.util.display('qbSpinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'}));
+	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized',sliceVisibilityThreshold:0.0075}));
 
 	// Display the vertical speed chart
 	chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
