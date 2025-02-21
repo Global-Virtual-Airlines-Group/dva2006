@@ -314,7 +314,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');	
 	data.addRows(golgotha.local.data.landingQuality);
 	golgotha.util.display('ls2Spinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'}));
+	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['red','orange','green','blue'],theme:'maximized'}));
 
 	// Massage data and init charts
 	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};

@@ -6,7 +6,7 @@ import java.util.*;
 import org.deltava.beans.Helper;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.Runway;
-import org.deltava.beans.stats.LandingStatistics;
+import org.deltava.beans.stats.*;
 
 import org.deltava.util.*;
 
@@ -20,29 +20,6 @@ import org.deltava.util.*;
 @Helper(FlightReport.class)
 public class FlightScorer {
 
-	/*
-	 * Helper class to convert LandingStatistics.
-	 */
-	private static class RunwayLengthUse implements RunwayLengthUsage {
-		private final int _l;
-		private final int _d;
-		
-		RunwayLengthUse(double l, double d) {
-			_l = (int)l;
-			_d = (int)d;
-		}
-
-		@Override
-		public int getLength() {
-			return _l;
-		}
-
-		@Override
-		public int getDistance() {
-			return _d;
-		}
-	}
-	
 	// static class
 	private FlightScorer() {
 		super();
@@ -68,15 +45,14 @@ public class FlightScorer {
 
 	/**
 	 * Scores a landing.
-	 * @param ls a LandingStats bean
+	 * @param td a TocuhdownData bean
 	 * @return a FlightScore
 	 */
-	public static FlightScore score(LandingStatistics ls) {
-		if ((ls.getAverageSpeed() == 0) || (ls.getAverageDistance() == 0))
+	public static FlightScore score(TouchdownData td) {
+		if ((td.getVSpeed() == 0) || (td.getDistance() == 0))
 			return FlightScore.INCOMPLETE;
 		
-		RunwayLengthUse rl = new RunwayLengthUse(ls.getDistanceStdDeviation(), ls.getAverageDistance());
-		return score((int) ls.getAverageSpeed(), rl).getLeft();
+		return score(td.getVSpeed(), td).getLeft();
 	}
 	
 	/*
