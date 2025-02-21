@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 2.1
  */
 
@@ -47,7 +47,7 @@ public class MyFlightsService extends WebService {
 		Collection<FlightStatsEntry> results = null; 
 		Collection<StageStatsEntry> stageStats = null;
 		Collection<SimStatsEntry> simStats = null;
-		Collection<LandingStatistics> landings = null;
+		Collection<TouchdownData> landings = null;
 		Collection<LandingStatsEntry> landingScores = null;
 		Map<Integer, Integer> vsStats = null; Map<OnTime, Integer> otStats = null;
 		try {
@@ -109,31 +109,19 @@ public class MyFlightsService extends WebService {
 		}
 		
 		// Go through landing statistics
-		int[] qualCount = new int[] {0, 0, 0};
-		for (LandingStatistics ls : landings) {
-			FlightScore score = FlightScorer.score(ls);
+		for (TouchdownData td : landings) {
+			FlightScore score = FlightScorer.score(td);
 			if (score == FlightScore.INCOMPLETE) continue;
-			qualCount[score.ordinal()]++;
-			
-			int fpm = (int) ls.getAverageSpeed();
-			boolean tooSoft = (fpm > -74);
+			boolean tooSoft = (td.getVSpeed() > -74);
 			
 			// Save touchdown scatter chart
 			JSONArray ea = new JSONArray();
-			ea.put((int) ls.getAverageDistance());
-			ea.put((score == FlightScore.DANGEROUS) ? Integer.valueOf(fpm) : null);
-			ea.put(!tooSoft && (score == FlightScore.ACCEPTABLE) ? Integer.valueOf(fpm) : null);
-			ea.put((score == FlightScore.OPTIMAL) ? Integer.valueOf(fpm) : null);
-			ea.put(tooSoft ? Integer.valueOf(fpm) : null);
+			ea.put(td.getDistance());
+			ea.put((score == FlightScore.DANGEROUS) ? Integer.valueOf(td.getVSpeed()) : null);
+			ea.put(!tooSoft && (score == FlightScore.ACCEPTABLE) ? Integer.valueOf(td.getVSpeed()) : null);
+			ea.put((score == FlightScore.OPTIMAL) ? Integer.valueOf(td.getVSpeed()) : null);
+			ea.put(tooSoft ? Integer.valueOf(td.getVSpeed()) : null);
 			jo.append("landingSct", ea);
-		}
-		
-		// Convert qualitative info into an array
-		for (int x = 0; x < qualCount.length; x++) {
-			JSONArray ea = new JSONArray();
-			ea.put(FlightScore.values()[x].getDescription());
-			ea.put(qualCount[x]);
-			jo.append("landingQuality", ea);
 		}
 		
 		// Create on-time statistics
@@ -175,6 +163,7 @@ public class MyFlightsService extends WebService {
 		}
 		
 		// Create landing scores by Month
+		int[] qualCount = new int[] {0, 0, 0, 0};
 		Collection<LandingRating> ratings = landingScores.stream().flatMap(ls -> ls.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
 		ratings.forEach(lr -> jo.append("ratings", lr.getDescription()));
 		JSONArray lso = new JSONArray(); JSONArray lsh = new JSONArray(); JSONArray lsd = new JSONArray();
@@ -182,8 +171,16 @@ public class MyFlightsService extends WebService {
 			JSONObject jd = JSONUtils.formatDate(entry.getDate());
 			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray(); JSONArray dd = new JSONArray();
 			da.put(jd); dh.put(jd); dd.put(jd);
-			ratings.forEach(lr -> { da.put(entry.getLegs(lr)); dh.put(entry.getHours(lr)); dd.put(entry.getDistance(lr)); });
+			ratings.forEach(lr -> { int l = entry.getLegs(lr); da.put(l); dh.put(entry.getHours(lr)); dd.put(entry.getDistance(lr)); qualCount[lr.ordinal() - 1] += l; });
 			lso.put(da); lsh.put(dh); lsd.put(dd);
+		}
+		
+		// Calculate landing score totals
+		for (int x = 0; x < qualCount.length; x++) {
+			JSONArray ea = new JSONArray();
+			ea.put(LandingRating.values()[x + 1].getDescription());
+			ea.put(qualCount[x]);
+			jo.append("landingQuality", ea);
 		}
 		
 		// Dump the JSON to the output stream
@@ -192,7 +189,7 @@ public class MyFlightsService extends WebService {
 		jo.put("landingCalendar", lso); jo.put("landingCalendarHours", lsh); jo.put("landingCalendarDistance", lsd);
 		try {
 			ctx.setContentType("application/json", "utf-8");
-			ctx.setExpiry(600);
+			ctx.setExpiry(1800);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {

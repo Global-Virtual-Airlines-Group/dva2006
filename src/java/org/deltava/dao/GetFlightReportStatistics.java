@@ -269,18 +269,12 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Returns touchdown speed and runway distance data for all of a Pilot's flights. 
 	 * @param pilotID the Pilot's database ID
-	 * @return a Collection of LandingStats beans
+	 * @return a Collection of TouchdownData beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<LandingStatistics> getLandingData(int pilotID) throws DAOException {
+	public Collection<TouchdownData> getLandingData(int pilotID) throws DAOException {
 
-		// Check the cache
-		StatsCacheKey key = new StatsCacheKey("$PILOTIND", pilotID);
-		CacheableList<LandingStatistics> results = _cache.get(key);
-		if ((results != null) && (_queryMax > 0) && (results.size() >= _queryMax))
-			return results.clone().subList(0, _queryMax);
-
-		try (PreparedStatement ps = prepare("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH, PR.ID FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
+		try (PreparedStatement ps = prepare("SELECT PR.ID, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
 			+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)")) {
 			ps.setBoolean(1, false);
 			ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
@@ -289,21 +283,18 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setInt(5, LandingScorer.OPT_VSPEED);
 
 			// Execute the query
-			results = new CacheableList<LandingStatistics>(key);
+			Collection<TouchdownData> results = new ArrayList<TouchdownData>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
-					ls.setID(rs.getInt(5));
-					ls.setLegs(1);
-					ls.setAverageSpeed(rs.getInt(2));
-					ls.setAverageDistance(rs.getInt(3));
-					ls.setDistanceStdDeviation(rs.getInt(4));
-					results.add(ls);
+					TouchdownData td = new TouchdownData(rs.getInt(1));
+					td.setVSpeed(rs.getInt(2));
+					td.setDistance(rs.getInt(3));
+					td.setLength(rs.getInt(4));
+					results.add(td);
 				}
 			}
 			
-			_cache.add(results);
-			return results.clone();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
