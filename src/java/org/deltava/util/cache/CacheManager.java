@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2017, 2018, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2018, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 11.3
+ * @version 11.5
  * @since 5.0
  */
 
@@ -23,12 +23,28 @@ public class CacheManager {
 	private static final Lock _r = _rw.readLock();
 	private static final Lock _w = _rw.writeLock();
 	
+	private static String _id = "UNKNOWN";
 	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>();
 	
 	// singleton
 	private CacheManager() {
 		super();
 	}
+	
+	/**
+	 * Initializes the cache Manager.
+	 * @param id the application ID
+	 */
+	public static void init(String id) {
+		try {
+			_w.lock();
+			_id = id;
+			_caches.clear();
+		} finally {
+			_w.unlock();
+		}
+	}
+	
 	
 	/**
 	 * Returns information about all caches.
@@ -74,7 +90,7 @@ public class CacheManager {
 	public static void invalidate(String id, boolean sendEvent) {
 		Cache<?> cache = get(id);
 		if (cache == null) {
-			log.warn("Unknown cache - {}", id);
+			log.warn("Unknown {} cache - {}", _id, id);
 			return;
 		}
 		
@@ -124,19 +140,19 @@ public class CacheManager {
 		
 		if (cfg.isGeo() && cfg.isRemote()) {
 			cache = new JedisGeoCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime(), cfg.getPrecision());
-			log.info("Registered GeoJedis cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
+			log.info("{} registered GeoJedis cache {}, expiry={}s, precision={}", _id, cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
 		} else if (cfg.isRemote()) {
 			cache = new JedisCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime());
-			log.info("Registered Jedis cache {}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()));
+			log.info("{} registered Jedis cache {}, expiry={}s", _id, cfg.getID(), Integer.valueOf(cfg.getExpiryTime()));
 		} else if (cfg.isGeo()) {
 			cache = new ExpiringGeoCache<T>(cfg.getMaxSize(), cfg.getExpiryTime(), cfg.getPrecision());
-			log.info("Registered Geo cache {}, expiry={}s, precision={}", cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
+			log.info("{} registered Geo cache {}, expiry={}s, precision={}", _id, cfg.getID(), Integer.valueOf(cfg.getExpiryTime()), Double.valueOf(cfg.getPrecision()));
 		} else if (cfg.getExpiryTime() > 0) {
 			cache = new ExpiringCache<T>(cfg.getMaxSize(), cfg.getExpiryTime());
-			log.info("Registered cache {}, size={}, expiry={}s", cfg.getID(), Integer.valueOf(cfg.getMaxSize()), Integer.valueOf(cfg.getExpiryTime()));
+			log.info("{} registered cache {}, size={}, expiry={}s", _id, cfg.getID(), Integer.valueOf(cfg.getMaxSize()), Integer.valueOf(cfg.getExpiryTime()));
 		} else {
 			cache = new AgingCache<T>(cfg.getMaxSize());
-			log.info("Registered cache {}, size={}", cfg.getID(), Integer.valueOf(cfg.getMaxSize()));
+			log.info("{} registered cache {}, size={}", _id, cfg.getID(), Integer.valueOf(cfg.getMaxSize()));
 		}
 		
 		addCache(cfg.getID(), cache);
@@ -149,12 +165,12 @@ public class CacheManager {
 	private static <T extends Cacheable> Cache<T> registerNull(String id) {
 		Cache<T> cache = get(id);
 		if (cache != null) {
-			log.warn("Duplicate registration attempted for cache {}", id);
+			log.warn("Duplicate registration attempted by {} for cache {}", _id, id);
 			return cache;
 		}
 		
 		cache = new NullCache<T>();
-		log.warn("Registered cache {}, null cache", id);
+		log.warn("{} registered cache {}, null cache", _id, id);
 		addCache(id, cache);
 		return cache;
 	}
