@@ -26,8 +26,6 @@ import org.deltava.util.*;
 
 public class MyFlightsService extends WebService {
 	
-	private static final int MAX_ENTRIES = 12;
-	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -77,25 +75,13 @@ public class MyFlightsService extends WebService {
 		ee.put("All Others");
 
 		// Create the entries
-		int entryCount = 0; int eeValue = 0;
 		for (FlightStatsEntry entry : results) {
-			entryCount++;
-			
-			// Add value
-			if (entryCount <= MAX_ENTRIES) {
-				JSONArray ea = new JSONArray();
-				ea.put(entry.getLabel());
-				ea.put(entry.getLegs());
-				jo.append("eqCount", ea);
-			}
-			else
-				eeValue += entry.getLegs();
+			JSONArray ea = new JSONArray();
+			ea.put(entry.getLabel());
+			ea.put(entry.getLegs());
+			jo.append("eqCount", ea);
 		}
 
-		// Add the "everything else" entry
-		ee.put(eeValue);
-		jo.append("eqCount", ee);
-		
 		// Create landing rate groups - this will be a stacked bar chart
 		for (Map.Entry<Integer, Integer> me : vsStats.entrySet()) {
 			int fpm = me.getKey().intValue();
