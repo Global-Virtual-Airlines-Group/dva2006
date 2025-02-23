@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 
 public class TestGetSchedule extends TestCase {
 
-	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/afv?useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false&connectionTimezone=SERVER&allowPublicKeyRetrieval=true";
 	
 	private final Collection<Airline> _airlines = new LinkedHashSet<Airline>();
 	private final Collection<Aircraft> _acTypes= new LinkedHashSet<Aircraft>();
@@ -28,7 +28,7 @@ public class TestGetSchedule extends TestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
 			assertNotNull(c);
 
 			// Load the airports/time zones
