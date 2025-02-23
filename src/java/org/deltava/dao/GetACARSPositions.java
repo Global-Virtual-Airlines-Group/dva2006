@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 4.1
  */
 
@@ -64,9 +64,9 @@ public class GetACARSPositions extends GetACARSData {
 	private List<GeospaceLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
 			Map<Long, GeospaceLocation> results = new LinkedHashMap<Long, GeospaceLocation>();
-			try (PreparedStatement ps = prepareWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, "
-				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED, ACARS_CONNECTED, RESTORE_COUNT, ENC_N1, ENC_N2 FROM "
-				+ "acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, ALTIMETER, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, "
+				+ "FUELFLOW, AOA, CG, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED, ACARS_CONNECTED, RESTORE_COUNT, ENC_N1, ENC_N2 FROM acars.POSITIONS "
+				+ "WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
 				ps.setInt(1, flightID);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -75,43 +75,44 @@ public class GetACARSPositions extends GetACARSData {
 						ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), pos);
 						entry.setAltitude(rs.getInt(4));
 						entry.setRadarAltitude(rs.getInt(5));
-						entry.setHeading(rs.getInt(6));
-						entry.setPitch(rs.getDouble(7));
-						entry.setBank(rs.getDouble(8));
-						entry.setAirSpeed(rs.getInt(9));
-						entry.setGroundSpeed(rs.getInt(10));
-						entry.setVerticalSpeed(rs.getInt(11));
-						entry.setMach(rs.getDouble(12));
-						entry.setN1(rs.getDouble(13));
-						entry.setN2(rs.getDouble(14));
-						entry.setFlaps(rs.getInt(15));
-						entry.setWindHeading(rs.getInt(16));
-						entry.setWindSpeed(rs.getInt(17));
-						entry.setTemperature(rs.getInt(18));
-						entry.setPressure(rs.getInt(19));
-						entry.setVisibility(rs.getDouble(20));
-						entry.setFuelRemaining(rs.getInt(21));
-						entry.setFuelFlow(rs.getInt(22));
-						entry.setAOA(rs.getDouble(23));
-						entry.setCG(rs.getDouble(24));
-						entry.setG(rs.getDouble(25));
-						entry.setFlags(rs.getInt(26));
-						entry.setFrameRate(rs.getInt(27));
-						entry.setSimRate(rs.getInt(28));
-						entry.setSimUTC(toInstant(rs.getTimestamp(29)));
-						entry.setPhase(FlightPhase.values()[rs.getInt(30)]);
-						entry.setNAV1(rs.getString(31));
-						entry.setNAV2(rs.getString(32));
-						entry.setADF1(rs.getString(33));
-						entry.setVASFree(rs.getInt(34));
-						entry.setWeight(rs.getInt(35));
-						entry.setAirspace(AirspaceType.values()[rs.getInt(36)]);
-						entry.setGroundOperations(rs.getInt(37));
-						entry.setNetworkConnected(rs.getBoolean(38));
-						entry.setACARSConnected(rs.getBoolean(39));
-						entry.setRestoreCount(rs.getInt(40));
-						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(41));
-						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(42));
+						entry.setAltimeter(rs.getInt(6));
+						entry.setHeading(rs.getInt(7));
+						entry.setPitch(rs.getDouble(8));
+						entry.setBank(rs.getDouble(9));
+						entry.setAirSpeed(rs.getInt(10));
+						entry.setGroundSpeed(rs.getInt(11));
+						entry.setVerticalSpeed(rs.getInt(12));
+						entry.setMach(rs.getDouble(13));
+						entry.setN1(rs.getDouble(14));
+						entry.setN2(rs.getDouble(15));
+						entry.setFlaps(rs.getInt(16));
+						entry.setWindHeading(rs.getInt(17));
+						entry.setWindSpeed(rs.getInt(18));
+						entry.setTemperature(rs.getInt(19));
+						entry.setPressure(rs.getInt(20));
+						entry.setVisibility(rs.getDouble(21));
+						entry.setFuelRemaining(rs.getInt(22));
+						entry.setFuelFlow(rs.getInt(23));
+						entry.setAOA(rs.getDouble(24));
+						entry.setCG(rs.getDouble(25));
+						entry.setG(rs.getDouble(26));
+						entry.setFlags(rs.getInt(27));
+						entry.setFrameRate(rs.getInt(28));
+						entry.setSimRate(rs.getInt(29));
+						entry.setSimUTC(toInstant(rs.getTimestamp(30)));
+						entry.setPhase(FlightPhase.values()[rs.getInt(31)]);
+						entry.setNAV1(rs.getString(32));
+						entry.setNAV2(rs.getString(33));
+						entry.setADF1(rs.getString(34));
+						entry.setVASFree(rs.getInt(35));
+						entry.setWeight(rs.getInt(36));
+						entry.setAirspace(AirspaceType.values()[rs.getInt(37)]);
+						entry.setGroundOperations(rs.getInt(38));
+						entry.setNetworkConnected(rs.getBoolean(39));
+						entry.setACARSConnected(rs.getBoolean(40));
+						entry.setRestoreCount(rs.getInt(41));
+						double[] n1 = EngineSpeedEncoder.decode(rs.getBytes(42));
+						double[] n2 = EngineSpeedEncoder.decode(rs.getBytes(43));
 						entry.setEngineCount(Math.min(n1.length, n2.length));
 						for (int eng = 0; eng < entry.getEngineCount(); eng++) {
 							entry.setN1(eng, n1[eng]);
