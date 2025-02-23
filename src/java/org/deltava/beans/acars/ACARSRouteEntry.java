@@ -21,6 +21,7 @@ import org.deltava.util.StringUtils;
 public class ACARSRouteEntry extends RouteEntry {
 
 	private int _radarAlt;
+	private int _altimeter;
 	private double _pitch;
 	private double _bank;
 	private int _vSpeed;
@@ -81,6 +82,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	@Override
 	public int getRadarAltitude() {
 		return _radarAlt;
+	}
+	
+	/**
+	 * Returns the value reported by the aircraft's altimeter.
+	 * @return the altitude in feet MSL
+	 * @see ACARSRouteEntry#setAltimeter(int)
+	 */
+	public int getAltimeter() {
+		return _altimeter;
 	}
 
 	/**
@@ -397,6 +407,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setRadarAltitude(int alt) {
 		_radarAlt = Math.max(0, alt);
+	}
+	
+	/**
+	 * Updates the altitude reported on the aircraft's altimeter.
+	 * @param alt the altitude in feet MSL
+	 * @see ACARSRouteEntry#getAltimeter()
+	 */
+	public void setAltimeter(int alt) {
+		_altimeter = alt;
 	}
 
 	/**
