@@ -76,7 +76,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Sources</td>
- <td class="data"><el:check name="src" width="210" options="${sources}" value="${loadedSources}" onChange="void golgotha.local.updateSource(this)" /></td>
+ <td class="data"><el:check name="src" width="240" options="${sources}" value="${loadedSources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <tr>
  <td class="label">Purge Options</td>

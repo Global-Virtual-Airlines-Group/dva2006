@@ -127,9 +127,11 @@ golgotha.local.updateProgress = function() {
 
 golgotha.local.updateSource = function(cb) {
 	golgotha.local.isInnovata = (golgotha.form.getCombo(cb) == 'INNOVATA');
+	golgotha.local.isPHPVMS = (golgotha.form.getCombo(cb) == 'VASYS');
 	golgotha.util.display(document.getElementById('selectFile'), !golgotha.local.isInnovata);
 	const canEnable = golgotha.local.isInnovata || golgotha.local.file; 
 	golgotha.util.disable(document.getElementById('SaveButton'), !canEnable);
+	golgotha.util.disable(document.forms[0].isUTC, golgotha.local.isPHPVMS);
 	return true;
 };
 </script>
