@@ -206,8 +206,8 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 
 	/**
-	 * Returns the average N1 speed of all engines.
-	 * @return the average N1 percentage
+	 * Returns the average N1 speed (propellor RPM for piston engines) of all engines.
+	 * @return the average N1 percentage or propellor RPM
 	 * @see ACARSRouteEntry#setN1(double)
 	 */
 	public double getN1() {
@@ -215,17 +215,17 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Returns an individual engine's N1 speed.
+	 * Returns an individual engine's N1 speed (propellor RPM for piston engines).
 	 * @param eng the zero-offset engine number
-	 * @return the N1 percentage
+	 * @return the N1 percentage or propellor RPM
 	 */
 	public double getN1(int eng) {
 		return _n1[eng];
 	}
 
 	/**
-	 * Returns the average N2 speed of all engines.
-	 * @return the average N2 percentage
+	 * Returns the average N2 speed (throttle position for piston enginers) of all engines.
+	 * @return the average N2 percentage or throttle position
 	 * @see ACARSRouteEntry#setN2(double)
 	 */
 	public double getN2() {
@@ -233,9 +233,9 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Returns an individual engine's N2 speed.
+	 * Returns an individual engine's N2 speed (throttle position for piston enginers).
 	 * @param eng the zero-offset engine number
-	 * @return the N2 percentage
+	 * @return the N2 percentage or throttle position
 	 */
 	public double getN2(int eng) {
 		return _n2[eng];
@@ -247,7 +247,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public boolean isEngineOut() {
 		for (int x = 0; x < _engineCount; x++) {
-			if ((_n1[x] < 10) || (_n2[x] < 15))
+			if ((_n1[x] < 10) || (_n2[x] < 12))
 				return true;
 		}
 		
