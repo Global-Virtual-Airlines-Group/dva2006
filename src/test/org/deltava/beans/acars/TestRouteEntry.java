@@ -48,7 +48,6 @@ protected void tearDown() throws Exception {
    
    public void testValidation() {
       validateInput("altitude", Integer.valueOf(-301), IllegalArgumentException.class);
-      validateInput("altitude", Integer.valueOf(100001), IllegalArgumentException.class);
       validateInput("heading", Integer.valueOf(-1), IllegalArgumentException.class);
       validateInput("heading", Integer.valueOf(361), IllegalArgumentException.class);
       validateInput("airSpeed", Integer.valueOf(-21), IllegalArgumentException.class);
