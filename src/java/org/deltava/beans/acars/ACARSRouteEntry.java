@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 11.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -693,7 +693,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	private String getATCData(int idx) {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder(32);
 		Controller ctr = (idx == 1) ? _atc1 : _atc2;
 		if (ctr != null) {
 			buf.append("COM");
