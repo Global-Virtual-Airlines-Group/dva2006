@@ -72,6 +72,7 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeShort(re.getWindHeading());
 		out.writeInt(re.getFuelRemaining());
 		out.writeInt(re.getRadarAltitude());
+		out.writeInt(re.getAltimeter());
 		out.writeFloat((float) re.getPitch());
 		out.writeFloat((float) re.getBank());
 		out.writeShort(re.getVerticalSpeed());
