@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 2.4
  */
 
@@ -159,6 +159,7 @@ public final class OfflineFlightParser {
 					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(pe.getChildTextTrim("date"), mdtf).toInstant(ZoneOffset.UTC), loc);
 					pos.setVASFree(StringUtils.parse(pe.getAttributeValue("vasFree", "0"), 0));
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
+					pos.setAltimeter(StringUtils.parse(pe.getChildTextTrim("altimeter"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
 					pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
