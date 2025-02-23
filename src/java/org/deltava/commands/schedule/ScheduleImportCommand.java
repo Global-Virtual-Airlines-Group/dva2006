@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.*;
+
 import org.deltava.beans.Compression;
 import org.deltava.beans.schedule.*;
 
@@ -130,6 +131,17 @@ public class ScheduleImportCommand extends AbstractCommand {
 
 					break;
 					
+				case VASYS:
+					try (InputStream is = c.getStream(fis)) {
+						GetPHPVMSSchedule dao = new GetPHPVMSSchedule(is);
+						dao.setAircraft(acdao.getAircraftTypes());
+						dao.setAirlines(adao.getActive().values());
+						entries.addAll(dao.process());
+						st = dao.getStatus();
+					}
+					
+					break;
+					
 				case LEGACY:
 				case MANUAL:
 					boolean isUTC = Boolean.parseBoolean(ctx.getParameter("isUTC"));
@@ -243,7 +255,6 @@ public class ScheduleImportCommand extends AbstractCommand {
 			ctx.setAttribute("status", st, REQUEST);
 			ctx.setAttribute("dupeCount", Integer.valueOf(dupeCount), REQUEST);
 			ctx.setAttribute("importCount", Integer.valueOf(entryCount), REQUEST);
-			
 			ctx.setAttribute("today", LocalDate.now(), REQUEST);
 		} catch (DAOException | IOException de) {
 			ctx.rollbackTX();
@@ -262,6 +273,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 		
 		if (f.getName().toLowerCase().endsWith(".gz"))
 			return new GZIPInputStream(new FileInputStream(f), 65536);
+		if (f.getName().toLowerCase().endsWith(".bz2"))
+			return new BZip2MultiInputStream(new BufferedInputStream(new FileInputStream(f), 65536));
 
 		boolean isPDF = false;
 		try (InputStream his = new BufferedInputStream(new FileInputStream(f))) {
