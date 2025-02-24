@@ -264,7 +264,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 google.charts.load('current',{'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 7500;
+xmlreq.timeout = 9500;
 xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -278,7 +278,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');
 	data.addRows(golgotha.local.data.eqCount);
 	golgotha.util.display('qbSpinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized',sliceVisibilityThreshold:0.005}));
+	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,theme:'maximized',sliceVisibilityThreshold:0.005}));
 
 	// Display the vertical speed chart
 	chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
@@ -314,7 +314,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');	
 	data.addRows(golgotha.local.data.landingQuality);
 	golgotha.util.display('ls2Spinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['red','orange','green','blue'],theme:'maximized'}));
+	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['red','orange','green','blue'],legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
 
 	// Massage data and init charts
 	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};
