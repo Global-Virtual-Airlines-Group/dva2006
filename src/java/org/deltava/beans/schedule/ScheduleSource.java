@@ -9,7 +9,7 @@ package org.deltava.beans.schedule;
  */
 
 public enum ScheduleSource implements org.deltava.beans.EnumDescription {
-	DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry"), CUSTOM("Custom Import"), VASYS("VASystems/PHPVMSv7"), DRAFT("Draft Flight Report");
+	VASYS("VASystems/PHPVMSv7"), DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry"), CUSTOM("Custom Import"), DRAFT("Draft Flight Report");
 	
 	private final String _desc;
 	
