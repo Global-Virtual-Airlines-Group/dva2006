@@ -149,7 +149,7 @@ public class MyFlightsService extends WebService {
 		}
 		
 		// Create landing scores by Month
-		int[] qualCount = new int[] {0, 0, 0, 0};
+		int[] qualCount = new int[] {0, 0, 0, 0, 0};
 		Collection<LandingRating> ratings = landingScores.stream().flatMap(ls -> ls.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
 		ratings.forEach(lr -> jo.append("ratings", lr.getDescription()));
 		JSONArray lso = new JSONArray(); JSONArray lsh = new JSONArray(); JSONArray lsd = new JSONArray();
@@ -157,14 +157,14 @@ public class MyFlightsService extends WebService {
 			JSONObject jd = JSONUtils.formatDate(entry.getDate());
 			JSONArray da = new JSONArray(); JSONArray dh = new JSONArray(); JSONArray dd = new JSONArray();
 			da.put(jd); dh.put(jd); dd.put(jd);
-			ratings.forEach(lr -> { int l = entry.getLegs(lr); da.put(l); dh.put(entry.getHours(lr)); dd.put(entry.getDistance(lr)); qualCount[lr.ordinal() - 1] += l; });
+			ratings.forEach(lr -> { int l = entry.getLegs(lr); da.put(l); dh.put(entry.getHours(lr)); dd.put(entry.getDistance(lr)); qualCount[lr.ordinal()] += l; });
 			lso.put(da); lsh.put(dh); lsd.put(dd);
 		}
 		
-		// Calculate landing score totals
-		for (int x = 0; x < qualCount.length; x++) {
+		// Calculate landing score totals - skip UNKNOWN
+		for (int x = 1; x < qualCount.length; x++) {
 			JSONArray ea = new JSONArray();
-			ea.put(LandingRating.values()[x + 1].getDescription());
+			ea.put(LandingRating.values()[x].getDescription());
 			ea.put(qualCount[x]);
 			jo.append("landingQuality", ea);
 		}
