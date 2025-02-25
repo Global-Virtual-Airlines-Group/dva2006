@@ -65,7 +65,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br />
-<el:box name="doPurge" idx="*" value="true" label="Purge Raw Schedule from this Schedule Source" /></td>
+<el:box name="doPurge" idx="*" value="true" checked="true" label="Purge Raw Schedule from this Schedule Source" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
@@ -90,7 +90,7 @@ golgotha.local.validate = function(f) {
 <content:googleAnalytics />
 <script async>
 golgotha.util.disable('SaveButton', true);
-golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
+golgotha.local.r = new Resumable({chunkSize:262144, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
