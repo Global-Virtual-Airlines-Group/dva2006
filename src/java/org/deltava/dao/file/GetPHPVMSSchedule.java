@@ -85,10 +85,13 @@ public class GetPHPVMSSchedule extends ScheduleLoadDAO {
 							throw new IllegalArgumentException(String.format("Invalid Airline Code - %s", aCode));
 
 						// Build the flight number and equipment type
-						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(csv.get(1)), Integer.parseInt(csv.get(4)));
-						entry.setEquipmentType(csv.get(23));
+						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(csv.get(1)), StringUtils.parse(csv.get(4), 1));
+						String eqType = getEquipmentType(csv.get(23));
+						if (eqType == null)
+							throw new IllegalArgumentException(String.format("Unknown equipment type - %s", csv.get(23)));
 
 						// Get the airports and times
+						entry.setEquipmentType(eqType);
 						entry.setSource(ScheduleSource.VASYS);
 						entry.setLineNumber(br.getLineNumber());
 						entry.setStartDate(sd);
