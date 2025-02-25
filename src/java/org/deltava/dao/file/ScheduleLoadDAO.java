@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015, 2016, 2017, 2019, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -14,14 +14,14 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 9.1
+ * @version 11.5
  * @since 1.0
  */
 
 public abstract class ScheduleLoadDAO extends DAO {
 
 	protected final ImportStatus _status;
-	protected Map<String, Airline> _airlines;
+	protected final Map<String, Airline> _airlines = new HashMap<String, Airline>();
 	
 	/**
 	 * Ground equipment codes.
@@ -62,6 +62,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 */
 	public void setAircraft(Collection<Aircraft> acInfo) {
 		for (Aircraft a : acInfo) {
+			_iataMappings.put(a.getName().toUpperCase(), a);
 			a.getIATA().forEach(iata -> _iataMappings.putIfAbsent(iata, a));
 			if (!StringUtils.isEmpty(a.getICAO()))
 				_iataMappings.putIfAbsent(a.getICAO(), a);
@@ -74,7 +75,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * @see ScheduleLoadDAO#setAircraft(Collection)
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
-		_airlines = new HashMap<String, Airline>();
+		_airlines.clear();
 		airlines.forEach(a -> a.getCodes().forEach(c -> _airlines.put(c,  a)));
 	}
 	
