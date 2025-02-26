@@ -216,6 +216,23 @@ public class TestSerializedPositions extends TestCase {
 	}
 	
 	@SuppressWarnings("static-method")
+	public void testV93() throws Exception {
+		
+		File f = new File("data/acars/ACARSv93.dat");
+		assertTrue(f.exists());
+
+		Compression c = Compression.detect(f);
+		assertEquals(Compression.GZIP, c);
+		try (InputStream gz = c.getStream(new FileInputStream(f))) {
+			GetSerializedPosition posdao = new GetSerializedPosition(gz);
+			Collection<? extends RouteEntry> entries = posdao.read();
+			assertNotNull(entries);
+			assertFalse(entries.isEmpty());
+			assertEquals(SerializedDataVersion.ACARSv93, posdao.getFormat());
+		}
+	}
+	
+	@SuppressWarnings("static-method")
 	public void testValidation() throws Exception {
 
 		File f = new File("data/acars/ACARSv9.dat");
