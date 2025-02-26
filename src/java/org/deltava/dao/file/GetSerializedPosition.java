@@ -86,7 +86,7 @@ public class GetSerializedPosition extends DAO {
 			re.setWindHeading(in.readShort());
 			re.setFuelRemaining(in.readInt());
 			re.setRadarAltitude(in.readInt());
-			re.setAltimeter(_v.atLeast(ACARSv93) ? in.readInt() : re.getAltitude());
+			re.setAltimeter(_v.atLeast(ACARSv93) ? in.readInt() : 0);
 			re.setPitch(in.readFloat());
 			re.setBank(in.readFloat());
 			re.setVerticalSpeed(in.readShort());
