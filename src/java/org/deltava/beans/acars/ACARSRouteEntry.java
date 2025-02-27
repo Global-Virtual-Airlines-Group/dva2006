@@ -730,7 +730,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	@Override
 	public Collection<Warning> getWarnings() {
 		Collection<Warning> warns = new LinkedHashSet<Warning>();
-		if ((getAltitude() < 10000) && (getAirSpeed() > 250))
+		if ((getAltitude() < 10000) && (getAirSpeed() > 254))
 			warns.add(Warning.OVER250K);
 		if ((_radarAlt < 1500) && (_vSpeed < -1500))
 			warns.add(Warning.DESCENTRATE);
