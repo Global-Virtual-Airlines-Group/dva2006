@@ -97,19 +97,19 @@ public class FlightScorer {
 		FDRFlightReport fr = pkg.getFlightReport();
 		int endFuel = (fr.getGateFuel() > 0) ? fr.getGateFuel() : fr.getLandingFuel();
 		if (fr.getTakeoffWeight() > pkg.getAircraft().getMaxTakeoffWeight()) {
-			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			fs = EnumUtils.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Takeoff weight excteeds MTOW");
 		} else if (fr.getLandingWeight() > pkg.getAircraft().getMaxLandingWeight()) {
-			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			fs = EnumUtils.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Landing weight exceeds MLW");
 		} else if (endFuel < pkg.getAircraft().getBaseFuel()) {
-			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			fs = EnumUtils.max(fs, FlightScore.DANGEROUS);
 			pkg.add(String.format("Insufficient fuel at Gate - %d lbs", Integer.valueOf(endFuel)));
 		} else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getOptions().getTakeoffRunwayLength())) {
-			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			fs = EnumUtils.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Insufficient Takeoff Runway length");
 		} else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getOptions().getLandingRunwayLength())) {
-			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+			fs = EnumUtils.max(fs, FlightScore.DANGEROUS);
 			pkg.add("Insufficient Landing Runway length");
 		}
 		
@@ -118,18 +118,17 @@ public class FlightScorer {
 		Map<Warning, MutableInteger> warnCount = new TreeMap<Warning, MutableInteger>();
 		for (ACARSRouteEntry re : pkg.getData()) {
 			for (Warning w : re.getWarnings()) {
-				es = FlightScore.max(es, w.getScore());
 				MutableInteger cnt = warnCount.getOrDefault(w, new MutableInteger(0));
 				cnt.inc();
 				warnCount.put(w, cnt);
+				if (cnt.intValue() >=  w.getMinCount())
+					es = EnumUtils.max(es, w.getScore());
 			}
 		}
 		
 		// Add to messages
-		for (Map.Entry<Warning, MutableInteger> me : warnCount.entrySet())
-			pkg.add(String.format("Flight Data Warning - %s (x%s)", me.getKey().getDescription(), me.getValue()));
-		
-		pkg.setResult(FlightScore.max(fs, es));
+		warnCount.entrySet().stream().filter(w -> w.getValue().intValue() >= w.getKey().getMinCount()).map(me -> String.format("Flight Data Warning - %s (x%s)", me.getKey().getDescription(), me.getValue())).forEach(pkg::add);
+		pkg.setResult(EnumUtils.max(fs, es));
 		return pkg.getResult();
 	}
 }
