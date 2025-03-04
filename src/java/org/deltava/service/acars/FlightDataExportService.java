@@ -48,11 +48,8 @@ public class FlightDataExportService extends WebService {
 				return SC_NOT_FOUND;
 			else if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routeData.addAll(dao.getXACARSEntries(id));
-			else {
-				final AutopilotType apType = info.getAutopilotType();
+			else
 				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
-				routeData.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(re -> { re.setAutopilotType(apType); });
-			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -74,9 +71,16 @@ public class FlightDataExportService extends WebService {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
 		// Format the ACARS data
-		int restoreCount = 0;
+		final AutopilotType apType = info.getAutopilotType();
+		int restoreCount = 0; boolean isAirborne = false;
 		for (RouteEntry entry : routeData) {
+			boolean onGround = entry.isFlagSet(ACARSFlags.ONGROUND);
+			if (onGround == isAirborne)
+				ctx.println(String.format("*** %s ***", onGround ? "TOUCHDOWN" : "TAKEOFF"));
+			
+			isAirborne = !onGround;
 			if (entry instanceof ACARSRouteEntry ae) {
+				ae.setAutopilotType(apType);
 				if (ae.getRestoreCount() > restoreCount) {
 					ctx.println(String.format("*** FLIGHT RESTORE %d ***", Integer.valueOf(ae.getRestoreCount())));
 					restoreCount = ae.getRestoreCount();
