@@ -1,4 +1,4 @@
-golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], aRwys:[], hasBlob:false};
+golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], aRwys:[], hasBlob:false, isDraft:false};
 golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
 golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
 golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
@@ -302,7 +302,8 @@ golgotha.routePlot.setRoute = function(combo)
 {
 	const f = document.forms[0];
 	if (combo.selectedIndex < 1) {
-		f.cruiseAlt.value = '';
+		if (!golgotha.routePlot.isDraft)
+			f.cruiseAlt.value = '';
 		if (!golgotha.routePlot.keepRoute) {
 			f.route.value = '';
 			f.sid.selectedIndex = 0;
@@ -323,6 +324,7 @@ try {
 	f.comments.value = opt.comments || '';
 	golgotha.form.setCombo(f.sid, opt.SID);
 	golgotha.routePlot.setTR(f.star, opt.STAR);
+	golgotha.routePlot.isDraft = false;
 	if (f.routeID)
 		f.routeID.value = opt.routeID;
 } catch (err) {
