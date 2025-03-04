@@ -411,18 +411,18 @@ table.form td.eliteStatus {
  <td class="data">Created on <fmt:date date="${sbPackage.createdOn}" /> [v<fmt:int value="${sbPackage.releaseVersion}" />] (AIRAC <span class="sec bld">${sbPackage.AIRAC}</span>)<span class="nophone"> - <a href="sbpackage.ws?id=${pirep.hexID}" rel="nofollow" target="sbPakage" class="bld">Download SimBrief Package</a> 
 <c:if test="${fn:isDraft(pirep)}"> | <a href="javascript:void golgotha.simbrief.sbRefresh()" rel="nofollow" class="bld">Refresh Package</a> | <a href="https://dispatch.simbrief.com/briefing/${sbPackage.requestID}" rel="nofollow" class="bld" target="sbpackage">View on SimBrief</a></c:if></span>
 <span id="sbMessageBox" style="display:none" class="bld"> - <span id="sbMessage" class="error"></span></span></td>
- </tr>
+</tr>
  <c:if test="${!empty sbPackage.tailCode}">
  <tr class="sbData">
   <td class="label">Aircraft</td>
   <td class="data"><span class="sec bld">${sbPackage.tailCode}</span><c:if test="${!empty sbPackage.airframeID}"> - <span class="ter ita">SimBrief airframe ID <span class="bld">${sbPackage.airframeID}</span></span></c:if></td>
- </tr>
+</tr>
  </c:if>
- <tr class="sbData">
+<tr class="sbData">
   <td class="label">Briefing Format</td>
   <td class="data pri bld">${sbPackage.format.description}</td>
- </tr>
- <tr class="sbData">
+</tr>
+<tr class="sbData">
  <td class="label">Fuel Load</td>
  <td class="data"><fmt:weight value="${sbPackage.taxiFuel}" /> / <fmt:weight value="${sbPackage.baseFuel}" /> / <fmt:weight value="${sbPackage.enrouteFuel}" /> / <fmt:weight value="${sbPackage.alternateFuel}" /> taxi / base / enroute / alternate <span class="ita">(<fmt:weight value="${sbPackage.totalFuel}" /> total)</span></td>
 </tr>
