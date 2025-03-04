@@ -300,6 +300,12 @@ table.form td.eliteStatus {
  <td class="data"><c:if test="${!empty pirep.gateA}">At <span class="ter bld">${pirep.gateA}</span></c:if><c:if test="${!empty pirep.gateA && !empty pirep.timeA}"> at </c:if>
 <c:if test="${!empty pirep.timeA}"><fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${pirep.timeA}" /></c:if></td>
 </tr>
+<c:if test="${!empty pirep.altitude}">
+<tr>
+ <td class="label">Planned Altitude</td>
+ <td class="data">${pirep.altitude}</td>
+</tr>
+</c:if>
 </c:if>
 <c:if test="${pirep.duration.toSeconds() > 0}">
 <tr>

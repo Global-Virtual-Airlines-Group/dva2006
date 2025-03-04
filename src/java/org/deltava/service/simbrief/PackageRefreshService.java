@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 10.3
  */
 
@@ -74,6 +74,7 @@ public class PackageRefreshService extends WebService {
 				sbdata.setSimBriefID(pkg.getSimBriefID());
 				sbdata.setURL(pkg.getURL());
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Updated SimBrief package");
+				fr.setAltitude(sbdata.getCruiseAltitude());
 				isUpdated = true;
 				
 				// Update route if necessary

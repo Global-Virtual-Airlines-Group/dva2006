@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 2.2
  */
 
@@ -181,6 +181,7 @@ public class RoutePlanService extends WebService {
 						ctx.setHeader("X-Plan-No-Recalc", 1);
 				}
 					
+				dfr.setAltitude(alt);
 				dfr.setSimulator(sim);
 				dfr.setRank(ctx.getUser().getRank());
 				if (gD != null) dfr.setGateD(gD.getName());
