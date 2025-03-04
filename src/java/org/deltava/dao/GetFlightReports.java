@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 11.4
+ * @version 11.5
  * @since 1.0
  */
 
@@ -510,7 +510,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PRT.ROUTE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PD.ALTITUDE, PRT.ROUTE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
@@ -541,7 +541,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PRT.ROUTE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, PD.TIME_D, PD.TIME_A, PD.GATE_D, PD.GATE_A, PD.ALTITUDE, PRT.ROUTE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
@@ -650,7 +650,7 @@ public class GetFlightReports extends DAO {
 			boolean hasACARS = (md.getColumnCount() > 74);
 			boolean hasComments = (md.getColumnCount() > 25);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 27));
-			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 30));
+			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 31));
 			boolean hasOnTime = (md.getColumnCount() > 80);
 			boolean hasMetadata = (md.getColumnCount() > 84);
 
@@ -716,8 +716,9 @@ public class GetFlightReports extends DAO {
 				
 					dp.setGateD(rs.getString(29));
 					dp.setGateA(rs.getString(30));
+					dp.setAltitude(rs.getString(31));
 					if (hasDraftRoute)
-						dp.setRoute(rs.getString(31));
+						dp.setRoute(rs.getString(32));
 				}
 
 				// Load generic ACARS pirep data

@@ -207,14 +207,14 @@ public class SetFlightReport extends DAO {
 			executeUpdate(ps, 0);
 		}
 		
-		if (!(fr instanceof DraftFlightReport)) return;
-		DraftFlightReport dfr = (DraftFlightReport) fr;
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PIREP_DRAFT (ID, TIME_D, TIME_A, GATE_D, GATE_A) VALUES (?, ?, ?, ?, ?)")) {
+		if (!(fr instanceof DraftFlightReport dfr)) return;
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PIREP_DRAFT (ID, TIME_D, TIME_A, GATE_D, GATE_A, ALTITUDE) VALUES (?,?,?,?,?,?)")) {
 			ps.setInt(1, dfr.getID());
 			ps.setTimestamp(2, (dfr.getTimeD() == null) ? null : Timestamp.valueOf(dfr.getTimeD().toLocalDateTime()));
 			ps.setTimestamp(3, (dfr.getTimeA() == null) ? null : Timestamp.valueOf(dfr.getTimeA().toLocalDateTime()));
 			ps.setString(4, dfr.getGateD());
 			ps.setString(5, dfr.getGateA());
+			ps.setString(6, dfr.getAltitude());
 			executeUpdate(ps, 1);
 		}
 	}
