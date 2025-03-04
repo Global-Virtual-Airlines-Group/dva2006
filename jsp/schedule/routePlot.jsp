@@ -145,7 +145,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
- <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" spellcheck="false" /></td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="${empty flight.altitude ? '35000' : flight.altitude}" spellcheck="false" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -184,6 +184,7 @@ golgotha.local.mapInit = function() {
 	f.airportD.loadAirports(golgotha.airportLoad.config);
 	window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 700);
 </c:when><c:otherwise>
+	golgotha.routePlot.isDraft = true;
 	golgotha.routePlot.keepRoute = ${(!empty sid) || (!empty star)}; 
 	golgotha.routePlot.updateRoute(${!empty rwy}, false);
 </c:otherwise></c:choose>

@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2018, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 10.3
+ * @version 11.5
  * @since 2.8
  */
 
@@ -22,6 +22,8 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
 	private String _gateD;
 	private String _gateA;
+	
+	private String _alt;
 	
 	/**
 	 * Creates a new Flight Report object with a given Flight.
@@ -60,6 +62,14 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	@Override
 	public ZonedDateTime getTimeA() {
 		return _timeA;
+	}
+	
+	/**
+	 * Returns the planned altitude.
+	 * @return the altitude
+	 */
+	public String getAltitude() {
+		return _alt;
 	}
 	
 	/**
@@ -126,6 +136,14 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 */
 	public void setGateA(String name) {
 		_gateA = name;
+	}
+	
+	/**
+	 * Updates the planned altitude. 
+	 * @param alt the altitude
+	 */
+	public void setAltitude(String alt) {
+		_alt = alt;
 	}
 	
 	/**
