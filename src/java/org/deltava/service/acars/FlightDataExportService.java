@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018, 2020, 2021, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 1.0
  */
 
@@ -64,6 +64,10 @@ public class FlightDataExportService extends WebService {
 
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
+			boolean isSimTime = (routeData.getFirst() instanceof ACARSRouteEntry ae) && (ae.getSimUTC() != null);
+			if (isSimTime)
+				ctx.print("Sim ");
+			
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,WindSpeed,WindHdg,Temperature,Pressure,Visibility,"
 				+"FuelFlow,Fuel,Weight,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,ADF1,COM1,ATC1,COM2,ATC2,WARN");
 		} else
@@ -72,22 +76,21 @@ public class FlightDataExportService extends WebService {
 		// Format the ACARS data
 		int restoreCount = 0;
 		for (RouteEntry entry : routeData) {
-			if (entry instanceof ACARSRouteEntry) {
-				ACARSRouteEntry ae = (ACARSRouteEntry) entry;
+			if (entry instanceof ACARSRouteEntry ae) {
 				if (ae.getRestoreCount() > restoreCount) {
 					ctx.println(String.format("*** FLIGHT RESTORE %d ***", Integer.valueOf(ae.getRestoreCount())));
 					restoreCount = ae.getRestoreCount();
 				}
 				
 				ctx.println(format(ae, wt));
-			} else if (entry instanceof XARouteEntry)
-				ctx.println(format((XARouteEntry) entry, wt));
+			} else if (entry instanceof XARouteEntry xe)
+				ctx.println(format(xe, wt));
 		}
 
 		// Write the response
 		try {
 			ctx.setContentType("text/csv", "utf-8");
-			ctx.setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
+			ctx.setHeader("Content-disposition", String.format("attachment; filename=acars_%d.csv", Integer.valueOf(id)));
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
