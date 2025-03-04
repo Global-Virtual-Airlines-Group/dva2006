@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 11.1
+ * @version 11.5
  * @since 2.1
  */
 
@@ -316,17 +316,15 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, STDDEV_POP(L.VSPEED) AS SD, "
-			+ "AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L "
-			+ "WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
+			+ "AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, AVG(L.SCORE) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append("GROUP BY L.EQTYPE HAVING (CNT>1) ORDER BY FACT");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, LandingScorer.OPT_VSPEED);
-			ps.setInt(2, pilotID);
+			ps.setInt(1, pilotID);
 			if (_dayFilter > 0)
-				ps.setInt(3, _dayFilter);
+				ps.setInt(2, _dayFilter);
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
