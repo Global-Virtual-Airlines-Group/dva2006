@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.*;
 import org.deltava.beans.system.IMAPConfiguration;
 
@@ -22,6 +24,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class IMAPMailboxCommand extends AbstractAuditFormCommand {
+	
+	private static final Logger log = LogManager.getLogger(IMAPMailboxCommand.class);
 
 	/**
 	 * Callback method called when editing the profile.
@@ -140,8 +144,11 @@ public class IMAPMailboxCommand extends AbstractAuditFormCommand {
 						}
 
 						// Get the stdout results
-						while (br.ready())
-							pOut.add(br.readLine());
+						while (br.ready()) {
+							String msg = br.readLine();
+							pOut.add(msg);
+							log.warn(msg);
+						}
 					}
 
 					ctx.setAttribute("scriptResults", pOut, REQUEST);
