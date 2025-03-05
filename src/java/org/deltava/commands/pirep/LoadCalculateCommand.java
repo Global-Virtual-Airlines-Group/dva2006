@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to calculate load factors on draft Flight Reports. 
  * @author Luke
- * @version 11.2
+ * @version 11.5
  * @since 10.0
  */
 
@@ -78,7 +78,7 @@ public class LoadCalculateCommand extends AbstractCommand {
 			fr.setLoadFactor(loadFactor);
 			
 			// If the date is in the past, move it forward to today
-			if ((fr instanceof DraftFlightReport dfr) && dfr.getTimeD().isBefore(ZonedDateTime.now())) {
+			if ((fr instanceof DraftFlightReport dfr) && (!dfr.hasTimes() || dfr.getTimeD().isBefore(ZonedDateTime.now()))) {
 				fr.setDate(LocalDate.now().atTime(12, 0).toInstant(ZoneOffset.UTC));
 				fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Adjusted draft flight date to %s", StringUtils.format(fr.getDate(), ctx.getUser().getDateFormat())));
 			}
