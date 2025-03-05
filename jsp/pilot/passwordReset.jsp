@@ -13,18 +13,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:attr roles="HR" attr="isHR" value="true" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
 <c:if test="${!empty dupeUsers}">
-golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
-golgotha.form.validate({f:f.fName, l:2, t:'First Name'});
-golgotha.form.validate({f:f.lName, l:2, t:'Last Name'});
+	golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
+	golgotha.form.validate({f:f.fName, l:2, t:'First Name'});
+	golgotha.form.validate({f:f.lName, l:2, t:'Last Name'});
 <content:filter roles="!HR">
-golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address', addr:true});</content:filter>
-golgotha.form.submit(f);
-return true;
+	golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address', addr:true});</content:filter>
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -43,8 +42,7 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="fName" required="true" idx="*" size="10" max="16" value="${param.fName}" />
- <el:text name="lName" required="true" idx="*" size="16" max="14" value="${param.lName}" /></td>
+ <td class="data"><el:text name="fName" required="true" idx="*" size="10" max="16" value="${param.fName}" />&nbsp;<el:text name="lName" required="true" idx="*" size="16" max="14" value="${param.lName}" /></td>
 </tr>
 <content:filter roles="!HR">
 <tr>
