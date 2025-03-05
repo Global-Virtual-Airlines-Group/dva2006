@@ -221,9 +221,8 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
-			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, (ABS(AVG(L.RWYDISTANCE))*3 + "
-			+ "STDDEV_POP(L.RWYDISTANCE)*2)/15), 650) + (ABS(AVG(ABS(? - L.VSPEED))*3) + STDDEV_POP(L.VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, FLIGHTSTATS_LANDING L WHERE "
-			+ "(PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
+			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, AVG(L.SCORE) AS FACT FROM PILOTS P, "
+			+ "PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
 			buf.append("AND (PR.EQTYPE=?) ");
 		if (_dayFilter > 0)
@@ -254,6 +253,7 @@ public class GetFlightReportStatistics extends DAO {
 					if (!rs.wasNull()) {
 						ls.setAverageDistance(dist);
 						ls.setDistanceStdDeviation(rs.getDouble(8));
+						ls.setAverageScore(rs.getDouble(9) / 100);
 					}
 				
 					results.add(ls);
@@ -340,6 +340,7 @@ public class GetFlightReportStatistics extends DAO {
 					if (!rs.wasNull()) {
 						ls.setAverageDistance(avgDist);
 						ls.setDistanceStdDeviation(rs.getDouble(7));
+						ls.setAverageScore(rs.getDouble(8) / 100);
 					}
 				
 					results.add(ls);
