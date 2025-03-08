@@ -279,8 +279,6 @@
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 		
-		<tileHost>api.weather.com</tileHost>
-
 		<!-- Radar download bounds -->
 		<radar>
 			<zoom type="Integer">8</zoom>

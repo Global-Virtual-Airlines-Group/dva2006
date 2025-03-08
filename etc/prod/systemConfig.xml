@@ -302,8 +302,6 @@
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 
-		<tileHost>api.weather.com</tileHost>
-
 		<!-- Download locations -->
 		<url>
 			<metarCycle>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
