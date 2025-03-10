@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 11.4
+ * @version 11.6
  * @since 1.0
  */
 
@@ -174,6 +174,8 @@ public class EventCommand extends AbstractCommand {
 
 			// Save event info in the request
 			ctx.setAttribute("event", e, REQUEST);
+			ctx.setAttribute("fbScore", FeedbackScore.generate(e), REQUEST);
+			ctx.setAttribute("hasFB", Boolean.valueOf(ctx.isAuthenticated() && e.hasFeedback(ctx.getUser().getID())), REQUEST);
 			ctx.setAttribute("access", eAccess, REQUEST);
 			ctx.setAttribute("saAccess", sAccessMap, REQUEST);			
 			// Save the routes in a map, keyed by ID

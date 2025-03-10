@@ -1,5 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
+
+import java.time.Instant;
 
 import org.deltava.beans.event.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -11,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 8.6
+ * @version 11.6
  * @since 1.0
  */
 
@@ -26,6 +28,8 @@ public class EventAccessControl extends AccessControl {
 	private boolean _canAssignFlights;
 	private boolean _canCancel;
 	private boolean _canDelete;
+	private boolean _canViewFeedback;
+	private boolean _canProvideFeedback;
 
 	/**
 	 * Initializes the Access Controller.
@@ -68,15 +72,17 @@ public class EventAccessControl extends AccessControl {
 		// Set access variables
 		boolean isEvent = (_ctx.isUserInRole("Event") && isOurs) || _ctx.isUserInRole("Admin");
 		boolean hasSignups = (!_ev.getSignups().isEmpty());
-		_canSignup = (_ev.getStatus() == Status.OPEN) && _ev.getCanSignup() && hasID && isRouteAvailable
-				&& canParticipate && (!_ev.isSignedUp(_ctx.getUser().getID()));
+		_canSignup = (_ev.getStatus() == Status.OPEN) && _ev.getCanSignup() && hasID && isRouteAvailable && canParticipate && (!_ev.isSignedUp(_ctx.getUser().getID()));
 		_canEdit = (_ev.getStatus() != Status.COMPLETE) && isEvent;
-		_canBalance = ((_ev.getStatus() == Status.OPEN) || (_ev.getStatus() == Status.CLOSED)) && hasSignups 
-			&& isEvent && (_ev.getRoutes().size() > 1);
-		_canAssignFlights = ((_ev.getStatus() == Status.CLOSED) || (_ev.getStatus() == Status.ACTIVE)) && hasSignups
-				&& isEvent;
+		_canBalance = ((_ev.getStatus() == Status.OPEN) || (_ev.getStatus() == Status.CLOSED)) && hasSignups && isEvent && (_ev.getRoutes().size() > 1);
+		_canAssignFlights = ((_ev.getStatus() == Status.CLOSED) || (_ev.getStatus() == Status.ACTIVE)) && hasSignups && isEvent;
 		_canCancel = _canEdit;
 		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && (_ev.getStartTime().toEpochMilli() > System.currentTimeMillis());
+		
+		// Check for feedback
+		boolean hasSignup = _ev.getSignups().stream().anyMatch(es -> es.getPilotID() == _ctx.getUser().getID());
+		boolean hasFeedback = _ctx.isAuthenticated() && _ev.hasFeedback(_ctx.getUser().getID());
+		_canProvideFeedback = canParticipate && _ev.getEndTime().isBefore(Instant.now()) && hasSignup && !hasFeedback;
 	}
 
 	/**
@@ -133,5 +139,21 @@ public class EventAccessControl extends AccessControl {
 	 */
 	public boolean getCanDelete() {
 		return _canDelete;
+	}
+	
+	/**
+	 * Returns if this User can view feedback about this Online Event.
+	 * @return TRUE if feedback can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewFeedback() {
+		return _canViewFeedback;
+	}
+	
+	/**
+	 * Returns if this User can provide feedback about this Online Event.
+	 * @return TRUE if feedback can be provided, otherwise FALSE
+	 */
+	public boolean getCanProvideFeedback() {
+		return _canProvideFeedback;
 	}
 }

@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 10.6
+ * @version 11.6
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getAssignableEvents() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC")) {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.SU_DEADLINE<?) AND (E.ENDTIME>?) AND (E.STATUS<>?) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC")) {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 			ps.setTimestamp(1, now);
 			ps.setTimestamp(2, now);
@@ -94,6 +94,20 @@ public class GetEvent extends DAO {
 			ps.setInt(3, net.ordinal());
 			ps.setString(4, airlineCode);
 			ps.setTimestamp(5, createTimestamp(dt));
+			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns Online Events with user feedback.
+	 * @return a List of Events
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Event> getWithFeedback() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA LEFT JOIN events.FEEDBACK EF ON (E.ID=EF.ID) WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) AND (EF.ID IS NOT NULL) ORDER BY E.STARTTIME DESC")) {
+			ps.setString(1, SystemData.get("airline.code"));
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -236,6 +250,7 @@ public class GetEvent extends DAO {
 			// Get the first event and populate it
 			loadAirlines(e);
 			loadEQTypes(e);
+			loadFeedback(e);
 			loadContactAddrs(e);
 			loadFeaturedAirports(e);
 			
@@ -437,6 +452,22 @@ public class GetEvent extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					e.addAirline(SystemData.getApp(rs.getString(1)));	
+			}
+		}
+	}
+	
+	private void loadFeedback(Event e) throws SQLException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM events.FEEDBACK WHERE (ID=?) ORDER BY CREATED")) {
+			ps.setInt(1, e.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Feedback f = new Feedback(e.getID(), Event.class);
+					f.setAuthorID(rs.getInt(2));
+					f.setCreatedOn(toInstant(rs.getTimestamp(3)));
+					f.setScore(rs.getInt(4));
+					f.setComments(rs.getString(5));
+					e.addFeedback(f);
+				}
 			}
 		}
 	}

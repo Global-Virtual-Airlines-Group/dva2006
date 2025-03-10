@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.Feedback;
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -12,7 +13,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 10.6
+ * @version 11.6
  * @since 1.0
  */
 
@@ -64,7 +65,7 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void signup(Signup s) throws DAOException {
-		try (PreparedStatement ps =  prepare("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps =  prepare("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, s.getID());
 			ps.setInt(2, s.getRouteID());
 			ps.setInt(3, s.getPilotID());
@@ -172,7 +173,7 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeBanner(Event e) throws DAOException {
-		try (PreparedStatement ps = prepare("REPLACE INTO events.BANNERS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, LCASE(?))")) {
+		try (PreparedStatement ps = prepare("REPLACE INTO events.BANNERS (ID, IMG, X, Y, EXT) VALUES (?,?,?,?,LCASE(?))")) {
 			ps.setInt(1, e.getID());
 			ps.setBinaryStream(2, e.getInputStream(), e.getSize());
 			ps.setInt(3, e.getWidth());
@@ -199,6 +200,27 @@ public class SetEvent extends DAO {
 		}
 	}
 	
+	/**
+	 * Writes Online Event feedback to the database.
+	 * @param f a Feedback bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Feedback f) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO events.FEEDBACK (ID, PILOT_ID, CREATED, SCORE, COMMENTS) VALUES (?,?,?,?,?)")) {
+			ps.setInt(1, f.getID());
+			ps.setInt(2, f.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(f.getCreatedOn()));
+			ps.setInt(4, f.getScore());
+			ps.setString(5, f.getComments());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/*
+	 * Helper method to write Chart data to the database.
+	 */
 	private void writeCharts(Event e) throws SQLException {
 
 		// Clear airports

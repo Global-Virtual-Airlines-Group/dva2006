@@ -1,0 +1,93 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<c:if test="${!hasFB}">
+<c:set var="fbURL" value="${fbObject.getClass().simpleName.toLowerCase()}fb.ws" scope="page" />
+<content:fbscores var="fbValues" />
+<script async>
+golgotha.local.send = function(b) { return golgotha.form.wrap(golgotha.local.validateFB, b.form); }; 
+
+golgotha.local.validateFB = function(f) {
+	if (!golgotha.form.check()) return false;
+
+	// Build the post object
+	const fd = new FormData();
+	fd.set('score', golgotha.form.getCheck(f.score).value);
+	fd.set('comments', f.comments.value);
+
+	// Send it and display statistics
+	const xreq = new XMLHttpRequest();
+	xreq.open('post', '${fbURL}?id=${fbObject.hexID}', true);
+	xreq.onreadystatechange = function() {
+		if (xreq.readyState != 4) return false;
+		if (xreq.status != 200) {
+			alert('Error ' + xreq.statusText + ' sending feedback');
+			golgotha.form.clear();
+			return false;
+		}
+
+		const js = JSON.parse(xreq.responseText);
+		const sse = document.getElementById('fbSize');
+		const ase = document.getElementById('fbScore');
+		ase.innerText = js.avg; sse.innerText = js.size;
+		golgotha.util.display('fbStats', true);
+		golgotha.util.display('fbResponse', true);
+
+		// Show coomments
+		if (js.comments.length > 0) {
+			const ce = document.getElementById('fcData');
+			js.comments.forEach(function(co) {
+				const se = document.createElement('span');
+				se.setAttribute('class', 'pri bld');
+				se.textContent = co.score;
+				ce.appendChild(se);
+				ce.append(' - ');
+				ce.append(co.comments);
+				ce.appendChild(document.createElement('br'));
+			});
+
+			golgotha.util.display('fbComments', true);	
+		}
+
+		const rows = golgotha.util.getElementsByClass('fbData', 'tr');
+		rows.forEach(function(r) { golgotha.util.display(r, false); });
+		golgotha.form.clear();
+		return true;
+	};
+
+	xreq.send(fd);
+	golgotha.form.submit(f);
+	return false;
+};
+</script></c:if>
+
+<!-- Feedback Form -->
+<el:form action="" method="post" link="${fbObject}" validate="return false">
+<el:table className="form">
+<tr class="title caps">
+ <td colspan="${fbCols}">${fbName} FEEDBACK</td>
+</tr>
+<c:if test="${!hasFB}">
+<tr class="fbData">
+ <td class="label">Rating</td>
+ <td class="data small" colspan="${fbCols - 1}"><el:check type="radio" name="score" idx="*" width="40" options="${fbValues}" /><span class="ita">(Excellent)</span> <el:button ID="SendButton" label="SEND" onClick="javascript:void golgotha.local.send(this)" /></td>
+</tr>
+<tr class="fbData">
+ <td class="label top">Comments</td>
+ <td class="data" colspan="${fbCols - 1}"><el:textbox name="comments" idx="*" width="85%" height="3"></el:textbox></td>
+</tr>
+</c:if>
+<tr id="fbStats"<c:if test="${empty fbScore}"> style="display:none"</c:if>>
+ <td class="label">Feedback</td>
+ <td class="data" colspan="${fbCols - 1}">Average Score: <span id="fbScore" class="pri bld"><fmt:dec value="${fbScore.average}" /></span>, <span id="fbSize" class="bld"><fmt:int value="${fbScore.size}" /></span> entries<c:if test="${!empty fbCmd && !empty fbScore}"> - <el:cmd url="${fbCmd}" link="${fbObject}" className="bld">VIEW FEEDBACK</el:cmd></c:if></td>
+</tr>
+<tr id="fbResponse" style="display:none">
+ <td colspan="2" class="mid pri bld caps">Thank you for submitting your feedback<span class="nophone"> about this <content:airline />&nbsp;${fbName}</span></td>
+</tr>
+<tr id="fbComments" style="display:none">
+ <td class="label top">Comments</td>
+ <td id="fcData" class="data small" colspan="${fbCols - 1}"></td>
+</tr>
+</el:table>
+</el:form>
