@@ -29,6 +29,15 @@ golgotha.charts.buildOptions = function(opts) {
 
 golgotha.util.mapAPILoaded = function() {
 	console.log('Google Maps API loaded');
+	if (golgotha.maps.async) {
+		const sc = document.createElement('script');
+		sc.setAttribute('async', 'true');
+		sc.setAttribute('id', 'googleMapsV' + google.maps.API);
+		sc.onload = new Function(golgotha.maps.callback + '()'); 
+		sc.src = golgotha.maps.library;
+		document.head.appendChild(sc);
+	}
+	
 	return true;
 };
 
@@ -498,18 +507,17 @@ golgotha.nav.init = function() {
 };
 
 golgotha.util.validateCAPTCHA = function(token) {
-	const xreq = new XMLHttpRequest();	
-	xreq.open('post', 'recaptcha.ws', true);
-	xreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		const isOK = (xreq.status == 200) || (xreq.status == 304);
-		if (!isOK) console.log('Error ' + xreq.status + ' validating CAPTCHA!');
-		golgotha.util.captcha = true;
-		return isOK;
-	};
+	const p = fetch('recaptcha.ws', {method:'post', body:token, headers:{'Content-Type':'application/json; charset=utf-8'}});
+	p.then(function(rsp) {
+		const isOK = ((rsp.status == 200) || (rsp.status == 304));
+		if (!isOK) 
+			console.log('Error ' + rsp.status + ' validating CAPTCHA!');
+		else
+			rsp.text();
 
-	xreq.send(token);
+		return isOK;
+	});
+
 	return true;
 };
 

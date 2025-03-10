@@ -30,7 +30,6 @@ public class InsertGoogleAPITag extends TagSupport {
 	
 	private static final int MIN_API_VERSION = 3;
 	private static final String DEFAULT_CYCLE = "quarterly";
-	private static final String DEFAULT_CALLBACK = "golgotha.util.mapAPILoaded";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
@@ -120,18 +119,21 @@ public class InsertGoogleAPITag extends TagSupport {
 			_cycle = DEFAULT_CYCLE;
 		
 		// Build the Map context object
+		String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);
 		JSONObject mco = new JSONObject();
 		mco.put("IMG_PATH", SystemData.get("path.img"));
 		mco.put("API", _majorVersion);
+		mco.put("async", Boolean.valueOf(_cb != null));
 		mco.putOpt("cycle", _cycle);
 		mco.putOpt("minor", _minorVersion);
 		mco.put("seriesData", Collections.emptyMap());
 		if (_cb != null) {
-			mco.put("library", String.format("%s/v%s/googleMapsV%d.js", SystemData.get("path.js"), VersionInfo.getFullBuild(), Integer.valueOf(_majorVersion)));
+			mco.put("library", String.format("%s/v%s/%s.js", SystemData.get("path.js"), VersionInfo.getFullBuild(), jsFileName));
 			mco.put("callback", _cb);
 		}
 		
 		// Insert the API version
+		ContentHelper.addContent(pageContext, "JS", jsFileName);
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
@@ -161,9 +163,9 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			out.print("&key=");
 			out.print(SystemData.get("security.key.googleMaps." + (_isAnonymous ? "anon" : "auth")));
-			out.print("&callback=");
-			out.print((_cb == null) ? DEFAULT_CALLBACK : _cb);
-			out.println("\"></script>");
+			if (_cb != null)
+				out.print("&loading=async");
+			out.print("&callback=golgotha.util.mapAPILoaded\"></script>");
 			
 			// Init common code
 			out.print("<script id=\"golgothaMCO\">");
@@ -172,17 +174,15 @@ public class InsertGoogleAPITag extends TagSupport {
 			out.println(";</script>");
 			
 			// Add JS support file
-			String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);
-			out.print("<script src=\"");
-			out.print(SystemData.get("path.js"));
-			out.print("/v");
-			out.print(VersionInfo.getFullBuild());
-			out.print('/');
-			out.print(jsFileName);
-			out.println(".js\"></script>");
-			
-			// Mark as added
-			ContentHelper.addContent(pageContext, "JS", jsFileName);
+			if (_cb == null) {
+				out.print("<script src=\"");
+				out.print(SystemData.get("path.js"));
+				out.print("/v");
+				out.print(VersionInfo.getFullBuild());
+				out.print('/');
+				out.print(jsFileName);
+				out.println(".js\"></script>");
+			}
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
