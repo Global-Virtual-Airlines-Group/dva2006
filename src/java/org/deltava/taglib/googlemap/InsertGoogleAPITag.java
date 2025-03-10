@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 10.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -125,8 +125,11 @@ public class InsertGoogleAPITag extends TagSupport {
 		mco.put("API", _majorVersion);
 		mco.putOpt("cycle", _cycle);
 		mco.putOpt("minor", _minorVersion);
-		mco.put("tileHost", SystemData.get("weather.tileHost"));
 		mco.put("seriesData", Collections.emptyMap());
+		if (_cb != null) {
+			mco.put("library", String.format("%s/v%s/googleMapsV%d.js", SystemData.get("path.js"), VersionInfo.getFullBuild(), Integer.valueOf(_majorVersion)));
+			mco.put("callback", _cb);
+		}
 		
 		// Insert the API version
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
