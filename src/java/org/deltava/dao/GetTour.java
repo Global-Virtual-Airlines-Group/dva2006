@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 10.0
  */
 
@@ -60,6 +60,7 @@ public class GetTour extends DAO {
 			t.setOwner(SystemData.getApp(dbName));
 			loadLegs(t);
 			loadProgress(t);
+			loadFeedback(t);
 			loadBriefing(t);
 			return t;
 		} catch (SQLException se) {
@@ -91,6 +92,22 @@ public class GetTour extends DAO {
 	public Collection<Tour> getWithFlights() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM PIREPS P, TOURS T "
 			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (P.TOUR_ID>0) AND (T.ID=P.TOUR_ID) GROUP BY T.ID")) {
+			List<Tour> results = execute(ps);
+			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Retrieves all Tours from the database that have user feedback.
+	 * @return a Collection of Tour beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Tour> getWithFeedback() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT T.*, GROUP_CONCAT(DISTINCT TN.NETWORK), TB.SIZE, TB.ISPDF, (SELECT COUNT(TL.IDX) FROM TOUR_LEGS TL WHERE (TL.ID=T.ID)) AS LEGCNT FROM TOUR_FEEDBACK TF, TOURS T "
+			+ "LEFT JOIN TOUR_NETWORKS TN ON (T.ID=TN.ID) LEFT JOIN TOUR_BRIEFINGS TB ON (T.ID=TB.ID) WHERE (T.ID=TF.ID) AND (TF.PILOT_ID>0) GROUP BY T.ID")) {
 			List<Tour> results = execute(ps);
 			results.forEach(t -> t.setOwner(SystemData.getApp(null)));
 			return results;
@@ -306,6 +323,29 @@ public class GetTour extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					t.load(rs.getBytes(1));
+			}
+		}
+	}
+	
+	/*
+	 * Helper method to load Tour feedback.
+	 */
+	private void loadFeedback(Tour t) throws SQLException {
+		
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(t.getOwner().getDB());
+		sqlBuf.append(".TOUR_FEEDBACK WHERE (ID=?) ORDER BY CREATED");
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, t.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Feedback tf = new Feedback(t.getID(), Tour.class);
+					tf.setAuthorID(rs.getInt(2));
+					tf.setCreatedOn(toInstant(rs.getTimestamp(3)));
+					tf.setScore(rs.getInt(4));
+					tf.setComments(rs.getString(5));
+					t.addFeedback(tf);
+				}
 			}
 		}
 	}

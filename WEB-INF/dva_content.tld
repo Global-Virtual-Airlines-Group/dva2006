@@ -110,6 +110,18 @@
 	</tag>
 
 	<tag>
+		<description>Adds Feedback score options as a page attribute</description>
+		<name>fbscores</name>
+		<tag-class>org.deltava.taglib.content.FeedbackScoresTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Adds a singleton collection as a page attribute</description>
 		<name>singleton</name>
 		<tag-class>org.deltava.taglib.content.SingletonTag</tag-class>

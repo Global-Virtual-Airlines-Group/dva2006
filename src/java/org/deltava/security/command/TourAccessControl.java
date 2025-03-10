@@ -1,5 +1,7 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
+
+import java.time.Instant;
 
 import org.deltava.beans.stats.Tour;
 
@@ -8,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Tour beans.
  * @author Luke
- * @version 10.3
+ * @version 11.6
  * @since 10.0
  */
 
@@ -17,10 +19,12 @@ public class TourAccessControl extends AccessControl {
 	private final Tour _t;
 	
 	private boolean _canCreate;
-	private boolean  _canRead;
+	private boolean _canRead;
 	private boolean _canEdit;
 	private boolean _canEditLegs;
 	private boolean _canDelete;
+	private boolean _canViewFeedback;
+	private boolean _canProvideFeedback;
 
 	/**
 	 * Initializes the access controller.
@@ -43,6 +47,13 @@ public class TourAccessControl extends AccessControl {
 		_canRead = (_t != null) && (_t.getActive() || hasRole);
 		_canEditLegs = (_t == null) ? _canCreate : (_canEdit && _t.getProgress().isEmpty());
 		_canDelete = (_t != null) && (_ctx.isUserInRole("Admin") || _canEditLegs);
+		
+		// Check for feedback
+		if (_t != null) {
+			_canViewFeedback = hasRole || _ctx.isUserInRole("HR");
+			boolean hasFeedback = _ctx.isAuthenticated() && _t.hasFeedback(_ctx.getUser().getID());
+			_canProvideFeedback = _ctx.isUserInRole("Pilot") && !hasFeedback && _t.isActiveOn(Instant.now());
+		}
 	}
 
 	/**
@@ -83,5 +94,21 @@ public class TourAccessControl extends AccessControl {
 	 */
 	public boolean getCanDelete() {
 		return _canDelete;
+	}
+	
+	/**
+	 * Returns whether the User can view feedback about this Tour.
+	 * @return TRUE if feedback can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewFeedback() {
+		return _canViewFeedback;
+	}
+	
+	/**
+	 * Returns whether the User can provide feedback about this Tour.
+	 * @return TRUE if feedback can be provided, otherwise FALSE
+	 */
+	public boolean getCanProvideFeedback() {
+		return _canProvideFeedback;
 	}
 }

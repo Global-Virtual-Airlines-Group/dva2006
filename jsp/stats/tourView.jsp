@@ -186,6 +186,14 @@ map.addMarkers(lines);
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
+<c:if test="${access.canProvideFeedback || access.canViewFeedback}">
+<c:set var="fbCols" value="6" scope="page" />
+<c:set var="fbCmd" value="tourfb" scope="page" />
+<c:set var="fbName" value="Flight Tour" scope="page" />
+<c:set var="fbObject" value="${tour}" scope="page" />
+<%@ include file="/jsp/feedback.jspf" %>
+</c:if>
+
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>	

@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 10.0
  */
 
@@ -302,6 +302,8 @@ public class TourCommand extends AbstractAuditFormCommand {
 
 			readAuditLog(ctx, t);
 			ctx.setAttribute("tour", t, REQUEST);
+			ctx.setAttribute("fbScore", FeedbackScore.generate(t), REQUEST);
+			ctx.setAttribute("hasFB", Boolean.valueOf(ctx.isAuthenticated() && t.hasFeedback(ctx.getUser().getID())), REQUEST);
 			ctx.setAttribute("isActiveNow", Boolean.valueOf(t.isActiveOn(Instant.now())), REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {

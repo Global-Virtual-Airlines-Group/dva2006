@@ -974,6 +974,12 @@
 		<roles>Event</roles>
 	</command>
 
+	<command id="eventfb">
+		<name>Event Feedback</name>
+		<class>org.deltava.commands.event.EventFeedbackCommand</class>
+		<roles>Operations,HR,Event</roles>
+	</command>
+
 
 	<!-- Water Cooler Commands -->
 	<command id="channels">
@@ -1424,6 +1430,12 @@
 		<name>Tour Progress</name>
 		<class>org.deltava.commands.stats.TourProgressCommand</class>
 		<roles>Pilot</roles>
+	</command>
+
+	<command id="tourfb">
+		<name>Tour Feedback</name>
+		<class>org.deltava.commands.stats.TourFeedbackCommand</class>
+		<roles>Operations,HR,Event</roles>
 	</command>
 
 	<command id="tourdelete">
