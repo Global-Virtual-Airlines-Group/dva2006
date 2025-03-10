@@ -1,16 +1,16 @@
-// Copyright 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.ScheduleEntry;
-import org.deltava.beans.stats.Tour;
+import org.deltava.beans.stats.*;
 
 /**
  * A Data Access Object to write Tour data to the database.
  * @author Luke
- * @version 10.3
+ * @version 11.6
  * @since 10.0
  */
 
@@ -158,5 +158,23 @@ public class SetTour extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}		
+	}
+
+	/**
+	 * Writes Flight Tour feedback to the database.
+	 * @param tf a Feedback bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Feedback tf) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO TOUR_FEEDBACK (ID, PILOT_ID, CREATED, SCORE, COMMENTS) VALUES (?,?,?,?,?)")) {
+			ps.setInt(1, tf.getID());
+			ps.setInt(2, tf.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(tf.getCreatedOn()));
+			ps.setInt(4, tf.getScore());
+			ps.setString(5, tf.getComments());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

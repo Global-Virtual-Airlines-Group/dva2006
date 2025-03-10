@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -13,11 +13,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Tour data.
  * @author Luke
- * @version 10.5
+ * @version 11.6
  * @since 10.0
  */
 
-public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry {
+public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry, FeedbackBean {
 
 	private String _name;
 	private TourStatus _status = TourStatus.PLANNING;
@@ -33,7 +33,8 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	private final List<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
 	private int _flightCount;
 	
-	private final Collection<TourProgress>_progress = new TreeSet<TourProgress>(Collections.reverseOrder());
+	private final Collection<TourProgress> _progress = new TreeSet<TourProgress>(Collections.reverseOrder());
+	private final Collection<Feedback> _feedback = new LinkedHashSet<Feedback>();
 	
 	private AirlineInformation _owner;
 	
@@ -108,6 +109,11 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public Collection<OnlineNetwork> getNetworks() {
 		return _networks;
+	}
+	
+	@Override
+	public Collection<Feedback> getFeedback() {
+		return _feedback;
 	}
 	
 	/**
@@ -336,6 +342,11 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 */
 	public void addProgress(TourProgress tp) {
 		_progress.add(tp);
+	}
+	
+	@Override
+	public void addFeedback(Feedback tf) {
+		_feedback.add(tf);
 	}
 	
 	/**

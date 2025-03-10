@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -14,11 +14,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 10.6
+ * @version 11.6
  * @since 1.0
  */
 
-public class Event extends ImageBean implements ComboAlias, TimeSpan {
+public class Event extends ImageBean implements ComboAlias, TimeSpan, FeedbackBean {
 	
     private String _name;
     private Briefing _briefing;
@@ -37,6 +37,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     private final Collection<Chart> _charts = new TreeSet<Chart>();
     private final Collection<Signup> _signups = new LinkedHashSet<Signup>();
     private final Collection<Route> _routes = new TreeSet<Route>();
+    private final Collection<Feedback> _feedback = new LinkedHashSet<Feedback>();
     private final List<AssignmentInfo> _assignments = new ArrayList<AssignmentInfo>();
     private final Collection<DispatchRoute> _dspRoutes = new LinkedHashSet<DispatchRoute>();
     private final Collection<String> _eqTypes = new TreeSet<String>();
@@ -220,6 +221,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      */
     public Collection<Signup> getSignups() {
         return _signups;
+    }
+    
+    @Override
+	public Collection<Feedback> getFeedback() {
+    	return _feedback;
     }
     
     /**
@@ -521,6 +527,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      */
     public void addCharts(Collection<Chart> charts) {
     	_charts.addAll(charts);
+    }
+    
+    @Override
+	public void addFeedback(Feedback f) {
+    	_feedback.add(f);
     }
     
     /**

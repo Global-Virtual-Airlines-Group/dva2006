@@ -37,6 +37,10 @@
 	<!-- Partner Redirect Service -->
 	<service id="partner" class="org.deltava.service.PartnerRedirectService" />
 
+	<!-- Used Feedback Services -->
+	<service id="tourfb" class="org.deltava.service.feedback.TourFeedbackService" />
+	<service id="eventfb" class="org.deltava.service.feedback.EventFeedbackService" />
+
 	<!-- Flight Schedule Services -->
 	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
 	<service id="aircraft" class="org.deltava.service.schedule.AircraftListService" />

@@ -320,13 +320,20 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </c:if>
 </el:table>
 
+<c:if test="${access.canProvideFeedback || access.canViewFeedback}">
+<c:set var="fbCols" value="6" scope="page" />
+<c:set var="fbCmd" value="eventfb" scope="page" />
+<c:set var="fbName" value="Online Event" scope="page" />
+<c:set var="fbObject" value="${event}" scope="page" />
+<%@ include file="/jsp/feedback.jspf" %>
+</c:if>
+
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSignup}"><el:button type="submit" label="SIGN UP FOR THIS EVENT" /></c:if>
-<c:if test="${access.canEdit}">
-&nbsp;<el:cmdbutton url="eventroutes" link="${event}" label="UPDATE ROUTES" />&nbsp;<el:cmdbutton url="eventedit" link="${event}" label="EDIT EVENT" /></c:if>
+<c:if test="${access.canEdit}">&nbsp;<el:cmdbutton url="eventroutes" link="${event}" label="UPDATE ROUTES" />&nbsp;<el:cmdbutton url="eventedit" link="${event}" label="EDIT EVENT" /></c:if>
 <c:if test="${access.canAssignFlights}">&nbsp;<el:cmdbutton url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" /></c:if>
 <c:if test="${access.canBalance}">&nbsp;<el:cmdbutton url="eventbalance" link="${event}" label="BALANCE SIGNUPS" /></c:if>
 <c:if test="${access.canCancel}">&nbsp;<el:cmdbutton url="eventcancel" link="${event}" label="CANCEL EVENT" /></c:if>
