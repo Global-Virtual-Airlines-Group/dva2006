@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to list all airports serviced by a particular Airline.
  * @author Luke
- * @version 7.3
+ * @version 11.6
  * @since 1.0
  */
 
@@ -87,6 +87,7 @@ public class ServicedAirportService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "airports");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(900);
@@ -99,10 +100,6 @@ public class ServicedAirportService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
