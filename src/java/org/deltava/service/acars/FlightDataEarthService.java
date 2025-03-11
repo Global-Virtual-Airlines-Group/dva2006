@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -205,5 +205,10 @@ public class FlightDataEarthService extends GoogleEarthService {
 		}
 
 		return SC_OK;
+	}
+	
+	@Override
+	public boolean isSecure() {
+		return false;
 	}
 }
