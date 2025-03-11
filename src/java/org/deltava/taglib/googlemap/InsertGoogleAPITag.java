@@ -137,6 +137,14 @@ public class InsertGoogleAPITag extends TagSupport {
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
+			
+			// Write the MCO
+			out.print("<script id=\"golgothaMCO\">");
+			out.print("golgotha.maps = ");
+			out.print(mco.toString());
+			out.println(";</script>");
+			
+			// Load the Google API
 			out.print("<script");
 			if (_cb != null)
 				out.print(" async");
@@ -166,12 +174,6 @@ public class InsertGoogleAPITag extends TagSupport {
 			if (_cb != null)
 				out.print("&loading=async");
 			out.print("&callback=golgotha.util.mapAPILoaded\"></script>");
-			
-			// Init common code
-			out.print("<script id=\"golgothaMCO\">");
-			out.print("golgotha.maps = ");
-			out.print(mco.toString());
-			out.println(";</script>");
 			
 			// Add JS support file
 			if (_cb == null) {
