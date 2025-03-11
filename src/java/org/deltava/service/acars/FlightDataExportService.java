@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -240,5 +240,10 @@ public class FlightDataExportService extends WebService {
 			buf.append("OVERSPEED");
 		
 		return buf.toString();
+	}
+	
+	@Override
+	public boolean isSecure() {
+		return false;
 	}
 }
