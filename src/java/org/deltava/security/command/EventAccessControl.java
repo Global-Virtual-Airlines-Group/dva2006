@@ -70,6 +70,7 @@ public class EventAccessControl extends AccessControl {
 		boolean isRouteAvailable = !_ev.getActiveRoutes().isEmpty();
 
 		// Set access variables
+		Instant now = Instant.now();
 		boolean isEvent = (_ctx.isUserInRole("Event") && isOurs) || _ctx.isUserInRole("Admin");
 		boolean hasSignups = (!_ev.getSignups().isEmpty());
 		_canSignup = (_ev.getStatus() == Status.OPEN) && _ev.getCanSignup() && hasID && isRouteAvailable && canParticipate && (!_ev.isSignedUp(_ctx.getUser().getID()));
@@ -77,12 +78,11 @@ public class EventAccessControl extends AccessControl {
 		_canBalance = ((_ev.getStatus() == Status.OPEN) || (_ev.getStatus() == Status.CLOSED)) && hasSignups && isEvent && (_ev.getRoutes().size() > 1);
 		_canAssignFlights = ((_ev.getStatus() == Status.CLOSED) || (_ev.getStatus() == Status.ACTIVE)) && hasSignups && isEvent;
 		_canCancel = _canEdit;
-		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && (_ev.getStartTime().toEpochMilli() > System.currentTimeMillis());
+		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && _ev.getStartTime().isBefore(now);
 		
 		// Check for feedback
-		boolean hasSignup = _ev.getSignups().stream().anyMatch(es -> es.getPilotID() == _ctx.getUser().getID());
 		boolean hasFeedback = _ctx.isAuthenticated() && _ev.hasFeedback(_ctx.getUser().getID());
-		_canProvideFeedback = canParticipate && _ev.getEndTime().isBefore(Instant.now()) && hasSignup && !hasFeedback;
+		_canProvideFeedback = canParticipate && (_ev.getEndTime() != null) && _ev.getEndTime().isBefore(now) && !hasFeedback;
 	}
 
 	/**
