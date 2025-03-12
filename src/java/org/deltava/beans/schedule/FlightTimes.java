@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.ZonedDateTime;
@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 /**
  * An interface to describe objects with departure and arrival times.
  * @author Luke
- * @version 10.1
+ * @version 11.6
  * @since 6.1
  */
 
@@ -33,7 +33,7 @@ public interface FlightTimes {
 	 * @return TRUE if both times are populated, otherwise FALSE
 	 * @see RoutePair#isPopulated()
 	 */
-	public default boolean hasTimes() {
+	public default boolean hasFlightTimes() {
 		return (getTimeD() != null) && (getTimeA() != null);
 	}
 }
