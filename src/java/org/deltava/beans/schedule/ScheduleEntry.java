@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017, 2020, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 11.2
+ * @version 11.6
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 
 	@Override
 	public final Duration getDuration() {
-		if (!hasTimes())
+		if (!hasFlightTimes())
 			throw new IllegalStateException("Arrival and Departure Times are not set");
 		
 		Duration d = Duration.between(_timeD.toInstant(), _timeA.toInstant());
@@ -189,7 +189,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * @return TRUE if the arrival time has been adjusted, otherwise FALSE
 	 */
 	public boolean adjustForDST(LocalDate dt) {
-		if (!isPopulated() || !hasTimes()) return false;
+		if (!isPopulated() || !hasFlightTimes()) return false;
 		
 		// Determine the proper departure/arrival date/times
 		LocalDateTime ltD = LocalDateTime.of(dt, getTimeD().toLocalTime());
