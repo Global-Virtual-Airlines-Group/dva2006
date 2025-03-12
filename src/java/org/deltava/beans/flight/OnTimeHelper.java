@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 8.4
  */
 
@@ -68,7 +68,7 @@ public class OnTimeHelper {
 	 * @param dfr a DraftFlightReport
 	 */
 	public void add(DraftFlightReport dfr) {
-		if (!dfr.hasTimes()) return;
+		if (!dfr.hasFlightTimes()) return;
 		ScheduleEntry se = new ScheduleEntry(dfr.getAirline(), dfr.getFlightNumber(), dfr.getLeg());
 		se.setEquipmentType(dfr.getEquipmentType());
 		se.setAirportD(dfr.getAirportD());
@@ -108,7 +108,7 @@ public class OnTimeHelper {
 	 * @return an OnTime enumeration
 	 */
 	public OnTime validate(FlightTimes fr) {
-		if (!fr.hasTimes()) return OnTime.UNKNOWN;
+		if (!fr.hasFlightTimes()) return OnTime.UNKNOWN;
 
 		// Get the closest schedule entry
 		_entry = getClosestScheduleEntry(fr);
