@@ -7,22 +7,22 @@
 <c:set var="isXACARS" value="${fn:isXACARS(pirep)}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
- <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline />&nbsp;</span>ACARS FLIGHT DATA</td>
+ <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline />&nbsp;</span>ACARS FLIGHT DATA<span id="acarsToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'acarsData')">COLLAPSE</span></td>
 </tr>
-<tr>
+<tr class="acarsData">
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)<content:authUser>
 <span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a> | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></content:authUser></td>
 </tr>
 <c:if test="${!empty archiveMetadata}">
-<tr>
+<tr class="acarsData">
  <td class="label">Archive Information</td>
  <td class="data" colspan="${cspan}"><span class="pri bld">${archiveMetadata.format}</span> Location <span class="bld">${archiveMetadata.bucket}/${archiveMetadata.hexID.substring(2)}</span> <span class="small nophone">Size = <fmt:fileSize value="${archiveMetadata.size}" />, 
  <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span>&nbsp;<span id="archiveOK" style="display:none" class="bld ter">OK</span><span id="archiveError" style="display:none" class="error bld"></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
-<tr>
+<tr class="acarsData">
  <td class="label">Data Recorder</td>
  <td class="data" colspan="${cspan}">${flightInfo.FDR.toString()} Build <fmt:int value="${pirep.clientBuild}" /><c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if>
 <c:if test="${!empty flightInfo}"><c:if test="${flightInfo.isACARS64Bit}"> [64-bit]</c:if>
@@ -32,7 +32,7 @@
 </tr>
 </c:if>
 <c:if test="${isXACARS}">
-<tr>
+<tr class="acarsData">
  <td class="label">Data Recorder</td>
  <td class="data" colspan="${cspan}">XACARS ${pirep.majorVersion}.${pirep.minorVersion}
 <c:if test="${!empty flightInfo}"> 
@@ -43,7 +43,7 @@
 <c:if test="${!isXACARS}">
 <content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
 <c:if test="${fn:hasFDE(pirep) || !empty pirep.aircraftCode || !empty pirep.author || fn:isMSFS(pirep)}">
-<tr>
+<tr class="acarsData">
  <td class="label">Aircraft Data</td>
  <td class="data" colspan="${cspan}"><c:if test="${fn:hasFDE(pirep)}">${pirep.FDE}&nbsp;</c:if><c:if test="${!empty pirep.aircraftCode}">IATA: ${pirep.aircraftCode}</c:if><c:if test="${!empty pirep.author}"><span class="small ita nophone">&nbsp;Author: ${pirep.author}</span></c:if>
 <c:if test="${!empty pirep.aircraftPath}"><span class="small nophone">&nbsp;Path: ${pirep.aircraftPath}</span></c:if></td>
@@ -51,26 +51,26 @@
 </c:if>
 </content:filter>
 <c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
-<tr>
+<tr class="acarsData">
  <td class="label">Aircraft SDK</td>
  <td class="data" colspan="${cspan}">${pirep.SDK}<c:if test="${!empty acarsClientInfo.bridgeInfo}" ><span class="small nophone"> (Using ${acarsClientInfo.bridgeInfo} simulator Bridge)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${fn:hasCapabilities(pirep)}">
-<tr>
+<tr class="acarsData">
  <td class="label">Capabilities</td>
  <td class="data" colspan="${cspan}" class="sec bld"><fmt:capabilities map="${pirep.capabilities}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty pirep.tailCode}">
-<tr>
+<tr class="acarsData">
  <td class="label">Aircraft Registration</td>
  <td class="data" colspan="${cspan}" class="bld">${pirep.tailCode}</td>
 </tr>
 </c:if>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
-<tr>
+<tr class="acarsData">
  <td class="label">Dispatcher</td>
 <c:if test="${!empty dispatcher}">
  <td class="data" colspan="${cspan}"><span class="ter caps bld">${dispatcher.name}</span> (${dispatcher.pilotCode})</td>
@@ -81,32 +81,32 @@
 </tr>
 </c:if>
 <c:set var="gate" value="${flightInfo.gateD}" scope="page" />
-<tr>
+ <tr class="acarsData">
  <td class="label">Start Time</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
 <fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.timeD}" tz="${pirep.airportD.TZ}" className="bld" /></span></c:if></td>
 </tr>
 <c:if test="${!isXACARS && !pirep.boardTime.isZero()}" >
-<tr>
+<tr class="acarsData">
  <td class="label">Loading Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.boardTime}" long="true" /></td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Taxi from Gate</td>
  <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" /> total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
  <span class="small bld">(<fmt:weight value="${pirep.taxiWeight - acInfo.maxWeight}" /> overweight)</span></c:if></td>
 </tr>
 <c:set var="taxiOutTime" value="${empty taxiTime.outboundTime ? pirep.taxiOutTime : taxiTime.outboundTime}" scope="page" />
 <c:if test="${!empty avgTaxiOutTime && !empty taxiOutTime}">
-<tr>
+<tr class="acarsData">
  <td class="label">Outbound Taxi Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiOutTime}" long="true" /><c:if test="${!avgTaxiOutTime.outboundTime.isZero()}"><span class="ita nophone"> (<c:if test="${avgTaxiOutTime.year > 0}">${avgTaxiOutTime.year} </c:if>average:
  <fmt:duration t="[H:]mm:ss" duration="${avgTaxiOutTime.outboundTime}" />)</span></c:if></td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Takeoff Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start) <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a>
@@ -114,7 +114,7 @@
 </tr>
 <c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayD}" scope="page" />
-<tr>
+<tr class="acarsData">
  <td class="label">Takeoff Runway</td>
  <td class="data">
 <c:if test="${!empty rwy}">
@@ -133,7 +133,7 @@
 <c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${pirep}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Takeoff Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots,
 <c:choose>
@@ -150,12 +150,12 @@
 <c:if test="${access.canDispose && (pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}"> | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TAKEOFF POINT</el:cmd></c:if></td>
 </tr>
 <c:if test="${!empty flightInfo.altitude}">
-<tr>
+<tr class="acarsData">
  <td class="label">Cruise Altitude</td>
  <td class="data" colspan="${cspan}">${flightInfo.altitude}</td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Landing Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start) <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a>
@@ -163,7 +163,7 @@
 </tr>
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayA}" scope="page" />
-<tr>
+ <tr class="acarsData">
  <td class="label">Landing Runway</td>
  <td class="data">
 <c:if test="${!empty rwy}">
@@ -187,7 +187,7 @@
 <c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${pirep}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Landing Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots,<c:if test="${!isXACARS}">&nbsp;<fmt:int value="${pirep.landingVSpeed}" />
  feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,</c:if>
@@ -207,7 +207,7 @@
 <c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}"> | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>
 <c:if test="${pirep.endTime.isAfter(pirep.landingTime)}">
-<tr>
+ <tr class="acarsData">
  <td class="label">Arrival Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.timeA}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
@@ -215,7 +215,7 @@
 </c:if>
 <c:set var="taxiInTime" value="${empty taxiTime.inboundTime ? pirep.taxiInTime : taxiTime.inboundTime}" scope="page" />
 <c:if test="${!empty avgTaxiInTime && !empty taxiInTime}">
-<tr>
+<tr class="acarsData">
  <td class="label">Inbound Taxi Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration className="sec" duration="${taxiInTime}" long="true" /><c:if test="${!avgTaxiInTime.inboundTime.isZero()}"><span class="ita nophone"> (<c:if test="${avgTaxiInTime.year > 0}">${avgTaxiInTime.year} </c:if>average:
  <fmt:duration t="[H:]mm:ss" duration="${avgTaxiInTime.inboundTime}" />)</span></c:if></td>
@@ -223,7 +223,7 @@
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
 <c:set var="gate" value="${flightInfo.gateA}" scope="page" />
-<tr>
+<tr class="acarsData">
  <td class="label">Arrival Information</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
 <fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel
@@ -232,24 +232,24 @@
 </tr>
 </c:if>
 <c:if test="${!isXACARS && !pirep.deboardTime.isZero()}">
-<tr>
+<tr class="acarsData">
  <td class="label">Unloading Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration duration="${pirep.deboardTime}" long="true" /></td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">
-<tr>
+<tr class="acarsData">
  <td class="label">Total Fuel Used</td>
  <td class="data" colspan="${cspan}"><fmt:weight value="${pirep.totalFuel}" longUnits="true" /></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && ((pirep.paxWeight > 0) || (pirep.cargoWeight > 0) || (flightInfo.loadType.name() != 'NONE'))}">
-<tr>
+<tr class="acarsData">
  <td class="label">Payload Weight</td>
  <td class="data" colspan="${cspan}"><fmt:weight value="${pirep.paxWeight}" /> passengers, <fmt:weight value="${pirep.cargoWeight}" /> baggage/cargo (Passenger Load: <span class="sec bld caps">${flightInfo.loadType}</span>)</td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Flight Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration t="HH:mm" className="pri bld" duration="${pirep.airborneTime}" />, total time <fmt:duration t="HH:mm" duration="${pirep.blockTime}" /></td>
 </tr>
@@ -257,23 +257,23 @@
 <c:set var="times" value="${pirep.times}" scope="page" />
 <c:if test="${(times[0] > 30) || (times[2] > 0) || (times[4] > 0)}">
 <c:if test="${times[0] > 90}">
-<tr>
+<tr class="acarsData">
  <td class="label">Time (Paused)</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${times[0] / 60}" /> minutes <fmt:int value="${times[0] % 60}" /> seconds</td>
 </tr>
 </c:if>
-<tr>
+<tr class="acarsData">
  <td class="label">Flight Time (1X)</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${times[1] / 60}" /> minutes <fmt:int value="${times[1] % 60}" /> seconds</td>
 </tr>
 <c:if test="${times[2] > 0}">
-<tr>
+<tr class="acarsData">
  <td class="label">Flight Time (2X)</td>
  <td class="data bld" colspan="${cspan}"><fmt:int value="${times[2] / 60}" /> minutes <fmt:int value="${times[2] % 60}" /> seconds</td>
 </tr>
 </c:if>
 <c:if test="${times[4] > 0}">
-<tr>
+<tr class="acarsData">
  <td class="label">Flight Time (4X)</td>
  <td class="data bld" colspan="${cspan}"><fmt:int value="${times[4] / 60}" /> minutes <fmt:int value="${times[4] % 60}" /> seconds</td>
 </tr>
@@ -282,13 +282,13 @@
 </c:if>
 <c:if test="${(!empty acarsFrames) || (pirep.averageFrameRate > 0)}">
 <c:set var="avgFrames" value="${empty acarsFrames ? pirep.averageFrameRate : acarsFrames.average}" scope="page" />
-<tr>
+<tr class="acarsData">
  <td class="label">Average Frame Rate</td>
  <td class="data" colspan="${cspan}"><fmt:dec value="${avgFrames}" /> frames per second</td>
 </tr>
 </c:if>
 <c:if test="${fn:hasOnTime(pirep) && (!empty onTimeEntry)}">
-<tr>
+<tr class="acarsData">
  <td class="label top">On-Time Performance</td>
  <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld caps"><fmt:edesc object="${pirep.onTime}" /></span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
  <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${onTimeEntry.timeD}" />, arrives <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${onTimeEntry.timeA}" />)</span>
@@ -298,18 +298,18 @@
 </tr>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
-<tr>
+<tr class="acarsData">
  <td class="label top">Flight Route</td>
  <td class="data" colspan="${cspan}">${flightInfo.route}</td>
 </tr>
 </c:if>
 <c:if test="${(!empty flightScore) && access.canViewScore}">
 <c:set var="warnings" value="${flightScore.warnings}" scope="page" />
-<tr>
+<tr class="acarsData">
  <td class="label">Landing Score</td>
  <td class="data bld"><fmt:landscore value="${pirep.landingScore}" /></td>
 </tr>
-<tr>
+<tr class="acarsData">
  <td class="label top">Flight Score</td>
  <td class="data" colspan="${cspan}"><span style="color:#${flightScore.result.hexColor}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn caps bld"><fmt:list value="${warnings}" delim=", " /></span></c:if>
 <c:if test="${!empty flightScore.messages}">
@@ -317,7 +317,7 @@
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">
-<tr class="title">
+<tr class="title acarsData">
  <td class="caps" colspan="${cspan + 1}">CHECK RIDE INFORMATION</td>
 </tr>
 <tr>
@@ -328,19 +328,19 @@
 <c:set var="isForm" value="true" scope="request" />
 <content:enum var="crScoreOpts" className="org.deltava.beans.testing.CheckRideScoreOptions" />
 <content:enum var="crFlightOpts" className="org.deltava.beans.testing.CheckFlightScoreOptions" />
-<tr>
+<tr class="acarsData">
  <td class="label top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:msg value="${checkRide.comments}" bbCode="true" /></td>
 </tr>
-<tr>
+<tr class="acarsData">
  <td class="label top">Reviewer Comments</td>
  <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea><el:text name="reviewTime" type="hidden" value="0" /></td>
 </tr>
-<tr>
+<tr class="acarsData">
  <td class="label">Check Ride Status</td>
  <td class="data bld" colspan="${cspan}"><el:check name="crApprove" type="radio" options="${crScoreOpts}" idx="*" /></td>
 </tr>
-<tr>
+<tr class="acarsData">
  <td class="label">Flight Report Status</td>
  <td class="data bld" colspan="${cspan}"><el:check name="frApprove" type="radio" options="${crFlightOpts}" idx="*" /></td>
 </tr>
