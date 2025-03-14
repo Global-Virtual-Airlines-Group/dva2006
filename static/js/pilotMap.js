@@ -48,7 +48,7 @@ while ((cnt < batchSize) && (a != null)) {
 if (a != null)
 	window.setTimeout(golgotha.pilotMap.load, 2, batchSize);
 else {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.util.setHTML('isLoading', '');
 	golgotha.util.disable(f.noFilter, false);
 	golgotha.util.disable(f.eqType, false);
