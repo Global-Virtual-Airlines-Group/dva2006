@@ -14,7 +14,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 1.6
+ * @version 11.6
  * @since 1.0
  */
 
