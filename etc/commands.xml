@@ -1236,6 +1236,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="withdraw">
+		<name>PIREP Withdraw</name>
+		<class>org.deltava.commands.pirep.PIREPWithdrawCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="promotoggle">
 		<name>PIREP Promotion Flag Toggle</name>
 		<class>org.deltava.commands.pirep.PromotionToggleCommand</class>

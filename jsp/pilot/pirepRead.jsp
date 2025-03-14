@@ -314,10 +314,9 @@ table.form td.eliteStatus {
 </tr>
 </c:if>
 </c:if>
-<content:defaultMethod object="${pirep}" method="flightType" var="flightType" />
 <tr>
  <td class="label">Customs Zone</td>
- <td class="data ter bld">${flightType.description}</td>
+ <td class="data ter bld">${pirep.flightType.description}</td>
 </tr>
 <c:if test="${pirep.length > 0}">
 <tr>
@@ -584,6 +583,8 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 &nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="hold" post="true" disabled="${hasDelay}" label="HOLD" /></c:if>
 <c:if test="${access.canRelease}">
 &nbsp;<el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" /></c:if>
+<c:if test="${access.canWithdraw}">
+&nbsp;<el:cmdbutton url="withdraw" link="${pirep}" post="true" label="WITHDRAW" /></c:if>
 <c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide)) && !scoreCR}">
 &nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="reject" post="true" disabled="${hasDelay}" label="REJECT" />
 <c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
@@ -627,7 +628,7 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}),scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
@@ -666,47 +667,44 @@ golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgoth
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 <c:if test="${isACARS && googleMap}">
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(function() {
-const xreq = new XMLHttpRequest();
-xreq.timeout = 3500;
-xreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
-xreq.onreadystatechange = function() {
-	if (xreq.readyState != 4) return false;
-	if (xreq.status != 200) {
+google.charts.setOnLoadCallback(function()
+{
+const p = fetch('pirepstats.ws?id=${pirep.hexID}');
+p.then(function(rsp) {
+	if (rsp.status != 200) {
 		golgotha.util.display('flightDataLabel', false);
 		golgotha.util.display('flightDataChart', false);
 		return false;
 	}
 
-	const statsData = JSON.parse(xreq.responseText);
-	if (statsData.isSimTime) console.log('Using simulator date/time');
-	statsData.data.forEach(function(e) { e[0] = new Date(e[0]); });
+	rsp.json().then(function(statsData) {
+		if (statsData.isSimTime) console.log('Using simulator date/time');
+		statsData.data.forEach(function(e) { e[0] = new Date(e[0]); });
 
-	// Build the Data
-	const data = new google.visualization.DataTable();
-	data.addColumn('datetime', 'Date/Time (UTC)');
-	data.addColumn('number', 'Ground Speed');
-	data.addColumn('number', 'Altitude');
-<c:if test="${!isXACARS}">    data.addColumn('number', 'Ground Elevation');</c:if>
-    data.addRows(statsData.data);
+		// Build the Data
+		const data = new google.visualization.DataTable();
+		data.addColumn('datetime', 'Date/Time (UTC)');
+		data.addColumn('number', 'Ground Speed');
+		data.addColumn('number', 'Altitude');
+		<c:if test="${!isXACARS}">    data.addColumn('number', 'Ground Elevation');</c:if>
+	    data.addRows(statsData.data);
+	
+		// Read CSS selectors for graph lines
+	    const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
+	    const sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
 
-	// Read CSS selectors for graph lines
-    const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
-    const sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
+		// Create formatting options
+		const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+		const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+		const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+		const s = [{targetAxisIndex:0},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
+		const opts = golgotha.charts.buildOptions({series:s,vAxes:[va0,va1],colors:[pr,sc,'#b8b8d8']});
+		const chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
+		chart.draw(data,opts);
+		<c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
+	});
+});
 
-	// Create formatting options
-	const ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-	const va0 = {maxValue:statsData.maxSpeed,gridlines:{count:5,multiple:100},title:'Knots',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-	const va1 = {maxValue:statsData.maxAlt,gridlines:{count:5,interval:[statsData.altInterval]},ticks:statsData.altIntervals,title:'Feet',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-	const s = [{targetAxisIndex:0},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
-	const opts = golgotha.charts.buildOptions({series:s,vAxes:[va0,va1],colors:[pr,sc,'#b8b8d8']});
-	const chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
-	chart.draw(data,opts);
-<c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
-	return true;
-};
-
-xreq.send(null);
 return true;
 });</c:if>
 </script>

@@ -115,6 +115,11 @@ This Flight Report has been marked as &quot;On Hold&quot; and an e-mail message 
 <br />
 This Flight Report has been rejected and an e-mail message has been sent to ${pilot.name}.<br />
 </c:if>
+<c:if test="${isWithdraw}">
+<div class="updateHdr">Flight Report Withdrawn</div>
+<br />
+This submitted Flight Report has been withdrawn and is now available for you to modify.<br />
+</c:if>
 <c:if test="${isDeleted}">
 <div class="updateHdr">Flight Report Deleted</div>
 <br />

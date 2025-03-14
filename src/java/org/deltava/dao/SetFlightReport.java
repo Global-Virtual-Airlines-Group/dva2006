@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -119,6 +119,25 @@ public class SetFlightReport extends DAO {
 			CacheManager.invalidate("Pilots", pKey);
 			CacheManager.invalidate("Logbook", pKey);
 			CacheManager.invalidate("OnTimeRoute", RouteOnTime.createKey(pirep, db));
+		}
+	}
+	
+	/**
+	 * Marks a Flight Report as widhrdawn.
+	 * @param fr the FlightReport
+	 * @param db the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void withdraw(FlightReport fr, String db) throws DAOException {
+		String dbName = formatDBName(db);
+		try (PreparedStatement ps = prepare("UPDATE " + dbName + ".PIREPS SET STATUS=?, DISPOSED=NULL, DISPOSAL_ID=? WHERE (ID=?) AND (STATUS=?)")) {
+			ps.setInt(1, FlightStatus.DRAFT.ordinal());
+			ps.setInt(2, 0);
+			ps.setInt(3, fr.getID());
+			ps.setInt(4, FlightStatus.SUBMITTED.ordinal());
+			executeUpdate(ps, 1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 

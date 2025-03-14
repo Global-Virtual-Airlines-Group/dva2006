@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Check if we are creating a new flight report or editing one with an assignment
 			boolean doCreate = (fr == null);
-			boolean isAssignment = (fr != null) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
+			boolean isAssignment = (fr != null) && ((fr.getDatabaseID(DatabaseID.ASSIGN) != 0) || (fr.getDatabaseID(DatabaseID.ACARS) != 0));
 
 			// Create the access controller and validate our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -121,8 +121,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 	+ ctx.getParameter("airportACode"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
-			RoutePair rt = RoutePair.of(ad, aa);
-			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), rt, ctx.getDB());
+			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), RoutePair.of(ad, aa), ctx.getDB());
 			Optional<FlightReport> ofr = draftFlights.stream().filter(dfr -> (dfr.getID() == id)).findAny();
 			if (ofr.isPresent())
 				fr = ofr.get();
@@ -146,7 +145,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setAirportA(aa);
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
-			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.UNKNOWN));
+			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), fr.getSimulator()));
 			fr.setRoute(ctx.getParameter("route"));
 			if (fr.getID() == 0)
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, "Draft Report created"); 
@@ -171,7 +170,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				// If the passengers are non-zero, update the count
-				if (fr.getPassengers() != 0) {
+				if ((fr.getPassengers() != 0) && ac.getCanEditCore()) {
 					int newPax = (int) Math.round(opts.getSeats() * fr.getLoadFactor());
 					if (newPax != fr.getPassengers()) {
 						fr.addStatusUpdate(0, HistoryType.SYSTEM, "Updated passengers from " + fr.getPassengers() + " to " + newPax);
@@ -190,28 +189,30 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr.setNetwork(net);
 			}
 			
-			// Get the flight time
-			try {
-				double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
-				fr.setLength((int) (fTime * 10));
-			} catch (NumberFormatException nfe) {
-				if (fr.getStatus() != FlightStatus.DRAFT)
-					throw new CommandException("Invalid Flight Time", false);
-			}
+			// Get the flight time/date
+			if (ac.getCanEditCore()) {
+				try {
+					double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
+					fr.setLength((int) (fTime * 10));
+				} catch (NumberFormatException nfe) {
+					if (fr.getStatus() != FlightStatus.DRAFT)
+						throw new CommandException("Invalid Flight Time", false);
+				}
 
-			// Calculate the date
-			ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
-			Month mn = EnumUtils.parse(Month.class, ctx.getParameter("dateM"), now.getMonth());
-			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), mn.getValue(), StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
-			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
+				// Calculate the date
+				ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
+				Month mn = EnumUtils.parse(Month.class, ctx.getParameter("dateM"), now.getMonth());
+				LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), mn.getValue(), StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
+				fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
-			// Validate the date
-			if (!ac.getCanOverrideDateRange()) {
-				final String FMT = "MM/dd/yyyy HH:mm";
-				Instant fdl = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays", 1) + 1).minusSeconds(60).truncatedTo(ChronoUnit.DAYS).toInstant();
-				Instant bdl = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays", 7)).truncatedTo(ChronoUnit.DAYS).toInstant();
-				if (fr.getDate().isBefore(bdl) || fr.getDate().isAfter(fdl))
-					throw new CommandException(String.format("Invalid Flight Report Date - %s (%s - %s)", StringUtils.format(fr.getDate(), FMT), StringUtils.format(bdl, FMT), StringUtils.format(fdl, FMT)), false);
+				// Validate the date
+				if (!ac.getCanOverrideDateRange()) {
+					final String FMT = "MM/dd/yyyy HH:mm";
+					Instant fdl = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays", 1) + 1).minusSeconds(60).truncatedTo(ChronoUnit.DAYS).toInstant();
+					Instant bdl = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays", 7)).truncatedTo(ChronoUnit.DAYS).toInstant();
+					if (fr.getDate().isBefore(bdl) || fr.getDate().isAfter(fdl))
+						throw new CommandException(String.format("Invalid Flight Report Date - %s (%s - %s)", StringUtils.format(fr.getDate(), FMT), StringUtils.format(bdl, FMT), StringUtils.format(fdl, FMT)), false);
+				}
 			}
 			
 			// Start transaction
@@ -277,7 +278,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		
 		// Get all airlines
 		Collection<Airline> airlines = new TreeSet<Airline>();
-		PIREPAccessControl ac = null;
+		PIREPAccessControl ac = null; FlightReport fr = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -298,12 +299,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetAcademyCourses crsdao = new GetAcademyCourses(con);
 			boolean hasCourse = crsdao.getByPilot(usr.getID()).stream().anyMatch(crs -> crs.getStatus() == Status.STARTED);
 			
-			//	Get aircraft types
-			GetAircraft acdao = new GetAircraft(con);
-			Collection<Aircraft> eqTypes = acdao.getAircraftTypes();
-			eqTypes.removeIf(eq -> !hasCourse && eq.getAcademyOnly());
-			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
-
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
 			if (isNew) {
@@ -315,11 +310,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Save the user object
 				ctx.setAttribute("pilot", usr, REQUEST);
 				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
+				ctx.setAttribute("access", ac, REQUEST);
 
 				// Get the active airlines
 				SystemData.getAirlines().stream().filter(Airline::getActive).forEach(airlines::add);
 			} else {
-				FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
+				fr = dao.get(ctx.getID(), ctx.getDB());
 				if (fr == null)
 					throw notFoundException("Invalid Flight Report - " + ctx.getID());
 
@@ -334,17 +330,40 @@ public class PIREPCommand extends AbstractFormCommand {
 				Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 				ctx.setAttribute("pilot", p, REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
+				ctx.setAttribute("access", ac, REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
+				ctx.setAttribute("isACARS", Boolean.valueOf(fr.getDatabaseID(DatabaseID.ACARS) != 0), REQUEST);
 
 				// Get the active airlines
-				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0)
-					SystemData.getAirlines().stream().filter(a -> (a.getActive() || fr.getAirline().equals(a))).forEach(airlines::add);
-				else
+				if (ac.getCanEditCore()) {
+					FlightReport fr2 = fr;
+					SystemData.getAirlines().stream().filter(a -> (a.getActive() || fr2.getAirline().equals(a))).forEach(airlines::add);
+				} else
 					airlines.add(fr.getAirline());
+				
+				// Add ACARS data if available
+				if (fr.getDatabaseID(DatabaseID.ACARS) != 0) {
+					GetACARSData fddao = new GetACARSData(con);
+					ctx.setAttribute("flightInfo", fddao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)), REQUEST);
+				}
 			}
 			
+			// Get aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			if (ac.getCanEditCore() || (fr == null)) {
+				Collection<Aircraft> eqTypes = acdao.getAircraftTypes();
+				eqTypes.removeIf(eq -> !hasCourse && eq.getAcademyOnly());
+				ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+			} else
+				ctx.setAttribute("eqTypes", Set.of(acdao.get(fr.getEquipmentType())), REQUEST);
+			
+			// Get airlines and networks
 			ctx.setAttribute("airlines", airlines, REQUEST);
+			if (fr == null || ac.getCanEditCore())
+				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
+			else if (fr.getNetwork() != null)
+				ctx.setAttribute("networks", List.of(fr.getNetwork()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -357,26 +376,21 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("forwardDateLimit", fdl, REQUEST);
 		ctx.setAttribute("backwardDateLimit", bdl, REQUEST);
 		
-		// Set flight years
-		Collection<Integer> years = new TreeSet<Integer>();
-		years.add(Integer.valueOf(today.get(ChronoField.YEAR)));
-		years.add(Integer.valueOf(fdl.getYear())); years.add(Integer.valueOf(bdl.getYear()));
+		// Set combo choices
+		if (ac.getCanEditCore() || (fr == null)) {
+			Collection<Integer> years = new TreeSet<Integer>();
+			years.add(Integer.valueOf(today.get(ChronoField.YEAR)));
+			years.add(Integer.valueOf(fdl.getYear())); years.add(Integer.valueOf(bdl.getYear()));
+			ctx.setAttribute("months", ComboUtils.properCase(Month.values()), REQUEST);
+			ctx.setAttribute("years", years, REQUEST);
+			ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
+		}
 
-		// Save pirep date combobox values
+		// Save request attributes
 		ctx.setAttribute("pirepYear", StringUtils.format(today.get(ChronoField.YEAR), "0000"), REQUEST);
 		ctx.setAttribute("pirepMonth", StringUtils.format(today.get(ChronoField.MONTH_OF_YEAR), "#0"), REQUEST);
 		ctx.setAttribute("pirepDay", StringUtils.format(today.get(ChronoField.DAY_OF_MONTH), "#0"), REQUEST);
-
-		// Save airport/airline lists in the request
 		ctx.setAttribute("airline", SystemData.get("airline.code"), REQUEST);
-
-		// Set basic lists for the JSP
-		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
-		ctx.setAttribute("months", ComboUtils.properCase(Month.values()), REQUEST);
-		ctx.setAttribute("years", years, REQUEST);
-
-		// Set the access controller
-		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/pilot/pirepEdit.jsp");

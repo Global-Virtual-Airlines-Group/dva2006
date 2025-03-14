@@ -44,7 +44,7 @@ if (parseInt(f.flightLeg.value) > 8)
 	throw new golgotha.event.ValidationError('The Flight Leg must be equal to or less than 8.', f.flightLeg);
 <content:browser html4="true">
 // Validate the date
-<c:if test="${!access.canOverrideDateRange}">
+<c:if test="${!access.canOverrideDateRange && access.canEditCore}">
 const pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 const pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
 const pDate = new Date(pY, f.dateM.selectedIndex, pD);
@@ -77,7 +77,7 @@ golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
 golgotha.local.setDaysInMonth = function(combo) {
 	const y = new Date().getFullYear();
 	const isLeapYear = (((y % 4) == 0) && ((y % 100) != 0));
-	const dCombo = document.forms[0].dateD;
+	const dCombo = document.forms[0].date;
 	const daysInMonth = [31, (isLeapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	const dd = dCombo.selectedIndex;
 	dCombo.options.length = daysInMonth[combo.selectedIndex];
@@ -112,11 +112,11 @@ golgotha.onDOMReady(function() {
 	golgotha.airportLoad.setHelpers([f.airportD,f.airportA]);
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
-
+<c:if test="${access.canEditCore}">
 	const d = new Date(${pirepYear},${pirepMonth - 1},${pirepDay});
 	golgotha.local.initDateCombos(f.dateM, f.dateD, d);
 	f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
-	console.log('Limits: b = <fmt:date date="${backwardDateLimit}" t="HH:mm" />, f = <fmt:date date="${forwardDateLimit}" t="HH:mm" />');
+	console.log('Limits: b = <fmt:date date="${backwardDateLimit}" t="HH:mm" />, f = <fmt:date date="${forwardDateLimit}" t="HH:mm" />');</c:if>
 });
 
 golgotha.local.hoursCalc = function(f)
@@ -232,6 +232,7 @@ return true;
 </tr>
 </c:otherwise>
 </c:choose>
+<c:if test="${access.canEditCore}">
 <tr>
  <td class="label">Flown on</td>
 <content:browser html5="true">
@@ -258,6 +259,17 @@ return true;
  <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" /> <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, 
  <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" /> minutes <el:button label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.local.hoursCalc, document.forms[0])" /></td>
 </tr>
+</c:if>
+<c:if test="${!access.canEditCore}">
+<tr>
+ <td class="label">Simulator</td>
+ <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}">&nbsp;<content:simVersion sim="${pirep.simulator}" major ="${flightInfo.simMajor}" minor="${flightInfo.simMinor}" /></c:if></td>
+</tr>
+<tr>
+ <td class="label">Logged Time</td>
+ <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours</td>
+</tr>
+</c:if>
 <c:if test="${!isACARS}">
 <tr>
  <td class="label top">Flight Route</td>
@@ -265,6 +277,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${isACARS}">
+<c:set var="cspan" value="1" scope="page" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %></c:if>
 <tr>
  <td class="label top">Remarks</td>
