@@ -85,7 +85,7 @@ var mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, zoom:golgotha.maps.info
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
