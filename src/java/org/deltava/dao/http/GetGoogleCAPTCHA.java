@@ -1,4 +1,4 @@
-// Copyright 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -9,14 +9,16 @@ import java.net.SocketTimeoutException;
 import org.json.*;
 
 import org.deltava.beans.system.CAPTCHAResult;
+
 import org.deltava.dao.DAOException;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to validate Google CAPTCHA tokens. 
  * @author Luke
- * @version 9.0
+ * @version 11.6
  * @since 9.0
  */
 
@@ -62,6 +64,8 @@ public class GetGoogleCAPTCHA extends DAO {
 			}
 		} catch (SocketTimeoutException te) {
 			throw new IOException(te);
+		} catch (JSONException je) {
+			throw new DAOException(je) {{ setWarning(true); }};
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
