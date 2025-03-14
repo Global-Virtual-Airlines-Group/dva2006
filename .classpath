@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.24.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.17.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20250107.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.10.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
