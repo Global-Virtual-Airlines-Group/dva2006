@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" callback="golgotha.local.mapInit" />
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics eventSupport="true" />
@@ -45,19 +45,21 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map
-const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.info.zoom, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.closeWindow(); map.removeMarkers(golgotha.routeMap.routes); });
-google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(golgotha.routeMap.routes); });
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
-});
+golgotha.local.mapInit = function() {
+	const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.info.zoom, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', function() { map.closeWindow(); map.removeMarkers(golgotha.routeMap.routes); });
+	google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(golgotha.routeMap.routes); });
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
+	});
+};
 </script>
 </body>
 </html>

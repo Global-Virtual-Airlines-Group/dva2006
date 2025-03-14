@@ -15,13 +15,13 @@
 <content:js name="common" />
 <content:js name="progress" />
 <content:browser human="true"><c:if test="${!empty tour.flights}">
-<map:api version="3" /></c:if></content:browser>
+<map:api version="3" callback="golgotha.local.mapInit" /></c:if></content:browser>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -152,27 +152,29 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td colspan="6"><map:div ID="googleMap" height="475" /></td>
 </tr>
 <script async>
-const lines = [];
-<map:point var="golgotha.local.mapC" point="${ctr}" />
-<map:markers var="golgotha.local.airports" items="${tourAirports}" />
-<map:points var="golgotha.local.todo" items="${tourRemaining}" />
-<map:line var="golgotha.local.todoLine" width="1" color="#a000a1" geodesic="true" src="golgotha.local.todo" transparency="0.35" />
-lines.push(golgotha.local.todoLine);
-<c:if test="${!empty myTourRoute}">
-<map:points var="golgotha.local.progress" items="${myTourRoute}" />
-<map:line var="golgotha.local.progressLine" width="2" color="#0000a1" geodesic="true" src="golgotha.local.progress" transparency="0.5" />
-lines.push(golgotha.local.progressLine);</c:if>
+golgotha.local.mapInit = function() {
+	const lines = [];
+	<map:point var="golgotha.local.mapC" point="${ctr}" />
+	<map:markers var="golgotha.local.airports" items="${tourAirports}" />
+	<map:points var="golgotha.local.todo" items="${tourRemaining}" />
+	<map:line var="golgotha.local.todoLine" width="1" color="#a000a1" geodesic="true" src="golgotha.local.todo" transparency="0.35" />
+	lines.push(golgotha.local.todoLine);
+	<c:if test="${!empty myTourRoute}">
+	<map:points var="golgotha.local.progress" items="${myTourRoute}" />
+	<map:line var="golgotha.local.progressLine" width="2" color="#0000a1" geodesic="true" src="golgotha.local.progress" transparency="0.5" />
+	lines.push(golgotha.local.progressLine);</c:if>
 
-// Build the map
-const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:6,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
-map.addMarkers(golgotha.local.airports);
-map.addMarkers(lines);
+	// Build the map
+	const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:6,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
+	map.addMarkers(golgotha.local.airports);
+	map.addMarkers(lines);
+};
 </script>
 </content:browser>
 </c:when>

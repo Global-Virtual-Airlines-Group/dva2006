@@ -12,23 +12,22 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" />
-<script>
-golgotha.local.filter = function(combo)
-{
-map.clearOverlays();
-if (combo.selectedIndex < 1) return false;	
-const codes = golgotha.local.accs[golgotha.form.getCombo(combo)];
-if (!codes) return false;
-codes.forEach(function(c) { 
-	var a = golgotha.local.allAirports[c];
-	if (!a)
-		console.log('Unknown airport ' + c);
-	else
-		a.setMap(map);
-});
+<map:api version="3" callback="golgotha.local.mapInit" />
+<script async>
+golgotha.local.filter = function(combo) {
+	map.clearOverlays();
+	if (combo.selectedIndex < 1) return false;	
+	const codes = golgotha.local.accs[golgotha.form.getCombo(combo)];
+	if (!codes) return false;
+	codes.forEach(function(c) { 
+		const a = golgotha.local.allAirports[c];
+		if (!a)
+			console.log('Unknown airport ' + c);
+		else
+			a.setMap(map);
+	});
 
-return true;
+	return true;
 };
 </script>
 </head>
@@ -55,17 +54,19 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script>
-<map:point var="golgotha.local.mapC" point="${mapCenter}" />
-const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-golgotha.local.allAirports = {};
-<c:forEach var="ap" items="${airports}">
-golgotha.local.allAirports['${ap.ICAO}'] = <map:marker point="${ap}" />;</c:forEach>
-golgotha.local.accs = ${jsData};
+<script async>
+golgotha.local.mapInit = function() {
+	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+	const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	golgotha.local.allAirports = {};
+	<c:forEach var="ap" items="${airports}">
+	golgotha.local.allAirports['${ap.ICAO}'] = <map:marker point="${ap}" />;</c:forEach>
+	golgotha.local.accs = ${jsData};
+};
 </script>
 </body>
 </html>

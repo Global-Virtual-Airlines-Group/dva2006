@@ -63,7 +63,7 @@
 const mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);

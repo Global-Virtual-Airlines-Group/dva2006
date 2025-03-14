@@ -146,7 +146,7 @@ return true;
 const mapOpts = {center:golgotha.local.mapC,minZoom:6,zoom:8,scrollwheel:true,streetViewControl:false,clickableIcons:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);

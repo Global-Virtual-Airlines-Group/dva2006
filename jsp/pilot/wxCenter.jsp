@@ -22,15 +22,6 @@
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
 <script>
-const loaders = {};
-loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-loaders.series.setData('futureRadar', 0.45, 'wxRadar');
-loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
@@ -47,7 +38,7 @@ useFA = f.useFA.checked;</content:filter>
 // Build the XML Request
 const xmlreq = new XMLHttpRequest();
 xmlreq.timeout = 4500;
-xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
+xmlreq.open('GET', 'airportwx.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
@@ -193,14 +184,14 @@ return true;
 <div id="zoomLevel" class="mapTextLabel"></div>
 <div id="seriesRefresh" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
 const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
@@ -211,11 +202,6 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
@@ -227,27 +213,12 @@ map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementBy
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.maps.reloadData(true);
 	google.maps.event.trigger(map, 'zoom_changed');
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	golgotha.local.loadWX('${homeAirport.ICAO}');
 });
 
 golgotha.local.wxMarkers = [];
-golgotha.maps.reloadData = function(isReload) {
-	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
-	
-	// Check if we're loading/animating
-	if ((map.preLoad) || (map.animator)) {
-		console.log('Animating Map - reload skipped');
-		return false;
-	}
-	
-	const dv = document.getElementById('seriesRefresh');
-	if (dv != null) dv.innerHTML = new Date();
-	loaders.series.loadGinsu();
-	return true;
-};
 </script>
 </body>
 </html>

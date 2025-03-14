@@ -17,7 +17,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
-<map:api version="3" />
+<map:api version="3" callback="golgotha.local.mapInit" />
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.gate.hasPFI = ${airport.hasPFI};
@@ -88,20 +88,22 @@ golgotha.onDOMReady(function() {
 </content:region>
 </content:page>
 <script async>
-<map:point var="golgotha.local.mapC" point="${airport}" />
-<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
+golgotha.local.mapInit = function() {
+	<map:point var="golgotha.local.mapC" point="${airport}" />
+	<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
-// Create the map
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollwheel:false,clickableIcons:false,streetViewControl:false});
-map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-map.fitBounds(golgotha.local.mapBounds);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
-google.maps.event.addListener(map, 'zoom_changed', function() {
-	map.toggle(golgotha.local.gates, (map.getZoom() > 11));
-	return true;
-});
+	// Create the map
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollwheel:false,clickableIcons:false,streetViewControl:false});
+	map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+	map.fitBounds(golgotha.local.mapBounds);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});	
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
+	google.maps.event.addListener(map, 'zoom_changed', function() {
+		map.toggle(golgotha.local.gates, (map.getZoom() > 11));
+		return true;
+	});
+};
 </script>
 <content:googleAnalytics />
 </body>

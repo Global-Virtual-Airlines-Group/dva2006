@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" callback="golgotha.local.mapInit" />
 <content:googleAnalytics eventSupport="true" />
 <script>
 golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
@@ -74,18 +74,18 @@ if (golgotha.maps.geoLocate.usrLocation != null)
 	golgotha.maps.geoLocate.usrLocation.setMap(null);
 
 // Update Latitude
-var p = me.latLng;
-var isSouth = (p.lat() < 0);
+const p = me.latLng;
+const isSouth = (p.lat() < 0);
 f.latD.value = Math.abs((isSouth) ? Math.ceil(p.lat()) : Math.floor(p.lat()));
-var latF = Math.abs(p.lat()) - parseInt(f.latD.value);
+const latF = Math.abs(p.lat()) - parseInt(f.latD.value);
 f.latM.value = Math.floor(latF * 60);
 f.latS.value = Math.floor((latF % (1/60)) * 3600);
 f.latDir.selectedIndex = (isSouth) ? 1 : 0;
 
 // Update Longitude
-var isWest = (p.lng() < 0);
+const isWest = (p.lng() < 0);
 f.lonD.value = Math.abs((isWest) ? Math.ceil(p.lng()) : Math.floor(p.lng()));
-var lonF = Math.abs(p.lng()) - parseInt(f.lonD.value);
+const lonF = Math.abs(p.lng()) - parseInt(f.lonD.value);
 f.lonM.value = Math.floor(lonF * 60);
 f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
 f.lonDir.selectedIndex = (isWest) ? 1 : 0;
@@ -97,11 +97,10 @@ map.closeWindow();
 return true;
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -160,32 +159,32 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
-<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+<script async>
+golgotha.local.mapInit = function() {
+	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
-// Build the map
-const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListener(map, 'dblclick', golgotha.maps.geoLocate.setLatLon);
-golgotha.maps.geoLocate.geoCoder = new google.maps.Geocoder();
-golgotha.maps.geoLocate.myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
+	// Build the map
+	const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:true, disableDoubleClickZoom	:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	google.maps.event.addListener(map, 'dblclick', golgotha.maps.geoLocate.setLatLon);
+	golgotha.maps.geoLocate.geoCoder = new google.maps.Geocoder();
+	golgotha.maps.geoLocate.myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
 
-// Add user's location
-const labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
+	// Add user's location
+	const labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
 <c:if test="${!empty location}">
-<map:point var="usrLoc" point="${location}" />
-golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:usrLoc, icon:golgotha.maps.geoLocate.myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
-google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, "dragend", golgotha.maps.geoLocate.setLatLon);
-</c:if>
+	<map:point var="usrLoc" point="${location}" />
+	golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:usrLoc, icon:golgotha.maps.geoLocate.myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
+	google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, "dragend", golgotha.maps.geoLocate.setLatLon);</c:if>
 <c:if test="${empty location}">
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	if (navigator.geolocation)
-		window.setTimeout(function() { navigator.geolocation.getCurrentPosition(golgotha.maps.geoLocate.gpsOK, golgotha.maps.geoLocate.gpsError,{timeout:5000}); }, 50);
-});
-</c:if>
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		if (navigator.geolocation)
+			window.setTimeout(function() { navigator.geolocation.getCurrentPosition(golgotha.maps.geoLocate.gpsOK, golgotha.maps.geoLocate.gpsError,{timeout:5000}); }, 50);
+	});</c:if>
+};
 </script>
 </body>
 </html>

@@ -16,7 +16,7 @@
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
-<map:api version="3" /></c:if>
+<map:api version="3" callback="golgotha.local.mapInit" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -175,15 +175,18 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
-<map:marker var="apMarker" point="${airport}" color="green" />
+<map:marker var="golgotha.local.apMarker" point="${airport}" color="green" />
 
 // Build the map
-const mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-apMarker.setMap(map);
+golgotha.local.mpaInit = function() { 
+	const mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+	golgotha.local.apMarker.setMap(map);
+	return true;
+};
 </script></c:if>
 </body>
 </html>
