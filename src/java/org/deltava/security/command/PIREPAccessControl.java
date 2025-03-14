@@ -12,7 +12,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -23,9 +23,11 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _ourPIREP;
 	private boolean _canCreate;
 	private boolean _canEdit;
+	private boolean _canEditCoreData;
 	private boolean _canCalculateLoad;
 	private boolean _canSubmit;
 	private boolean _canHold;
+	private boolean _canWithdraw;
 	private boolean _canRelease;
 	private boolean _canApprove;
 	private boolean _canReject;
@@ -64,6 +66,8 @@ public class PIREPAccessControl extends AccessControl {
 		_canCreate = _ctx.isUserInRole("Pilot") && !noManual;
 		_canPreApprove = isHR;
 		if (_pirep == null) {
+			_canEdit = _canCreate;
+			_canEditCoreData = _canCreate;
 			_canSubmit = _canCreate;
 			return;
 		}
@@ -97,8 +101,10 @@ public class PIREPAccessControl extends AccessControl {
 		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightStatus.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightStatus.OK)));
-		_canRelease = (isHeld && canReleaseHold);
+		_canRelease = isHeld && canReleaseHold;
+		_canWithdraw = isSubmitted && _ourPIREP && !_pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (Duration.between(_pirep.getSubmittedOn(), Instant.now()).toMinutes() < 120);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
+		_canEditCoreData = _canEdit && ((_pirep.getDatabaseID(DatabaseID.ACARS) == 0) || !_ourPIREP);
 		_canViewDiagData = _ourPIREP || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("Developer");
 		_canViewComments = isHR || isPirep || _ourPIREP;
 		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
@@ -130,6 +136,14 @@ public class PIREPAccessControl extends AccessControl {
 	public boolean getCanEdit() {
 		return _canEdit;
 	}
+	
+	/**
+	 * Returns if core flight data (airports, airline, date, equipment) can be modified.
+	 * @return TRUE if core fields can be modified, otherwise FALSE
+	 */
+	public boolean getCanEditCore() {
+		return _canEditCoreData;
+	}
 
 	/**
 	 * Returns if the PIREP can be submitted.
@@ -139,6 +153,14 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanSubmit() {
 		return _canSubmit && (_pirep != null) && (_pirep.getLength() > 0);
+	}
+	
+	/**
+	 * Returns if the PIREP can be withdrawn.
+	 * @return TRUE if the PIREP can be withdrawan, otherwise FALSE
+	 */
+	public boolean getCanWithdraw() {
+		return _canWithdraw;
 	}
 	
 	/**
