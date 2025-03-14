@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" libraries="visualization" />
+<map:api version="3" libraries="visualization" callback="golgotha.local.mapInit" />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
@@ -92,24 +92,26 @@ golgotha.pilotMap.deleteMarker = function(id) {
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
-<map:point var="golgotha.local.mapC" point="${mapCenter}" />
-<map:marker var="hq" point="${hq}" />
-const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-golgotha.pilotMap.hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
-golgotha.pilotMap.pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
-golgotha.pilotMap.pBar.getDiv().style.right = '4px';
-golgotha.pilotMap.pBar.getDiv().style.top = '30px';
-map.controls[google.maps.ControlPosition.RIGHT_TOP].push(golgotha.pilotMap.pBar.getDiv());
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	hq.setMap(map);
-	const xmlreq = golgotha.pilotMap.generateXMLRequest();
-	xmlreq.send(null);	
-});
+<script async>
+golgotha.local.mapInit = function() {
+	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+	<map:marker var="hq" point="${hq}" />
+	const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	golgotha.pilotMap.hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
+	golgotha.pilotMap.pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
+	golgotha.pilotMap.pBar.getDiv().style.right = '4px';
+	golgotha.pilotMap.pBar.getDiv().style.top = '30px';
+	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(golgotha.pilotMap.pBar.getDiv());
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		hq.setMap(map);
+		const xmlreq = golgotha.pilotMap.generateXMLRequest();
+		xmlreq.send(null);	
+	});
+};
 </script>
 </body>
 </html>
