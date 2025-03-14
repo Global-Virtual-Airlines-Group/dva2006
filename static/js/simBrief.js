@@ -21,47 +21,38 @@ golgotha.simbrief.sbSubmit = function() {
 };
 
 golgotha.simbrief.loadPax = function(f) {
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 2500;
-	xreq.open('get', 'sbpax.ws?id=' + golgotha.simbrief.id, true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		const paxData = JSON.parse(xreq.responseText);	
-		if (!paxData.isCalculated)
-			console.log('Using existing passenger load of ' + paxData.pax);
-		else
-			f.pax.value = paxData.pax;
+	const p = fetch('sbpax.ws?id=' + golgotha.simbrief.id);
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			if (!js.isCalculated)
+				console.log('Using existing passenger load of ' + js.pax);
+			else
+				f.pax.value = js.pax;	
 
-		return simbriefsubmit(self.location.href);
-	};
-
-	xreq.send(null);
-	return true;
+			return simbriefsubmit(self.location.href);			
+		});
+	});
 };
 
 golgotha.simbrief.loadAirframes = function() {
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 2500;
-	xreq.open('get', 'sbairframes.ws?id=' + golgotha.simbrief.id, true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		const js = JSON.parse(xreq.responseText);
+	const p = fetch('sbairframes.ws?id=' + golgotha.simbrief.id);
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
 		const f = document.forms[0];
 		const cb = f.tailCode;
-		cb.options.length = js.length + 1;
-		for (var x = 0; x < js.length; x++) {
-			const ac = js[x];
-			cb.options[x + 1] = new Option(ac.tailCode + ' (' + ac.useCount + ' flights)', ac.tailCode);
-			golgotha.simbrief.airframes[ac.tailCode] = ac;
-		}
+		rsp.json().then(function(js) {
+			cb.options.length = js.length + 1;	
+			for (var x = 0; x < js.length; x++) {
+				const ac = js[x];
+				cb.options[x + 1] = new Option(ac.tailCode + ' (' + ac.useCount + ' flights)', ac.tailCode);
+				golgotha.simbrief.airframes[ac.tailCode] = ac;
+			}
 
-		golgotha.util.disable(f.disableCustomAirframe, (js.length == 0));
-		golgotha.util.display('sbTailCode', (js.length > 0));
-		return true;
-	};
-
-	xreq.send(null);
-	return true;
+			golgotha.util.disable(f.disableCustomAirframe, (js.length == 0));
+			golgotha.util.display('sbTailCode', (js.length > 0));
+		});
+	});
 };
 
 golgotha.simbrief.sbAirframeUpdate = function(cb) {
@@ -113,27 +104,20 @@ golgotha.simbrief.sbRefresh = function() {
 	const f = document.forms[0];
 	golgotha.form.submit(f);
 	golgotha.util.display('sbMessageBox', false);
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 7500;
-	xreq.open('get', 'sbrefresh.ws?id=' + golgotha.simbrief.id, true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
+	const p = fetch('sbrefresh.ws?id=' + golgotha.simbrief.id);
+	p.then(function(rsp) {
 		golgotha.form.clear(f);
-		if (xreq.status == 200) {
+		rsp.text();
+		if (rsp.status == 200) {
 			golgotha.simbrief.showSBMessage('SimBrief package updated', 'ter');
 			window.setTimeout(function() { location.reload(); }, 950);
-		} else if (xreq.status == 304)
+		} else if (rsp.status == 304)
 			golgotha.simbrief.showSBMessage('SimBrief package not modified', 'warn');
-		else if (xreq.status == 503)
-			golgotha.simbrief.showSBMessage(xreq.getResponseHeader('X-SB-Error-Message') + ' (' + xreq.getResponseHeader('X-SB-Error-Code') + ')');
-		else if (xreq.status >= 500)
-			golgotha.simbrief.showSBMessage('Error ' + xreq.status + ' updating package', 'error');
-
-		return true;
-	};
-
-	xreq.send(null);
-	return true;
+		else if (rsp.status == 503)
+			golgotha.simbrief.showSBMessage(rsp.headers.get('X-SB-Error-Message') + ' (' + rsp.headers.get('X-SB-Error-Code') + ')');
+		else if (rsp.status >= 500)
+			golgotha.simbrief.showSBMessage('Error ' + rsp.status + ' updating package', 'error');
+	});
 };
 
 golgotha.simbrief.sbDownloadPlan = function(cb) {

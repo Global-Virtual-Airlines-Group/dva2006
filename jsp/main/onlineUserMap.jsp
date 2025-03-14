@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" callback="golgotha.local.mapInit" />
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
@@ -40,16 +40,18 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
-const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
-map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
+<script async>
+golgotha.local.mapInit = function() {
+	const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
+	map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', map.closeWindow);
 
-// Center the map and add positions
-<map:markers var="golgotha.local.positions" items="${pilots}" />
-map.addMarkers(golgotha.local.positions);
+	// Center the map and add positions
+	<map:markers var="golgotha.local.positions" items="${pilots}" />
+	map.addMarkers(golgotha.local.positions);
+};
 </script>
 </body>
 </html>

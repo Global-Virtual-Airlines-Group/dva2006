@@ -16,7 +16,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" callback="golgotha.local.mapInit" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="flightBoardMap" />
 </head>
@@ -64,13 +64,15 @@
 golgotha.flightBoard.network = '${network}';
 
 // Create the map
-const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.closeWindow(); golgotha.flightBoard.infoClose(); });
-google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.flightBoard.infoClose);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.flightBoard.updateMap(true); });
+golgotha.local.mapInit = function() {
+	const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', function() { map.closeWindow(); golgotha.flightBoard.infoClose(); });
+	google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.flightBoard.infoClose);
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.flightBoard.updateMap(true); });
+};
 </script>
 </body>
 </html>

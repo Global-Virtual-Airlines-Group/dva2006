@@ -126,50 +126,51 @@ golgotha.airportLoad.setOptions = function(combo, data, opts) {
 golgotha.airportLoad.loadAirports = function(opts)
 {
 const oldCode = golgotha.form.getCombo(this); let combo = this;
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'airports.ws?' + golgotha.util.createURLParams(opts), true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+combo.disabled = true;
+if (combo.txt) combo.txt.disabled = true;
+
+const p = fetch('airports.ws?' + golgotha.util.createURLParams(opts));
+p.then(function(rsp) {
+	if (!rsp.ok) return false;
 	const o = combo.options[combo.selectedIndex];
 	const oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
 	const isChanged = (oldCodes.indexOf(oldCode) < 0);
-	const jsData = JSON.parse(xmlreq.responseText);
-	golgotha.airportLoad.setOptions(combo, jsData, opts);
-	combo.setAirport(oldCode, isChanged);
-	combo.disabled = false;
-	if (combo.txt) combo.txt.disabled = false;
-	golgotha.event.beacon('Airports', 'Load Airport List');
+	rsp.json().then(function(js) {
+		golgotha.airportLoad.setOptions(combo, js, opts);		
+		combo.setAirport(oldCode, isChanged);
+		combo.disabled = false;
+		if (combo.txt) combo.txt.disabled = false;
+		return true;		
+	});
+	
 	return true;
-};
+});
 
-combo.disabled = true;
-if (combo.txt) combo.txt.disabled = true;
-xmlreq.send(null);
+
 return true;
 };
 
 golgotha.airportLoad.loadSIDSTAR = function(code, type)
 {
-const oldValue = golgotha.form.getCombo(this); let combo = this;
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const js = JSON.parse(xmlreq.responseText);
-	const jsData = js[type];
-	combo.options.length = jsData.length + 1;
-	combo.options[0] = new Option('-', '');
-	for (var i = 0; i < trs.length; i++)
-		combo.options[i+1] = new Option(trs[i].code, trs[i].code);
+const oldValue = golgotha.form.getCombo(this); let combo = this; combo.disabled = true;
+const p = fetch('troutes.ws?airportD=' + code + '&airportA=' + code);
+p.then(function(rsp) {
+	if (!rsp.ok) return false;
+	rsp.json().then(function(js) {
+		const jsData = js[type];
+		combo.options.length = jsData.length + 1;
+		combo.options[0] = new Option('-', '');
+		for (var i = 0; i < trs.length; i++)
+			combo.options[i+1] = new Option(trs[i].code, trs[i].code);
+			
+		golgotha.form.setCombo(combo, oldValue);
+		combo.disabled = false;	
+		return true;		
+	});
 
-	golgotha.form.setCombo(combo, oldValue);
-	this.disabled = false;
-	golgotha.event.beacon('Airports', 'Load SID/STAR List');
-	return true;
-};
+	return true;	
+});
 
-combo.disabled = true;
-xmlreq.send(null);
 return true;
 };
 
