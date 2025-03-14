@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2018, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
@@ -14,7 +14,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 9.2
+ * @version 1.6
  * @since 1.0
  */
 
@@ -101,7 +101,6 @@ public class PageTag extends BrowserInfoTag {
 		try {
 			JspWriter out = pageContext.getOut();
 			out.println("</div>");
-			out.println(NewRelic.getBrowserTimingFooter());
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
