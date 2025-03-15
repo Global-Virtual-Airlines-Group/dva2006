@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 2.1
  */
 
@@ -221,17 +221,16 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
-			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, AVG(L.SCORE) AS FACT FROM PILOTS P, "
-			+ "PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
+			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, AVG(L.SCORE) AS FACT FROM PILOTS P, PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) "
+			+ "AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
 			buf.append("AND (PR.EQTYPE=?) ");
 		if (_dayFilter > 0)
 			buf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
-		buf.append("GROUP BY P.ID HAVING (CNT>=?) ORDER BY FACT");
+		buf.append("GROUP BY P.ID HAVING (CNT>=?) ORDER BY FACT DESC");
 		
 		try (PreparedStatement ps = prepare(buf.toString())) {
 			int pos = 0;
-			ps.setInt(++pos, LandingScorer.OPT_VSPEED);
 			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (eqType != null)
 				ps.setString(++pos, eqType);
@@ -249,11 +248,11 @@ public class GetFlightReportStatistics extends DAO {
 					ls.setHours(rs.getDouble(4));
 					ls.setAverageSpeed(rs.getDouble(5));
 					ls.setStdDeviation(rs.getDouble(6));
+					ls.setAverageScore(rs.getDouble(9) / 100);
 					double dist = rs.getDouble(7);
 					if (!rs.wasNull()) {
 						ls.setAverageDistance(dist);
 						ls.setDistanceStdDeviation(rs.getDouble(8));
-						ls.setAverageScore(rs.getDouble(9) / 100);
 					}
 				
 					results.add(ls);
