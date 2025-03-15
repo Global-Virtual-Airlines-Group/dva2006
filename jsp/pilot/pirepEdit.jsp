@@ -77,7 +77,7 @@ golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
 golgotha.local.setDaysInMonth = function(combo) {
 	const y = new Date().getFullYear();
 	const isLeapYear = (((y % 4) == 0) && ((y % 100) != 0));
-	const dCombo = document.forms[0].date;
+	const dCombo = document.forms[0].dateD;
 	const daysInMonth = [31, (isLeapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	const dd = dCombo.selectedIndex;
 	dCombo.options.length = daysInMonth[combo.selectedIndex];
