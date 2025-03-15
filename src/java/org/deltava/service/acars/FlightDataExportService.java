@@ -61,7 +61,7 @@ public class FlightDataExportService extends WebService {
 
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
-			boolean isSimTime = (routeData.getFirst() instanceof ACARSRouteEntry ae) && !routeData.isEmpty() && (ae.getSimUTC() != null);
+			boolean isSimTime = !routeData.isEmpty() && (routeData.getFirst() instanceof ACARSRouteEntry ae) && (ae.getSimUTC() != null);
 			if (isSimTime)
 				ctx.print("Sim ");
 			
