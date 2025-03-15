@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -40,7 +40,7 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
- <td class="right" colspan="6">TOP <el:text name="viewCount" idx="*" size="2" max ="3" value="${viewContext.count}" /> PILOTS WITH A MINIMUM OF <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS
+ <td class="right" colspan="7">TOP <el:text name="viewCount" idx="*" size="2" max ="3" value="${viewContext.count}" /> PILOTS WITH A MINIMUM OF <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS
  WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${dayFilter}" /> IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button type="submit" label="GO" /></td>
 </tr>
 <c:if test="${!empty viewContext.results}">
@@ -48,13 +48,14 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 <tr class="title caps">
  <td style="width:5%">#</td>
  <td style="width:20%">PILOT NAME</td>
- <td style="width:16%">RANK</td>
+ <td class="nophone" style="width:15%">RANK</td>
  <td style="width:7%">FLIGHTS</td>
- <td style="width:7%">HOURS</td>
- <td style="width:14%">AVG. SPEED</td>
- <td style="width:10%">STD. DEVIATION</td>
- <td style="width:10%">AVG. DISTANCE</td>
- <td>STD. DEVIATION</td>
+ <td class="nophone" style="width:7%">HOURS</td>
+ <td style="width:10%">AVG. SPEED</td>
+ <td class="nophone" style="width:10%">STD. DEVIATION</td>
+ <td class="nophone" style="width:10%">AVG. DISTANCE</td>
+ <td class="nophone" style="width:10%">STD. DEVIATION</td>
+ <td>AVG. SCORE</td>
 </tr>
 
 <!-- Table Statistics Data -->
@@ -65,32 +66,33 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld"><content:pilotName pilot="${pilot}">${pilot.name}</content:pilotName></td>
- <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
+ <td class="sc nophone">${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
- <td><fmt:dec value="${entry.hours}" /></td>
+ <td class="nophone" ><fmt:dec value="${entry.hours}" /></td>
  <td class="pri bld"><fmt:dec value="${entry.averageSpeed}" fmt="#0.00" /> ft/min</td>
- <td class="sec"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
+ <td class="sec nophone"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
 <c:choose>
 <c:when test="${entry.distanceStdDeviation < 1}">
- <td colspan="2">N / A</td>
+ <td class="nophone" colspan="2">N / A</td>
 </c:when>
 <c:otherwise>
- <td class="bld"><fmt:dec value="${entry.averageDistance}" fmt="#0" /> ft</td>
- <td><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
+ <td class="bld nophone"><fmt:dec value="${entry.averageDistance}" fmt="#0" /> ft</td>
+ <td class="nophone"><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
 </c:otherwise>
 </c:choose>
+ <td><fmt:landscore className="bld" value="${entry.averageScore}" /></td>
 </tr>
 </c:forEach>
 </c:if>
 <c:if test="${empty viewContext.results}">
 <tr>
- <td colspan="9" class="pri bld mid caps">No <content:airline /> Pilots meeting your criteria were found</td>
+ <td colspan="10" class="pri bld mid caps">No <content:airline /> Pilots meeting your criteria were found</td>
 </tr>
 </c:if>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="9">&nbsp;</td>
+ <td colspan="10">&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
