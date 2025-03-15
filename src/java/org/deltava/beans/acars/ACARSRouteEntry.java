@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -257,7 +257,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public boolean isEngineOut() {
 		for (int x = 0; x < _engineCount; x++) {
-			if ((_n1[x] < 10) || (_n2[x] < 12))
+			if ((_n1[x] < 10) || ((_n2[x] < 12) && (_n1[x] < 100))) // Check N1 as well for turboprops, since when throttle is at zero RPMs should still be there 
 				return true;
 		}
 		
