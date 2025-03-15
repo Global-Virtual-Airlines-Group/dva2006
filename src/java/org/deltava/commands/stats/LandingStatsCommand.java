@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2015, 2016, 2018, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display landing statistics.
  * @author Luke
- * @version 8.3
+ * @version 11.6
  * @since 2.1
  */
 
@@ -33,7 +33,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 		// Load the view context and minimum landings
 		ViewContext<LandingStatistics> vc = initView(ctx, LandingStatistics.class, 50);
 		int dayFilter = StringUtils.parse(ctx.getParameter("days"), 30);
-		int minLegs = Math.max(10, StringUtils.parse(ctx.getParameter("legCount"), 100));
+		int minLegs = Math.max(10, StringUtils.parse(ctx.getParameter("legCount"), 10));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
 		ctx.setAttribute("dayFilter", Integer.valueOf(dayFilter), REQUEST);
 		
