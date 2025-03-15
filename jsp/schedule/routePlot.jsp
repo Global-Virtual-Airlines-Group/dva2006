@@ -15,7 +15,7 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="airportRefresh" />
-<map:api version="3" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <content:js name="markermanager" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
@@ -180,51 +180,47 @@ golgotha.local.rpInit = function() {
 	return true;
 };
 
-golgotha.local.mapInit = function() {	
-	const f = document.forms[0];
-	golgotha.util.disable(f.routes);
-	golgotha.util.disable('SearchButton');
-	golgotha.airportLoad.config.doICAO = ${useICAO};
-	golgotha.airportLoad.config.airline = 'all';
-	golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
-	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
-	golgotha.airportLoad.setText(f.airline);
-	<fmt:jsarray var="golgotha.routePlot.aRwys" items="${aRwyNames}" />
-	golgotha.routePlot.validateBlob(f);
-	golgotha.routePlot.togglePax();
+const f = document.forms[0];
+golgotha.util.disable(f.routes);
+golgotha.util.disable('SearchButton');
+golgotha.airportLoad.config.doICAO = ${useICAO};
+golgotha.airportLoad.config.airline = 'all';
+golgotha.airportLoad.setHelpers([f.airportD,f.airportA,f.airportL]);
+f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
+golgotha.airportLoad.setText(f.airline);
+<fmt:jsarray var="golgotha.routePlot.aRwys" items="${aRwyNames}" />
+golgotha.routePlot.validateBlob(f);
+golgotha.routePlot.togglePax();
 
-	// Create the map
-	const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(golgotha.maps.info.type);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-	google.maps.event.addListener(map, 'zoom_changed', function() { document.forms[0].noRecenter.checked = (map.zoom > 4); });
+// Create the map
+const mapOpts = {center:{lat:38.88,lng:-93.25},zoom:4,minZoom:3,maxZoom:16,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+map.setMapTypeId(golgotha.maps.info.type);
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+google.maps.event.addListener(map, 'zoom_changed', function() { document.forms[0].noRecenter.checked = (map.zoom > 4); });
 
-	// Build the layer controls
-	const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-	const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-	ctls.push(new golgotha.maps.LayerClearControl(map));
+// Build the layer controls
+const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+ctls.push(new golgotha.maps.LayerClearControl(map));
 
-	// Display the copyright notice and text boxes
-	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
+// Display the copyright notice and text boxes
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
 
-	// Build gates marker managers
-	golgotha.routePlot.dGates = new MarkerManager(map,{maxZoom:17});
-	golgotha.routePlot.aGates = new MarkerManager(map,{maxZoom:17});
+// Build gates marker managers
+golgotha.routePlot.dGates = new MarkerManager(map,{maxZoom:17});
+golgotha.routePlot.aGates = new MarkerManager(map,{maxZoom:17});
 
-	// Load data async once tiles are loaded
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		google.maps.event.trigger(map, 'maptypeid_changed');
-		golgotha.local.rpInit();
-		return true;
-	});
-
+// Load data async once tiles are loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	google.maps.event.trigger(map, 'maptypeid_changed');
+	golgotha.local.rpInit();
 	return true;
-};
+});
 </script>
 </body>
 </html>
