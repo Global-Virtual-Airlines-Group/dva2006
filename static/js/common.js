@@ -14,12 +14,12 @@ golgotha.charts.lgStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:
 golgotha.charts.ttStyle = {color:golgotha.charts.tx,fontName:'Verdana',fontSize:11};
 golgotha.charts.dateTX = function(e) { const dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); };
 golgotha.charts.buildOptions = function(opts) {
-	const o = opts || {};
+	const o = opts || {}; o.legend = o.legend || {};
 	const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
 	o.backgroundColor = golgotha.charts.bg;
 	o.vAxis = Object.assign({}, aX);
 	o.hAxis = Object.assign({}, aX);
-	o.legend = Object.assign({}, opts.legend, aX);
+	o.legend = Object.assign({}, o.legend, aX);
 	o.fontSize = 10;
 	o.fontName = o.fontName || 'Verdana';
 	o.textStyle = o.textStyle || Object.assign({}, golgotha.charts.lgStyle);
