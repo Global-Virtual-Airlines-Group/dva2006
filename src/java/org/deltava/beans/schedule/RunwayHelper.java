@@ -12,7 +12,7 @@ import org.deltava.comparators.RunwayComparator;
 /**
  * A helper class to suggest Runway assignments.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 11.2
  */
 
@@ -149,7 +149,7 @@ public class RunwayHelper implements RoutePair{
 			Collections.sort(rwys);
 		
 		// Don't get runways with significantly low usage
-		int maxUse = rwys.getFirst().getUseCount();
+		int maxUse = rwys.isEmpty() ? 0 : rwys.getFirst().getUseCount();
 		if (maxUse > 40)
 			rwys.removeIf(r -> r.getUseCount() < (maxUse / 3));
 
