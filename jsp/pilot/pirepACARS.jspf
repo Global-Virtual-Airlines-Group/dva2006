@@ -50,7 +50,7 @@
 </tr>
 </c:if>
 </content:filter>
-<c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
+<c:if test="${!empty pirep.SDK}">
 <tr class="acarsData">
  <td class="label">Aircraft SDK</td>
  <td class="data" colspan="${cspan}">${pirep.SDK}<c:if test="${!empty acarsClientInfo.bridgeInfo}" ><span class="small nophone"> (Using ${acarsClientInfo.bridgeInfo} simulator Bridge)</span></c:if></td>
