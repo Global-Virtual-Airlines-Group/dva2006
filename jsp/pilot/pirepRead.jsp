@@ -92,7 +92,7 @@ golgotha.local.zoomTo = function(lat, lng, zoom) {
 <content:filter roles="PIREP,HR,Developer,Operations">
 <map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
 golgotha.local.showRunwayChoices = function() {
-	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes');
+	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=360,width=770,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
 </content:filter>
 </script></c:if>
