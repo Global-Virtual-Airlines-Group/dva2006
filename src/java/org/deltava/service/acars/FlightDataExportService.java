@@ -50,6 +50,8 @@ public class FlightDataExportService extends WebService {
 				routeData.addAll(dao.getXACARSEntries(id));
 			else
 				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
+		} catch (ArchiveValidationException ave) {
+			throw error(SC_INTERNAL_SERVER_ERROR, ave.getMessage(), false);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
