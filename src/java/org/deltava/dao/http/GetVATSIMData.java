@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2016, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read VATSIM API data.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -67,6 +67,33 @@ public class GetVATSIMData extends DAO {
 				c.addPilotRating("P" + pRating);
 			
 			return c;
+		} catch (IOException ie) {
+			throw new DAOException(ie);
+		}
+	}
+	
+	/**
+	 * Returns whether a VATSIM user is connected to the network.
+	 * @param id the VATSIM ID
+	 * @return TRUE if connected, otherwise FALSE
+	 * @throws DAOException if an error occurs
+	 */
+	public boolean getOnline(String id) throws DAOException {
+		if (StringUtils.isEmpty(id)) return false;
+		try {
+			setCompression(Compression.GZIP);
+			init(String.format("https://api.vatsim.net/v2/members/%s/status", id));
+			if (getResponseCode() != HTTP_OK)
+				return false;
+
+			// Process the JSON document
+			try (InputStream is = getIn()) {
+				JSONObject jo = new JSONObject(new JSONTokener(is));
+				JSONObject fpo = jo.optJSONObject("fp");
+				return (fpo != null) && (fpo.optInt("id") > 0);
+			} catch (IOException ie) {
+				throw new DAOException(ie);
+			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
