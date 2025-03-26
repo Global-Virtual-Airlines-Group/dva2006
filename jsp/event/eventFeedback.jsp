@@ -55,7 +55,7 @@ golgotha.local.update = function(cb) {
 
 <!-- Tabe Data -->
 <c:forEach var="fb" items="${viewContext.results}">
-<c:set var="author" value="${authors[fb.authorID]}" scope="page" />
+<c:set var="author" value="${pilots[fb.authorID]}" scope="page" />
 <view:row entry="${fb}">
  <td><fmt:date date="${fb.createdOn}" t="HH:mm" /></td>
  <td class="bld">${author.name}<c:if test="${!empty author.pilotCode}"><span class="nophone"> (${author.pilotCode})</span></c:if></td>
