@@ -106,7 +106,7 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getWithFeedback() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA LEFT JOIN events.FEEDBACK EF ON (E.ID=EF.ID) WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) AND (EF.ID IS NOT NULL) ORDER BY E.STARTTIME DESC")) {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA LEFT JOIN events.FEEDBACK EF ON (EA.ID=EF.ID) WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) AND (EF.ID IS NOT NULL) ORDER BY E.STARTTIME DESC")) {
 			ps.setString(1, SystemData.get("airline.code"));
 			return execute(ps);
 		} catch (SQLException se) {
