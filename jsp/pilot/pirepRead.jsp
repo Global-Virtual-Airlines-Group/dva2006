@@ -49,24 +49,17 @@ golgotha.local.validate = function(f) {
 
 golgotha.local.loadLogbook = function() {
 	const d = new Date();
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 8500;
-	xreq.open('get', 'logpreload.ws?id=${pirep.authorID}', true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		if (xreq.status != 200) {
-			console.log('Error ' + xreq.status + ' preloading Log Book');
+	const p = fetch('logpreload.ws?id=${pirep.authorID}');
+	p.then(function(rsp) {
+		if (!rsp.ok) {
+			console.log('Error ' + rsp.status + ' preloading Log Book');
 			return false;
 		}
 
-		const d2 = new Date(); const ms = d2.getTime() - d.getTime();
-		const isHit = (xreq.getResponseHeader('X-Cache-Hit') == '1');
-		console.log('Preloaded ' + xreq.getResponseHeader('X-Logbook-Size') + ' Flights, hit=' + isHit + ' (' + ms + 'ms)');
-		return true;
-	};
-
-	xreq.send(null);
-	return true;
+		rsp.text(); const d2 = new Date(); const ms = d2.getTime() - d.getTime();
+		const isHit = (rsp.headers.get('X-Cache-Hit') == '1');
+		console.log('Preloaded ' + rsp.headers.get('X-Logbook-Size') + ' Flights, hit=' + isHit + ' (' + ms + 'ms)');
+	});
 };
 
 golgotha.onDOMReady(golgotha.local.loadLogbook);
@@ -653,10 +646,10 @@ map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 <map:line var="golgotha.maps.acarsFlight.otRoute" src="golgotha.maps.acarsFlight.onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" /></c:if>
 <c:if test="${!empty mapRoute}">
 map.addMarkers(golgotha.maps.acarsFlight.gRoute);</c:if>
-<c:if test="${(!empty sbPackage.alternates) && fn:isDraft(pirep)}">
+<c:if test="${!empty sbPackage.alternates}">
 <map:markers var="golgotha.maps.acarsFlight.alts" items="${sbPackage.alternates}" />
 map.addMarkers(golgotha.maps.acarsFlight.alts);</c:if>
-<c:if test="${(!empty sbMarkers) && fn:isDraft(pirep)}">
+<c:if test="${!empty sbMarkers}">
 <map:markers var="golgotha.maps.acarsFlight.sbMrks" items="${sbMarkers}" />
 map.addMarkers(golgotha.maps.acarsFlight.sbMrks);</c:if>
 <c:if test="${empty filedRoute}">
