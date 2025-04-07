@@ -900,10 +900,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				int max = SystemData.getInt("api.max.googleMaps", -1);
 				int dailyMax = max / 30;
-				if (isSpider)
+				if (isSpider || !ctx.isAuthenticated())
 					dailyMax *= 0.2;
-				else if (!ctx.isAuthenticated())
-					dailyMax *= 0.75;
 
 				// Get today's predicted use
 				GetSystemLog sldao = new GetSystemLog(con);
