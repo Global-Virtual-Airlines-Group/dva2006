@@ -60,7 +60,7 @@ public class ValidateCAPTCHAService extends WebService {
 				s.setAttribute(CAPTCHA_ATTR_NAME, cr);
 			}
 		} catch (DAOException | IOException ie) {
-			boolean isWarning = (ie instanceof DAOException de) && de.isWarning();
+			boolean isWarning = ((ie instanceof DAOException de) && de.isWarning()) || (ie instanceof EOFException);
 			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), !isWarning);
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
