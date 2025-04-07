@@ -18,7 +18,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 4.1
  */
 
@@ -174,8 +174,10 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Get archive metadata
 		ArchiveMetadata md = getArchiveInfo(flightID);
-		if (md == null)
-			throw new ArchiveValidationException(String.format("No metadata for Flight %d", Integer.valueOf(flightID)));
+		if (md == null) {
+			File f = ArchiveHelper.getPositions(flightID);
+			throw new ArchiveValidationException(String.format("No metadata for Flight %d (exists=%s)", Integer.valueOf(flightID), Boolean.valueOf(f.exists())));
+		}
 		
 		// Validate and Deserialize
 		List<GeospaceLocation> results = new ArrayList<GeospaceLocation>();
