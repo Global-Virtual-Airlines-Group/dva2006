@@ -49,9 +49,9 @@
 	<cache id="ACARSMap" max="1" expires="3" />
 	<cache id="ACARSFlightID" max="1" expires="3" />
 	<cache id="simFDRFlightID" remote="true" expires="3600" />
-	<cache id="ACARSTrackCAS" max="16" expires="3600" />
+	<cache id="ACARSTrackCAS" max="48" expires="3600" />
 	<cache id="TaxiTime" remote="true" expires="86400" />
-	<cache id="ArchiveMeta" remote="true" expires="7200" />
+	<cache id="ArchiveMeta" remote="true" expires="8h" />
 
 	<!-- Statistics caches -->
 	<cache id="GreasedLandings" max="16" expires="1800" />
@@ -72,7 +72,7 @@
 	<cache id="ServInfoData" remote="true" expires="300" />
 
 	<!-- System caches -->
-	<cache id="AircraftInfo" max="192" expires="7200" />
+	<cache id="AircraftInfo" remote="true" expires="6h" />
 	<cache id="AircraftInfoALL" max="6" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
 	<cache id="Accomplishments" max="256" expires="3600" />
