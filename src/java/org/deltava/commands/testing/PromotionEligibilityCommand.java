@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command for users to view Promotion Eligibility.
  * @author Luke
- * @version 8.0
+ * @version 11.6
  * @since 3.0
  */
 
@@ -116,13 +116,13 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 						RideType rt = testHistory.canRequestCheckRide(eq);
 						if (p.getProficiencyCheckRides()) {
 							if (rt == RideType.CHECKRIDE)
-								eqData.put(eq, new EligibilityMessage(false, true, "You are eligibile to request but have not passed the initial Check Ride for this Equipment program."));
+								eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to request but have not passed the initial Check Ride for this Equipment program."));
 							else
-								eqData.put(eq, new EligibilityMessage(false, true, "You are eligibile to request but do not have a current Check Ride for this Equipment program."));
+								eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to request but do not have a current Check Ride for this Equipment program."));
 						} else
-							eqData.put(eq, new EligibilityMessage(false, true, "You are eligibile to request but have not passed the Check Ride for this Equipment program."));
+							eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to request but have not passed the Check Ride for this Equipment program."));
 					} catch (IneligibilityException ie) {
-						eqData.put(eq, new EligibilityMessage("You are not eligibile to request the Check Ride for this Equipment program - " + ie.getMessage()));
+						eqData.put(eq, new EligibilityMessage("You are not eligible to request the Check Ride for this Equipment program - " + ie.getMessage()));
 					}
 
 					continue;
@@ -136,7 +136,7 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 
 				// Figure out what new ratings we can get
 				Collection<String> extraRatings = new TreeSet<String>(CollectionUtils.getDelta(eq.getRatings(), p.getRatings()));
-				eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to switch to or seek the following additional ratings (" + StringUtils.listConcat(extraRatings, ", ") + ") in this Equipment program."));
+				eqData.put(eq, new EligibilityMessage(false, true, String.format("You are eligible to switch to or seek the following additional ratings (%s) in this Equipment program.", StringUtils.listConcat(extraRatings, ", "))));
 			}
 
 			ctx.setAttribute("eqData", eqData, REQUEST);
