@@ -1,5 +1,5 @@
 golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], aRwys:[], hasBlob:false, isDraft:false};
-golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
+golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60},uspfi:{pal:2,icon:16},eu:{pal:2,icon:17}};
 golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
 golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
 golgotha.routePlot.getAJAXParams = function()
@@ -35,8 +35,12 @@ return o;
 golgotha.routePlot.generateGate = function(g, al) {
 	const isOurs = (al) && g.airlines.contains(al.code);
 	let opts = golgotha.routePlot.gateIcons.other;
-	if (isOurs && g.isIntl)
+	if (isOurs && (g.zoneCode == 1))
 		opts = golgotha.routePlot.gateIcons.intl;
+	else if (isOurs && (g.zoneCode == 2))
+		opts = golgotha.routePlot.gateIcons.uspfi;
+	else if (isOurs && (g.zoneCode == 3))
+		opts = golgotha.routePlot.gateIcons.eu;
 	else if (isOurs)
 		opts = golgotha.routePlot.gateIcons.ours;
 	else if (g.useCount > 0)
