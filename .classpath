@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="lib/hansel-2.0a3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
@@ -26,7 +25,6 @@
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/java-jwt-3.19.2.jar"/>
