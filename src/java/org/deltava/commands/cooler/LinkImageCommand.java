@@ -1,14 +1,13 @@
-// Copyright 2007, 2008, 2009, 2015, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2017, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
+import java.net.http.*;
 import java.util.*;
 import java.io.IOException;
 
 import java.sql.Connection;
-
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.HeadMethod;
+import java.time.Duration;
 
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.VersionInfo;
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 10.6
+ * @version 11.6
  * @since 1.0
  */
 
@@ -84,29 +83,21 @@ public class LinkImageCommand extends AbstractCommand {
 			// Validate the image
 			LinkedImage img = null;
 			try {
-				java.net.URI url = new java.net.URI(ctx.getParameter("imgURL"));
+				URI url = new URI(ctx.getParameter("imgURL"));
 				if (!(url.getScheme().startsWith("http")))
 					throw new MalformedURLException();
 				else if (imgURLs.contains(url.toString()))
 					throw new MalformedURLException("Duplicate Image URL");
 				
 				// Init the HTTP client
-				HttpClient hc = new HttpClient();
-				hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-				hc.getParams().setParameter("http.useragent",  VersionInfo.getUserAgent());
-				hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-				hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(2500));
-				hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(2000));
-				
-				// Open the connection
-				HeadMethod hm = new HeadMethod(url.toString());
-				hm.setFollowRedirects(false);
+				HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
+				HttpRequest req = HttpRequest.newBuilder().timeout(Duration.ofMillis(2500)).uri(url).header("user-agent", VersionInfo.getUserAgent()).HEAD().build();
 				
 				// Validate the result code
-				int resultCode = hc.executeMethod(hm);
-				if (resultCode == HttpURLConnection.HTTP_OK) {
-					Header[] hdrs = hm.getResponseHeaders("Content-Type");
-					String cType = (hdrs.length == 0) ? "unknown" : hdrs[0].getValue();
+				HttpResponse<String> rsp = hc.send(req, HttpResponse.BodyHandlers.ofString());
+				if (rsp.statusCode() == HttpURLConnection.HTTP_OK) {
+					Optional<String> ct = rsp.headers().firstValue("Content-Type");
+					String cType = ct.orElse("unknown");
 					if (!_imgMimeTypes.contains(cType))
 						ctx.setMessage("Invalid MIME type for " + url + " - " + cType);
 					else {
@@ -115,11 +106,11 @@ public class LinkImageCommand extends AbstractCommand {
 						imgURLs.add(url.toString());
 					}
 				} else
-					ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
+					ctx.setMessage("Invalid Image HTTP result code - " + rsp.statusCode());
 			} catch (MalformedURLException | URISyntaxException se) {
 				ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
-			} catch (IOException ie) {
-				ctx.setMessage("I/O Error - " + ie.getMessage());
+			} catch (IOException | InterruptedException ie) {
+				ctx.setMessage(String.format("%s - %s", ie.getClass().getSimpleName(), ie.getMessage()));
 			}
 			
 			// If we don't have a linked image bean, abort
