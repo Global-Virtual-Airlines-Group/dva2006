@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -315,6 +315,7 @@ public class RoutePlotMapService extends MapPlotService {
 			go.put("icon", g.getIconCode());
 			go.put("airlines", g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet()));
 			go.put("zone", g.getZone().getDescription());
+			go.put("zoneCode", g.getZone().ordinal());
 			go.put("useCount", g.getUseCount());
 			go.put("info", g.getInfoBox());
 			jo.append(isDeparture ? "departureGates" : "arrivalGates", go);
