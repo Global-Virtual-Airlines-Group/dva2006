@@ -1,19 +1,19 @@
-// Copyright 2012, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.apache.commons.httpclient.util.DateUtil;
-
 import org.deltava.dao.DAOException;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 10.5
+ * @version 11.6
  * @since 5.0
  */
 
@@ -23,7 +23,7 @@ public class GetURL extends DAO {
 	private final String _outFile;
 	
 	private boolean _forceDL;
-	private long _lastModified = -1;
+	private Instant _lastModified;
 	private int _statusCode;
 	
 	/**
@@ -55,9 +55,9 @@ public class GetURL extends DAO {
 	
 	/**
 	 * Updates the timestamp used to send an If-Modified-Since header.
-	 * @param dt the epoch timestamp in milliseconds
+	 * @param dt the date/time
 	 */
-	public void setIfModifiedSince(long dt) {
+	public void setIfModifiedSince(Instant dt) {
 		_lastModified = dt;
 	}
 	
@@ -70,13 +70,13 @@ public class GetURL extends DAO {
 		File tmp = null;
 		try {
 			File outF = new File(_outFile);
-			if ((_lastModified == -1) && outF.exists())
-				_lastModified =  outF.lastModified();
+			if ((_lastModified == null) && outF.exists())
+				_lastModified = Instant.ofEpochMilli(outF.lastModified());
 			init(_url);
 			
 			// If we're not forcing the download and it exists, do a head request to check
-			if (!_forceDL && (_lastModified > -1))
-				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
+			if (!_forceDL && (_lastModified != null))
+				setRequestHeader("If-Modified-Since", StringUtils.format(_lastModified, "EEE, dd MMM yyyy HH:mm:ss zzz"));
 				
 			// Check the status code, if not modified exit out
 			_statusCode = getResponseCode();
@@ -119,8 +119,8 @@ public class GetURL extends DAO {
 			init(_url);
 			
 			// If we're not forcing the download and it exists, do a head request to check
-			if (!_forceDL && (_lastModified > -1))
-				setRequestHeader("If-Modified-Since", DateUtil.formatDate(new Date(_lastModified)));
+			if (!_forceDL && (_lastModified != null))
+				setRequestHeader("If-Modified-Since", StringUtils.format(_lastModified, "EEE, dd MMM yyyy HH:mm:ss zzz"));
 			
 			// Check the status code, if not modified exit out
 			_statusCode = getResponseCode();
