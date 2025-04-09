@@ -1,108 +1,91 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
+import java.net.http.*;
+import java.time.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 import java.io.IOException;
 
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.apache.logging.log4j.*;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.HeadMethod;
-
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.VersionInfo;
+
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
-
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
 public class ImageLinkTestTask extends Task {
 
 	protected Collection<?> _mimeTypes;
-	
-	// TODO Convert to ThreadPool using virtual threads
-	private class ImageLinkWorker extends Thread {
-		private final Logger tLog;
-		private final Queue<LinkedImage> _work;
+
+	private class ImageLinkWorker implements Runnable {
+		private final Logger tLog = LogManager.getLogger(ImageLinkWorker.class);
+		
+		private final LinkedImage _img;
 		private final Collection<String> _invalidHosts;
 		private final Queue<LinkedImage> _output;
-		
-		ImageLinkWorker(int id, Queue<LinkedImage> work, Collection<String> badHosts, Queue<LinkedImage> out) {
-			super("ImageLinkWorker-" + String.valueOf(id));
-			setDaemon(true);
-			tLog = LogManager.getLogger(ImageLinkTestTask.class.getPackage().getName() + "." + getName());
-			_work = work;
+
+		ImageLinkWorker(LinkedImage img, Collection<String> badHosts, Queue<LinkedImage> out) {
+			super();
+			_img = img;
 			_invalidHosts = badHosts;
 			_output = out;
 		}
-		
+
 		@Override
 		public void run() {
-			HttpClient hc = new HttpClient();
-			hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-			hc.getParams().setParameter("http.useragent",  VersionInfo.getUserAgent());
-			hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-			hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(8250));
-			hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(8250));
-			
-			// Go through each image
-			LinkedImage img = _work.poll();
-			while (img != null) {
-				boolean isOK = false;
-				java.net.URI url = null;
-				try {
-					url = new java.net.URI(img.getURL());
-					if (_invalidHosts.contains(url.getHost()))
-						throw new IllegalArgumentException("Bad Host!");
-					
-					// Open the connection
-					HeadMethod hm = new HeadMethod(url.toString());
-					hm.setFollowRedirects(false);
+			HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
+			boolean isOK = false; URI url = null;
+			try {
+				url = new java.net.URI(_img.getURL());
+				if (_invalidHosts.contains(url.getHost()))
+					throw new IllegalArgumentException("Bad Host!");
 
-					// Validate the result code
-					int resultCode = hc.executeMethod(hm);
-					if (resultCode != HttpURLConnection.HTTP_OK)
-						tLog.warn("Invalid Image HTTP result code - {}", Integer.valueOf(resultCode));
-					else {
-						Header[] hdrs = hm.getResponseHeaders("Content-Type");
-						String cType = (hdrs.length == 0) ? "unknown" : hdrs[0].getValue();
-						isOK = _mimeTypes.contains(cType);
-						if (!isOK)
-							tLog.warn("Invalid MIME type for {} - {}", img, cType);
-						else
-							tLog.info("Validated {}", url.toString());
-					}
-				} catch (IllegalArgumentException iae) {
-					if (url != null)
-						tLog.warn("Known bad host - {}", url.getHost());
-				} catch (URISyntaxException se) {
-					tLog.warn("Invalid URL - {}", img);
-				} catch (IOException ie) {
-					tLog.warn("Error validating {} - {}", img, ie.getMessage());
-					if ("Connection timed out".equals(ie.getMessage()))
-						_invalidHosts.add(url.getHost());
+				// Open the connection
+				HttpRequest req = HttpRequest.newBuilder().timeout(Duration.ofMillis(8250)).uri(url).header("User-Agent", VersionInfo.getUserAgent()).HEAD().build();
+
+				// Validate the result code
+				TaskTimer tt = new TaskTimer();
+				HttpResponse<String> rsp = hc.send(req, HttpResponse.BodyHandlers.ofString());
+				int resultCode = rsp.statusCode();
+				tt.stop();
+				if (resultCode != HttpURLConnection.HTTP_OK)
+					tLog.warn("Invalid Image HTTP result code - {}", Integer.valueOf(resultCode));
+				else {
+					String cType = rsp.headers().firstValue("Content-Type").orElse("unknown");
+					isOK = _mimeTypes.contains(cType);
+					if (!isOK)
+						tLog.warn("Invalid MIME type for {} - {}", _img, cType);
+					else
+						tLog.info("Validated {} in {}ms", url.toString(), Long.valueOf(tt.getMillis()));
 				}
-				
-				// If not OK, push onto the error stack
-				if (!isOK)
-					_output.add(img);
-				
-				// Get next image
-				img = isInterrupted() ? null : _work.poll();
+			} catch (IllegalArgumentException iae) {
+				if (url != null)
+					tLog.warn("Known bad host - {}", url.getHost());
+			} catch (URISyntaxException se) {
+				tLog.warn("Invalid URL - {}", _img);
+			} catch (IOException | InterruptedException ie) {
+				tLog.warn("Error validating {} - {} {}", _img, ie.getClass().getSimpleName(), ie.getMessage());
+				if ("Connection timed out".equals(ie.getMessage()))
+					_invalidHosts.add(url.getHost());
 			}
+
+			// If not OK, push onto the error stack
+			if (!isOK)
+				_output.add(_img);
 		}
 	}
 
@@ -118,39 +101,39 @@ public class ImageLinkTestTask extends Task {
 	protected void execute(TaskContext ctx) {
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the images to check
 			GetCoolerLinks dao = new GetCoolerLinks(con);
 			Collection<Integer> ids = dao.getThreads();
-			log.info("Validating images in " + ids.size() + " discussion threads");
+			log.info("Validating images in {} discussion threads", Integer.valueOf(ids.size()));
 			
-			// Load the images
-			Queue<LinkedImage> work = new ConcurrentLinkedQueue<LinkedImage>();
-			for (Integer id : ids)
-				work.addAll(dao.getURLs(id.intValue(), false));
-			
-			ctx.release();
-
-			// Keep track of invalid hosts
+			// Create the dead letter queues
 			Collection<String> invalidHosts = Collections.synchronizedSet(new HashSet<String>());
 			Queue<LinkedImage> badImgs = new ConcurrentLinkedQueue<LinkedImage>();
-			
+
+			// Load the images
+			Collection<ImageLinkWorker> work = new ArrayList<ImageLinkWorker>();
+			for (Integer id : ids) {
+				Collection<LinkedImage> imgs = dao.getURLs(id.intValue(), false);
+				imgs.stream().map(img -> new ImageLinkWorker(img, invalidHosts, badImgs)).forEach(work::add);
+			}
+
+			ctx.release();
+
 			// Fire up the workers
 			int tpSize = Math.max(1, Math.min(12, work.size() / 16));
-			Collection<Thread> workers = new ArrayList<Thread>();
-			for (int x = 1; x <= tpSize; x++) {
-				ImageLinkWorker wrk = new ImageLinkWorker(x, work, invalidHosts, badImgs);
-				wrk.setUncaughtExceptionHandler(this);
-				workers.add(wrk);
-				wrk.start();
+			try (ThreadPoolExecutor exec = new ThreadPoolExecutor(tpSize, tpSize, 250, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), Thread.ofVirtual().factory())) {
+				exec.allowCoreThreadTimeOut(true);
+				work.forEach(exec::execute);
+				exec.shutdown();
+				exec.awaitTermination(5, TimeUnit.MINUTES);
+			} catch (InterruptedException ie) {
+				log.warn("Interrupted validating images");
 			}
-			
-			// Wait for the workers to finish
-			ThreadUtils.waitOnPool(workers);
-			
+
 			// Save the last update date/time for each thread
 			Map<Integer, Long> updTimes = new HashMap<Integer, Long>();
-			
+
 			// Re-open the database connection
 			con = ctx.getConnection();
 			ctx.startTX();
@@ -174,12 +157,12 @@ public class ImageLinkTestTask extends Task {
 					updTimes.put(id, Long.valueOf(System.currentTimeMillis()));
 					upd.setDate(Instant.now());
 				}
-				
+
 				// Write a thread update and delete the link
 				msgdao.write(upd);
 				wdao.disable(img.getThreadID(), img.getID());
 			}
-			
+
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
