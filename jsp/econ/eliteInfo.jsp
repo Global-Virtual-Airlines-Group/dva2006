@@ -109,8 +109,8 @@ span.rmbar {
 <c:if test="${nextYearStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span></c:if>.</td></c:if>
 <c:if test="${!isRollover}">
  <td class="data">If you do not complete any more flights this year, your ${eliteName} status will be <fmt:elite level="${nextYearStatus.level}" className="bld" nameOnly="true" />.<c:if test="${!empty projectedTotal}"> If you continue flying at your current rate, you will accumulate 
- <fmt:int value="${projectedTotal.legs}" /> flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedStatus.level}" className="bld" nameOnly="true" /> status
-<c:if test="${projectedStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span>)</c:if><.</c:if>
+ <fmt:int value="${projectedTotal.legs}" /> flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedStatus.level}" className="bld" nameOnly="true" /> status.
+<c:if test="${projectedStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span>)</c:if></c:if>
  <c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
  <br /><br />
 <span class="pri bld">REQUALIFICATION ALERT</span> - You are approaching the requirements for <fmt:elite level="${nextLevel}" className="bld" nameOnly="true" /> status in ${currentYear + 1}. Just a few more flights could qualify you for a higher
