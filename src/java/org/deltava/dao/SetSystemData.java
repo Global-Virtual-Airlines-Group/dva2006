@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,21 +6,16 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.TZInfo;
-import org.deltava.beans.stats.APIUsage;
 import org.deltava.beans.system.*;
-
-import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 10.6
+ * @version 11.6
  * @since 1.0
  */
 
 public class SetSystemData extends DAO {
-
-	private static final Cache<APIUsage> _todayAPICache = CacheManager.get(APIUsage.class, "APIStats");
 
 	/**
 	 * Initialize the Data Access Object.
@@ -79,9 +74,6 @@ public class SetSystemData extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		// Invalidate cache keys
-		cacheKeys.forEach(key -> _todayAPICache.remove(key));
 	}
 
 	/**
