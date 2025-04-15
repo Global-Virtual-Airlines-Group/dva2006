@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 11.2
+ * @version 11.6
  * @since 1.0
  */
 
@@ -107,6 +107,15 @@ public class RoutePlotCommand extends AbstractCommand {
 				// Save SID/STARs
 				ctx.setAttribute("sids", rh.getSIDs(), REQUEST);
 				ctx.setAttribute("stars", rh.getSTARs(), REQUEST);
+				
+				// Calculate altitude
+				if (StringUtils.isEmpty(dfr.getAltitude())) {
+					double hdg = GeoUtils.course(dfr.getAirportD(), dfr.getAirportA());
+					if (hdg < 180)
+						dfr.setAltitude(String.valueOf((dfr.getDistance() < 250) ? 25000 : 35000));
+					else
+						dfr.setAltitude(String.valueOf((dfr.getDistance() < 250) ? 24000 : 34000));
+				}
 				
 				// Load up route
 				if (!StringUtils.isEmpty(dfr.getRoute())) {
