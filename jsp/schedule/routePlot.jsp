@@ -145,7 +145,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
- <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="${empty flight.altitude ? '35000' : flight.altitude}" spellcheck="false" /></td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="${flight.altitude}" spellcheck="false" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
