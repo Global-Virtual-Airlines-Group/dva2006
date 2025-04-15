@@ -58,7 +58,6 @@
 	<cache id="LandingStats" max="64" expires="1800" />
 	<cache id="FlightStats" max="16" expires="600" />
 	<cache id="ProgramStats" max="8" expires="1800" />
-	<cache id="APIStats" max="16" expires="600" />
 	<cache id="OnTimeRoute" remote="true" expires="24h" />
 
 	<!-- Weather caches -->
