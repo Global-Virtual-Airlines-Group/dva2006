@@ -220,10 +220,6 @@ golgotha.onDOMReady(function() {
  <td class="label">PilotEdge ID</td>
  <td colspan="${cspan}" class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:networkID(pilot,'PilotEdge')}" size="10" max="9" /></td>
 </tr>
-<tr>
- <td class="label">POSCON ID</td>
- <td colspan="${cspan}" class="data"><el:text name="POSCON_ID" idx="*" value="${fn:networkID(pilot,'POSCON')}" size="10" max="9" /></td>
-</tr>
 <c:if test="${empty pilotLocation}">
 <tr>
  <td class="label">Location</td>

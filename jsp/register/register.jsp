@@ -181,10 +181,6 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
  <td class="label">PilotEdge ID#</td>
  <td class="data" colspan="${cspan}"><el:text name="PilotEdge_ID" idx="*" size="10" max="9" value="${param.PilotEdge_ID}" /></td>
 </tr>
-<tr>
- <td class="label">POSCON ID#</td>
- <td class="data" colspan="${cspan}"><el:text name="POSCON_ID" idx="*" size="10" max="9" value="${param.POSCON_ID}" /></td>
-</tr>
 
 <!-- E-Mail Information -->
 <tr class="title">

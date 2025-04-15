@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -162,7 +162,6 @@ public class RegisterCommand extends AbstractCommand {
 		a.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
 		a.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 		a.setNetworkID(OnlineNetwork.PILOTEDGE, ctx.getParameter("PilotEdge_ID"));
-		a.setNetworkID(OnlineNetwork.POSCON, ctx.getParameter("POSCON_ID"));
 		a.setLegacyURL(ctx.getParameter("legacyURL"));
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
