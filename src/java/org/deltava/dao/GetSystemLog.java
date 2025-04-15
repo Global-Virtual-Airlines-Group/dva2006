@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,18 +8,14 @@ import java.util.*;
 import org.deltava.beans.stats.APIUsage;
 import org.deltava.beans.system.*;
 
-import org.deltava.util.cache.*;
-
 /**
  * A Data Access Object to read system logging tables. 
  * @author Luke
- * @version 10.1
+ * @version 11.6
  * @since 9.0
  */
 
 public class GetSystemLog extends DAO {
-	
-	private static final Cache<APIUsage> _todayAPICache = CacheManager.get(APIUsage.class, "APIStats");
 	
 	/**
 	 * Initialize the Data Access Object.
@@ -87,26 +83,22 @@ public class GetSystemLog extends DAO {
 		
 		// Check the cache
 		String methodName = api.createName(method);
-		APIUsage result = _todayAPICache.get(methodName);
-		if (result != null)
-			return result;
-		
 		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (USAGE_DATE>CURDATE()) GROUP BY DT LIMIT 1")) {
 			ps.setString(1, methodName);
 			try (ResultSet rs = ps.executeQuery()) {
-				result = new APIUsage(Instant.now(), methodName);
+				APIUsage result = new APIUsage(Instant.now(), methodName);
 				if (rs.next()) {
 					result.setTotal(rs.getInt(2));
 					result.setAnonymous(rs.getInt(3));
 					result.setBlocked(rs.getInt(4));
+					return result;
 				}
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
-		_todayAPICache.add(result);
-		return result;
+		return null;
 	}
 	
 	/**
