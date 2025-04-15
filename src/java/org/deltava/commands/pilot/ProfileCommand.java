@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 11.2
+ * @version 11.6
  * @since 1.0
  */
 
@@ -127,7 +127,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			p.setNetworkID(OnlineNetwork.PILOTEDGE, ctx.getParameter("PilotEdge_ID"));
-			p.setNetworkID(OnlineNetwork.POSCON, ctx.getParameter("POSCON_ID"));
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));

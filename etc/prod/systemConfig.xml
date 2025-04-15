@@ -332,7 +332,6 @@
 			<network>VATSIM</network>
 			<network>IVAO</network>
 			<network>PilotEdge</network>
-			<network>POSCON</network>
 		</list>
 
 		<list name="highlightCodes" attr="code" unique="true">
