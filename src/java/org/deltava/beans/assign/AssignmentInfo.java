@@ -255,7 +255,6 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * Removes an unflown leg from this assignment.
      * @param rp the RoutePair to remove
      */
-    @SuppressWarnings("unlikely-arg-type")
 	public void remove(RoutePair rp) {
     	FlightReport dfr = null;
     	for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
