@@ -58,7 +58,7 @@ golgotha.util.addClass = function(e, cl) {
 	if (!e) return false;
 	const c = e.className.split(' ');
 	if (c.indexOf(cl) < 0) c.push(cl);
-	e.className = (c.length == 0) ? '' : c.join(' ');
+	e.className = (c.length == 0) ? '' : c.join(' ').trim();
 	return true;
 };
 
@@ -66,7 +66,7 @@ golgotha.util.removeClass = function(e, cl) {
 	if (!e) return false;
 	const c = e.className.split(' ');
 	const hasClass = c.remove(cl);
-	e.className = (c.length == 0) ? '' : c.join(' ');
+	e.className = (c.length == 0) ? '' : c.join(' ').trim();
 	return hasClass;
 };
 
