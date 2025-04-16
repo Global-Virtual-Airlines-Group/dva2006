@@ -24,6 +24,10 @@
 <content:js name="fileSaver" />
 <content:googleAnalytics eventSupport="true" />
 <script async>
+golgotha.local.sl = new golgotha.maps.SeriesLoader();
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
@@ -205,6 +209,8 @@ google.maps.event.addListener(map, 'zoom_changed', function() { document.forms[0
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
@@ -219,6 +225,7 @@ golgotha.routePlot.aGates = new MarkerManager(map,{maxZoom:17});
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	golgotha.local.rpInit();
+	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
 	return true;
 });
 </script>

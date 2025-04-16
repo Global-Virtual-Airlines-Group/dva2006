@@ -18,27 +18,18 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
-<script>
-const loaders = {};
-loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
+<script async>
+golgotha.local.filterTypes = function(combo) {
+	const minIDX = Math.max(1, combo.selectedIndex + 1);
+	for (var x = 0; x < golgotha.local.wxAirports.length; x++) {
+		const mrk = golgotha.local.wxAirports[x];
+		if ((mrk.ILS < minIDX) && mrk.getVisible())
+			mrk.setVisible(false);
+		else if ((mrk.ILS >= minIDX) && !mrk.getVisible())
+			mrk.setVisible(true);
+	}
 
-golgotha.local.filterTypes = function(combo)
-{
-const minIDX = Math.max(1, combo.selectedIndex + 1);
-for (var x = 0; x < golgotha.local.wxAirports.length; x++) {
-	const mrk = golgotha.local.wxAirports[x];
-	if ((mrk.ILS < minIDX) && mrk.getVisible())
-		mrk.setVisible(false);
-	else if ((mrk.ILS >= minIDX) && !mrk.getVisible())
-		mrk.setVisible(true);
-}
-	
-return true;
+	return true;
 };
 </script>
 </head>
@@ -75,35 +66,38 @@ return true;
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 const mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:3, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 
+//Weather layer loader
+golgotha.local.sl = new golgotha.maps.SeriesLoader();
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
+
 // Add airports -- don't use the standard TAG so we can add some info to the tags
 golgotha.local.wxAirports = [];
 <c:forEach var="ap" items="${metars}">
-<map:marker var="mrk" marker="true" point="${ap}" color="${ap.iconColor}" label="${ap.infoBox}" />
-mrk.ILS = ${ap.ILS.ordinal()};
-golgotha.local.wxAirports.push(mrk);
+<map:marker var="golgotha.local.mrk" marker="true" point="${ap}" color="${ap.iconColor}" label="${ap.infoBox}" />
+golgotha.local.mrk.ILS = ${ap.ILS.ordinal()};
+golgotha.local.wxAirports.push(golgotha.local.mrk);
 </c:forEach>
 map.addMarkers(golgotha.local.wxAirports);
 
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
@@ -114,9 +108,9 @@ map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.maps.reloadData(true);
 	google.maps.event.trigger(map, 'zoom_changed');
 	google.maps.event.trigger(map, 'maptypeid_changed');
+	window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
 });
 
 golgotha.maps.reloadData = function(isReload) {
@@ -125,7 +119,7 @@ golgotha.maps.reloadData = function(isReload) {
 
 	const dv = document.getElementById('seriesRefresh');
 	if (dv != null) dv.innerHTML = new Date();
-	loaders.series.loadGinsu();
+	golgotha.local.sl.loadRV();
 	return true;
 };
 </script>
