@@ -1,23 +1,23 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
-import java.time.Instant;
 
 /**
  * A bean to store weather tile overlay layer data.
  * @author Luke
- * @version 8.0
+ * @version 11.6
  * @since 8.0
  */
 
 public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.Serializable {
 
 	private final String _name;
-	private final Collection<Instant> _dates = new TreeSet<Instant>(Collections.reverseOrder());
+	private final Collection<TileDate> _dates = new TreeSet<TileDate>(Collections.reverseOrder());
 	
 	private int _nativeZoom;
 	private int _maxZoom;
+	private int _palCode;
 
 	/**
 	 * Creates the layer bean.
@@ -38,9 +38,9 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	
 	/**
 	 * Returns the layer effective dates.
-	 * @return a Collection of Instants
+	 * @return a Collection of TileDates
 	 */
-	public Collection<Instant> getDates() {
+	public Collection<TileDate> getDates() {
 		return _dates;
 	}
 	
@@ -61,11 +61,19 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	}
 	
 	/**
-	 * Adds an effective date to this layer.
-	 * @param dt a date/time
+	 * Returns the layer's palette code.
+	 * @return the palette code
 	 */
-	public void addDate(Instant dt) {
-		_dates.add(dt);
+	public int getPaletteCode() {
+		return _palCode;
+	}
+	
+	/**
+	 * Adds an effective date to this layer.
+	 * @param td a TileDate
+	 */
+	public void addDate(TileDate td) {
+		_dates.add(td);
 	}
 	
 	/**
@@ -76,6 +84,14 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	public void setZoom(int nativeZoom, int maxZoom) {
 		_nativeZoom = nativeZoom;
 		_maxZoom = Math.max(nativeZoom, maxZoom);
+	}
+	
+	/**
+	 * Updates the layer's palette code.
+	 * @param code the palette code
+	 */
+	public void setPaletteCode(int code) {
+		_palCode = code;
 	}
 	
 	@Override

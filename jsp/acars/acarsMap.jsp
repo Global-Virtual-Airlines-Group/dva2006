@@ -27,6 +27,10 @@
 <content:js name="wxParsers" />
 <script async>
 const loaders = {};
+loaders.series = new golgotha.maps.SeriesLoader();
+loaders.series.setData('radar', 0.45, 'wxRadar');
+loaders.series.setData('infrared', 0.25, 'wxSat');
+loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
 loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
 
@@ -120,14 +124,13 @@ golgotha.maps.acars.updateSettings = function() {
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
 const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
 google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
@@ -136,51 +139,42 @@ google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapT
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.acars.updateSettings);
 google.maps.event.addListener(map, 'bounds_changed', golgotha.maps.acars.updateSettings);
 
-// Add preload progress bar
-map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
-
-// Build the weather layer controls
+//Build the weather layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-
-// Add other layers
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return loaders.fir.getLayer(); }));
 map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.275)'});
 ctls.push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
+
+// Load data async once tiles are loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
+	google.maps.event.trigger(map, 'maptypeid_changed');
+	google.maps.event.trigger(map, 'zoom_changed');
+	golgotha.maps.acars.reloadData(true);
+	window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
+});
 
 // Display the copyright notice and text boxes
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
-
-// Load data async once tiles are loaded
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.maps.reloadData(true);
-	golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
-	google.maps.event.trigger(map, 'maptypeid_changed');
-	google.maps.event.trigger(map, 'zoom_changed');
-	golgotha.maps.acars.reloadData(true);
-});
+map.setMapTypeId(golgotha.maps.info.type);
 
 golgotha.maps.reloadData = function(isReload) {
-	if (isReload) 
-		window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
-
-	// Check if we're loading/animating
-	if ((map.preLoad) || (map.animator)) {
-		console.log('Animating Map - reload skipped');
-		return false;
-	}
-
+	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
 	const dv = document.getElementById('seriesRefresh');
 	if (dv != null) {
 		const txtDate = new Date().toString();
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
+	loaders.series.loadRV();
 	return true;
 };
 </script>

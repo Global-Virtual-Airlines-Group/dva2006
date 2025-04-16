@@ -11,16 +11,13 @@ import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Data Access Object to load weather tile layers.
  * @author Luke
- * @version 10.3
+ * @version 11.6
  * @since 8.0
  */
 
-@Deprecated
 public class GetWeatherTileLayers extends DAO {
 	
 	/**
@@ -30,48 +27,43 @@ public class GetWeatherTileLayers extends DAO {
 	 */
 	public Collection<WeatherTileLayer> getLayers() throws DAOException {
 		
-		StringBuilder buf = new StringBuilder("https://api.weather.com/v3/TileServer/series/productSet?apiKey=");
-		buf.append(SystemData.get("security.key.twc"));
-		buf.append("&productSet=twcAll");
-		
 		Collection<WeatherTileLayer> layers = new LinkedHashSet<WeatherTileLayer>();
 		try {
-			init (buf.toString());
+			init("https://api.rainviewer.com/public/weather-maps.json");
+			setCompression(Compression.GZIP, Compression.DEFLATE);
 			try (InputStream in = getIn()) {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
-				JSONObject so = jo.optJSONObject("seriesInfo");
-				if (so == null)
-					throw new DAOException("No seriesInfo in response");
-				
-				for (String name : so.keySet()) {
-					JSONObject layerInfo = so.getJSONObject(name);
-					JSONArray seriesTimes = layerInfo.optJSONArray("series");
-					if (seriesTimes == null) continue;
-					
-					// Build the bean
-					boolean isFF = ((seriesTimes.length() > 0) && seriesTimes.getJSONObject(0).has("fts"));
-					WeatherTileLayer layer = null;
-					if (isFF)
-						layer = new WeatherFutureTileLayer(name);
-					else
-						layer = new WeatherTileLayer(name);
-					
-					// Build bounding box
-					layer.setZoom(layerInfo.getInt("nativeZoom"), layerInfo.getInt("maxZoom"));
-					
-					for (int x = 0; x < seriesTimes.length(); x++) {
-						JSONObject st = seriesTimes.getJSONObject(x);
-						Instant dt = Instant.ofEpochSecond(st.getLong("ts"));
-						layer.addDate(dt);
-						if (isFF) {
-							WeatherFutureTileLayer flayer = (WeatherFutureTileLayer) layer;
-							JSONArray ffa = st.getJSONArray("fts");
-							for (int y = 0; y < ffa.length(); y++)
-								flayer.addSlice(dt, Instant.ofEpochSecond(ffa.getLong(y)));
-						}
-					}
-					
+				JSONObject ro = jo.optJSONObject("radar");
+				if (ro != null) {
+					JSONArray la = ro.getJSONArray("past");
+					if ((la == null) || (la.length() == 0))
+						throw new DAOException("No radar/past in response");
+
+					WeatherTileLayer layer = new WeatherTileLayer("radar");
+					layer.setZoom(9, 16);
+					layer.setPaletteCode(4);
 					layers.add(layer);
+					for (int x = 0; x < la.length(); x++) {
+						JSONObject lso = la.getJSONObject(x);
+						Instant dt = Instant.ofEpochSecond(lso.getLong("time"));
+						layer.addDate(new TileDate(dt, lso.getString("path")));
+					}
+				}
+				
+				JSONObject so = jo.getJSONObject("satellite");
+				if (so != null) {
+					JSONArray la = so.getJSONArray("infrared");
+					if ((la == null) || (la.length() == 0))
+						throw new DAOException("No satellite/infrared in response");
+					
+					WeatherTileLayer layer = new WeatherTileLayer("infrared");
+					layer.setZoom(9, 16);
+					layers.add(layer);
+					for (int x = 0; x < la.length(); x++) {
+						JSONObject lso = la.getJSONObject(x);
+						Instant dt = Instant.ofEpochSecond(lso.getLong("time"));
+						layer.addDate(new TileDate(dt, lso.getString("path")));
+					}
 				}
 			}
 		} catch (IOException ie) {

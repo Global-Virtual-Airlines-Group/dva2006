@@ -21,7 +21,12 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script async>
+golgotha.local.sl = new golgotha.maps.SeriesLoader();
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
+
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
@@ -29,16 +34,16 @@ if (code.length < 4) {
 	return false;
 }
 
-var useFA = false;
+golgotha.local.useFA = false;
 <content:filter roles="Route,Dispatch">
 // Check for FlightAware Weather
 const f = document.forms[0];
-useFA = f.useFA.checked;</content:filter>
+golgotha.local.useFA = f.useFA.checked;</content:filter>
 	
 // Build the XML Request
 const xmlreq = new XMLHttpRequest();
 xmlreq.timeout = 4500;
-xmlreq.open('GET', 'airportwx.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
+xmlreq.open('GET', 'airportwx.ws?fa=' + golgotha.local.useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
@@ -53,15 +58,15 @@ xmlreq.onreadystatechange = function() {
 			if (mrk.isOpen) map.infoWindow.close();
 			if (wx.tabs.length == 0) {
 				delete mrk.tabs;
-				var label = wx.firstChild;
+				const label = wx.firstChild;
 				if (label)
 					mrk.infoLabel = label.data.replace(/\n/g, '<br />');
 			} else {
 				mrk.tabs = [];
 				for (var x = 0; x < wx.tabs.length; x++) {
-					var tab = wx.tabs[x];
+					const tab = wx.tabs[x];
 					eval('mrk.' + tab.type + ' = tab.content');
-					var wxData = tab.content.replace(/\n/g, '<br />');
+					const wxData = tab.content.replace(/\n/g, '<br />');
 					mrk.tabs.push({name:tab.name, content:wxData});
 				}
 			}
@@ -83,7 +88,7 @@ xmlreq.onreadystatechange = function() {
 		} else {
 			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab; 
 			for (var x = 0; x < wx.tabs.length; x++) {
-				var tab = wx.tabs[x];
+				const tab = wx.tabs[x];
 				eval('mrk.' + tab.type + ' = tab.content');
 				const wxData = tab.content.replace(/\n/g, '<br />');
 				mrk.tabs.push({name:tab.name, content:wxData});
@@ -98,7 +103,7 @@ xmlreq.onreadystatechange = function() {
 		mrk.setMap(map);
 	}
 
-	var mrk = golgotha.local.wxMarkers[code];
+	const mrk = golgotha.local.wxMarkers[code];
 	if (mrk)
 		google.maps.event.trigger(mrk, 'click');
 
@@ -196,13 +201,12 @@ google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 
-// Add preload progress bar
-map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
-
 // Build the layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
@@ -216,6 +220,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	google.maps.event.trigger(map, 'zoom_changed');
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	golgotha.local.loadWX('${homeAirport.ICAO}');
+	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
 });
 
 golgotha.local.wxMarkers = [];

@@ -65,7 +65,7 @@
 	<cache id="TAF" max="256" expires="1800" />
 	<cache id="FlightAwareMETAR" max="256" expires="1800" />
 	<cache id="FlightAwareTAF" max="256" expires="1800" />
-	<cache id="TWCSeriesList" max="3" expires="150" />
+	<cache id="RVSeriesList" max="3" expires="150" />
 
 	<!-- ServInfo caches -->
 	<cache id="ServInfoData" remote="true" expires="300" />

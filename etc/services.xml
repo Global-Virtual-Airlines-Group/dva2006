@@ -166,6 +166,7 @@
 	<service id="metar" class="org.deltava.service.wx.METARService" />
 	<service id="taf" class="org.deltava.service.wx.TAFService" />
 	<service id="airportwx" class="org.deltava.service.wx.AirportWeatherService" />
+	<service id="serieslist" class="org.deltava.service.wx.SeriesListService" />
 	
 	<!-- Push Notification Services -->
 	<service id="pushstatus" class="org.deltava.service.push.StatusService" />
