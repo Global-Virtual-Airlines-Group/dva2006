@@ -139,7 +139,7 @@
 // Build the map
 const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 map.setMapTypeId(golgotha.maps.info.type);
 golgotha.maps.acarsFlight.getACARSData(${info.ID});
