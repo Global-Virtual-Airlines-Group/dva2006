@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 @SuppressWarnings("static-method")
 public class TestDuplicateCheck extends TestCase {
 
-	@SuppressWarnings("unlikely-arg-type")
 	public void testCIDCheck() {
 		
 		Controller c = new Controller(12345, OnlineNetwork.VATSIM);
