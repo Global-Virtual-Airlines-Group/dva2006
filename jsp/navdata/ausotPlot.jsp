@@ -58,7 +58,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script async>
 // Create the map
 const mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -68,17 +68,17 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
-// Weather layer loader
-golgotha.local.loader = new golgotha.maps.SeriesLoader();
-golgotha.local.loader.setData('sat', 0.325, 'wxSat');
-golgotha.local.loader.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
+//Weather layer loader
+golgotha.local.sl = new golgotha.maps.SeriesLoader();
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Add clouds and jet stream layers
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
@@ -88,6 +88,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
 	golgotha.local.loader.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
+	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
 });
 </script>
 </body>

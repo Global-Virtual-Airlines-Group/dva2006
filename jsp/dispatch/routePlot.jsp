@@ -27,11 +27,8 @@
 <script>
 golgotha.local.loaders = golgotha.local.loaders || {};
 golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
-golgotha.local.loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
-golgotha.local.loaders.series.setData('temp', 0.275, 'wxTemp');
-golgotha.local.loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
-golgotha.local.loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
-golgotha.local.loaders.series.setData('sat', 0.325, 'wxSat');
+golgotha.local.loaders.series.setData('radar', 0.45, 'wxRadar');
+golgotha.local.loaders.series.setData('infrared', 0.35, 'wxSat');
 golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 
 golgotha.local.validate = function(f)
@@ -151,7 +148,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script>
+<script async>
 const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
@@ -173,18 +170,15 @@ window.setTimeout(function() { newCfg.airline = 'all'; f.airportL.loadAirports(n
 const mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Build the weather layer controls
 const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('radar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('infrared'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
@@ -199,8 +193,8 @@ golgotha.routePlot.etopsCheck = false;
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.local.loaders.series.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
+	window.setTimeout(function() { golgotha.local.loaders.series.loadRV(); }, 500);
 });
 <c:if test="${!empty airportD}">golgotha.routePlot.plotMap();</c:if>
 </script>
