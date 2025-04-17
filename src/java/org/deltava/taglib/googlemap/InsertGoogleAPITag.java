@@ -38,6 +38,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	private String _cycle;
 	private String _cb;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
+	private final Collection<String> _jsOnLoad = new LinkedHashSet<String>();
 	
 	private boolean _isAnonymous;
 	
@@ -70,10 +71,18 @@ public class InsertGoogleAPITag extends TagSupport {
 	
 	/**
 	 * Sets the Google Maps v3 libraries to load.
-	 * @param libList a comma-separated list of libraries.
+	 * @param libList a comma-separated list of libraries
 	 */
 	public void setLibraries(String libList) {
 		_libraries.addAll(StringUtils.split(libList, ","));
+	}
+	
+	/**
+	 * Sets the Javascript libraries to load after the API is loaded.
+	 * @param jsList a comma-separated list of libraries
+	 */
+	public void setJs(String jsList) {
+		_jsOnLoad.addAll(StringUtils.split(jsList, ","));
 	}
 	
 	/**
@@ -128,8 +137,10 @@ public class InsertGoogleAPITag extends TagSupport {
 		mco.putOpt("minor", _minorVersion);
 		mco.put("seriesData", Collections.emptyMap());
 		if (_cb != null) {
-			mco.put("library", String.format("%s/v%s/%s.js", SystemData.get("path.js"), VersionInfo.getFullBuild(), jsFileName));
+			mco.put("path", String.format("%s/v%s", SystemData.get("path.js"), VersionInfo.getFullBuild()));
+			mco.put("library", String.format("%s.js", jsFileName));
 			mco.put("callback", _cb);
+			mco.put("jsLoad", _jsOnLoad);
 		}
 		
 		// Insert the API version
