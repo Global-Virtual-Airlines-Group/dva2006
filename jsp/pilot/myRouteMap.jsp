@@ -13,9 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" />
-<content:js name="markerWithLabel" />
-<content:js name="myRouteMap" />
+<map:api version="3" js="markerWithLabel,myRouteMap" callback="golgotha.local.mapInit" />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -37,7 +35,7 @@
  <td class="data"><el:combo name="days" options="${dateOptions}" size="1" idx="*" value="0" onChange="void golgotha.routeMap.updateDates(this)" /></td>
 </tr>
 <tr>
- <td colspan="4"><map:div ID="googleMap" height="510" /></td>
+ <td colspan="4"><map:div ID="googleMap" height="640" /></td>
 </tr>
 <tr class="nophone">
  <td colspan="4" class="mid small ita">Left-click on an Airport to view all the Routes flown to/from this Airport. Right-click on an Airport to view the last flight tracks in/out.</td>
@@ -49,20 +47,22 @@
 </content:region>
 </content:page>
 <script async>
-<map:point var="golgotha.local.mapC" point="${home}" />
+golgotha.local.mapInit = function() {
+	<map:point var="golgotha.local.mapC" point="${home}" />
 
-// Create the map
-const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: {mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); golgotha.routeMap.reset(); });
+	// Create the map
+	const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: {mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); golgotha.routeMap.reset(); });
 
-// Add the home airport
-<map:marker var="airportH" point="${home}" color="white" marker="true" />
-airportH.setMap(map);
-golgotha.routeMap.id = '${pilot.hexID}';
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(0); });
+	// Add the home airport and load the data
+	<map:marker var="airportH" point="${home}" color="white" marker="true" />
+	airportH.setMap(map);
+	golgotha.routeMap.id = '${pilot.hexID}';
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(0); });
+};
 </script>
 <content:googleAnalytics />
 </body>
