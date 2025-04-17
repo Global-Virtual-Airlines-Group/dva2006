@@ -1,5 +1,4 @@
 var golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{},sort:{lastSort:{},data:{}}};
-golgotha.util.isIOS = ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone'));
 golgotha.nav.touch = ("ontouchend" in document);
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.util.darkMode = false; // (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -27,15 +26,34 @@ golgotha.charts.buildOptions = function(opts) {
 	return o;
 };
 
+golgotha.util.loadAsync = function(js) {
+	if (!js.endsWith('.js')) js += '.js';
+	const p = new Promise(function(rsv, rej) {
+		const sc = document.createElement('script');
+		sc.setAttribute('async', 'true');
+		sc.setAttribute('id', js);
+		sc.onload = function() { console.log('Loaded ' + js); rsv(); };
+		sc.onerror = rej;
+		document.head.appendChild(sc);
+		sc.src = golgotha.maps.path + '/' + js;
+	});
+
+	return p;
+};
+
 golgotha.util.mapAPILoaded = function() {
 	console.log('Google Maps API loaded');
 	if (golgotha.maps.async) {
-		const sc = document.createElement('script');
-		sc.setAttribute('async', 'true');
-		sc.setAttribute('id', 'googleMapsV' + google.maps.API);
-		sc.onload = new Function(golgotha.maps.callback + '()'); 
-		sc.src = golgotha.maps.library;
-		document.head.appendChild(sc);
+		const lp = golgotha.util.loadAsync(golgotha.maps.library);
+		lp.then(function() {
+			const ps = [];
+			golgotha.maps.jsLoad.forEach(function(l) { ps.push(golgotha.util.loadAsync(l)); });
+			const p = Promise.all(ps);
+			p.then(function() {
+				const f = new Function(golgotha.maps.callback + '()');
+				f.apply();
+			});
+		});
 	}
 	
 	return true;
@@ -197,7 +215,7 @@ if (url.indexOf(golgotha.maps.wxHost) > -1) {
 	url += api;
 }
 	
-let sc = document.createElement('script');
+const sc = document.createElement('script');
 sc.setAttribute('id', opts.id);
 sc.src = url;
 if (opts.async) sc.setAttribute('async', 'true');
