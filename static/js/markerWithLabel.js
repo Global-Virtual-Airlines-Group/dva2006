@@ -145,19 +145,19 @@ MarkerLabel_.prototype.onAdd = function () {
   }
 
   this.listeners_ = [
-    google.maps.event.addDomListener(this.eventDiv_, "mouseover", function (e) {
+    this.eventDiv_.addEventListener("mouseover", function (e) {
       if (me.marker_.getDraggable() || me.marker_.getClickable()) {
         this.style.cursor = "pointer";
         google.maps.event.trigger(me.marker_, "mouseover", e);
       }
     }),
-    google.maps.event.addDomListener(this.eventDiv_, "mouseout", function (e) {
+    this.eventDiv_.addEventListener("mouseout", function (e) {
       if ((me.marker_.getDraggable() || me.marker_.getClickable()) && !cDraggingLabel) {
         this.style.cursor = me.marker_.getCursor();
         google.maps.event.trigger(me.marker_, "mouseout", e);
       }
     }),
-    google.maps.event.addDomListener(this.eventDiv_, "mousedown", function (e) {
+    this.eventDiv_.addEventListener("mousedown", function (e) {
       cDraggingLabel = false;
       if (me.marker_.getDraggable()) {
         cMouseIsDown = true;
@@ -168,7 +168,7 @@ MarkerLabel_.prototype.onAdd = function () {
         cAbortEvent(e); // Prevent map pan when starting a drag on a label
       }
     }),
-    google.maps.event.addDomListener(document, "mouseup", function (mEvent) {
+    document.addEventListener("mouseup", function (mEvent) {
       var position;
       if (cMouseIsDown) {
         cMouseIsDown = false;
@@ -228,7 +228,7 @@ MarkerLabel_.prototype.onAdd = function () {
         }
       }
     }),
-    google.maps.event.addDomListener(document, "keydown", function (e) {
+    document.addEventListener("keydown", function (e) {
       if (cDraggingLabel) {
         if (e.keyCode === 27) { // Esc key
           cRaiseEnabled = false;
@@ -238,7 +238,7 @@ MarkerLabel_.prototype.onAdd = function () {
         }
       }
     }),
-    google.maps.event.addDomListener(this.eventDiv_, "click", function (e) {
+    this.eventDiv_.addEventListener("click", function (e) {
       if (me.marker_.getDraggable() || me.marker_.getClickable()) {
         if (cIgnoreClick) { // Ignore the click reported when a label drag ends
           cIgnoreClick = false;
@@ -248,7 +248,7 @@ MarkerLabel_.prototype.onAdd = function () {
         }
       }
     }),
-    google.maps.event.addDomListener(this.eventDiv_, "dblclick", function (e) {
+    this.eventDiv_.addEventListener("dblclick", function (e) {
       if (me.marker_.getDraggable() || me.marker_.getClickable()) {
         google.maps.event.trigger(me.marker_, "dblclick", e);
         cAbortEvent(e); // Prevent map zoom when double-clicking on a label
