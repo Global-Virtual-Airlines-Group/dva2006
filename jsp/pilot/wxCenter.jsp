@@ -16,17 +16,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" />
-<content:js name="progressBar" />
-<content:js name="googleMapsWX" />
-<content:js name="wxParsers" />
+<map:api version="3" js="googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:googleAnalytics eventSupport="true" />
 <script async>
-golgotha.local.sl = new golgotha.maps.SeriesLoader();
-golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
-golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
-golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
-
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
@@ -191,39 +183,47 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script async>
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
-const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
-// Create the map
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+golgotha.local.mapInit = function () {
+	golgotha.local.wxMarkers = [];
 
-// Build the layer controls
-const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
-ctls.push(new golgotha.maps.LayerClearControl(map));
+	// Create the map
+	const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.setMapTypeId(golgotha.maps.info.type);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
+	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 
-// Display the copyright notice and text boxes
-map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
-map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
+	// Init weather layer loader
+	golgotha.local.sl = new golgotha.maps.SeriesLoader();
+	golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+	golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+	golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 
-// Load data async once tiles are loaded
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	google.maps.event.trigger(map, 'zoom_changed');
-	google.maps.event.trigger(map, 'maptypeid_changed');
-	golgotha.local.loadWX('${homeAirport.ICAO}');
-	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
-});
+	// Build the layer controls
+	const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+	const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
+	ctls.push(new golgotha.maps.LayerClearControl(map));
 
-golgotha.local.wxMarkers = [];
+	// Display the copyright notice and text boxes
+	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
+	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
+	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
+
+	// Load data async once tiles are loaded
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		google.maps.event.trigger(map, 'zoom_changed');
+		google.maps.event.trigger(map, 'maptypeid_changed');
+		golgotha.local.loadWX('${homeAirport.ICAO}');
+		window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
+	});
+};
 </script>
 </body>
 </html>

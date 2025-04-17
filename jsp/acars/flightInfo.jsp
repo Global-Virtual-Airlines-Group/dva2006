@@ -15,8 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" />
-<content:js name="acarsFlightMap" />
+<c:if test="${mapRoute.size() > 0}"><map:api version="3" js="acarsFlightMap" callback="golgotha.local.mapInit" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
@@ -130,23 +129,25 @@
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
 <script async>
-// Build the route line and map center
-<map:point var="golgotha.local.mapC" point="${mapCenter}" />
-<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
-<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
-<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
+golgotha.local.mapInit = function() {
+	// Build the route line and map center
+	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+	<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
+	<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
+	<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
 
-// Build the map
-const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-map.setMapTypeId(golgotha.maps.info.type);
-golgotha.maps.acarsFlight.getACARSData(${info.ID});
+	// Build the map
+	const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map, 'click', map.closeWindow);
+	map.setMapTypeId(golgotha.maps.info.type);
+	golgotha.maps.acarsFlight.getACARSData(${info.ID});
 
-// Add the filed route and markers
-map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
-map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
+	// Add the filed route and markers
+	map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
+	map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
+};
 </script></c:if>
 </body>
 </html>
