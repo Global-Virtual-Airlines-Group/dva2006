@@ -17,58 +17,8 @@
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="3" />
+<map:api version="3" js="acarsMap,markerWithlabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:captcha action="acarsMap" />
-<content:js name="acarsMap" />
-<content:js name="progressBar" />
-<content:js name="markerWithLabel" />
-<content:js name="dayNightLayer" />
-<content:js name="googleMapsWX" />
-<content:js name="wxParsers" />
-<script async>
-const loaders = {};
-loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('radar', 0.45, 'wxRadar');
-loaders.series.setData('infrared', 0.25, 'wxSat');
-loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
-loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
-
-golgotha.maps.acars.reloadData = function(isAuto) {
-	const isVisible = !document.visibilityState || (document.visibilityState == 'visible');
-	const doRefresh = document.forms[0].autoRefresh.checked;
-
-	// Generate XMLHTTPRequest if we're not already viewing a flight
-	if (!document.pauseRefresh && isVisible) {
-		const isLoading = document.getElementById('isLoading');
-		isLoading.innerHTML = ' - LOADING...';
-		const xmlreq = golgotha.maps.acars.generateXMLRequest();
-		xmlreq.send(null);
-	}
-
-	// Set timer to reload the data
-	if (doRefresh && isAuto)
-		window.setTimeout(golgotha.maps.acars.reloadData, ${refreshInterval + 2000}, true);
-
-	return true;
-};
-
-golgotha.maps.acars.showLegend = function(box) {
-	const rows = golgotha.util.getElementsByClass('mapLegend', 'tr');
-	rows.forEach(function(r) { golgotha.util.display(r, box.checked); });
-	return true;
-};
-
-golgotha.maps.acars.showEarth = function() {
-	self.location = '/acars_map_earth.ws';
-	return true;
-};
-
-golgotha.maps.acars.updateSettings = function() {
-	golgotha.maps.save(map);
-	return true;
-};
-</script>
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -125,46 +75,57 @@ golgotha.maps.acars.updateSettings = function() {
 </content:region>
 </content:page>
 <script async>
+golgotha.local.refresh = ${refreshInterval + 2000};
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
-const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
-// Create the map
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
-google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
-google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.acars.updateSettings);
-google.maps.event.addListener(map, 'bounds_changed', golgotha.maps.acars.updateSettings);
+golgotha.local.mapInit = function () {
+	golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
+	golgotha.local.loaders = {};
+	golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
+	golgotha.local.loaders.series.setData('radar', 0.45, 'wxRadar');
+	golgotha.local.loaders.series.setData('infrared', 0.25, 'wxSat');
+	golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
+	golgotha.local.loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
+	golgotha.local.loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
 
-//Build the weather layer controls
-const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('radar'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('infrared'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return loaders.fir.getLayer(); }));
-map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.275)'});
-ctls.push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
-ctls.push(new golgotha.maps.LayerClearControl(map));
+	// Create the map
+	const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
+	google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
+	google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
+	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.acars.updateSettings);
+	google.maps.event.addListener(map, 'bounds_changed', golgotha.maps.acars.updateSettings);
 
-// Load data async once tiles are loaded
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
-	google.maps.event.trigger(map, 'maptypeid_changed');
-	google.maps.event.trigger(map, 'zoom_changed');
-	golgotha.maps.acars.reloadData(true);
-	window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
-});
+	// Build the weather layer controls
+	const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+	const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('radar'); }));
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('infrared'); }));
+	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return golgotha.local.loaders.fir.getLayer(); }));
+	map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.275)'});
+	ctls.push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
+	ctls.push(new golgotha.maps.LayerClearControl(map));
 
-// Display the copyright notice and text boxes
-map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
-map.setMapTypeId(golgotha.maps.info.type);
+	// Load data async once tiles are loaded
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=golgotha.local.loaders.fir.load'), async:true});
+		google.maps.event.trigger(map, 'maptypeid_changed');
+		google.maps.event.trigger(map, 'zoom_changed');
+		golgotha.maps.acars.reloadData(true);
+		window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
+	});
+
+	// Display the copyright notice and text boxes
+	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
+	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
+	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
+	map.setMapTypeId(golgotha.maps.info.type);
+};
 
 golgotha.maps.reloadData = function(isReload) {
 	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
@@ -174,7 +135,7 @@ golgotha.maps.reloadData = function(isReload) {
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	loaders.series.loadRV();
+	golgotha.local.loaders.series.loadRV();
 	return true;
 };
 </script>

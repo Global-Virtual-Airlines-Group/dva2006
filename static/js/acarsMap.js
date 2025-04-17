@@ -265,3 +265,38 @@ golgotha.maps.save = function(m) {
 	localStorage.setItem('golgotha.mapInfo', JSON.stringify(inf));
 	return true;
 };
+
+golgotha.maps.acars.reloadData = function(isAuto) {
+	const isVisible = !document.visibilityState || (document.visibilityState == 'visible');
+	const doRefresh = document.forms[0].autoRefresh.checked;
+
+	// Generate XMLHTTPRequest if we're not already viewing a flight
+	if (!document.pauseRefresh && isVisible) {
+		const isLoading = document.getElementById('isLoading');
+		isLoading.innerHTML = ' - LOADING...';
+		const xmlreq = golgotha.maps.acars.generateXMLRequest();
+		xmlreq.send(null);
+	}
+
+	// Set timer to reload the data
+	if (doRefresh && isAuto)
+		window.setTimeout(golgotha.maps.acars.reloadData, golgotha.local.refresh, true);
+
+	return true;
+};
+
+golgotha.maps.acars.showLegend = function(box) {
+	const rows = golgotha.util.getElementsByClass('mapLegend', 'tr');
+	rows.forEach(function(r) { golgotha.util.display(r, box.checked); });
+	return true;
+};
+
+golgotha.maps.acars.showEarth = function() {
+	self.location = '/acars_map_earth.ws';
+	return true;
+};
+
+golgotha.maps.acars.updateSettings = function() {
+	golgotha.maps.save(map);
+	return true;
+};
