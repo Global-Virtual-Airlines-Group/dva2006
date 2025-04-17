@@ -47,44 +47,38 @@ const f = document.forms[0];
 const dt = f.date.options[f.date.selectedIndex];
 if (f.date.selectedIndex < 1) return;
 
-// Generate an XMLHTTP request
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 2500;
-xmlreq.open('GET', 'otrackinfo.ws?type=' + type + '&date=' + dt.text, true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	if (xmlreq.status != 200) {
-		golgotha.util.setHTML('isLoading', ' - ERROR ' + xmlreq.statusText);		
+// Fetch the tracks
+golgotha.util.setHTML('isLoading', ' - LOADING...');
+const p = fetch('otrackinfo.ws?type=' + type + '&date=' + dt.text);
+p.then(function(rsp) {
+	if (rsp.status != 200) {
+		golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);		
 		return false;
 	}
-
+	
 	map.clearOverlays();
 	golgotha.maps.oceanic.resetTracks();
+	rsp.json().then(function(jsData) {
+		jsData.tracks.forEach(function(t) {
+			const trackPos = [];
+			t.waypoints.forEach(function(wp) {
+				trackPos.push(wp.ll);
 
-	// Get the JSON document
-	const jsData = JSON.parse(xmlreq.responseText);
-	jsData.tracks.forEach(function(t) {
-		const trackPos = [];
-		t.waypoints.forEach(function(wp) {
-			trackPos.push(wp.ll);
+				// Create the map marker
+				const mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75}, wp.ll);
+				mrk.title = t.code; mrk.trackPoints = t.track; 
+				google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.oceanic.showTrackInfo(this); });
+				golgotha.maps.oceanic.points[t.type].push(mrk);
+			});
 
-			// Create the map marker
-			const mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75}, wp.ll);
-			mrk.title = t.code; mrk.trackPoints = t.track; 
-			google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.oceanic.showTrackInfo(this); });
-			golgotha.maps.oceanic.points[t.type].push(mrk);
+			// Draw the route
+			const trackLine = new google.maps.Polyline({map:map, path:trackPos, strokeColor:t.color, strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+			golgotha.maps.oceanic.tracks[t.type].push(trackLine);
 		});
 
-		// Draw the route
-		const trackLine = new google.maps.Polyline({map:map, path:trackPos, strokeColor:t.color, strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-		golgotha.maps.oceanic.tracks[t.type].push(trackLine);
+		golgotha.util.setHTML('isLoading', '');
 	});
+});
 
-	golgotha.util.setHTML('isLoading', '');
-	return true;
-};
-
-golgotha.util.setHTML('isLoading', ' - LOADING...');
-xmlreq.send(null);
 return true;
 };
