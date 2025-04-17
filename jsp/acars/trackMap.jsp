@@ -15,32 +15,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="3" />
-<content:js name="googleMapsStyles" />
+<map:api version="3" js="googleMapsStyles" callback="golgotha.local.mapInit" />
 <style>
 select.localAP { background-color:#000810; }
 </style>
-<script>
-golgotha.maps.track = golgotha.maps.track || {};
-golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ)
-{
-const layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
-layerOpts.myBaseURL = location.protocol + '//' + location.host + '/track/';
-layerOpts.getTileUrl = function(pnt, zoom) {
-	if (zoom > this.maxZoom) return '';
-	let url = this.myBaseURL;
-	for (var x = zoom; x > 0; x--) {
-		const digit1 = ((golgotha.maps.masks[x] & pnt.x) == 0) ? 0 : 1;
-		const digit2 = ((golgotha.maps.masks[x] & pnt.y) == 0) ? 0 : 2;
-		url += (digit1 + digit2);
-	}
-
-	return url + '.png';
-};
-
-return new google.maps.ImageMapType(layerOpts);
-};
-</script>
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -56,7 +34,7 @@ return new google.maps.ImageMapType(layerOpts);
  <td class="caps"><content:airline /> ACARS TRACK MAP</td>
 </tr>
 <tr>
- <td class="data"><map:div ID="googleMap" height="620" /></td>
+ <td class="data"><map:div ID="googleMap" height="640" /></td>
 </tr>
 </el:table>
 <div id="localAirports" style="display:none;"><el:combo name="localAP" size="1" firstEntry="[ SELECT AIRPORT ]" options="${localAP}" className="small localAP" onChange="void golgotha.maps.track.selectLocal(this)" /></div>
@@ -65,34 +43,56 @@ return new google.maps.ImageMapType(layerOpts);
 <content:copyright />
 </content:region>
 </content:page>
-<c:set var="maxZoomLevel"  value="${(empty localAP) ? 9 : 12}" scope="page" />
+<c:set var="maxZoomLevel" value="${(empty localAP) ? 9 : 12}" scope="page" />
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script async>
+golgotha.maps.track = golgotha.maps.track || {};
+golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ) {
+	const layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
+	layerOpts.myBaseURL = location.protocol + '//' + location.host + '/track/';
+	layerOpts.getTileUrl = function(pnt, zoom) {
+		if (zoom > this.maxZoom) return '';
+		let url = this.myBaseURL;
+		for (var x = zoom; x > 0; x--) {
+			const digit1 = ((golgotha.maps.masks[x] & pnt.x) == 0) ? 0 : 1;
+			const digit2 = ((golgotha.maps.masks[x] & pnt.y) == 0) ? 0 : 2;
+			url += (digit1 + digit2);
+		}
+
+		return url + '.png';
+	};
+
+	return new google.maps.ImageMapType(layerOpts);
+};
+
 <map:point var="mapC" point="${mapCenter}" />
-const mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
-const mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+golgotha.local.mapInit = function() {
+	const mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
+	const mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
-// Create the map
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-const tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
-map.mapTypes.set('acars_trackmap', tmStyledMap);
-map.setMapTypeId('acars_trackmap');
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-var trkLayer = new golgotha.maps.track.ShapeLayer(0.525, 3, ${maxZoomLevel});
-map.overlayMapTypes.insertAt(0, trkLayer);
-google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-<c:if test="${!empty localAP}">
-google.maps.event.addListener(map, 'zoom_changed', function() { golgotha.util.display('localAirports', (this.getZoom() > 9)); });</c:if>
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('zoomLevel'));
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('localAirports'));
-	google.maps.event.trigger(this, 'maptypeid_changed');
-	google.maps.event.trigger(this, 'zoom_changed');
-});
+	// Create the map
+	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+	const tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
+	map.mapTypes.set('acars_trackmap', tmStyledMap);
+	map.setMapTypeId('acars_trackmap');
+	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+	const trkLayer = new golgotha.maps.track.ShapeLayer(0.525, 3, ${maxZoomLevel});
+	map.overlayMapTypes.insertAt(0, trkLayer);
+	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+	<c:if test="${!empty localAP}">
+	google.maps.event.addListener(map, 'zoom_changed', function() { golgotha.util.display('localAirports', (this.getZoom() > 9)); });</c:if>
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('zoomLevel'));
+		map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('localAirports'));
+		google.maps.event.trigger(this, 'maptypeid_changed');
+		google.maps.event.trigger(this, 'zoom_changed');
+	});
 
-let airportCoords = {};
-<c:forEach var="ap" items="${localAP}">
-airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
+	const airportCoords = {};
+	<c:forEach var="ap" items="${localAP}">
+	airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
+};
+
 golgotha.maps.track.selectLocal = function(combo) {
 	if (combo.selectedIndex < 1) return false;
 	const o = combo[combo.selectedIndex];
