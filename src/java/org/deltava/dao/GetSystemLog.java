@@ -81,7 +81,6 @@ public class GetSystemLog extends DAO {
 	 */
 	public APIUsage getCurrentAPIUsage(API api, String method) throws DAOException {
 		
-		// Check the cache
 		String methodName = api.createName(method);
 		try (PreparedStatement ps = prepare("SELECT DATE(USAGE_DATE) AS DT, SUM(USE_COUNT), SUM(ANONYMOUS), SUM(BLOCKED) FROM SYS_API_USAGE WHERE (API=?) AND (USAGE_DATE>CURDATE()) GROUP BY DT LIMIT 1")) {
 			ps.setString(1, methodName);
@@ -98,7 +97,7 @@ public class GetSystemLog extends DAO {
 			throw new DAOException(se);
 		}
 		
-		return null;
+		return new APIUsage(Instant.now(), methodName);
 	}
 	
 	/**
