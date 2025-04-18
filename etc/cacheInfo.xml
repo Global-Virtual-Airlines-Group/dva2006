@@ -50,7 +50,7 @@
 	<cache id="ACARSFlightID" max="1" expires="3" />
 	<cache id="simFDRFlightID" remote="true" expires="3600" />
 	<cache id="ACARSTrackCAS" max="48" expires="3600" />
-	<cache id="TaxiTime" remote="true" expires="86400" />
+	<cache id="TaxiTime" remote="true" expires="36h" />
 	<cache id="ArchiveMeta" remote="true" expires="8h" />
 
 	<!-- Statistics caches -->
