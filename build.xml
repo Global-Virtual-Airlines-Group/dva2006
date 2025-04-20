@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="21" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="24" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -118,7 +118,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" updatedProperty="jar.compile" includeantruntime="false" debuglevel="lines,vars,source" source="23" target="23" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" updatedProperty="jar.compile" includeantruntime="false" debuglevel="lines,vars,source" source="24" target="24" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,path,finally,-options" />
 			<compilerarg value="-proc:none" />
 	    	<classpath id="javac.classpath">
@@ -229,13 +229,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.23" compilerSourceVM="1.23" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.24" compilerSourceVM="1.24" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" updatedProperty="jsp.compile" compiler="modern" debug="on" debuglevel="source" target="21" source="21" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" updatedProperty="jsp.compile" compiler="modern" debug="on" debuglevel="source" target="24" source="24" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally,-options" />
 			<compilerarg value="-proc:none" />
 			<classpath refid="jspc.classpath" />
@@ -655,7 +655,7 @@
 
 	    <!-- Compile the code -->
 	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
-	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.22" target="1.22" compiler="modern" fork="true">
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.24" target="1.24" compiler="modern" fork="true">
 	    	<include name="org/deltava/acars/*.java" />
 	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	        <classpath id="javac.classpath">
