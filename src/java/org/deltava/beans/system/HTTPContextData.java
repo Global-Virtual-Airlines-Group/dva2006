@@ -1,17 +1,17 @@
-// Copyright 2011, 2012, 2013, 2014, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2014, 2016, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
  * A bean to store data about the current HTTP request. 
  * @author Luke
- * @version 10.0
+ * @version 11.6
  * @since 3.7
  */
 
 public class HTTPContextData implements java.io.Serializable {
 	
 	private final OperatingSystem _os;
-	private final BrowserType _browser;
+	private BrowserType _browser;
 	private final DeviceType _device;
 	
 	private int _major;
@@ -129,5 +129,12 @@ public class HTTPContextData implements java.io.Serializable {
 	 */
 	public void setHTTP2(boolean isHTTP2) {
 		_http2 = isHTTP2;
+	}
+	
+	/**
+	 * Overrides whether the browser is a Spider.
+	 */
+	public void forceSpider() {
+		_browser = BrowserType.SPIDER;
 	}
 }
