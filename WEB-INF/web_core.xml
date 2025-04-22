@@ -36,6 +36,24 @@
 		<filter-name>FileUploadFilter</filter-name>
 		<filter-class>org.deltava.servlet.filter.FileUploadFilter</filter-class>
 	</filter>
+	
+	<!-- Web Spider Filter-->
+	<filter>
+		<filter-name>SpiderFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.SpiderFilter</filter-class>
+		<init-param>
+			<param-name>minRequests</param-name>
+			<param-value>10</param-value>
+		</init-param>
+		<init-param>
+			<param-name>minTime</param-name>
+			<param-value>300</param-value>
+		</init-param>
+		<init-param>
+			<param-name>purgeCount</param-name>
+			<param-value>5000</param-value>
+		</init-param>
+	</filter>
 
 	<!-- Web Services servlet -->
 	<servlet>
@@ -126,6 +144,10 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpiderFilter</filter-name>
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
 
@@ -226,6 +248,10 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>FileUploadFilter</filter-name>
+		<servlet-name>webService</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpiderFilter</filter-name>
 		<servlet-name>webService</servlet-name>
 	</filter-mapping>
 	
