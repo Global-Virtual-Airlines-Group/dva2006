@@ -406,7 +406,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Calculate what map type to use
-		MapType mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : MapType.GOOGLE;
+		MapType mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : MapType.GOOGLEStatic;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -892,12 +892,15 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (!hasTrack && (mapType == MapType.GOOGLE) && (sbPkg == null))
 					mapType = MapType.GOOGLEStatic;
 			}
+			
+			// Check for Spiders
+			HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+			boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
+			if (isSpider)
+				mapType = MapType.NONE;
 
 			// If we're set to use Google Maps, check API usage
 			if (mapType == MapType.GOOGLE) {
-				HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
-				boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
-				
 				int max = SystemData.getInt("api.max.googleMaps", -1);
 				int dailyMax = max / 30;
 				if (isSpider || !ctx.isAuthenticated())
@@ -930,7 +933,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						log.warn("GoogleMap disabled - usage [max={}, predicted={}, actual={}] : {} spider={}", Integer.valueOf(max), Integer.valueOf(predictedUse.getTotal()), Integer.valueOf(totalUse.getTotal()), ctx.getRequest().getRemoteHost(), Boolean.valueOf(isSpider));
 						mapType = MapType.GOOGLEStatic;
 					}
-				} else if ((isSpider || isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))
+				} else if (!isSpider && (isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))
 					mapType = MapType.GOOGLEStatic;
 			}				
 
