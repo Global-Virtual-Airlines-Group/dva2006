@@ -1,15 +1,15 @@
-// Copyright 2012, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store map types.
  * @author Luke
- * @version 9.0
+ * @version 11.6
  * @since 5.0
  */
 
 public enum MapType implements EnumDescription {
-	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static");
+	NONE("None"), GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static");
 
 	private final String _desc;
 	
