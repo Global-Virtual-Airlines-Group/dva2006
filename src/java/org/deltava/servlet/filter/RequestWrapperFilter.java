@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2015, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2015, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.apache.logging.log4j.*;
 /**
  * A servlet filter to wrap HTTP servlet requests with a custom wrapper. This filter will also extract cookies into servlet request attributes.
  * @author Luke
- * @version 11.0
+ * @version 11.6
  * @since 1.0
  */
 
@@ -43,10 +43,6 @@ public class RequestWrapperFilter extends HttpFilter {
        			req.setAttribute("COOKIE$" + c.getName(), c);
        		}
        	}
-        	
-       	// Save HTTP version
-       	String p = req.getProtocol();
-       	req.setAttribute("HTTP$Version", p.substring(p.lastIndexOf('/') + 1));
         	
        	// Roll the request wrapper
        	fc.doFilter(new CustomRequestWrapper(req), rsp);
