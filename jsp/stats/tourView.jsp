@@ -87,7 +87,7 @@
 <c:set var="barPct" value="${maxLeg * 100 / tour.flights.size()}" scope="page" />
 <tr>
  <td class="label top">Previous Leg</td>
- <td class="data" colspan="5"><el:cmd url="pirep" link="${pLeg}" className="pri bld">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
+ <td class="data" colspan="5"><el:cmd url="pirep" link="${pLeg}" className="pri bld" authOnly="true">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
  ${pLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportA.IATA}"><fmt:airport airport="${pLeg.airportA}" /></el:cmd>)<span class="nophone ita"> flown on <fmt:date date="${pLeg.date}" fmt="d" /></span><br />
  <span id="progressBar" class="bar" style="width:90%">&nbsp;</span></td>
 </tr>
