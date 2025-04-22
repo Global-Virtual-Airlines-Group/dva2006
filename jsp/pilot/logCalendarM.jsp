@@ -43,7 +43,7 @@ golgotha.local.switchType = function(combo) {
 <calendar:month date="cDate" startDate="${startDate}" entries="${pireps}" topBarClass="dayHdr"
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="logcalendar">
 <calendar:entry name="pirep">
-<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd><br />
+<el:cmd className="bld" url="pirep" link="${pirep}" authOnly="true">${pirep.flightCode}</el:cmd><br />
 <span class="bld">${pirep.equipmentType}</span><br />
 <span class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</span><br />
 <fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours<br />

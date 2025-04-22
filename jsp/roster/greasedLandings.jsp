@@ -66,7 +66,7 @@ The members of <content:airline /> are a skilled group - and they can prove it. 
  <td class="sec bld">${entryNumber}</td>
  <td>${pilot.name}</td>
  <td class="pri nophone"><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><el:cmd className="small bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="small bld" url="pirep" link="${pirep}" authOnly="true">${pirep.flightCode}</el:cmd></td>
  <td class="sec small">${pirep.equipmentType}</td>
  <td class="bld"><fmt:int value="${pirep.landingVSpeed}" /> ft/min</td>
  <td class="sec bld"><fmt:int value="${rwy.distance}" /> ft</td>

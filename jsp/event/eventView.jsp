@@ -271,7 +271,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:set var="pilotLoc" value="${userData[fn:PilotID(pirep)]}" scope="page" />
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
- <td class="bld "><el:cmd domain="${pilotLoc.domain}" url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
+ <td class="bld "><el:cmd domain="${pilotLoc.domain}" url="pirep" authOnly="true" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
  <td class="small"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld">${pirep.equipmentType}</td>
  <td>${pirep.flightCode}</td>
