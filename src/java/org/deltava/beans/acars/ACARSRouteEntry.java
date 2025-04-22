@@ -895,7 +895,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			if (_flaps > 0)
 				buf.append(_flaps).append("<sup>o</sup><br />");
 			else
-				buf.append(AirbusFlaps.fromCode(_flaps)).append("<br />");
+				buf.append(AirbusFlaps.fromCode(_flaps).getDescription()).append("<br />");
 		}
 
 		// Add afterburner/gear if deployed
