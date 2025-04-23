@@ -33,11 +33,11 @@ The <content:airline /> IP Network Location database has been updated. <fmt:int 
 <br />
 The following import warning/error messages were logged:<br />
 <c:forEach var="msg" items="${msgs}">
-<br />${msg}</c:forEach>
+<br />${msg}</c:forEach><br />
 </c:if>
 <br />
-To return to the IP Network Block import page, <el:cmd url="ipimport" className="sec bld">Click Here</el:cmd>.<br />
 To return to the IP Network Location import page, <el:cmd url="ipgeoimport" className="sec bld">Click Here</el:cmd>.<br />
+To return to the IP Network Block import page, <el:cmd url="ipimport" className="sec bld">Click Here</el:cmd>.<br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
