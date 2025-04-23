@@ -37,21 +37,29 @@
 		<filter-class>org.deltava.servlet.filter.FileUploadFilter</filter-class>
 	</filter>
 	
-	<!-- Web Spider Filter-->
+	<!-- Rate Limit Filter-->
 	<filter>
-		<filter-name>SpiderFilter</filter-name>
-		<filter-class>org.deltava.servlet.filter.SpiderFilter</filter-class>
+		<filter-name>RateLimitFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.RateLimitFilter</filter-class>
 		<init-param>
 			<param-name>minRequests</param-name>
-			<param-value>10</param-value>
+			<param-value>30</param-value>
 		</init-param>
 		<init-param>
 			<param-name>minTime</param-name>
-			<param-value>300</param-value>
+			<param-value>3600</param-value>
 		</init-param>
 		<init-param>
 			<param-name>purgeCount</param-name>
-			<param-value>5000</param-value>
+			<param-value>500</param-value>
+		</init-param>
+		<init-param>
+			<param-name>blockCount</param-name>
+			<param-value>50000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>blockTime</param-name>
+			<param-value>600</param-value>
 		</init-param>
 	</filter>
 
@@ -147,7 +155,7 @@
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>SpiderFilter</filter-name>
+		<filter-name>RateLimitFilter</filter-name>
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
 
@@ -251,7 +259,7 @@
 		<servlet-name>webService</servlet-name>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>SpiderFilter</filter-name>
+		<filter-name>RateLimitFilter</filter-name>
 		<servlet-name>webService</servlet-name>
 	</filter-mapping>
 	
