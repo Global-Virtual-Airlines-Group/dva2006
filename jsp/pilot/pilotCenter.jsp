@@ -981,22 +981,14 @@ pilot Certification.</td>
 </content:filter>
 <content:filter roles="Developer,Operations">
 <tr>
- <td class="mid"><el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd><br />
- <el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd></td>
- <td class="data">You can import MaxMind GeoCity network block and location data files into the database.</td>
+ <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br />
+<el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd></td>
+ <td class="data">You can import MaxMind GeoCity network block and location data files into the database. <span class="ita">Locations should be imported before network blocks</span>.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="apistats">External API Usage</el:cmd></td>
  <td class="data">You can view usage statistics and predictions for external API usage.</td>
 </tr>
-</content:filter>
-<content:filter roles="HR,Developer">
-<c:if test="${acarsEnabled}">
-<tr>
- <td class="mid"><el:cmd className="bld" url="liveries">ACARS Multi-Player Liveries</el:cmd></td>
- <td class="data">You can update multi-player liveries for the <content:airline /> ACARS server.</td>
-</tr>
-</c:if>
 </content:filter>
 <content:filter roles="HR">
 <c:if test="${hasIMAP}">
@@ -1048,6 +1040,10 @@ pilot Certification.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Command Log database.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ratelimit">HTTP Rate Limiter</el:cmd></td>
+ <td class="data">You can view the status of the HTTP rate limiter, including addresses, request counts and rate limiting status.</td>
 </tr>
 </content:filter>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
