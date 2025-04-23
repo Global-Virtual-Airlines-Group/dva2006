@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.io.*;
@@ -19,12 +19,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to load IP GeoLocation data.
  * @author Luke
- * @version 10.5
+ * @version 11.6
  * @since 8.7
  */
 
 public class IPGeoImportCommand extends AbstractCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -55,36 +55,37 @@ public class IPGeoImportCommand extends AbstractCommand {
 			ctx.startTX();
 
 			SetIPLocation ipwdao = new SetIPLocation(con);
-			try (InputStream fis = new FileInputStream(f); InputStream is = cmp.getStream(fis)) {
-				try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
-					String data = lr.readLine();
-					while (data != null) {
-						data = lr.readLine();
-						if (data == null)
-							break;
+			try (InputStream is = cmp.getStream(new FileInputStream(f)); LineNumberReader lr = new LineNumberReader(new InputStreamReader(is))) {
+				String data = lr.readLine();
+				while (data != null) {
+					data = lr.readLine();
+					if (data == null) break;
 
-						List<String> tkns = StringUtils.split(data, ",");
-						if (tkns.size() < 11) {
-							msgs.add("Invalid token count (" + tkns.size() + ", expected 14) at Line " + lr.getLineNumber());
-							continue;
-						}
-
-						// Build the object
-						IPLocation loc = new IPLocation(StringUtils.parse(tkns.get(0), 0));
-						loc.setCountry(Country.get(tkns.get(4)));
-
-						if (tkns.get(6).length() > 3) {
-							msgs.add("Invalid region code at Line " + lr.getLineNumber() + " - " + tkns.get(6));
-							loc.setRegionCode("");
-						} else {
-							loc.setRegionCode(tkns.get(6));
-							loc.setRegion(StringUtils.removeCSVQuotes(tkns.get(7)));
-						}
-
-						loc.setCityName(StringUtils.removeCSVQuotes(tkns.get(10)));
-						ipwdao.write(loc);
-						locCount++;
+					List<String> tkns = StringUtils.split(data, ",");
+					if (tkns.size() < 11) {
+						msgs.add("Invalid token count (" + tkns.size() + ", expected 14) at Line " + lr.getLineNumber());
+						continue;
 					}
+
+					// Build the object
+					IPLocation loc = new IPLocation(StringUtils.parse(tkns.get(0), 0));
+					loc.setCountry(Country.get(tkns.get(4)));
+
+					if (tkns.get(6).length() > 6) {
+						msgs.add("Invalid region code at Line " + lr.getLineNumber() + " - " + tkns.get(6));
+						loc.setRegionCode("");
+					} else {
+						String rc = StringUtils.removeCSVQuotes(tkns.get(7));
+						if (rc.length() > 60)
+							rc = rc.substring(0, 59);
+								
+						loc.setRegionCode(tkns.get(6));
+						loc.setRegion(rc);
+					}
+
+					loc.setCityName(StringUtils.removeCSVQuotes(tkns.get(10)));
+					ipwdao.write(loc);
+					locCount++;
 				}
 			}
 
