@@ -877,6 +877,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="ratelimit">
+		<name>Rate Limiter Status</name>
+		<class>org.deltava.commands.system.RateLimitCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<!-- Online Event Commands -->
 	<command id="flightboard">
 		<name>Online Flight Board</name>
