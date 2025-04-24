@@ -127,7 +127,9 @@ public class RateLimitFilter extends HttpFilter implements Thread.UncaughtExcept
 				
 				// Block if applicable
 				if (r == Result.BLOCK) {
-					log.error("Blocking {} ({}) after {} requests in {}s", req.getRemoteAddr(), req.getRemoteHost(), Integer.valueOf(reqs), Long.valueOf(_rl.getMinTime().getSeconds()));
+					if ((reqs % 50) == 0)
+						log.error("Blocking {} ({}) after {} requests in {}s", req.getRemoteAddr(), req.getRemoteHost(), Integer.valueOf(reqs), Long.valueOf(_rl.getMinTime().getSeconds()));
+					
 					rsp.setStatus(429);
 					return;
 				}
