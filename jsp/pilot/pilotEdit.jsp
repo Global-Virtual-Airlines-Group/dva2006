@@ -114,7 +114,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
-<content:enum var="mapTypes" className="org.deltava.beans.MapType" />
+<content:enum var="mapTypes" className="org.deltava.beans.MapType" exclude="NONE" />
 <content:enum var="acarsRest" className="org.deltava.beans.acars.Restriction" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 <content:enum var="updateChannels" className="org.deltava.beans.acars.UpdateChannel" />

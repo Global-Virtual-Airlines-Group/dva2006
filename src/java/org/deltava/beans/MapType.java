@@ -9,7 +9,7 @@ package org.deltava.beans;
  */
 
 public enum MapType implements EnumDescription {
-	NONE("None"), GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static");
+	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static"), NONE("None");
 
 	private final String _desc;
 	
