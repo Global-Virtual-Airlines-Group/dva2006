@@ -52,8 +52,7 @@ public class GetGoogleCAPTCHA extends DAO {
 			// Parse the response
 			try (InputStream in = getIn()) {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
-				CAPTCHAResult result = new CAPTCHAResult (jo.optBoolean("success"));
-				result.setHostName(jo.optString("hostname"));
+				CAPTCHAResult result = new CAPTCHAResult(jo.optBoolean("success"), jo.optString("hostname"));
 				if (result.getIsSuccess())
 					result.setChallengeTime(StringUtils.parseInstant(jo.getString("challenge_ts"), "yyyy-MM-dd'T'HH:mm:ssVV"));
 				JSONArray msgs = jo.optJSONArray("error-codes");
