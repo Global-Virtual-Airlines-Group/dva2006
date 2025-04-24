@@ -895,8 +895,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Check for Spiders
 			HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
-			boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
-			if (isSpider || ((mapType == MapType.GOOGLE) && !ctx.passedCAPTCHA() && !ctx.isAuthenticated()))
+			boolean captchaOK = ctx.passedCAPTCHA(); boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
+			if (isSpider || ((mapType == MapType.GOOGLE) && !captchaOK && !ctx.isAuthenticated()))
 				mapType = MapType.NONE;
 
 			// If we're set to use Google Maps, check API usage
@@ -930,7 +930,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
 					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
-						log.warn("GoogleMap disabled - usage [max={}, predicted={}, actual={}] : {} spider={}", Integer.valueOf(max), Integer.valueOf(predictedUse.getTotal()), Integer.valueOf(totalUse.getTotal()), ctx.getRequest().getRemoteHost(), Boolean.valueOf(isSpider));
+						log.warn("GoogleMap disabled - usage [max={}, predicted={}, actual={}] : {} spider={}, captcha={}", Integer.valueOf(max), Integer.valueOf(predictedUse.getTotal()), Integer.valueOf(totalUse.getTotal()), ctx.getRequest().getRemoteHost(), Boolean.valueOf(isSpider), Boolean.valueOf(captchaOK));
 						mapType = MapType.GOOGLEStatic;
 					}
 				} else if (!isSpider && (isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))
