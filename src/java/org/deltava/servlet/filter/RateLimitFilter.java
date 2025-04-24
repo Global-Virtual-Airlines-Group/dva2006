@@ -78,7 +78,7 @@ public class RateLimitFilter extends HttpFilter implements Thread.UncaughtExcept
 				
 				// Merge the counters based on netblock
 				Collection<RequestCounter> mctrs = _rl.merge();
-				JedisUtils.write(_jedisKey, 1800, mctrs);
+				JedisUtils.write(_jedisKey, _rl.getMinTime().toSeconds(), mctrs);
 				if (mctrs.size() < ctrs.size())
 					log.info("{} merged {} counters into {}", SystemData.get("airline.code"), Integer.valueOf(ctrs.size()), Integer.valueOf(mctrs.size()));
 			} finally {
