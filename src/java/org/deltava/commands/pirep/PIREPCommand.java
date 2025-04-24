@@ -896,7 +896,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check for Spiders
 			HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
 			boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
-			if (isSpider)
+			if (isSpider || ((mapType == MapType.GOOGLE) && !ctx.passedCAPTCHA() && !ctx.isAuthenticated()))
 				mapType = MapType.NONE;
 
 			// If we're set to use Google Maps, check API usage
