@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.CAPTCHAResult;
 
 import org.deltava.jdbc.ConnectionContext;
 import org.deltava.security.SecurityContext;
@@ -192,6 +193,18 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 			throw new CommandException(String.format("File %s size %dKB > %dKB", fu.getName(), Integer.valueOf(fu.getSize() / 1024), Integer.valueOf(maxSize / 1024)), false) {{ setStatusCode(400); }};
 		
 		return fu;
+	}
+	
+	/**
+	 * Returns whether the user has passed CAPTCHA validation.
+	 * @return TRUE if the user has passed the CAPTCHA, otherwise FALSE
+	 */
+	public boolean passedCAPTCHA() {
+		HttpSession s = _req.getSession(false);
+		if (s == null) return false;
+		
+		CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(CAPTCHA_ATTR_NAME);
+		return (cr != null) && cr.getIsSuccess();
 	}
 
 	/**
