@@ -58,7 +58,7 @@
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" height="500" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="620" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
 <div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
