@@ -1,20 +1,22 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
 import java.time.Instant;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to store Google reCAPTCHA validation responses. 
  * @author Luke
- * @version 9.0
+ * @version 11.6
  * @since 9.0
  */
 
-public class CAPTCHAResult implements java.io.Serializable {
+public class CAPTCHAResult implements Cacheable {
 	
 	private final boolean _isSuccess;
-	private String _hostName;
+	private final String _hostName;
 	private Instant _challengeTime;
 	
 	private final Collection<String> _msgs = new ArrayList<String>();
@@ -22,10 +24,12 @@ public class CAPTCHAResult implements java.io.Serializable {
 	/**
 	 * Creates the bean.
 	 * @param isSuccess TRUE if successful, otherwise FALSE
+	 * @param hostName the remote host name
 	 */
-	public CAPTCHAResult(boolean isSuccess) {
+	public CAPTCHAResult(boolean isSuccess, String hostName) {
 		super();
 		_isSuccess = isSuccess;
+		_hostName = hostName;
 	}
 
 	/**
@@ -61,14 +65,6 @@ public class CAPTCHAResult implements java.io.Serializable {
 	}
 	
 	/**
-	 * Updates the site host name.
-	 * @param host the site host name
-	 */
-	public void setHostName(String host) {
-		_hostName = host;
-	}
-	
-	/**
 	 * Updates the date/time of the challenge.
 	 * @param dt the date/time
 	 */
@@ -82,5 +78,10 @@ public class CAPTCHAResult implements java.io.Serializable {
 	 */
 	public void addMessage(String msg) {
 		_msgs.add(msg);
+	}
+	
+	@Override
+	public Object cacheKey() {
+		return _hostName;
 	}
 }
