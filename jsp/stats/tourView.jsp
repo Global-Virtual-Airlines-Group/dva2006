@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:js name="progress" />
+<content:captcha action="tour" />
 <content:browser human="true"><c:if test="${!empty tour.flights}">
 <map:api version="3" callback="golgotha.local.mapInit" /></c:if></content:browser>
 <content:pics />
