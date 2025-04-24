@@ -51,11 +51,11 @@
 		</init-param>
 		<init-param>
 			<param-name>blockCount</param-name>
-			<param-value>90</param-value>
+			<param-value>250</param-value>
 		</init-param>
 		<init-param>
 			<param-name>blockTime</param-name>
-			<param-value>600</param-value>
+			<param-value>3600</param-value>
 		</init-param>
 	</filter>
 
@@ -252,10 +252,6 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>FileUploadFilter</filter-name>
-		<servlet-name>webService</servlet-name>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>RateLimitFilter</filter-name>
 		<servlet-name>webService</servlet-name>
 	</filter-mapping>
 	
