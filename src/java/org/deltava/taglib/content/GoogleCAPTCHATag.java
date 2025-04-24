@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.security.Principal;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert Google RECAPTCHA libraries. 
  * @author Luke
- * @version 9.1
+ * @version 11.6
  * @since 9.0
  */
 
@@ -64,8 +64,8 @@ public class GoogleCAPTCHATag extends TagSupport {
 			throw new JspException("No RECAPTCHA Site Key defined");
 		
 		// Check if authenticated
+		HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 		if (_authOnly) {
-			HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 			Principal usr = req.getUserPrincipal();
 			if (usr == null)
 				return EVAL_BODY_INCLUDE;
@@ -73,7 +73,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 		
 		// Check if forced
 		if (!_force) {
-			HttpSession s = pageContext.getSession();
+			HttpSession s = req.getSession(false);
 			if (s != null) {
 				CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME);
 				if ((cr != null) && cr.getIsSuccess())
