@@ -18,6 +18,7 @@ public class RequestCounter implements java.io.Serializable, ViewEntry {
 	private final String _addr;
 	private final List<Long> _reqs = new ArrayList<Long>();
 	private long _blockTime;
+	private boolean _isDegraded;
 	
 	private IPBlock _ipInfo;
 
@@ -59,11 +60,19 @@ public class RequestCounter implements java.io.Serializable, ViewEntry {
 	}
 	
 	/**
+	 * Updates whether this request counter is in degraded status.
+	 * @param isDegrade TRUE if degraded, otherwise FALSE
+	 */
+	public void setDegraded(boolean isDegrade) {
+		_isDegraded = isDegrade;
+	}
+	
+	/**
 	 * Returns the remote address.
 	 * @return the address
 	 */
 	public String getAddress() {
-		return _addr;
+		return (_ipInfo != null) ? _ipInfo.getAddress() : _addr;
 	}
 	
 	/**
@@ -116,6 +125,11 @@ public class RequestCounter implements java.io.Serializable, ViewEntry {
 		_ipInfo = ip;
 	}
 	
+	/**
+	 * Returns whethre an IP address is contained within this counter's network block.
+	 * @param addr the remote address
+	 * @return TRUE if there is a network block and the address is contained within it, otherwise FALSE
+	 */
 	public boolean contains(String addr) {
 		return (_ipInfo != null) && _ipInfo.contains(addr);
 	}
@@ -136,6 +150,7 @@ public class RequestCounter implements java.io.Serializable, ViewEntry {
 
 	@Override
 	public String getRowClassName() {
-		return (_blockTime > 0) ? "error" : null;
+		if (_blockTime > 0) return"error";
+		return _isDegraded? "opt1" : null;
 	}
 }
