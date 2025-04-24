@@ -115,7 +115,7 @@ public class RateLimiter {
 	}
 	
 	/*
-	 * Obtains the counter for a particular remote address.
+	 * Obtains the counter for a particular remote address, if enabled.
 	 * @param add the address
 	 */
 	public RequestCounter get(String addr) {
@@ -161,7 +161,13 @@ public class RateLimiter {
 			}
 		}
 		
-		return (reqs >= _minReqs) ? Result.DEGRADE : Result.PASS;
+		if (reqs >= _minReqs) {
+			rc.setDegraded(true);
+			return Result.DEGRADE;
+		}
+		
+		rc.setDegraded(false);
+		return Result.PASS;
 	}
 	
 	/**
@@ -185,10 +191,12 @@ public class RateLimiter {
 			Collection<RequestCounter> mctrs = new ArrayList<RequestCounter>();
 			_w.lock();
 			for (RequestCounter rc : _reqs.values()) {
-				Optional<RequestCounter> orc = mctrs.stream().filter(ctr -> ctr.contains(rc.getAddress())).findAny();
-				if (orc.isPresent())
-					orc.get().merge(rc);
-				else
+				Optional<RequestCounter> orc = _doMerge ? mctrs.stream().filter(ctr -> ctr.contains(rc.getAddress())).findAny() : Optional.empty();
+				if (orc.isPresent()) {
+					RequestCounter rc2 = orc.get();
+					rc2.merge(rc);
+					rc2.setDegraded(rc2.getRequests() >= _minReqs);
+				} else
 					mctrs.add(rc);
 			}
 			
@@ -209,6 +217,7 @@ public class RateLimiter {
 			for (Iterator<Map.Entry<String, RequestCounter>> i = _reqs.entrySet().iterator(); i.hasNext(); ) {
 				RequestCounter rc = i.next().getValue();
 				rc.purge(_minTime);
+				rc.setDegraded(rc.getRequests() > _minReqs);
 				if (rc.getRequests() == 0)
 					i.remove();
 			}
