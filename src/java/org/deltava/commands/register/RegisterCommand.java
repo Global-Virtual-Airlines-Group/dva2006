@@ -281,17 +281,9 @@ public class RegisterCommand extends AbstractCommand {
 			}
 			
 			// Check for CAPTCHA
-			HttpSession s = ctx.getSession();
-			if (s != null) {
-				CAPTCHAResult cr = (CAPTCHAResult) s.getAttribute(HTTPContext.CAPTCHA_ATTR_NAME);
-				a.setHasCAPTCHA((cr != null) && cr.getIsSuccess());
-				if (!a.getHasCAPTCHA()) {
-					a.addHRComment("CAPTCHA Validation failed!");
-					if (cr != null)
-						cr.getMessages().forEach(a::addHRComment);
-				}
-			} else
-				a.addHRComment("No CAPTCHA / Session\r\n");
+			a.setHasCAPTCHA(ctx.passedCAPTCHA());
+			if (!a.getHasCAPTCHA())
+				a.addHRComment("CAPTCHA Validation failed!");
 			
 			// Do address uniqueness check
 			if (checkAddr) {
