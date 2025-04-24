@@ -50,7 +50,7 @@
 <!-- Bottom Bar -->
 <tr class="title">
  <td colspan="4">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="110" labels="Blocked,Degraded,None" classes="error,opt1, " /> </td>
+<view:legend width="110" labels="Blocked,Degraded,None" classes="err,opt1, " /> </td>
 </tr>
 </view:table>
 <content:copyright />
