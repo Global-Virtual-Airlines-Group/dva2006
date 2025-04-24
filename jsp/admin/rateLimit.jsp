@@ -30,7 +30,7 @@
 </tr>
 <tr class="title caps">
  <td>ADDRESS</td>
- <td style="width:25%">REQUESTS</td>
+ <td style="width:20%">REQUESTS</td>
  <td style="width:15%">OLDEST</td>
  <td style="width:15%">NEWEST</td>
 </tr>
@@ -40,16 +40,17 @@
 <c:set var="ip" value="${rc.IPInfo}" scope="page" />
 <c:set var="interval" value="${rc.newest.epochSecond - rc.oldest.epochSecond + 1}" scope="page" />
 <view:row entry="${rc}">
- <td><span class="bld">${rc.address}</span><c:if test="${!empty ip}">&nbsp;<span class="small">(${ip.address}/${ip.bits})</span></c:if></td>
- <td><span class="pri bld"><fmt:int value="${rc.requests}" /></span> (<fmt:dec value="${rc.requests * 60.0 / interval}" /> reqs/min)</td>
+ <td><span class="bld">${rc.address}</span><c:if test="${!empty ip}">&nbsp;<span class="small">(${ip.address}/${ip.bits} - ${ip.location})</span></c:if></td>
+ <td><span class="pri bld"><fmt:int value="${rc.requests}" /></span><c:if test="${rc.requests > 1}"> (<fmt:dec value="${rc.requests * 60.0 / interval}" /> reqs/min)</c:if></td>
  <td><fmt:date date="${rc.oldest}" /></td>
  <td><fmt:date date="${rc.newest}" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
-<tr class="title caps">
- <td colspan="4">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+<tr class="title">
+ <td colspan="4">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="110" labels="Blocked,Degraded,None" classes="error,opt1, " /> </td>
 </tr>
 </view:table>
 <content:copyright />
