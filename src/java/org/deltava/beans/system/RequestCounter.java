@@ -15,6 +15,8 @@ import org.deltava.beans.ViewEntry;
 
 public class RequestCounter implements java.io.Serializable, ViewEntry {
 	
+	private static final long serialVersionUID = -3095654494604105269L;
+	
 	private final String _addr;
 	private final List<Long> _reqs = new ArrayList<Long>();
 	private long _blockTime;
