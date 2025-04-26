@@ -194,9 +194,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				try {
 					double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
 					fr.setLength((int) (fTime * 10));
-				} catch (NumberFormatException nfe) {
+				} catch (NumberFormatException | NullPointerException nfe) {
 					if (fr.getStatus() != FlightStatus.DRAFT)
-						throw new CommandException("Invalid Flight Time", false);
+						throw new CommandException(String.format("Invalid Flight Time - %s", nfe.getClass().getSimpleName()), false);
 				}
 
 				// Calculate the date
