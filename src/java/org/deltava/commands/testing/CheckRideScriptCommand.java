@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 10.2
+ * @version 11.6
  * @since 1.0
  */
 
@@ -109,6 +109,8 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<EquipmentType> allEQ = eqdao.getAll();
 			Map<String, Collection<String>> acTypes = new LinkedHashMap<String, Collection<String>>();
+			allEQ.forEach(ep -> acTypes.put(ep.getName(), ep.getPrimaryRatings()));
+			ctx.setAttribute("acTypes", acTypes, REQUEST);
 
 			// Get the DAO and the script
 			GetExamProfiles dao = new GetExamProfiles(con);
@@ -130,13 +132,11 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 				
 				// Get primary equipment types
 				EquipmentType eq = eqdao.get(sc.getProgram());
-				if (eq != null) {
-					ctx.setAttribute("eqTypes", Collections.singleton(eq), REQUEST);
-					acTypes.put(eq.getName(), eq.getPrimaryRatings());
-				} else {
+				if (eq != null)
+					ctx.setAttribute("eqTypes", ctx.isUserInRole("Operations") ? allEQ : List.of(eq), REQUEST);
+				else {
 					ctx.setAttribute("acTypes", acdao.getAircraftTypes(), REQUEST);
 					ctx.setAttribute("eqTypes", allEQ, REQUEST);	
-					allEQ.forEach(ep -> acTypes.put(ep.getName(), ep.getPrimaryRatings()));
 				}
 			} else {
 				// Calculate our access
@@ -145,15 +145,10 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 				if (!access.getCanCreate())
 					throw securityException("Cannot create Check Ride script");
 
-				// Save in request
-				ctx.setAttribute("access", access, REQUEST);
-				
-				// Save all equipment types
-				allEQ.forEach(ep -> acTypes.put(ep.getName(), ep.getPrimaryRatings()));
+				// Save request attributes
 				ctx.setAttribute("eqTypes", allEQ, REQUEST);
+				ctx.setAttribute("access", access, REQUEST);
 			}
-			
-			ctx.setAttribute("acTypes", acTypes, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
