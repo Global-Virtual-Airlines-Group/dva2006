@@ -6,13 +6,13 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title>Check Ride Script</title>
+<title><content:airline /> Check Ride Script</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 <fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
