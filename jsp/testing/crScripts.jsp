@@ -45,7 +45,7 @@ span.el {
  <td style="width:10%">AIRCRAFT TYPE</td>
  <td style="width:10%">EQUIPMENT PROGRAM</td>
  <td style="width:65%" class="left nophone">DESCRIPTION</td>
- <td> <c:if test="${access.canCreate}"><el:cmd url="crscript" op="edit">NEW SCRIPT</el:cmd></c:if></td>
+ <td>&nbsp;<c:if test="${access.canCreate}"><el:cmd url="crscript" op="edit">NEW SCRIPT</el:cmd></c:if></td>
 </tr>
 
 <!-- Table Script Data -->
@@ -53,7 +53,7 @@ span.el {
 <view:row entry="${sc}">
 <c:set var="access" value="${accessMap[sc.equipmentType]}" scope="page" />
 <td>
-<c:if test="${access.canEdit}"><el:cmd url="crscript" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></c:if>
+<c:if test="${access.canEdit}"><el:cmd url="crscript" className="bld" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></c:if>
 <c:if test="${!access.canEdit}"><span class="pri bld">${sc.equipmentType}</span></c:if>
 <c:if test="${sc.isCurrency}"><br /><span class="ter bld small">CURRENCY</span></c:if>
 <c:if test="${sc.isDefault}"><br /><span class="sec bld small">DEFAULT</span></c:if>
