@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
 <c:if test="${!empty eqType}">
-<title><content:airline /> ${eqType.name} Program</title>
+<title><content:airline />&nbsp;${eqType.name} Program</title>
 </c:if>
 <c:if test="${empty eqType}">
 <title>New <content:airline /> Equipment Program</title>
@@ -18,22 +18,21 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
-golgotha.form.validate({f:f.cp, t:'Chief Pilot'});
-golgotha.form.validate({f:f.stage, min:1, t:'Equipment Stage'});
-golgotha.form.validate({f:f.captLegs, min:0, t:'Flight Legs for Promotion'});
-golgotha.form.validate({f:f.captDistance, min:0, t:'Flight Distance for Promotion'});
-golgotha.form.validate({f:f.switchDistance, min:0, t:'Flight Distance for Time Acceleration'});
-golgotha.form.validate({f:f.maxAccel, min:0, t:'Flight Time with Time Acceleration'});
-golgotha.form.validate({f:f.min1X, min:0, t:'Flight time without Time Acceleration'});
-golgotha.form.validate({f:f.ranks, min:2, t:'Ranks'});
-golgotha.form.validate({f:f.pRatings, min:1, t:'Primary Rating'});
-golgotha.form.submit(f);
-return true;
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+	golgotha.form.validate({f:f.cp, t:'Chief Pilot'});
+	golgotha.form.validate({f:f.stage, min:1, t:'Equipment Stage'});
+	golgotha.form.validate({f:f.captLegs, min:0, t:'Flight Legs for Promotion'});
+	golgotha.form.validate({f:f.captDistance, min:0, t:'Flight Distance for Promotion'});
+	golgotha.form.validate({f:f.switchDistance, min:0, t:'Flight Distance for Time Acceleration'});
+	golgotha.form.validate({f:f.maxAccel, min:0, t:'Flight Time with Time Acceleration'});
+	golgotha.form.validate({f:f.min1X, min:0, t:'Flight time without Time Acceleration'});
+	golgotha.form.validate({f:f.ranks, min:2, t:'Ranks'});
+	golgotha.form.validate({f:f.pRatings, min:1, t:'Primary Rating'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -79,11 +78,11 @@ return true;
 </tr>
 <tr>
  <td class="label top">Primary Ratings</td>
- <td class="data"><el:check name="pRatings" cols="8" width="95" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="pRatings" cols="10" width="95" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label top">Secondary Ratings</td>
- <td class="data"><el:check name="sRatings" cols="8" width="95" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="sRatings" cols="10" width="95" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label">Web Applications</td>
@@ -94,7 +93,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">First Officer Examinations</td>
- <td class="data"><el:check name="examFO" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
+ <td class="data"><el:check name="examFO" width="180" idx="*" cols="5" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
 </tr>
 <tr>
  <td class="label">Flights for Promotion</td>
@@ -112,7 +111,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Captain Examinations</td>
- <td class="data"><el:check name="examC" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examC(eqType)}" /></td>
+ <td class="data"><el:check name="examC" width="180" idx="*" cols="5" newLine="true" className="small" options="${exams}" checked="${fn:examC(eqType)}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
