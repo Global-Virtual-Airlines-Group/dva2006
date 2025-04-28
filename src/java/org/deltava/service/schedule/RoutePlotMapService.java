@@ -47,6 +47,8 @@ public class RoutePlotMapService extends MapPlotService {
 		JSONObject req = null;
 		try {
 			req = new JSONObject(new JSONTokener(ctx.getRequest().getInputStream()));
+		} catch (IOException ie) {
+			throw error(SC_BAD_REQUEST, ie.getMessage(), false);
 		} catch (Exception e) {
 			throw error(SC_BAD_REQUEST, e.getMessage());
 		}
