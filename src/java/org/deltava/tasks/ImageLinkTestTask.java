@@ -47,9 +47,8 @@ public class ImageLinkTestTask extends Task {
 
 		@Override
 		public void run() {
-			HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
 			boolean isOK = false; URI url = null;
-			try {
+			try (HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()) {
 				url = new java.net.URI(_img.getURL());
 				if (_invalidHosts.contains(url.getHost()))
 					throw new IllegalArgumentException("Bad Host!");
