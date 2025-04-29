@@ -55,7 +55,7 @@ public class FlightStatsService extends WebService {
 			else
 				routePoints = dao.getRouteEntries(info.getID(), true, info.getArchived());
 		} catch (ArchiveValidationException ave) {
-			throw error(SC_INTERNAL_SERVER_ERROR, ave.getMessage(), true);
+			throw error(SC_INTERNAL_SERVER_ERROR, ave.getMessage(), false);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
