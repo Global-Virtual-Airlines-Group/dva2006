@@ -90,23 +90,24 @@ public class LinkImageCommand extends AbstractCommand {
 					throw new MalformedURLException("Duplicate Image URL");
 				
 				// Init the HTTP client
-				HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
-				HttpRequest req = HttpRequest.newBuilder().timeout(Duration.ofMillis(2500)).uri(url).header("user-agent", VersionInfo.getUserAgent()).HEAD().build();
+				try (HttpClient hc = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()) {
+					HttpRequest req = HttpRequest.newBuilder().timeout(Duration.ofMillis(2500)).uri(url).header("user-agent", VersionInfo.getUserAgent()).HEAD().build();
 				
-				// Validate the result code
-				HttpResponse<String> rsp = hc.send(req, HttpResponse.BodyHandlers.ofString());
-				if (rsp.statusCode() == HttpURLConnection.HTTP_OK) {
-					Optional<String> ct = rsp.headers().firstValue("Content-Type");
-					String cType = ct.orElse("unknown");
-					if (!_imgMimeTypes.contains(cType))
-						ctx.setMessage("Invalid MIME type for " + url + " - " + cType);
-					else {
-						img = new LinkedImage(imgURLs.size() + 1, url.toString());
-						img.setDescription(ctx.getParameter("desc"));
-						imgURLs.add(url.toString());
-					}
-				} else
-					ctx.setMessage("Invalid Image HTTP result code - " + rsp.statusCode());
+					// Validate the result code
+					HttpResponse<String> rsp = hc.send(req, HttpResponse.BodyHandlers.ofString());
+					if (rsp.statusCode() == HttpURLConnection.HTTP_OK) {
+						Optional<String> ct = rsp.headers().firstValue("Content-Type");
+						String cType = ct.orElse("unknown");
+						if (!_imgMimeTypes.contains(cType))
+							ctx.setMessage("Invalid MIME type for " + url + " - " + cType);
+						else {
+							img = new LinkedImage(imgURLs.size() + 1, url.toString());
+							img.setDescription(ctx.getParameter("desc"));
+							imgURLs.add(url.toString());
+						}
+					} else
+						ctx.setMessage("Invalid Image HTTP result code - " + rsp.statusCode());
+				}
 			} catch (MalformedURLException | URISyntaxException se) {
 				ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 			} catch (IOException | InterruptedException ie) {
