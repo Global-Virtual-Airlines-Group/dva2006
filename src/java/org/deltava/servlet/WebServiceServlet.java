@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 1.0
  */
 
@@ -115,11 +115,11 @@ public class WebServiceServlet extends BasicAuthServlet {
 		try {
 			rsp.setStatus(svc.execute(ctx));
 		} catch (Exception e) {
-			int resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+			int resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR; String usrName = (usr == null) ? "Anonymous" : usr.getName();
 			if (e instanceof ServiceException se) {
 				resultCode = se.getCode();
 				if (!se.isWarning()) {
-					log.error("Error on {}", getURL(req));
+					log.error("Error on {} by {}", getURL(req), usrName);
 					if (se.getLogStackDump())
 						log.atError().withThrowable(e).log("Error executing Web Service - {}", e.getMessage());
 					else
@@ -127,7 +127,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 				} else
 					log.warn("Error executing Web Service - {}", e.getMessage());
 			} else {
-				log.error("Error on {}", getURL(req));
+				log.error("Error on {} by {}", getURL(req), usrName);
 				log.atError().withThrowable(e).log("Error executing {} - {}", parser.getName(), e.getMessage());
 			}
 
