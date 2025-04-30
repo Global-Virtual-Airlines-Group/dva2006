@@ -23,7 +23,7 @@ if (!golgotha.form.check()) return false;
 // Get form action
 const act = f.action;
 if (act.indexOf('hdcomment.do') != -1) {
-	golgotha.form.validate({f:f.body, l:10, t:'Issue Comments'});
+	golgotha.form.validate({f:f.body, l:6, t:'Issue Comments'});
 	golgotha.form.validate({f:f.attach, ext:[], empty:true, t:'Attached File', maxSize:2048});
 } else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
 	let isChecked = 0;
@@ -43,26 +43,15 @@ golgotha.form.submit(f);</c:if>
 return ${access.canComment};
 }
 <c:if test="${access.canUseTemplate}">
-golgotha.local.selectResponse = function(f)
-{
-if (!golgotha.form.comboSet(f.rspTemplate)) return false;
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 2500;
-xmlreq.open('get', 'hdrsptmp.ws?id=' + encodeURI(golgotha.form.getCombo(f.rspTemplate)));
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const xml = xmlreq.responseXML;
-	if (!xml) return false;
-	const xe = xml.documentElement;
-	const bds = xe.getElementsByTagName("body");
-	if (bds.length == 0) return false;
-	const body = bds[0].firstChild.data;
-	f.body.value += body;
-	return true;
-};
-
-xmlreq.send(null);
-return true;	
+golgotha.local.selectResponse = function(f) {
+	if (!golgotha.form.comboSet(f.rspTemplate)) return false;
+	const p = fetch('hdrsptmp.ws?id=' + encodeURI(golgotha.form.getCombo(f.rspTemplate)));
+	f.then(function(rsp) {
+		if (rsp.status != 200) return false;
+		rsp.json().then(function(js) {
+			f.body.value += js.body;
+		});
+	});
 };
 </c:if>
 </script>
