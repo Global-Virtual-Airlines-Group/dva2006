@@ -26,7 +26,7 @@
 <content:captcha action="pirep" authOnly="true" />
 <content:googleAnalytics eventSupport="true" />
 <content:browser human="true"><c:if test="${googleMap}">
-<map:api version="3" /></c:if></content:browser>
+<map:api version="3" callback="golgotha.local.mapInit" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <content:empty var="emptyList" />
@@ -615,11 +615,12 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <script async>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
+golgotha.local.mapInit = function() {
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
 const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}),scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
+map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(golgotha.maps.info.type);
 map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
@@ -658,6 +659,7 @@ map.addMarkers(golgotha.maps.acarsFlight.sbMrks);</c:if>
 <map:marker var="golgotha.maps.acarsFlight.gmD" point="${pirep.airportD}" />
 golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgotha.maps.acarsFlight.gmD];
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
+};
 <c:if test="${isACARS && googleMap}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function()
