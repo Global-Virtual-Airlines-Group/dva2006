@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 10.0
  */
 
@@ -313,8 +313,7 @@ public class FlightSubmissionHelper {
 		if ((_info != null) && (_fr.getPassengers() > 0) && (_info.getSeats() == 0))
 			_info.setSeats(opts.getSeats());
 
-		if (!FDRFlightReport.class.isInstance(_fr)) return;
-		FDRFlightReport ffr = (FDRFlightReport) _fr;
+		if (!(_fr instanceof FDRFlightReport ffr)) return;
 		
 		// Check for excessive weight
 		if ((_ac.getMaxTakeoffWeight() != 0) && (ffr.getTakeoffWeight() > _ac.getMaxTakeoffWeight()))
@@ -327,8 +326,7 @@ public class FlightSubmissionHelper {
 	 * Checks this Flight for in-flight refueling.
 	 */
 	public void checkRefuel() {
-		if (!_isACARS || !hasPositionData()) return;
-		ACARSFlightReport afr = (ACARSFlightReport) _fr;
+		if ((!(_fr instanceof ACARSFlightReport afr)) || !hasPositionData()) return;
 		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).collect(Collectors.toList());
 		FuelUse use = FuelUse.validate(fuelData);
 		afr.setTotalFuel(use.getTotalFuel());
@@ -448,8 +446,7 @@ public class FlightSubmissionHelper {
 			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, !isEvent && !isTour);
 			
 		// Determine flight length, use block time if ACARS/simFDR
-		if (_isACARS) {
-			ACARSFlightReport afr = (ACARSFlightReport) _fr;
+		if (_isACARS && (_fr instanceof ACARSFlightReport afr)) {
 			bt = bt.minusSeconds(afr.getBoardTime().toSeconds() + afr.getDeboardTime().toSeconds());
 			if (bt.isNegative()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, "Boarding/Deboarding Time exceeds Flight Time");
@@ -471,7 +468,7 @@ public class FlightSubmissionHelper {
 				afr.setOnTime(oth.validate(afr));
 				_onTimeEntry = oth.getScheduleEntry();
 				if (_onTimeEntry != null)
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Retrieved schedule times from %s", _onTimeEntry.getSource().getDescription()));
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Retrieved schedule times from %s (%d min)", _onTimeEntry.getSource().getDescription(), Integer.valueOf(oth.getTolerance())));
 			}
 		}
 			
@@ -484,8 +481,7 @@ public class FlightSubmissionHelper {
 	 */
 	public void calculateRunways() throws DAOException {
 		
-		if (!_isACARS) return;
-		ACARSFlightReport afr = (ACARSFlightReport) _fr;
+		if (!(_fr instanceof ACARSFlightReport afr)) return;
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
 		
 		// Load the departure runway
@@ -564,7 +560,7 @@ public class FlightSubmissionHelper {
 	public void checkTour() throws DAOException {
 		
 		// Determine date to check
-		Instant dt = _isACARS ? ((ACARSFlightReport)_fr).getTakeoffTime() : _fr.getDate(); // Non-ACARS should be 12:00 already
+		Instant dt = (_isACARS && (_fr instanceof ACARSFlightReport afr)) ? afr.getTakeoffTime() : _fr.getDate(); // Non-ACARS should be 12:00 already
 		
 		// Load Tours
 		GetTour trdao = new GetTour(_c);
