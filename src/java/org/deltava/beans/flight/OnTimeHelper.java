@@ -4,6 +4,8 @@ package org.deltava.beans.flight;
 import java.time.*;
 import java.util.*;
 
+import org.apache.logging.log4j.*;
+
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
@@ -16,6 +18,8 @@ import org.deltava.beans.schedule.*;
 
 @Helper(OnTime.class)
 public class OnTimeHelper {
+	
+	private static final Logger log = LogManager.getLogger(OnTimeHelper.class);
 
 	private final Collection<ScheduleEntry> _flights = new ArrayList<ScheduleEntry>();
 	private int _depToleranceMinutes = 60;
@@ -52,6 +56,14 @@ public class OnTimeHelper {
 	 */
 	public ScheduleEntry getScheduleEntry() {
 		return _entry;
+	}
+	
+	/**
+	 * Returns the departure time tolerance limit.
+	 * @return the limit in minutes
+	 */
+	public int getTolerance() {
+		return _depToleranceMinutes;
 	}
 	
 	/**
@@ -93,12 +105,12 @@ public class OnTimeHelper {
 		
 		// Filter for matching flight # and close range
 		if (ft instanceof FlightNumber fn) {
-			Optional<ScheduleEntry> ose = _flights.stream().filter(se -> (FlightNumber.compare(se, fn, false) == 0) && matchDeparture(se.getTimeD(), ft.getTimeD())).findFirst();
+			Optional<ScheduleEntry> ose = _flights.stream().filter(se -> (FlightNumber.compare(se, fn, false) == 0) && matchDeparture(se, ft.getTimeD())).findAny();
 			if (ose.isPresent())
 				return ose.get();
 		}
 		
-		Optional<ScheduleEntry> ose = _flights.stream().sorted(new ClosestFlight(ft)).filter(se -> matchDeparture(se.getTimeD(), ft.getTimeD())).findFirst();
+		Optional<ScheduleEntry> ose = _flights.stream().sorted(new ClosestFlight(ft)).filter(se -> matchDeparture(se, ft.getTimeD())).findFirst();
 		return ose.orElse(null);
 	}
 		
@@ -144,8 +156,10 @@ public class OnTimeHelper {
 		return (d.abs().toMinutes() > 10) ? OnTime.EARLY: OnTime.ONTIME;
 	}
 	
-	private boolean matchDeparture(ZonedDateTime scheduledDeparture, ZonedDateTime actualDeparture) {
-		long dMin = Duration.between(scheduledDeparture, actualDeparture).toMinutes();
-		return (dMin > (_depToleranceMinutes / -2)) && (dMin < _depToleranceMinutes);
+	private boolean matchDeparture(ScheduleEntry se, ZonedDateTime actualDeparture) {
+		int earlyLimit = _depToleranceMinutes / -2; int lateLimit = _depToleranceMinutes;
+		long dMin = Duration.between(se.getTimeD(), actualDeparture).toMinutes();
+		log.info("{} {} delta = {}, ({} .. {})", se.getFlightCode(), se.getTimeD(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit));
+		return (dMin > earlyLimit) && (dMin < lateLimit);
 	}
 }
