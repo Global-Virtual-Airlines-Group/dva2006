@@ -12,7 +12,7 @@
 <tr class="acarsData">
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)<content:authUser>
-<span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a> | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></content:authUser></td>
+<c:if test="${flightInfo.positionCount > 0}"><span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a> | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty archiveMetadata}">
 <tr class="acarsData">
