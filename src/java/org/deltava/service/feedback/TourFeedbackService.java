@@ -57,7 +57,7 @@ public class TourFeedbackService extends FeedbackService {
 			f.setAuthorID(ctx.getUser().getID());
 			f.setCreatedOn(Instant.now());
 			f.setScore(score);
-			f.setComments(ctx.getParameter("fbComments"));
+			f.setComments(ctx.getParameter("comments"));
 			t.addFeedback(f);
 			jo = renderScore(t, ac.getCanViewFeedback());
 			
