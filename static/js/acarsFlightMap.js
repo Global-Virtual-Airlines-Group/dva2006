@@ -7,79 +7,77 @@ const f = document.forms[0];
 f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled = true;
 golgotha.util.disable(f.rwyDebug, true);
 
-// Build the XML Requester
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace, true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+// Fetch the data
+const p = fetch('acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace);
+p.then(function(rsp) {
 	const errE = document.getElementById('archiveError');
-	if (xmlreq.status != 200) {
-		errE.innerText = 'Error ' + xmlreq.status;
+	if (rsp.status != 200) {
+		errE.innerText = 'Error ' + rsp.status;
 		golgotha.util.display(errE, true);
 		return false;
 	}
 
-	const js = JSON.parse(xmlreq.responseText);
-	if (js.error) {
-		errE.innerText = js.error;
-		golgotha.util.display(errE, true);
-	} else
-		golgotha.util.display('archiveOK', true);
-
-	js.positions.forEach(function(p) {
-		var mrk;
-		golgotha.maps.acarsFlight.routePoints.push(p.ll);
-		if (p.icon)
-			mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75}, p.ll);
-		else if (p.color)
-			mrk = new golgotha.maps.Marker({color:p.color, info:p.info, opacity:0.75}, p.ll);
-		else
-			return false;
-
-		// Add ATC data
-		golgotha.maps.acarsFlight.routeMarkers.push(mrk);
-		if (p.atc) {
-			if ((p.atc.type != 'CTR') && (p.atc.type != 'FSS')) {
-				mrk.range = p.atc.range; mrk.atcPosition = p.atc.ll;
-				google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.acarsFlight.showAPP(this.atcPosition, this.range); });
-			} else {
-				mrk.atcID = p.atc.id;
-				google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.acarsFlight.showFIR(this.atcID); });
-			}
+	rsp.json().then(function(js) {
+		if (js.error) {
+			errE.innerText = js.error;
+			golgotha.util.display(errE, true);
 		} else
-			google.maps.event.addListener(mrk, 'click', golgotha.maps.acarsFlight.hideATC);
+			golgotha.util.display('archiveOK', true);
+
+		js.positions.forEach(function(p) {
+			var mrk;
+			golgotha.maps.acarsFlight.routePoints.push(p.ll);
+			if (p.icon)
+				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75}, p.ll);
+			else if (p.color)
+				mrk = new golgotha.maps.Marker({color:p.color, info:p.info, opacity:0.75}, p.ll);
+			else
+				return false;
+
+			// Add ATC data
+			golgotha.maps.acarsFlight.routeMarkers.push(mrk);
+			if (p.atc) {
+				if ((p.atc.type != 'CTR') && (p.atc.type != 'FSS')) {
+					mrk.range = p.atc.range; mrk.atcPosition = p.atc.ll;
+					google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.acarsFlight.showAPP(this.atcPosition, this.range); });
+				} else {
+					mrk.atcID = p.atc.id;
+					google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.acarsFlight.showFIR(this.atcID); });
+				}
+			} else
+				google.maps.event.addListener(mrk, 'click', golgotha.maps.acarsFlight.hideATC);
+		});
+
+		js.airspace.forEach(function(a) {
+			if (a.exclude) return false;
+			a.c = golgotha.maps.acarsFlight.airspaceColors[a.type];
+			golgotha.maps.acarsFlight.airspace.push(a);
+		});
+
+		golgotha.maps.acarsFlight.gRoute = new google.maps.Polyline({path:golgotha.maps.acarsFlight.routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+		golgotha.event.beacon('ACARS', 'Flight Data');
+
+		if (f.rwyDebug) {
+			golgotha.maps.acarsFlight.showRunway(js.runwayD, golgotha.local.takeoff);
+			golgotha.maps.acarsFlight.showRunway(js.runwayA, golgotha.local.landing);
+			golgotha.util.disable(f.rwyDebug, false);
+			const isDebug = localStorage.getItem('golgotha.rwyDebug');
+			if (isDebug == 'true') {
+				f.rwyDebug.checked = true;
+				golgotha.local.zoomTo(golgotha.local.landing.lat, golgotha.local.landing.lng, 16);
+				map.toggle(golgotha.maps.acarsFlight.debugMarkers, true);
+			} else
+				map.toggle(golgotha.maps.acarsFlight.debugMarkers, false);
+		}
+
+		// Enable checkboxes
+		golgotha.util.disable(f.showFDR, false);
+		golgotha.util.disable(f.showRoute, false);
+		golgotha.util.disable(f.showAirspace, false);
+		if (doToggle) f.showRoute.click();
 	});
+});
 
-	js.airspace.forEach(function(a) {
-		if (a.exclude) return false;
-		a.c = golgotha.maps.acarsFlight.airspaceColors[a.type];
-		golgotha.maps.acarsFlight.airspace.push(a);
-	});
-	
-	golgotha.maps.acarsFlight.gRoute = new google.maps.Polyline({path:golgotha.maps.acarsFlight.routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-	golgotha.event.beacon('ACARS', 'Flight Data');
-	if (f.rwyDebug) {
-		golgotha.maps.acarsFlight.showRunway(js.runwayD, golgotha.local.takeoff);
-		golgotha.maps.acarsFlight.showRunway(js.runwayA, golgotha.local.landing);
-		golgotha.util.disable(f.rwyDebug, false);
-		const isDebug = localStorage.getItem('golgotha.rwyDebug');
-		if (isDebug == 'true') {
-			f.rwyDebug.checked = true;
-			golgotha.local.zoomTo(golgotha.local.landing.lat, golgotha.local.landing.lng, 16);
-			map.toggle(golgotha.maps.acarsFlight.debugMarkers, true);
-		} else
-			map.toggle(golgotha.maps.acarsFlight.debugMarkers, false);
-	}
-
-	// Enable checkboxes
-	golgotha.util.disable(f.showFDR, false);
-	golgotha.util.disable(f.showRoute, false);
-	golgotha.util.disable(f.showAirspace, false);
-	if (doToggle) f.showRoute.click();
-	return true;
-};
-
-xmlreq.send(null);
 return true;
 };
 
