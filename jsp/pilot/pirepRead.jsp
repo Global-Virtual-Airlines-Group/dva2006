@@ -517,7 +517,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 </c:when>
 </c:choose>
-<c:if test="${isACARS && googleMap}">
+<c:if test="${isACARS && googleMap && (flightInfo.positionCount > 0)}">
 <tr id="flightDataLabel" class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
@@ -634,7 +634,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.e
 <c:if test="${empty mapRoute && isACARS}">
 <map:point var="golgotha.local.takeoff" point="${pirep.takeoffLocation}" />
 <map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
-golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});</c:if>
+<c:if test="${flightInfo.positionCount > 0}">golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});</c:if></c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
 <map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
@@ -660,7 +660,7 @@ map.addMarkers(golgotha.maps.acarsFlight.sbMrks);</c:if>
 golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgotha.maps.acarsFlight.gmD];
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 };
-<c:if test="${isACARS && googleMap}">
+<c:if test="${isACARS && googleMap && (flightInfo.positionCount > 0)}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function()
 {
