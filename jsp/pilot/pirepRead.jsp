@@ -49,7 +49,7 @@ golgotha.local.validate = function(f) {
 
 golgotha.local.loadLogbook = function() {
 	const d = new Date();
-	const p = fetch('logpreload.ws?id=${pirep.authorID}');
+	const p = fetch('logpreload.ws?id=${pirep.authorID}', {signal:AbortSignal.timeout(9500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) {
 			console.log('Error ' + rsp.status + ' preloading Log Book');
@@ -664,7 +664,7 @@ map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);</c:if>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function()
 {
-const p = fetch('pirepstats.ws?id=${pirep.hexID}');
+const p = fetch('pirepstats.ws?id=${pirep.hexID}', {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (rsp.status != 200) {
 		golgotha.util.display('flightDataLabel', false);

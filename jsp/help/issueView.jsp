@@ -45,7 +45,7 @@ return ${access.canComment};
 <c:if test="${access.canUseTemplate}">
 golgotha.local.selectResponse = function(f) {
 	if (!golgotha.form.comboSet(f.rspTemplate)) return false;
-	const p = fetch('hdrsptmp.ws?id=' + encodeURI(golgotha.form.getCombo(f.rspTemplate)));
+	const p = fetch('hdrsptmp.ws?id=' + encodeURI(golgotha.form.getCombo(f.rspTemplate)), {signal:AbortSignal.timeout(5000)});
 	f.then(function(rsp) {
 		if (rsp.status != 200) return false;
 		rsp.json().then(function(js) {

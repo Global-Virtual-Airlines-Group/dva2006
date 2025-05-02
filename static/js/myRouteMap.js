@@ -64,7 +64,7 @@ golgotha.routeMap.updateDates = function(cb) {
 golgotha.routeMap.load = function(days) {
 	if (this.busy) return false;
 	golgotha.util.setHTML('isLoading', ' - LOADING...');
-	const p = fetch('myroutemap.ws?id=' + this.id + '&days=' + days);
+	const p = fetch('myroutemap.ws?id=' + this.id + '&days=' + days, {signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		if (rsp.status != 200) {
 			golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);
@@ -106,7 +106,7 @@ golgotha.routeMap.load = function(days) {
 golgotha.routeMap.loadTracks = function(icao, isDST) {
 	if (this.busy) return false;
 	golgotha.util.setHTML('isLoading', ' - LOADING FLIGHT TRACKS...');
-	const p = fetch('mytracks.ws?id=' + this.id + '&icao=' + icao + '&dst=' + isDST);
+	const p = fetch('mytracks.ws?id=' + this.id + '&icao=' + icao + '&dst=' + isDST, {signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		if (rsp.status != 200) {
 			golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);

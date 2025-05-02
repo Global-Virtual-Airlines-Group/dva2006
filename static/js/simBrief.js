@@ -21,7 +21,7 @@ golgotha.simbrief.sbSubmit = function() {
 };
 
 golgotha.simbrief.loadPax = function(f) {
-	const p = fetch('sbpax.ws?id=' + golgotha.simbrief.id);
+	const p = fetch('sbpax.ws?id=' + golgotha.simbrief.id, {signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
 		rsp.json().then(function(js) {
@@ -36,7 +36,7 @@ golgotha.simbrief.loadPax = function(f) {
 };
 
 golgotha.simbrief.loadAirframes = function() {
-	const p = fetch('sbairframes.ws?id=' + golgotha.simbrief.id);
+	const p = fetch('sbairframes.ws?id=' + golgotha.simbrief.id, {signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
 		const f = document.forms[0];
@@ -104,7 +104,7 @@ golgotha.simbrief.sbRefresh = function() {
 	const f = document.forms[0];
 	golgotha.form.submit(f);
 	golgotha.util.display('sbMessageBox', false);
-	const p = fetch('sbrefresh.ws?id=' + golgotha.simbrief.id);
+	const p = fetch('sbrefresh.ws?id=' + golgotha.simbrief.id, {signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		golgotha.form.clear(f);
 		rsp.text();

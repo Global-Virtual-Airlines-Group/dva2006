@@ -23,7 +23,7 @@ if (golgotha.routeMap.aps) {
 
 // Fetch the data
 golgotha.util.setHTML('isLoading', ' - LOADING...');
-const p = fetch('rmap_airports.ws?airline=' + aCode);
+const p = fetch('rmap_airports.ws?airline=' + aCode, {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (!rsp.ok) return false;
 	golgotha.util.setHTML('isLoading', ' - REDRAWING...');
@@ -63,7 +63,7 @@ map.removeMarkers(golgotha.routeMap.routes);
 map.closeWindow();
 
 // Fetch the data
-const p = fetch('rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode);
+const p = fetch('rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (!rsp.ok) return false;
 	golgotha.util.setHTML('isLoading', ' - REDRAWING...');

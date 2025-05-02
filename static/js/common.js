@@ -525,15 +525,13 @@ golgotha.nav.init = function() {
 };
 
 golgotha.util.validateCAPTCHA = function(token) {
-	const p = fetch('recaptcha.ws', {method:'post', body:token, headers:{'Content-Type':'application/json; charset=utf-8'}});
+	const p = fetch('recaptcha.ws', {method:'post', body:token, headers:{'Content-Type':'application/json; charset=utf-8'}, signal:AbortSignal.timeout(5000)});
 	p.then(function(rsp) {
 		const isOK = ((rsp.status == 200) || (rsp.status == 304));
 		if (!isOK) 
 			console.log('Error ' + rsp.status + ' validating CAPTCHA!');
 		else
 			rsp.text();
-
-		return isOK;
 	});
 
 	return true;
