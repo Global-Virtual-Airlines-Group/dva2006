@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate Elite program scoring for a Flight Report.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 11.2
  */
 
@@ -101,7 +101,7 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 						entries.addAll(psdao.read());
 					}
 				} catch (IOException ie) {
-					throw new DAOException(ie);
+					fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Cannot load archive data - %s", ie.getMessage()));
 				}
 				
 				// Get the landing runway
