@@ -8,7 +8,7 @@ f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled 
 golgotha.util.disable(f.rwyDebug, true);
 
 // Fetch the data
-const p = fetch('acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace);
+const p = fetch('acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace, {signal:AbortSignal.timeout(2500)});
 p.then(function(rsp) {
 	const errE = document.getElementById('archiveError');
 	if (rsp.status != 200) {

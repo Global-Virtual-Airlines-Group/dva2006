@@ -23,7 +23,7 @@ golgotha.push.check = async function() {
   	if (!sub) return false;
 
 	const po = {endpoint:sub.endpoint};
-	const rsp = await fetch('/pushstatus.ws', {method:'post', body:JSON.stringify(po), headers:{"content-type":"application/json"}});
+	const rsp = await fetch('/pushstatus.ws', {method:'post', body:JSON.stringify(po), headers:{"content-type":"application/json"}, signal:AbortSignal.timeout(3500)});
 	const js = await rsp.json();
 	return ((js) && js.subscribed);
 };
@@ -32,7 +32,7 @@ golgotha.push.sub = async function() {
 	const reg = await navigator.serviceWorker.ready;
 	const sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: golgotha.push.pubKey});
 
-	const rsp = await fetch('/pushsub.ws', {method:'post', body:JSON.stringify(sub), haleaders:{"content-type":"application/json"}});
+	const rsp = await fetch('/pushsub.ws', {method:'post', body:JSON.stringify(sub), haleaders:{"content-type":"application/json"}, signal:AbortSignal.timeout(5000)});
 	const js = await rsp.json();
 	golgotha.push.isSubscribed = js.isSubscribed;
 	golgotha.util.display('pushunsub', js.isSubscribed);
@@ -46,7 +46,7 @@ golgotha.push.unsub = async function() {
 	if (!sub) return true;
 
 	await sub.unsubscribe();
-	const rsp = await fetch('/pushunsub.ws', {method:'post', body:JSON.stringify(sub), headers:{"content-type":"application/json"}});
+	const rsp = await fetch('/pushunsub.ws', {method:'post', body:JSON.stringify(sub), headers:{"content-type":"application/json"}, signal:AbortSignal.timeout(5000)});
 	const js = await rsp.json();
 	golgotha.push.isSubscribed = !js.isUnsubscribed;
 	golgotha.util.display('pushunsub', js.isUnsubscribed);
@@ -83,7 +83,7 @@ golgotha.push.test = async function(doCurrent) {
 	if (!sub) return false;
 
 	sub.doCurrent = doCurrent;
-	const rsp = await fetch('/pushtest.ws', {method:'post', body:JSON.stringify(sub), headers:{"content-type":"application/json"}});
+	const rsp = await fetch('/pushtest.ws', {method:'post', body:JSON.stringify(sub), headers:{"content-type":"application/json"}, signal:AbortSignal.timeout(5000)});
 	const js = await rsp.json();
 	console.log('Sent ' + js.sent + '/' + js.size + ' notifications');
 	return true;

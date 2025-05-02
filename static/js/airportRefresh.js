@@ -129,7 +129,7 @@ const oldCode = golgotha.form.getCombo(this); let combo = this;
 combo.disabled = true;
 if (combo.txt) combo.txt.disabled = true;
 
-const p = fetch('airports.ws?' + golgotha.util.createURLParams(opts));
+const p = fetch('airports.ws?' + golgotha.util.createURLParams(opts), {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (!rsp.ok) return false;
 	const o = combo.options[combo.selectedIndex];
@@ -153,7 +153,7 @@ return true;
 golgotha.airportLoad.loadSIDSTAR = function(code, type)
 {
 const oldValue = golgotha.form.getCombo(this); let combo = this; combo.disabled = true;
-const p = fetch('troutes.ws?airportD=' + code + '&airportA=' + code);
+const p = fetch('troutes.ws?airportD=' + code + '&airportA=' + code, {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (!rsp.ok) return false;
 	rsp.json().then(function(js) {
