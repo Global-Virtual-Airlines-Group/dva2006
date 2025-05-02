@@ -49,7 +49,7 @@ if (f.date.selectedIndex < 1) return;
 
 // Fetch the tracks
 golgotha.util.setHTML('isLoading', ' - LOADING...');
-const p = fetch('otrackinfo.ws?type=' + type + '&date=' + dt.text);
+const p = fetch('otrackinfo.ws?type=' + type + '&date=' + dt.text, {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (rsp.status != 200) {
 		golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);		

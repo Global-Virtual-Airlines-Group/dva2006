@@ -274,7 +274,7 @@ return results;
 golgotha.maps.SeriesLoader.prototype.loadRV = function()
 {
 const loader = this;
-const p = fetch('serieslist.ws?time=' + golgotha.util.getTimestamp(3000));
+const p = fetch('serieslist.ws?time=' + golgotha.util.getTimestamp(3000), {signal:AbortSignal.timeout(2500)});
 p.then(function(rsp) {
 	if (rsp.status != 200) {
 		console.log('Error ' + rsp.status + ' loading tile series data');
