@@ -57,7 +57,7 @@ public class EventFeedbackService extends FeedbackService {
 			f.setAuthorID(ctx.getUser().getID());
 			f.setCreatedOn(Instant.now());
 			f.setScore(score);
-			f.setComments(ctx.getParameter("fbComments"));
+			f.setComments(ctx.getParameter("comments"));
 			e.addFeedback(f);
 			jo = renderScore(e, ac.getCanViewFeedback());
 			
