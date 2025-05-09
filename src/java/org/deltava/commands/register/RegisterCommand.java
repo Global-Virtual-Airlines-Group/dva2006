@@ -165,9 +165,9 @@ public class RegisterCommand extends AbstractCommand {
 		a.setLegacyURL(ctx.getParameter("legacyURL"));
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
-		a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
-		a.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
-		a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
+		a.setDistanceType(EnumUtils.parse(DistanceUnit.class, ctx.getParameter("distanceUnits"), DistanceUnit.MI));
+		a.setWeightType(EnumUtils.parse(WeightUnit.class, ctx.getParameter("weightUnits"), WeightUnit.LB));
+		a.setAirportCodeType(EnumUtils.parse(Airport.Code.class, ctx.getParameter("airportCodeType"), Airport.Code.ICAO));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
 		a.setComments(ctx.getParameter("comments"));
@@ -176,6 +176,11 @@ public class RegisterCommand extends AbstractCommand {
 		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setSimVersion(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.FSX));
 		a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0));
+		
+		// Check for CAPTCHA
+		a.setHasCAPTCHA(ctx.passedCAPTCHA());
+		if (!a.getHasCAPTCHA())
+			a.addHRComment("CAPTCHA Validation failed!");
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
@@ -183,8 +188,8 @@ public class RegisterCommand extends AbstractCommand {
 		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? a.getRegisterAddress() : hostName);
 		
 		// Check for null UI scheme
-		if (a.getUIScheme() == null) {
-			log.warn("Detected robot from " + hostName);
+		if ((a.getUIScheme() == null) || !a.getHasCAPTCHA()) {
+			log.warn("Detected robot from {} - CAPTCHA = {}", hostName, Boolean.valueOf(a.getHasCAPTCHA()));
 			result.setURL("/jsp/register/blackList.jsp");
 			result.setSuccess(true);
 			return;
@@ -279,11 +284,6 @@ public class RegisterCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-			
-			// Check for CAPTCHA
-			a.setHasCAPTCHA(ctx.passedCAPTCHA());
-			if (!a.getHasCAPTCHA())
-				a.addHRComment("CAPTCHA Validation failed!");
 			
 			// Do address uniqueness check
 			if (checkAddr) {
