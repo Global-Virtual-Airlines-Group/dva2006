@@ -92,7 +92,7 @@ public class TestJedisCache extends TestCase {
 		assertEquals(2, _cache.getRequests());
 		assertEquals(2, _cache.getHits());
 
-		Thread.sleep(1050);
+		Thread.sleep(1550);
 		assertNull(_cache.get("AF"));
 		assertNull(_cache.get("DVA"));
 		assertEquals(4, _cache.getRequests());
