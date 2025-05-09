@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2019, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2019, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.jedis;
 
 import java.util.Collection;
@@ -14,11 +14,12 @@ import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
  * @author Luke
- * @version 11.3
+ * @version 11.6
  * @since 7.0
  */
 
@@ -53,8 +54,7 @@ public class SetTrack extends JedisDAO {
 
 				byte[] rawKey = JedisUtils.encodeKey(key);
 				_casCache.add(data);
-				j.set(rawKey, JedisUtils.write(data));
-				j.expire(rawKey, 3600);
+				j.set(rawKey, JedisUtils.write(data), SetParams.setParams().ex(3600));
 			}
 			
 			jp.sync();
