@@ -59,9 +59,10 @@ public class ValidateCAPTCHAService extends WebService {
 				s = ctx.getRequest().getSession(true);
 				s.setAttribute(CAPTCHA_ATTR_NAME, cr);
 			}
-		} catch (DAOException | IOException ie) {
-			boolean isWarning = ((ie instanceof DAOException de) && de.isWarning()) || (ie instanceof EOFException);
-			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), !isWarning);
+		} catch (IOException ie) {
+			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), false);
+		} catch (DAOException de) {
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
