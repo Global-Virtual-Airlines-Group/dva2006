@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 10.0
+ * @version 11.6
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public class LeaveCommand extends AbstractCommand {
 			// Create status update record
 			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.LOA); 
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription("Leave of absence until " + StringUtils.format(loaExpiry, "MM/dd/yyyy"));
+			upd.setDescription(String.format("Leave of absence until %s", StringUtils.format(loaExpiry, "MM/dd/yyyy")));
 
 			// Start the transaction
 			ctx.startTX();
@@ -66,7 +66,7 @@ public class LeaveCommand extends AbstractCommand {
 			
 			// Add an inactivity table entry
 			SetInactivity idao = new SetInactivity(con);
-			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days", 180), true);
+			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days", 180), true, ctx.getDB());
 			
 			// Write the status updat
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
