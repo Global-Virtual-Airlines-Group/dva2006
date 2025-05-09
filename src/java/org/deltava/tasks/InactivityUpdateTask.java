@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -211,7 +211,7 @@ public class InactivityUpdateTask extends Task {
 					sudao.write(upd, ctx.getDB());
 
 					// Make sure we have a notification entry
-					iwdao.setInactivity(p.getID(), inactiveDays, true);
+					iwdao.setInactivity(p.getID(), inactiveDays, true, ctx.getDB());
 					
 					// Commit the transaction
 					ctx.commitTX();

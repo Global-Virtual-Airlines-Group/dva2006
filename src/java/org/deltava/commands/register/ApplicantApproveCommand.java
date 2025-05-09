@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 11.0
+ * @version 11.6
  * @since 1.0
  */
 
@@ -155,7 +155,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
-			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days", 21), true);
+			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days", 21), true, ctx.getDB());
 			
 			// Get the Pilot and optionally set ACARS-only PIREP flag
 			GetPilot pdao = new GetPilot(con);

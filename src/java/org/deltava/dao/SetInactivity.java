@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to update the Inactivity Purge table.
  * @author Luke
- * @version 9.0
+ * @version 11.6
  * @since 1.0
  */
 
@@ -25,10 +25,17 @@ public class SetInactivity extends DAO {
 	 * @param pilotID the Pilot's database ID
 	 * @param isNotified TRUE if the warning message has been sent, otherwise FALSE
 	 * @param days the number of days from today to purge
+	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void setInactivity(int pilotID, int days, boolean isNotified) throws DAOException {
-		try (PreparedStatement ps = prepare("REPLACE INTO INACTIVITY (ID, NOTIFY, PURGE_DATE, PURGE_DAYS) VALUES (?, ?, DATE_ADD(CURDATE(), INTERVAL ? DAY), ?)")) {
+	public void setInactivity(int pilotID, int days, boolean isNotified, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("REPLACE INTO ");
+		buf.append(formatDBName(dbName));
+		buf.append(".INACTIVITY (ID, NOTIFY, PURGE_DATE, PURGE_DAYS) VALUES (?, ?, DATE_ADD(CURDATE(), INTERVAL ? DAY), ?)");
+		
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			ps.setInt(1, pilotID);
 			ps.setBoolean(2, isNotified);
 			ps.setInt(3, days);
