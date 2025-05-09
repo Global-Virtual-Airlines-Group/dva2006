@@ -1,6 +1,7 @@
 // Copyright 2016, 2017, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -9,11 +10,12 @@ import org.apache.logging.log4j.*;
 import org.deltava.util.JedisUtils;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * An object cache using ValKey as its backing store.
  * @author Luke
- * @version 11.5
+ * @version 11.6
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -57,8 +59,10 @@ public class JedisCache<T extends Cacheable> extends Cache<T> {
 	 */
 	protected long getExpiryTime(T entry) {
 		long expTime = _expiryTime;
-		if (entry instanceof ExpiringCacheable ec)
-			expTime = ec.getExpiryDate().toEpochMilli();
+		if (entry instanceof ExpiringCacheable ec) {
+			Duration d = Duration.between(Instant.now(), ec.getExpiryDate());
+			expTime = d.isNegative() ? 0 : d.toSeconds();
+		}
 		
 		return expTime;
 	}
@@ -85,12 +89,9 @@ public class JedisCache<T extends Cacheable> extends Cache<T> {
 		try (Jedis jc = JedisUtils.getConnection()) {
 			Pipeline jp = jc.pipelined();
 			for (T entry : entries) {
-				long expiry = getExpiryTime(entry);
 				byte[] rawKey = JedisUtils.encodeKey(createKey(entry.cacheKey()));
 				byte[] data = JedisUtils.write(new RemoteCacheEntry<T>(entry));
-				long expTime = (expiry <= 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
-				jc.set(rawKey, data);
-				jc.expireAt(rawKey, expTime);
+				jc.set(rawKey, data, SetParams.setParams().ex(getExpiryTime(entry)));
 			}
 			
 			jp.sync();

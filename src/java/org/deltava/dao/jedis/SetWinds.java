@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2021, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.jedis;
 
 import java.util.*;
@@ -9,11 +9,12 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * A Data Access Object to write wind data to Redis.
  * @author Luke
- * @version 11.3
+ * @version 11.6
  * @since 5.4
  */
 
@@ -42,8 +43,7 @@ public class SetWinds extends JedisDAO {
 				Pipeline jp = j.pipelined();
 				for (WindData w : wd) {
 					byte[] key = JedisUtils.encodeKey(createKey(w.cacheKey()));
-					j.set(key, JedisUtils.write(w));
-					j.expireAt(key, _expiry);
+					j.set(key, JedisUtils.write(w), SetParams.setParams().ex(_expiry));
 					keys.add(key);
 				}
 				

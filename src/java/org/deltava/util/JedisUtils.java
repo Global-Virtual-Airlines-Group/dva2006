@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -7,13 +7,14 @@ import java.util.*;
 import org.apache.logging.log4j.*;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.params.SetParams;
 
 import org.gvagroup.pool.ConnectionPool;
 
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 11.3
+ * @version 11.6
  * @since 6.1
  */
 
@@ -120,19 +121,15 @@ public class JedisUtils {
 	/**
 	 * Writes an object to Redis.
 	 * @param key the key
-	 * @param expiry the expiry time in seconds from the present or an absolute timestamp
+	 * @param expiry the expiry time in seconds from the present
 	 * @param value the value
 	 */
 	public static void write(String key, long expiry, Object value) {
 		if (value == null) return;
 		byte[] rawKey = encodeKey(key);
 		byte[] data = write(value);
-		long expTime = (expiry <= 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
 		try (Jedis jc = getConnection()) {
-			Pipeline jp = jc.pipelined();
-			jc.set(rawKey, data);
-			jc.expireAt(rawKey, expTime);
-			jp.sync();
+			jc.set(rawKey, data, SetParams.setParams().ex(expiry));
 		} catch (Exception e) {
 			log.error("Error writing to Jedis - {}", e.getMessage());
 		}

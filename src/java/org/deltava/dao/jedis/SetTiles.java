@@ -1,10 +1,11 @@
-// Copyright 2012, 2013, 2015, 2016, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2021, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.jedis;
 
 import java.util.*;
 import java.time.Instant;
 
 import redis.clients.jedis.*;
+import redis.clients.jedis.params.SetParams;
 
 import org.deltava.dao.DAOException;
 
@@ -15,7 +16,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to write map tiles to Jedis. 
  * @author Luke
- * @version 11.3
+ * @version 11.6
  * @since 5.0
  */
 
@@ -41,8 +42,7 @@ public class SetTiles extends JedisDAO implements SeriesWriter {
 			Pipeline jp = j.pipelined();
 			for (Map.Entry<TileAddress, PNGTile> me : is.entrySet()) {
 				byte[] k = JedisUtils.encodeKey(createKey(me.getKey().getName()));
-				j.set(k, me.getValue().getData());
-				j.expireAt(k, _expiry);
+				j.set(k, me.getValue().getData(), SetParams.setParams().ex(_expiry));
 			}
 			
 			jp.sync();
