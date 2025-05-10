@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2017, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -115,7 +115,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 				}
 				
 				src.setTime((int) tt.stop());
-				log.info("Loaded {} ( skipped) {} schedule entries for {} in {}ms", Integer.valueOf(src.getLegs()), Integer.valueOf(src.getSkipped()), src.getSource().getDescription(), src.getEffectiveDate(), Integer.valueOf(src.getTime()));
+				log.info("Loaded {} ({} skipped) {} schedule entries for {} in {}ms", Integer.valueOf(src.getLegs()), Integer.valueOf(src.getSkipped()), src.getSource().getDescription(), src.getEffectiveDate(), Integer.valueOf(src.getTime()));
 			}
 			
 			// Purge if needed
