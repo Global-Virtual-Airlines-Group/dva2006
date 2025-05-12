@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.18.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-logging-1.3.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-6.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
