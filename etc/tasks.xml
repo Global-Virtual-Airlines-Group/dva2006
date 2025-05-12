@@ -61,7 +61,7 @@
 	</task>
 
 	<!-- Download AUSOT Track data -->
-	<task id="ausot" enabled="false">
+	<task id="ausot" enabled="true">
 		<class>org.deltava.tasks.AUSOTDownloadTask</class>
 		<time>
 			<min>0</min>

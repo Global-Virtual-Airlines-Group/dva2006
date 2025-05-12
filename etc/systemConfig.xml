@@ -311,7 +311,7 @@
 		    <url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
 		</pacot>
 		<ausot>
-			<url>http://www.airservicesaustralia.com/flextracks/text.asp?ver=1</url>
+			<url>https://www.airservicesaustralia.com/flextracks/text.asp?ver=1</url>
 		</ausot>
 	</config>
 	
