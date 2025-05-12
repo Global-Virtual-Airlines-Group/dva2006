@@ -22,11 +22,11 @@ public class TestGetOceanic extends TestCase {
 		String info = dao.getTrackInfo();
 		assertNotNull(info);
 		assertTrue(info.length() > 0);
-		 Map<String, Collection<String>> trackInfo = dao.getWaypoints();
-		 assertNotNull(trackInfo);
-		 assertFalse(trackInfo.isEmpty());
+		Map<String, Collection<String>> trackInfo = dao.getWaypoints();
+		assertNotNull(trackInfo);
+		assertFalse(trackInfo.isEmpty());
 	}
-	
+
 	@SuppressWarnings("static-method")
 	public void testPACOT() throws DAOException {
 		GetPACOTs dao = new GetPACOTs("https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&actionType=advancedNOTAMFunctions");
@@ -34,13 +34,13 @@ public class TestGetOceanic extends TestCase {
 		assertNotNull(info);
 		assertTrue(info.length() > 0);
 		Map<String, Collection<String>> trackInfo = dao.getWaypoints();
-		 assertNotNull(trackInfo);
-		 assertFalse(trackInfo.isEmpty());
+		assertNotNull(trackInfo);
+		assertFalse(trackInfo.isEmpty());
 	}
-	
+
 	@SuppressWarnings("static-method")
 	public void testAUSOT() throws DAOException {
-		GetAUSOTs dao = new GetAUSOTs("http://www.airservicesaustralia.com/flextracks/text.asp?ver=1");
+		GetAUSOTs dao = new GetAUSOTs("https://www.airservicesaustralia.com/flextracks/text.asp?ver=1");
 		String info = dao.getTrackInfo();
 		assertNotNull(info);
 		assertTrue(info.length() > 0);
