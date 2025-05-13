@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2013, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
@@ -8,13 +8,14 @@ import org.deltava.beans.navdata.*;
 /**
  * A bean to store NOTAMs containing Oceanic route data.
  * @author Luke
- * @version 7.0
+ * @version 11.6
  * @since 1.0
  */
 
 public class OceanicNOTAM implements OceanicTrackInfo, Comparable<OceanicNOTAM> {
 
 	private Instant _date;
+	private Instant _fetchDate;
     private Type _routeType;
     private String _sourceHost;
     private String _routeInfo;
@@ -30,23 +31,22 @@ public class OceanicNOTAM implements OceanicTrackInfo, Comparable<OceanicNOTAM> 
 		_date = dt;
 	}
 	
-    /**
-     * Returns the date of the Oceanic Route NOTAM.
-     * @return the route date
-     * @see OceanicNOTAM#setDate(Instant)
-     */
 	@Override
     public Instant getDate() {
         return _date;
     }
     
-    /**
-     * Returns the route type code.
-     * @return the route type
-     */
     @Override
     public Type getType() {
         return _routeType;
+    }
+    
+    /**
+     * Returns the retrieval date of the track data.
+     * @return the retrieval date/time
+     */
+	public Instant getFetchDate() {
+    	return _fetchDate;
     }
     
     /**
@@ -103,15 +103,25 @@ public class OceanicNOTAM implements OceanicTrackInfo, Comparable<OceanicNOTAM> 
     public void setRoute(String routeData) {
         _routeInfo = routeData;
     }
-    
+
     /**
-     * Implements Comparable interface by comparing the dates, then the route types.
-     * @see Comparable#compareTo(Object)
+     * Updates the retrieval date of this NOTAM.
+     * @param dt the retrieval date/time
+     * @see OceanicNOTAM#getFetchDate()
      */
+    public void setFetchDate(Instant dt) {
+    	_fetchDate = dt;
+    }
+    
     @Override
     public int compareTo(OceanicNOTAM or2) {
         int tmpResult = _date.compareTo(or2._date);
         return (tmpResult == 0) ? _routeType.compareTo(or2._routeType) : tmpResult;
+    }
+    
+    @Override
+	public int hashCode() {
+    	return toString().hashCode();
     }
   
     @Override
