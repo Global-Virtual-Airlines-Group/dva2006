@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -10,6 +10,7 @@ import org.json.*;
 
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.OceanicNOTAM;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -18,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 9.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -42,16 +43,11 @@ public class OceanicPlotService extends WebService {
 		}
 		
 		// Get the track type
-		OceanicTrackInfo.Type trackType = OceanicTrackInfo.Type.NAT;
-		try {
-			trackType = OceanicTrackInfo.Type.valueOf(ctx.getParameter("type").toUpperCase());
-		} catch (Exception e) {
-			// empty
-		}
-
-		DailyOceanicTracks tracks = null;
+		OceanicTrackInfo.Type trackType = EnumUtils.parse(OceanicTrackInfo.Type.class, ctx.getParameter("type"), OceanicTrackInfo.Type.NAT); 
+		DailyOceanicTracks tracks = null; OceanicNOTAM nt = null;
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
+			nt = dao.get(trackType, dt);
 			tracks = dao.getOceanicTracks(trackType, dt);
 			if (trackType == OceanicTrackInfo.Type.NAT)
 				dao.loadConcordeNATs().forEach(tracks::addTrack);
@@ -65,6 +61,11 @@ public class OceanicPlotService extends WebService {
 		JSONObject jo = new JSONObject();
 		jo.put("timestamp", tracks.getDate().toEpochMilli());
 		jo.put("date", StringUtils.format(tracks.getDate(), ctx.isAuthenticated() ? ctx.getUser().getDateFormat() : "MM/dd/yyyy"));
+		if ((nt != null) && (nt.getFetchDate() != null)) {
+			jo.put("fetchTime", nt.getFetchDate().toEpochMilli());
+			jo.put("fetchDate", StringUtils.format(nt.getFetchDate(), "MM/dd/yyyy HH:mm"));
+			jo.put("src", nt.getSource());
+		}
 
 		// Build the track data
 		for (OceanicTrack ow : tracks.getTracks()) {
@@ -101,19 +102,11 @@ public class OceanicPlotService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns if the Web Service invocation is logged.
-	 * @return FALSE
-	 */
 	@Override
 	public boolean isLogged() {
 		return false;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;
