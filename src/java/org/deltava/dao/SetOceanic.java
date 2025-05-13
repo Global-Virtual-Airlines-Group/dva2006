@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2017, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Oceanic Routes.
  * @author Luke
- * @version 9.0
+ * @version 11.6
  * @since 1.0
  */
 
@@ -68,11 +68,12 @@ public class SetOceanic extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(OceanicNOTAM or) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, FETCH_DATE, SOURCE, ROUTE) VALUES (?,?,?,?,?)")) {
 			ps.setInt(1, or.getType().ordinal());
 			ps.setTimestamp(2, createTimestamp(or.getDate()));
-			ps.setString(3, or.getSource());
-			ps.setString(4, or.getRoute());
+			ps.setTimestamp(3, createTimestamp(or.getFetchDate()));
+			ps.setString(4, or.getSource());
+			ps.setString(5, or.getRoute());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

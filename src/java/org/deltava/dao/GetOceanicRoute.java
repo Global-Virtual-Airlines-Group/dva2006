@@ -93,8 +93,9 @@ public class GetOceanicRoute extends GetNavAirway {
         	while (rs.next()) {
         		OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.values()[rs.getInt(1)];
         		OceanicNOTAM or = new OceanicNOTAM(rType, expandDate(rs.getDate(2)));
-        		or.setSource(rs.getString(3));
-        		or.setRoute(rs.getString(4));
+        		or.setFetchDate(toInstant(rs.getTimestamp(3)));
+        		or.setSource(rs.getString(4));
+        		or.setRoute(rs.getString(5));
         		results.add(or);
         	}
         }	
