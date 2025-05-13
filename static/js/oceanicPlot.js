@@ -45,14 +45,18 @@ golgotha.maps.oceanic.loadTracks = function(type)
 // Check the combobox
 const f = document.forms[0];
 const dt = f.date.options[f.date.selectedIndex];
-if (f.date.selectedIndex < 1) return;
+if (f.date.selectedIndex < 1) {
+	golgotha.util.display('fetchData', false);
+	return;
+}
 
 // Fetch the tracks
 golgotha.util.setHTML('isLoading', ' - LOADING...');
 const p = fetch('otrackinfo.ws?type=' + type + '&date=' + dt.text, {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
 	if (rsp.status != 200) {
-		golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);		
+		golgotha.util.setHTML('isLoading', ' - ERROR ' + rsp.status);
+		golgotha.util.display('fetchData', false);		
 		return false;
 	}
 	
@@ -76,6 +80,12 @@ p.then(function(rsp) {
 			golgotha.maps.oceanic.tracks[t.type].push(trackLine);
 		});
 
+		if (jsData.src) {
+			document.getElementById('fetchDate').innerText = jsData.fetchDate;
+			document.getElementById('fetchSrc').innerText = jsData.src;
+		}
+
+		golgotha.util.display('fetchData', (jsData.src));
 		golgotha.util.setHTML('isLoading', '');
 	});
 });
