@@ -36,18 +36,6 @@
 		</time>
 	</task>
 
-	<!-- Download AUSOT Track data -->
-	<task id="ausot" enabled="true">
-		<class>org.deltava.tasks.AUSOTDownloadTask</class>
-		<time>
-			<min>0</min>
-			<hour>8,20</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-		</time>
-	</task>
-
 	<!-- Purge old Draft Flight Reports -->
 	<task id="draftpurge" enabled="true">
 		<class>org.deltava.tasks.DraftPIREPPurgeTask</class>

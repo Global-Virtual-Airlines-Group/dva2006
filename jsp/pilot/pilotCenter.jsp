@@ -491,9 +491,8 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
-<el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd><br />
-<el:cmd className="bld" url="ausotplot">AUSOT Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to plot today's North Atlantic, Pacific and Australian Tracks, or NAT / PACOT / AUSOT routes for the previous several months.</td>
+<el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to plot today's North Atlantic and Pacific Tracks, or NAT / PACOT routes for the previous several months.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxcenter">Weather Center</el:cmd></td>
