@@ -3,7 +3,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Oceanic Route <fmt:date fmt="d" date="${route.date}" /></title>
@@ -30,15 +29,17 @@
  <td class="label">Source</td>
  <td class="data">${route.source}</td>
 </tr>
+<c:if test="${!empty route.fetchDate}">
+<tr>
+ <td class="label">Retrieved on</td>
+ <td class="data"><fmt:date date="${route.fetchDate}" /></td>
+</tr>
+</c:if>
 <tr>
  <td colspan="2" class="left">${route.route}</td>
 </tr>
-</el:table>
-
-<!-- Button Bar -->
-<el:table className="bar">
 <tr>
- <td>&nbsp;</td>
+ <td colspan="2">&nbsp;</td>
 </tr>
 </el:table>
 </content:region>
