@@ -1,4 +1,4 @@
-// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 11.1
+ * @version 11.6
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class NATDownloadTask extends Task {
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, Instant.now());
 			or.setSource(url.getHost());
+			or.setFetchDate(Instant.now());
 			
 			// Load waypoint data, retry up to 3 times
 			log.info("Loading NAT track data from {}", url);
