@@ -34,6 +34,10 @@
  <td class="label">Date</td>
  <td class="data"><el:combo name="date" idx="*" firstEntry="-" options="${dates}" value="${param.date}" onChange="void golgotha.maps.oceanic.loadTracks('AUSOT')" /></td>
 </tr>
+<tr id="fetchData" style="display:none">
+ <td class="label">Retrieved on</td>
+ <td class="data"><span id="fetchDate" class="pri bld"></span> from <span id="fetchSrc" class="ita"></span></td>
+</tr>
 <tr>
  <td class="label"><span id="trackLabel">Track Data</span></td>
  <td class="data"><span id="trackData">N/A</span></td>
