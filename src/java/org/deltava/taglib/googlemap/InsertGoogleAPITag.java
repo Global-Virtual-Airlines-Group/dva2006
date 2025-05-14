@@ -8,8 +8,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
+import org.apache.logging.log4j.*;
 
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -24,6 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class InsertGoogleAPITag extends TagSupport {
+	
+	private static final Logger log = LogManager.getLogger(API.class);
 
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	private static final List<String> CYCLES = List.of("weekly", "quarterly");
@@ -121,6 +124,14 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
 			return EVAL_PAGE;
+		
+		// Write log entry
+		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
+		StringBuffer urlBuf = hreq.getRequestURL();
+		if (!StringUtils.isEmpty(hreq.getQueryString()))
+			urlBuf.append('/').append(hreq.getQueryString());
+		
+		log.info("{} {} {}", urlBuf, hreq.getRemoteUser(), (_cb != null) ? "async" : "sync");
 		
 		// Translate stable/release v3 to minor version
 		APIUsage.track(APIUsage.Type.DYNAMIC, _isAnonymous);
