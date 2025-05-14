@@ -640,7 +640,7 @@
 	<command id="routemap">
 		<name>Schedule Route Map</name>
 		<class>org.deltava.commands.schedule.RouteMapCommand</class>
-		<roles>*</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="routes">
