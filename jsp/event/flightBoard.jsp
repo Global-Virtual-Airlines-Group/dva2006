@@ -34,7 +34,7 @@ golgotha.local.setNetwork = function(combo) {
 <view:table cmd="flightboard">
 <tr class="title">
  <td colspan="4" class="left">${netInfo.network} ONLINE DATA<span class="nophone"> - VALID AS OF <fmt:date date="${netInfo.validDate}" /></span></td>
- <td><el:cmd url="flightboardmap" linkID="${network}">FLIGHT MAP</el:cmd></td>
+ <td><content:authUser><el:cmd url="flightboardmap" linkID="${network}">FLIGHT MAP</el:cmd></content:authUser>&nbsp;</td>
  <td colspan="2" class="right">NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${network}" /></td>
 </tr>
 

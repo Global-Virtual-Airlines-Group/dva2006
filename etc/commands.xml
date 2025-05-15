@@ -893,7 +893,7 @@
 	<command id="flightboardmap">
 		<name>Online Flight Board Map</name>
 		<class>org.deltava.commands.event.FlightBoardMapCommand</class>
-		<roles>*</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="netservers">
