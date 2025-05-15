@@ -15,18 +15,19 @@
 <content:js name="common" />
 <content:js name="progress" />
 <content:captcha action="tour" />
-<content:browser human="true"><c:if test="${!empty tour.flights}">
-<map:api version="3" callback="golgotha.local.mapInit" /></c:if></content:browser>
+<content:attr attr="tourAccess" value="true" roles="Pilot" />
+<c:if test="${(tour.flights.size() > 0) && tourAccess}">
+<c:set var="hasMap" value="true" scope="page" />
+<map:api version="3" callback="golgotha.local.mapInit" /></c:if>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload()">
+<body<c:if test="${hasMap}"> onunload="void golgotha.maps.util.unload()"</c:if>>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:attr attr="tourAccess" value="true" roles="Pilot" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -145,12 +146,12 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td class="bld" colspan="${tour.matchLeg ? 1 : 2}"><fmt:date fmt="t" t="HH:mm" tz="${fl.airportD.TZ}" date="${fl.timeD}" /> - <fmt:date fmt="t" t="HH:mm" tz="${fl.airportA.TZ}" date="${fl.timeA}" /> (<fmt:int value="${fl.duration.toHoursPart()}" />h <fmt:int value="${fl.duration.toMinutesPart()}" />m)</td>
 </tr>
 </c:forEach>
-<content:browser human="true">
+<c:if test="${hasMap}">
 <tr class="title caps">
  <td colspan="6">FLIGHT LEG MAP<span id="historyToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
 </tr>
 <tr class="tourMap">
- <td colspan="6"><map:div ID="googleMap" height="475" /></td>
+ <td colspan="6"><map:div ID="googleMap" height="515" /></td>
 </tr>
 <script async>
 golgotha.local.mapInit = function() {
@@ -177,7 +178,7 @@ golgotha.local.mapInit = function() {
 	map.addMarkers(lines);
 };
 </script>
-</content:browser>
+</c:if>
 </c:when>
 <c:otherwise>
 <tr id="tourEmpty">
