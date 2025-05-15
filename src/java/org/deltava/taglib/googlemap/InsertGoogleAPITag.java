@@ -129,7 +129,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
 		StringBuffer urlBuf = hreq.getRequestURL();
 		if (!StringUtils.isEmpty(hreq.getQueryString()))
-			urlBuf.append('/').append(hreq.getQueryString());
+			urlBuf.append('?').append(hreq.getQueryString());
 		
 		log.info("{} {} {}", urlBuf, hreq.getRemoteUser(), (_cb != null) ? "async" : "sync");
 		
