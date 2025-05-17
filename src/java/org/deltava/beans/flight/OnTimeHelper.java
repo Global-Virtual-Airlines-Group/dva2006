@@ -157,7 +157,7 @@ public class OnTimeHelper {
 	}
 	
 	private boolean matchDeparture(ScheduleEntry se, ZonedDateTime actualDeparture) {
-		int earlyLimit = (int)(_depToleranceMinutes * 0.6); int lateLimit = _depToleranceMinutes;
+		int earlyLimit = (int)(_depToleranceMinutes * -0.6); int lateLimit = _depToleranceMinutes;
 		long dMin = Duration.between(se.getTimeD(), actualDeparture).toMinutes();
 		log.info("{} {} delta = {}, ({} .. {})", se.getFlightCode(), se.getTimeD(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit));
 		return (dMin > earlyLimit) && (dMin < lateLimit);
