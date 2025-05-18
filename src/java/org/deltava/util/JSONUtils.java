@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -15,7 +15,7 @@ import org.deltava.beans.stats.FlightStatsEntry;
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 7.3
  */
 
@@ -53,6 +53,18 @@ public class JSONUtils {
 		jo.put("lat", loc.getLatitude());
 		jo.put("lng", loc.getLongitude());
 		return jo;
+	}
+
+	/**
+	 * Converts a location into a MapbOX LngLat JSON array. 
+	 * @param loc a GeoLocation
+	 * @return a JSONArray
+	 */
+	public static JSONArray toLL(GeoLocation loc) {
+		JSONArray ja = new JSONArray();
+		ja.put(loc.getLongitude());
+		ja.put(loc.getLatitude());
+		return ja;
 	}
 	
 	/**
