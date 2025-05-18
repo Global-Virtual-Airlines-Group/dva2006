@@ -4,12 +4,12 @@ package org.deltava.beans;
 /**
  * An enumeration to store map types.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 5.0
  */
 
 public enum MapType implements EnumDescription {
-	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static"), NONE("None");
+	GOOGLE("Google Maps"), FALLINGRAIN("Falling Rain"), GOOGLEStatic("Google Static"), MAPBOX("MapBox"), NONE("None");
 
 	private final String _desc;
 	
