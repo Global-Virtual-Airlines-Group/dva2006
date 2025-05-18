@@ -491,7 +491,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				sbPkg = sbpdao.getSimBrief(fr.getID(), ctx.getDB());
 				if (sbPkg != null) {
 					List<NavigationDataBean> mrks = sbPkg.getETOPSAlternates().stream().map(ETOPSHelper::generateAlternateMarker).collect(Collectors.toList());
-					mrks.add(ETOPSHelper.generateMidpointMarker(sbPkg.getETOPSMidpoint(), sbPkg.getETOPSAlternates()));
+					GeoLocation mp = sbPkg.getETOPSMidpoint();
+					if ((mp.getLatitude() != 0) && (mp.getLongitude() != 0))
+						mrks.add(ETOPSHelper.generateMidpointMarker(mp, sbPkg.getETOPSAlternates()));
+					
 					ctx.setAttribute("sbPackage", sbPkg, REQUEST);
 					ctx.setAttribute("sbMarkers", mrks, REQUEST);
 				}
