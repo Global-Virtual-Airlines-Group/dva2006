@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.apache.logging.log4j.*;
-
+import org.deltava.beans.MapType;
 import org.deltava.beans.system.*;
 
 import org.deltava.taglib.ContentHelper;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -144,6 +144,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		mco.put("IMG_PATH", SystemData.get("path.img"));
 		mco.put("API", _majorVersion);
 		mco.put("async", Boolean.valueOf(_cb != null));
+		mco.put("type", "google");
 		mco.putOpt("cycle", _cycle);
 		mco.putOpt("minor", _minorVersion);
 		mco.put("seriesData", Collections.emptyMap());
@@ -156,6 +157,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		// Insert the API version
 		ContentHelper.addContent(pageContext, "JS", jsFileName);
+		pageContext.setAttribute("$mapType", MapType.GOOGLE);
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
