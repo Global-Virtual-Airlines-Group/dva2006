@@ -90,7 +90,7 @@ public class LineTag extends MapEntryTag {
 		JSONObject lo = new JSONObject();
 		lo.put("id", name);
 		lo.put("type", "line");
-		lo.put("source", name + "-src");
+		lo.put("source", _srcJsVarName);
 		JSONObject po = new JSONObject();
 		po.put("line-color", _color);
 		po.put("line-width", _width);
