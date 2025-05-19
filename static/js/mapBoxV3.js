@@ -19,6 +19,7 @@ golgotha.maps.util = golgotha.maps.util || {};
 
 // Convert LatLng to LngLat (GoogleMaps -> MapBox)
 golgotha.maps.toLL = function(ll) { return [ll.lng,ll.lat]; };
+golgotha.maps.util.isShape = function(o) { return (o) && golgotha.util.isFunction(o.getLayer); };
 
 // Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
@@ -91,6 +92,8 @@ golgotha.maps.Map = function(_div, opts) { const m = new mapboxgl.Map(opts); gol
 mapboxgl.Map.prototype.clearOverlays = function() {
 	for (var mrk = golgotha.maps.displayedMarkers.pop(); (mrk != null); mrk = golgotha.maps.displayedMarkers.pop())
 		mrk.remove();
+	for (var mrk = golgotha.maps.displayedLayers.pop(); (mrk != null); mrk = golgotha.maps.displayedLayers.pop())
+		this.removeLayer(mrk.name);
 
 	return true;
 };
@@ -107,21 +110,22 @@ mapboxgl.Map.prototype.removeMarkers = function(mrks) {
 	mrks = (mrks instanceof Array) ? mrks : [mrks];
 	for (var x = 0; x < mrks.length; x++) {
 		const mrk = mrks[x];
-		mrk.setMap(null);
+		if (mrk.setMap)
+			mrk.setMap(null);
+		else if (golgotha.maps.util.isShape(mrk))
+			this.removeLayer(mrk.name);
 	}
 	
 	return true;
 };
 
-mapboxgl.Map.prototype.addLine = function(l, data) {
-	if (golgotha.util.isFunction(l.getLayer) && golgotha.util.isFunction(l.getSource)) {
-		data = l.getSource();
-		l = l.getLayer();
-	}
+mapboxgl.Map.prototype.addLine = function(layer, data) {
+	if (golgotha.maps.util.isShape(layer))
+		layer = layer.getLayer();
 
-	this.addSource(l.id + '-src', data);
-	this.addLayer(l);
-	golgotha.maps.displayedLayers[l.id] = true;	
+	if (data) layer.source = data;
+	this.addLayer(layer);
+	golgotha.maps.displayedLayers[layer.id] = true;
 	return true;
 };
 
@@ -132,8 +136,10 @@ mapboxgl.Map.prototype.toggle = function(mrks, show) {
 		const m = mrks[x];
 		if (m.setMap)
 			mrks[x].setMap(show ? this : null);
-		else if (m instanceof golgotha.maps.Line)
-			this.setLayoutProperty(m.name, 'visibility', show ? 'visible' : 'none', {validate:false});
+		else if (golgotha.maps.util.isShape(m))
+			map.setLayoutProperty(m.name, 'visibility', show ? 'visible' : 'none', {validate:false});
+		else if (m.hasOwnProperty('id'))
+			map.setLayoutProperty(m.id, 'visibility', show ? 'visible' : 'none', {validate:false});
 	}
 	
 	return true;
@@ -167,13 +173,12 @@ golgotha.maps.Marker = function(opts) {
 	}
 
 	const mrk = new mapboxgl.Marker(mrkOpts);
-	mrk.setMap = golgotha.maps.setMap;
+	mrk.setMap = golgotha.maps.setMap; mrk.getElement().marker = mrk;
 	mrk.setLngLat(opts.pt);
 	if (opts.info) {
 		const p = new mapboxgl.Popup({closeOnClick:true,focusAfterOpen:false,maxWidth:'300px'});
 		p.setHTML(opts.info);
 		mrk.setPopup(p);
-		mrk.on('click', function(m) { m.togglePopup(); });
 	}
 
 	if (opts.map != null) mrk.setMap(opts.map);
@@ -191,13 +196,12 @@ golgotha.maps.IconMarker = function(opts) {
 	dv.style.backgroundSize = '100%';
 
 	const mrk = new mapboxgl.Marker(dv);
-	mrk.setMap = golgotha.maps.setMap;
+	mrk.setMap = golgotha.maps.setMap; dv.marker = mrk;
 	mrk.setLngLat(opts.pt);
 	if (opts.info != null) {
 		const p = new mapboxgl.Popup({closeOnClick:true,focusAfterOpen:false,maxWidth:'300px'});
 		p.setHTML(opts.info);
 		mrk.setPopup(p);
-		mrk.on('click', function(m) { m.togglePopup(); });
 	}
 
 	if (opts.map != null) mrk.setMap(opts.map);
@@ -207,18 +211,33 @@ golgotha.maps.IconMarker = function(opts) {
 golgotha.maps.Line = function(name, opts, pts) {
 	this.name = name;
 	this._opts = opts;
-	this._pts = pts;
+	this._pts = pts.map(golgotha.maps.toLL);
 };
 
-golgotha.maps.Line.prototype.getSource = function () {
-	const o = {type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:this._pts}}};
-	return o;
-};
-
+golgotha.maps.Line.prototype.getType = function() { return 'Line'; };
 golgotha.maps.Line.prototype.getLayer = function () {
+	const src = {type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:this._pts}}};
 	const v = (this._opts.visible != null) ? this._opts.visible : true;
 	const po = {'line-color':this._opts.color,'line-opacity':this._opts.opacity,'line-width':this._opts.width};
 	const lo = {'line-join':'round','line-cap':'round',visibility:(v ? 'visible' : 'none')};
-	const o = {id:this.name,type:'line',source:(this.name + '-src'),paint:po,layout:lo};
+	const o = {id:this.name,type:'line',source:src,paint:po,layout:lo};
+	return o;
+};
+
+golgotha.maps.Polygon = function(name, opts, pts) {
+	this.name = name;
+	this._opts = opts;
+	this._pts = pts.map(golgotha.maps.toLL);
+};
+
+golgotha.maps.Polygon.prototype.getType = function() { return 'Polygon'; };
+golgotha.maps.Polygon.prototype.getLayer = function () {
+	const src = {type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[this._pts]}}};
+	if (this._opts.hasOwnProperty('info'))
+		src.data.properties.info = this._opts.info;
+	
+	const v = (this._opts.visible != null) ? this._opts.visible : true;
+	const po = {'fill-color':this._opts.fillColor,'fill-opacity':this._opts.fillOpacity,'fill-outline-color':this._opts.color};
+	const o = {id:this.name,type:'fill',source:src,paint:po,layout:{visibility:(v ? 'visible' : 'none')}};
 	return o;
 };
