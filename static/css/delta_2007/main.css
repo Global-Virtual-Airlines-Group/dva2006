@@ -459,6 +459,15 @@ div.mapMarkerLabel {
 	filter: alpha(opacity=70);
 }
 
+div.mapBoxBaseControl {
+	padding: 2px;
+}
+
+div.mapBoxLayerSelect {
+	float: left;
+	margin: 3px;
+}
+
 .bld, ul.submenu a.bld {
 	font-weight: bold;
 }
