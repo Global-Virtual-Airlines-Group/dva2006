@@ -9,6 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.json.JSONObject;
 
 import org.deltava.beans.MapType;
+import org.deltava.beans.system.VersionInfo;
 import org.deltava.taglib.ContentHelper;
 
 import org.deltava.util.StringUtils;
@@ -76,13 +77,15 @@ public class InsertAPITag extends TagSupport {
 			out.print(mco.toString());
 			out.println(";</script>");
 			
-			// Load the Mapbox CSS
+			// Load the Mapbox CSS and JS
 			out.println("<link href=\"https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css\" rel=\"stylesheet\">");
-			
-			// Load the Mapbox API and util JS
 			out.println("<script src=\"https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js\"></script>");
+			
+			// Load the Mapbox library 
 			out.print("<script src=\"/");
 			out.print(SystemData.get("path.js"));
+			out.print("/v");
+			out.print(VersionInfo.getFullBuild());
 			out.print('/');
 			out.print(jsFileName);
 			out.println(".js\"></script>");
