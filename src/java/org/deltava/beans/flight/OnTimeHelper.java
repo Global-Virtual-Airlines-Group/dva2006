@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 8.4
  */
 
@@ -159,7 +159,7 @@ public class OnTimeHelper {
 	private boolean matchDeparture(ScheduleEntry se, ZonedDateTime actualDeparture) {
 		int earlyLimit = (int)(_depToleranceMinutes * -0.6); int lateLimit = _depToleranceMinutes;
 		long dMin = Duration.between(se.getTimeD(), actualDeparture).toMinutes();
-		log.info("{} {} delta = {}, ({} .. {})", se.getFlightCode(), se.getTimeD(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit));
+		log.info("{} {} [{}] delta = {}, ({} .. {})", se.getFlightCode(), se.getTimeD(), se.getSource(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit));
 		return (dMin > earlyLimit) && (dMin < lateLimit);
 	}
 }
