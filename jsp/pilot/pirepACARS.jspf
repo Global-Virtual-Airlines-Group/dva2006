@@ -158,7 +158,7 @@
  <td class="label">Landing Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)<c:if test="${googleMap}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a></c:if>
-<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.localLandingTime}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
+<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}">&nbsp;<span class="ita">Simulator: <fmt:date t="HH:mm" date="${pirep.localLandingTime}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
 </tr>
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayA}" scope="page" />
@@ -225,9 +225,8 @@
 <tr class="acarsData">
  <td class="label">Arrival Information</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
-<fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel
-<c:if test="${acLoaded && (pirep.gateFuel < acInfo.baseFuel)}">&nbsp;<span class="error bld caps">LOW FUEL</span></c:if>
-<c:if test="${googleMap && (!empty gate)}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom <span class="nophone">to Gate</span></a></c:if></td>
+<fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel<c:if test="${acLoaded && (pirep.gateFuel < acInfo.baseFuel)}">&nbsp;<span class="error bld caps">LOW FUEL</span></c:if>
+<c:if test="${googleMap && (!empty gate)}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && !pirep.deboardTime.isZero()}">
