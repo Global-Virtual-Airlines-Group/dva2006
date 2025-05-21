@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Online User Map</title>
@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
@@ -32,7 +32,7 @@
  <td style="width:15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" height="540" /></td>
+ <td colspan="2"><map:div ID="mapBox" height="540" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -41,17 +41,17 @@
 </content:region>
 </content:page>
 <script async>
-golgotha.local.mapInit = function() {
-	const mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
-	map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', map.closeWindow);
+<map:token />
+const mapOpts = {container:'mapBox', zoom:5, maxZoom:12, projection:'globe', center:[-93.25,38.88], style:'mapbox://styles/mapbox/outdoors-v12'};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'bottom-left');
+map.on('style.load', golgotha.maps.updateMapText);
 
-	// Center the map and add positions
-	<map:markers var="golgotha.local.positions" items="${pilots}" />
-	map.addMarkers(golgotha.local.positions);
-};
+// Center the map and add positions
+<map:markers var="golgotha.local.positions" items="${pilots}" />
+map.addMarkers(golgotha.local.positions);
 </script>
 </body>
 </html>
