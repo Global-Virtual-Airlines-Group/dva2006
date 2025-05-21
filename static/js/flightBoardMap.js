@@ -24,21 +24,34 @@ xmlreq.onreadystatechange = function() {
 	// Display pilots
 	golgotha.flightBoard.pilots.length = 0;
 	js.pilots.forEach(function(wp) {
-		const mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map}, wp.ll);
+		const mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map, pt:[wp.ll.lng, wp.ll.lat]});
 		mrk.networkID = wp.id; mrk.callsign = wp.callsign;
-		google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showRoute(this.networkID); });
+		mrk.getElement().addEventListener('click', function(e) {
+			const mrk = e.currentTarget.marker;
+			golgotha.flightBoard.infoClose(); 
+			golgotha.flightBoard.showRoute(mrk.networkID); 
+		});
+		
 		golgotha.flightBoard.pilots[mrk.callsign] = mrk;
 	});
 
 	// Display controllers
 	js.atc.forEach(function(cp) {
-		const mrk = new golgotha.maps.Marker({color:cp.color, info:cp.info, map:map}, cp.ll);
+		const mrk = new golgotha.maps.Marker({color:cp.color, info:cp.info, map:map, pt:[cp.ll.lng, cp.ll.lat]});
 		mrk.networkID = cp.id; mrk.callsign = cp.callsign;
-		if ((cp.type == 'CTR') || (cp.type == 'FSS'))
-			google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showFIR(this.callsign); });
-		else if (cp.type == 'APP') {
+		if ((cp.type == 'CTR') || (cp.type == 'FSS')) {
+			mrk.getElement().addEventListener('click', function(e) {
+				const mrk = e.currentTarget.marker; 
+				golgotha.flightBoard.infoClose(); 
+				golgotha.flightBoard.showFIR(mrk.callsign); 
+			});
+		} else if (cp.type == 'APP') {
 			mrk.range = cp.range;
-			google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showAPP(this); });
+			mrk.getElement().addEventListener('click', function(e) {
+				const mrk = e.currentTarget.marker;
+				golgotha.flightBoard.infoClose(); 
+				golgotha.flightBoard.showAPP(mrk);
+			});
 		}
 
 		golgotha.flightBoard.atc[mrk.callsign] = mrk;
@@ -64,43 +77,39 @@ return true;
 
 golgotha.flightBoard.formatDate = function(dt) {
 	let fdt = golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ';
-	if (dt.getHours() < 10)
-		fdt += '0';
-
+	if (dt.getHours() < 10) fdt += '0';
 	fdt += dt.getHours();
 	fdt += ':';
-	if (dt.getMinutes() < 10)
-		fdt += '0';
-
+	if (dt.getMinutes() < 10) fdt += '0';
 	fdt += dt.getMinutes();
 	return fdt;
 }
 
-golgotha.flightBoard.infoClose = function()
-{
-if (golgotha.flightBoard.selectedRoute != null) {
-	map.removeMarkers(golgotha.flightBoard.selectedRoute);
-	delete golgotha.flightBoard.selectedRoute;
-}
+golgotha.flightBoard.infoClose = function() {
+	if (golgotha.flightBoard.selectedRoute) {
+		map.removeMarkers(golgotha.flightBoard.selectedRoute);
+		delete golgotha.flightBoard.selectedRoute;
+	}
 
-if (golgotha.flightBoard.selectedTrack != null) {
-	map.removeMarkers(golgotha.flightBoard.selectedTrack);
-	delete golgotha.flightBoard.selectedTrack;
-}
+	if (golgotha.flightBoard.selectedTrack) {
+		map.removeMarkers(golgotha.flightBoard.selectedTrack);
+		delete golgotha.flightBoard.selectedTrack;
+	}
 
-if (golgotha.flightBoard.waypoints != null) {
-	map.removeMarkers(golgotha.flightBoard.waypoints);
-	delete golgotha.flightBoard.waypoints;
-}
+	if (golgotha.flightBoard.waypoints) {
+		map.removeMarkers(golgotha.flightBoard.waypoints);
+		delete golgotha.flightBoard.waypoints;
+	}
 
-return true;
+	return true;
 };
 
 golgotha.flightBoard.zoomTo = function(combo) {
 	const opt = combo.options[combo.selectedIndex];
-	if ((!opt) || (opt.mrk == null)) return false;	
-	map.panTo(opt.mrk.getPosition());
-	google.maps.event.trigger(opt.mrk, 'click');
+	if ((!opt) || (!opt.mrk)) return false;	
+	map.panTo(opt.mrk.getLngLat());
+	opt.mrk.getElement().dispatchEvent(new Event('click'));
+	opt.mrk.togglePopup();
 	return true;
 };
 
@@ -110,54 +119,54 @@ golgotha.flightBoard.setNetwork = function(combo) {
 };
 
 golgotha.flightBoard.showAPP = function(mrk) {
-	golgotha.flightBoard.selectedRoute = new google.maps.Circle({map:map, center: mrk.getPosition(), radius:mrk.range, strokeColor:'#20c060', strokeWeight:1, strokeOpacity:0.65, fillColor:'#208040', fillOpacity:0.2});
-};
-
-golgotha.flightBoard.showFIR = function(code)
-{
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'fir.ws?id=' + code, true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	golgotha.flightBoard.infoClose();
-	const js = JSON.parse(xmlreq.responseText);
-	golgotha.flightBoard.selectedRoute = [];
-	js.firs.forEach(function(fe) {
-		if (fe.border.length == 0) return false;
-		fe.border.push(fe.border[0]);
-		golgotha.flightBoard.selectedRoute.push(new google.maps.Polygon({map:map, paths:[fe.border], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON}));
-	});
-
-	return true;
+	const c = new golgotha.maps.Circle(mrk.callsign, {color:'#208040', opacity:0.55, width:2, fillOpacity:0.25, fillColor:'#208040', radius:mrk.range}, mrk.getLngLat());
+	map.addLine(c);
+	golgotha.flightBoard.selectedRoute = c;
 };
 
-xmlreq.send(null);
-return true;
-};
-
-golgotha.flightBoard.showRoute = function(pilotID)
-{
-const xreq = new XMLHttpRequest();
-xreq.open('GET', 'si_route.ws?network=' + golgotha.flightBoard.network + '&id=' + pilotID + '&time=' + golgotha.util.getTimestamp(5000), true);
-xreq.onreadystatechange = function() {
-	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
+golgotha.flightBoard.showFIR = function(code) {
 	golgotha.flightBoard.infoClose();
-	const js = JSON.parse(xreq.responseText);
-	if (js.route instanceof Array)
-		golgotha.flightBoard.selectedRoute = new google.maps.Polyline({map:map, path:js.route, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.625, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-	if (js.track instanceof Array)
-		golgotha.flightBoard.selectedTrack = new google.maps.Polyline({map:map, path:js.track, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true, zIndex:(golgotha.maps.z.POLYLINE-1)});
-	if (js.waypoints instanceof Array) {
-		golgotha.flightBoard.waypoints = [];
-		js.waypoints.forEach(function(wp) {
-			const mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info, opacity:0.55}, wp.ll);
-			golgotha.flightBoard.waypoints.push(mrk);
+	const p = fetch('fir.ws?id=' + code, {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (rsp.status != 200) return false;
+		golgotha.flightBoard.infoClose();
+		rsp.json().then(function(js) {
+			golgotha.flightBoard.selectedRoute = [];	
+			js.firs.forEach(function(fe) {
+				if (fe.border.length == 0) return false;
+				fe.border.push(fe.border[0]);
+				const pl = new golgotha.maps.Polygon(fe.id, {color:'#efefff', width:1, opacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25}, fe.border);
+				map.addLine(pl);
+				golgotha.flightBoard.selectedRoute.push(pl);
+			});
 		});
-	}
-	
-	return true;
+	});
 };
 
-xreq.send(null);
-return true;
+golgotha.flightBoard.showRoute = function(pilotID) {
+	const p = fetch('si_route.ws?network=' + golgotha.flightBoard.network + '&id=' + pilotID + '&time=' + golgotha.util.getTimestamp(5000), {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (rsp.status != 200) return false;
+		golgotha.flightBoard.infoClose();	
+		rsp.json().then(function(js) {
+			if (js.route instanceof Array) {
+				golgotha.flightBoard.selectedRoute = new golgotha.maps.Line('rt-' + pilotID, {color:'#af8040', width:2, opacity:0.625}, js.route);
+				map.addLine(golgotha.flightBoard.selectedRoute);
+			}
+				
+			if (js.track instanceof Array) {
+				golgotha.flightBoard.selectedTrack = new golgotha.maps.Line('trk-' + pilotID, {color:'#4080af', width:2, opacity:0.75}, js.track);
+				map.addLine(golgotha.flightBoard.selectedTrack);
+			}
+				
+			if (js.waypoints instanceof Array) {
+				golgotha.flightBoard.waypoints = [];
+				js.waypoints.forEach(function(wp) {
+					const mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info, opacity:0.55, pt:wp.ll});
+					golgotha.flightBoard.waypoints.push(mrk);
+				});
+			}		
+		});
+	});
 };
