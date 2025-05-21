@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Flight Tour - ${tour.name}</title>
@@ -16,9 +16,9 @@
 <content:js name="progress" />
 <content:captcha action="tour" />
 <content:attr attr="tourAccess" value="true" roles="Pilot" />
-<c:if test="${(tour.flights.size() > 0) && tourAccess}">
+<c:if test="${tour.flights.size() > 0}">
 <c:set var="hasMap" value="true" scope="page" />
-<map:api version="3" callback="golgotha.local.mapInit" /></c:if>
+<map:api version="3" /></c:if>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -151,32 +151,32 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td colspan="6">FLIGHT LEG MAP<span id="historyToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'tourMap')">COLLAPSE</span></td>
 </tr>
 <tr class="tourMap">
- <td colspan="6"><map:div ID="googleMap" height="515" /></td>
+ <td colspan="6"><map:div ID="mapBox" height="550" /></td>
 </tr>
 <script async>
-golgotha.local.mapInit = function() {
-	const lines = [];
-	<map:point var="golgotha.local.mapC" point="${ctr}" />
-	<map:markers var="golgotha.local.airports" items="${tourAirports}" />
-	<map:points var="golgotha.local.todo" items="${tourRemaining}" />
-	<map:line var="golgotha.local.todoLine" width="1" color="#a000a1" geodesic="true" src="golgotha.local.todo" transparency="0.35" />
-	lines.push(golgotha.local.todoLine);
-	<c:if test="${!empty myTourRoute}">
-	<map:points var="golgotha.local.progress" items="${myTourRoute}" />
-	<map:line var="golgotha.local.progressLine" width="2" color="#0000a1" geodesic="true" src="golgotha.local.progress" transparency="0.5" />
-	lines.push(golgotha.local.progressLine);</c:if>
+<map:token />
+const lines = [];
+<map:point var="golgotha.local.mapC" point="${ctr}" />
+<map:markers var="golgotha.local.airports" items="${tourAirports}" />
+<map:points var="golgotha.local.todo" items="${tourRemaining}" />
+<map:line var="golgotha.local.todoLine" width="2" color="#a000a1" src="golgotha.local.todo" transparency="0.45" />
+lines.push(golgotha.local.todoLine);
+<c:if test="${!empty myTourRoute}">
+<map:points var="golgotha.local.progress" items="${myTourRoute}" />
+<map:line var="golgotha.local.progressLine" width="4" color="#0000a1" src="golgotha.local.progress" transparency="0.65" />
+lines.push(golgotha.local.progressLine);</c:if>
 
-	// Build the map
-	const mapOpts = {center:golgotha.local.mapC,minZoom:2,maxZoom:18,zoom:6,scrollwheel:false,clickableIcons:false,streetViewControl:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(golgotha.maps.info.type);
-	map.infoWindow = new google.maps.InfoWindow({content:'',zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() { google.maps.event.trigger(map, 'maptypeid_changed'); });
+// Build the map
+const mapOpts = {container:'mapBox', zoom:2, maxZoom:17, projection:'globe', center:golgotha.local.mapC, style:'mapbox://styles/mapbox/outdoors-v12'};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'bottom-left');
+map.on('style.load', golgotha.maps.updateMapText);
+map.once('load', function() {
 	map.addMarkers(golgotha.local.airports);
-	map.addMarkers(lines);
-};
+	lines.forEach(function(l) { map.addLine(l); });
+});
 </script>
 </c:if>
 </c:when>
