@@ -143,9 +143,13 @@ mapboxgl.Map.prototype.removeMarkers = function(mrks) {
 };
 
 mapboxgl.Map.prototype.addLine = function(l, data) {
-	if (data) l.source = data;
 	if (!l.name) l.name = l.id;
 	if (!l.visible == null) l.visible = true;
+	if (data)
+		l.source = data;
+	else if ((typeof l.source == 'string') && (this.getSource(l.source) == null))
+		l.source = eval(l.source);
+
 	this.addLayer(golgotha.maps.util.isShape(l) ? l.getLayer() : l);
 	golgotha.maps.displayedLayers.push(l);
 	console.log('Added layer ' + l.name);
