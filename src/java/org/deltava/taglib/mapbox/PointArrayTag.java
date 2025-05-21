@@ -10,7 +10,7 @@ import org.json.*;
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.ContentHelper;
-import org.deltava.util.JSONUtils;
+import org.deltava.util.*;
 
 /**
  * A JSP Tag to generate a GeoJSON LineString object.
@@ -21,7 +21,8 @@ import org.deltava.util.JSONUtils;
 
 public class PointArrayTag extends MapEntryTag {
 
-	private final Collection<GeoLocation> _entries = new ArrayList<GeoLocation>();
+	private static final int GC_SEGMENT_SIZE = 30;
+	private final List<GeoLocation> _entries = new ArrayList<GeoLocation>();
 
 	/**
 	 * Sets the points used to generate the array.
@@ -33,8 +34,32 @@ public class PointArrayTag extends MapEntryTag {
 	
 	@Override
 	public void release() {
-		super.release();
 		_entries.clear();
+		super.release();
+	}
+	
+	@Override
+	public int doStartTag() {
+		
+		// Convert to Great Circle route
+		if (_entries.size() > 1) {
+			GeoLocation lastLoc = _entries.getFirst();
+			Collection<GeoLocation> gcPts = new ArrayList<GeoLocation>();
+			for (int x = 1; x < _entries.size(); x++) {
+				GeoLocation loc = _entries.get(x);
+				if (lastLoc.distanceTo(loc) > GC_SEGMENT_SIZE)
+					gcPts.addAll(GeoUtils.greatCircle(lastLoc, loc, GC_SEGMENT_SIZE));
+				else
+					gcPts.add(loc);
+				
+				lastLoc = loc;
+			}
+			
+			_entries.clear();
+			_entries.addAll(gcPts);
+		}
+		
+		return EVAL_BODY_INCLUDE;
 	}
 
 	@Override
