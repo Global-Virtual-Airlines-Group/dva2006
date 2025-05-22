@@ -1,8 +1,6 @@
 // Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import java.security.Principal;
-
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -10,13 +8,14 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.deltava.beans.system.CAPTCHAResult;
 import org.deltava.commands.HTTPContext;
 import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to insert Google RECAPTCHA libraries. 
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 9.0
  */
 
@@ -25,7 +24,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 	private static final String JS_URL = "https://www.google.com/recaptcha/api.js?render=";
 	
 	private String _action;
-	private boolean _authOnly;
+	private boolean _anonOnly;
 	private boolean _force;
 	
 	/**
@@ -37,11 +36,11 @@ public class GoogleCAPTCHATag extends TagSupport {
 	}
 	
 	/**
-	 * Sets whether to display for authenticated users only.
-	 * @param isAuthOnly TRUE for authenticated users only, otherwise FALSE
+	 * Sets whether to display for anonymous users only.
+	 * @param isAuthOnly TRUE for unauthenticated users only, otherwise FALSE
 	 */
-	public void setAuthOnly(boolean isAuthOnly) {
-		_authOnly = isAuthOnly;
+	public void setAnonOnly(boolean isAuthOnly) {
+		_anonOnly = isAuthOnly;
 	}
 	
 	/**
@@ -65,9 +64,8 @@ public class GoogleCAPTCHATag extends TagSupport {
 		
 		// Check if authenticated
 		HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
-		if (_authOnly) {
-			Principal usr = req.getUserPrincipal();
-			if (usr == null)
+		if (_anonOnly) {
+			if (req.getUserPrincipal() != null)
 				return EVAL_BODY_INCLUDE;
 		}
 		
@@ -113,7 +111,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 	
 	@Override
 	public void release() {
-		_authOnly = false;
+		_anonOnly = false;
 		_force = false;
 		super.release();
 	}
