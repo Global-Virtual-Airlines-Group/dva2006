@@ -63,6 +63,8 @@ public class InsertAPITag extends TagSupport {
 		mco.put("API", _majorVersion);
 		mco.put("async", false);
 		mco.put("type", "mapbox");
+		mco.put("util", new JSONObject());
+		mco.put("wx", new JSONObject());
 		mco.put("seriesData", Collections.emptyMap());
 		
 		// Insert the API version
