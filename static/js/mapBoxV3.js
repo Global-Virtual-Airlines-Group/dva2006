@@ -15,7 +15,6 @@ golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
 golgotha.maps.setOpacity = function(e, tx) { e.style.opacity = tx; };
 golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
-golgotha.maps.util = golgotha.maps.util || {};
 
 // Convert LatLng to LngLat (GoogleMaps -> MapBox)
 golgotha.maps.toLL = function(ll) { return (ll instanceof Array) ? ll : [ll.lng,ll.lat]; };
