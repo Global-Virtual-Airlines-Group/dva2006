@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -130,10 +130,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
-			p.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
-			p.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
-			p.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
-			p.setMapType(MapType.valueOf(ctx.getParameter("mapType")));
+			p.setDistanceType(EnumUtils.parse(DistanceUnit.class, ctx.getParameter("distanceUnits"), p.getDistanceType()));
+			p.setWeightType(EnumUtils.parse(WeightUnit.class, ctx.getParameter("weightUnits"), p.getWeightType()));
+			p.setAirportCodeType(EnumUtils.parse(Airport.Code.class, ctx.getParameter("airportCodeType"), p.getAirportCodeType()));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
 			p.setViewCount(StringUtils.parse(ctx.getParameter("viewCount"), SystemData.getInt("html.table.viewSize")));
 			p.setDateFormat(ctx.getParameter("df"));
