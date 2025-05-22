@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:js name="fileSaver" />
+<content:captcha action="logbook" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -115,7 +116,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${fn:isDispatch(pirep)}"><el:img src="dispatch.png" caption="ACARS Dispatch Services" /></c:if>
 <c:if test="${fn:isSimBrief(pirep)}"><el:img src="icon_simbrief.png" caption="SimBrief Dispatch Services" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
- <td><el:cmd className="pri bld" url="pirep" link="${pirep}" authOnly="true">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="pri bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - 
  ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</td>
  <td class="sec">${pirep.equipmentType}</td>
