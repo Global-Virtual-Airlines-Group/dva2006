@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 10.3
+ * @version 12.0
  * @since 1.0
  */
 
@@ -38,9 +38,8 @@ public class SetPilot extends PilotWriteDAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, POSCON_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
-			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, RANKING=?, "
-			+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, ACARS_UPDCH=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, "
-			+ "PROF_CR=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, RANKING=?, EQTYPE=?, STATUS=?, "
+			+ "NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, ACARS_UPDCH=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, PROF_CR=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			startTransaction();
@@ -69,25 +68,24 @@ public class SetPilot extends PilotWriteDAO {
 				ps.setInt(22, p.getAirportCodeType().ordinal());
 				ps.setInt(23, p.getDistanceType().ordinal());
 				ps.setInt(24, p.getWeightType().ordinal());
-				ps.setInt(25, p.getMapType().ordinal());
-				ps.setInt(26, p.getRank().ordinal());
-				ps.setString(27, p.getEquipmentType());
-				ps.setInt(28, p.getStatus().ordinal());
-				ps.setBoolean(29, p.getNoExams());
-				ps.setBoolean(30, p.getNoVoice());
-				ps.setBoolean(31, p.getNoCooler());
-				ps.setBoolean(32, p.getNoTimeCompression());
-				ps.setInt(33, p.getACARSRestriction().ordinal());
-				ps.setInt(34, p.getACARSUpdateChannel().ordinal());
-				ps.setBoolean(35, p.isInvalid());
-				ps.setString(36, p.getLDAPName());
-				ps.setString(37, p.getMotto());
-				ps.setBoolean(38, p.getIsPermanent());
-				ps.setBoolean(39, p.getIsForgotten());
-				ps.setBoolean(40, p.getProficiencyCheckRides());
-				ps.setString(41, p.getFirstName());
-				ps.setString(42, p.getLastName());
-				ps.setInt(43, p.getID());
+				ps.setInt(25, p.getRank().ordinal());
+				ps.setString(26, p.getEquipmentType());
+				ps.setInt(27, p.getStatus().ordinal());
+				ps.setBoolean(28, p.getNoExams());
+				ps.setBoolean(29, p.getNoVoice());
+				ps.setBoolean(30, p.getNoCooler());
+				ps.setBoolean(31, p.getNoTimeCompression());
+				ps.setInt(32, p.getACARSRestriction().ordinal());
+				ps.setInt(33, p.getACARSUpdateChannel().ordinal());
+				ps.setBoolean(34, p.isInvalid());
+				ps.setString(35, p.getLDAPName());
+				ps.setString(36, p.getMotto());
+				ps.setBoolean(37, p.getIsPermanent());
+				ps.setBoolean(38, p.getIsForgotten());
+				ps.setBoolean(39, p.getProficiencyCheckRides());
+				ps.setString(40, p.getFirstName());
+				ps.setString(41, p.getLastName());
+				ps.setInt(42, p.getID());
 				executeUpdate(ps, 1);
 			}
 			
