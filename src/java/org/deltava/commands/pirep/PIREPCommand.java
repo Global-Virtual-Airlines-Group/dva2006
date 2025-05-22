@@ -40,7 +40,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -406,7 +406,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Calculate what map type to use
-		MapType mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : MapType.GOOGLEStatic;
+		MapType mapType = ctx.isAuthenticated() ? MapType.MAPBOX : MapType.GOOGLEStatic;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -604,7 +604,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			if (isACARS && (fr instanceof FDRFlightReport afr)) {
-				mapType = MapType.GOOGLE;
+				mapType = MapType.MAPBOX;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("isSimFDR", Boolean.valueOf(afr.getFDR() == Recorder.SIMFDR), REQUEST);
 				ctx.setAttribute("isXACARS", Boolean.valueOf(afr.getFDR() == Recorder.XACARS), REQUEST);
@@ -848,7 +848,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("onlineTrackTime", Duration.ofSeconds(onlineTrackTime), REQUEST);
 				
 				// Write the positions
-				if (mapType == MapType.GOOGLE)
+				if (mapType == MapType.MAPBOX)
 					ctx.setAttribute("onlineTrack", pd, REQUEST);
 			}
 			
@@ -892,59 +892,21 @@ public class PIREPCommand extends AbstractFormCommand {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);
 				ctx.setAttribute("filedRoute", rt, REQUEST);
-				if (!hasTrack && (mapType == MapType.GOOGLE) && (sbPkg == null))
+				if (!hasTrack && (mapType == MapType.MAPBOX) && (sbPkg == null))
 					mapType = MapType.GOOGLEStatic;
 			}
 			
 			// Check for Spiders
 			HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
 			boolean captchaOK = ctx.passedCAPTCHA(); boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
-			if (isSpider || ((mapType == MapType.GOOGLE) && !captchaOK && !ctx.isAuthenticated()))
+			if (isSpider || ((mapType == MapType.MAPBOX) && !captchaOK && !ctx.isAuthenticated()))
 				mapType = MapType.NONE;
-
-			// If we're set to use Google Maps, check API usage
-			if (mapType == MapType.GOOGLE) {
-				int max = SystemData.getInt("api.max.googleMaps", -1);
-				int dailyMax = max / 30;
-				if (isSpider || !ctx.isAuthenticated())
-					dailyMax *= 0.01;
-
-				// Get today's predicted use
-				GetSystemLog sldao = new GetSystemLog(con);
-				APIUsage todayUse = sldao.getCurrentAPIUsage(API.GoogleMaps, "DYNAMIC");
-				APIUsage predictedUse = APIUsageHelper.predictToday(todayUse);
-				if (ctx.isUserInRole("Developer"))
-					fr.addStatusUpdate(0, HistoryType.SYSTEM, "Max " + dailyMax + " / a=" + todayUse.getTotal() + ",p=" + predictedUse.getTotal());
-				
-				// Override usage
-				boolean isOurs = ctx.isAuthenticated() && (fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID());
-				boolean forceMap = isOurs || ctx.isUserInRole("Developer") || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("Operations");
-				boolean isDraft = (fr.getStatus() == FlightStatus.DRAFT);
-				
-				// If we're below the daily max, all good
-				if ((predictedUse.getTotal() > dailyMax) && !isSpider && !isDraft) {
-					String method = API.GoogleMaps.createName("DYNAMIC");
-					Collection<APIUsage> usage = sldao.getAPIRequests(API.GoogleMaps, 31);
-					predictedUse = APIUsageHelper.predictUsage(usage, method);
-					
-					// Calculate actual usage
-					APIUsage totalUse = new APIUsage(Instant.now(), method);
-					usage.stream().forEach(u -> { totalUse.setTotal(totalUse.getTotal() + u.getTotal()); totalUse.setAnonymous(totalUse.getAnonymous() + u.getAnonymous()); });
-
-					// If predicted usage is less than 90% of max or less than 110% of max and we're auth, OK
-					if (!forceMap && ((predictedUse.getTotal() > (max * 1.10)) || (!ctx.isAuthenticated() && (predictedUse.getTotal() > (max *0.9))))) {
-						log.warn("GoogleMap disabled - usage [max={}, predicted={}, actual={}] : {} spider={}, captcha={}", Integer.valueOf(max), Integer.valueOf(predictedUse.getTotal()), Integer.valueOf(totalUse.getTotal()), ctx.getRequest().getRemoteHost(), Boolean.valueOf(isSpider), Boolean.valueOf(captchaOK));
-						mapType = MapType.GOOGLEStatic;
-					}
-				} else if (!isSpider && (isDraft || (predictedUse.getTotal() > dailyMax)) && ((sbPkg == null) || !isOurs))
-					mapType = MapType.GOOGLEStatic;
-			}				
 
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("frMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
-			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.GOOGLE), REQUEST);
+			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.MAPBOX), REQUEST);
 			ctx.setAttribute("googleStaticMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
 			ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 		} catch (DAOException de) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -63,9 +63,8 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	private boolean _noCooler;
 	private boolean _noTimeCompression;
 
-	private Restriction _ACARSRestrict;
+	private Restriction _ACARSRestrict = Restriction.OK;
 	private UpdateChannel _acarsClientUpd = UpdateChannel.RELEASE;
-	private MapType _mapType;
 	
 	private String _sigExt;
 	private Instant _sigModified;
@@ -282,15 +281,6 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	 */
 	public String getMotto() {
 		return _motto;
-	}
-
-	/**
-	 * Returns the Pilot's preferred route map type.
-	 * @return the MapType
-	 * @see Pilot#setMapType(MapType)
-	 */
-	public MapType getMapType() {
-		return _mapType;
 	}
 
 	/**
@@ -715,15 +705,6 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 	public void setMotto(String txt) {
 		_motto = txt;
 	}
-
-	/**
-	 * Sets the Pilot's preferred Map type.
-	 * @param mt the MapType
-	 * @see Pilot#getMapType()
-	 */
-	public void setMapType(MapType mt) {
-		_mapType = mt;
-	}
 	
 	/**
 	 * Sets whether a Navigation Bar or side menu should be rendered. 
@@ -1095,7 +1076,6 @@ public class Pilot extends Person implements PushAddress, ComboAlias, Cloneable 
 		p2._hours = _hours;
 		p2._lastFlight = _lastFlight;
 		p2._legs = _legs;
-		p2._mapType = _mapType;
 		p2._miles = _miles;
 		p2._onlineHours = _onlineHours;
 		p2._onlineLegs = _onlineLegs;

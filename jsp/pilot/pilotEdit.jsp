@@ -334,10 +334,6 @@ golgotha.onDOMReady(function() {
  <td colspan="${cspan}" class="data"><el:check name="weightUnits" type="radio" cols="3" options="${weightUnits}" value="${pilot.weightType}" /></td>
 </tr>
 <tr>
- <td class="label">Route Map Type</td>
- <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapType}" /></td>
-</tr>
-<tr>
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />&nbsp;<span class="small nophone">(Navigation Bar is not displayed at screen widths below 1024 pixels.)</span></td>
