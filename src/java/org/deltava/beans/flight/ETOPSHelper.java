@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2018, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2018, 2019, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 10.3
+ * @version 12.0
  * @since 4.1
  */
 
@@ -207,15 +207,15 @@ public final class ETOPSHelper {
 			while (i.hasNext()) {
 				GeoLocation pos = i.next();
 				int dist = lastPos.distanceTo(pos);
-				if (dist > 30)
-					entries.addAll(GeoUtils.greatCircle(lastPos, pos, 30));
+				if (dist > GeoUtils.GC_SEGMENT_SIZE)
+					entries.addAll(GeoUtils.greatCircle(lastPos, pos, GeoUtils.GC_SEGMENT_SIZE));
 				else
 					entries.add(pos);
 
 				lastPos = pos;
 			}
 		} else if (pr.getAirportA() != null)
-			entries.addAll(GeoUtils.greatCircle(pr.getAirportD(), pr.getAirportA(), 30));
+			entries.addAll(GeoUtils.greatCircle(pr.getAirportD(), pr.getAirportA(), GeoUtils.GC_SEGMENT_SIZE));
 
 		if (pr.getAirportA() != null)
 			entries.add(pr.getAirportA());
