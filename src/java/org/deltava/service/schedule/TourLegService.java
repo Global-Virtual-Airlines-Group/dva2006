@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to calculate flight times for custom Flight Tour legs.
  * @author Luke
- * @version 10.0
+ * @version 12.0
  * @since 10.0
  */
 
@@ -68,7 +68,7 @@ public class TourLegService extends WebService {
 			jo.put("lRunwayWarn", (opts.getLandingRunwayLength() > se.getAirportA().getMaximumRunwayLength()));
 
 			// Check ETOPS
-			ETOPSResult er = ETOPSHelper.classify(GeoUtils.greatCircle(se.getAirportD(), se.getAirportA(), 30));
+			ETOPSResult er = ETOPSHelper.classify(GeoUtils.greatCircle(se.getAirportD(), se.getAirportA(), GeoUtils.GC_SEGMENT_SIZE));
 			jo.put("etopsWarn", ETOPSHelper.isWarn(opts.getETOPS(), er.getResult()));
 			
 			// Save ETOPS data
