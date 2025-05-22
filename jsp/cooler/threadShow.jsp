@@ -25,7 +25,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:captcha action="threadCreate" authOnly="true" />
+<content:captcha action="threadCreate" />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
