@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -13,14 +13,13 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to perform Restricted Airspace validation.
  * @author Luke
- * @version 10.3
+ * @version 12.0
  * @since 7.3
  */
 
 @Helper(Airspace.class)
 public final class AirspaceHelper {
 	
-	private static final int SEGMENT_SIZE = 75;
 	private static final int CLIMB_RATE = 500;
 
 	// static
@@ -47,8 +46,8 @@ public final class AirspaceHelper {
 		
 		// Break the whole route into segments
 		for (GeoLocation loc : pr.getWaypoints()) {
-			if (loc.distanceTo(lastLoc) > SEGMENT_SIZE)
-				rawGC.addAll(GeoUtils.greatCircle(lastLoc, loc, SEGMENT_SIZE));
+			if (loc.distanceTo(lastLoc) > GeoUtils.GC_SEGMENT_SIZE)
+				rawGC.addAll(GeoUtils.greatCircle(lastLoc, loc, GeoUtils.GC_SEGMENT_SIZE));
 			else
 				rawGC.add(loc);
 		
@@ -64,7 +63,7 @@ public final class AirspaceHelper {
 			
 			if (dist > maxDistance)
 				GeoUtils.greatCircle(lastLoc, loc, maxDistance).stream().map(l -> {
-					if (apDistance < SEGMENT_SIZE) {
+					if (apDistance < GeoUtils.GC_SEGMENT_SIZE) {
 						int posDst = Math.min(l.distanceTo(pr.getAirportD()), l.distanceTo(pr.getAirportA()));
 						int posAlt = Math.max(1000, Math.min(cruiseAlt, posDst * CLIMB_RATE));
 						return new GeoPosition(l.getLatitude(), l.getLongitude(), posAlt);

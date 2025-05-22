@@ -14,11 +14,16 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
 public class GeoUtils {
+	
+	/**
+	 * Maximum direct segment length when converting lines to Great Circle tracks.
+	 */
+	public static final int GC_SEGMENT_SIZE = 30;
 
 	private static final char DEGREE = (char) 176;
 

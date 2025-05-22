@@ -145,6 +145,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		mco.put("API", _majorVersion);
 		mco.put("async", Boolean.valueOf(_cb != null));
 		mco.put("type", "google");
+		mco.put("util", new JSONObject());
 		mco.putOpt("cycle", _cycle);
 		mco.putOpt("minor", _minorVersion);
 		mco.put("seriesData", Collections.emptyMap());

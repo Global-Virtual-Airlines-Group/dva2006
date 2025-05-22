@@ -21,7 +21,6 @@ import org.deltava.util.*;
 
 public class PointArrayTag extends MapEntryTag {
 
-	private static final int GC_SEGMENT_SIZE = 30;
 	private final List<GeoLocation> _entries = new ArrayList<GeoLocation>();
 
 	/**
@@ -47,8 +46,8 @@ public class PointArrayTag extends MapEntryTag {
 			Collection<GeoLocation> gcPts = new ArrayList<GeoLocation>();
 			for (int x = 1; x < _entries.size(); x++) {
 				GeoLocation loc = _entries.get(x);
-				if (lastLoc.distanceTo(loc) > GC_SEGMENT_SIZE)
-					gcPts.addAll(GeoUtils.greatCircle(lastLoc, loc, GC_SEGMENT_SIZE));
+				if (lastLoc.distanceTo(loc) > GeoUtils.GC_SEGMENT_SIZE)
+					gcPts.addAll(GeoUtils.greatCircle(lastLoc, loc, GeoUtils.GC_SEGMENT_SIZE));
 				else
 					gcPts.add(loc);
 				

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Get the submission helper
 			FlightSubmissionHelper fsh = new FlightSubmissionHelper(con, pirep, p);
 			fsh.setAirlineInfo(SystemData.get("airline.code"), ctx.getDB());
-			Collection<GeospaceLocation> rte = GeoUtils.greatCircle(pirep.getAirportD(), pirep.getAirportA(), 20).stream().map(gl -> new GeoPosition(gl)).collect(Collectors.toList());
+			Collection<GeospaceLocation> rte = GeoUtils.greatCircle(pirep.getAirportD(), pirep.getAirportA(), GeoUtils.GC_SEGMENT_SIZE).stream().map(GeoPosition::new).collect(Collectors.toList());
 			fsh.addPositions(rte);
 			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
