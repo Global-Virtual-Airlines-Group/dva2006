@@ -64,19 +64,20 @@ p.then(function(rsp) {
 	golgotha.maps.oceanic.resetTracks();
 	rsp.json().then(function(jsData) {
 		jsData.tracks.forEach(function(t) {
-			const trackPos = [];
 			t.waypoints.forEach(function(wp) {
-				trackPos.push(wp.ll);
-
-				// Create the map marker
-				const mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75}, wp.ll);
-				mrk.title = t.code; mrk.trackPoints = t.track; 
-				google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.oceanic.showTrackInfo(this); });
+				const mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:t.info, label:wp.code, opacity:0.75, pt:wp.ll});
+				mrk.title = t.code; mrk.trackPoints = t.track;
+				mrk.getElement().addEventListener('click', function(e) {
+					const m = e.currentTarget.marker; 
+					golgotha.maps.oceanic.showTrackInfo(m); 
+				});
+ 
 				golgotha.maps.oceanic.points[t.type].push(mrk);
 			});
 
 			// Draw the route
-			const trackLine = new google.maps.Polyline({map:map, path:trackPos, strokeColor:t.color, strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+			const trackLine = new golgotha.maps.Line('NAT-' + t.code, {color:t.color, width:2, opacity:0.7}, t.pts);
+			map.addLine(trackLine);
 			golgotha.maps.oceanic.tracks[t.type].push(trackLine);
 		});
 
