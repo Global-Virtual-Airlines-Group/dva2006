@@ -26,6 +26,20 @@ public class GeoUtils {
 	public static final int GC_SEGMENT_SIZE = 30;
 
 	private static final char DEGREE = (char) 176;
+	
+	private static class RawGeoPosition extends GeoPosition {
+		private double _lng;
+		
+		RawGeoPosition(double lat, double lng, int alt) {
+			super(lat, lng, alt);
+			_lng = lng;
+		}
+
+		@Override
+		public double getLongitude() {
+			return _lng;
+		}
+	}
 
 	// Singleton constructor
 	private GeoUtils() {
@@ -79,7 +93,30 @@ public class GeoUtils {
 			lastLoc = loc;
 		}
 		
+		translate(results);
 		return results;
+	}
+	
+	/**
+	 * Adjusts a collection of coordinates to cross the International Date Line.
+	 * @param pts a List of GeoLocations
+	 */
+	public static void translate(List<GeoLocation> pts) {
+		GeoLocation lastLoc = pts.getFirst();
+		for (int x = 1; x < pts.size(); x++) {
+			GeoLocation loc = pts.get(x);
+			int altitude = (loc instanceof GeospaceLocation gl) ? gl.getAltitude() : 0;
+			double lngDiff = loc.getLongitude() - lastLoc.getLongitude();
+			if (lngDiff >= 180) {
+				loc = new RawGeoPosition(loc.getLatitude(), loc.getLongitude() - 360, altitude);
+				pts.set(x, loc);
+			} else if (lngDiff <= -180) {
+				loc = new RawGeoPosition(loc.getLatitude(), loc.getLongitude() + 360, altitude);
+				pts.set(x, loc);
+			}
+			
+			lastLoc = loc;
+		}
 	}
 
 	/**
