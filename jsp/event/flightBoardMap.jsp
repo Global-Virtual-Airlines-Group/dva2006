@@ -67,7 +67,7 @@ const mapOpts = {container:'mapBox', zoom:4, maxZoom:12, projection:'globe', cen
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'bottom-left');
+map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 map.once('load', function() { golgotha.flightBoard.updateMap(true); });
 map.on('click', golgotha.flightBoard.infoClose);
 map.on('style.load', golgotha.maps.updateMapText);
