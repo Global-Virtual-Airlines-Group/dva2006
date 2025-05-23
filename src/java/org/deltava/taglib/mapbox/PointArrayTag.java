@@ -42,18 +42,7 @@ public class PointArrayTag extends MapEntryTag {
 		
 		// Convert to Great Circle route
 		if (_entries.size() > 1) {
-			GeoLocation lastLoc = _entries.getFirst();
-			Collection<GeoLocation> gcPts = new ArrayList<GeoLocation>();
-			for (int x = 1; x < _entries.size(); x++) {
-				GeoLocation loc = _entries.get(x);
-				if (lastLoc.distanceTo(loc) > GeoUtils.GC_SEGMENT_SIZE)
-					gcPts.addAll(GeoUtils.greatCircle(lastLoc, loc, GeoUtils.GC_SEGMENT_SIZE));
-				else
-					gcPts.add(loc);
-				
-				lastLoc = loc;
-			}
-			
+			Collection<GeoLocation> gcPts = GeoUtils.greatCircle(_entries);
 			_entries.clear();
 			_entries.addAll(gcPts);
 		}
