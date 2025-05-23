@@ -3,12 +3,13 @@ package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.util.*;
 import java.time.Instant;
 import java.io.IOException;
 
 import org.json.*;
 
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.OceanicNOTAM;
 
@@ -19,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -75,16 +76,22 @@ public class OceanicPlotService extends WebService {
 			to.put("type", ow.isFixed() ? "C" : (isEast ? "E" : "W"));
 			to.put("color", ow.isFixed() ? "#2040e0" : (isEast ? "#eeeeee" : "#eeee44"));
 			to.put("track", ow.getRoute());
+			
+			// Plot the waypoints
 			for (NavigationDataBean ndb : ow.getWaypoints()) {
 				JSONObject wo = new JSONObject();
 				wo.put("code", ndb.getCode());
 				wo.put("ll", JSONUtils.format(ndb));
+				wo.put("pal", ndb.getPaletteCode());
+				wo.put("icon", ndb.getIconCode());
 				wo.put("color", ow.isFixed() ? MapEntry.BLUE : (isEast ? MapEntry.WHITE : MapEntry.ORANGE));
 				wo.put("info", ndb.getInfoBox());
 				to.append("waypoints", wo);
 			}
 
-			JSONUtils.ensureArrayPresent(to, "waypoints");
+			List<GeoLocation> gcPts = GeoUtils.greatCircle(ow.getWaypoints());
+			gcPts.forEach(pt -> to.append("pts", JSONUtils.toLL(pt)));
+			JSONUtils.ensureArrayPresent(to, "waypoints", "pts");
 			jo.append("tracks", to);
 		}
 
