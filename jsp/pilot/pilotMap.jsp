@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Pilot Map</title>
@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" libraries="visualization" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
@@ -24,7 +24,7 @@ golgotha.pilotMap.deleteMarker = function(id) {
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.timeout = 7500;
 	xmlreq.open('post', 'pilotmapclear.ws', true);
-	xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
@@ -60,11 +60,7 @@ golgotha.pilotMap.deleteMarker = function(id) {
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading"></span></td>
 </tr>
 <tr>
- <td class="label">Map Type</td>
- <td class="data"><el:check name="mapOpts" type="radio" options="${mapOptions}" value="LOC" onChange="void golgotha.pilotMap.updateMapOptions(this)" /></td>
-</tr>
-<tr>
- <td class="data" colspan="2"><map:div ID="googleMap" height="525" /></td>
+ <td class="data" colspan="2"><map:div ID="mapBox" height="550" /></td>
 </tr>
 <tr class="title caps locFilter">
  <td colspan="2">PILOT LOCATION FILTERING</td>
@@ -93,25 +89,19 @@ golgotha.pilotMap.deleteMarker = function(id) {
 </content:region>
 </content:page>
 <script async>
-golgotha.local.mapInit = function() {
-	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
-	<map:marker var="hq" point="${hq}" />
-	const mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, disableDoubleClickZoom:true, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(golgotha.maps.info.type);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	golgotha.pilotMap.hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
-	golgotha.pilotMap.pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
-	golgotha.pilotMap.pBar.getDiv().style.right = '4px';
-	golgotha.pilotMap.pBar.getDiv().style.top = '30px';
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(golgotha.pilotMap.pBar.getDiv());
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		hq.setMap(map);
-		const xmlreq = golgotha.pilotMap.generateXMLRequest();
-		xmlreq.send(null);	
-	});
-};
+<map:token />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+<map:marker var="hq" point="${hq}" />
+
+const mapOpts = {center:golgotha.local.mapC,zoom:6,minZoom:2,maxZoom:11,projection:'globe',style:'mapbox://styles/mapbox/outdoors-v12'};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	hq.setMap(map);
+	golgotha.pilotMap.load();
+});
 </script>
 </body>
 </html>
