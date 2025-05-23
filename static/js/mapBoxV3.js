@@ -87,16 +87,11 @@ golgotha.maps.feet2Meter = function (ft) { return ft / 3.2808399 };
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {'satellite-v9':'#efefef','outdoors-v12':'#002010','dark-v11':'#efefef'};
 golgotha.maps.updateMapText = function () {
-	const s = this.getStyle(); 
-	const id = s.sprite.substring(s.sprite.lastIndexOf('/') + 1);
+	const id = this.getMapType();
 	const newColor = golgotha.maps.TEXT_COLOR[id];
 	const elements = golgotha.util.getElementsByClass('mapTextLabel');
 	elements.forEach(function(e) { e.style.color = newColor; });
-	golgotha.maps.displayedLayers.forEach(function(l) {
-		console.log('Restoring layer ' + l.name + ', visible=' + l.visible);
-		map.addLayer(golgotha.maps.util.isShape(l) ? l.getLayer() : l);
-	});
-
+	golgotha.maps.displayedLayers.forEach(function(l) { map.addLayer(golgotha.maps.util.isShape(l) ? l.getLayer() : l); });
 	return true;
 };
 
@@ -109,11 +104,18 @@ golgotha.maps.displayedLayers = [];
 
 // Track map and marker instances
 golgotha.maps.Map = function(_div, opts) { const m = new mapboxgl.Map(opts); golgotha.maps.instances.push(m); return m; };
+mapboxgl.Map.prototype.getMapType = function() {
+	const s = this.getStyle().sprite;
+	return s.substring(s.lastIndexOf('/') + 1);
+};
+
 mapboxgl.Map.prototype.clearOverlays = function() {
 	for (var mrk = golgotha.maps.displayedMarkers.pop(); (mrk != null); mrk = golgotha.maps.displayedMarkers.pop())
 		mrk.remove();
-	for (var mrk = golgotha.maps.displayedLayers.pop(); (mrk != null); mrk = golgotha.maps.displayedLayers.pop())
-		this.removeLayer(mrk.name);
+	for (var l = golgotha.maps.displayedLayers.pop(); (l != null); l = golgotha.maps.displayedLayers.pop()) {
+		this.removeLayer(l.name);
+		this.removeSource(l.name);
+	}
 
 	return true;
 };
@@ -151,8 +153,16 @@ mapboxgl.Map.prototype.addLine = function(l, data) {
 
 	this.addLayer(golgotha.maps.util.isShape(l) ? l.getLayer() : l);
 	golgotha.maps.displayedLayers.push(l);
-	console.log('Added layer ' + l.name);
 	return true;
+};
+
+mapboxgl.Map.prototype.removeLine = function(l) {
+	const layer = golgotha.maps.util.isShape(l) ? l.getLayer() : l;
+	this.removeLayer(layer.id);
+	this.removeSource(layer.id);
+	const dl = golgotha.maps.displayedLayers.find(function(ll) { return ll.getLayer().id == layer.id });
+	if (dl)
+		golgotha.maps.displayedLayers.remove(dl);
 };
 
 mapboxgl.Map.prototype.toggle = function(mrks, show) {
@@ -183,6 +193,17 @@ golgotha.maps.setMap = function(map) {
 	return true;
 };
 
+golgotha.maps.createMarkerLabel = function(mrk, txt) {
+	const dv = document.createElement('div');
+	dv.className = 'mapMarkerLabel mapTextLabel';
+	dv.innerHTML = txt;
+	dv.style.position = 'absolute';
+	dv.style.top = '20px';
+	dv.style.left = '-6px'
+	mrk.getElement().appendChild(dv);
+	return true;
+}
+
 golgotha.maps.Marker = function(opts) {
 	if ((opts == null) || (opts.color == 'null')) return pt;
 	const hasLabel = (opts.label != null);
@@ -199,26 +220,15 @@ golgotha.maps.Marker = function(opts) {
 		p.setHTML(opts.info);
 		mrk.setPopup(p);
 	}
-	
-	if (hasLabel) {
-		const dv = document.createElement('div');
-		dv.className = 'mapMarkerLabel';
-		dv.innerHTML = opts.label;
-		
-		const pdv = document.createElement('div');
-		pdv.appendChild(mrk.getElement());
-		pdv.appendChild(dv);
-		mrk = new mapboxgl.Marker(pdv);
-		mrk.setMap = golgotha.maps.setMap; mrk.getElement().marker = mrk;
-		mrk.setLngLat(opts.pt);
-	}
 
+	if (hasLabel) golgotha.maps.createMarkerLabel(mrk, opts.label);
 	if (opts.map != null) mrk.setMap(opts.map);
 	return mrk;
 };
 
 
 golgotha.maps.IconMarker = function(opts) {
+	const hasLabel = (opts.label != null);
 	const imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/kml/pal' + opts.pal + '/icon' + opts.icon;
 	const dv = document.createElement('div');
 	dv.className = 'marker';
@@ -226,7 +236,7 @@ golgotha.maps.IconMarker = function(opts) {
 	dv.style.width = golgotha.maps.S_ICON_SIZE.w + 'px';
 	dv.style.height = golgotha.maps.S_ICON_SIZE.h + 'px';
 	dv.style.backgroundSize = '100%';
-
+	
 	const mrk = new mapboxgl.Marker(dv);
 	mrk.setMap = golgotha.maps.setMap; dv.marker = mrk;
 	mrk.setLngLat(opts.pt);
@@ -236,6 +246,7 @@ golgotha.maps.IconMarker = function(opts) {
 		mrk.setPopup(p);
 	}
 
+	if (hasLabel) golgotha.maps.createMarkerLabel(mrk, opts.label);
 	if (opts.map != null) mrk.setMap(opts.map);
 	return mrk;
 };
@@ -295,16 +306,22 @@ golgotha.maps.Circle.prototype.getLayer = function () {
 golgotha.maps.BaseMapControl = function(labels) { this._labels = labels; };
 golgotha.maps.BaseMapControl.prototype.onAdd = function(map) {
 	this._map = map;
-	const div = document.createElement('div');
+	const cs = map.getMapType();
+	const div = document.createElement('div'); div.id = 'baseCtl';
 	div.className = 'mapBoxBaseControl mapboxgl-ctrl mapboxgl-ctrl-group';
 	for (var x = 0; x < this._labels.length; x++) {
 		const e = this._labels[x];
 		const dv = golgotha.maps.CreateButtonDiv(e.l);
-		dv.className = 'mapBoxLayerSelect layerSelect';	
+		dv.className = 'mapBoxLayerSelect layerSelect baseSelect';	
 		dv.mapStyle = e.style; dv.map = map;
+		if (cs == e.style) golgotha.util.addClass(dv, 'displayed');
 		dv.addEventListener('click', function(e) {
-			const d = e.currentTarget;
-			d.map.setStyle('mapbox://styles/mapbox/' + d.mapStyle);
+			const isSelected = (this.map.getMapType() == this.mapStyle);
+			if (isSelected) return;
+			this.map.setStyle('mapbox://styles/mapbox/' + this.mapStyle);
+			const btns = golgotha.util.getElementsByClass('baseSelect', 'div')
+			btns.forEach(function(b) {golgotha.util.removeClass(b, 'displayed'); });
+			golgotha.util.addClass(this, 'displayed');
 		});
 
 		div.appendChild(dv);
@@ -316,5 +333,9 @@ golgotha.maps.BaseMapControl.prototype.onAdd = function(map) {
 
 golgotha.maps.BaseMapControl.prototype.onRemove = function() {
 	this._container.parentNode.removeChild(this._container);
-	this._map = undefined;	
+	delete this._map;	
 };
+
+golgotha.maps.DIVControl = function(id) { this._div = document.getElementById(id); }
+golgotha.maps.DIVControl.prototype.onAdd = function(map) { this._map = map; return this._div; };
+golgotha.maps.DIVControl.prototype.onRemove = function() { this._div.parentNode.removeChild(this._div); delete this._map; };
