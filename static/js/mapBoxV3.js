@@ -20,6 +20,11 @@ golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
 golgotha.maps.toLL = function(ll) { return (ll instanceof Array) ? ll : [ll.lng,ll.lat]; };
 golgotha.maps.util.isShape = function(o) { return (o) && golgotha.util.isFunction(o.getLayer); };
 
+golgotha.maps.util.unload = function() {
+	if (map) map.remove(); 
+	return true;
+};
+
 // Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
 golgotha.maps.util.Timer.prototype.start = function() {
@@ -103,7 +108,13 @@ golgotha.maps.displayedMarkers = [];
 golgotha.maps.displayedLayers = [];
 
 // Track map and marker instances
-golgotha.maps.Map = function(_div, opts) { const m = new mapboxgl.Map(opts); golgotha.maps.instances.push(m); return m; };
+golgotha.maps.Map = function(div, opts) {
+	opts.container = opts.container|| div; 
+	const m = new mapboxgl.Map(opts); 
+	golgotha.maps.instances.push(m); 
+	return m;
+};
+
 mapboxgl.Map.prototype.getMapType = function() {
 	const s = this.getStyle().sprite;
 	return s.substring(s.lastIndexOf('/') + 1);
