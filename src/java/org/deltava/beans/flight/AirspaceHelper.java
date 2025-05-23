@@ -41,21 +41,10 @@ public final class AirspaceHelper {
 		final int cruiseAlt = Math.min(35000, (pr.getDistance() / 2) * CLIMB_RATE);
 		
 		// Turn into great circle route and approximte climb / descent at 500 ft/mile
-		List<GeoLocation> rawGC = new ArrayList<GeoLocation>();
-		GeoLocation lastLoc = pr.getAirportD();
-		
-		// Break the whole route into segments
-		for (GeoLocation loc : pr.getWaypoints()) {
-			if (loc.distanceTo(lastLoc) > GeoUtils.GC_SEGMENT_SIZE)
-				rawGC.addAll(GeoUtils.greatCircle(lastLoc, loc, GeoUtils.GC_SEGMENT_SIZE));
-			else
-				rawGC.add(loc);
-		
-			lastLoc = loc;
-		}
+		List<GeoLocation> rawGC = GeoUtils.greatCircle(pr.getWaypoints());
 			
 		// Now do the altitude checks
-		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>(rawGC.size()); lastLoc = pr.getAirportD();
+		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>(rawGC.size()); GeoLocation lastLoc = pr.getAirportD();
 		for (GeoLocation loc : rawGC) {
 			final int apDistance = Math.min(loc.distanceTo(pr.getAirportD()), loc.distanceTo(pr.getAirportA()));
 			int maxDistance = (pr.getWaypoints().size() < 4) ? 30 : Math.max(1, Math.min(20, apDistance / 5));

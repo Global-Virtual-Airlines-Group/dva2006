@@ -58,6 +58,29 @@ public class GeoUtils {
 		results.add(end);
 		return results;
 	}
+	
+	/**
+	 * Interpolate immediate positions via Great Circle algorithm, for mapping tools like MapBox that do not generate GC lines. This will use the standard
+	 * Great Circle segment length for interpolation.
+	 * @param pts a List of GeoLocations
+	 * @return a List of GeoLocations with interpolated points.
+	 * @see GeoUtils#GC_SEGMENT_SIZE
+	 */
+	public static List<GeoLocation> greatCircle(List<? extends GeoLocation> pts) {
+		List<GeoLocation> results = new ArrayList<GeoLocation>();
+		GeoLocation lastLoc = pts.getFirst();
+		for (int x = 1; x < pts.size(); x++) {
+			GeoLocation loc = pts.get(x);
+			if (lastLoc.distanceTo(loc) > GC_SEGMENT_SIZE)
+				results.addAll(greatCircle(lastLoc, loc, GC_SEGMENT_SIZE));
+			else
+				results.add(lastLoc);
+			
+			lastLoc = loc;
+		}
+		
+		return results;
+	}
 
 	/**
 	 * Formats a geographic location as &quot;longitude,latitude&quot;.
