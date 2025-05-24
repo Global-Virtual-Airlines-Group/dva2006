@@ -266,4 +266,26 @@
 		</attribute>
 	</tag>
 
+	<tag>
+        <description>Bounds tag, to create a bounding box</description>    	  
+	    <name>bounds</name>
+	    <tag-class>org.deltava.taglib.mapbox.BoundsTag</tag-class>
+	    <body-content>empty</body-content>
+	    <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+	    </attribute>
+	    <attribute>
+			<name>const</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	    <attribute>
+            <name>items</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
 </taglib>
