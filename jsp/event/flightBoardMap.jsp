@@ -45,7 +45,7 @@
  <map:legend color="red" className="small" legend="Center" /> <map:legend color="green" className="small" legend="Approach / Departure" /></td>
 </tr>
 <tr>
- <td colspan="3"><map:div ID="mapBox" height="600" /></td>
+ <td colspan="3"><map:div ID="mapBox" height="600" /><div id="zoomLevel" class="mapTextlabel"></div></td>
 </tr>
 
 <!-- Button Bar -->
@@ -67,10 +67,14 @@ const mapOpts = {container:'mapBox', zoom:4, maxZoom:12, projection:'globe', cen
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
-map.once('load', function() { golgotha.flightBoard.updateMap(true); });
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('click', golgotha.flightBoard.infoClose);
 map.on('style.load', golgotha.maps.updateMapText);
+map.on('zoomend', golgotha.maps.updateZoom);
+map.once('load', function() { 
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	golgotha.flightBoard.updateMap(true);
+});
 </script>
 </body>
 </html>
