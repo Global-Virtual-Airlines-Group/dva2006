@@ -100,7 +100,7 @@ golgotha.maps.updateMapText = function () {
 	return true;
 };
 
-golgotha.maps.updateZoom = function() {	return golgotha.util.setHTML('zoomLevel', 'Zoom Level ' + this.getZoom()); };
+golgotha.maps.updateZoom = function() {	return golgotha.util.setHTML('zoomLevel', 'Zoom Level ' + Math.rount(this.getZoom() * 100.0 / 100)); };
 mapboxgl.Map.prototype.setCopyright = function(msg) { return golgotha.util.setHTML('copyright', msg); };
 mapboxgl.Map.prototype.setStatus = function(msg) { return golgotha.util.setHTML('mapStatus', msg); };
 
@@ -145,10 +145,8 @@ mapboxgl.Map.prototype.removeMarkers = function(mrks) {
 		const mrk = mrks[x];
 		if (mrk.setMap)
 			mrk.setMap(null);
-		else if (golgotha.maps.util.isShape(mrk)) {
-			golgotha.maps.displayedLayers.remove(mrk);		
-			this.removeLayer(mrk.name);
-		}
+		else if (golgotha.maps.util.isShape(mrk))
+			this.removeLine(mrk);
 	}
 	
 	return true;
@@ -296,22 +294,24 @@ golgotha.maps.Polygon.prototype.getLayer = function () {
 	return o;
 };
 
-golgotha.maps.Circle = function(name, opts, pt) {
-	this.name = name;
-	this._opts = opts;
-	this._pt = golgotha.maps.toLL(pt);
-	this.visible = (opts.visible != null) ? opts.visible : true;	
-};
+golgotha.util.generateCircle = function(map, ctr, radius) {
+	if (radius <= 0) return [];
+	const l2 = [ctr.lng, ctr.lat + (radius / 69.16)];
+	const centerPt = map.project(ctr); 
+	const radiusPt = map.project(l2);
 
-golgotha.maps.Circle.prototype.getType = function() { return 'Circle'; };
-golgotha.maps.Circle.prototype.getLayer = function () {
-	const src = {type:'geojson',data:{type:'Feature',properties:{radius:this._opts.radius},geometry:{type:'Point',coordinates:[this._pt]}}};
-	if (this._opts.hasOwnProperty('info'))
-		src.data.properties.info = this._opts.info;
+	// Build the circle
+	const pts = [];
+	const r = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
+	for (var a = 0; a < 361; a += 6) {
+    	const aRad = (Math.PI / 180) * a;
+    	const py = centerPt.y + r * Math.sin(aRad);
+    	const px = centerPt.x + r * Math.cos(aRad);
+		const ll = map.unproject({x:px,y:py});
+		pts.push([ll.lng, ll.lat]);
+	} 
 
-	const po = {'circle-color':this._opts.fillColor,'circle-opacity':this._opts.fillOpacity,'circle-stroke-width':this._opts.width,'circle-stroke-color':this._opts.color,'circle-radius':500};
-	const o = {id:this.name,type:'circle',source:src,paint:po,layout:{visibility:(this.visible ? 'visible' : 'none')}};
-	return o;
+	return pts;
 };
 
 golgotha.maps.BaseMapControl = function(labels) { this._labels = labels; };
