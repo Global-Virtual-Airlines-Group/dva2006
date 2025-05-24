@@ -117,7 +117,7 @@ golgotha.flightBoard.setNetwork = function(combo) {
 };
 
 golgotha.flightBoard.showAPP = function(mrk) {
-	const pts = golgotha.util.generateCircle(map, mrk.getLngLat(), mrk.range);
+	const pts = golgotha.maps.util.generateCircle(map, mrk.getLngLat(), mrk.range);
 	const c = new golgotha.maps.Polygon(mrk.callsign, {color:'#208040', opacity:0.75, width:2, fillOpacity:0.2, fillColor:'#208040'}, pts);
 	map.addLine(c);
 	golgotha.flightBoard.selectedRoute = [c];
