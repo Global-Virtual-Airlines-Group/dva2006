@@ -102,6 +102,7 @@ public class GeoUtils {
 	 * @param pts a List of GeoLocations
 	 */
 	public static void translate(List<GeoLocation> pts) {
+		if (pts.size() < 2) return;
 		GeoLocation lastLoc = pts.getFirst();
 		for (int x = 1; x < pts.size(); x++) {
 			GeoLocation loc = pts.get(x);
