@@ -100,7 +100,7 @@ golgotha.maps.updateMapText = function () {
 	return true;
 };
 
-golgotha.maps.updateZoom = function() {	return golgotha.util.setHTML('zoomLevel', 'Zoom Level ' + Math.rount(this.getZoom() * 100.0 / 100)); };
+golgotha.maps.updateZoom = function() {	return golgotha.util.setHTML('zoomLevel', 'Zoom Level ' + Math.round(this.getZoom() * 1000) / 1000); };
 mapboxgl.Map.prototype.setCopyright = function(msg) { return golgotha.util.setHTML('copyright', msg); };
 mapboxgl.Map.prototype.setStatus = function(msg) { return golgotha.util.setHTML('mapStatus', msg); };
 
@@ -294,11 +294,10 @@ golgotha.maps.Polygon.prototype.getLayer = function () {
 	return o;
 };
 
-golgotha.util.generateCircle = function(map, ctr, radius) {
+golgotha.maps.util.generateCircle = function(map, ctr, radius) {
 	if (radius <= 0) return [];
-	const l2 = [ctr.lng, ctr.lat + (radius / 69.16)];
-	const centerPt = map.project(ctr); 
-	const radiusPt = map.project(l2);
+	const centerPt = map.project(ctr);
+	const radiusPt = map.project([ctr.lng, ctr.lat + (radius / 69.16)]);
 
 	// Build the circle
 	const pts = [];
