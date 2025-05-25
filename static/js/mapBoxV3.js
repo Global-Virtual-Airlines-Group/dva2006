@@ -349,3 +349,42 @@ golgotha.maps.BaseMapControl.prototype.onRemove = function() {
 golgotha.maps.DIVControl = function(id) { this._div = document.getElementById(id); }
 golgotha.maps.DIVControl.prototype.onAdd = function(map) { this._map = map; return this._div; };
 golgotha.maps.DIVControl.prototype.onRemove = function() { this._div.parentNode.removeChild(this._div); delete this._map; };
+
+golgotha.maps.util.updateTab = function(ofs, size) {
+	if ((ofs < 0) || (ofs > this.tabs.length)) ofs = 0;
+	const tab = this.tabs[ofs];
+	let txt = '<div ';
+	if (!size) size = this.tabSize;
+	if (size) {
+		txt += ' style="width:';
+		txt += size.width;
+		txt += 'px; height:'
+		txt += size.height;
+		txt += 'px;"';
+		this.tabSize = size;
+	}
+
+	txt += '>';
+	txt += tab.content;
+	txt += '<br /><br />';
+	txt += golgotha.maps.util.renderTabChoices(this.tabs, ofs);
+	txt += '</div>';
+	this.getPopup().setHTML(txt);
+	return true;
+};
+
+golgotha.maps.util.renderTabChoices = function(tabs, selectedOfs) {
+	let txt = '<span class="tabMenu">';
+	for (var x = 0; x < tabs.length; x++) {
+		const tab = tabs[x];
+		if (x != selectedOfs) {
+			txt += '<a href="javascript:void golgotha.maps.selectedMarker.updateTab(' + x + ')">';
+			txt += tab.name;
+			txt += '</a> ';
+		} else
+			txt += '<span class="selectedTab">' + tab.name + '<span> '; 
+	}
+
+	txt += '</span>';
+	return txt;
+};
