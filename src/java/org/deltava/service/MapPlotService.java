@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -8,12 +8,12 @@ import org.json.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
 
-import org.deltava.util.JSONUtils;
+import org.deltava.util.*;
 
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 2.3
  */
 
@@ -59,8 +59,11 @@ public abstract class MapPlotService extends WebService {
 			start = entry;
 			jo.append("positions", po);
 		}
-
-		JSONUtils.ensureArrayPresent(jo, "positions");
+		
+		// Plot GC route for MapBox
+		List<GeoLocation> gcPts = GeoUtils.greatCircle(points);
+		gcPts.forEach(pt -> jo.append("track", JSONUtils.format(pt)));
+		JSONUtils.ensureArrayPresent(jo, "positions", "track");
 		jo.put("distance", distance);
 		return jo;
 	}
