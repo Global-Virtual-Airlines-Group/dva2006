@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
@@ -18,7 +18,7 @@
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
 <content:googleJS module="charts" />
-<map:api version="3" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.local.update = function(cb) {
@@ -234,7 +234,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </tr>
 <tr class="airportMap">
  <td class="label">Gate Legend</td>
- <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;Domestic
+ <td class="data" colspan="2"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate" width="16" height="16" />&nbsp;Domestic
  | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;International
 <c:if test="${airport.hasPFI}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon16.png" alt="USPFI Gate" width="16" height="16" />&nbsp;US PFI</c:if>
 <c:if test="${airport.isSchengen}"> | <img src="https://maps.google.com/mapfiles/kml/pal2/icon17.png" alt="Schengen Gate" width="16" height="16" />&nbsp;Schengen</c:if>
@@ -243,7 +243,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 <content:filter roles="Operations,Schedule"> | <el:cmd url="gateinfo" linkID="${airport.ICAO}" className="sec bld">EDIT GATE DATA</el:cmd></content:filter></td>
 </tr>
 <tr class="airportMap">
- <td colspan="3"><map:div ID="googleMap" height="570" /></td>
+ <td colspan="3"><map:div ID="mapBox" height="540" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="3"><span id="gateType">DEPARTURE</span> GATE DATA<span class="nophone"> (<span id="gateUsageDays"><fmt:int value="${gateUsageDays}" /></span> DAYS)</span><span id="gateToggle" class="toggle" onclick="void golgotha.util.toggleExpand(this, 'gateInfo')">COLLAPSE</span>
@@ -259,49 +259,38 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </content:region>
 </content:page>
 <script async>
-golgotha.local.mapInit = function() {
-	<map:point var="golgotha.local.mapC" point="${airport}" />
-	<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
+<map:token />
 
-	// Create the map
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollwheel:false,clickableIcons:false,streetViewControl:false});
-	map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-	map.fitBounds(golgotha.local.mapBounds);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	golgotha.gate.load({id:'${airport.ICAO}'});
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
-	google.maps.event.addListener(map, 'zoom_changed', function() {
-		map.toggle(golgotha.local.gates, (map.getZoom() > 11));
-		return true;
-	});
-};
+<map:point var="golgotha.local.mapC" point="${airport}" />
+<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
+
+// Create the map
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollZoom:false,style:'mapbox://styles/mapbox/satellite-v9'});
+map.fitBounds(golgotha.local.mapBounds);
+golgotha.gate.load({id:'${airport.ICAO}'});
+map.on('zoomend', function() { map.toggle(golgotha.local.gates, (map.getZoom() > 11)); });
 
 // Load charts
 google.charts.load('current', {'packages':['corechart']});
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 7500;
-xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const js = JSON.parse(xmlreq.responseText);
-
-	// Display the chart
-	const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
-	const fData = new google.visualization.DataTable(); 
-	const nf = new google.visualization.NumberFormat({pattern:'00'});
-	fData.addColumn('number', 'Hour of Day'); nf.format(fData, 0); 
-	fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
-	fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
-	js.flights.forEach(function(h) { fData.addRow([h.hour, h.dd, h.di, h.ad, h.ai]); });
-	golgotha.util.display('flightTimeChart', true);
-	const mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
-	const opts = golgotha.charts.buildOptions({title:'Flights by Hour of Day',isStacked:true,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
-	fC.draw(fData,opts);
-	return true;
+const p = fetch('ftstats.ws?airport=${airport.ICAO}', {signal:AbortSignal.timeout(7500)});
+p.handle = function(rsp) {
+	if (rsp.status != 200) return false;
+	rsp.json().then(function(js) {
+		const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
+		const fData = new google.visualization.DataTable(); 
+		const nf = new google.visualization.NumberFormat({pattern:'00'});
+		fData.addColumn('number', 'Hour of Day'); nf.format(fData, 0); 
+		fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
+		fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
+		js.flights.forEach(function(h) { fData.addRow([h.hour, h.dd, h.di, h.ad, h.ai]); });
+		golgotha.util.display('flightTimeChart', true);
+		const mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
+		const opts = golgotha.charts.buildOptions({title:'Flights by Hour of Day',isStacked:true,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+		fC.draw(fData,opts);
+	});
 };
 
-google.charts.setOnLoadCallback(function() { xmlreq.send(null); });
+google.charts.setOnLoadCallback(function() { p.then(p.handle) });
 </script>
 <content:googleAnalytics />
 </body>

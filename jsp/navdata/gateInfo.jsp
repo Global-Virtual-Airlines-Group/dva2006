@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
@@ -17,7 +17,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
-<map:api version="3" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.gate.hasPFI = ${airport.hasPFI};
@@ -76,7 +76,7 @@ golgotha.onDOMReady(function() {
  | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other</td>
 </tr>
 <tr>
- <td colspan="3"><map:div ID="googleMap" height="570" /></td>
+ <td colspan="3"><map:div ID="mapBox" height="570" /></td>
 </tr>
 <tr class="title mid" id="buttonRow" style="display:none;">
  <td colspan="3"><el:button ID="SaveButton" label="SAVE GATE ASSIGNMENTS" onClick="void golgotha.gate.save()" />&nbsp;<el:button ID="UndoButton" label="UNDO CHANGES" onClick="void golgotha.gate.undo()" />&nbsp;</td>
@@ -88,22 +88,14 @@ golgotha.onDOMReady(function() {
 </content:region>
 </content:page>
 <script async>
-golgotha.local.mapInit = function() {
-	<map:point var="golgotha.local.mapC" point="${airport}" />
-	<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
+<map:token />
+<map:point var="golgotha.local.mapC" point="${airport}" />
+<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
-	// Create the map
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollwheel:false,clickableIcons:false,streetViewControl:false});
-	map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-	map.fitBounds(golgotha.local.mapBounds);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});	
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
-	google.maps.event.addListener(map, 'zoom_changed', function() {
-		map.toggle(golgotha.local.gates, (map.getZoom() > 11));
-		return true;
-	});
-};
+// Create the map
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollzoom:false,style:'mapbox://styles/mapbox/satellite-v9'});
+map.fitBounds(golgotha.local.mapBounds);
+map.on('zoomend', function() { map.toggle(golgotha.local.gates, (map.getZoom() > 11)); });
 </script>
 <content:googleAnalytics />
 </body>
