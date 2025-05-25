@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Interactive Route Map</title>
@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<map:api version="3" callback="golgotha.local.mapInit" />
+<map:api version="3" />
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics eventSupport="true" />
@@ -37,7 +37,7 @@
  <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" height="530" /></td>
+ <td class="data" colspan="2"><map:div ID="mapBox" height="530" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -46,20 +46,17 @@
 </content:region>
 </content:page>
 <script async>
+<map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map
-golgotha.local.mapInit = function() {
-	const mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.info.zoom, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(golgotha.maps.info.type);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', function() { map.closeWindow(); map.removeMarkers(golgotha.routeMap.routes); });
-	google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(golgotha.routeMap.routes); });
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
-	});
-};
+const mapOpts = {center:golgotha.local.mapC, zoom:4, minZOom:2, maxZoom:11, scrollZoom:false, style:'mapbox://styles/mapbox/outdoors-v12'};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+map.on('click', function() { map.removeMarkers(golgotha.routeMap.routes); golgotha.routeMap.routes = []; });
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
+});
 </script>
 </body>
 </html>
