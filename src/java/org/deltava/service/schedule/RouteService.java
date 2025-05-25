@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2017, 2020, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -9,7 +9,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 
-import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -21,13 +20,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display scheduled routes out of a particular Airport. 
  * @author Luke
- * @version 10.0
+ * @version 12.0
  * @since 1.0
  */
 
 public class RouteService extends WebService {
 	
-	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(List.of(MapEntry.COLORS), List.of(MapEntry.LINECOLORS));
+	//private static final Map<String, String> LCOLORS = CollectionUtils.createMap(List.of(MapEntry.COLORS), List.of(MapEntry.LINECOLORS));
 	
 	/**
 	 * Executes the Web Service.
@@ -44,12 +43,13 @@ public class RouteService extends WebService {
 			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"), false);
 		
 		Collection<ScheduleEntry> flights = null;
+		Airline al = SystemData.getAirline(ctx.getParameter("airline"));
 		try {
 			Connection con = ctx.getConnection();
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			GetSchedule dao = new GetSchedule(con);
 			dao.setSources(rsdao.getSources(true, ctx.getDB()));
-			flights = dao.getFlights(a, SystemData.getAirline(ctx.getParameter("airline")));
+			flights = dao.getFlights(a, al);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -64,14 +64,13 @@ public class RouteService extends WebService {
 		Collection<Airport> dstAirports = new TreeSet<Airport>();
 		for (ScheduleEntry entry : flights) {
 			Airport ap = entry.getAirportA();
-			if (dstAirports.contains(ap))
-				continue;
+			if (dstAirports.contains(ap)) continue;
 
 			JSONObject ro = new JSONObject();
 			ro.put("from", a.getICAO());
 			ro.put("to", ap.getICAO());
 			ro.put("airline", entry.getAirline().getCode());
-			ro.put("color", LCOLORS.get(entry.getAirline().getColor()));
+			ro.put("color", al.getColor());
 			ro.append("positions", JSONUtils.format(a));
 			ro.append("positions", JSONUtils.format(ap));
 
@@ -83,7 +82,7 @@ public class RouteService extends WebService {
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "routes");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(3600);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -94,10 +93,6 @@ public class RouteService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
