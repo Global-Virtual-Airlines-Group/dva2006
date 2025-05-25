@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -281,6 +281,7 @@ public class RoutePlotMapService extends MapPlotService {
 			for (NavigationDataBean ap : er.getClosestAirports()) {
 				JSONObject apo = new JSONObject();
 				apo.put("ll", JSONUtils.format(ap));
+				apo.put("icao", ap.getCode());
 				apo.put("pal", ap.getPaletteCode());
 				apo.put("icon", ap.getIconCode());
 				apo.put("color", ap.getIconColor());
