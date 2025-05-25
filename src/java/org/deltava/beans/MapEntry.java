@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An interface to define icon formatting for entries that can be displayed in Google Maps.
  * @author Luke
- * @version 3.2
+ * @version 12.0
  * @since 1.0
  */
 
@@ -65,11 +65,4 @@ public interface MapEntry extends GeoLocation {
     * All Google Maps icon colors.
     */
    public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW, GREY, BROWN};
-   
-   /**
-    * Google Maps line colors.
-    * @see org.deltava.util.color.GoogleMapsColor#GoogleMapsColor(String)
-    */
-   public static final String[] LINECOLORS = {"89-89-255", "98-217-98", "242-196-12", "236-82-236", "255-64-80",
-	   "255-255-255", "242-242-97", "96-96-96", "128-64-16"};
 }
