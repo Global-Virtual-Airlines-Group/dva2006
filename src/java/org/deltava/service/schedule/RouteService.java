@@ -8,7 +8,7 @@ import java.sql.Connection;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
-
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -25,8 +25,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class RouteService extends WebService {
-	
-	//private static final Map<String, String> LCOLORS = CollectionUtils.createMap(List.of(MapEntry.COLORS), List.of(MapEntry.LINECOLORS));
 	
 	/**
 	 * Executes the Web Service.
@@ -71,8 +69,10 @@ public class RouteService extends WebService {
 			ro.put("to", ap.getICAO());
 			ro.put("airline", entry.getAirline().getCode());
 			ro.put("color", al.getColor());
-			ro.append("positions", JSONUtils.format(a));
-			ro.append("positions", JSONUtils.format(ap));
+			
+			// Calculate GC route
+			Collection<GeoLocation> positions = GeoUtils.greatCircle(a, ap, 100);
+			positions.forEach(loc -> ro.append("positions", JSONUtils.format(loc)));
 
 			// Add to the root element
 			jo.append("routes", ro);
