@@ -81,6 +81,7 @@ public class GeoUtils {
 	 * @see GeoUtils#GC_SEGMENT_SIZE
 	 */
 	public static List<GeoLocation> greatCircle(List<? extends GeoLocation> pts) {
+		if (pts.size() < 2) return new ArrayList<GeoLocation>(pts);
 		List<GeoLocation> results = new ArrayList<GeoLocation>();
 		GeoLocation lastLoc = pts.getFirst();
 		for (int x = 1; x < pts.size(); x++) {
