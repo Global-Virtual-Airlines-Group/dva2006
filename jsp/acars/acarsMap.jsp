@@ -17,7 +17,7 @@
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="3" js="acarsMap,markerWithlabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
+<map:api version="3" js="acarsMap,markerWithLabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:captcha action="acarsMap" />
 </head>
 <content:copyright visible="false" />
