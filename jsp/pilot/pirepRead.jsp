@@ -618,7 +618,7 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:bounds var="golgotha.local.bb" items="${pirep.airports}" />
 
 // Build the map
-const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true};
+const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, projection:'globe', fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLights:true});
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right')
