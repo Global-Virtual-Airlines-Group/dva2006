@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 11.2
+ * @version 12.0
  * @since 1.0
  */
 
@@ -96,7 +96,9 @@ public class MapFlightDataService extends WebService {
 			JSONObject eo = new JSONObject(); 
 			eo.put("ll", JSONUtils.format(entry));
 			eo.put("alt", entry.getAltitude());
-			
+			if (entry instanceof RouteEntry re)
+				eo.put("hdg", re.getHeading());
+
 			if (entry instanceof MarkerMapEntry me) {
 				eo.put("color", me.getIconColor());
 				eo.put("info", me.getInfoBox());
