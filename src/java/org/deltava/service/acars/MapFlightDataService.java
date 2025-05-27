@@ -92,9 +92,10 @@ public class MapFlightDataService extends WebService {
 		JSONObject jo = new JSONObject();
 		jo.put("id", id);
 		jo.putOpt("error", validationMsg);
-		for (GeoLocation entry : routePoints) {
+		for (GeospaceLocation entry : routePoints) {
 			JSONObject eo = new JSONObject(); 
 			eo.put("ll", JSONUtils.format(entry));
+			eo.put("alt", entry.getAltitude());
 			
 			if (entry instanceof MarkerMapEntry me) {
 				eo.put("color", me.getIconColor());

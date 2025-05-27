@@ -121,11 +121,12 @@ mapboxgl.Map.prototype.addTerrain = function(exg) {
 	const e = (exg) ? exg : 1;
 	this.addSource('mapbox-terrain-dem', golgotha.maps.util.terrain);
 	this.setTerrain({source:'mapbox-terrain-dem', exaggeration:e});
+	map.verticalEx = e;
 };
 
 mapboxgl.Map.prototype.getMapType = function() {
 	const s = this.getStyle().sprite;
-	return s.substring(s.lastIndexOf('/') + 1);
+	return (s) ? s.substring(s.lastIndexOf('/') + 1) : 'standard';
 };
 
 mapboxgl.Map.prototype.clearOverlays = function() {
@@ -275,12 +276,24 @@ golgotha.maps.Line = function(name, opts, pts) {
 	this.visible = (opts.visible != null) ? opts.visible : true;
 };
 
+golgotha.maps.Line.prototype.addElevation = function(alts) { this._alts = alts; };
+golgotha.maps.Line.prototype.is3D = function() { return (this._alts); };
 golgotha.maps.Line.prototype.getType = function() { return 'Line'; };
 golgotha.maps.Line.prototype.getLayer = function () {
 	const src = {type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:this._pts}}};
 	const po = {'line-color':this._opts.color,'line-opacity':this._opts.opacity,'line-width':this._opts.width};
 	const lo = {'line-join':'round','line-cap':'round',visibility:(this.visible ? 'visible' : 'none')};
 	const o = {id:this.name,type:'line',source:src,paint:po,layout:lo};
+	if (this.is3D()) {
+		console.assert((this._alts.length == this._pts.length), "Alt count = %d, Pos count = %d", this._alts.length, this._pts.length);
+		lo['line-z-offset'] = ['at-interpolated', ['*', ['line-progress'], this._alts.length - 1], ['get', 'elevation']];
+		lo['line-cross-slope'] = 1;
+		lo['line-elevation-reference'] = 'sea';
+		src.lineMetrics = true;
+		src.data.properties.elevation = this._alts;
+	};
+
+	console.log(JSON.stringify(o));
 	return o;
 };
 

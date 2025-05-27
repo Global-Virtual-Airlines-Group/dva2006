@@ -24,8 +24,9 @@ p.then(function(rsp) {
 		} else
 			golgotha.util.display('archiveOK', true);
 
+		const alts = [];
 		js.positions.forEach(function(p) {
-			let mrk; const ll = golgotha.maps.toLL(p.ll);
+			let mrk; const ll = golgotha.maps.toLL(p.ll); alts.push(golgotha.maps.feet2Meter(p.alt));
 			golgotha.maps.acarsFlight.routePoints.push(ll);
 			if (p.icon)
 				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75, pt:ll});
