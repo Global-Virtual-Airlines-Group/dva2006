@@ -308,6 +308,7 @@
 			<fileset dir="static/js" >
 				<include name="*.js" />
 				<exclude name="push*.js" />
+				<exclude name="threebox.js" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/min.cache.txt" />
@@ -317,6 +318,9 @@
 		<copy todir="${java.io.tmpdir}/build/min/js">
 			<fileset dir="static/js">
 				<include name="push.js" />
+			</fileset>
+			<fileset dir="static/js/min">
+				<include name="*.js" />
 			</fileset>
 		</copy>
 		<move todir="${java.io.tmpdir}/build/min/js" includeemptydirs="false">
@@ -413,6 +417,7 @@
 		<!-- Upload static content to the HTTP server -->
 		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" port="${http.dev.port}" verbose="yes" knownhosts="${webapp.dev.hosts}" keyfile="${http.dev.key}">
 			<fileset dir="static">
+				<exclude name="js/min" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
@@ -552,6 +557,7 @@
 		<!-- Upload static content to the HTTP server -->
 		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}" port="${http.ssh.port}" verbose="yes" knownhosts="${webapp.ssh.hosts}" keyfile="${http.ssh.key}">
 			<fileset dir="static">
+				<exclude name="js/min" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />

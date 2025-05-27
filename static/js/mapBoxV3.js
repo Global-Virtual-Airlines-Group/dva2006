@@ -5,7 +5,7 @@ golgotha.maps.DEFAULT_SHADOW = {src:'/' + golgotha.maps.IMG_PATH + '/maps/shadow
 golgotha.maps.S_ICON_SIZE = {w:24, h:24};
 golgotha.maps.S_ICON_SHADOW_SIZE = {w:(24 * (59 / 32)), h:24};
 golgotha.maps.ICON_ANCHOR = {x:12, y:12};
-golgotha.maps.DEFAULT_TYPES = [{l:'Satellite',style:'satellite-v9'}, {l:'Dark',style:'dark-v11'}, {l:'Terrain',style:'outdoors-v12'}];
+golgotha.maps.DEFAULT_TYPES = [{l:'Satellite',style:'satellite-v9'}, {l:'Terrain',style:'outdoors-v12'}, {l:'Light',style:'light-v11'}, {l:'Dark',style:'dark-v11'}];
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
 golgotha.maps.info = localStorage.getItem('golgotha.mapInfo');
 golgotha.maps.info = (golgotha.maps.info) ? JSON.parse(golgotha.maps.info) : {type:'sat', zoom:5};
@@ -112,7 +112,8 @@ golgotha.maps.displayedLayers = [];
 golgotha.maps.Map = function(div, opts) {
 	opts.container = opts.container|| div; 
 	const m = new mapboxgl.Map(opts); 
-	golgotha.maps.instances.push(m); 
+	golgotha.maps.instances.push(m);
+	m.verticalEx = 1; 
 	return m;
 };
 
@@ -177,8 +178,9 @@ mapboxgl.Map.prototype.addLine = function(l, data) {
 mapboxgl.Map.prototype.removeLine = function(l) {
 	const layer = golgotha.maps.util.isShape(l) ? l.getLayer() : l;
 	this.removeLayer(layer.id);
-	this.removeSource(layer.id);
-	const dl = golgotha.maps.displayedLayers.find(function(ll) { return ll.getLayer().id == layer.id });
+	if (this.getSource(layer.id) != null)
+		this.removeSource(layer.id);
+	const dl = golgotha.maps.displayedLayers.find(function(ll) { return ((ll.id || ll.getLayer().id) == layer.id); });
 	if (dl)
 		golgotha.maps.displayedLayers.remove(dl);
 };
@@ -192,7 +194,13 @@ mapboxgl.Map.prototype.toggle = function(mrks, show) {
 			mrks[x].setMap(show ? this : null);
 		else if (golgotha.maps.util.isShape(m)) {
 			m.visible = show;
-			map.setLayoutProperty(m.name, 'visibility', show ? 'visible' : 'none', {validate:false});
+			if (m.getType() == 'Line3D') {
+				if (show) 
+					this.addLine(m);
+				else
+					this.removeLine(m);
+			} else
+				map.setLayoutProperty(m.name, 'visibility', show ? 'visible' : 'none', {validate:false});
 		}
 	}
 	
@@ -276,25 +284,12 @@ golgotha.maps.Line = function(name, opts, pts) {
 	this.visible = (opts.visible != null) ? opts.visible : true;
 };
 
-golgotha.maps.Line.prototype.addElevation = function(alts) { this._alts = alts; };
-golgotha.maps.Line.prototype.is3D = function() { return (this._alts); };
 golgotha.maps.Line.prototype.getType = function() { return 'Line'; };
 golgotha.maps.Line.prototype.getLayer = function () {
 	const src = {type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:this._pts}}};
 	const po = {'line-color':this._opts.color,'line-opacity':this._opts.opacity,'line-width':this._opts.width};
 	const lo = {'line-join':'round','line-cap':'round',visibility:(this.visible ? 'visible' : 'none')};
-	const o = {id:this.name,type:'line',source:src,paint:po,layout:lo};
-	if (this.is3D()) {
-		console.assert((this._alts.length == this._pts.length), "Alt count = %d, Pos count = %d", this._alts.length, this._pts.length);
-		lo['line-z-offset'] = ['at-interpolated', ['*', ['line-progress'], this._alts.length - 1], ['get', 'elevation']];
-		lo['line-cross-slope'] = 1;
-		lo['line-elevation-reference'] = 'sea';
-		src.lineMetrics = true;
-		src.data.properties.elevation = this._alts;
-	};
-
-	console.log(JSON.stringify(o));
-	return o;
+	return {id:this.name,type:'line',source:src,paint:po,layout:lo};
 };
 
 golgotha.maps.Polygon = function(name, opts, pts) {
@@ -312,6 +307,27 @@ golgotha.maps.Polygon.prototype.getLayer = function () {
 	
 	const po = {'fill-color':this._opts.fillColor,'fill-opacity':this._opts.fillOpacity,'fill-outline-color':this._opts.color};
 	const o = {id:this.name,type:'fill',source:src,paint:po,layout:{visibility:(this.visible ? 'visible' : 'none')}};
+	return o;
+};
+
+golgotha.maps.Line3D = function(name, opts, pts) {
+	this.name = name;
+	this._opts = opts;
+	this._pts = pts;
+	this.visible = (opts.visible != null) ? opts.visible : true;
+}
+
+golgotha.maps.Line3D.prototype.getType = function() { return 'Line3D'; };
+golgotha.maps.Line3D.prototype.getLayer = function() {
+	const o = {id:this.name,type:'custom',renderingMode:'3d','_opts':this._opts,tb:this.tb,geo:this._pts};
+	o.render = function() { window.tb.update(); };
+	o.onRemove = function() { window.tb.remove(this._tbSegment); delete this._tbSegment; };
+	o.onAdd = function() {
+		const lno = {color:this._opts.color, width:this._opts.width, opacity:this._opts.opacity, geometry:this.geo};
+		this._tbSegment = window.tb.line(lno);
+		window.tb.add(this._tbSegment);
+	};
+	
 	return o;
 };
 
