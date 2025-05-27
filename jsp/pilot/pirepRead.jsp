@@ -486,7 +486,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 </tr>
 <c:choose>
 <c:when test="${googleMap}">
-<tr class="acarsMapData">
+<tr class="acarsMapData" id="mapToggleRow">
  <td class="label">Map Data</td>
  <td class="data"><span id="mapToggles" class="bld">
 <c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
@@ -624,7 +624,7 @@ window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLight
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right')
 map.addControl(new mapboxgl.NavigationControl(), 'top-right')
 map.on('style.load', golgotha.maps.updateMapText);
-map.once("load", function() { 
+map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
 });
