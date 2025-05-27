@@ -617,13 +617,15 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-const mapOpts = {container:'mapBox', zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), minZoom:2, maxZoom:18, projection:'globe', center:golgotha.local.mapC, style:'mapbox://styles/mapbox/outdoors-v12'};
+const mapOpts = {container:'mapBox', zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), minZoom:2, maxZoom:18, projection:'mercator', center:golgotha.local.mapC, style:'mapbox://styles/mapbox/outdoors-v12'};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right')
 map.addControl(new mapboxgl.NavigationControl(), 'top-right')
-map.once("load", function() { map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left'); });
 map.on('style.load', golgotha.maps.updateMapText);
-map.once('load', golgotha.maps.updateMapText);
+map.once("load", function() { 
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	map.addTerrain(1.33);
+});
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
