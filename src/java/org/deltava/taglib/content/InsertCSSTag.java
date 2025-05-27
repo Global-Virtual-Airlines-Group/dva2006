@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 	
 	private String _host;
 	private String _scheme;
+	private boolean _noScheme;
 
 	/**
 	 * Specifies that the Style Sheet is located on a different web server.
@@ -49,6 +50,14 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 	}
 	
 	/**
+	 * Sets whether to ignore any CSS schemes when generating the file name.
+	 * @param noScheme TRUE to ignore schemes, otherwise FALSE
+	 */
+	public void setNoScheme(boolean noScheme) {
+		_noScheme = noScheme;
+	}
+	
+	/**
 	 * Gets the scheme in use, or DEFAULT_SCHEME if none specified
 	 * @return the scheme name
 	 * @see InsertCSSTag#setScheme(String)
@@ -57,10 +66,6 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		return (_scheme == null) ? DEFAULT_SCHEME : _scheme;
 	}
 
-	/**
-	 * Loads the UI scheme name from the user object, if present.
-	 * @param ctxt the JSP page context
-	 */
 	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
@@ -70,11 +75,6 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 			setScheme(p.getUIScheme());
 	}
 
-	/**
-	 * Renders the tag.
-	 * @return TagSupport.EVAL_PAGE
-	 * @throws JspException if an error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 		
@@ -83,8 +83,11 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		buf.append(SystemData.get("path.css"));
 		buf.append("/v");
 		buf.append(VersionInfo.getFullBuild());
-		buf.append('/');
-		buf.append(getScheme());
+		if (!_noScheme) {
+			buf.append('/');
+			buf.append(getScheme());
+		}
+		
 		buf.append('/');
 		buf.append(getFileName());
 		buf.append(".css");
@@ -124,5 +127,6 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		super.release();
 		_scheme = null;
 		_host = null;
+		_noScheme = false;
 	}
 }
