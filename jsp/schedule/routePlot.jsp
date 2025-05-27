@@ -99,7 +99,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="100" max="320" idx="*" value="${flight.route}" spellcheck="false" onChange="void golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:text name="route" className="caps" size="100" max="320" idx="*" value="${flight.route}" spellcheck="false" onChange="void golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -227,6 +227,7 @@ golgotha.routePlot.aGates = new golgotha.routePlot.GateManager(10);
 // Load data async once tiles are loaded
 map.once('load', function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	map.addTerrain(1.33);
 	golgotha.local.rpInit();
 	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 350);
 	return true;
