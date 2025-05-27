@@ -25,8 +25,7 @@
 <content:js name="simbrief.apiv1" /></c:if></c:if>
 <content:captcha action="pirep" />
 <content:googleAnalytics eventSupport="true" />
-<content:browser human="true"><c:if test="${googleMap}">
-<map:api version="3" /></c:if></content:browser>
+<c:if test="${googleMap}"><map:api version="3" /></c:if>
 <c:if test="${scoreCR || access.canDispose}">
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <content:empty var="emptyList" />
@@ -75,6 +74,8 @@ golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons,
 <c:if test="${isACARS && googleMap}">
 <content:googleJS module="charts" />
 <content:js name="acarsFlightMap" />
+<content:js name="threebox" minify="false" />
+<content:css name="threebox" noScheme="true" />
 <script async>
 <c:if test="${googleMap}">
 golgotha.local.zoomTo = function(lat, lng, zoom) {
@@ -487,7 +488,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <c:when test="${googleMap}">
 <tr class="acarsMapData">
  <td class="label">Map Data</td>
- <td class="data"><span class="bld">
+ <td class="data"><span id="mapToggles" class="bld">
 <c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> 
 <el:box name="showAirspace" idx="*" onChange="void golgotha.maps.acarsFlight.toggleAirspace(this.checked)" label="Airspace Boundaries" checked="false" /> </c:if>
@@ -614,17 +615,18 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:token />
-<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+<map:bounds var="golgotha.local.bb" items="${pirep.airports}" />
 
 // Build the map
-const mapOpts = {container:'mapBox', zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), minZoom:2, maxZoom:18, projection:'mercator', center:golgotha.local.mapC, style:'mapbox://styles/mapbox/outdoors-v12'};
+const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLights:true});
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right')
 map.addControl(new mapboxgl.NavigationControl(), 'top-right')
 map.on('style.load', golgotha.maps.updateMapText);
 map.once("load", function() { 
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
-	map.addTerrain(1.33);
+	map.addTerrain(1.5);
 });
 
 // Build the route line and map center

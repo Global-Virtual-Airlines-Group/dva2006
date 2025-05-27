@@ -24,9 +24,8 @@ p.then(function(rsp) {
 		} else
 			golgotha.util.display('archiveOK', true);
 
-		const alts = [];
 		js.positions.forEach(function(p) {
-			let mrk; const ll = golgotha.maps.toLL(p.ll); alts.push(golgotha.maps.feet2Meter(p.alt));
+			let mrk; const ll = golgotha.maps.toLL(p.ll); ll.push(golgotha.maps.feet2Meter(p.alt * map.verticalEx + 2.5));
 			golgotha.maps.acarsFlight.routePoints.push(ll);
 			if (p.icon)
 				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75, pt:ll});
@@ -56,8 +55,7 @@ p.then(function(rsp) {
 		});
 
 		// Create the line, but don't show it
-		golgotha.maps.acarsFlight.gRoute = new golgotha.maps.Line('flightPath', {color:'#4080af', width:3, opacity:0.85, visible:false}, golgotha.maps.acarsFlight.routePoints);
-		map.addLine(golgotha.maps.acarsFlight.gRoute);
+		golgotha.maps.acarsFlight.gRoute = new golgotha.maps.Line3D('flightPath', {color:'#a0203f',width:4,opacity:0.875,visible:false}, golgotha.maps.acarsFlight.routePoints);
 		golgotha.event.beacon('ACARS', 'Flight Data');
 
 		if (f.rwyDebug) {
