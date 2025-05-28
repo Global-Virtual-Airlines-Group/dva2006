@@ -4,6 +4,7 @@ package org.deltava.servlet;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 import java.io.*;
+import java.util.*;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
@@ -13,7 +14,8 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.GetImage;
-import org.deltava.util.ControllerException;
+
+import org.deltava.util.*;
 import org.deltava.util.tile.TileAddress;
 import org.deltava.util.system.SystemData;
 
@@ -22,7 +24,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 5.0
  */
 
@@ -30,13 +32,27 @@ public class TrackTileServlet extends TileServlet {
 
 	private static final Logger log = LogManager.getLogger(TrackTileServlet.class);
 	
-	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
-	 */
 	@Override
 	public String getServletInfo() {
 		return "ACARS Track Servlet " + VersionInfo.TXT_COPYRIGHT;
+	}
+	
+	private static TileAddress getTileAddress(String uri) {
+		
+		// Parse the URL and get the path parts
+		URLParser url = new URLParser(uri);
+		LinkedList<String> pathParts = url.getPath();
+		Collections.reverse(pathParts);
+		
+		// Pop Z/Y/Z
+		try {
+			int z = Integer.parseInt(pathParts.pop());
+			int y = Integer.parseInt(pathParts.pop());
+			int x = Integer.parseInt(pathParts.pop());
+			return new TileAddress(x, y, z);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -49,7 +65,7 @@ public class TrackTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		TileAddress addr = getTileAddress(req.getRequestURI(), false);
+		TileAddress addr = getTileAddress(req.getRequestURI());
 		if (addr == null) {
 			rsp.sendError(SC_BAD_REQUEST);
 			return;
