@@ -34,7 +34,7 @@ public class AccessTokenTag extends TagSupport {
 		try {
 			out.print("mapboxgl.accessToken = '");
 			out.print(SystemData.get("security.key.mapbox"));
-			out.print("';");
+			out.println("';");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
