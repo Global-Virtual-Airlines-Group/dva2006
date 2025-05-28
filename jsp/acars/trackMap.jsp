@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Track Map</title>
@@ -15,10 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="3" js="googleMapsStyles" callback="golgotha.local.mapInit" />
-<style>
-select.localAP { background-color:#000810; }
-</style>
+<map:api version="3" />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -31,72 +28,54 @@ select.localAP { background-color:#000810; }
 <el:form action="trackmap.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td class="caps"><content:airline /> ACARS TRACK MAP</td>
+ <td class="caps"><span class="nophone"><content:airline />&nbsp;</span>ACARS TRACK MAP</td>
+ <td class="right"><span id="localAirports" class="right" style="display:none;"><el:combo name="localAP" size="1" firstEntry="[ SELECT AIRPORT ]" options="${localAP}" className="small localAP" onChange="void golgotha.local.selectLocal(this)" /></span></td>
 </tr>
 <tr>
- <td class="data"><map:div ID="googleMap" height="640" /></td>
+ <td colspan="2" class="data"><map:div ID="mapBox" height="620" /><div id="zoomLevel" class="small bld mapTextLabel right"></div></td>
 </tr>
 </el:table>
-<div id="localAirports" style="display:none;"><el:combo name="localAP" size="1" firstEntry="[ SELECT AIRPORT ]" options="${localAP}" className="small localAP" onChange="void golgotha.maps.track.selectLocal(this)" /></div>
 </el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
 <c:set var="maxZoomLevel" value="${(empty localAP) ? 9 : 12}" scope="page" />
-<div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script async>
-golgotha.maps.track = golgotha.maps.track || {};
-golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ) {
-	const layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
-	layerOpts.myBaseURL = location.protocol + '//' + location.host + '/track/';
-	layerOpts.getTileUrl = function(pnt, zoom) {
-		if (zoom > this.maxZoom) return '';
-		let url = this.myBaseURL;
-		for (var x = zoom; x > 0; x--) {
-			const digit1 = ((golgotha.maps.masks[x] & pnt.x) == 0) ? 0 : 1;
-			const digit2 = ((golgotha.maps.masks[x] & pnt.y) == 0) ? 0 : 2;
-			url += (digit1 + digit2);
-		}
-
-		return url + '.png';
-	};
-
-	return new google.maps.ImageMapType(layerOpts);
+golgotha.local.TrackSource = function(opacity) { this._opacity = opacity; };
+golgotha.local.TrackSource.prototype.getType = 'Tiles';
+golgotha.local.TrackSource.prototype.getLayer = function() {
+	const to = location.protocol + '//' + location.host + '/track/{x}/{y}/{z}/tile.png';
+	const so = {type:'raster',tileSize:golgotha.maps.TILE_SIZE.w,tiles:[to]};
+	return {id:'Tracks',type:'raster',paint:{'raster-opacity':this._opacity},source:so};
 };
 
-<map:point var="mapC" point="${mapCenter}" />
-golgotha.local.mapInit = function() {
-	const mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
-	const mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+<map:token />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
-	// Create the map
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	const tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
-	map.mapTypes.set('acars_trackmap', tmStyledMap);
-	map.setMapTypeId('acars_trackmap');
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-	const trkLayer = new golgotha.maps.track.ShapeLayer(0.525, 3, ${maxZoomLevel});
-	map.overlayMapTypes.insertAt(0, trkLayer);
-	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-	<c:if test="${!empty localAP}">
-	google.maps.event.addListener(map, 'zoom_changed', function() { golgotha.util.display('localAirports', (this.getZoom() > 9)); });</c:if>
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('zoomLevel'));
-		map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('localAirports'));
-		google.maps.event.trigger(this, 'maptypeid_changed');
-		google.maps.event.trigger(this, 'zoom_changed');
-	});
+// Create the map
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, projection:'globe', style:'mapbox://styles/mapbox/dark-v11'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
+map.on('zoomend', golgotha.maps.updateZoom);
+map.on('style.load', golgotha.maps.updateMapText);
 
-	const airportCoords = {};
-	<c:forEach var="ap" items="${localAP}">
-	airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
-};
+<c:if test="${!empty localAP}">
+map.on('zoomend', function() { golgotha.util.display('localAirports', (this.getZoom() > 6)); });</c:if>
+map.once('load', function() {
+	golgotha.local.tl = new golgotha.local.TrackSource(0.525); 
+	map.addLine(golgotha.local.tl);
+	map.fire('zoomend');
+});
 
-golgotha.maps.track.selectLocal = function(combo) {
+golgotha.local.airportCoords = {};
+<c:forEach var="ap" items="${localAP}">golgotha.local.airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
+
+golgotha.local.selectLocal = function(combo) {
 	if (combo.selectedIndex < 1) return false;
 	const o = combo[combo.selectedIndex];
-	const ll = airportCoords[o.getAttribute('icao')];
+	const ll = golgotha.local.airportCoords[o.getAttribute('icao')];
 	if (ll != null) map.panTo(ll);
 	return true;
 };
