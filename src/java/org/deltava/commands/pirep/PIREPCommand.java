@@ -178,16 +178,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 				}
 			}
-
-			// Figure out what network the flight was flown on and ensure we have an ID
-			OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), null);
-			if ((net != null) && !p.hasNetworkID(net))
-				throw new IllegalStateException("No " + net + " ID");
-
-			if (fr.getNetwork() != net) {
-				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((net == null) ? "Offline" : net));
-				fr.setNetwork(net);
-			}
 			
 			// Get the flight time/date
 			if (ac.getCanEditCore()) {
@@ -197,6 +187,16 @@ public class PIREPCommand extends AbstractFormCommand {
 				} catch (NumberFormatException | NullPointerException nfe) {
 					if (fr.getStatus() != FlightStatus.DRAFT)
 						throw new CommandException(String.format("Invalid Flight Time - %s", nfe.getClass().getSimpleName()), false);
+				}
+				
+				// Figure out what network the flight was flown on and ensure we have an ID
+				OnlineNetwork net = EnumUtils.parse(OnlineNetwork.class, ctx.getParameter("network"), fr.getNetwork());
+				if ((net != null) && !p.hasNetworkID(net))
+					throw new IllegalStateException(String.format("No %s ID", net));
+
+				if (fr.getNetwork() != net) {
+					fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, "Updated online network from " + fr.getNetwork() + " to " + ((net == null) ? "Offline" : net));
+					fr.setNetwork(net);
 				}
 
 				// Calculate the date
