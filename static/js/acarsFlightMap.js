@@ -55,7 +55,7 @@ p.then(function(rsp) {
 		});
 
 		// Create the line, but don't show it
-		golgotha.maps.acarsFlight.gRoute = new golgotha.maps.Line3D('flightPath', {color:'#a0203f',width:4,opacity:0.875,visible:false}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.gRoute = new golgotha.maps.Line3D('flightPath', {color:'#c01933',width:4,opacity:0.875,visible:false}, golgotha.maps.acarsFlight.routePoints);
 		golgotha.event.beacon('ACARS', 'Flight Data');
 
 		if (f.rwyDebug) {
