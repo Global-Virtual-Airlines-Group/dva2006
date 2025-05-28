@@ -154,8 +154,6 @@ golgotha.maps.wx.WXLayerControl.prototype.onAdd = function(map) {
 			const dl = d.getLayer();
 			if (d.isSelected) {
 				d.map.removeLine(dl);
-				//d.map.removeLayer(d.layer);
-				//d.map.removeSource(d.layer);
 				golgotha.util.removeClass(d, 'displayed');
 				delete d.isSelected;
 			} else {
