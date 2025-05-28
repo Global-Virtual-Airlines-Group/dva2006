@@ -91,7 +91,8 @@ golgotha.maps.acarsFlight.hideATC = function() {
 
 golgotha.maps.acarsFlight.showAPP = function(ctr, range) {
 	golgotha.maps.acarsFlight.hideATC();
-	const c = new google.maps.Circle({map:map, center:ctr, radius:golgotha.maps.miles2Meter(range), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
+	const c = new golgotha.maps.Circle({radius:golgotha.maps.miles2Meter(range), color:'#efefff', width:1, opacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25}, ctr);
+	map.addLine(c);
 	golgotha.maps.acarsFlight.selectedFIRs.push(c);
 };
 
@@ -120,7 +121,10 @@ golgotha.maps.acarsFlight.toggleAirspace = function(show) {
 golgotha.maps.acarsFlight.showRunway = function(rd, pd) {
 	const rw = rd.threshold || rd.location;
 	const dst = golgotha.maps.distance(rd.pt, pd);
-	golgotha.maps.acarsFlight.debugMarkers.push(new google.maps.Polyline({map:map, path:[rw,rd.pt], strokeWeight:7.5, strokeColor:'#0000a1', strokeOpacity:0.25, zIndex:golgotha.maps.z.POLYLINE+1}));
+	const l = new golgotha.maps.Line('RWY', {width:7.5, color:'#0000a1', opacity:0.25}, [rw,rd.pt]);
+	golgotha.maps.acarsFlight.debugMarkers.push(l);
+	map.addLine(l);
+	
 	//golgotha.maps.acarsFlight.debugMarkers.push(new google.maps.Circle({map:map, center:rd.pt, radius:golgotha.maps.feet2Meter(Math.abs(rd.distance)), strokeColor:'#0000a1', strokeOpacity:0.5, strokeWeight:1, fillColor:'#0000a1', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON}));
 	golgotha.maps.acarsFlight.debugMarkers.push(new golgotha.maps.IconMarker({map:map, pal:3, icon:38, opacity:0.5, info:'Actual Takeoff/Touchdown', pt:pd}));
 	if (dst > 15)
