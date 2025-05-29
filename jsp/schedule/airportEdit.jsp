@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Schedule - ${!empty airport ? airport.IATA : 'New Airport'}</title>
@@ -15,8 +15,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
-<c:if test="${googleMap}">
-<map:api version="3" callback="golgotha.local.mapInit" /></c:if>
+<c:if test="${googleMap}"><map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -157,7 +156,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
  <td colspan="2">AIRPORT LOCATION</td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" height="550" /></td>
+ <td colspan="2"><map:div ID="mapBox" height="550" /></td>
 </tr>
 </c:if>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -180,13 +179,11 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <map:marker var="golgotha.local.apMarker" point="${airport}" color="green" />
 
 // Build the map
-golgotha.local.mpaInit = function() { 
-	const mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-	golgotha.local.apMarker.setMap(map);
-	return true;
-};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, zoom:6, minZoom:4, maxZoom:12, scrollZoom:false, style:'mapbox://styles/mapbox/satellite-v9'}});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.once('load', function() { map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left'); });
+golgotha.local.apMarker.setMap(map);
 </script></c:if>
 </body>
 </html>
