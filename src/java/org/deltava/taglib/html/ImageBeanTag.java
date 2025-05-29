@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import org.deltava.beans.ImageBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.ImageBean;
 /**
  * A JSP tag to display database-served images. 
  * @author Luke
- * @version 10.6
+ * @version 12.0
  * @since 10.6
  */
 
@@ -51,7 +51,7 @@ public class ImageBeanTag extends ImageTag {
 	@Override
 	public int doStartTag() {
 		
-		StringBuilder buf = new StringBuilder("/dbimg/");
+		StringBuilder buf = new StringBuilder("dbimg/");
 		buf.append(_img.getImageType().getURLPart());
 		buf.append('/');
 		if (_airlineCode != null) {
