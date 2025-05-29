@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 2.4
  */
 
@@ -31,6 +31,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public static final String HTTPCTXT_ATTR_NAME = "httpContext";
 	public static final String CAPTCHA_ATTR_NAME = "google$captcha";
 	public static final String RTLIMIT_ATTR_NAME = "rateLimiter";
+	public static final String CSP_ATTR_NAME = "contentSecurity";
 
 	/**
 	 * The HTTP request.
