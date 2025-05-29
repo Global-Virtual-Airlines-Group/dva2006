@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -7,17 +7,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.deltava.beans.system.HTTPContextData;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.HTTPContext;
 
 /**
- * A Helper class to check whether content has been aded into this request.
+ * A Helper class to check whether content has been aded into this request. This is also used as a helper to modify the dynamic Content Security Policy.
  * @author Luke
- * @version 9.0
+ * @version 12.0
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
+ * @see ContentSecurityPolicy
  */
 
 public class ContentHelper {
@@ -80,7 +81,7 @@ public class ContentHelper {
 	 * @see BrowserInfoTag
 	 */
 	public static HTTPContextData getBrowserContext(PageContext ctx) {
-		return (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+		return (HTTPContextData) ctx.getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, PageContext.REQUEST_SCOPE);
 	}
 	
 	/**
@@ -122,5 +123,33 @@ public class ContentHelper {
 		buf.append(">; rel=preload; as=");
 		buf.append(type);
 		rsp.addHeader("Link", buf.toString());
+	}
+
+	/**
+	 * Adds a host to the dynamic Content Security Policy.
+	 * @param ctx the PageContext object
+	 * @param cs a ContentSecurity enumeration
+	 * @param hosts the host names or wildcards
+	 */
+	public static void addCSP(PageContext ctx, ContentSecurity cs, String... hosts) {
+		ContentSecurityPolicy csp = (ContentSecurityPolicy) ctx.getAttribute(HTTPContext.CSP_ATTR_NAME, PageContext.REQUEST_SCOPE);
+		if (csp == null)
+			throw new IllegalStateException("No Content Security Policy in request");
+		
+		for (int x = 0; x < hosts.length; x++)
+			csp.add(cs, hosts[x]);
+	}
+
+	/**
+	 * Writes a dynamic Content Security Policy header to the response, overwriting any existing CSP header.
+	 * @param ctx the PageContext object
+	 */
+	public static void flushCSP(PageContext ctx) {
+		ContentSecurityPolicy csp = (ContentSecurityPolicy) ctx.getAttribute(HTTPContext.CSP_ATTR_NAME, PageContext.REQUEST_SCOPE);
+		if (csp == null)
+			throw new IllegalStateException("No Content Security Policy in request");
+		
+		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
+		rsp.setHeader(csp.getHeader(), csp.getData());
 	}
 }
