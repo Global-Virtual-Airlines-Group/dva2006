@@ -8,7 +8,7 @@ golgotha.maps.ICON_ANCHOR = {x:12, y:12};
 golgotha.maps.DEFAULT_TYPES = [{l:'Satellite',style:'satellite-v9'}, {l:'Terrain',style:'outdoors-v12'}, {l:'Light',style:'light-v11'}, {l:'Dark',style:'dark-v11'}];
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
 golgotha.maps.info = localStorage.getItem('golgotha.mapInfo');
-golgotha.maps.info = (golgotha.maps.info) ? JSON.parse(golgotha.maps.info) : {type:'sat', zoom:5};
+golgotha.maps.info = (golgotha.maps.info) ? JSON.parse(golgotha.maps.info) : {type:'Terrain', zoom:5};
 golgotha.maps.instances = [];
 golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
@@ -236,6 +236,7 @@ golgotha.maps.Marker = function(opts) {
 	const mrkOpts = {color:opts.color};
 	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
 	mrkOpts.scale = (opts.scale) ? opts.scale : 0.625;
+	mrkOpts.draggable = (opts.draggable) ? opts.draggable : false;
 
 	// Create the marker
 	let mrk = new mapboxgl.Marker(mrkOpts);
