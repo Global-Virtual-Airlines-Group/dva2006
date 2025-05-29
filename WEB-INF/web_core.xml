@@ -20,6 +20,16 @@
 			<param-value>Chrome 55.0</param-value>
 		</init-param>
 	</filter>
+	
+	<!-- CSP Filter -->
+	<filter>
+		<filter-name>ContentSecurityFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.ContentSecurityFilter</filter-class>
+		<init-param>
+			<param-name>enforce</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
 
 	<!-- Servlet Security Cookie/Wrapper Filters -->
 	<filter>
@@ -136,6 +146,10 @@
 	<!-- Filter mappings to Command Controller -->
 	<filter-mapping>
 		<filter-name>BrowserTypeFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ContentSecurityFilter</filter-name>
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
 	<filter-mapping>
