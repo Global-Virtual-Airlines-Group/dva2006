@@ -9,6 +9,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
+
 import org.deltava.beans.system.ContentSecurity;
 import org.deltava.beans.system.ContentSecurityPolicy;
 
@@ -24,11 +25,13 @@ public class ContentSecurityFilter extends HttpFilter {
 	private static final Logger log = LogManager.getLogger(ContentSecurityFilter.class);
 	
 	private boolean _enforce;
+	private String _reportURI;
 	
 	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		log.info("Started");
 		_enforce = Boolean.valueOf(cfg.getInitParameter("enforce")).booleanValue();
+		_reportURI = cfg.getInitParameter("reportURI");
 	}
 	
 	@Override
@@ -38,9 +41,20 @@ public class ContentSecurityFilter extends HttpFilter {
 		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce);
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		csp.add(ContentSecurity.CONNECT, "www.google-analytics.com");
+		
+		// Calculate the reporting URI
+		if (_reportURI != null) {
+			if (!_reportURI.startsWith("http")) {
+				StringBuilder buf = new StringBuilder(req.getScheme());
+				buf.append("://").append(req.getServerName());
+				buf.append(_reportURI);
+				csp.setReportURI("default-report", buf.toString());
+			} else
+				csp.setReportURI("default-report", _reportURI);
+		}
+		
+		// Save and Pass upstream
 		req.setAttribute(CSP_ATTR_NAME, csp);
-
-		// Pass upstream
 		fc.doFilter(req, rsp);
 	}
 }
