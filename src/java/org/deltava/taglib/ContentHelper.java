@@ -153,14 +153,17 @@ public class ContentHelper {
 		if (csp == null)
 			throw new IllegalStateException("No Content Security Policy in request");
 		
+		// Check if header already set
+		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
+		if (rsp.containsHeader(csp.getHeader())) return;
+		
 		// Check for committed request that will silent fail header setting
-		if (ctx.getResponse().isCommitted()) {
+		if (rsp.isCommitted()) {
 			HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
 			log.warn("Cannot set CSP Header for {} - {} already committed", req.getRemoteUser(), req.getRequestURI());
 			return;
 		}
 		
-		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
 		rsp.setHeader(csp.getHeader(), csp.getData());
 		if (csp.hasReportURI()) {
 			rsp.setHeader("Reporting-Endpoints", csp.getReportHeader());
