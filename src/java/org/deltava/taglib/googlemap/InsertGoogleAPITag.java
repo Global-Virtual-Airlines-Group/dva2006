@@ -221,6 +221,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		ContentHelper.addContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME);
 		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "www.google.com", "maps.googleapis.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "maps.googleapis.com", "'unsafe-eval'");
+		ContentHelper.addCSP(pageContext, ContentSecurity.FONT, "fonts.gstatic.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "maps.gstatic.com");
 		return EVAL_PAGE;
 	}
