@@ -9,5 +9,5 @@ package org.deltava.beans.system;
  */
 
 public enum ContentSecurity {
-	DEFAULT, CONNECT, STYLE, IMG, SCRIPT, FRAME, FONT, WORKER;
+	DEFAULT, CONNECT, STYLE, IMG, SCRIPT, FRAME, FONT, WORKER, MEDIA;
 }
