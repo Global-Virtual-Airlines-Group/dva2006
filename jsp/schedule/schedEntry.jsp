@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="datePicker" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

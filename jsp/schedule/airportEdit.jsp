@@ -16,7 +16,7 @@
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}"><map:api version="3" /></c:if>
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

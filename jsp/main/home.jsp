@@ -18,7 +18,7 @@
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:captcha action="home" />
 <content:pics />
 <content:favicon />

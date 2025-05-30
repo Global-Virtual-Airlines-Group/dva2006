@@ -18,7 +18,7 @@
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="routePlot" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script>
 golgotha.local.validate = function(f)
 {

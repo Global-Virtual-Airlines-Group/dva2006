@@ -17,7 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:js name="flightBoardMap" />
 </head>
 <content:copyright visible="false" />

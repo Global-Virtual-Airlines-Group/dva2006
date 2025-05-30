@@ -22,7 +22,7 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:js name="routePlot" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <script>
 golgotha.local.loaders = golgotha.local.loaders || {};

@@ -18,7 +18,7 @@
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <script>
 const loaders = {};

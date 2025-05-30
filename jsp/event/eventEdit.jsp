@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="airportRefresh" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.local.updateSignups = function() {

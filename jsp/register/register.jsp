@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:captcha action="register" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <script>
