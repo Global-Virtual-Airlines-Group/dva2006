@@ -6,6 +6,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.system.CAPTCHAResult;
+import org.deltava.beans.system.ContentSecurity;
 import org.deltava.commands.HTTPContext;
 import org.deltava.taglib.ContentHelper;
 
@@ -105,7 +106,10 @@ public class GoogleCAPTCHATag extends TagSupport {
 		} finally {
 			release();
 		}
-		
+
+		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "'self'", "www.google.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "www.google.com", "www.gstatic.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.FRAME, "www.google.com");
 		return EVAL_PAGE;
 	}
 	

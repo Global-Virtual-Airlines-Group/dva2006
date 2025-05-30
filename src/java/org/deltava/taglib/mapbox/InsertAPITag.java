@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.json.JSONObject;
 
 import org.deltava.beans.MapType;
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 import org.deltava.taglib.ContentHelper;
 
 import org.deltava.util.StringUtils;
@@ -98,10 +98,14 @@ public class InsertAPITag extends TagSupport {
 		}
 		
 		// Mark the content as added and return
-		
 		ContentHelper.addContent(pageContext, "JS", API_JS_NAME);
 		ContentHelper.addContent(pageContext, "CSS", API_JS_NAME);
 		ContentHelper.addContent(pageContext, "JS", jsFileName);
+		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "*.tiles.mapbox.com", "api.mapbox.com", "events.mapbox.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.WORKER, "blob:");
+		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "api.mapbox.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "data:");
+		ContentHelper.addCSP(pageContext, ContentSecurity.STYLE, "api.mapbox.com");
 		return EVAL_PAGE;
 	}
 }
