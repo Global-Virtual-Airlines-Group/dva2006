@@ -11,48 +11,41 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <content:sysdata var="imgPath" name="path.img" />
 <script async>
-golgotha.local.selectAC = function(combo)
-{
-if (!golgotha.form.comboSet(combo)) {
-	golgotha.local.fName = null;
-	golgotha.util.show('installerInfo', false);
-	return false;
-}
-
-// Get the code
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 2500;
-xmlreq.open('GET', 'fleetlib.ws?code=' + encodeURI(golgotha.form.getCombo(combo)), true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	if (xmlreq.status != 200) {
-		combo.disabled = false;
+golgotha.local.selectAC = function(combo) {
+	if (!golgotha.form.comboSet(combo)) {
+		golgotha.local.fName = null;
+		golgotha.util.show('installerInfo', false);
 		return false;
 	}
 
-	// Update the page
-	const js = JSON.parse(xmlreq.responseText);
-	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ' + js.sims.join(', ') + '.';
-	golgotha.local.fName = js.fileName;
-	document.getElementById('FleetPic').src = js.img;
-	document.getElementById('divName').innerHTML = js.title;
-	if (js.date)
-		document.getElementById('divDT').innerHTML = js.date;
-	document.getElementById('divSize').innerHTML = js.size;
-	document.getElementById('FSVersions').innerHTML = (js.sims.length == 0) ? '' : verDesc;
-	document.getElementById('divDesc').innerHTML = js.desc;
-	combo.disabled = false;
-	golgotha.util.show('installerInfo', true);
-	return true;
-};
+	combo.disabled = true;
+	const p = fetch('fleetlib.ws?code=' + encodeURI(golgotha.form.getCombo(combo)), {signal:AbortSignal.timeout(3500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) {
+			combo.disabled = false;
+			return false;
+		}
 
-combo.disabled = true;
-xmlreq.send(null);
-return true;
+		rsp.json().then(function(js) {
+			const js = JSON.parse(xmlreq.responseText);
+			const verDesc = 'This <content:airline /> Fleet Library installer is compatible with ' + js.sims.join(', ') + '.';
+			golgotha.local.fName = js.fileName;
+			document.getElementById('FleetPic').src = js.img;
+			document.getElementById('divName').innerHTML = js.title;
+			if (js.date) document.getElementById('divDT').innerHTML = js.date;
+			document.getElementById('divSize').innerHTML = js.size;
+			document.getElementById('FSVersions').innerHTML = (js.sims.length == 0) ? '' : verDesc;
+			document.getElementById('divDesc').innerHTML = js.desc;
+			combo.disabled = false;
+			golgotha.util.show('installerInfo', true);
+		});
+	});
 };
 
 golgotha.local.download = function() {
@@ -100,6 +93,5 @@ Please select a <content:airline /> Fleet Installer from the list above.</span>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
