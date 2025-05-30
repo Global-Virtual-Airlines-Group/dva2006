@@ -53,7 +53,7 @@ public class ReportingService extends WebService {
 			br.setCreatedOn(Instant.now());
 			br.setURL(jo.getString("url"));
 			br.setAuthorID(ctx.isAuthenticated() ? ctx.getUser().getID() : 0);
-			br.setBody(jo.getString("body"));
+			br.setBody(jo.getJSONObject("body").toString(1));
 			reports.add(br);
 		}
 
