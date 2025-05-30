@@ -11,11 +11,13 @@
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -56,6 +58,5 @@ ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.a
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

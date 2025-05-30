@@ -14,7 +14,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 <script async>
 golgotha.local.setNetwork = function(combo) {
 	location.href = '/flightboard.do?id=' + encodeURI(golgotha.form.getCombo(combo));
@@ -100,6 +102,5 @@ golgotha.local.setNetwork = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
