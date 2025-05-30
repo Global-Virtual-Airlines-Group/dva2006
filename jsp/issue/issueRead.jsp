@@ -10,10 +10,12 @@
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
@@ -159,6 +161,5 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

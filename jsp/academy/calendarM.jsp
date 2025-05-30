@@ -15,26 +15,27 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script type="text/javascript">
+<content:cspHeader />
+<script async>
 golgotha.local.switchType = function(combo) {
-	var cType = combo.options[combo.selectedIndex].value;
+	const cType = combo.options[combo.selectedIndex].value;
 	self.location = '/academycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (!f.comments) return false;
-golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
-golgotha.form.validate({f:f.startDate, l:8, t:'Busy Start Date'});
-golgotha.form.validate({f:f.startTime, l:5, t:'Busy Start Time'});
-golgotha.form.validate({f:f.endDate, l:8, t:'Busy End Date'});
-golgotha.form.validate({f:f.endTime, l:5, t:'Busy End Time'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (!f.comments) return false;
+	golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
+	golgotha.form.validate({f:f.startDate, l:8, t:'Busy Start Date'});
+	golgotha.form.validate({f:f.startTime, l:5, t:'Busy Start Time'});
+	golgotha.form.validate({f:f.endDate, l:8, t:'Busy End Date'});
+	golgotha.form.validate({f:f.endTime, l:5, t:'Busy End Time'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -92,6 +93,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
