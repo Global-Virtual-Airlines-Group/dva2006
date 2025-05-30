@@ -12,10 +12,12 @@
 <content:css name="form" />
 <content:css name="calendar" />
 <content:expire expires="30" />
+<content:googleAnalytics />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:js name="common" />
+<content:cspHeader />
 <script async>
 golgotha.local.switchType = function(combo) {
 	self.location = '/networkoutages.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
@@ -53,7 +55,5 @@ golgotha.local.switchType = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
-
