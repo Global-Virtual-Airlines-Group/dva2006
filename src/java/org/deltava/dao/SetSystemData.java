@@ -113,12 +113,11 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(BrowserReport r) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_REPORTS (CREATED, AUTHOR_ID, TYPE, URL, BODY) VALUES (?, ?, ?, ?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_REPORTS (CREATED, TYPE, URL, BODY) VALUES (?, ?, ?, ?)")) {
 			ps.setTimestamp(1, createTimestamp(r.getCreatedOn()));
-			ps.setInt(2, r.getAuthorID());
-			ps.setString(3, r.getType());
-			ps.setString(4, r.getURL());
-			ps.setString(5, r.getBody());
+			ps.setString(2, r.getType());
+			ps.setString(3, r.getURL());
+			ps.setString(4, r.getBody());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

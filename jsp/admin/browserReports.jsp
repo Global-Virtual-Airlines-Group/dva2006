@@ -31,19 +31,16 @@
  <td style="width:5%">#</td>
  <td class="nophone" style="width:10%">TYPE</td>
  <td style="width:15%">DATE</td>
- <td class="nophone" style="width:15%">AUTHOR</td>
  <td class="nophone" style="width:30%">URL</td>
  <td class="left">BODY</td>
 </tr>
 
 <!-- Table data -->
 <c:forEach var="br" items="${viewContext.results}">
-<c:set var="author" value="${pilots[br.authorID]}" scope="page" />
 <view:row entry="${br}">
  <td class="bld"><fmt:int value="${br.ID}" /></td>
  <td class="nophone sec">${br.type}</td>
  <td class="pri"><fmt:date date="${br.createdOn}" t="HH:mm" /></td>
- <td class="nophone bld">${empty auhtor ? 'Anonymous' : author.name}</td>
  <td class="nophone small">${br.URL}</td>
  <td class="left small"><pre><code>${br.body}</code></pre></td>
 </view:row>
@@ -51,7 +48,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
