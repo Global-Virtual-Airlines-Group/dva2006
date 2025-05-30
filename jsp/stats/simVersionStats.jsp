@@ -11,11 +11,13 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -125,19 +127,15 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 3500;
-	xmlreq.open('get', 'simstats.ws', true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		const js = JSON.parse(xmlreq.responseText);
-		js.splice(0, 1); 
-		golgotha.local.chartData = js.reverse();
-		return golgotha.local.renderChart();
-	};
-
-	xmlreq.send(null);
-	return true;
+	const p = fetch('simstats.ws', {signal:AbortSignal.timeout(3500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		p.json().then(function(js) {
+			js.splice(0, 1); 
+			golgotha.local.chartData = js.reverse();
+			return golgotha.local.renderChart();
+		});
+	});
 };
 
 golgotha.local.renderChart = function() {
@@ -161,6 +159,5 @@ golgotha.local.renderChart = function() {
     return true;
 };
 </script>
-<content:googleAnalytics />
 </body>
 </html>
