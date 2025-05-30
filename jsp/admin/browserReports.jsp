@@ -36,13 +36,15 @@
 </tr>
 
 <!-- Table data -->
+<c:set var="nl" value="\n" scope="page" />
 <c:forEach var="br" items="${viewContext.results}">
+<c:set var="body" value="${br.body.replace(nl,'<br />')}" scope="page" />
 <view:row entry="${br}">
  <td class="bld"><fmt:int value="${br.ID}" /></td>
  <td class="nophone sec">${br.type}</td>
  <td class="pri"><fmt:date date="${br.createdOn}" t="HH:mm" /></td>
  <td class="nophone small">${br.URL}</td>
- <td class="left small"><pre><code>${br.body}</code></pre></td>
+ <td class="left small"><pre><code>${body}</code></pre></td>
 </view:row>
 </c:forEach>
 
