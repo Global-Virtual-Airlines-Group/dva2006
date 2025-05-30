@@ -16,7 +16,7 @@
 <content:favicon />
 <content:js name="common" />
 <c:if test="${mapRoute.size() > 0}"><map:api version="3" js="acarsFlightMap" callback="golgotha.local.mapInit" /></c:if>
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">

@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <map:api version="3" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script async>
 golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
 golgotha.maps.geoLocate.gpsOK = function(pos) { map.panTo({lat:pos.coords.latitude, lng:pos.coords.longitude}); map.setZoom(8); return true; };

@@ -19,7 +19,8 @@
 <content:js name="mapBoxWX" />
 <content:js name="routePlot" />
 <content:js name="fileSaver" />
-<content:googleAnalytics eventSupport="true" />
+<content:csp type="CONNECT" host="tilecache.rainviewer.com" />
+<content:googleAnalytics />
 <script async>
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {

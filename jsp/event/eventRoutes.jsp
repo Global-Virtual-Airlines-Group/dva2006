@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <script async>
 <fmt:jsarray var="golgotha.local.routeIDs" items="${routeIDs}" />

@@ -16,6 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -166,6 +167,5 @@ golgotha.onDOMReady(function() {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics eventSupport="true" />
 </body>
 </html>

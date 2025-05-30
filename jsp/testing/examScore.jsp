@@ -19,7 +19,7 @@
 <map:api version="3" /></c:if>
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

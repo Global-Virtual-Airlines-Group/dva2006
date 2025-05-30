@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -88,7 +88,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airlne = 'all';
 const f = document.forms[0];

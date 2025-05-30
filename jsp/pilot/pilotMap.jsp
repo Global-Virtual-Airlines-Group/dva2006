@@ -16,7 +16,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="pilotMap" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:js name="progressBar" />
 <content:filter roles="HR">
 <script async>

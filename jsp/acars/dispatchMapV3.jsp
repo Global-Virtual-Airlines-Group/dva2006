@@ -15,7 +15,7 @@
 <map:api version="3" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script>
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
