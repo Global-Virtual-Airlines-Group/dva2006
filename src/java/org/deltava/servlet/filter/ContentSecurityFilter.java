@@ -36,8 +36,8 @@ public class ContentSecurityFilter extends HttpFilter {
 		
 		// Add a CSP bean to the request that downstream can play with
 		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce);
-		csp.add(ContentSecurity.SCRIPT, "ssl.google-analytics.com");
-		csp.add(ContentSecurity.IMG, "ssl.google-analytics.com");
+		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
+		csp.add(ContentSecurity.CONNECT, "www.google-analytics.com");
 		req.setAttribute(CSP_ATTR_NAME, csp);
 
 		// Pass upstream
