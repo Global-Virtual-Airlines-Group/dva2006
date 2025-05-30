@@ -50,7 +50,7 @@ public class BrowserReportsCommand extends AbstractViewCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/system/browserReports.jsp");
+		result.setURL("/jsp/admin/browserReports.jsp");
 		result.setSuccess(true);
 	}
 }
