@@ -1,97 +1,25 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.beans.system.ContentSecurity;
+
 import org.deltava.taglib.ContentHelper;
 import org.deltava.util.system.SystemData;
 
 /**
- * A JSP Tag to embed Google analytics data.
+ * A JSP Tag to embed Google Analytics v4 tags.
  * @author Luke
- * @version 9.1
+ * @version 12.0
  * @since 1.0
  */
 
 public class GoogleAnalyticsTag extends TagSupport {
 	
-	private static final String JS_URL = "https://ssl.google-analytics.com/ga.js";
+	private static final String JS_URL = "https://www.googletagmanager.com/gtag/js";
 	
-	private boolean _eventSupport;
-	private boolean _asyncLoad = true;
-	
-	/**
-	 * Sets if event support functionality should be enabled on this page.
-	 * @param doSupport TRUE to enable event support, otherwise FALSE
-	 */
-	public void setEventSupport(boolean doSupport) {
-		_eventSupport = doSupport;
-	}
-	
-	/**
-	 * Sets whether to load the API asynchronously.
-	 * @param doAsync TRUE to load asynchronously, otherwise FALSE
-	 */
-	public void setAsync(boolean doAsync) {
-		_asyncLoad = doAsync;
-	}
-	
-	/*
-	 * Helper method to generate synchronous loading snippet.
-	 */
-	private void writeSync(String accountID) throws Exception {
-		JspWriter out = pageContext.getOut();
-		
-		// Write the script include tag
-		out.print("<script src=\"");
-		out.print(JS_URL);
-		out.println("\"></script>");
-		
-		// Write the analytics script
-		out.println("<script>");
-		out.println("try { ");
-		out.print("golgotha.event.tracker = _gat._getTracker('");
-		out.print(accountID);
-		out.println("'); golgotha.event.tracker._trackPageview();");
-		out.println("} catch(err) { }");
-		
-		// Write event tracker function
-		if (_eventSupport) {
-			out.println();
-			out.println("golgotha.event.beacon = function(category, action, label, count) {");
-			out.print("if (golgotha.event.tracker == null) return false; ");
-			out.print("golgotha.event.tracker._trackEvent(category, action, label, count); ");
-			out.print("return true; ");
-			out.println("};");
-		}
-		
-		out.println("</script>");
-	}
-	
-	/*
-	 * Helper method to generate asynchronous loading snippet.
-	 */
-	private void writeAsync(String accountID) throws Exception {
-		JspWriter out = pageContext.getOut();
-		out.println("<script async>");
-		out.println("var _gaq = _gaq || [];");
-		out.println("_gaq.push(['_setAccount', '" + accountID + "']);");
-		out.println("_gaq.push(['_trackPageview']);");
-
-		// Create DOM entry
-		out.println("(function() { const ga = document.createElement('script');");
-		out.print("ga.src = '");
-		out.print(JS_URL);
-		out.println("'; ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga); })();");
-		out.println("</script>");
-	}
-	
-	/**
-	 * Inserts the JavaScript for Google Analytics into the JSP.
-	 * @return TagSupport#EVAL_PAGE always
-	 * @throws JspException if an I/O error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 		String accountID = SystemData.get("security.key.analytics");
@@ -99,24 +27,30 @@ public class GoogleAnalyticsTag extends TagSupport {
 			return EVAL_PAGE;
 		
 		try {
-			ContentHelper.pushContent(pageContext, JS_URL, "script");
-			if (!_asyncLoad || _eventSupport)
-				writeSync(accountID);
-			else
-				writeAsync(accountID);
+			JspWriter out = pageContext.getOut();
+			out.print("<script async src=\"");
+			out.print(JS_URL);
+			out.print("?id=");
+			out.print(accountID);
+			out.println("\"></script>");
+			
+			out.println("<script>");
+			out.println("window.dataLayer = window.dataLayer || [];");
+			out.println("function gtag(){ dataLayer.push(arguments); };");
+			out.println("gtag('js', new Date());");
+			out.print("gtag('config', '");
+			out.print(accountID);
+			out.println("');");
+			out.println("</script>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
 			release();
 		}
 		
+		ContentHelper.pushContent(pageContext, JS_URL, "script");
+		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "www.googletagmanager.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "www.google-analytics.com");
 		return EVAL_PAGE;
-	}
-	
-	@Override
-	public void release() {
-		_eventSupport = false;
-		_asyncLoad = true;
-		super.release();
 	}
 }

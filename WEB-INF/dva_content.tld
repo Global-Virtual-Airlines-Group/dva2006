@@ -595,18 +595,6 @@
 		<name>googleAnalytics</name>
 		<tag-class>org.deltava.taglib.content.GoogleAnalyticsTag</tag-class>
 		<body-content>empty</body-content>
-		<attribute>
-			<name>eventSupport</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
-		<attribute>
-			<name>async</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
 	</tag>
 
 	<tag>
