@@ -15,6 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:googleAnalytics />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,7 +32,7 @@
  <td class="nophone" style="width:10%">TYPE</td>
  <td style="width:15%">DATE</td>
  <td class="nophone" style="width:15%">AUTHOR</td>
- <td style="width:25%">URL</td>
+ <td class="nophone" style="width:30%">URL</td>
  <td class="left">BODY</td>
 </tr>
 
@@ -43,8 +44,8 @@
  <td class="nophone sec">${br.type}</td>
  <td class="pri"><fmt:date date="${br.createdOn}" t="HH:mm" /></td>
  <td class="nophone bld">${empty auhtor ? 'Anonymous' : author.name}</td>
- <td class="small">${br.URL}</td>
- <td class="left small">${br.body}</td>
+ <td class="nophone small">${br.URL}</td>
+ <td class="left small"><pre><code>${br.body}</code></pre></td>
 </view:row>
 </c:forEach>
 
