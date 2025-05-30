@@ -5,7 +5,9 @@ import java.util.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.system.*;
 
@@ -22,7 +24,9 @@ import org.deltava.commands.HTTPContext;
  */
 
 public class ContentHelper {
-
+	
+	private static final Logger log = LogManager.getLogger(ContentHelper.class);
+	
 	private static final String PUSH_URL_ATTR = "$PushURLs";
 	private static final String CONTENT_MAP_ATTR = "$TagContentNames$";
 
@@ -141,7 +145,7 @@ public class ContentHelper {
 	}
 
 	/**
-	 * Writes a dynamic Content Security Policy header to the response, overwriting any existing CSP header.
+	 * Writes a dynamic Content Security Policy header to the response.
 	 * @param ctx the PageContext object
 	 */
 	public static void flushCSP(PageContext ctx) {
@@ -149,7 +153,18 @@ public class ContentHelper {
 		if (csp == null)
 			throw new IllegalStateException("No Content Security Policy in request");
 		
+		// Check for committed request that will silent fail header setting
+		if (ctx.getResponse().isCommitted()) {
+			HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
+			log.warn("Cannot set CSP Header for {} - {} already committed", req.getRemoteUser(), req.getRequestURI());
+			return;
+		}
+		
 		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
 		rsp.setHeader(csp.getHeader(), csp.getData());
+		if (csp.hasReportURI()) {
+			rsp.setHeader("Reporting-Endpoints", csp.getReportHeader());
+			rsp.setHeader("Report-To", csp.getReportHeader());
+		}
 	}
 }
