@@ -29,6 +29,10 @@
 			<param-name>enforce</param-name>
 			<param-value>false</param-value>
 		</init-param>
+		<init-param>
+			<param-name>reportURI</param-name>
+			<param-value>/brwreport.ws</param-value>		
+		</init-param>
 	</filter>
 
 	<!-- Servlet Security Cookie/Wrapper Filters -->
