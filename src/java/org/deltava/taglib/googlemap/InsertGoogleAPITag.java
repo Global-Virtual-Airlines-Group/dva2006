@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.apache.logging.log4j.*;
+
 import org.deltava.beans.MapType;
 import org.deltava.beans.system.*;
 
@@ -218,6 +219,9 @@ public class InsertGoogleAPITag extends TagSupport {
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME);
+		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "www.google.com", "maps.googleapis.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "maps.googleapis.com", "'unsafe-eval'");
+		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "maps.gstatic.com");
 		return EVAL_PAGE;
 	}
 }
