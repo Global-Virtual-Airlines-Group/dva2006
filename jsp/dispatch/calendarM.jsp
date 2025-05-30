@@ -14,8 +14,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
+<content:cspHeader />
 <script async>
 golgotha.local.switchType = function(combo) {
 	self.location = '/dspcalendar.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
@@ -81,6 +83,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

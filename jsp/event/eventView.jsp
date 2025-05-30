@@ -17,8 +17,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="event" />
+<content:cspHeader />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -346,6 +348,5 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

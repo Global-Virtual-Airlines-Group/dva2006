@@ -12,6 +12,7 @@
 <content:expire expires="10" />
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <c:if test="${!empty pushPubKey}"><content:js name="push" /></c:if>
 <script>
@@ -1054,6 +1055,5 @@ pilot Certification.</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
