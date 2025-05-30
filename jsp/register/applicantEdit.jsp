@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <script>
 golgotha.local.validate = function(f)
 {

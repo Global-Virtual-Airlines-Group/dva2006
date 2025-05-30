@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="3" js="acarsMap,markerWithLabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:captcha action="acarsMap" />

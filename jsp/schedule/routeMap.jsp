@@ -15,7 +15,7 @@
 <map:api version="3" />
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">

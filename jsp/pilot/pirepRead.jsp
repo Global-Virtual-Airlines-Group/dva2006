@@ -24,8 +24,11 @@
 <c:if test="${empty sbPackage}">
 <content:js name="simbrief.apiv1" /></c:if></c:if>
 <content:captcha action="pirep" />
-<content:googleAnalytics eventSupport="true" />
+<content:googleAnalytics />
 <c:if test="${googleMap}"><map:api version="3" /></c:if>
+<c:if test="${googleStaticMap || (isACARS && googleMap)}">
+<content:csp type="SCRIPT" host="www.gstatic.com" />
+<content:csp type="STYLE" host="www.gstatic.com" /></c:if>
 <c:if test="${scoreCR || access.canDispose}">
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <content:empty var="emptyList" />
@@ -705,9 +708,6 @@ p.then(function(rsp) {
 return true;
 });</c:if>
 </script>
-</c:when>
-<c:when test="${googleStatic}">
-<!--  Google static Map -->
 </c:when>
 </c:choose>
 <c:if test="${access.canUseSimBrief}">
