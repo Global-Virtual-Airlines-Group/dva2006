@@ -11,7 +11,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -102,6 +102,24 @@ public class SetSystemData extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SYS_COMMANDS WHERE (CMDDATE < DATE_SUB(NOW(), INTERVAL ? DAY))")) {
 			ps.setInt(1, days);
 			return executeUpdate(ps, 0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a Browser policy violation report to the database.
+	 * @param r a BrowserReport
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(BrowserReport r) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_REPORTS (CREATED, AUTHOR_ID, TYPE, URL, BODY) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setTimestamp(1, createTimestamp(r.getCreatedOn()));
+			ps.setInt(2, r.getAuthorID());
+			ps.setString(3, r.getType());
+			ps.setString(4, r.getURL());
+			ps.setString(5, r.getBody());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -6,6 +6,9 @@
 	<!-- CAPTCHA service -->
 	<service id="recaptcha" class="org.deltava.service.ValidateCAPTCHAService" />
 
+	<!-- Reporting API endpoint -->
+	<service id="brwreport" class="org.deltava.service.ReportingService" />
+
 	<!-- Water Cooler Services -->
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 

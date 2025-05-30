@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019, 2020, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.stats.*;
-import org.deltava.beans.system.BlacklistEntry;
+import org.deltava.beans.system.*;
 import org.deltava.taskman.TaskLastRun;
 
 import org.deltava.util.cache.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 11.3
+ * @version 12.0
  * @since 1.0
  */
 
@@ -38,6 +38,32 @@ public class GetSystemData extends DAO {
 	public String getDBVersion() throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT VERSION()"); ResultSet rs = ps.executeQuery()) {
 			return rs.next() ? rs.getString(1) : null;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves Reporting API reports from the database.
+	 * @return a List of BrowserReport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<BrowserReport> getBrowserReports() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM SYS_REPORTS")) {
+			List<BrowserReport> results = new ArrayList<BrowserReport>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					BrowserReport br = new BrowserReport(rs.getString(4));
+					br.setID(rs.getInt(1));
+					br.setCreatedOn(toInstant(rs.getTimestamp(2)));
+					br.setAuthorID(rs.getInt(3));
+					br.setURL(rs.getString(5));
+					br.setBody(rs.getString(6));
+					results.add(br);
+				}
+			}
+
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
