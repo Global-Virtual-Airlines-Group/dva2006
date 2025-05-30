@@ -19,6 +19,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
+<content:cspHeader />
 <script async>
 golgotha.ff = golgotha.ff || {};
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
