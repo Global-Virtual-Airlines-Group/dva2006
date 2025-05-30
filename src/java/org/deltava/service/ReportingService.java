@@ -49,7 +49,7 @@ public class ReportingService extends WebService {
 			JSONObject bo = jo.getJSONObject("body");
 			String p = bo.optString("originalPolicy");
 			if ((p != null) && (p.length() > 60))
-				bo.put("originalPolicy", p.replace("; ", "; " + System.getProperty("line.separator")));
+				bo.put("originalPolicy", p.replace("; ", ";" + System.getProperty("line.separator")));
 
 			// Build the bean
 			BrowserReport br = new BrowserReport(jo.getString("type"));
