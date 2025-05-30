@@ -853,6 +853,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="brwreports">
+		<name>Reporting API Reports</name>
+		<class>org.deltava.commands.system.BrowserReportsCommand</class>
+		<roles>Operations,Developer</roles>
+	</command>
+
 	<command id="tzones">
 		<name>Time Zone Profiles</name>
 		<class>org.deltava.commands.system.TimeZoneListCommand</class>
