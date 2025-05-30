@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.net.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Water Cooler Linked Images and their descriptions.
  * @author Luke
- * @version 10.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -65,6 +65,18 @@ public class LinkedImage extends DatabaseBean {
 	 */
 	public boolean getDisabled() {
 		return _isDisabled;
+	}
+	
+	/**
+	 * Returns the host name for this Linked Image.
+	 * @return the host name
+	 */
+	public String getHost() {
+		try {
+			return new URI(_url).getHost();
+		} catch (URISyntaxException se) {
+			return null;
+		}
 	}
 	
 	/**
