@@ -10,9 +10,11 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:googleAnalytics />
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -171,6 +173,5 @@ golgotha.local.checkAssignee = function(combo) {
 <script async>
 golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </html>

@@ -12,8 +12,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
+<content:csp type="IMG" host="*" />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
@@ -208,6 +211,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

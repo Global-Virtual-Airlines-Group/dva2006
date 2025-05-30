@@ -14,6 +14,8 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -164,6 +166,5 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -21,6 +21,7 @@
 <content:js name="fileSaver" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
+<content:cspHeader />
 <script async>
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
