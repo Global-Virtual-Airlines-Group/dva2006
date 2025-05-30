@@ -26,6 +26,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:captcha action="threadCreate" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
@@ -53,34 +54,23 @@ return true;
 
 golgotha.local.openEmoticons = function() {	return window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes'); };
 <c:if test="${access.canReply && !doEdit}">
-golgotha.local.postQuote = function(postID, f)
-{
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 2500;
-xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const js = JSON.parse(xmlreq.responseText);
+golgotha.local.postQuote = function(postID, f) {
+	const p = fetch('quote.ws?id=${thread.hexID}&post=' + postID, {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		p.json().then(function(js) {
+			let quote = '[quote';
+			if (js.author) quote += '=' + js.author;
+			quote += ']';
+			quote += js.body;
+			quote += '[/quote]\r\n\r\n';
 
-	// Create the opening
-	let quote = '[quote';
-	if (js.author)
-		quote += '=' + js.author;
-	quote += ']';
-
-	// Add the body
-	quote += js.body;
-	quote += '[/quote]\r\n\r\n';
-
-	// Save in the field
-	if (f.msgText.value.length > 0) f.msgText.value += '\r\n';
-	f.msgText.value += quote;
-	f.msgText.focus();
-	return true;
-};
-
-xmlreq.send(null);
-return true;	
+			// Save in the field
+			if (f.msgText.value.length > 0) f.msgText.value += '\r\n';
+			f.msgText.value += quote;
+			f.msgText.focus();
+		})
+	});
 };
 </c:if>
 </script>
@@ -351,6 +341,5 @@ notification each time a reply is posted in this Thread.
 const postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </html>

@@ -10,11 +10,13 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -106,30 +108,22 @@
 <script async>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 7500;
-xmlreq.open('GET', 'allstats.ws', true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const statsData = JSON.parse(xmlreq.responseText);
-
-	// Display the chart
-	const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
-	const data = new google.visualization.DataTable();
-	data.addColumn('string','Date');
-	data.addColumn('number','Total Flights');
-	data.addColumn('number','Online Flights');
-	data.addColumn('number','ACARS Flights');
-	data.addColumn('number','Historic Flights');
-	data.addRows(statsData);
-	chart.draw(data,golgotha.charts.buildOptions());
-	return true;
+	const p = fetch('allstats.ws', {signal:AbortSignal.timeout(7500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			const chart = new google.visualization.LineChart(document.getElementById('flightStats'));
+			const data = new google.visualization.DataTable();
+			data.addColumn('string','Date');
+			data.addColumn('number','Total Flights');
+			data.addColumn('number','Online Flights');
+			data.addColumn('number','ACARS Flights');
+			data.addColumn('number','Historic Flights');
+			data.addRows(js);
+			chart.draw(data,golgotha.charts.buildOptions());
+		});
+	});
 };
-
-xmlreq.send(null);
-return true;	
-});
 </script>
-<content:googleAnalytics />
 </body>
 </html>

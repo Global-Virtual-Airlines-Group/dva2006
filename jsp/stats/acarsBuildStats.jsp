@@ -8,11 +8,13 @@
 <title><content:airline /> ACARS Client Build Statistics</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -56,23 +58,19 @@ golgotha.local.showChart = function(cb) {
 	const weeks = golgotha.form.getCombo(cb);
 	if ((golgotha.local.chartData) && (golgotha.local.chartData.weeks >= weeks)) return golgotha.local.renderChart(weeks);
 
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 7500;
-	xmlreq.open('get', 'acarsbuildstats.ws?count=' + weeks, true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) {
+	const p = fetch('acarsbuildstats.ws?count=' + weeks, {signal:AbortSignal.timeout(7500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) {
 			golgotha.form.clear(cb.form);
 			return false;
 		}
 
-		const js = JSON.parse(xmlreq.responseText);
-		js.stats.forEach(function(e) { const dt = e.week; e.week= new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
-		golgotha.local.chartData = js; //.reverse();
-		return golgotha.local.renderChart(weeks);
-	};
-
-	xmlreq.send(null);
-	return true;
+		p.json().then(function(js) {
+			js.stats.forEach(function(e) { const dt = e.week; e.week= new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
+			golgotha.local.chartData = js;
+			return golgotha.local.renderChart(weeks);
+		})
+	});
 };
 
 golgotha.local.renderChart = function(cnt) {
@@ -99,6 +97,5 @@ golgotha.local.renderChart = function(cnt) {
 	return true;
 };
 </script>
-<content:googleAnalytics />
 </body>
 </html>

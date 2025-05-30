@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -12,16 +13,17 @@
 <title><content:airline /> Flight Tour - ${tour.name}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="progress" />
 <content:captcha action="tour" />
 <content:attr attr="tourAccess" value="true" roles="Pilot" />
-<c:if test="${tour.flights.size() > 0}">
-<c:set var="hasMap" value="true" scope="page" />
+<c:if test="${tour.flights.size() > 0}"><c:set var="hasMap" value="true" scope="page" />
 <map:api version="3" /></c:if>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body<c:if test="${hasMap}"> onunload="void golgotha.maps.util.unload()"</c:if>>
