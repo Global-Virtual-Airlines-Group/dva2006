@@ -26,12 +26,14 @@ public class GoogleAnalyticsTag extends TagSupport {
 		if (accountID == null)
 			return EVAL_PAGE;
 		
+		// Build the URL
+		StringBuilder urlBuf = new StringBuilder(JS_URL);
+		urlBuf.append("?id=").append(accountID);
+		
 		try {
 			JspWriter out = pageContext.getOut();
 			out.print("<script async src=\"");
-			out.print(JS_URL);
-			out.print("?id=");
-			out.print(accountID);
+			out.print(urlBuf.toString());
 			out.println("\"></script>");
 			
 			out.println("<script>");
@@ -48,7 +50,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 			release();
 		}
 		
-		ContentHelper.pushContent(pageContext, JS_URL, "script");
+		ContentHelper.pushContent(pageContext, urlBuf.toString(), "script");
 		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "www.google-analytics.com");
 		return EVAL_PAGE;
