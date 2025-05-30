@@ -12,11 +12,10 @@ import org.deltava.beans.*;
  * @since 12.0
  */
 
-public class BrowserReport extends DatabaseBean implements AuthoredBean {
+public class BrowserReport extends DatabaseBean {
 	
 	private final String _type;
 	private Instant _createdOn;
-	private int _authorID;
 	private String _url;
 	private String _body;
 
@@ -45,11 +44,6 @@ public class BrowserReport extends DatabaseBean implements AuthoredBean {
 		return _createdOn;
 	}
 
-	@Override
-	public int getAuthorID() {
-		return _authorID;
-	}
-	
 	/**
 	 * Returns the URL of the report violation.
 	 * @return the URL
@@ -64,12 +58,6 @@ public class BrowserReport extends DatabaseBean implements AuthoredBean {
 	 */
 	public String getBody() {
 		return _body;
-	}
-
-	@Override
-	public void setAuthorID(int id) {
-		validateID(_authorID, id, true);
-		_authorID = id;
 	}
 
 	/**

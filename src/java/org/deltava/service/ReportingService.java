@@ -46,13 +46,16 @@ public class ReportingService extends WebService {
 		Collection<BrowserReport> reports = new ArrayList<BrowserReport>();
 		for (int x = 0; x < ja.length(); x++) {
 			JSONObject jo = ja.getJSONObject(x);
+			JSONObject bo = jo.getJSONObject("body");
+			String p = bo.optString("originalPolicy");
+			if ((p != null) && (p.length() > 60))
+				bo.put("originalPolicy", p.replace("; ", "; " + System.getProperty("line.separator")));
 
 			// Build the bean
 			BrowserReport br = new BrowserReport(jo.getString("type"));
 			br.setCreatedOn(now.minusSeconds(jo.optInt("age")));
 			br.setCreatedOn(Instant.now());
 			br.setURL(jo.getString("url"));
-			br.setAuthorID(ctx.isAuthenticated() ? ctx.getUser().getID() : 0);
 			br.setBody(jo.getJSONObject("body").toString(1));
 			reports.add(br);
 		}

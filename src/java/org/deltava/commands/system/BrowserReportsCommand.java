@@ -1,11 +1,6 @@
 // Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import org.deltava.beans.AuthoredBean;
 import org.deltava.beans.system.BrowserReport;
 
 import org.deltava.commands.*;
@@ -30,18 +25,10 @@ public class BrowserReportsCommand extends AbstractViewCommand {
 		
 		ViewContext<BrowserReport> vc = initView(ctx, BrowserReport.class);
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the reports
-			GetSystemData dao = new GetSystemData(con);
+			GetSystemData dao = new GetSystemData(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			vc.setResults(dao.getBrowserReports());
-			
-			// Get the authors
-			Collection<Integer> authorIDs = vc.getResults().stream().map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
-			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
