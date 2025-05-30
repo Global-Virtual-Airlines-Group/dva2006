@@ -13,10 +13,12 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="calendar" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.switchType = function(combo) {
 	self.location = '/logcalendar.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
@@ -62,6 +64,5 @@ golgotha.local.switchType = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
