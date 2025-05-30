@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="32kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,8 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
-<c:if test="${!empty pushPubKey}">
-<content:js name="push" /></c:if>
+<c:if test="${!empty pushPubKey}"><content:js name="push" /></c:if>
 <script>
 golgotha.push.pubKey = '${pushPubKey}';
 golgotha.onDOMReady(function() { 
@@ -31,6 +30,7 @@ golgotha.onDOMReady(function() {
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <style type="text/css">
 @media (min-width: 801px) {
     table#pilotCenter td.sideLabel { width: 35%; max-width: 350px; }
@@ -979,6 +979,10 @@ pilot Certification.</td>
 </tr>
 </content:filter>
 <content:filter roles="Developer,Operations">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="brwreports">Browser Reports</el:cmd></td>
+ <td class="data">You can view web browser reports sent via the browser Reporting API for front-end issues and errors on the web site.</td>
+</tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br />
 <el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd></td>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="32kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -114,6 +114,7 @@ return true;
 <%@ include file="/jsp/cooler/threadImg.jspf" %>
 <%@ include file="/jsp/cooler/threadPoll.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
+<content:cspHeader />
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="0" scope="page" />
