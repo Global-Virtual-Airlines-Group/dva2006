@@ -7,14 +7,14 @@ import javax.servlet.jsp.*;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
 
-import org.deltava.taglib.BrowserInfoTag;
+import org.deltava.taglib.*;
 
 import com.newrelic.api.agent.NewRelic;
 
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -38,12 +38,6 @@ public class PageTag extends BrowserInfoTag {
 		_isLogged = true;
 	}
 
-	/**
-	 * Writes the layout element's opening tag to the JSP output stream.
-	 * @return TagSuppport.EVAL_BODY_INCLUDE always
-	 * @throws JspException if an error occurs
-	 */
-	@SuppressWarnings("null")
 	@Override
 	public int doStartTag() throws JspException {
 
@@ -51,7 +45,7 @@ public class PageTag extends BrowserInfoTag {
 		HTTPContextData bctxt = getBrowserContext();
 		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() == DeviceType.PHONE) || (bctxt.getDeviceType() == DeviceType.UNKNOWN);
 		logReason("Non-desktop/tablet device");
-		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
+		_sideMenu |= (bctxt != null) && ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
 		logReason("Internet Explorer < 9");
 		
 		// Check if our screen size is big enough
@@ -70,8 +64,11 @@ public class PageTag extends BrowserInfoTag {
 			out.println(NewRelic.getBrowserTimingHeader());
 			out.print("<div id=\"nav\" class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
-			out.print(bctxt.isIPv6() ? " ipv6 " : " ipv4 ");
-			out.print(bctxt.getDeviceType().name().toLowerCase());
+			if (bctxt != null) {
+				out.print(bctxt.isIPv6() ? " ipv6 " : " ipv4 ");
+				out.print(bctxt.getDeviceType().name().toLowerCase());
+			}
+			
 			out.println("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
@@ -82,25 +79,18 @@ public class PageTag extends BrowserInfoTag {
 		return EVAL_BODY_INCLUDE;
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
 		_isLogged = false;
 	}
 
-	/**
-	 * Writes the layout element's closing tag to the JSP output stream.
-	 * @return TagSuppport.EVAL_PAGE always
-	 * @throws JspException if an error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
+
+		ContentHelper.flushCSP(pageContext);
 		try {
-			JspWriter out = pageContext.getOut();
-			out.println("</div>");
+			pageContext.getOut().println("</div>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
