@@ -3,6 +3,6 @@ CREATE TABLE SYS_REPORTS (
  CREATED               DATETIME NOT NULL,
  TYPE                  VARCHAR(16) NOT NULL,
  URL                   VARCHAR(96) NOT NULL,
- BODY                  SMALLTEXT CHARACTER SET utf8mb4 NOT NULL,
+ BODY                  TEXT  CHARACTER SET utf8mb4 NOT NULL,
  PRIMARY KEY (ID)
 ) CHARACTER SET Latin1;
