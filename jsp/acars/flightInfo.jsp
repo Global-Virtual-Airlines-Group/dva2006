@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Flight Data - Flight <fmt:int value="${info.ID}" /></title>
@@ -15,8 +15,11 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<c:if test="${mapRoute.size() > 0}"><map:api version="3" js="acarsFlightMap" callback="golgotha.local.mapInit" /></c:if>
+<c:if test="${mapRoute.size() > 0}"><map:api version="3" />
+<content:js name="acarsFlightMap" />
+<content:js name="threebox" /></c:if>
 <content:googleAnalytics />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -129,25 +132,27 @@
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
 <script async>
-golgotha.local.mapInit = function() {
-	// Build the route line and map center
-	<map:point var="golgotha.local.mapC" point="${mapCenter}" />
-	<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
-	<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
-	<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
+<map:token />
 
-	// Build the map
-	const mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', map.closeWindow);
-	map.setMapTypeId(golgotha.maps.info.type);
+// Build the route line and map center
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+<map:bounds var="golgotha.local.bb" items="${info.airports}" />
+<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
+<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
+<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#a0400f" width="2" transparency="0.7" />
+
+// Build the map
+const map = new golgotha.maps.Map(document.getElementById('googleMap'), {center:golgotha.local.mapC, minZoom:2, maxZoom:15, bounds:golgotha.local.bb, projection:'globe', fitBoundsOptions:{padding:48}, scrollZoom:false, style:'mapbox://styles/mapbox/outdoors-v12'});
+window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLights:true});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.on('style.load', golgotha.maps.updateMapText);
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	golgotha.maps.acarsFlight.getACARSData(${info.ID});
-
-	// Add the filed route and markers
-	map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
+	map.addLine(golgotha.maps.acarsFlight.gfRoute);
 	map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
-};
+});
 </script></c:if>
 </body>
 </html>
