@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Navigation Database</title>
@@ -12,11 +12,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <map:api version="3" />
-<content:googleAnalytics />
-<content:js name="markermanager" />
-<content:js name="markerWithLabel" />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -31,20 +30,25 @@ golgotha.local.zoomTo = function(combo) {
 
 	// Pan the map
 	const mrk = golgotha.local.navaids[idx];
-	map.panTo(mrk.getPosition());
-	golgotha.local.mapC = mrk.getPosition();
+	map.panTo(mrk.getLngLat());
+	golgotha.local.mapC = mrk.getLngLat();
 	golgotha.local.loadWaypoints();
-	google.maps.event.trigger(mrk, 'click');
+	mrk.getElement().dispatchEvent(new Event('click'));
 	return true;
+};
+
+golgotha.local.toggleMarkers = function() {
+	const z = map.getZoom();
+	golgotha.local.sMarkers.forEach(function(m) { m.setMap((z >= m.minZoom) ? map : null); });
 };
 
 golgotha.local.loadWaypoints = function()
 {
 // Get the lat/long
-const lat = golgotha.local.mapC.lat();
-const lng = golgotha.local.mapC.lng();
-const range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
-golgotha.local.sMarkers.clearMarkers();
+const lat = golgotha.local.mapC.lat;
+const lng = golgotha.local.mapC.lng;
+const range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng - map.getBounds().getSouthWest().lng);
+map.removeMarkers(golgotha.local.sMarkers);
 
 // Check if we don't select
 const f = document.forms[0];
@@ -63,14 +67,16 @@ xmlreq.onreadystatechange = function() {
 	const js = JSON.parse(xmlreq.responseText);
 	js.items.forEach(function(wp) {
 		if (wp.code == '${param.navaidCode}') return;
-		const mrk = new golgotha.maps.IconMarker((wp.pal) ? {pal:wp.pal,icon:wp.icon,info:wp.info} : {color:wp.color,info:wp.info,label:wp.code}, wp.ll);;
+		const mrk = new golgotha.maps.IconMarker((wp.pal) ? {pal:wp.pal,icon:wp.icon,info:wp.info,pt:wp.ll} : {color:wp.color,info:wp.info,label:wp.code,pt:wp.ll});;
 		mrk.minZoom = 6; mrk.code = wp.code;
 		if (wp.type == 'Airport')
 			mrk.minZoom = 7;
 		else if (wp.type == 'Intersection')
 			mrk.minZoom = 8;
 
-		golgotha.local.sMarkers.addMarker(mrk, mrk.minZoom);
+		golgotha.local.sMarkers.push(mrk);
+		if (map.getZoom() >= mrk.minZoom)
+			mrk.setMap(map);
 	});
 
 	golgotha.form.clear();
@@ -104,7 +110,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Map</td>
- <td class="data"><map:div ID="googleMap" height="450" /></td>
+ <td class="data"><map:div ID="mapBox" height="500" /></td>
 </tr>
 </c:if>
 <c:if test="${empty results}">
@@ -140,29 +146,28 @@ return true;
 <div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
 <script async>
+<map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-const mapOpts = {center:golgotha.local.mapC,minZoom:6,zoom:8,scrollwheel:true,streetViewControl:false,clickableIcons:false,mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, minZoom:6, zoom:8, maxZoom:14, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
+map.on('style.load', golgotha.maps.updateMapText);
+map.on('zoomend', golgotha.maps.updateZoom);
+map.on('zoomend', golgotha.local.toggleMarkers);
 
 // Build the navaid list
 <map:markers var="golgotha.local.navaids" items="${results}" />
 map.addMarkers(golgotha.local.navaids);
+golgotha.local.sMarkers = [];
 
-// Surrounding navads
-golgotha.local.sMarkers = new MarkerManager(map, {borderPadding:32});
 document.forms[0].navaid.selectedIndex = 0;
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left'); 
 	golgotha.local.zoomTo(document.forms[0].navaid);
-	google.maps.event.trigger(map, 'zoom_changed');
-	google.maps.event.trigger(map, 'maptypeid_changed');
+	map.fire('zoomend');
 });
 </script></c:if>
 </body>
