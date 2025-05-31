@@ -233,7 +233,7 @@ map.once('load', function() {
 	map.addTerrain(1.33);
 	golgotha.local.rpInit();
 	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 350);
-	return true;
+	map.fire('zoomend');
 });
 </script>
 </body>
