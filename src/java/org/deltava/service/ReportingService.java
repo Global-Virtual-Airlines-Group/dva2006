@@ -3,10 +3,11 @@ package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
-import java.io.IOException;
 
 import org.json.*;
 import org.apache.logging.log4j.*;
@@ -36,12 +37,24 @@ public class ReportingService extends WebService {
 		
 		// Parse the data
 		JSONArray ja = null;
-		try {
-			ja = new JSONArray(new JSONTokener(ctx.getRequest().getInputStream()));
-		} catch (IOException ie) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(ctx.getRequest().getInputStream()))) {
+			String json = br.lines().collect(Collectors.joining("\n"));
+			char c = json.charAt(0);
+			if (c == '[')
+				ja = new JSONArray(json);
+			else if (c == '{') {
+				log.warn("Unexpected JSON received - {}", json);
+				@SuppressWarnings("unused")
+				JSONObject jo = new JSONObject(json);
+				log.warn("Parse Successful");
+			}
+			
+			if (ja == null)
+				throw new JSONException("No Reports found");
+		} catch (IOException | JSONException ie) {
 			throw error(SC_BAD_REQUEST, ie.getMessage(), false);
 		} catch (Exception e) {
-			throw error(SC_BAD_REQUEST, e.getMessage());
+			throw error(SC_BAD_REQUEST, e.getMessage(), e);
 		}
 		
 		// Generate the reports
