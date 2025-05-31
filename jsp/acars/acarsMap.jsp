@@ -19,6 +19,8 @@
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="3" js="acarsMap,markerWithLabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:captcha action="acarsMap" />
+<content:csp type="CONNECT" host="tilecache.rainviewer.com" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
