@@ -123,7 +123,7 @@ google.charts.setOnLoadCallback(function() {
 			chart.draw(data,golgotha.charts.buildOptions());
 		});
 	});
-};
+});
 </script>
 </body>
 </html>
