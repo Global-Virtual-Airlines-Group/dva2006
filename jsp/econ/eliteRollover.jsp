@@ -10,10 +10,12 @@
 <title><content:airline />&nbsp;${eliteName} Rollover for ${year}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -70,6 +72,5 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -10,11 +10,13 @@
 <title><content:airline />&nbsp;${eliteName} Statistics</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -77,22 +79,17 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 <script async>
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 7500;
-	xmlreq.open('get', 'elitestats.ws?year=${statsYear}', true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		const js = JSON.parse(xmlreq.responseText);
-		golgotha.local.chartData = js;
-		return golgotha.local.renderChart();
-	};
-
-	xmlreq.send(null);
-	return true;
+	const p = fetch('elitestats.ws?year=${statsYear}', {signal:AbortSignal.timeout(7500)});
+	p.then(function(rsp) {
+		if (rsp.ok) return false;
+		rsp.json().then(function(js) {
+			golgotha.local.chartData = js;
+			return golgotha.local.renderChart();
+		});
+	});
 };
 
 golgotha.local.renderChart = function() {

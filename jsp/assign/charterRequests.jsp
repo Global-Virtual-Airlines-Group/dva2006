@@ -14,9 +14,11 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
 <content:attr attr="showAuthors" roles="HR,Operations,PIREP" value="true" />
+<content:cspHeader />
 <c:if test="${showAuthors}">
-<script>
+<script async>
 golgotha.local.updateAuthor = function(cb) {
 	self.location = (cb.selectedIndex < 1) ? 'chreqs.do' : ('chreqs.do?id=' + golgotha.form.getCombo(cb));
 	return true;
@@ -79,6 +81,5 @@ golgotha.local.updateAuthor = function(cb) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
