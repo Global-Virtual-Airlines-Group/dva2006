@@ -103,7 +103,7 @@ public class InsertAPITag extends TagSupport {
 		ContentHelper.addContent(pageContext, "JS", jsFileName);
 		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "*.tiles.mapbox.com", "api.mapbox.com", "events.mapbox.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.WORKER, "blob:");
-		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "api.mapbox.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "api.mapbox.com", "'unsafe-eval'");
 		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "data:");
 		ContentHelper.addCSP(pageContext, ContentSecurity.STYLE, "api.mapbox.com");
 		return EVAL_PAGE;
