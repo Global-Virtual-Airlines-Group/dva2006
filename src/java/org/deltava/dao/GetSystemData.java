@@ -53,11 +53,13 @@ public class GetSystemData extends DAO {
 			List<BrowserReport> results = new ArrayList<BrowserReport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					BrowserReport br = new BrowserReport(rs.getString(3));
+					BrowserReport br = new BrowserReport(rs.getInt(2), rs.getString(6));
 					br.setID(rs.getInt(1));
-					br.setCreatedOn(toInstant(rs.getTimestamp(2)));
-					br.setURL(rs.getString(4));
-					br.setBody(rs.getString(5));
+					br.setCreatedOn(toInstant(rs.getTimestamp(3)));
+					br.setHost(rs.getString(4));
+					br.setDirective(rs.getString(5));
+					br.setURL(rs.getString(7));
+					br.setBody(rs.getString(8));
 					results.add(br);
 				}
 			}
