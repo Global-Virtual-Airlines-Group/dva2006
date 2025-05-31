@@ -65,7 +65,7 @@ golgotha.local.showChart = function(cb) {
 			return false;
 		}
 
-		p.json().then(function(js) {
+		rsp.json().then(function(js) {
 			js.stats.forEach(function(e) { const dt = e.week; e.week= new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
 			golgotha.local.chartData = js;
 			return golgotha.local.renderChart(weeks);
