@@ -16,7 +16,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 <c:if test="${!empty loginAddrs}">
 <script async>
 golgotha.local.toggleLoginAddrs = function(lnk) {
@@ -403,6 +405,5 @@ Applicant profile for ${pilot.name}.</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

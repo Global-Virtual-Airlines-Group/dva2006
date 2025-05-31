@@ -10,10 +10,12 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
@@ -43,6 +45,5 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

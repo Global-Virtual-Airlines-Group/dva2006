@@ -13,6 +13,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:sysdata var="forumName" name="airline.forum" />
@@ -21,7 +22,8 @@
 <content:sysdata var="defaultTFormat" name="time.time_format" />
 <content:sysdata var="defaultDFormat" name="time.date_format" />
 <fmt:aptype var="useICAO" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.hasSignature = ${pilot.hasSignature};
 golgotha.local.validate = function(f)
 {
@@ -395,6 +397,5 @@ golgotha.onDOMReady(function() {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

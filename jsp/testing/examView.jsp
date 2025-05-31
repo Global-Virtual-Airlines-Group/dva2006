@@ -14,11 +14,11 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
-<c:if test="${exam.routePlot}">
-<map:api version="3" /></c:if>
-<c:if test="${hasQImages || exam.routePlot}">
-<content:js name="examTake" /></c:if>
+<c:if test="${exam.routePlot}"><map:api version="3" /></c:if>
+<c:if test="${hasQImages || exam.routePlot}"><content:js name="examTake" /></c:if>
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -151,6 +151,5 @@ map.addMarkers(arMarkers);
 golgotha.exam.maps.push(map);
 </c:if></c:forEach>
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </html>

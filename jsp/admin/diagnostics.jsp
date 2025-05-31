@@ -18,9 +18,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
-<c:if test="${acarsEnabled}">
-<content:googleJS module="charts" /></c:if>
+<c:if test="${acarsEnabled}"><content:googleJS module="charts" /></c:if>
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -151,6 +152,5 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

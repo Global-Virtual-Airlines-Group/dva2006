@@ -14,12 +14,14 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
+<content:cspHeader />
 <script async>
 golgotha.local.update = function(cb) {
 	if (!golgotha.form.check()) return false;
@@ -260,7 +262,6 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </content:page>
 <script async>
 <map:token />
-
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
@@ -292,6 +293,5 @@ p.handle = function(rsp) {
 
 google.charts.setOnLoadCallback(function() { p.then(p.handle) });
 </script>
-<content:googleAnalytics />
 </body>
 </html>
