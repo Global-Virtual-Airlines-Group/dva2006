@@ -1,6 +1,9 @@
 CREATE TABLE SYS_REPORTS (
  ID                    INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+ BUILD                 SMALLINT UNSIGNED NOT NULL DEFAULT 0,
  CREATED               DATETIME NOT NULL,
+ HOST                  VARCHAR(64),
+ DIRECTIVE             VARCHAR(16),
  TYPE                  VARCHAR(16) NOT NULL,
  URL                   VARCHAR(96) NOT NULL,
  BODY                  TEXT  CHARACTER SET utf8mb4 NOT NULL,
