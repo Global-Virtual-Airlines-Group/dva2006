@@ -20,6 +20,7 @@
 <content:js name="routePlot" />
 <content:js name="fileSaver" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
+<content:csp type="IMG" host="maps.google.com" />
 <content:googleAnalytics />
 <content:cspHeader />
 <script async>
