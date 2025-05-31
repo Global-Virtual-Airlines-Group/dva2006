@@ -96,6 +96,7 @@ map.once('load', function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	golgotha.maps.oceanic.resetTracks();
 	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 350);
+	map.fire('zoomend');
 });
 </script>
 </body>
