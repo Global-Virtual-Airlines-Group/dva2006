@@ -94,7 +94,7 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		// Build the resource name if host specified
 		if (_host != null) {
 			StringBuilder sb = new StringBuilder("https://");
-			buf.append(_host);
+			sb.append(_host);
 			buf.insert(0, sb);
 			ContentHelper.addCSP(pageContext, ContentSecurity.STYLE, _host);
 		}
