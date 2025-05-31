@@ -14,8 +14,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:copyright />
 <content:js name="common" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -164,7 +166,6 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 </c:if>
 </el:form>
 <br />
-<content:copyright />
 </content:region>
 </content:page>
 <content:googleAnalytics />

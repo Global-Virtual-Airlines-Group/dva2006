@@ -10,8 +10,11 @@
 <title><content:airline /> Navigation Cycle Release Dates</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
@@ -67,7 +70,6 @@
 This cycle is currently loaded into the <content:airline /> FAA Approach Chart database</c:if>
 <c:if test="${isNow}">
 
-
 </c:if></td>
 </view:row>
 </c:forEach>
@@ -80,6 +82,5 @@ This cycle is currently loaded into the <content:airline /> FAA Approach Chart d
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

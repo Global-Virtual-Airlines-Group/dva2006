@@ -11,10 +11,12 @@
 <title><content:airline />&nbsp;${eliteName} Pilots for ${year}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.update = function() {
 	const f = document.forms[0];
@@ -106,6 +108,5 @@ td.requal-${lvl.name} {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
