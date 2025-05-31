@@ -8,10 +8,13 @@
 <head>
 <title>Runway Options - ${pirep.flightCode}</title>
 <content:expire expires="5" />
+<content:js name="common" />
+<content:googleAnalytics />
 <content:css name="main" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body style="margin:8px">
@@ -42,6 +45,5 @@ Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Var
 <el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br />
 <br />
 <content:copyright />
-<content:googleAnalytics />
 </body>
 </html>
