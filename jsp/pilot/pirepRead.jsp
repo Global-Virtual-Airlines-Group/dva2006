@@ -670,7 +670,7 @@ google.charts.setOnLoadCallback(function()
 {
 const p = fetch('pirepstats.ws?id=${pirep.hexID}', {signal:AbortSignal.timeout(5000)});
 p.then(function(rsp) {
-	if (rsp.status != 200) {
+	if (!rsp.ok) {
 		golgotha.util.display('flightDataLabel', false);
 		golgotha.util.display('flightDataChart', false);
 		return false;
