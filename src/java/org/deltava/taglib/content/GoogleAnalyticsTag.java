@@ -53,6 +53,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 		ContentHelper.pushContent(pageContext, urlBuf.toString(), "script");
 		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "*.google-analytics.com");
+		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "www.googletagmanager.com");
 		return EVAL_PAGE;
 	}
 }
