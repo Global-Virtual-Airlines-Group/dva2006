@@ -16,6 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <map:api version="3" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
