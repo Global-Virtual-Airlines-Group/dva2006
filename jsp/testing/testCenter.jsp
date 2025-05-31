@@ -14,8 +14,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f, isCR) {
 	if (!golgotha.form.check()) return false;
 	if (!isCR) {
@@ -199,6 +201,5 @@ Most <content:airline /> examianations are multiple choice and automatically sco
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
