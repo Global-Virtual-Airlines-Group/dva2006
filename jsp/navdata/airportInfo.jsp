@@ -21,6 +21,7 @@
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
+<content:csp type="IMG" host="maps.google.com" />
 <content:cspHeader />
 <script async>
 golgotha.local.update = function(cb) {
