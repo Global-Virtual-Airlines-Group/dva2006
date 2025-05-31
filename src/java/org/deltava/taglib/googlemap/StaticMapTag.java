@@ -1,4 +1,4 @@
-// Copyright 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -7,16 +7,18 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.ContentSecurity;
 
+import org.deltava.taglib.ContentHelper;
 import org.deltava.taglib.html.ElementTag;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to insert a static Google Map on the page.
  * @author Luke
- * @version 9.1
+ * @version 12.0
  * @since 6.0
  */
 
@@ -171,6 +173,7 @@ public class StaticMapTag extends ElementTag {
 			release();
 		}
 
+		ContentHelper.addCSP(pageContext, ContentSecurity.IMG, "maps.googleapis.com");
 		return EVAL_PAGE;
 	}
 
