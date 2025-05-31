@@ -71,12 +71,12 @@ golgotha.local.enableButtons = function() {
 
 golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons, ${(fn:hasSDK(pirep) || !isACARS) ? 1250 : reviewDelay}); });</c:if>
 </script></c:if>
+<c:if test="${googleStaticMap}"><content:csp type="IMG" host="maps.googleapis.com" /></c:if>
 <c:if test="${isACARS && googleMap}">
 <content:googleJS module="charts" />
 <content:js name="acarsFlightMap" />
 <content:js name="threebox" minify="false" />
 <content:css name="threebox" noScheme="true" />
-<content:cspHeader />
 <script async>
 <c:if test="${googleMap}">
 golgotha.local.zoomTo = function(lat, lng, zoom) {
@@ -89,6 +89,7 @@ golgotha.local.showRunwayChoices = function() {
 };
 </content:filter>
 </script></c:if>
+<content:cspHeader />
 <c:if test="${!empty eliteLevel}">
 <style type="text/css">
 table.form td.eliteStatus {
