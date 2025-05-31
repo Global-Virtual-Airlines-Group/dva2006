@@ -11,11 +11,13 @@
 <title>Questionnaire - ${applicant.name}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:js name="examTake" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:js name="examTake" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -74,6 +76,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
