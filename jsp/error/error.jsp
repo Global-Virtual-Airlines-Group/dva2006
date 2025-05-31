@@ -7,10 +7,12 @@
 <head>
 <title><content:airline /> System Error</title>
 <content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -47,6 +49,5 @@ This is the root cause of the exception: <span class="sec bld">${ex.cause.getCla
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
