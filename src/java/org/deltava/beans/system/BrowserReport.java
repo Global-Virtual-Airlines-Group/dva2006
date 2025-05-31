@@ -13,18 +13,24 @@ import org.deltava.beans.*;
  */
 
 public class BrowserReport extends DatabaseBean {
-	
+
+	private final int _build;
 	private final String _type;
 	private Instant _createdOn;
 	private String _url;
 	private String _body;
-
+	
+	private String _host;
+	private String _directive;
+	
 	/**
 	 * Creates the bean.
+	 * @param build the build number
 	 * @param type the report type
 	 */
-	public BrowserReport(String type) {
+	public BrowserReport(int build, String type) {
 		super();
+		_build = build;
 		_type = type;
 	}
 
@@ -37,11 +43,27 @@ public class BrowserReport extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the build numebr.
+	 * @return the build
+	 */
+	public int getBuild() {
+		return _build;
+	}
+	
+	/**
 	 * Returns the creation date of this Report.
 	 * @return the creation date/time
 	 */
 	public Instant getCreatedOn() {
 		return _createdOn;
+	}
+	
+	/**
+	 * Returns the triggered CSP directive.
+	 * @return the directive name
+	 */
+	public String getDirective() {
+		return _directive;
 	}
 
 	/**
@@ -50,6 +72,14 @@ public class BrowserReport extends DatabaseBean {
 	 */
 	public String getURL() {
 		return _url;
+	}
+	
+	/**
+	 * Returns the blocked host name.
+	 * @return the host name
+	 */
+	public String getHost() {
+		return _host;
 	}
 	
 	/**
@@ -67,13 +97,30 @@ public class BrowserReport extends DatabaseBean {
 	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
+	
+	/**
+	 * Updates the blocked host name.
+	 * @param host the host name
+	 */
+	public void setHost(String host) {
+		_host = host;
+	}
+
+	/**
+	 * Updates the triggered CSP directive.
+	 * @param d the directive name
+	 */
+	public void setDirective(String d) {
+		_directive = d;
+	}
 
 	/**
 	 * Updates the URL of the report violation.
 	 * @param url the URL
 	 */
 	public void setURL(String url) {
-		_url = url;
+		int pos = url.indexOf('?');
+		_url = (pos > 0) ? url.substring(0, pos) : url;
 	}
 	
 	/**
