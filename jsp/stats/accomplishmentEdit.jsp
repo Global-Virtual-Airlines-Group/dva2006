@@ -13,19 +13,20 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
 <content:js name="jsColor" />
 <content:sysdata var="forumName" name="airline.forum" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
-golgotha.form.validate({f:f.units, t:'Units of Measurement'});
-golgotha.form.validate({f:f.value, min:0, t:'Number of Units'});
-golgotha.form.validate({f:f.color, l:6, t:'${forumName} label color'});
-golgotha.form.submit(f);
-return true;
+<content:cspHeader />
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
+	golgotha.form.validate({f:f.units, t:'Units of Measurement'});
+	golgotha.form.validate({f:f.value, min:0, t:'Number of Units'});
+	golgotha.form.validate({f:f.color, l:6, t:'${forumName} label color'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.toggleAll = function() {
@@ -174,6 +175,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
