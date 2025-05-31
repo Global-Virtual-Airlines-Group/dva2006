@@ -1,14 +1,13 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import java.net.*;
 import java.security.Principal;
 
 import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Person;
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -92,20 +91,21 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 		buf.append(getFileName());
 		buf.append(".css");
 		
+		// Build the resource name if host specified
+		if (_host != null) {
+			StringBuilder sb = new StringBuilder("https://");
+			buf.append(_host);
+			buf.insert(0, sb);
+			ContentHelper.addCSP(pageContext, ContentSecurity.STYLE, _host);
+		}
+		
+		// Check if the content has already been added
+		if (ContentHelper.containsContent(pageContext, "CSS", buf.toString())) {
+			release();
+			return EVAL_PAGE;
+		}
+		
 		try {
-			// Build the resource name if host specified
-			if (_host != null) {
-				URI url = new URI("https", _host, buf.toString());
-				buf = new StringBuilder(url.toString());
-			}
-			
-			// Check if the content has already been added
-			if (ContentHelper.containsContent(pageContext, "CSS", buf.toString())) {
-				release();
-				return EVAL_PAGE;
-			}
-
-			// Write the tag
 			JspWriter out = pageContext.getOut();			
 			out.print("<link rel=\"stylesheet\" href=\"");
 			out.print(buf.toString());
