@@ -11,11 +11,13 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="userList" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.sortBy = function(combo) {
 	self.location = '/users.do?sortOpt=' + encodeURI(golgotha.form.getCombo(combo));
@@ -90,6 +92,5 @@ golgotha.local.sortBy = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

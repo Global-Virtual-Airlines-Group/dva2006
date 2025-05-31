@@ -14,7 +14,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 <script>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.newAP = function() {
@@ -67,6 +69,5 @@ golgotha.local.newAP = function() {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

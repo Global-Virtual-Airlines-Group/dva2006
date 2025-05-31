@@ -14,11 +14,13 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
+<content:cspHeader />
 <script async>
 golgotha.gate.hasPFI = ${airport.hasPFI};
 golgotha.gate.hasSchengen = ${airport.isSchengen};
@@ -97,6 +99,5 @@ const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:gol
 map.fitBounds(golgotha.local.mapBounds);
 map.on('zoomend', function() { map.toggle(golgotha.local.gates, (map.getZoom() > 11)); });
 </script>
-<content:googleAnalytics />
 </body>
 </html>
