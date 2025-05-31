@@ -12,8 +12,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
+<content:cspHeader />
 <script async>
 golgotha.local.selectAircraft = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {
@@ -71,6 +73,5 @@ golgotha.local.selectAircraft = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
