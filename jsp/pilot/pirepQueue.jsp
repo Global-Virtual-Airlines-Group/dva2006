@@ -13,10 +13,12 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:favicon />
+<content:cspHeader />
 <script async>
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
@@ -132,6 +134,5 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 </el:form>
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
