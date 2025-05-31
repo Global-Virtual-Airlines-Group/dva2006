@@ -58,7 +58,7 @@ golgotha.local.postQuote = function(postID, f) {
 	const p = fetch('quote.ws?id=${thread.hexID}&post=' + postID, {signal:AbortSignal.timeout(2500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
-		p.json().then(function(js) {
+		rsp.json().then(function(js) {
 			let quote = '[quote';
 			if (js.author) quote += '=' + js.author;
 			quote += ']';

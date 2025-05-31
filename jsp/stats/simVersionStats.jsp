@@ -130,7 +130,7 @@ golgotha.local.showChart = function() {
 	const p = fetch('simstats.ws', {signal:AbortSignal.timeout(3500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) return false;
-		p.json().then(function(js) {
+		rsp.json().then(function(js) {
 			js.splice(0, 1); 
 			golgotha.local.chartData = js.reverse();
 			return golgotha.local.renderChart();
