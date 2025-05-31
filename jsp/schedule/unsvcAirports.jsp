@@ -8,11 +8,13 @@
 <title><content:airline /> Unserviced Airports</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:favicon />
-<script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm("Are you sure you wish to continue?")) return false;
@@ -67,6 +69,5 @@ The following <fmt:int value="${airports.size()}" /> airports are no longer serv
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

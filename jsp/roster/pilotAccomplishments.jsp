@@ -10,10 +10,12 @@
 <title><content:airline /> Pilot Accomplishments</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,11 +25,8 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<content:airline /> is committed to recognizing the accomplishments of our talented pilots. Every day,
-they rack up countless flight hours and legs in a variety of aircraft types. Every day, Pilots take
-written examinations and check rides and gain promotions in rank, and transfers into new equipment
-programs. Please join us in congratulating these <content:airline /> members who have achieved the
-following accomplishments:<br />
+<content:airline /> is committed to recognizing the accomplishments of our talented pilots. Every day, they rack up countless flight hours and legs in a variety of aircraft types. Every day, Pilots take written 
+examinations and check rides and gain promotions in rank, and transfers into new equipment programs. Please join us in congratulating these <content:airline /> members who have achieved the following accomplishments:<br />
 <br />
 <el:table className="view">
 <!-- Table Header Row -->
@@ -119,6 +118,5 @@ following accomplishments:<br />
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

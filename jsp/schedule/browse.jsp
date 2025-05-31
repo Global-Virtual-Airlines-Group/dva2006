@@ -18,6 +18,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.setAirportD = function(combo) {
 	self.location = '/browse.do?airportD=' + encodeURI(golgotha.form.getCombo(combo));
