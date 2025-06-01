@@ -10,8 +10,10 @@
 <content:pics />
 <content:favicon />
 <content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -46,6 +48,5 @@ To return to the list of Pilot Accomplishments, <el:cmd url="accomplishments" cl
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -11,10 +11,12 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:js name="common" />
+<content:cspHeader />
 <script async>
 golgotha.local.update = function(cb) {
 	self.location = '/tourfb.do?id' = golgotha.form.comboGet(cb);
@@ -74,6 +76,5 @@ golgotha.local.update = function(cb) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

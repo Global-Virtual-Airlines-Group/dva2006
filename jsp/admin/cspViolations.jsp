@@ -41,7 +41,7 @@
  <td class="sec bld caps">${cv.type}</td>
  <td>${cv.host}</td>
  <td class="bld"><fmt:int value="${cv.count}" /></td>
- <td class="left"><c:forEach var="url" items="${cv.URLs}" varStatus="hasNext"><el:cmd className="small plain" url="brwreports" linkID="${url}">${url}</el:cmd><c:if test="${!hasNext.last}">&nbsp;</c:if></c:forEach></td>
+ <td class="left"><c:forEach var="url" items="${cv.URLs}" varStatus="hasNext"><el:cmd className="small plain" url="brwreports" linkID="${url}">${url}</el:cmd><c:if test="${!hasNext.last}">, </c:if></c:forEach></td>
 </view:row>
 </c:forEach>
 

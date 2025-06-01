@@ -13,8 +13,10 @@
 <content:favicon />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -93,6 +95,5 @@ golgotha.onDOMReady(function() {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

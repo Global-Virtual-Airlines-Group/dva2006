@@ -11,8 +11,10 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.id, t:'Accomplishment'});
@@ -85,6 +87,5 @@ ${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -6,12 +6,14 @@
 <html lang="en">
 <head>
 <title><content:airline /> Issue Updated</title>
+<content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:css name="main" />
 <meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -46,6 +48,5 @@ To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Clic
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
