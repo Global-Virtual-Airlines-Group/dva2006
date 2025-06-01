@@ -19,6 +19,7 @@
 <map:api version="3" />
 <content:googleAnalytics />
 <content:js name="flightBoardMap" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
