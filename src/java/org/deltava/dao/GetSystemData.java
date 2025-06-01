@@ -42,33 +42,6 @@ public class GetSystemData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
-	/**
-	 * Retrieves Reporting API reports from the database.
-	 * @return a List of BrowserReport beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<BrowserReport> getBrowserReports() throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM SYS_REPORTS")) {
-			List<BrowserReport> results = new ArrayList<BrowserReport>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					BrowserReport br = new BrowserReport(rs.getInt(2), rs.getString(6));
-					br.setID(rs.getInt(1));
-					br.setCreatedOn(toInstant(rs.getTimestamp(3)));
-					br.setHost(rs.getString(4));
-					br.setDirective(rs.getString(5));
-					br.setURL(rs.getString(7));
-					br.setBody(rs.getString(8));
-					results.add(br);
-				}
-			}
-
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 
 	/**
 	 * Returns HTTP server statistics.
