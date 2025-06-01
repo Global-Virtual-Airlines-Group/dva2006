@@ -91,7 +91,8 @@ public class GetBrowserReports extends DAO {
 				br.setHost(rs.getString(4));
 				br.setDirective(rs.getString(5));
 				br.setURL(rs.getString(7));
-				br.setBody(rs.getString(8));
+				br.setRemoteAddress(rs.getString(8), rs.getString(9));
+				br.setBody(rs.getString(10));
 				results.add(br);
 			}
 		}
