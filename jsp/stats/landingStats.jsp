@@ -11,9 +11,11 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
@@ -100,6 +102,5 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -16,7 +16,8 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});

@@ -8,10 +8,12 @@
 <head>
 <title><content:airline /> Charter Request Updated</title>
 <content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -52,6 +54,5 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

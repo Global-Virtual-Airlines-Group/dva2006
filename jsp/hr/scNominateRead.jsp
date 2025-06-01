@@ -10,22 +10,23 @@
 <title><content:airline /> Senior Captain Nomination - ${pilot.name}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-const act = f.action;
-if (act.indexOf('scnomdispose.do') != -1)
-	if (!confirm("Are you sure you wish to approve or reject ${pilot.name}'s nomination to Senior Captain?")) return false;
-else
-	golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
+<content:cspHeader />
+<script async>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	const act = f.action;
+	if (act.indexOf('scnomdispose.do') != -1)
+		if (!confirm("Are you sure you wish to approve or reject ${pilot.name}'s nomination to Senior Captain?")) return false;
+	else
+		golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -127,6 +128,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

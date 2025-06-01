@@ -15,6 +15,7 @@
 <content:googleAnalytics />
 <map:api version="3" />
 <content:cspHeader />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">

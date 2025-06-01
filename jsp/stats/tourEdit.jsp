@@ -12,6 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="airportRefresh" />
@@ -19,7 +20,8 @@
 <content:js name="tourEdit" /></c:if>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <fmt:aptype var="useICAO" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:5, t:'Tour Name'});

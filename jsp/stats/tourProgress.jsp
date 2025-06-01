@@ -11,10 +11,12 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
-<content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.updateTour = function() { document.forms[0].submit(); };
 </script>
@@ -67,6 +69,5 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
