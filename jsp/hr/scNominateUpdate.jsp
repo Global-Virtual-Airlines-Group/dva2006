@@ -10,7 +10,10 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<content:js name="common" />
+<content:googleAnalytics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -79,6 +82,5 @@ To return to the list of Senior Captain nominations, <el:cmd url="scnomcenter" c
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

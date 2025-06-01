@@ -9,11 +9,13 @@
 <title><content:airline /> Load Statistics</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.update = function(cb) {
 	golgotha.form.submit(document.forms[0]);
@@ -216,6 +218,5 @@ google.charts.setOnLoadCallback(function() {
 	return true;
 });
 </script>
-<content:googleAnalytics />
 </body>
 </html>
