@@ -43,10 +43,12 @@ public class ReportingService extends WebService {
 			if (c == '[')
 				ja = new JSONArray(json);
 			else if (c == '{') {
-				log.warn("Unexpected JSON received - {}", json);
-				@SuppressWarnings("unused")
 				JSONObject jo = new JSONObject(json);
-				log.warn("Parse Successful");
+				if ("csp-violation".equals(jo.optString("type"))) {
+					ja = new JSONArray();
+					ja.put(jo);
+				} else
+					log.warn("Unexpected JSON received - {}", json);
 			}
 			
 			if (ja == null)
