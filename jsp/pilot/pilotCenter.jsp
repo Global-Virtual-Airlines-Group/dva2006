@@ -981,8 +981,9 @@ pilot Certification.</td>
 </content:filter>
 <content:filter roles="Developer,Operations">
 <tr>
- <td class="mid"><el:cmd className="bld" url="brwreports">Browser Reports</el:cmd></td>
- <td class="data">You can view web browser reports sent via the browser Reporting API for front-end issues and errors on the web site.</td>
+ <td class="mid"><el:cmd className="bld" url="brwreports">Browser Reports</el:cmd><br />
+<el:cmd className="bld" url="cspviolations">Content Security Policy Violations</el:cmd></td>
+ <td class="data">You can view web browser reports sent via the browser Reporting API for front-end issues and errors on the web site, as well as aggregated statistics about CSP violations.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br />
