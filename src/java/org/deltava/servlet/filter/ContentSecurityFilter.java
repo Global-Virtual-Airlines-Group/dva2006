@@ -10,8 +10,7 @@ import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
-import org.deltava.beans.system.ContentSecurity;
-import org.deltava.beans.system.ContentSecurityPolicy;
+import org.deltava.beans.system.*;
 
 /**
  * A servlet filter to add Content Security Policy data to the request and response.
@@ -39,8 +38,12 @@ public class ContentSecurityFilter extends HttpFilter {
 		
 		// Add a CSP bean to the request that downstream can play with
 		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce);
+		csp.add(ContentSecurity.SCRIPT, "'unsafe-inline'");
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
+		csp.add(ContentSecurity.SCRIPT, "js-agent.newrelic.com");
 		csp.add(ContentSecurity.CONNECT, "www.google-analytics.com");
+		csp.add(ContentSecurity.CONNECT, "bam.nr-data.net");
+		csp.add(ContentSecurity.CONNECT, "bam-cell.nr-data.net");
 		
 		// Calculate the reporting URI
 		if (_reportURI != null) {
