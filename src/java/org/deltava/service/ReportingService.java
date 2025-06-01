@@ -76,6 +76,7 @@ public class ReportingService extends WebService {
 			br.setURL(jo.getString("url"));
 			br.setDirective(bo.optString("effectiveDirective"));
 			br.setBody(jo.getJSONObject("body").toString(1));
+			br.setRemoteAddress(ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
 			
 			// Get the host name
 			String blockedURL = bo.optString("blockedURL");
@@ -88,8 +89,7 @@ public class ReportingService extends WebService {
 				}
 			}
 
-			if (!"127.0.0.1".equals(br.getHost()))
-				reports.add(br);
+			reports.add(br);
 		}
 
 		// Write the reports
