@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="fileSaver" />
 <content:captcha action="logbook" />
@@ -142,6 +143,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
