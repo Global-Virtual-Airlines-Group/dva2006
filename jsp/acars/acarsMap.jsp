@@ -20,6 +20,7 @@
 <map:api version="3" js="acarsMap,markerWithLabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
 <content:captcha action="acarsMap" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
+<content:csp type="IMG" host="tilecache.rainviewer.com" />
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
