@@ -16,6 +16,7 @@
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -50,8 +51,7 @@
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map
-const mapOpts = {center:golgotha.local.mapC, zoom:4, minZOom:2, maxZoom:11, scrollZoom:false, style:'mapbox://styles/mapbox/outdoors-v12'};
-const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, zoom:4, minZOom:2, maxZoom:11, scrollZoom:false, style:'mapbox://styles/mapbox/outdoors-v12'});
 map.on('click', function() { map.removeMarkers(golgotha.routeMap.routes); golgotha.routeMap.routes = []; });
 map.once('load', function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');

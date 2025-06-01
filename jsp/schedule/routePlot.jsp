@@ -136,7 +136,7 @@ golgotha.local.validate = function(f) {
  <td colspan="2" class="data bld"><span class="warn small caps">Route enters the following Restricted/Prohibited Airspace: <span id="aspaceList"></span></span></td>
 </tr>
 <tr>
- <td colspan="2" class="data"><map:div ID="mapBox" height="580" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div><div id="zoomLevel" class="smapp mapTextLabel"></div></td>
+ <td colspan="2" class="data"><map:div ID="mapBox" height="580" /><div id="copyright" class="small mapTextLabel right"></div><div id="mapStatus" class="small mapTextLabel right"></div><div id="zoomLevel" class="small mapTextLabel right"></div></td>
 </tr>
 <tr>
  <td class="label">Simulator Version</td>
