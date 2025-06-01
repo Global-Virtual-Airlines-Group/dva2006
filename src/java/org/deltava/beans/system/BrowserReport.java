@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 12.0
  */
 
-public class BrowserReport extends DatabaseBean {
+public class BrowserReport extends DatabaseBean implements RemoteAddressBean {
 
 	private final int _build;
 	private final String _type;
@@ -22,6 +22,9 @@ public class BrowserReport extends DatabaseBean {
 	
 	private String _host;
 	private String _directive;
+	
+	private String _remoteHost;
+	private String _remoteAddr;
 	
 	/**
 	 * Creates the bean.
@@ -90,6 +93,16 @@ public class BrowserReport extends DatabaseBean {
 		return _body;
 	}
 
+	@Override
+	public String getRemoteAddr() {
+		return _remoteAddr;
+	}
+
+	@Override
+	public String getRemoteHost() {
+		return _remoteHost;
+	}
+
 	/**
 	 * Updates the creation date of this Report.
 	 * @param dt the creation date/time
@@ -129,5 +142,15 @@ public class BrowserReport extends DatabaseBean {
 	 */
 	public void setBody(String body) {
 		_body = body;
+	}
+	
+	/**
+	 * Updates the remote address that sumbitted this report.
+	 * @param addr the remote IP address
+	 * @param host the remost host name
+	 */
+	public void setRemoteAddress(String addr, String host) {
+		_remoteAddr = addr;
+		_remoteHost = host;
 	}
 }
