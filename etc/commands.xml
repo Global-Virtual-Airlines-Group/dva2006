@@ -859,6 +859,12 @@
 		<roles>Operations,Developer</roles>
 	</command>
 
+	<command id="cspviolations">
+		<name>CSP Violation Statistics</name>
+		<class>org.deltava.commands.system.CSPViolationsCommand</class>
+		<roles>Operations,Developer</roles>
+	</command>
+
 	<command id="tzones">
 		<name>Time Zone Profiles</name>
 		<class>org.deltava.commands.system.TimeZoneListCommand</class>
