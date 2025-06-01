@@ -41,7 +41,7 @@ public class ContentSecurityFilter extends HttpFilter {
 		csp.add(ContentSecurity.SCRIPT, "'unsafe-inline'");
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		csp.add(ContentSecurity.SCRIPT, "js-agent.newrelic.com");
-		csp.add(ContentSecurity.CONNECT, "www.google-analytics.com");
+		csp.add(ContentSecurity.CONNECT, "*.google-analytics.com");
 		csp.add(ContentSecurity.CONNECT, "bam.nr-data.net");
 		csp.add(ContentSecurity.CONNECT, "bam-cell.nr-data.net");
 		
