@@ -491,7 +491,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <tr class="acarsMapData" id="mapToggleRow">
  <td class="label">Map Data</td>
  <td class="data"><span id="mapToggles" class="bld">
-<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
+<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void golgotha.maps.acarsFlight.togglePath(this.checked)" label="Flight Path" checked="${!isACARS}" /> </c:if>
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> 
 <el:box name="showAirspace" idx="*" onChange="void golgotha.maps.acarsFlight.toggleAirspace(this.checked)" label="Airspace Boundaries" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gfRoute, this.checked)" label="Flight Plan" checked="true" /> </c:if>
@@ -503,7 +503,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
  </td>
 </tr>
 <tr class="acarsMapData">
- <td colspan="2"><map:div ID="mapBox" height="575" /></td>
+ <td colspan="2"><map:div ID="mapBox" height="575" /><div id="zoomLevel" class="mapTextlabel right"></div></td>
 </tr>
 </c:when>
 <c:when test="${googleStaticMap}">
@@ -623,12 +623,16 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, projection:'globe', fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 <c:if test="${isACARS}">window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLights:true});</c:if>
-map.addControl(new mapboxgl.FullscreenControl(), 'top-right')
-map.addControl(new mapboxgl.NavigationControl(), 'top-right')
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('style.load', golgotha.maps.updateMapText);
+map.on('zoomend', golgotha.maps.updateZoom);
+map.on('zoomend', golgotha.maps.acarsFlight.switchPaths);
 map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
+	map.fire('zoomend');
 });
 
 // Build the route line and map center

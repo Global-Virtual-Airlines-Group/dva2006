@@ -54,8 +54,11 @@ p.then(function(rsp) {
 			golgotha.maps.acarsFlight.airspace.push(a);
 		});
 
-		// Create the line, but don't show it
-		golgotha.maps.acarsFlight.gRoute = new golgotha.maps.Line3D('flightPath', {color:'#c01933',width:4,opacity:0.875,visible:false}, golgotha.maps.acarsFlight.routePoints);
+		// Create the lines, but don't show them
+		golgotha.maps.acarsFlight.path2D = new golgotha.maps.Line('flightPath', {color:'#c01933',width:3,opacity:0.725,visible:false}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.path3D = new golgotha.maps.Line3D('flightPath', {color:'#c01933',width:4,opacity:0.875}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.path3D.minZoom = 6.2;
+		map.addLine(golgotha.maps.acarsFlight.path2D);
 		golgotha.event.beacon('ACARS', 'Flight Data');
 
 		if (f.rwyDebug) {
@@ -80,6 +83,26 @@ p.then(function(rsp) {
 });
 
 return true;
+};
+
+golgotha.maps.acarsFlight.getLineName = function() { return (map.getZoom() >= golgotha.maps.acarsFlight.path3D.minZoom) ? 'path3D' : 'path2D'; };
+golgotha.maps.acarsFlight.togglePath = function(doShow) {
+	const ln = golgotha.maps.acarsFlight.getLineName();
+	map.toggle(golgotha.maps.acarsFlight[ln], doShow);
+	delete golgotha.maps.acarsFlight.lineName;
+	if (doShow) golgotha.maps.acarsFlight.lineName = ln;
+};
+
+golgotha.maps.acarsFlight.switchPaths = function() {
+	if (!golgotha.maps.acarsFlight.lineName) return false;	
+	const ln = golgotha.maps.acarsFlight.getLineName();
+	if (ln != golgotha.maps.acarsFlight.lineName) {
+		const l = golgotha.maps.acarsFlight[ln];
+		console.log('Switching Flight path to ' + ln);
+		golgotha.maps.acarsFlight.lineName = ln;
+		map.removeLine(l);
+		map.addLine(l);
+	}
 };
 
 golgotha.maps.acarsFlight.hideATC = function() {
