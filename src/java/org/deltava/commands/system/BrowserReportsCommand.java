@@ -5,6 +5,7 @@ import org.deltava.beans.system.BrowserReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display Reporting API browser reports.
@@ -22,13 +23,14 @@ public class BrowserReportsCommand extends AbstractViewCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
+
+		String url = ctx.getParameter("id");
 		ViewContext<BrowserReport> vc = initView(ctx, BrowserReport.class);
 		try {
-			GetSystemData dao = new GetSystemData(ctx.getConnection());
+			GetBrowserReports dao = new GetBrowserReports(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			vc.setResults(dao.getBrowserReports());
+			vc.setResults(StringUtils.isEmpty(url) ? dao.getBrowserReports() : dao.getReportsByURL(url));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
