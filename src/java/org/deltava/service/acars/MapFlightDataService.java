@@ -96,8 +96,10 @@ public class MapFlightDataService extends WebService {
 			JSONObject eo = new JSONObject(); 
 			eo.put("ll", JSONUtils.format(entry));
 			eo.put("alt", entry.getAltitude());
-			if (entry instanceof RouteEntry re)
+			if (entry instanceof RouteEntry re) {
 				eo.put("hdg", re.getHeading());
+				eo.put("agl", re.getRadarAltitude());
+			}
 
 			if (entry instanceof MarkerMapEntry me) {
 				eo.put("color", me.getIconColor());
