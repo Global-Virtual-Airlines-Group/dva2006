@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2019, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.json.*;
+
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RouteStats;
 
@@ -17,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report routes to a Google map.
  * @author Luke
- * @version 10.3
+ * @version 12.0
  * @since 5.4
  */
 
@@ -79,14 +81,18 @@ public class MyRouteMapService extends WebService {
 			ro.put("ratio", Math.max(1, r.getFlights() * 100 / max));
 			ro.put("src", r.getAirportD().getICAO());
 			ro.put("dst", r.getAirportA().getICAO());
-			r.getPoints().forEach(loc -> ro.append("points", JSONUtils.format(loc)));
+			
+			// Calculate GC route for MapBox
+			List<GeoLocation> gcPts = GeoUtils.greatCircle(r.getAirportD(), r.getAirportA(), 100);
+			GeoUtils.translate(gcPts);
+			gcPts.forEach(loc -> ro.append("points", JSONUtils.format(loc)));
 			jo.append("routes", ro);
 		}
 			
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "airports", "routes");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(1800);
 			ctx.println(jo.toString());
 			ctx.commit();
@@ -97,19 +103,11 @@ public class MyRouteMapService extends WebService {
 		return SC_OK;
 	}
 
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE always
-	 */
 	@Override
 	public final boolean isSecure() {
 		return true;
 	}
 	
-	/**
-	 * Tells the Web Service Servlet not to log invocations of this service.
-	 * @return FALSE always
-	 */
 	@Override
 	public final boolean isLogged() {
 		return false;
