@@ -10,10 +10,12 @@
 <title><content:airline /> Check Ride</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 <script async>
 golgotha.local.toggleBody = function(id) {
 	const row = document.getElementById(id);
@@ -133,6 +135,5 @@ golgotha.local.toggleBody = function(id) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

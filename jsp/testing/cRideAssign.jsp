@@ -11,8 +11,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
-<script>
+<content:cspHeader />
+<script async>
 <fmt:js var="golgotha.local.eqAircraft" object="${eqAircraft}" />
 golgotha.local.updateEQ = function(combo) {
 	const eq = golgotha.form.getCombo(combo);
@@ -81,6 +83,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
