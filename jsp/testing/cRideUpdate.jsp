@@ -7,9 +7,12 @@
 <head>
 <title><content:airline /> Check Ride</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -66,6 +69,5 @@ An Equipment Program Transfer Request to the ${tx.equipmentType} is currently pe
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
