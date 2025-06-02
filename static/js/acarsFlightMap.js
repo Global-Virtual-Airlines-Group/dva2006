@@ -55,8 +55,8 @@ p.then(function(rsp) {
 		});
 
 		// Create the lines, but don't show them
-		golgotha.maps.acarsFlight.path2D = new golgotha.maps.Line('flightPath', {color:'#c01933',width:3,opacity:0.725,visible:false}, golgotha.maps.acarsFlight.routePoints);
-		golgotha.maps.acarsFlight.path3D = new golgotha.maps.Line3D('flightPath', {color:'#c01933',width:4,opacity:0.875}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.path2D = new golgotha.maps.Line('flightPath2D', {color:'#c01933',width:3,opacity:0.725,visible:false}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.path3D = new golgotha.maps.Line3D('flightPath3D', {color:'#c01933',width:4,opacity:0.875}, golgotha.maps.acarsFlight.routePoints);
 		golgotha.maps.acarsFlight.path3D.minZoom = 6.2;
 		map.addLine(golgotha.maps.acarsFlight.path2D);
 		golgotha.event.beacon('ACARS', 'Flight Data');
@@ -96,13 +96,13 @@ golgotha.maps.acarsFlight.togglePath = function(doShow) {
 golgotha.maps.acarsFlight.switchPaths = function() {
 	if (!golgotha.maps.acarsFlight.lineName) return false;	
 	const ln = golgotha.maps.acarsFlight.getLineName();
-	if (ln != golgotha.maps.acarsFlight.lineName) {
-		const l = golgotha.maps.acarsFlight[ln];
-		console.log('Switching Flight path to ' + ln);
-		golgotha.maps.acarsFlight.lineName = ln;
-		map.removeLine(l);
-		map.addLine(l);
-	}
+	if (ln == golgotha.maps.acarsFlight.lineName) return;
+	const nl = golgotha.maps.acarsFlight[ln];
+	const ol = golgotha.maps.acarsFlight[golgotha.maps.acarsFlight.lineName];
+	console.log('Switching Flight path from ' + ol.name + ' to ' + nl.name);
+	golgotha.maps.acarsFlight.lineName = ln;
+	map.toggle(ol, false);
+	map.toggle(nl, true);
 };
 
 golgotha.maps.acarsFlight.hideATC = function() {
