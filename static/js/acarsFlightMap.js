@@ -24,15 +24,22 @@ p.then(function(rsp) {
 		} else
 			golgotha.util.display('archiveOK', true);
 
+		const pts3D = [];
 		js.positions.forEach(function(p) {
-			let mrk; const ll = golgotha.maps.toLL(p.ll); ll.push(golgotha.maps.feet2Meter(p.alt * map.verticalEx + 2.5));
+			const agl = golgotha.maps.feet2Meter(p.agl * map.verticalEx);
+			const alt = golgotha.maps.feet2Meter(p.alt * map.verticalEx + 2.5);
+			let mrk; const ll = golgotha.maps.toLL(p.ll);
 			golgotha.maps.acarsFlight.routePoints.push(ll);
 			if (p.icon)
-				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75, pt:ll});
+				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75, pt:ll, altitude:agl});
 			else if (p.color)
-				mrk = new golgotha.maps.Marker({color:p.color, info:p.info, opacity:0.75, scale:0.5, pt:ll});
+				mrk = new golgotha.maps.Marker({color:p.color, info:p.info, opacity:0.75, scale:0.5, pt:ll, altitude:agl});
 			else
 				return false;
+
+			// Save 3d point data
+			mrk.alt = agl;
+			pts3D.push([ll[0], ll[1], alt]);
 
 			// Add ATC data
 			golgotha.maps.acarsFlight.routeMarkers.push(mrk);
@@ -56,7 +63,7 @@ p.then(function(rsp) {
 
 		// Create the lines, but don't show them
 		golgotha.maps.acarsFlight.path2D = new golgotha.maps.Line('flightPath2D', {color:'#c01933',width:3,opacity:0.725,visible:false}, golgotha.maps.acarsFlight.routePoints);
-		golgotha.maps.acarsFlight.path3D = new golgotha.maps.Line3D('flightPath3D', {color:'#c01933',width:4,opacity:0.875}, golgotha.maps.acarsFlight.routePoints);
+		golgotha.maps.acarsFlight.path3D = new golgotha.maps.Line3D('flightPath3D', {color:'#c01933',width:4,opacity:0.875}, pts3D);
 		golgotha.maps.acarsFlight.path3D.minZoom = 6.2;
 		map.addLine(golgotha.maps.acarsFlight.path2D);
 		golgotha.event.beacon('ACARS', 'Flight Data');
@@ -86,6 +93,7 @@ return true;
 };
 
 golgotha.maps.acarsFlight.getLineName = function() { return (map.getZoom() >= golgotha.maps.acarsFlight.path3D.minZoom) ? 'path3D' : 'path2D'; };
+golgotha.maps.acarsFlight.toggleData = function(doShow) { map.toggle(golgotha.maps.acarsFlight.routeMarkers, doShow); };
 golgotha.maps.acarsFlight.togglePath = function(doShow) {
 	const ln = golgotha.maps.acarsFlight.getLineName();
 	map.toggle(golgotha.maps.acarsFlight[ln], doShow);
