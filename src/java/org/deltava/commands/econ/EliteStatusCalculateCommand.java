@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 11.2
+ * @version 12.0
  * @since 9.2
  */
 
@@ -244,6 +244,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 	private static SequencedCollection<? extends RouteEntry> loadACARS(Integer id) {
 		try {
 			File f = ArchiveHelper.getPositions(id.intValue());
+			if (!f.exists()) return Collections.emptyList();
 			Compression c = Compression.detect(f);
 			try (InputStream is = c.getStream(new BufferedInputStream(new FileInputStream(f), 32768))) {
 				GetSerializedPosition psdao = new GetSerializedPosition(is);
