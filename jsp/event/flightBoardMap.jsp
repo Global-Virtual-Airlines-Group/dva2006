@@ -46,7 +46,7 @@
  <map:legend color="red" className="small" legend="Center" /> <map:legend color="green" className="small" legend="Approach / Departure" /></td>
 </tr>
 <tr>
- <td colspan="3"><map:div ID="mapBox" height="600" /><div id="zoomLevel" class="mapTextlabel"></div></td>
+ <td colspan="3"><map:div ID="mapBox" height="600" /><div id="zoomLevel" class="mapTextlabel right"></div></td>
 </tr>
 
 <!-- Button Bar -->
@@ -75,6 +75,7 @@ map.on('zoomend', golgotha.maps.updateZoom);
 map.once('load', function() { 
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	golgotha.flightBoard.updateMap(true);
+	map.fire('zoomend');
 });
 </script>
 </body>
