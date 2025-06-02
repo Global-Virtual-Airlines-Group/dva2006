@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017, 2018, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 10.1
+ * @version 12.0
  * @since 5.4
  */
 
@@ -93,6 +93,7 @@ public class MyTrackService extends WebService {
 		for (Map.Entry<FlightInfo, Collection<GeospaceLocation>> me : rts.entrySet()) {
 			JSONObject fo = new JSONObject();
 			fo.put("isDST", (me.getKey().getAirportA().equals(a)));
+			fo.put("id", me.getKey().getID());
 			GeoLocation last = null;
 			for (GeoLocation loc : me.getValue()) {
 				int dst = loc.distanceTo(last);
@@ -108,7 +109,7 @@ public class MyTrackService extends WebService {
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(2700);
 			ctx.println(jo.toString());
 			ctx.commit();
