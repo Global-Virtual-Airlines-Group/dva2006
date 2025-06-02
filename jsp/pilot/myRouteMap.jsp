@@ -12,8 +12,10 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
 <content:js name="common" />
 <map:api version="3" js="markerWithLabel,myRouteMap" callback="golgotha.local.mapInit" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onunload="void golgotha.maps.util.unload()">
@@ -64,6 +66,5 @@ golgotha.local.mapInit = function() {
 	google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(0); });
 };
 </script>
-<content:googleAnalytics />
 </body>
 </html>
