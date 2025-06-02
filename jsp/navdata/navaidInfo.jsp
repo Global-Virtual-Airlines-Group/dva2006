@@ -143,7 +143,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<div id="zoomLevel" class="mapTextLabel"></div>
+<div id="zoomLevel" class="mapTextLabel right"></div>
 <c:if test="${!empty results}">
 <script async>
 <map:token />
