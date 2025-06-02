@@ -89,8 +89,12 @@ public class ReportingService extends WebService {
 				}
 			}
 
-			reports.add(br);
+			if (br.getHost() != null)
+				reports.add(br);
 		}
+		
+		if (!reports.isEmpty())
+			return SC_OK;
 
 		// Write the reports
 		try {
