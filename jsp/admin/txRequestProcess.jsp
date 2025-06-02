@@ -11,9 +11,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (f.action.indexOf('txreqdelete.do') == -1) {
@@ -204,6 +206,5 @@ golgotha.local.toggleBody = function(id, type) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
