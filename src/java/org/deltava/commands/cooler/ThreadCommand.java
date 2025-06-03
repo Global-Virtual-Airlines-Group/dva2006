@@ -1,10 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2020, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.time.*;
+import java.net.URI;
 import java.sql.Connection;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -24,11 +27,13 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
 public class ThreadCommand extends AbstractCommand {
+	
+	private static final Logger log = LogManager.getLogger(ThreadCommand.class);
 
 	private static final List<String> SCORES = List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 	private static final List<String> COLORS = List.of("blue", "black", "green", "red", "purple", "grey", "brown", "orange", "pink", "yellow");
@@ -65,6 +70,17 @@ public class ThreadCommand extends AbstractCommand {
 			mt = tdao.getThread(ctx.getID(), true);
 			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
+
+			// Get the channel profile
+			GetCoolerChannels cdao = new GetCoolerChannels(con);
+			Channel c = cdao.get(mt.getChannel());
+			
+			// Check user access
+			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
+			ac.updateContext(mt, c);
+			ac.validate();
+			if (!ac.getCanRead())
+				throw securityException("Cannot read Message Thread " + ctx.getID());
 			
 			// Get lastRead
 			if (ctx.isAuthenticated()) {
@@ -72,10 +88,6 @@ public class ThreadCommand extends AbstractCommand {
 				Instant lastRead = lrdao.getLastRead(mt.getID(), ctx.getUser().getID());
 				ctx.setAttribute("lastReadPostID", Integer.valueOf(mt.getNextPostID(lastRead)), REQUEST);
 			}
-
-			// Get the channel profile
-			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			Channel c = cdao.get(mt.getChannel());
 			
 			// Load the poll options (if any)
 			GetCoolerPolls tpdao = new GetCoolerPolls(con);
@@ -87,13 +99,6 @@ public class ThreadCommand extends AbstractCommand {
 				ctx.setAttribute("maxVotes", Integer.valueOf(maxVotes), REQUEST);
 			}
 
-			// Check user access
-			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
-			ac.updateContext(mt, c);
-			ac.validate();
-			if (!ac.getCanRead())
-				throw securityException("Cannot read Message Thread " + ctx.getID());
-			
 			// Make sure we can edit the thread and save the last post content
 			doEdit &= ac.getCanEdit();
 			if (doEdit)
@@ -118,6 +123,27 @@ public class ThreadCommand extends AbstractCommand {
 				final MessageThread thread = mt; 
 				GetCoolerLinks ldao = new GetCoolerLinks(con);
 				ldao.getURLs(mt.getID(), ctx.isUserInRole("Moderator")).forEach(li -> thread.addImageURL(li));
+			}
+			
+			// Search for embedded images in posts
+			Collection<String> imgHosts = mt.getImageURLs().stream().map(LinkedImage::getHost).collect(Collectors.toSet());
+			for (Message msg : mt.getPosts()) {
+				String b = msg.getBody();
+				int si = b.indexOf("[img]");
+				while ((si != -1) && (si < b.length())) {
+					int ei = b.indexOf("[/img]", si+5);
+					if (ei > -1) {
+						String url = b.substring(si+5, ei); 
+						try {
+							URI u = new URI(url);
+							imgHosts.add(u.getHost());
+						} catch (Exception e) {
+							log.warn("Error parsing image URL {}", url);
+						}
+					}
+					
+					si = b.indexOf("[img]", ei);
+				}
 			}
 			
 			// Get the locations of the pilots writing updates
@@ -250,6 +276,7 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("pilots", users, REQUEST);
 			ctx.setAttribute("accomplishments", accs, REQUEST);
 			ctx.setAttribute("eliteStatus", eStatus, REQUEST);
+			ctx.setAttribute("imgHosts", imgHosts, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

@@ -15,12 +15,8 @@
 <content:css name="form" />
 <content:sysdata var="ourDomain" name="airline.domain" />
 <c:forEach var="domain" items="${userDomains}">
-<c:if test="${domain == ourDomain}">
-<content:css name="signature" />
-</c:if>
-<c:if test="${domain != ourDomain}">
-<content:css host="www.${domain}" name="signature" scheme="legacy" />
-</c:if>
+<c:if test="${domain == ourDomain}"><content:css name="signature" /></c:if>
+<c:if test="${domain != ourDomain}"><content:css host="www.${domain}" name="signature" scheme="legacy" /></c:if>
 </c:forEach>
 <content:pics />
 <content:favicon />
@@ -29,7 +25,9 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
+<c:forEach var="host" items="${imgHosts}"><content:csp type="IMG" host="${host}" /></c:forEach>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
+<content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -104,7 +102,6 @@ golgotha.local.postQuote = function(postID, f) {
 <%@ include file="/jsp/cooler/threadImg.jspf" %>
 <%@ include file="/jsp/cooler/threadPoll.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
-<content:cspHeader />
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="0" scope="page" />
