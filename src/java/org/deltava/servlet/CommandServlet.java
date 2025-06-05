@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -30,7 +30,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 11.3
+ * @version 12.0
  * @since 1.0
  */
 
@@ -101,11 +101,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 	}
 
-	/**
-	 * Initializes the servlet. This loads the command map.
-	 * @throws ServletException if an error occurs
-	 * @see CommandFactory#load(String)
-	 */
 	@Override
 	public void init() throws ServletException {
 		log.info("Initializing");
@@ -222,7 +217,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		try {
 			// Validate command access
 			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
-				throw new CommandException("Not Authorized to execute", false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(SC_FORBIDDEN); }};
+				throw new CommandException("Not Authorized to execute", false) {{ setForwardURL("/jsp/error/securityViolation.jsp"); setWarning(true); setStatusCode(SC_FORBIDDEN); setSuppressed(!ctxt.isAuthenticated()); }};
 
 			// If we are not executing the redirection command, clear the redirection state data in the session
 			if (!(cmd instanceof RedirectCommand))
@@ -293,7 +288,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				log.log(logLevel, "{} executing {} ({}) - {}", usrName, cmd.getName(), getURL(req), e.getMessage());
 			
-
 			// Redirect to the error page
 			try {
 				RequestDispatcher rd = req.getRequestDispatcher(errPage);
