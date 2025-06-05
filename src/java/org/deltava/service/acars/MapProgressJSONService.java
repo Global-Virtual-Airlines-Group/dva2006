@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -11,6 +12,7 @@ import org.json.*;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.Recorder;
+import org.deltava.beans.navdata.NavigationDataBean;
 
 import org.deltava.dao.*;
 import org.deltava.dao.jedis.GetTrack;
@@ -21,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide JSON-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 11.3
+ * @version 12.0
  * @since 7.3
  */
 
@@ -46,25 +48,26 @@ public class MapProgressJSONService extends WebService {
 		boolean doRoute = Boolean.parseBoolean(ctx.getParameter("route"));
 
 		// Get the DAO and the route data
-		final List<GeoLocation> routePoints = new ArrayList<GeoLocation>();
-		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
+		final List<GeoLocation> pathPoints = new ArrayList<GeoLocation>();
 		final List<GeoLocation> tempPoints = new ArrayList<GeoLocation>();
+		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
+		
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSPositions dao = new GetACARSPositions(con); FlightInfo info = null; GetTrack tkdao = new GetTrack();
 			if (!isExternal) {
 				info = dao.getInfo(acarsID);
 				if ((info != null) && (info.getFDR() == Recorder.XACARS))
-					routePoints.addAll(dao.getXACARSEntries(acarsID));
+					pathPoints.addAll(dao.getXACARSEntries(acarsID));
 				else if (info != null)
-					routePoints.addAll(dao.getRouteEntries(acarsID, false, false));
+					pathPoints.addAll(dao.getRouteEntries(acarsID, false, false));
 			} else
 				tempPoints.addAll(tkdao.getTrack(false, id));
 			
 			// Get temporary waypoints
 			tempPoints.addAll(tkdao.getTrack(true, String.valueOf(id)));
-			if (!routePoints.isEmpty())
-				tempPoints.add(0, routePoints.getLast());
+			if (!pathPoints.isEmpty())
+				tempPoints.add(0, pathPoints.getLast());
 
 			// Load the route and the route waypoints
 			if ((info != null) && doRoute) {
@@ -91,29 +94,40 @@ public class MapProgressJSONService extends WebService {
 			ctx.release();
 		}
 		
+		// Plot GC route for MapBox
+		final List<GeoLocation> routePathPoints = GeoUtils.greatCircle(routeWaypoints.stream().map(GeoLocation.class::cast).collect(Collectors.toList()));
+		
+		// Handle cross-IDL lines for MapBox
+		GeoUtils.translate(pathPoints);
+		GeoUtils.translate(tempPoints);
+		GeoUtils.translate(routePathPoints);
+		
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
 		jo.put("id", id);
-		routePoints.forEach(entry -> jo.append("savedPositions", JSONUtils.format(entry)));
-		tempPoints.forEach(entry -> jo.append("tempPositions", JSONUtils.format(entry)));
+		pathPoints.forEach(e -> jo.append("savedPositions", JSONUtils.format(e)));
+		tempPoints.forEach(e -> jo.append("tempPositions", JSONUtils.format(e)));
+		routePathPoints.forEach(e -> jo.append("routePathPoints",  JSONUtils.format(e)));
 		
 		// Write the route
 		for (MapEntry entry : routeWaypoints) {
 			JSONObject eo = new JSONObject();
 			eo.put("ll", JSONUtils.format(entry));
+			if (entry instanceof NavigationDataBean nd)
+				eo.put("code", nd.getCode());
+			
 			eo.put("route", entry.getInfoBox());
-			if (entry instanceof IconMapEntry) {
-				IconMapEntry ime = (IconMapEntry) entry;
+			if (entry instanceof IconMapEntry ime) {
 				eo.put("pal", ime.getPaletteCode());
 				eo.put("icon", ime.getIconCode());
-			} else
-				eo.put("color", ((MarkerMapEntry) entry).getIconColor());
+			} else if (entry instanceof MarkerMapEntry mme)
+				eo.put("color", mme.getIconColor());
 			
 			jo.append("waypoints", eo);
 		}
 		
 		// Dump the JSON to the output stream
-		JSONUtils.ensureArrayPresent(jo, "savedPositions", "tempPositions", "waypoints");
+		JSONUtils.ensureArrayPresent(jo, "savedPositions", "tempPositions", "waypoints", "routePathPoints");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(5);
