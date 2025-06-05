@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Schedule Task to automatically release Flight Assignments.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -57,10 +57,10 @@ public class AssignmentPurgeTask extends Task {
 
 					// If the assignment is repeatable, then release it - otherwise delete it
 					if (a.isRepeating()) {
-						log.warn("Releasing Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
+						log.info("Releasing Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
 						wdao.reset(a);
 					} else {
-						log.warn("Deleting Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
+						log.info("Deleting Assignment {} reserved by {}", Integer.valueOf(a.getID()), usr.getName());
 						wdao.delete(a);
 					}
 				} else if (log.isDebugEnabled())
