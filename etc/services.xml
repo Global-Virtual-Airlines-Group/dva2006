@@ -150,6 +150,7 @@
 	<service id="otrackinfo" class="org.deltava.service.schedule.OceanicPlotService" />
 	<service id="acars_chat_log" class="org.deltava.service.acars.ChatLogService" />
 	<service id="acars_raw_track" class="org.deltava.service.acars.RawTrackService" />
+	<service id="acicon" class="org.deltava.service.AircraftIconService" />
 
 	<!-- The names of ACARSMapEarthServices are hardcoded in ACARSMapEarthLinkService -->
 	<service id="acars_map_earth" class="org.deltava.service.acars.EarthMapLinkService" />

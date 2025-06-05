@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2013, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.awt.image.*;
 /**
  * A class to store color palette data.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 5.0
  */
 
@@ -109,8 +109,7 @@ public class Palette {
 	 * @return a downsampled BufferedImage
 	 */
 	public BufferedImage translate(BufferedImage in, boolean useClosest, boolean shrinkPalette) {
-		if ((in == null) || (in.getColorModel().getPixelSize() < 24))
-			return in;
+		if (in == null) return in;
 		
 		// Build the translation table
 		if (_xlator == null) {
