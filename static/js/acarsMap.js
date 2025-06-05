@@ -3,7 +3,7 @@ golgotha.maps.acars.generateXMLRequest = function()
 {
 const xmlreq = new XMLHttpRequest();
 xmlreq.timeout = 2500;
-xmlreq.open('get', 'acars_map_json.json?time=' + golgotha.util.getTimestamp(3000), true);
+xmlreq.open('get', 'acars_map_json.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.ontimeout = function() { golgotha.util.setHTML('isLoading', ' - TIMEOUT'); return true; };
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
