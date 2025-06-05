@@ -113,6 +113,7 @@ map.addControl(golgotha.maps.wx.ctl, 'bottom-left');
 
 // Load data async once tiles are loaded
 map.once('load', function() {
+	map.addTerrain(1.5);
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.fire('zoomend');
 	golgotha.maps.acars.reloadData(true);
