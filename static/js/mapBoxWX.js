@@ -42,7 +42,7 @@ for (var x = 0; x < this.layers.names.length; x++) {
 	const ln = this.layers.names[x]; const ldata = this.layers.data[ln]; const mapLayers = [];
 	for (var y = 0; y < ldata.length; y++) {
 		const ov = ldata[y];
-		const mm = ov.getMap();
+		const mm = (map.getLayer(ov.name) != null) ? map : null;
 		if ((mm != null) && ((m == null) || (mm == m)))
 			mapLayers.push(ov);
 	}

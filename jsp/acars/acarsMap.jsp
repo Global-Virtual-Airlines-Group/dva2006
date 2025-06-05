@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
@@ -17,7 +17,10 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="3" js="acarsMap,markerWithLabel,dayNightLayer,googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
+<map:api version="3" />
+<content:js name="acarsMap" />
+<content:js name="mapBoxWX" />
+<content:js name="wxParsers" />
 <content:captcha action="acarsMap" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:csp type="IMG" host="tilecache.rainviewer.com" />
@@ -61,8 +64,8 @@
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" height="620" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
-<div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
+ <td class="data" colspan="4"><map:div ID="mapBox" height="620" /><div id="copyright" class="small mapTextLabel right"></div><div id="mapStatus" class="small mapTextLabel right"></div>
+<div id="zoomLevel" class="small mapTextLabel right"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
 
@@ -78,67 +81,60 @@
 </content:region>
 </content:page>
 <script async>
+<map:token />
 golgotha.local.refresh = ${refreshInterval + 2000};
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
+golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
 
-golgotha.local.mapInit = function () {
-	golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
-	golgotha.local.loaders = {};
-	golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
-	golgotha.local.loaders.series.setData('radar', 0.45, 'wxRadar');
-	golgotha.local.loaders.series.setData('infrared', 0.25, 'wxSat');
-	golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-	golgotha.local.loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
-	golgotha.local.loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
+golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.setData('infrared', 0.25, 'wxSat');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
+golgotha.local.fl = new golgotha.maps.FIRLoader();
+golgotha.local.fl.onload(function() { golgotha.util.enable('wxselect-selFIR'); });
 
-	// Create the map
-	const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.maps.acars.infoClose);
-	google.maps.event.addListener(map, 'click', golgotha.maps.acars.infoClose);
-	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.acars.updateSettings);
-	google.maps.event.addListener(map, 'bounds_changed', golgotha.maps.acars.updateSettings);
+// Create the map
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.on('zoomend', golgotha.maps.updateZoom);
+map.on('style.load', golgotha.maps.updateMapText);
+map.on('style.load', golgotha.maps.acars.updateSettings);
 
-	// Build the weather layer controls
-	const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-	const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('radar'); }));
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.loaders.series.getLatest('infrared'); }));
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return golgotha.local.loaders.fir.getLayer(); }));
-	map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.275)'});
-	ctls.push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
-	ctls.push(new golgotha.maps.LayerClearControl(map));
+// Build the weather layer controls
+golgotha.maps.wx.ctl = new golgotha.maps.wx.WXLayerControl();
+golgotha.maps.wx.ctl.addLayer({name:'Radar', c:'selImg', disabled:true, f:function() { return golgotha.local.sl.getLatest('radar'); }});
+golgotha.maps.wx.ctl.addLayer({name:'Satellite', c:'selImg', disabled:true, id:'infrared', f:function() { return golgotha.local.sl.getLatest('infrared'); }});
+golgotha.maps.wx.ctl.addLayer({name:'FIRs', disabled:true, id:'selFIR', f:function() { return golgotha.local.fl.getFIRs(); }});
+map.addControl(golgotha.maps.wx.ctl, 'bottom-left');
 
-	// Load data async once tiles are loaded
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=golgotha.local.loaders.fir.load'), async:true});
-		google.maps.event.trigger(map, 'maptypeid_changed');
-		google.maps.event.trigger(map, 'zoom_changed');
-		golgotha.maps.acars.reloadData(true);
-		window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
-	});
+//const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
+// ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 
-	// Display the copyright notice and text boxes
-	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
-	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
-	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
-	map.setMapTypeId(golgotha.maps.info.type);
-};
+// Load data async once tiles are loaded
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	map.fire('zoomend');
+	golgotha.maps.acars.reloadData(true);
+	window.setTimeout(function() { golgotha.maps.reloadData(true); }, 500);
+	golgotha.local.fl.load();
+});
+
+// Display the copyright notice and text boxes
+map.addControl(new golgotha.maps.DIVControl('copyright'), 'bottom-right');
+map.addControl(new golgotha.maps.DIVControl('mapStatus'), 'top-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
+map.addControl(new golgotha.maps.DIVControl('seriesRefresh'), 'bottom-left');
 
 golgotha.maps.reloadData = function(isReload) {
 	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
 	const dv = document.getElementById('seriesRefresh');
-	if (dv != null) {
+	if (dv) {
 		const txtDate = new Date().toString();
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	golgotha.local.loaders.series.loadRV();
+	golgotha.local.sl.loadRV();
 	return true;
 };
 </script>
