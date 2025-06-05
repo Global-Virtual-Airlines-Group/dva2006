@@ -176,6 +176,7 @@ mapboxgl.Map.prototype.addLine = function(l, data) {
 };
 
 mapboxgl.Map.prototype.removeLine = function(l) {
+	if (!l) return false;
 	const layer = golgotha.maps.util.isShape(l) ? l.getLayer() : l;
 	this.removeLayer(layer.id);
 	if (this.getSource(layer.id) != null)
@@ -333,6 +334,28 @@ golgotha.maps.Line3D.prototype.getLayer = function() {
 	return o;
 };
 
+golgotha.maps.PolygonLayer = function(name, opts) {
+	this.name = name;
+	this._opts = opts;
+	this.visible = (opts.visible != null) ? opts.visible : true;
+	this._pts = [];
+};
+
+golgotha.maps.PolygonLayer.prototype.getType = function() { return 'PolygonLayer'; };
+golgotha.maps.PolygonLayer.prototype.add = function (label, pts) { this._pts.push({name:label, pts:pts.map(golgotha.maps.toLL)}); };
+golgotha.maps.PolygonLayer.prototype.getLayer = function() {
+	const fa = []; const na = [];
+	this._pts.forEach(function(p) {
+		na.push(p.name);
+		const po = {type:'Feature',geometry:{type:'Polygon',coordinates:[p.pts]}};
+		fa.push(po);
+	});
+
+	const src = {type:'geojson',data:{type:'FeatureCollection',properties:{names:na},features:fa}};
+	const po = {'fill-color':this._opts.fillColor,'fill-opacity':this._opts.fillOpacity,'fill-outline-color':this._opts.color};
+	return {id:this.name,type:'fill',source:src,paint:po,layout:{visibility:(this.visible ? 'visible' : 'none')}};
+};
+
 golgotha.maps.util.generateCircle = function(map, ctr, radius) {
 	if (radius <= 0) return [];
 	const centerPt = map.project(ctr);
@@ -364,7 +387,7 @@ golgotha.maps.BaseMapControl.prototype.onAdd = function(map) {
 		dv.className = 'mapBoxLayerSelect layerSelect baseSelect';	
 		dv.mapStyle = e.style; dv.map = map;
 		if (cs == e.style) golgotha.util.addClass(dv, 'displayed');
-		dv.addEventListener('click', function(e) {
+		dv.addEventListener('click', function(_e) {
 			const isSelected = (this.map.getMapType() == this.mapStyle);
 			if (isSelected) return;
 			this.map.setStyle('mapbox://styles/mapbox/' + this.mapStyle);
@@ -408,8 +431,10 @@ golgotha.maps.util.updateTab = function(ofs, size) {
 	txt += '<br /><br />';
 	txt += golgotha.maps.util.renderTabChoices(this.tabs, ofs);
 	txt += '</div>';
-	this.getPopup().setHTML(txt);
-	return true;
+	if (this.getPopup() != null)
+		this.getPopup().setHTML(txt);
+	
+	return txt;
 };
 
 golgotha.maps.util.renderTabChoices = function(tabs, selectedOfs) {
