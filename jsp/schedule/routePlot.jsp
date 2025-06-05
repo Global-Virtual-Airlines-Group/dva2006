@@ -20,7 +20,6 @@
 <content:js name="routePlot" />
 <content:js name="fileSaver" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
-<content:csp type="IMG" host="maps.google.com" />
 <content:googleAnalytics />
 <content:cspHeader />
 <script async>
@@ -128,8 +127,10 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gateLegendRow" style="display:none;">
  <td class="label">Gate Legend</td>
- <td class="data"><span class="small"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />Domestic Gates | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />International Gates
- | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
+ <td class="data small" colspan="2"><el:img src="maps/kml/pal2/icon56.png" caption="Our Gate" x="16" y="16" />&nbsp;Domestic  | <el:img src="maps/kml/pal2/icon48.png" caption="International Gate" x="16" y="16" />&nbsp;International 
+<c:if test="${airport.hasPFI}"> | <el:img src="maps/kml/pal2/icon16.png" caption="USPFI Gate" x="16" y="16" />&nbsp;US PFI</c:if>
+<c:if test="${airport.isSchengen}"> | <el:img src="maps/kml/pal2/icon17.png" caption="Schengen Zone Gate" x="16" y="16" />&nbsp;Schengen</c:if>
+ | <el:img src="maps/kml/pal3/icon52.png" caption="Frequently Used Gate" x="16" y="16" /> Frequently Used | <el:img src="maps/kml/pal3/icon60.png" caption="Other Gate" x="16" y="16" /> Other</td>
 </tr>
 <tr id="asWarnRow" style="display:none;'">
  <td class="label">&nbsp;</td>
