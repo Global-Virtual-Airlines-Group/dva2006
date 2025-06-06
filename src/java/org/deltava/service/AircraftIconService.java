@@ -22,6 +22,8 @@ import org.deltava.util.tile.Palette;
 
 public class AircraftIconService extends WebService {
 	
+	private final Color TX = new Color(255, 0, 255);
+	
 	/*
 	 * Helper method to load colors by name.
 	 */
@@ -68,18 +70,17 @@ public class AircraftIconService extends WebService {
 			for (int x = 0; x < img.getWidth(); x++) {
 				int pc = img.getRGB(x, y) & 0xFFFFFF;
 				if (pc == 0xFF0000)
-					img.setRGB(x, y, (c | 0xFF000000));
+					img.setRGB(x, y, c);
 			}
 		}
 		
 		// Shrink the palette
 		Palette p = new Palette(img, 256);
-		p.setTransparent(Color.WHITE);
+		p.setTransparent(TX);
 		BufferedImage outImg = p.translate(img, true, true);
 
 		// Convert to PNG
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(2048)) {
 			ImageIO.write(outImg, "png", out);
 			ctx.setContentType("image/png");
 			ctx.setHeader("Content-Length", out.size());
