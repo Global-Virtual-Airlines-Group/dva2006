@@ -31,7 +31,7 @@ xmlreq.onreadystatechange = function() {
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	const allAC = js.aircraft.sort(golgotha.maps.acars.sort);
 	allAC.forEach(function(a) {
-		const mrk = (a.pal) ? new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon, pt:a.ll}) : new golgotha.maps.Marker({color:a.color, pt:a.ll});
+		const mrk = new golgotha.maps.AircraftMarker({color:a.color, pt:a.ll, hdg:a.hdg});
 		mrk.isExternal = a.hasOwnProperty('external_id');
 		mrk.flight_id = mrk.isExternal ? a.external_id : a.flight_id;
 		mrk.isBusy = a.busy;
@@ -88,7 +88,6 @@ xmlreq.onreadystatechange = function() {
 			golgotha.maps.selectedMarker = e.target._marker;
 			golgotha.maps.acars.clickDispatch(golgotha.maps.selectedMarker);
 		});
-
 
 		// Add the user ID
 		if ((d.pilot) && (cbo != null)) {
