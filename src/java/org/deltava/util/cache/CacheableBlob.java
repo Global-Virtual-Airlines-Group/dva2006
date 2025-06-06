@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * A class to make raw data cacheable.
  * @author Luke
- * @version 6.0
+ * @version 12.0
  * @since 6.0
  */
 
@@ -40,6 +40,14 @@ public class CacheableBlob implements Cacheable {
 	 */
 	public InputStream getStream() {
 		return new ByteArrayInputStream(_data);
+	}
+	
+	/**
+	 * Returns the size of the object.
+	 * @return the size in bytes
+	 */
+	public int size() {
+		return _data.length;
 	}
 
 	@Override

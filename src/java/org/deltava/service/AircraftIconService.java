@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.ConfigLoader;
 import org.deltava.util.tile.Palette;
 
@@ -21,6 +22,8 @@ import org.deltava.util.tile.Palette;
  */
 
 public class AircraftIconService extends WebService {
+	
+	private static final Cache<CacheableBlob> _cache = CacheManager.get(CacheableBlob.class, "AircraftIcon");
 	
 	private final Color TX = new Color(255, 0, 255);
 	
@@ -58,34 +61,41 @@ public class AircraftIconService extends WebService {
 			return SC_BAD_REQUEST;
 		}
 		
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(ConfigLoader.getStream("/etc/acIcon.bmp"));
-		} catch (IOException ie) {
-			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), false);
-		}
+		// Check the cache and generate the image if needed
+		CacheableBlob b = _cache.get(Integer.valueOf(c));
+		if (b == null) {
+			try (InputStream is = ConfigLoader.getStream("/etc/acIcon.bmp")) {
+				BufferedImage img = ImageIO.read(is);
 
-		// Apply color
-		for (int y = 0; y < img.getHeight(); y++) {
-			for (int x = 0; x < img.getWidth(); x++) {
-				int pc = img.getRGB(x, y) & 0xFFFFFF;
-				if (pc == 0xFF0000)
-					img.setRGB(x, y, c);
+				// Apply color
+				for (int y = 0; y < img.getHeight(); y++) {
+					for (int x = 0; x < img.getWidth(); x++) {
+						int pc = img.getRGB(x, y) & 0xFFFFFF;
+						if (pc == 0xFF0000)
+							img.setRGB(x, y, c);
+					}
+				}
+				
+				// Shrink the palette
+				Palette p = new Palette(img, 256);
+				p.setTransparent(TX);
+				BufferedImage outImg = p.translate(img, true, true);
+
+				// Convert to PNG
+				ByteArrayOutputStream out = new ByteArrayOutputStream(2048);
+				ImageIO.write(outImg, "png", out);
+				b = new CacheableBlob(Integer.valueOf(c), out.toByteArray());
+				_cache.add(b);
+			} catch (IOException ie) {
+				throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), false);
 			}
 		}
-		
-		// Shrink the palette
-		Palette p = new Palette(img, 256);
-		p.setTransparent(TX);
-		BufferedImage outImg = p.translate(img, true, true);
 
-		// Convert to PNG
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(2048)) {
-			ImageIO.write(outImg, "png", out);
+		try {
 			ctx.setContentType("image/png");
-			ctx.setHeader("Content-Length", out.size());
+			ctx.setHeader("Content-Length", b.size());
 			ctx.setExpiry(60);
-			ctx.getResponse().getOutputStream().write(out.toByteArray());
+			ctx.getResponse().getOutputStream().write(b.getData());
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage(), false);
 		} catch (Exception e) {

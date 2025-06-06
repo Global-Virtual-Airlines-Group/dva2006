@@ -11,6 +11,7 @@
 	<cache id="Image" max="32" expires="15m" />
 	<cache id="Tracks" expires="2d" remote="true" />
 	<cache id="UploadState" expires="4h" max="32" />
+	<cache id="AircraftIcon" expires="2d" remote="true" />
 	
 	<!-- SkyMiles caches -->
 	<cache id="EliteLevel" max="32" expires="24h" />
