@@ -257,25 +257,6 @@ golgotha.maps.Marker = function(opts) {
 	return mrk;
 };
 
-golgotha.maps.IconMarker = function(opts) {
-	const imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/kml/pal' + opts.pal + '/icon' + opts.icon;
-	const dv = document.createElement('div');
-	dv.className = 'marker';
-	dv.style.backgroundImage = 'url(' + imgBase + '.png)';
-	dv.style.width = golgotha.maps.S_ICON_SIZE.w + 'px';
-	dv.style.height = golgotha.maps.S_ICON_SIZE.h + 'px';
-	dv.style.backgroundSize = '100%';
-	
-	const mrkOpts = {element:dv, pt:opts.pt};
-	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
-	mrkOpts.scale = (opts.scale) ? opts.scale : 0.625;
-	mrkOpts.draggable = (opts.draggable) ? opts.draggable : false;
-	mrkOpts.altitude = (opts.altitude) ? opts.altitude : 0;
-	const mrk = new mapboxgl.Marker(mrkOpts);
-	golgotha.maps.setMarkerOptions(mrk, mrkOpts);
-	return mrk;
-};
-
 golgotha.maps.ImageMarker = function(opts) {
 	if (!opts.img.startsWith('/')) opts.img = golgotha.maps.IMG_PATH + '/' + opts.img;
 	const dv = document.createElement('div');
@@ -294,6 +275,12 @@ golgotha.maps.ImageMarker = function(opts) {
 	const mrk = new mapboxgl.Marker(mrkOpts);
 	golgotha.maps.setMarkerOptions(mrk, mrkOpts);
 	return mrk;
+};
+
+golgotha.maps.IconMarker = function(opts) {
+	opts.img = 'maps/kml/pal' + opts.pal + '/icon' + opts.icon + '.png';
+	opts.w = golgotha.maps.S_ICON_SIZE.w; opts.h = golgotha.maps.S_ICON_SIZE.h;
+	return new golgotha.maps.ImageMarker(opts);
 };
 
 golgotha.maps.AircraftMarker = function(opts) {
