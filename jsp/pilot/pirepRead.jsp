@@ -628,7 +628,7 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('style.load', golgotha.maps.updateMapText);
 map.on('zoomend', golgotha.maps.updateZoom);
-map.on('zoomend', golgotha.maps.acarsFlight.switchPaths);
+<c:if test="${!empty mapRoute}">map.on('zoomend', golgotha.maps.acarsFlight.switchPaths);</c:if>
 map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
