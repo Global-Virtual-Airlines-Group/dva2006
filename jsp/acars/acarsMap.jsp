@@ -52,10 +52,10 @@
 </tr>
 <tr class="nophone mapLegend">
  <td class="label" style="max-width:160px;">Aircraft Legend</td>
- <td class="data" style="width:45%;"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
- <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
+ <td class="data" style="width:45%;"><img height="22" width="24" alt="Cruising" src="/acicon.ws?c=blue" /> Cruise | <img height="22" width="22" alt="On Ground" src="/acicon.ws?c=white" /> On Ground | 
+ <img height="22" width="22" alt="Climbing" src="/acicon.ws?c=orange" /> Climbing | <img height="22" width="22" alt="Descending" src="/acicon.ws?c=yellow" /> Descending</td>
  <td class="label">Dispatcher Legend</td>
- <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
+ <td class="data"><map:legend color="green" legend="Available" /> | <map:legend color="purple" legend="Busy" /></td>
 </tr>
 <tr class="nophone">
  <td class="label">Dispatch Service</td>
@@ -94,12 +94,14 @@ golgotha.local.fl = new golgotha.maps.FIRLoader();
 golgotha.local.fl.onload(function() { golgotha.util.enable('wxselect-selFIR'); });
 
 // Create the map
-const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, zoom:golgotha.maps.info.zoom, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, antiAlias:true, zoom:golgotha.maps.info.zoom, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.on('zoomend', golgotha.maps.updateZoom);
 map.on('style.load', golgotha.maps.updateMapText);
 map.on('style.load', golgotha.maps.acars.updateSettings);
+map.on('dragpan', golgotha.maps.acars.updateSettings);
+map.on('zoomend', golgotha.maps.acars.updateSettings);
 
 // Build the weather layer controls
 golgotha.maps.wx.ctl = new golgotha.maps.wx.WXLayerControl();
