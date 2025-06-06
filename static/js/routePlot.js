@@ -110,7 +110,7 @@ xmlreq.onreadystatechange = function() {
 	map.clearOverlays();
 	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(wp) {
-		const mrk = (wp.pal) ? new golgotha.maps.IconMarker({pal:wp.pal,icon:wp.icon,info:wp.info, pt:wp.ll}) : new golgotha.maps.Marker({color:wp.color,info:wp.info, pt:wp.ll});
+		const mrk = (wp.pal) ? new golgotha.maps.IconMarker({pal:wp.pal,icon:wp.icon,info:wp.info,pt:wp.ll,label:wp.code}) : new golgotha.maps.Marker({color:wp.color,info:wp.info,pt:wp.ll,label:wp.code});
 		mrk.setMap(map);
 	});
 	
