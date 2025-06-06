@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide JSON-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -79,9 +79,11 @@ public class MapJSONService extends WebService {
 			eo.put("busy", entry.isBusy());
 			
 			// Display heading if available
-			if (entry instanceof RouteEntry rte) {
+			if (entry instanceof ACARSRouteEntry rte) {
 				eo.put("hdg", rte.getHeading());
 				eo.put("gs", rte.getGroundSpeed());
+				eo.put("alt", rte.getAltitude());
+				eo.put("agl", rte.getRadarAltitude());
 			}
 			
 			if (entry instanceof GroundMapEntry gme)
