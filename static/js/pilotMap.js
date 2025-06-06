@@ -4,13 +4,13 @@ golgotha.pilotMap.load = function() {
 	const f = document.forms[0];
 	const p = fetch('pilotmap.ws', {signal:AbortSignal.timeout(7500)});
 	p.then(function(rsp) {
-		if (rsp.status != 200) return false;
+		if (!rsp.ok) return false;
 		rsp.json().then(function(js) {
 			map.removeMarkers(golgotha.pilotMap.mrks);		
 			js.forEach(function(a) {
-				const mrk = new golgotha.maps.Marker({map:map, color:a.color, pt:a.ll, info:a.info});			
+				const mrk = new golgotha.maps.ImageMarker({img:'maps/delta_nnc07.png', w:24, h:24, color:a.color, pt:a.ll, map:map, info:a.info});			
 				mrk.ID = a.id; mrk.rank = a.rank; mrk.eqType = a.eqType;			
-				golgotha.pilotMap.mrks.push(mrk);			
+				golgotha.pilotMap.mrks.push(mrk);
 			});
 
 			golgotha.util.setHTML('isLoading', '');
