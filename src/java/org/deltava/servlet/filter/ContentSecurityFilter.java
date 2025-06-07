@@ -38,7 +38,6 @@ public class ContentSecurityFilter extends HttpFilter {
 		
 		// Add a CSP bean to the request that downstream can play with
 		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce);
-		csp.add(ContentSecurity.SCRIPT, "'unsafe-inline'");
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		csp.add(ContentSecurity.SCRIPT, "js-agent.newrelic.com");
 		csp.add(ContentSecurity.CONNECT, "*.google-analytics.com");
