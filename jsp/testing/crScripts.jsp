@@ -14,7 +14,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<style>
+<content:googleAnalytics />
+<content:cspHeader />
+<style type="text/css">
 span.el {
   display: block; /* Fallback for non-webkit */
   display: -webkit-box;
@@ -72,6 +74,5 @@ span.el {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
