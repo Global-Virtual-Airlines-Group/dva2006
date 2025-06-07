@@ -250,6 +250,9 @@ golgotha.maps.Marker = function(opts) {
 	mrkOpts.scale = (opts.scale) ? opts.scale : 0.625;
 	mrkOpts.draggable = (opts.draggable) ? opts.draggable : false;
 	mrkOpts.altitude = (opts.altitude) ? opts.altitude : 0;
+	if (opts.label) mrkOpts.label = opts.label;
+	if (opts.info) mrkOpts.info = opts.info;
+	if (opts.map) mrkOpts.map = opts.map;
 
 	// Create the marker
 	const mrk = new mapboxgl.Marker(mrkOpts);
