@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017, 2020, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.util.*;
@@ -8,22 +8,18 @@ import org.json.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.deltava.beans.MapEntry;
 import org.deltava.beans.wx.*;
 import org.deltava.beans.navdata.AirportLocation;
-import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetFAWeather;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 2.3
  */
 
@@ -38,10 +34,6 @@ public class AirportWeatherService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Check if using FlightAware data services
-		boolean useFA = Boolean.parseBoolean(ctx.getParameter("fa"));
-		useFA &= SystemData.getBoolean("schedule.flightaware.enabled") && (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
-		
 		// Check the code
 		String code = ctx.getParameter("code");
 		if (code == null)
@@ -63,22 +55,11 @@ public class AirportWeatherService extends WebService {
 			al = navdao.getAirport(code);
 			
 			// Get the weather
-			if (useFA) {
-				GetFAWeather wxdao = new GetFAWeather();
-				wxdao.setKey(SystemData.get("schedule.flightaware.flightXML.v4"));
-				wxdao.setReadTimeout(5000);
-				APILogger.add(new APIRequest(API.FlightAware.createName("WEATHER"), !ctx.isAuthenticated()));
-				if (useMETAR)
-					wxBeans.add(wxdao.getMETAR(al));
-				if (useTAF)
-					wxBeans.add(wxdao.getTAF(al));
-			} else {
-				GetWeather wxdao = new GetWeather(con);
-				if (useMETAR)
-					wxBeans.add(wxdao.getMETAR(code));
-				if (useTAF)
-					wxBeans.add(wxdao.getTAF(code));
-			}
+			GetWeather wxdao = new GetWeather(con);
+			if (useMETAR)
+				wxBeans.add(wxdao.getMETAR(code));
+			if (useTAF)
+				wxBeans.add(wxdao.getTAF(code));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -93,7 +74,8 @@ public class AirportWeatherService extends WebService {
 		if (al != null) {
 			JSONObject wo = new JSONObject();
 			wo.put("ll", JSONUtils.format(al));
-			wo.put("color", MapEntry.WHITE);
+			wo.put("pal", al.getPaletteCode());
+			wo.put("icon", al.getIconCode());
 			wo.put("icao", al.getCode());
 			for (WeatherDataBean wx : wxBeans) {
 				if (wx == null) continue;
