@@ -9,6 +9,7 @@ import org.json.*;
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.*;
+import org.deltava.util.JSONUtils;
 
 /**
  * An abstract class to support MapBox JSP tags.
@@ -59,20 +60,18 @@ abstract class MapEntryTag extends JSTag {
 	 * Generates a call to googleMarker() to generate a Google Maps marker.
 	 * @param loc the location
 	 * @param color the icon color
-	 * @param label the label HTML text, or null if none
+	 * @param infoBox the InfoBox HTML text, or null if none
+	 * @param label the marker label text, or null if none 
 	 * @return a JavaScript function call definition
 	 */
-	protected static String generateMarker(GeoLocation loc, String color, String label) {
+	protected static String generateMarker(GeoLocation loc, String color, String infoBox, String label) {
 
-		// Build the JS call
+		// Build the options
 		JSONObject jo = new JSONObject();
-		JSONArray ja = new JSONArray();
-		ja.put(loc.getLongitude());
-		ja.put(loc.getLatitude());
-		jo.put("pt", ja);
+		jo.put("pt", JSONUtils.toLL(loc));
 		jo.put("color", color);
-		if (label != null)
-			jo.put("info", label);
+		jo.putOpt("info", infoBox);
+		jo.putOpt("label", label);
 		
 		StringBuilder buf = new StringBuilder("new golgotha.maps.Marker(");
 		buf.append(jo.toString());
@@ -85,21 +84,19 @@ abstract class MapEntryTag extends JSTag {
 	 * @param loc the location
 	 * @param paletteCode the Google Earth palette code
 	 * @param iconCode the Google Earth icon code
-	 * @param label the label HTML text, or null if none
+	 * @param infoBox the InfoBox HTML text, or null if none
+	 * @param label the marker label text, or null if none
 	 * @return a JavaScript function call definition
 	 */
-	protected static String generateIconMarker(GeoLocation loc, int paletteCode, int iconCode, String label) {
+	protected static String generateIconMarker(GeoLocation loc, int paletteCode, int iconCode, String infoBox, String label) {
 
 		// Build the options
 		JSONObject jo = new JSONObject();
-		JSONArray ja = new JSONArray();
-		ja.put(loc.getLongitude());
-		ja.put(loc.getLatitude());
-		jo.put("pt", ja);
+		jo.put("pt", JSONUtils.toLL(loc));
 		jo.put("pal", paletteCode);
 		jo.put("icon", iconCode);
-		if (label != null)
-			jo.put("info", label);
+		jo.putOpt("info", infoBox);
+		jo.putOpt("label", label);
 
 		// Build the JS call
 		StringBuilder buf = new StringBuilder("new golgotha.maps.IconMarker(");

@@ -20,6 +20,7 @@ public class MarkerTag extends MapEntryTag {
 
 	private String _jsPointVarName;
 
+	private String _info;
 	private String _label;
 	private String _color;
 	private GeoLocation _entry;
@@ -44,9 +45,17 @@ public class MarkerTag extends MapEntryTag {
 	}
 
 	/**
-	 * Sets the label for this marker. This overrides any label provided by the point.
-	 * @param label the label HTML text
+	 * Sets the Popup content for this marker. This overrides any label provided by the point.
+	 * @param info the Popup HTML text
 	 * @see MapEntry#getInfoBox()
+	 */
+	public void setInfo(String info) {
+		_info = info;
+	}
+	
+	/**
+	 * Sets the label for this Marker.
+	 * @param label the label
 	 */
 	public void setLabel(String label) {
 		_label = label;
@@ -78,19 +87,17 @@ public class MarkerTag extends MapEntryTag {
 	}
 
 	/**
-	 * Sets the JavaScript point variable name. If this is specified a seperate GPoint variable will be set.
+	 * Sets the JavaScript point variable name. If this is specified a separate GPoint variable will be set.
 	 * @param varName the variable name
 	 */
 	public void setPointVar(String varName) {
 		_jsPointVarName = varName;
 	}
 
-	/**
-	 * Resets the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_jsPointVarName = null;
+		_info = null;
 		_label = null;
 		_color = null;
 		_useMarker = false;
@@ -99,20 +106,14 @@ public class MarkerTag extends MapEntryTag {
 		super.release();
 	}
 
-	/**
-	 * Renders the JSP tag, creating a Javascript line.
-	 * @return TagSupport.EVAL_PAGE always
-	 * @throws JspException
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 
 		// Calculate if color or label need to be overridden
 		if (_entry instanceof MapEntry mapInfo) {
-			if (_label == null)
-				_label = mapInfo.getInfoBox();
-			if ((_color == null) && (_entry instanceof MarkerMapEntry mme))
-				_color = mme.getIconColor();
+			if (_info == null) _info = mapInfo.getInfoBox();
+			if ((_color == null) && (_entry instanceof MarkerMapEntry mme)) _color = mme.getIconColor();
+			if ((_label == null) && (_entry instanceof LabelMapEntry lme)) _label = lme.getLabel();
 		}
 
 		try {
@@ -121,9 +122,11 @@ public class MarkerTag extends MapEntryTag {
 
 			// Call the googleMarker function
 			if ((_entry instanceof IconMapEntry ime) && !_useMarker) {
-				out.print(generateIconMarker(_entry, (_palCode == -1) ? ime.getPaletteCode() : _palCode, (_iconCode == -1) ? ime.getIconCode() : _iconCode, _label));
+				int pal = (_palCode == -1) ? ime.getPaletteCode() : _palCode;
+				int icon = (_iconCode == -1) ? ime.getIconCode() : _iconCode;
+				out.print(generateIconMarker(_entry, pal, icon, _info, _label));
 			} else
-				out.print(generateMarker(_entry, _color, _label));
+				out.print(generateMarker(_entry, _color, _info, _label));
 
 			out.print(';');
 
