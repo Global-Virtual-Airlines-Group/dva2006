@@ -7,6 +7,7 @@ import org.json.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.*;
 
@@ -31,8 +32,8 @@ public abstract class MapPlotService extends WebService {
 		int distance = 500;
 		if (points.size() > 1) {
 			NavigationDataBean ndf = points.getFirst();
-			mp = ndf.getPosition().midPoint(points.getLast());
-			distance = ndf.getPosition().distanceTo(points.getLast());
+			mp = new GeoPosition(ndf).midPoint(points.getLast());
+			distance = ndf.distanceTo(points.getLast());
 		} else if (points.size() == 1)
 			mp = points.getFirst();
 

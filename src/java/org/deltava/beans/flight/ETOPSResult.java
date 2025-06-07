@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.comparators.GeoComparator;
 /**
  * A class to store ETOPS validation results.
  * @author Luke
- * @version 7.0
+ * @version 12.0
  * @since 4.1
  */
 
@@ -75,7 +75,7 @@ public class ETOPSResult {
 	 * @return the maximum distance in miles
 	 */
 	public int getDistance() {
-		return (_airports.isEmpty()) ? 0 : _airports.first().getPosition().distanceTo(_warnPoint);
+		return (_airports.isEmpty()) ? 0 : _airports.first().distanceTo(_warnPoint);
 	}
 	
 	/**
