@@ -6,7 +6,6 @@ import java.util.*;
 import javax.servlet.jsp.*;
 
 import org.deltava.beans.*;
-
 import org.deltava.taglib.*;
 
 /**
@@ -65,9 +64,6 @@ public class MarkerArrayTag extends MapEntryTag {
 		_entries = points;
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		_color = null;
@@ -77,12 +73,6 @@ public class MarkerArrayTag extends MapEntryTag {
 		super.release();
 	}
 
-	/**
-	 * Renders the tag data to the JSP output stream, generating a JavaScript array with a number of Google Maps
-	 * markers.
-	 * @return TagSupport.EVAL_PAGE always
-	 * @throws JspException if a network error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 
@@ -98,16 +88,19 @@ public class MarkerArrayTag extends MapEntryTag {
 			StringBuilder buf = new StringBuilder();
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
 				GeoLocation entry = i.next();
-				if (entry instanceof MapEntry) {
+				if (entry instanceof MapEntry me) {
 					buf.append(_jsVarName);
 					buf.append(".push(");
-					
-					if ((entry instanceof IconMapEntry me) && !_useMarker)
-						buf.append(generateIconMarker(entry, (_palCode == -1) ? me.getPaletteCode() : _palCode, (_iconCode == -1) ? me.getIconCode() : _iconCode, me.getInfoBox()));
-					else {
-						MarkerMapEntry me = (MarkerMapEntry) entry;
-						String entryColor = (_color == null) ? me.getIconColor() : _color; 
-						buf.append(generateMarker(entry, entryColor, me.getInfoBox()));
+					if ((me instanceof IconMapEntry ime) && !_useMarker) {
+						int pal = (_palCode == -1) ? ime.getPaletteCode() : _palCode;
+						int icon = (_iconCode == -1) ? ime.getIconCode() : _iconCode;
+						String label = (ime instanceof LabelMapEntry lme) ? lme.getLabel() : null;
+						buf.append(generateIconMarker(entry, pal, icon, ime.getInfoBox(), label));
+					} else {
+						if ((_color == null) && (entry instanceof MarkerMapEntry mme)) _color = mme.getIconColor();
+						if (_color == null) _color = "white";
+						String label = (entry instanceof LabelMapEntry lme) ? lme.getLabel() : null;
+						buf.append(generateMarker(entry, _color, me.getInfoBox(), label));
 					}
 					
 					buf.append(");");
