@@ -107,8 +107,8 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 				} else if (dspL.latest) {
 					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.timestamp + ' with ' + ovLayer.timestamp);
 					dspL.force = true;
-					ovLayer.setMap(dspL.getMap());
-					dspL.setMap(null);
+					map.removeLine(dspL);
+					map.addLine(ovLayer);
 				}
 			} else if (dt == ts.unixDate) {
 				if ((!dspL.latest) && (!dspL.force)) {
