@@ -13,8 +13,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:js name="imgLike" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body onload="void golgotha.like.get(${img.hexID})">
@@ -59,6 +61,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
