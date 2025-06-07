@@ -199,6 +199,11 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>info</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
         <attribute>
             <name>palette</name>
             <required>false</required>
