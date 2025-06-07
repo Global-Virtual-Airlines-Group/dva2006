@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatch Route Plotter</title>
@@ -17,19 +17,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="airportRefresh" />
 <map:api version="3" />
-<content:js name="markermanager" />
-<content:js name="progressBar" />
-<content:js name="googleMapsWX" />
+<content:js name="mapBoxWX" />
 <content:js name="wxParsers" />
 <content:js name="routePlot" />
+<content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<script>
-golgotha.local.loaders = golgotha.local.loaders || {};
-golgotha.local.loaders.series = new golgotha.maps.SeriesLoader();
-golgotha.local.loaders.series.setData('radar', 0.45, 'wxRadar');
-golgotha.local.loaders.series.setData('infrared', 0.35, 'wxSat');
-golgotha.local.loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
+<content:cspHeader />
+<script async>
+golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 
 golgotha.local.validate = function(f)
 {
@@ -118,8 +117,7 @@ golgotha.routePlot.updateAirline = function(combo) {
  <td colspan="2" class="data bld"><span class="warn small caps">Route enters the following Restricted/Prohibited Airspace: <span id="aspaceList"></span></span></td>
 </tr>
 <tr>
- <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
-<div id="mapStatus" class="small mapTextLabel"></div></td>
+ <td colspan="2" class="data"><map:div ID="mapBox" height="580" /><div id="copyright" class="small mapTextLabel"></div><div id="zoomLevel" class="small mapTextLabel right"></div></td>
 </tr>
 <tr>
  <td class="label">Waypoints</td>
@@ -147,11 +145,13 @@ golgotha.routePlot.updateAirline = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script async>
+<map:token />
+
 const f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
+golgotha.routePlot.etopsCheck = false;
 
 // Load the airports
 const cfg = golgotha.airportLoad.config; 
@@ -167,34 +167,31 @@ window.setTimeout(function() { f.airportA.loadAirports(newCfg); }, 1050);</c:if>
 window.setTimeout(function() { newCfg.airline = 'all'; f.airportL.loadAirports(newCfg); }, 1250);
 
 // Create the map
-const mapOpts = {center:{lat:38.88,lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:[-93.25,38.88], zoom:4, minZoom:2, maxZoom:10, scrollZoom:false, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.on('style.load', golgotha.maps.updateMapText);
+map.on('zoomend', golgotha.maps.updateZoom);
 
-// Build the weather layer controls
-const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('radar'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('infrared'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-ctls.push(new golgotha.maps.LayerClearControl(map));
+// Add weather selection controls
+golgotha.maps.wx.ctl = new golgotha.maps.wx.WXLayerControl();
+golgotha.maps.wx.ctl.addLayer({name:'Radar', c:'selImg', disabled:true, f:function() { return golgotha.local.sl.getLatest('radar'); }});
+golgotha.maps.wx.ctl.addLayer({name:'Satellite', c:'selImg', disabled:true, id:'infrared', f:function() { return golgotha.local.sl.getLatest('infrared'); }});
+map.addControl(golgotha.maps.wx.ctl, 'bottom-left');
 
 // Display the copyright notice and text boxes
-map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
+map.addControl(new golgotha.maps.DIVControl('copyright'), 'bottom-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 
-// Build departure gates marker manager
-golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:14});
-golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:14});
-golgotha.routePlot.etopsCheck = false;
+//Build gates marker managers
+golgotha.routePlot.dGates = new golgotha.routePlot.GateManager(10);
+golgotha.routePlot.aGates = new golgotha.routePlot.GateManager(10);
 
 // Load data async once tiles are loaded
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	google.maps.event.trigger(map, 'maptypeid_changed');
-	window.setTimeout(function() { golgotha.local.loaders.series.loadRV(); }, 500);
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	map.fire('zoomend');
+	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
 });
 <c:if test="${!empty airportD}">golgotha.routePlot.plotMap();</c:if>
 </script>

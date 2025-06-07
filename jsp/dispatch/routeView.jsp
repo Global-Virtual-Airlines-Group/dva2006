@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Route #<fmt:int value="${route.ID}" /></title>
@@ -74,7 +74,7 @@
 </tr>
 <c:if test="${waypoints.size() > 0}">
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" height="500" /></td>
+ <td class="data" colspan="4"><map:div ID="mapBox" height="500" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -91,23 +91,29 @@
 </content:region>
 </content:page>
 <c:if test="${waypoints.size() > 0}">
-<script>
+<script async>
+<map:token />
+
 // Build the route line and map center
-<map:point var="mapC" point="${mapCenter}" />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:points var="pnts" items="${waypoints}" />
-<map:markers var="mrks" items="${waypoints}" />
-<map:line var="route" src="pnts" color="#4080af" width="2" transparency="0.7" geodesic="true" />
+<map:markers var="golgotha.local.mrks" items="${waypoints}" />
+<map:line var="route" src="pnts" color="#4080af" width="2" transparency="0.7" />
+<map:bounds var="golgotha.local.bb" items="${route.airports}" />
 
 // Build the map
-const mapOpts = {center: mapC, zoom:golgotha.maps.util.getDefaultZoom(${distance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-const map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.setMapTypeId(golgotha.maps.info.type);
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
-
-// Add the route and markers
-map.addMarkers(route);
-map.addMarkers(mrks);
+const mapOpts = {center:golgotha.local.mapC, minZoom:3, maxZoom:14, bounds:golgotha.local.bb, fitBoundsOptions:{padding:48}, scrollZoom:false, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'};
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.on('style.load', golgotha.maps.updateMapText);
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	
+	// Add the route and markers
+	map.addLine(route);
+	map.addMarkers(golgotha.local.mrks);
+});
 </script></c:if>
 <content:googleAnalytics />
 </body>
