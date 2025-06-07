@@ -64,7 +64,7 @@
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="mapBox" height="620" /><div id="copyright" class="small mapTextLabel right"></div><div id="mapStatus" class="small mapTextLabel right"></div>
+ <td class="data" colspan="4"><map:div ID="mapBox" height="600" /><div id="copyright" class="small mapTextLabel right"></div><div id="mapStatus" class="small mapTextLabel right"></div>
 <div id="zoomLevel" class="small mapTextLabel right"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
@@ -94,7 +94,7 @@ golgotha.local.fl = new golgotha.maps.FIRLoader();
 golgotha.local.fl.onload(function() { golgotha.util.enable('wxselect-selFIR'); });
 
 // Create the map
-const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, antiAlias:true, zoom:golgotha.maps.info.zoom, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.maps.info.ctr, minZoom:3, maxZoom:17, antiAlias:true, scrollZoom:false, zoom:golgotha.maps.info.zoom, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.on('zoomend', golgotha.maps.updateZoom);
