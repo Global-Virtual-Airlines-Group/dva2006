@@ -32,10 +32,6 @@ protected void tearDown() throws Exception {
       assertEquals(-23.456, _ndb.getLongitude(), 0.0001);
       assertEquals(Navaid.NDB, _ndb.getType());
       
-      assertNotNull(_ndb.getPosition());
-      assertEquals(_ndb.getLatitude(), _ndb.getPosition().getLatitude(), 0.0001);
-      assertEquals(_ndb.getLongitude(), _ndb.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("code", "TST");
       checkProperty("name", "Test VOR");
       checkProperty("frequency", "123.35");

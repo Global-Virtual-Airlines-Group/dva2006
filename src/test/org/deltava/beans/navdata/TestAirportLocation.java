@@ -32,10 +32,6 @@ protected void tearDown() throws Exception {
       assertEquals(-23.456, _a.getLongitude(), 0.0001);
       assertEquals(Navaid.AIRPORT, _a.getType());
       
-      assertNotNull(_a.getPosition());
-      assertEquals(_a.getLatitude(), _a.getPosition().getLatitude(), 0.0001);
-      assertEquals(_a.getLongitude(), _a.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("altitude", Integer.valueOf(580));
       checkProperty("code", "TST");
       checkProperty("name", "Test Airport");

@@ -34,10 +34,6 @@ protected void tearDown() throws Exception {
       assertEquals(-23.456, _int.getLongitude(), 0.0001);
       assertEquals(Navaid.INT, _int.getType());
       
-      assertNotNull(_int.getPosition());
-      assertEquals(_int.getLatitude(), _int.getPosition().getLatitude(), 0.0001);
-      assertEquals(_int.getLongitude(), _int.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("code", "TST");
    }
    

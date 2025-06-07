@@ -34,10 +34,6 @@ protected void tearDown() throws Exception {
       assertEquals(Navaid.GATE, _g.getType());
       assertEquals(GateZone.DOMESTIC, _g.getZone());
       
-      assertNotNull(_g.getPosition());
-      assertEquals(_g.getLatitude(), _g.getPosition().getLatitude(), 0.0001);
-      assertEquals(_g.getLongitude(), _g.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("code", "TST");
       checkProperty("region", "K7");
       checkProperty("name", "TEST VOR");

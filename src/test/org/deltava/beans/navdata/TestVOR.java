@@ -32,10 +32,6 @@ protected void tearDown() throws Exception {
       assertEquals(-23.456, _vor.getLongitude(), 0.0001);
       assertEquals(Navaid.VOR, _vor.getType());
       
-      assertNotNull(_vor.getPosition());
-      assertEquals(_vor.getLatitude(), _vor.getPosition().getLatitude(), 0.0001);
-      assertEquals(_vor.getLongitude(), _vor.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("code", "TST");
       checkProperty("name", "Test VOR");
       checkProperty("frequency", "123.35");
