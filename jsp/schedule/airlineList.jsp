@@ -5,15 +5,18 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <html lang="en">
 <head>
 <title><content:airline /> Schedule - Airlines</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -70,6 +73,5 @@ ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
