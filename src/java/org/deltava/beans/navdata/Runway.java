@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -38,6 +38,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public Runway(double lat, double lon) {
 		super(Navaid.RUNWAY, lat, lon);
+	}
+	
+	@Override
+	public String getLabel() {
+		return getName();
 	}
 
 	/**
@@ -83,7 +88,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	/**
-	 * Returns the postion of the displaced runway threshold, if any. 
+	 * Returns the position of the displaced runway threshold, if any. 
 	 * @return the GeoLocation of the threshold
 	 */
 	public MapEntry getThreshold() {
@@ -111,7 +116,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	
 	/**
 	 * Returns the alternate code for this Runway.
-	 * @return the alternet code, or null if none
+	 * @return the alternate code, or null if none
 	 * @see Runway#setAlternateCode(String, boolean)
 	 */
 	public String getAlternateCode() {

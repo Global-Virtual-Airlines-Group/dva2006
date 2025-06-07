@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2023 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 1.0
  */
 
-public class Airport implements Comparable<Airport>, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry {
+public class Airport implements Comparable<Airport>, Auditable, ComboAlias, ViewEntry, ICAOAirport, MarkerMapEntry, IconMapEntry, LabelMapEntry {
 
 	/**
 	 * Enumeration for Airport code types.
@@ -201,7 +201,7 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	}
 	
 	/**
-	 * Updates the superceded airport code for this airport.
+	 * Updates the superseded airport code for this airport.
 	 * @param iata the airport IATA code
 	 * @see Airport#getSupercededAirport()
 	 */
@@ -219,6 +219,11 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 
 	@Override
 	public String getICAO() {
+		return _icao;
+	}
+	
+	@Override
+	public String getLabel() {
 		return _icao;
 	}
 
