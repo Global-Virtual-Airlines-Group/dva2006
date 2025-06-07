@@ -5,22 +5,16 @@
 <head>
 <title><content:airline /> Approach Chart - ${chart.name}</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-@media print 
-{
-.noPrint {
-	display:none;
-}
-
-.CHART {
-	display:inline;
-	text-align:center;
-	position:absolute;
-	top: -5px;
-}
+<content:cspHeader />
+<style type="text/css">
+@media print {
+.noPrint { display:none; }
+.CHART { display:inline; text-align:center; position:absolute; top: -5px; }
 }
 </style>
 </head>
@@ -29,6 +23,5 @@
 <span class="noPrint"><a href="javascript:void window.print()">Print Chart</a><br /></span>
 <span class="CHART"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${chart.ID}" class="noborder" /></span>
 <div class="noPrint"><content:copyright /></div>
-<content:googleAnalytics />
 </body>
 </html>
