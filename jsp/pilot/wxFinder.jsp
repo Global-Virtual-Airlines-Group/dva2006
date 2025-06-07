@@ -17,7 +17,6 @@
 <map:api version="3" />
 <content:js name="mapBoxWX" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
-<content:csp type="STYLE" host="'unsafe-inline'" />
 <content:googleAnalytics />
 <content:cspHeader />
 <style type="text/css">
@@ -77,7 +76,7 @@ golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 // Add airports
 golgotha.local.wxAirports = [];
 <c:forEach var="ap" items="${metars}">
-<map:marker var="golgotha.local.mrk" marker="true" point="${ap}" color="${ap.iconColor}" label="${ap.infoBox}" />
+<map:marker var="golgotha.local.mrk" marker="true" point="${ap}" color="${ap.iconColor}" info="${ap.infoBox}" />
 golgotha.local.mrk.getPopup().addClassName('wxPopup');
 golgotha.local.mrk.ILS = ${ap.ILS.ordinal()};
 golgotha.local.wxAirports.push(golgotha.local.mrk);</c:forEach>
