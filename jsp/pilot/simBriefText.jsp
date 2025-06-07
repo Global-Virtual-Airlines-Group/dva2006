@@ -8,15 +8,15 @@
 <title>SimBrief Briefing - ${pirep.flightCode}</title>
 <content:expire expires="5" />
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-@media print 
-{
-.noprint {
-	display:none;
-}
+<content:cspHeader />
+<style type="text/css">
+@media print {
+.noprint { display:none; }
 }
 </style>
 </head>
@@ -29,6 +29,5 @@ ${pkg.briefingText}
 <span class="noprint"><el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br /></span>
 <br />
 <content:copyright />
-<content:googleAnalytics />
 </body>
 </html>
