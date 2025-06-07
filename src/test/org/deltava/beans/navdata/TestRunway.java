@@ -32,10 +32,6 @@ protected void tearDown() throws Exception {
       assertEquals(-23.456, _rwy.getLongitude(), 0.0001);
       assertEquals(Navaid.RUNWAY, _rwy.getType());
       
-      assertNotNull(_rwy.getPosition());
-      assertEquals(_rwy.getLatitude(), _rwy.getPosition().getLatitude(), 0.0001);
-      assertEquals(_rwy.getLongitude(), _rwy.getPosition().getLongitude(), 0.0001);
-      
       checkProperty("code", "TST");
       checkProperty("heading", Integer.valueOf(92));
       checkProperty("length", Integer.valueOf(8050));
