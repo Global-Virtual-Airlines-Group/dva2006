@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_mapbox.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
@@ -16,8 +16,11 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<map:api version="3" js="googleMapsWX,wxParsers" callback="golgotha.local.mapInit" />
+<map:api version="3" />
+<content:js name="mapBoxWX" />
+<content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
+<content:cspHeader />
 <script async>
 golgotha.local.loadWX = function(code)
 {
@@ -26,16 +29,10 @@ if (code.length < 4) {
 	return false;
 }
 
-golgotha.local.useFA = false;
-<content:filter roles="Route,Dispatch">
-// Check for FlightAware Weather
-const f = document.forms[0];
-golgotha.local.useFA = f.useFA.checked;</content:filter>
-	
 // Build the XML Request
 const xmlreq = new XMLHttpRequest();
 xmlreq.timeout = 4500;
-xmlreq.open('GET', 'airportwx.ws?fa=' + golgotha.local.useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
+xmlreq.open('GET', 'airportwx.ws?code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	const js = JSON.parse(xmlreq.responseText);
@@ -47,12 +44,13 @@ xmlreq.onreadystatechange = function() {
 		// Check for an existing marker
 		let mrk = golgotha.local.wxMarkers[wx.code];
 		if (mrk) {
-			if (mrk.isOpen) map.infoWindow.close();
+			const pp = mrk.getPopup();
+			if (pp.isOpen()) mrk.togglePopup();
 			if (wx.tabs.length == 0) {
 				delete mrk.tabs;
 				const label = wx.firstChild;
 				if (label)
-					mrk.infoLabel = label.data.replace(/\n/g, '<br />');
+					pp.setHTML(label.data.replace(/\n/g, '<br />'));
 			} else {
 				mrk.tabs = [];
 				for (var x = 0; x < wx.tabs.length; x++) {
@@ -60,6 +58,7 @@ xmlreq.onreadystatechange = function() {
 					eval('mrk.' + tab.type + ' = tab.content');
 					const wxData = tab.content.replace(/\n/g, '<br />');
 					mrk.tabs.push({name:tab.name, content:wxData});
+					pp.setHTML(mrk.updateTab(0));
 				}
 			}
 
@@ -67,16 +66,13 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Create the marker
-		if (wx.pal)
-			mrk = new golgotha.maps.IconMarker({pal:wx.pal, icon:wx.icon}, wx.ll);
-		else if (wx.color)
-			mrk = new golgotha.maps.Marker({color:wx.color}, wx.ll);
-
-		mrk.code = wx.icao; mrk.isOpen = false;
+		mrk = (wx.pal) ? new golgotha.maps.IconMarker({pal:wx.pal, icon:wx.icon, pt:wx.ll, label:wx.icao}) : new golgotha.maps.Marker({color:wx.color, pt:wx.ll, label:wx.icao});
+		mrk.code = wx.icao;
+		const p = new mapboxgl.Popup({closeOnClick:true,focusAfterOpen:false,maxWidth:'500px'});
 		if (wx.tabs.length == 0) {
 			const label = wx.firstChild;
 			if (label)
-				mrk.infoLabel = label.data;
+				p.setHTML(label.data.replace(/\n/g, '<br />'));
 		} else {
 			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab; 
 			for (var x = 0; x < wx.tabs.length; x++) {
@@ -84,21 +80,25 @@ xmlreq.onreadystatechange = function() {
 				eval('mrk.' + tab.type + ' = tab.content');
 				const wxData = tab.content.replace(/\n/g, '<br />');
 				mrk.tabs.push({name:tab.name, content:wxData});
+				p.setHTML(mrk.updateTab(0));
 			}
 		}
 
-		// Set the the click handlers
-		google.maps.event.addListener(mrk, 'click', golgotha.local.clickInfo);
+		// Create the event handlers
+		p.on('close', function() { golgotha.local.clickInfo(); });
+		p.on('open', function(e) {
+			golgotha.maps.selectedMarker = e.target._marker;
+			golgotha.local.clickInfo(e.target._marker);
+		});
 
 		// Add the marker
+		mrk.setPopup(p);
 		golgotha.local.wxMarkers[mrk.code] = mrk;
 		mrk.setMap(map);
 	}
 
 	const mrk = golgotha.local.wxMarkers[code];
-	if (mrk)
-		google.maps.event.trigger(mrk, 'click');
-
+	if (mrk) mrk.togglePopup();
 	golgotha.event.beacon('WeatherMap', 'Fetch TAF/METAR', code);
 	return true;
 };
@@ -107,37 +107,15 @@ xmlreq.send(null);
 return true;
 };
 
-golgotha.local.closeWindow = function() {
-    this.isOpen = false;
-    const f = document.forms[0];
-    f.wxID.value = '';
-    f.metarData.value = '';
-    f.metarData.disabled = true;
-    f.tafData.value = '';
-    f.tafData.disabled = true;
-    map.closeWindow();
-    return true;
-};
-
-golgotha.local.clickInfo = function()
-{
-if (this.tabs) {
-	this.updateTab(0, new google.maps.Size(325, 100));
-	map.infoWindow.marker = this;
-} else
-	map.infoWindow.setContent(this.infoLabel);
-
-map.infoWindow.open(map, this); 
-	
-// Copy the data to the fields
-const f = document.forms[0];
-f.wxID.value = this.code;
-f.metarData.value = this.METAR;
-f.metarData.disabled = false;
-f.tafData.value = this.TAF;
-f.tafData.disabled = false;
-this.isOpen = true;
-return true;
+golgotha.local.clickInfo = function(mrk) {
+	const hasMrk = (mrk);
+	const f = document.forms[0];
+	f.wxID.value = hasMrk ? mrk.code : '';
+	f.metarData.value = hasMrk ? mrk.METAR : '';
+	f.metarData.disabled = !hasMrk;
+	f.tafData.value = hasMrk ? mrk.TAF : '';
+	f.tafData.disabled = !hasMrk;
+	return true;
 };
 </script>
 </head>
@@ -156,12 +134,11 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER <c:if test="${!empty gfsCycle}"> - GFS DATA AS OF <fmt:date date="${gfsCycle}" t="HH:mm" /></c:if></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" height="480" /></td>
+ <td class="data" colspan="2"><map:div ID="mapBox" height="480" /></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>
- <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" />&nbsp;<el:button onClick="void golgotha.local.loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
-<content:filter roles="Route,Dispatch"> <el:box name="useFA" value="true" checked="false" label="Use FlightAware Weather" /></content:filter></td>
+ <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" />&nbsp;<el:button onClick="void golgotha.local.loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" /></td>
 </tr>
 <tr>
  <td class="label top">METAR Data</td>
@@ -176,54 +153,43 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<div id="copyright" class="mapTextLabel"></div>
-<div id="mapStatus" class="small mapTextLabel"></div>
-<div id="zoomLevel" class="mapTextLabel"></div>
-<div id="seriesRefresh" class="mapTextLabel"></div>
-<content:sysdata var="wuAPI" name="security.key.wunderground" />
+<div id="copyright" class="small mapTextLabel"></div><div id="zoomLevel" class="small right mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div>
 <script async>
+<map:token />
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
+golgotha.local.wxMarkers = [];
 
-golgotha.local.mapInit = function () {
-	golgotha.local.wxMarkers = [];
+// Create the map
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:12, scrollZoom:false, projection:'globe', style:'mapbox://styles/mapbox/outdoors-v12'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.on('style.load', golgotha.maps.updateMapText);
+map.on('zoomend', golgotha.maps.updateZoom);
 
-	// Create the map
-	const mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-	map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
-	map.setMapTypeId(golgotha.maps.info.type);
-	map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW, headerDisabled:true});
-	google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
-	google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-	google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+// Init weather layer loader
+golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
+golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
+golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
+golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
 
-	// Init weather layer loader
-	golgotha.local.sl = new golgotha.maps.SeriesLoader();
-	golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
-	golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
-	golgotha.local.sl.onload(function() { golgotha.util.enable('#selImg'); });
+// Build the layer controls
+golgotha.maps.wx.ctl = new golgotha.maps.wx.WXLayerControl();
+golgotha.maps.wx.ctl.addLayer({name:'Radar', c:'selImg', disabled:true, f:function() { return golgotha.local.sl.getLatest('radar'); }});
+golgotha.maps.wx.ctl.addLayer({name:'Satellite', c:'selImg', disabled:true, id:'infrared', f:function() { return golgotha.local.sl.getLatest('infrared'); }});
+map.addControl(golgotha.maps.wx.ctl, 'bottom-left');
 
-	// Build the layer controls
-	const ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-	const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.425, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-jet');
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('radar'); }));
-	ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Satellite', disabled:true, c:'selImg'}, function() { return golgotha.local.sl.getLatest('infrared'); }));
-	ctls.push(new golgotha.maps.LayerClearControl(map));
+// Display the copyright notice and text boxes
+map.addControl(new golgotha.maps.DIVControl('copyright'), 'bottom-right');
+map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
+map.addControl(new golgotha.maps.DIVControl('seriesRefresh'), 'bottom-left');
 
-	// Display the copyright notice and text boxes
-	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
-	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
-	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('seriesRefresh'));
-
-	// Load data async once tiles are loaded
-	google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-		google.maps.event.trigger(map, 'zoom_changed');
-		google.maps.event.trigger(map, 'maptypeid_changed');
-		golgotha.local.loadWX('${homeAirport.ICAO}');
-		window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
-	});
-};
+// Load data async once tiles are loaded
+map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
+	golgotha.local.loadWX('${homeAirport.ICAO}');
+	window.setTimeout(function() { golgotha.local.sl.loadRV(); }, 500);
+	map.fire('zoomend');
+});
 </script>
 </body>
 </html>
