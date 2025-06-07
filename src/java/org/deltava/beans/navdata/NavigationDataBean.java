@@ -12,11 +12,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Cloneable, Cacheable, Comparable<NavigationDataBean>, MarkerMapEntry, IconMapEntry {
+public abstract class NavigationDataBean implements Cloneable, Cacheable, Comparable<NavigationDataBean>, MarkerMapEntry, IconMapEntry, LabelMapEntry {
 
 	private static final long serialVersionUID = 4880772877749063792L;
 	
@@ -69,15 +69,10 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	public final double getLongitude() {
 		return _gp.getLongitude();
 	}
-
-	/**
-	 * Returns the object's position.
-	 * @return the GeoPosition of this object
-	 * @see NavigationDataBean#getLatitude()
-	 * @see NavigationDataBean#getLongitude()
-	 */
-	public GeoPosition getPosition() {
-		return _gp;
+	
+	@Override
+	public String getLabel() {
+		return _code;
 	}
 
 	/**
