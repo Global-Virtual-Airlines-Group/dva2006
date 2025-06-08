@@ -622,7 +622,6 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('style.load', golgotha.maps.updateMapText);
 map.on('zoomend', golgotha.maps.updateZoom);
-<c:if test="${!empty mapRoute}">map.on('zoomend', golgotha.maps.acarsFlight.switchPaths);</c:if>
 map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
@@ -636,7 +635,11 @@ map.once("load", function() {
 <c:if test="${empty mapRoute && isACARS}">
 <map:point var="golgotha.local.takeoff" point="${pirep.takeoffLocation}" />
 <map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
-<c:if test="${flightInfo.positionCount > 0}">map.once('load', function() { golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user}); });</c:if></c:if>
+<c:if test="${flightInfo.positionCount > 0}">
+map.once('load', function() {
+	golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user}); 
+	map.on('zoomend', golgotha.maps.acarsFlight.switchPaths);	
+});</c:if></c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
 <map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
