@@ -27,9 +27,10 @@ p.then(function(rsp) {
 		const pts3D = [];
 		js.positions.forEach(function(p) {
 			const agl = golgotha.maps.feet2Meter(p.agl * map.verticalEx);
-			const alt = golgotha.maps.feet2Meter(p.alt * map.verticalEx + 2.5);
+			const alt = golgotha.maps.feet2Meter(p.alt * map.verticalEx) + 2;
 			let mrk; const ll = golgotha.maps.toLL(p.ll);
 			golgotha.maps.acarsFlight.routePoints.push(ll);
+			pts3D.push([ll[0], ll[1], alt]);
 			if (p.icon)
 				mrk = new golgotha.maps.IconMarker({pal:p.pal, icon:p.icon, info:p.info, opacity:0.75, pt:ll, altitude:agl});
 			else if (p.color)
@@ -37,11 +38,8 @@ p.then(function(rsp) {
 			else
 				return false;
 
-			// Save 3d point data
-			mrk.alt = agl;
-			pts3D.push([ll[0], ll[1], alt]);
-
 			// Add ATC data
+			mrk.alt = agl;
 			golgotha.maps.acarsFlight.routeMarkers.push(mrk);
 			if (p.atc) {
 				if ((p.atc.type != 'CTR') && (p.atc.type != 'FSS')) {
