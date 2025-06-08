@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 11.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -81,9 +81,11 @@ public class EventAccessControl extends AccessControl {
 		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && _ev.getStartTime().isBefore(now);
 		
 		// Check for feedback
-		_canViewFeedback = isOurs && (_ctx.isUserInRole("Event") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations"));
-		boolean hasFeedback = _ctx.isAuthenticated() && _ev.hasFeedback(_ctx.getUser().getID());
-		_canProvideFeedback = canParticipate && (_ev.getEndTime() != null) && _ev.getEndTime().isBefore(now) && !hasFeedback;
+		if (_ev.getEndTime().isAfter(Instant.now())) {
+			_canViewFeedback = isOurs && (_ctx.isUserInRole("Event") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations"));
+			boolean hasFeedback = _ctx.isAuthenticated() && _ev.hasFeedback(_ctx.getUser().getID());
+			_canProvideFeedback = canParticipate && (_ev.getEndTime() != null) && _ev.getEndTime().isBefore(now) && !hasFeedback;
+		}
 	}
 
 	/**
