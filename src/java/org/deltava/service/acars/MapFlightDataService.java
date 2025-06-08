@@ -126,6 +126,14 @@ public class MapFlightDataService extends WebService {
 			jo.append("positions", eo);
 		}
 		
+		// Display airport data and departure/arrival runway disatnces
+		if (info != null) {
+			jo.put("airportD", JSONUtils.format(info.getAirportD()));
+			jo.put("airportA", JSONUtils.format(info.getAirportA()));
+			jo.putOpt("runwayD", formatRunway(info.getRunwayD()));
+			jo.putOpt("runwayA", formatRunway(info.getRunwayA()));
+		}
+		
 		// Load airspace boundaries
 		for (Airspace a : airspaces) {
 			JSONObject ao = new JSONObject();
@@ -139,12 +147,6 @@ public class MapFlightDataService extends WebService {
 			a.getBorder().forEach(pt -> ao.append("border", JSONUtils.format(pt)));
 			JSONUtils.ensureArrayPresent(ao, "border");
 			jo.append("airspace", ao);
-		}
-		
-		// Write departure/arrival runway disatnces
-		if (info != null) {
-			jo.putOpt("runwayD", formatRunway(info.getRunwayD()));
-			jo.putOpt("runwayA", formatRunway(info.getRunwayA()));
 		}
 		
 		// Dump the JSON to the output stream
