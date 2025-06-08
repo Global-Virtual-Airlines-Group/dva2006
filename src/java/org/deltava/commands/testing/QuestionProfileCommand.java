@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -203,7 +203,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			// Load SID/STAR list if a route plot question
 			if (isRP && (qp != null)) {
 				RoutePlot rp = (RoutePlot) qp;
-				ctx.setAttribute("mapCenter", rp.getMidPoint(), REQUEST);
+				ctx.setAttribute("mapCenter", rp.midPoint(), REQUEST);
 				
 				GetNavRoute trdao = new GetNavRoute(con);
 				ctx.setAttribute("sids", trdao.getRoutes(rp.getAirportD(), TerminalRoute.Type.SID), REQUEST);
