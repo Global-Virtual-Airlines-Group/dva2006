@@ -905,7 +905,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("googleStaticMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
 			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.MAPBOX), REQUEST);
-			ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
+			ctx.setAttribute("mapCenter", fr.midPoint(), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
