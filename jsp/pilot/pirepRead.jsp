@@ -503,18 +503,12 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
  </td>
 </tr>
 <tr class="acarsMapData">
- <td colspan="2"><map:div ID="mapBox" height="575" /><div id="zoomLevel" class="mapTextlabel right"></div></td>
+ <td colspan="2"><map:div ID="mapBox" height="575" /><div id="zoomLevel" class="small mapTextlabel right"></div></td>
 </tr>
 </c:when>
 <c:when test="${googleStaticMap}">
 <tr class="acarsMapData">
  <td colspan="2" class="mid"><gmap:static w="1280" h="520" scale="2" markers="${filedRoute}" center="${mapCenter}" /></td>
-</tr>
-</c:when>
-<c:when test="${frMap}">
-<tr class="acarsMapData">
- <td colspan="2"><img src="https://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
-alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
 </c:when>
 </c:choose>

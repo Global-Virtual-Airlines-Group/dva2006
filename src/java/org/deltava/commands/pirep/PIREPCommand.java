@@ -886,8 +886,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					fr.setAttribute(FlightReport.ATTR_ETOPSWARN, true);
 					mapType = MapType.GOOGLEStatic;
 				}
-					
-				if ((sbPkg == null) && !hasTrack) mapType = MapType.GOOGLEStatic;
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);
@@ -905,9 +903,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
-			ctx.setAttribute("frMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
-			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.MAPBOX), REQUEST);
 			ctx.setAttribute("googleStaticMap", Boolean.valueOf(mapType == MapType.GOOGLEStatic), REQUEST);
+			ctx.setAttribute("googleMap", Boolean.valueOf(mapType == MapType.MAPBOX), REQUEST);
 			ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
