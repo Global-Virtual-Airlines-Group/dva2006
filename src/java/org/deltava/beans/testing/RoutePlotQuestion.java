@@ -1,13 +1,12 @@
-// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 
 /**
  * A bean to store route plotting Examination questions.
  * @author Luke
- * @version 7.0
+ * @version 12.0
  * @since 2.3
  */
 
@@ -33,16 +32,6 @@ public class RoutePlotQuestion extends MultiChoiceQuestion implements RoutePlot 
 	@Override
 	public Airport getAirportD() {
 		return _airportD;
-	}
-
-	@Override
-	public GeoLocation getMidPoint() {
-		return new GeoPosition(_airportD).midPoint(_airportA);
-	}
-
-	@Override
-	public int getDistance() {
-		return new GeoPosition(_airportD).distanceTo(_airportA);
 	}
 
 	@Override

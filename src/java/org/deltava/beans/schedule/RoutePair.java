@@ -3,12 +3,13 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.flight.FlightType;
 
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 2.6
  */
 
@@ -69,10 +70,18 @@ public interface RoutePair {
 	
 	/**
 	 * Returns the distance between the Airports.
-	 * @return the distance in miles
+	 * @return the distance in miles, or -1 if not populated
 	 */
 	default int getDistance() {
 		return isPopulated() ? getAirportD().distanceTo(getAirportA()) : -1;
+	}
+	
+	/**
+	 * Returns the midpoint between the two Airports on a Great Circle route.
+	 * @return the midpoint GeoLocation, or null if not populated
+	 */
+	default GeoLocation midPoint() {
+		return isPopulated() ? new GeoPosition(getAirportD()).midPoint(getAirportA()) : null;
 	}
 
 	/**

@@ -94,7 +94,7 @@ public class TestFlightReport extends AbstractBeanTestCase {
         checkProperty("airportD", atl);
 
         assertTrue(_fr.isPopulated());
-        assertEquals(_fr.getDistance(), atl.getPosition().distanceTo(jfk.getPosition()));
+        assertEquals(_fr.getDistance(), atl.distanceTo(jfk));
     }
     
     public void testToString() {
