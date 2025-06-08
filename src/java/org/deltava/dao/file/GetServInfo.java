@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -24,7 +24,7 @@ import org.deltava.util.*;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -170,8 +170,6 @@ public class GetServInfo extends OnlineNetworkDAO {
 										Pilot p = new Pilot(id, _net);
 										p.setCallsign(si.get(SITokens.CALLSIGN));
 										p.setName(si.get(SITokens.NAME));
-										p.setAirportD(getAirport(si.get(SITokens.AIRPORT_D)));
-										p.setAirportA(getAirport(si.get(SITokens.AIRPORT_A)));
 										p.setPosition(StringUtils.parse(si.get(SITokens.LAT), 0.0), StringUtils.parse(si.get(SITokens.LON), 0.0));
 										p.setEquipmentCode(si.get(SITokens.EQCODE));
 										p.setAltitude(StringUtils.parse(si.get(SITokens.ALT), 0));
@@ -181,7 +179,8 @@ public class GetServInfo extends OnlineNetworkDAO {
 										p.setServer(si.get(SITokens.SERVER).toUpperCase());
 
 										// Set departure airport position if unknown
-										if (p.getAirportD().getPosition() == null) {
+										p.setAirportD(getAirport(si.get(SITokens.AIRPORT_D)));
+										if (!p.getAirportD().hasPosition()) {
 											try {
 												double lat = Double.parseDouble(si.get(SITokens.DEP_LAT));
 												double lon = Double.parseDouble(si.get(SITokens.DEP_LON));
@@ -192,7 +191,8 @@ public class GetServInfo extends OnlineNetworkDAO {
 										}
 
 										// Set arrival airport position if unknown
-										if (p.getAirportA().getPosition() == null) {
+										p.setAirportA(getAirport(si.get(SITokens.AIRPORT_A)));
+										if (!p.getAirportA().hasPosition()) {
 											try {
 												double lat = Double.parseDouble(si.get(SITokens.DEP_LAT));
 												double lon = Double.parseDouble(si.get(SITokens.DEP_LON));

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 1.0
  */
 
@@ -74,8 +74,8 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Get the route data from the DAFIF database
 			List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
-			GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
-			int distance = info.getAirportD().getPosition().distanceTo(info.getAirportA());
+			GeoLocation lastWaypoint = info.getAirportD();
+			int distance = info.getAirportD().distanceTo(info.getAirportA());
 			
 			// Get navigation aids
 			GetNavData navdao = new GetNavData(con);
@@ -88,8 +88,7 @@ public class FlightInfoCommand extends AbstractCommand {
 				if (wPoint != null) {
 					if (lastWaypoint.distanceTo(wPoint) < distance) {
 						routeInfo.add(wPoint);
-						lastWaypoint.setLatitude(wPoint.getLatitude());
-						lastWaypoint.setLongitude(wPoint.getLongitude());
+						lastWaypoint = wPoint;
 					}
 				}
 			}
@@ -104,9 +103,8 @@ public class FlightInfoCommand extends AbstractCommand {
 			   ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
 			   ctx.setAttribute("routeLength", Integer.valueOf(start.distanceTo(end)), REQUEST);
 			} else {
-			   GeoPosition start = info.getAirportD().getPosition();
-			   ctx.setAttribute("mapCenter", start.midPoint(info.getAirportA()), REQUEST);
-			   ctx.setAttribute("routeLength", Integer.valueOf(start.distanceTo(info.getAirportA())), REQUEST);
+			   ctx.setAttribute("mapCenter", info.midPoint(), REQUEST);
+			   ctx.setAttribute("routeLength", Integer.valueOf(info.getDistance()), REQUEST);
 			}
 			
 			// Save the filed/actual routes

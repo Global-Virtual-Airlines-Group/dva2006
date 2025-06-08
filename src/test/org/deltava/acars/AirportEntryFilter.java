@@ -32,7 +32,7 @@ public class AirportEntryFilter implements RouteEntryFilter {
 		if (re.getRadarAltitude() > _maxAlt) return null;
 		
 		for (Airport a : _airports) {
-			if (a.getPosition().distanceTo(re) <= _maxDistance)
+			if (a.distanceTo(re) <= _maxDistance)
 				return _p.getPixelAddress(re);
 		}
 		

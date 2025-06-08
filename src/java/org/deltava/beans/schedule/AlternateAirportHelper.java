@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2019, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to calculate diversion airports. Airports are given a score based on maximum runway length in excess of minimums and distance from the destination.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 4.2
  */
 
@@ -79,7 +79,7 @@ public class AlternateAirportHelper {
 		Map<Score, Airport> results = new TreeMap<Score, Airport>(Collections.reverseOrder());
 		for (Airport ap : airports) {
 			int airlines = ap.getAirlineCodes().size();
-			int distance = ap.getPosition().distanceTo(dst);
+			int distance = ap.distanceTo(dst);
 			int rwyDelta = (ap.getMaximumRunwayLength() - opts.getTakeoffRunwayLength());
 			if ((distance > maxDistance) && (results.size() > 2))
 				break;

@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2019, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 9.0
+ * @version 12.0
  * @since 4.1
  */
 
@@ -16,7 +16,6 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 
 	private final Airport _aD;
 	private final Airport _aA;
-	private final GeoLocation _mp;
 
 	private final String _code;
 	protected int _frequency;
@@ -31,7 +30,6 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 		super();
 		_aD = aD;
 		_aA = aA;
-		_mp = aD.getPosition().midPoint(aA);
 
 		// Build code
 		Collection<String> airports = new TreeSet<String>();
@@ -52,20 +50,12 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 
 	@Override
 	public double getLatitude() {
-		return _mp.getLatitude();
+		return midPoint().getLatitude();
 	}
 
 	@Override
 	public double getLongitude() {
-		return _mp.getLongitude();
-	}
-
-	/**
-	 * Returns the departure and arrival airports.
-	 * @return a Collection of GeoLocations
-	 */
-	public Collection<? extends GeoLocation> getPoints() {
-		return Arrays.asList(_aD, _aA);
+		return midPoint().getLongitude();
 	}
 
 	/**

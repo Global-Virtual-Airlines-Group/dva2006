@@ -302,14 +302,6 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	}
 	
 	/**
-	 * Returns this airport's latitude and longitude.
-	 * @return a GeoPosition object containing the airport's position
-	 */
-	public GeoPosition getPosition() {
-		return _position;
-	}
-	
-	/**
 	 * Returns whether this Airport is in the Schengen Zone.
 	 * @return TRUE if in the Schengen Zone, otherwise FALSE
 	 * @see Airport#setIsSchengen(boolean)
@@ -499,9 +491,7 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
 	
 	@Override
 	public String getRowClassName() {
-		if (_aCodes.isEmpty())
-			return "warn";
-		
+		if (_aCodes.isEmpty()) return "warn";
 		return _hasGateData ? null : "opt1";
 	}
 

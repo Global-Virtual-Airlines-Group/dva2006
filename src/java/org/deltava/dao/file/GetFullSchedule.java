@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 1.0
  */
 
@@ -184,7 +184,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
 			isOK = false;
 			log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
-		} else if (airportD.getPosition().distanceTo(airportA) < 5) {
+		} else if (airportD.distanceTo(airportA) < 5) {
 			isOK = false;
 			log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
 		}

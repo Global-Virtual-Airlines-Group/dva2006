@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 1.0
  */
 
@@ -245,18 +245,17 @@ public class AirportCommand extends AbstractAuditFormCommand {
 					ctx.setAttribute("oldAirports", List.of(sa), REQUEST);
 
 				// Convert the geoPosition into degrees, minutes, seconds
-				GeoPosition gp = a.getPosition();
-				int latS = (int) GeoPosition.getSeconds(gp.getLatitude());
-				int lngS = (int) GeoPosition.getSeconds(gp.getLongitude());
+				int latS = (int) GeoPosition.getSeconds(a.getLatitude());
+				int lngS = (int) GeoPosition.getSeconds(a.getLongitude());
 				
-				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
-				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
+				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(a.getLatitude()))), REQUEST);
+				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(a.getLatitude())), REQUEST);
 				ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
-				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
-				ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
-				ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
+				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((a.getLatitude() < 0) ? 1 : 0)], REQUEST);
+				ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(a.getLongitude()))), REQUEST);
+				ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(a.getLongitude())), REQUEST);
 				ctx.setAttribute("lonS", Integer.valueOf(lngS), REQUEST);
-				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
+				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((a.getLongitude() < 0) ? 1 : 0)], REQUEST);
 			}
 		}
 

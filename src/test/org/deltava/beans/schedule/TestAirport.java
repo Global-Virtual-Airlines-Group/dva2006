@@ -33,7 +33,6 @@ public class TestAirport extends TestCase {
 	    assertEquals(_a.getICAO(), "KATL");
 	    assertEquals(_a.getName(), "Atlanta GA");
 	    assertTrue(_a.getTZ().getID().equals(TZInfo.UTC.getID()));
-	    assertNotNull(_a.getPosition());
 	    assertEquals(0, _a.getLatitude(), 0.0001);
 	    assertEquals(0, _a.getLongitude(), 0.0001);
 	    assertEquals(0, _a.getAltitude());
