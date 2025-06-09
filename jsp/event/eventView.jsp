@@ -38,7 +38,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 	return true;
 };
 
-golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
+golgotha.onDOMReady(function() {  golgotha.local.resizeBriefing(20); });
 </script>
 </head>
 <content:copyright visible="false" />
@@ -51,15 +51,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<c:if test="${access.canSignup}">
-<c:set var="formAction" value="eventsignup.do" scope="page" />
-<c:set var="formValidate" value="return golgotha.form.wrap(golgotha.local.validate, this)" scope="page" />
-</c:if>
-<c:if test="${!access.canSignup}">
-<c:set var="formAction" value="event.do" scope="page" />
-<c:set var="formValidate" value="return false" scope="page" />
-</c:if>
-<el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
+<el:form action="${access.canSignup ? 'eventsignup' :'event'}" method="post" link="${event}" validate="return ${access.canSignup ? 'golgotha.form.wrap(golgotha.local.validate, this)' : 'false'}">
 <el:table className="form view">
 <tr class="title caps">
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" d="EEEE MMMM dd yyyy"  t="HH:mm" /></td>
@@ -306,13 +298,13 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 <c:if test="${access.canSignup}">
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.activeRoutes}" firstEntry="-" className="req" /></td>
+ <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.activeRoutes}" firstEntry="-" required="true" /></td>
  <td class="label top" rowspan="2">Remarks</td> 
- <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2" resize="true"></el:textbox></td>
+ <td class="data top" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2" resize="true"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" className="req" firstEntry="-" /></td>
+ <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" required="true" firstEntry="-" /></td>
 </tr>
 </c:if>
 <c:if test="${!event.canSignup}">
@@ -323,7 +315,7 @@ golgotha.onDOMReady(function() { golgotha.local.resizeBriefing(20); });
 </c:if>
 </el:table>
 
-<c:if test="${access.canProvideFeedback || access.canViewFeedback}">
+<c:if test="${(access.canProvideFeedback || access.canViewFeedback) && !access.canSignup}">
 <c:set var="fbCols" value="6" scope="page" />
 <c:set var="fbCmd" value="eventfb" scope="page" />
 <c:set var="fbName" value="Online Event" scope="page" />
