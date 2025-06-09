@@ -51,7 +51,7 @@ golgotha.onDOMReady(function() {  golgotha.local.resizeBriefing(20); });
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="${access.canSignup ? 'eventsignup' :'event'}" method="post" link="${event}" validate="return ${access.canSignup ? 'golgotha.form.wrap(golgotha.local.validate, this)' : 'false'}">
+<el:form action="${access.canSignup ? 'eventsignup' :'event'}.do" method="post" link="${event}" validate="return ${access.canSignup ? 'golgotha.form.wrap(golgotha.local.validate, this)' : 'false'}">
 <el:table className="form view">
 <tr class="title caps">
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" d="EEEE MMMM dd yyyy"  t="HH:mm" /></td>
