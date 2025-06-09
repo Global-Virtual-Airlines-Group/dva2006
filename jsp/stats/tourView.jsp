@@ -160,6 +160,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 const lines = [];
 <map:point var="golgotha.local.mapC" point="${ctr}" />
 <map:markers var="golgotha.local.airports" items="${tourAirports}" />
+<map:bounds var="golgotha.local.bb" items="${tourAirports}" />
 <map:points var="golgotha.local.todo" items="${tourRemaining}" />
 <map:line var="golgotha.local.todoLine" width="2" color="#a000a1" src="golgotha.local.todo" transparency="0.45" />
 lines.push(golgotha.local.todoLine);
@@ -169,13 +170,13 @@ lines.push(golgotha.local.todoLine);
 lines.push(golgotha.local.progressLine);</c:if>
 
 // Build the map
-const mapOpts = {container:'mapBox', zoom:2, maxZoom:17, projection:'globe', center:golgotha.local.mapC, style:'mapbox://styles/mapbox/outdoors-v12'};
+const mapOpts = {container:'mapBox', bounds:golgotha.local.bb, maxZoom:17, projection:'globe', center:golgotha.local.mapC, fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12'};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 map.on('style.load', golgotha.maps.updateMapText);
 map.once('load', function() {
+	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addMarkers(golgotha.local.airports);
 	lines.forEach(function(l) { map.addLine(l); });
 });
