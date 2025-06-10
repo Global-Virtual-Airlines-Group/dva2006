@@ -614,9 +614,10 @@ map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('style.load', golgotha.maps.updateMapText);
-map.on('zoomend', golgotha.maps.acarsFlight.updateStatus);
+map.on('zoomend', golgotha.maps.acarsFlight.updateStatus || golgotha.maps.updateZoom);
+<c:if test="${isACARS && googleMap}">
 map.on('rotateend', golgotha.maps.acarsFlight.updateStatus);
-map.on('pitchend', golgotha.maps.acarsFlight.updateStatus);
+map.on('pitchend', golgotha.maps.acarsFlight.updateStatus);</c:if>
 map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
