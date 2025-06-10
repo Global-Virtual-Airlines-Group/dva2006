@@ -218,3 +218,16 @@ golgotha.maps.acarsFlight.showFIR = function(code) {
 		});
 	});
 };
+
+golgotha.maps.acarsFlight.zoomTo = function(lat, lng, z, hdg, p) {
+	const opts = {center:[lng,lat], pitch:p, zoom:(z || 15), bearing:(hdg || map.getBearing()), maxDuration:3750};
+	return map.easeTo(opts);
+};
+
+golgotha.maps.acarsFlight.updateStatus = function(e) {
+	const m = e.target;
+	const z = Math.round(m.getZoom() * 1000) / 1000;
+	const p = Math.round(m.getPitch() * 100) / 100;
+	const b = Math.round(m.getBearing() * 100) / 100;
+	golgotha.util.setHTML('zoomLevel', 'Zoom ' + z + ', P ' + p + ', B ' + b);	
+};

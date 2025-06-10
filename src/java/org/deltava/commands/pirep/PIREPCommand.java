@@ -690,9 +690,15 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Build the route
 					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
-					route.add((info.getGateD() != null) ? info.getGateD() : info.getAirportD());
-					if (info.getRunwayD() != null)
+					if (info.getGateD() != null) {
+						route.add(info.getGateD());
+						ctx.setAttribute("gDView", GeoUtils.bearingPointS(info.getGateD(), 0.95, info.getGateD().getHeading() - 90), REQUEST);
+					}
+					
+					if (info.getRunwayD() != null) {
 						route.add(info.getRunwayD());
+						ctx.setAttribute("rDView", GeoUtils.bearingPointS(info.getRunwayD(), 1.25, info.getRunwayD().getHeading() - 90), REQUEST);	
+					}
 					rb.add(info.getSID());
 					
 					// Load the serialized route
@@ -733,9 +739,12 @@ public class PIREPCommand extends AbstractFormCommand {
 						Runway rA = info.getRunwayA();
 						route.add(rA);
 						if (rA.getThresholdLength() > 0) route.add(rA.getThreshold());
+						ctx.setAttribute("rAView", GeoUtils.bearingPointS(rA, 1.25, rA.getHeading() - 90), REQUEST);
 					}
-						
+					
 					route.add((info.getGateA() != null) ? info.getGateA() : info.getAirportA());
+					if (info.getGateA() != null)
+						ctx.setAttribute("gAView", GeoUtils.bearingPointS(info.getGateA(), 0.95, info.getGateA().getHeading() - 90), REQUEST);
 					
 					// Load departure and arrival runways
 					if (ac.getCanDispose()) {
