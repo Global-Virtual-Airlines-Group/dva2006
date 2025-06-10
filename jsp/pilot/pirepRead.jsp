@@ -77,18 +77,12 @@ golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons,
 <content:js name="acarsFlightMap" />
 <content:js name="threebox" minify="false" />
 <content:css name="threebox" noScheme="true" />
-<script async>
-<c:if test="${googleMap}">
-golgotha.local.zoomTo = function(lat, lng, zoom) {
-	return map.jumpTo({center:{lat:lat,lng:lng},zoom:(zoom == null) ? 12 : zoom});
-};</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
-<map:point var="golgotha.local.landing" point="${pirep.landingLocation}" />
+<script async>
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=360,width=770,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
-</content:filter>
-</script></c:if>
+</script></content:filter></c:if>
 <content:cspHeader />
 <c:if test="${!empty eliteLevel}">
 <style type="text/css">
@@ -614,14 +608,15 @@ golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:bounds var="golgotha.local.bb" items="${pirep.airports}" />
 
 // Build the map
-const mapOpts = {bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, projection:'globe', fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true};
-const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {bounds:golgotha.local.bb, minZoom:2, maxZoom:18, scrollZoom:false, projection:'globe', fitBoundsOptions:{padding:48}, style:'mapbox://styles/mapbox/outdoors-v12', antialias:true});
 <c:if test="${isACARS}">window.tb = new Threebox(map, map.getCanvas().getContext('webgl'), {defaultLights:true});</c:if>
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.on('style.load', golgotha.maps.updateMapText);
-map.on('zoomend', golgotha.maps.updateZoom);
+map.on('zoomend', golgotha.maps.acarsFlight.updateStatus);
+map.on('rotateend', golgotha.maps.acarsFlight.updateStatus);
+map.on('pitchend', golgotha.maps.acarsFlight.updateStatus);
 map.once("load", function() {
 	map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left');
 	map.addTerrain(1.5);
