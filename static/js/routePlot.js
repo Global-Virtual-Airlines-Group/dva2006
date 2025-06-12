@@ -107,7 +107,8 @@ xmlreq.onreadystatechange = function() {
 	}
 	
 	// Draw the markers
-	map.clearOverlays();
+	map.removeMarkers(golgotha.maps.displayedMarkers); golgotha.maps.displayedMarkers.length = 0;
+	if (map.hasLayer('FlightRoute')) map.removeLine('FlightRoute');
 	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(wp) {
 		const mrk = (wp.pal) ? new golgotha.maps.IconMarker({pal:wp.pal,icon:wp.icon,info:wp.info,pt:wp.ll,label:wp.code}) : new golgotha.maps.Marker({color:wp.color,info:wp.info,pt:wp.ll,label:wp.code});
