@@ -130,6 +130,7 @@ mapboxgl.Map.prototype.getMapType = function() {
 	return (s) ? s.substring(s.lastIndexOf('/') + 1) : 'standard';
 };
 
+mapboxgl.Map.prototype.hasLayer = function(name) { return (this.getLayer(name) != null); };
 mapboxgl.Map.prototype.clearOverlays = function() {
 	for (var mrk = golgotha.maps.displayedMarkers.pop(); (mrk != null); mrk = golgotha.maps.displayedMarkers.pop())
 		mrk.remove();
@@ -178,10 +179,10 @@ mapboxgl.Map.prototype.addLine = function(l, data) {
 mapboxgl.Map.prototype.removeLine = function(l) {
 	if (!l) return false;
 	const layer = golgotha.maps.util.isShape(l) ? l.getLayer() : l;
-	this.removeLayer(layer.id);
-	if (this.getSource(layer.id) != null)
-		this.removeSource(layer.id);
-	const dl = golgotha.maps.displayedLayers.find(function(ll) { return ((ll.id || ll.getLayer().id) == layer.id); });
+	const id = layer.hasOwnProperty('id') ? layer.id : layer;
+	this.removeLayer(id);
+	if (this.getSource(id) != null) this.removeSource(id);
+	const dl = golgotha.maps.displayedLayers.find(function(ll) { return ((ll.id || ll.getLayer().id) == id); });
 	if (dl)
 		golgotha.maps.displayedLayers.remove(dl);
 };
