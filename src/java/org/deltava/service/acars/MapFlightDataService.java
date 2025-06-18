@@ -39,7 +39,7 @@ public class MapFlightDataService extends WebService {
       
 		// Get the DAO and the route data
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		Collection<? extends GeospaceLocation> routePoints = Collections.emptyList(); FlightInfo info = null;
+		List<? extends GeospaceLocation> routePoints = Collections.emptyList(); FlightInfo info = null; boolean crossIDL = false;
 		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>(); String validationMsg = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -50,6 +50,7 @@ public class MapFlightDataService extends WebService {
 			if (info == null)
 				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID - " + id, false);
 			
+			crossIDL = GeoUtils.crossesMeridian(info.getAirportD(), info.getAirportA(), 179.9);
 			if (info.getArchived()) {
 				ArchiveMetadata md = dao.getArchiveInfo(id);
 				ArchiveHelper.load(md);
@@ -88,13 +89,19 @@ public class MapFlightDataService extends WebService {
 			lastLoc = rt;
 		}
 		
+		// If we cross the IDT, translate the locations
+		List<GeoLocation> locs = new ArrayList<GeoLocation>(routePoints);
+		if (crossIDL)
+			GeoUtils.translate(locs);
+		
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
 		JSONObject jo = new JSONObject();
 		jo.put("id", id);
-		jo.putOpt("error", validationMsg);
+		jo.put("crossIDL", crossIDL);
+		jo.putOpt("error", validationMsg); int idx = 0;
 		for (GeospaceLocation entry : routePoints) {
 			JSONObject eo = new JSONObject(); 
-			eo.put("ll", JSONUtils.format(entry));
+			eo.put("ll", JSONUtils.format(locs.get(idx)));
 			eo.put("alt", entry.getAltitude());
 			if (entry instanceof RouteEntry re) {
 				eo.put("hdg", re.getHeading());
@@ -124,6 +131,7 @@ public class MapFlightDataService extends WebService {
 			}
 			
 			jo.append("positions", eo);
+			idx++;
 		}
 		
 		// Display airport data and departure/arrival runway disatnces
