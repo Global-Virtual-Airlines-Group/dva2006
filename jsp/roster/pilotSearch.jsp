@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<content:copyright />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
 <script async>
@@ -166,8 +166,8 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 </c:if>
 </el:form>
 <br />
+<content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
