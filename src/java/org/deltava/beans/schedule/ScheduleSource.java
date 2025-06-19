@@ -4,12 +4,12 @@ package org.deltava.beans.schedule;
 /**
  * An enumeration of flight schedule sources.
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 9.0
  */
 
 public enum ScheduleSource implements org.deltava.beans.EnumDescription {
-	VASYS("VASystems/PHPVMSv7"), DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry"), CUSTOM("Custom Import"), DRAFT("Draft Flight Report");
+	VASYS("VASystems/PHPVMSv7"), DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry"), CUSTOM("Custom Import"), DRAFT("Draft Flight Report"), SIMVECTOR("SimVector");
 	
 	private final String _desc;
 	
