@@ -9,10 +9,12 @@
 <head>
 <title><content:airline /> Flight Report Updated</title>
 <content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -95,7 +97,7 @@ This Pilot has been assigned a Pilot ID and seniority number at <content:airline
 With the approval of this Flight Report, a Flight Assignment has been successfully completed.<br />
 <br /></c:if>
 <c:if test="${onlineArchive}">
-This flight was flown using the ${pirep.network} online network, and track data has been archived for later retrieval.<br />
+This flight was flown using the <span class="sec bld">${pirep.network}</span> online network, and track data has been archived for later retrieval.<br />
 </c:if>
 <c:if test="${acarsArchive}">
 This flight was logged using <content:airline /> ACARS software, and all position data has been archived for later retrieval.<br />
@@ -159,6 +161,5 @@ To return to your Log Book, <el:cmd url="logbook" className="sec bld" noCache="t
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
