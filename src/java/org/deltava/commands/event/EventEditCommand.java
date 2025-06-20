@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2012, 2016, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 8.6
+ * @version 12.0
  * @since 1.0
  */
 
@@ -47,9 +47,7 @@ public class EventEditCommand extends AbstractCommand {
 		
 		// Get the event ID - if not found, assume a new event
 		if (ctx.getID() == 0) {
-			Event e = new Event("");
-			e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-			EventAccessControl access = new EventAccessControl(ctx, e);
+			EventAccessControl access = new EventAccessControl(ctx, null);
 			access.validate();
 			if (!access.getCanCreate())
 				throw securityException("Cannot create new Online Event");
@@ -66,7 +64,7 @@ public class EventEditCommand extends AbstractCommand {
 			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("myAirline", Collections.singleton(e.getOwner()), REQUEST);
+			ctx.setAttribute("myAirline", List.of(SystemData.getApp(SystemData.get("airline.code"))), REQUEST);
 			
 			// Redirect to the JSP
 			result.setURL("/jsp/event/eventEdit.jsp");
