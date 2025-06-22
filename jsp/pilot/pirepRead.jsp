@@ -566,7 +566,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <c:if test="${access.canRelease}">
 &nbsp;<el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" /></c:if>
 <c:if test="${access.canWithdraw}">
-&nbsp;<el:cmdbutton url="withdraw" link="${pirep}" post="true" label="WITHDRAW" /></c:if>
+&nbsp;<el:cmdbutton url="withdraw" link="${pirep}" label="WITHDRAW" /></c:if>
 <c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide)) && !scoreCR}">
 &nbsp;<el:cmdbutton className="timedButton" url="dispose" link="${pirep}" op="reject" post="true" disabled="${hasDelay}" label="REJECT" />
 <c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
