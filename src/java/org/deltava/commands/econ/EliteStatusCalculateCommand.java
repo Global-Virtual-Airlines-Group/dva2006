@@ -133,6 +133,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			
 			// Get the DAOs
 			GetAircraft acdao = new GetAircraft(con);
+			GetGates gdao = new GetGates(con);
 			GetACARSData fidao = new GetACARSData(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
 			
@@ -153,10 +154,12 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 					Aircraft a = acdao.get(fr.getEquipmentType());
 					AircraftPolicyOptions opts = a.getOptions(ai.getCode());
 					FlightInfo fi = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
+					gdao.populate(fi);
 					
 					// Load the positions
 					if ((fi != null) && fi.getArchived()) {
 						ScorePackage pkg = new ScorePackage(a, ffr, fi.getRunwayD(), fi.getRunwayA(), opts);
+						pkg.setGates(fi.getGateD(), fi.getGateA());
 						SequencedCollection<? extends RouteEntry> entries = routeData.getOrDefault(Integer.valueOf(fi.getID()), Collections.emptyList());
 						if (entries.isEmpty())
 							msgs.add(String.format("No flight data found for Flight %d", Integer.valueOf(fr.getID())));

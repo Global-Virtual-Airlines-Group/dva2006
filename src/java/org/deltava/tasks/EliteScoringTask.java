@@ -55,6 +55,7 @@ public class EliteScoringTask extends Task {
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
 			GetElite eldao = new GetElite(con);
+			GetGates gdao = new GetGates(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetACARSData fidao = new GetACARSData(con);
@@ -136,12 +137,14 @@ public class EliteScoringTask extends Task {
 						log.error("Error reading positions for Flight {} - {}", Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)), ie.getMessage());
 					}
 					
-					// Get the landing runway
-					RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+					// Get the Gates and Runways
+					FlightInfo info = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
+					gdao.populate(info);
 					tt.mark("acarsData");
 					
 					// Create the package
-					ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
+					ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
+					pkg.setGates(info.getGateD(), info.getGateA());
 					entries.forEach(pkg::add);
 					sc = es.score(pkg, st.getLevel());
 				} else
