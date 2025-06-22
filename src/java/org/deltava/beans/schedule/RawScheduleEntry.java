@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Flight;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 11.2
+ * @version 12.0
  * @since 8.0
  */
 
@@ -131,6 +131,20 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public void addDayOfWeek(DayOfWeek d) {
 		_days.add(d);
+	}
+
+	/**
+	 * Sets the days of the week that this flight operates on. This is a list of digits matching the days of the week.
+	 * @param days a String with a list of days
+	 * @see DayOfWeek#of(int)
+	 */
+	public void setDaysOfWeek(String days) {
+		for (char c : days.toCharArray()) {
+			if (!Character.isDigit(c)) continue;
+			int d = Character.getNumericValue(c);
+			if ((d > 0) && (d < 8))
+				_days.add(DayOfWeek.of(d));
+		}
 	}
 
 	/**

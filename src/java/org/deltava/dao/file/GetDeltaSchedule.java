@@ -1,4 +1,4 @@
-// Copyright 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load the Delta flight schedule.
  * @author Luke
- * @version 11.0
+ * @version 12.0
  * @since 9.0
  */
 
@@ -105,10 +105,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 				rse.setLineNumber(lr.getLineNumber());
 				rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeD, _tf)));
 				rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeA, _tf)));
-				for (char c : fd.daysOfWeek.toCharArray()) {
-					if (Character.isDigit(c))
-						rse.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
-				}
+				rse.setDaysOfWeek(fd.daysOfWeek);
 				
 				if (rse.getAirportD() == null) {
 					isOK = false;
