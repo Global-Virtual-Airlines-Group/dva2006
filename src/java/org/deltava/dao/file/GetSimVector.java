@@ -2,8 +2,10 @@
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.time.DayOfWeek;
 import java.util.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.ChronoField;
 
 import org.json.*;
 import org.apache.logging.log4j.*;
@@ -23,6 +25,8 @@ import org.deltava.util.system.SystemData;
 public class GetSimVector extends ScheduleLoadDAO {
 	
 	private static final Logger log = LogManager.getLogger(GetSimVector.class);
+	
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H[H]:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	private int _baseLine;
 
@@ -52,7 +56,10 @@ public class GetSimVector extends ScheduleLoadDAO {
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
-
+		
+		LocalDate today = LocalDate.now();
+		LocalDate sd = today.minusDays(1);
+		LocalDate ed = LocalDate.of(today.getYear(), 1, 1).plusYears(1).minusDays(1);
 		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		for (int x = 0; x < ja.length(); x++) {
 			JSONObject jo = ja.getJSONObject(x);
@@ -72,14 +79,17 @@ public class GetSimVector extends ScheduleLoadDAO {
 				RawScheduleEntry se = new RawScheduleEntry(a, jo.getInt("flight_number"), 1);
 				se.setAirportD(aD); se.setAirportA(aA);
 				se.setLineNumber(_baseLine + x);
+				se.setStartDate(sd);
+				se.setEndDate(ed);
+				se.setDaysOfWeek(jo.optString("days", "1234567"));
 				
-				String days = jo.optString("days", "1234567");
-				for (int o = 0; o < days.length(); o++) {
-					int d = Integer.parseInt(days.substring(o, o + 1));
-					DayOfWeek dw = DayOfWeek.values()[d];
-					se.addDayOfWeek(dw);
-				}
-				
+				// Load departure/arrival times
+				Instant iD = ZonedDateTime.of(today, LocalTime.parse(jo.getString("dpt_time"), _tf), ZoneOffset.UTC).toInstant();
+				Instant iA = ZonedDateTime.of(today, LocalTime.parse(jo.getString("arr_time"), _tf), ZoneOffset.UTC).toInstant();
+				ZonedDateTime zD = ZonedDateTime.ofInstant(iD, se.getAirportD().getTZ().getZone());
+				ZonedDateTime zA = ZonedDateTime.ofInstant(iA, se.getAirportA().getTZ().getZone());
+				se.setTimeD(zD.toLocalDateTime());
+				se.setTimeA(zA.toLocalDateTime());
 				
 				results.add(se);
 			} catch (IllegalArgumentException iae) {

@@ -138,9 +138,7 @@ public class ManualRawScheduleLoader extends TestCase {
 		rse.setTimeA(se.getTimeA().toLocalDateTime());
 		rse.setAcademy(se.getAcademy());
 		rse.setHistoric(se.getHistoric() || se.getAirline().getHistoric());
-		for (DayOfWeek d : DayOfWeek.values())
-			rse.addDayOfWeek(d);
-		
+		rse.setDaysOfWeek("1234567");
 		return rse;
 	}
 }
