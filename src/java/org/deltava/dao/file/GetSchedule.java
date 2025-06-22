@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 11.5
+ * @version 12.0
  * @since 1.0
  */
 
@@ -98,17 +98,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						// Calculate start/end dates
 						LocalDate sd = LocalDate.parse(tkns.nextToken(), _df);
 						LocalDate ed = LocalDate.parse(tkns.nextToken(), _df);
-						
-						// Get days of week
-						String daysOfWeek = tkns.nextToken(); Collection<DayOfWeek> days = new LinkedHashSet<DayOfWeek>();
-						for (int x = 0; x < daysOfWeek.length(); x++) {
-							char c = daysOfWeek.charAt(x);
-							if (Character.isDigit(c)) {
-								int day = Character.getNumericValue(c);
-								if ((day > 0) && (day < 8))
-									days.add(DayOfWeek.of(day));
-							}
-						}
+						String daysOfWeek = tkns.nextToken();
 						
 						// Get the airline
 						String aCode = tkns.nextToken();
@@ -125,7 +115,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setLineNumber(srcLine);
 						entry.setStartDate(sd);
 						entry.setEndDate(ed);
-						days.forEach(entry::addDayOfWeek);
+						entry.setDaysOfWeek(daysOfWeek);
 						
 						// Load tokens and airports from parser
 						String aD = tkns.nextToken(); String tD = tkns.nextToken();
