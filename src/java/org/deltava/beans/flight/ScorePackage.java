@@ -1,17 +1,16 @@
-// Copyright 2017, 2018, 2019, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
 
+import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.acars.ACARSRouteEntry;
-import org.deltava.beans.acars.RouteEntry;
-import org.deltava.beans.navdata.Runway;
+import org.deltava.beans.navdata.*;
 
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 11.4
+ * @version 12.0
  * @since 8.0
  */
 
@@ -22,6 +21,8 @@ public class ScorePackage {
 	private final FDRFlightReport _pirep;
 	private final Runway _rD;
 	private final Runway _rA;
+	private Gate _gD;
+	private Gate _gA;
 	
 	private final Collection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
 	
@@ -116,6 +117,22 @@ public class ScorePackage {
 	}
 	
 	/**
+	 * Returns the departure Gate.
+	 * @return a Gate, or null if none
+	 */
+	public Gate getGateD() {
+		return _gD;
+	}
+	
+	/**
+	 * Returns the arrival Gate.
+	 * @return a Gate, or null if none
+	 */
+	public Gate getGateA() {
+		return _gA;
+	}
+	
+	/**
 	 * Returns the aircraft policy options.
 	 * @return an AircraftPolicyOptions bean
 	 */
@@ -155,5 +172,15 @@ public class ScorePackage {
 	 */
 	void setResult(FlightScore fs) {
 		_result = fs;
+	}
+	
+	/**
+	 * Updates the departure and arrival Gates.
+	 * @param gD the departure Gate, or null if none
+	 * @param gA the arrival Gate, or null if none
+	 */
+	public void setGates(Gate gD, Gate gA) {
+		_gD = gD;
+		_gA = gA;
 	}
 }

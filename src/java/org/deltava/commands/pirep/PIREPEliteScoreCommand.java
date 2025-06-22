@@ -104,12 +104,15 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 					fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Cannot load archive data - %s", ie.getMessage()));
 				}
 				
-				// Get the landing runway
+				// Get the flight info
+				GetGates gdao = new GetGates(con);
 				GetACARSData fidao = new GetACARSData(con);
-				RunwayDistance rwyA = fidao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+				FlightInfo info = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
+				gdao.populate(info);
 				
 				// Create the package
-				ScorePackage pkg = new ScorePackage(ac, ffr, null, rwyA, opts);
+				ScorePackage pkg = new ScorePackage(ac, ffr, null, info.getRunwayA(), opts);
+				pkg.setGates(info.getGateD(), info.getGateA());
 				entries.forEach(pkg::add);
 				sc = es.score(pkg, st.getLevel());
 			} else

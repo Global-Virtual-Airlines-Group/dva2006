@@ -620,9 +620,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					
+					// Load the gates
+					GetGates gdao = new GetGates(con);
+					gdao.populate(info);
+					
 					// Load position data and scoring package - we use package for online time calculations as well
 					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
+					pkg.setGates(info.getGateD(), info.getGateA());
 					if ((ac.getCanViewScore() || hasClientOnlineTime) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						ArchiveMetadata md = posdao.getArchiveInfo(info.getID());
@@ -682,11 +687,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Load the dispatch log entry
 					if (info.getDispatchLogID() != 0)
 						ctx.setAttribute("dispatchLog", ardao.getDispatchLog(info.getDispatchLogID()), REQUEST);
-					
-					// Load the gates
-					GetGates gdao = new GetGates(con);
-					gdao.populate(info);
-					
+				
 					// Build the route
 					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
