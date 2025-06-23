@@ -151,7 +151,7 @@ mapboxgl.Map.prototype.addMarkers = function(mrks) {
 
 mapboxgl.Map.prototype.removeMarkers = function(mrks) {
 	if (!mrks) return false;
-	mrks = (mrks instanceof Array) ? mrks : [mrks];
+	mrks = (mrks instanceof Array) ? mrks.slice() : [mrks];
 	for (var x = 0; x < mrks.length; x++) {
 		const mrk = mrks[x];
 		if (mrk.setMap)
