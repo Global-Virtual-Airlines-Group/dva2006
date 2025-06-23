@@ -34,9 +34,9 @@ golgotha.maps.oceanic.resetTracks = function() {
 golgotha.maps.oceanic.updateTracks = function(checkbox) {
 	const xtracks = golgotha.maps.oceanic.tracks[checkbox.value];
 	const trackPoints = golgotha.maps.oceanic.points[checkbox.value];
-	const markerMap = checkbox.checked ? map : null;
-	trackPoints.forEach(function(pt) { pt.setMap(markerMap); });
-	xtracks.forEach(function(pt) { pt.setMap(markerMap); });
+	const m = checkbox.checked ? map : null;
+	trackPoints.forEach(function(pt) { pt.setMap(m); });
+	xtracks.forEach(function(t) { (m) ? m.addLine(t) : map.removeLine(t); });
 	return true;
 };
 
@@ -59,8 +59,10 @@ p.then(function(rsp) {
 		golgotha.util.display('fetchData', false);		
 		return false;
 	}
-	
-	map.clearOverlays();
+
+	map.removeMarkers(golgotha.maps.displayedMarkers); 
+	const layers = golgotha.maps.displayedLayers.slice();
+	layers.forEach(function(l) { if (!golgotha.maps.util.isTiles(l)) map.removeLine(l); });
 	golgotha.maps.oceanic.resetTracks();
 	rsp.json().then(function(jsData) {
 		jsData.tracks.forEach(function(t) {

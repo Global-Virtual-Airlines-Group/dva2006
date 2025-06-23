@@ -19,6 +19,7 @@ golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
 // Convert LatLng to LngLat (GoogleMaps -> MapBox)
 golgotha.maps.toLL = function(ll) { return (ll instanceof Array) ? ll : [ll.lng,ll.lat]; };
 golgotha.maps.util.isShape = function(o) { return (o) && golgotha.util.isFunction(o.getLayer); };
+golgotha.maps.util.isTiles = function(o) { return golgotha.maps.util.isShape(o) && (o.getType() == 'Tiles'); };
 golgotha.maps.util.terrain = {type:'raster-dem',tileSize:512,maxZoom:14,url:'mapbox://mapbox.mapbox-terrain-dem-v1'};
 
 golgotha.maps.util.unload = function() {
