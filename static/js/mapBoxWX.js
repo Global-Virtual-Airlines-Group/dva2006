@@ -4,7 +4,7 @@ golgotha.maps.wx.RadarSource = function(name, path, size) {
 	this._size = size;
 };
 
-golgotha.maps.wx.RadarSource.prototype.getType = 'Tiles';
+golgotha.maps.wx.RadarSource.prototype.getType = function() { return 'Tiles'};
 golgotha.maps.wx.RadarSource.prototype.getLayer = function() {
 	const to = 'https://tilecache.rainviewer.com' + this._path + '/' + this._size + '/{z}/{x}/{y}/' + this.pal + '/1_1.png';
 	const so = {type:'raster',tileSize:this._size,tiles:[to]};
