@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 11.4
+ * @version 12.0
  * @since 11.0
  */
 
@@ -77,9 +77,10 @@ public class SkyMilesScorer extends EliteScorer {
 				_score.setDistance(Math.max(MIN_DISTANCE, Math.round(ffr.getDistance() * (1f - (accPct / 100f)))));
 			}
 			
-			// Calculate on-time bonus
+			// Calculate on-time and Gate bonuss
 			addBonus(Math.round(ffr.getDistance() * 0.4f), "Early Arrival", (afr.getOnTime() == OnTime.EARLY));
 			addBonus(Math.round(ffr.getDistance() * 0.15f), "On Time Arrival", (afr.getOnTime() == OnTime.ONTIME));
+			addBonus(350, "Gate to Gate", (pkg.getGateD() != null) && (pkg.getGateA() != null));
 		}
 		
 		return _score;
