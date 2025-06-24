@@ -41,7 +41,7 @@
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<time>
 			<min>0</min>
-			<hour>8,12,16</hour>
+			<hour>6,10,12,14,18</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
@@ -53,19 +53,7 @@
 		<class>org.deltava.tasks.PACOTDownloadTask</class>
 		<time>
 			<min>0</min>
-			<hour>20</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-		</time>
-	</task>
-
-	<!-- Download AUSOT Track data -->
-	<task id="ausot" enabled="false">
-		<class>org.deltava.tasks.AUSOTDownloadTask</class>
-		<time>
-			<min>0</min>
-			<hour>8</hour>
+			<hour>18,20,22</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
