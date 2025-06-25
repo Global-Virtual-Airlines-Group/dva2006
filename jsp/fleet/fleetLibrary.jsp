@@ -33,7 +33,6 @@ golgotha.local.selectAC = function(combo) {
 		}
 
 		rsp.json().then(function(js) {
-			const js = JSON.parse(xmlreq.responseText);
 			const verDesc = 'This <content:airline /> Fleet Library installer is compatible with ' + js.sims.join(', ') + '.';
 			golgotha.local.fName = js.fileName;
 			document.getElementById('FleetPic').src = js.img;
