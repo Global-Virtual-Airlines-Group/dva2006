@@ -18,6 +18,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
+<content:cspHeader />
 <script async>
 golgotha.local.updateSignups = function() {
 	const f = document.forms[0];
@@ -217,7 +218,7 @@ golgotha.onDOMReady(function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;<c:if test="${access.canEdit}"><el:button type="submit" label="SAVE ONLINE EVENT" /></c:if></td>
+ <td>&nbsp;<c:if test="${empty event ? access.canCreate : access.canEdit}"><el:button type="submit" label="SAVE ONLINE EVENT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
