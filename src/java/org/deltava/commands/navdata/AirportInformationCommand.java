@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -11,8 +11,8 @@ import org.deltava.beans.acars.TaxiTime;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RunwayUsage;
-import org.deltava.beans.wx.METAR;
-
+import org.deltava.beans.wx.*;
+import org.deltava.beans.wx.Condition.Type;
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 11.2
+ * @version 12.0
  * @since 6.3
  */
 
@@ -48,10 +48,23 @@ public class AirportInformationCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get weather
+			// Get weather - check for rain/snow
 			GetWeather wxdao = new GetWeather(con);
 			METAR m = wxdao.getMETAR(a, 25);
 			ctx.setAttribute("wx", m, REQUEST);
+			if (m != null) {
+				Optional<Condition> oc = m.getConditions().stream().filter(c -> (c.getType().ordinal() <= 5)).findAny();
+				if (oc.isPresent()) {
+					Condition.Type t = oc.get().getType();
+					if ((t == Type.DZ) || (t == Type.RA)) {
+						ctx.setAttribute("isRain", Boolean.TRUE, REQUEST);
+						ctx.setAttribute("precipDensity", Double.valueOf((t == Type.DZ) ? 0.3 : 1), REQUEST);
+					} else {
+						ctx.setAttribute("isSnow", Boolean.TRUE, REQUEST);
+						ctx.setAttribute("precipDensity", Double.valueOf((t == Type.SN) ? 1 : 0.3), REQUEST);
+					}
+				}
+			}
 			
 			// Get runway data and build bounding box
 			GetNavData nddao = new GetNavData(con);
