@@ -61,7 +61,7 @@ golgotha.local.validate = function(f) {
  <td class="sec small" colspan="2">${airport.TZ}</td>
  <td class="small nophone">${airport.country}</td>
  <td class="small"><fmt:int value="${airport.maximumRunwayLength}" /> ft</td>
- <td class="small nophone"><fmt:geo pos="${airport.position}" /></td>
+ <td class="small nophone"><fmt:geo pos="${airport}" /></td>
 </view:row>
 </c:forEach>
 
