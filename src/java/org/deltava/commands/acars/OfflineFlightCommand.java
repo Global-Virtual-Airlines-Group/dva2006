@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 11.2
+ * @version 12.0
  * @since 2.4
  */
 
@@ -134,17 +134,23 @@ public class OfflineFlightCommand extends AbstractCommand {
 				}
 				
 				// Calculate hashes
+				List<String> salts = StringUtils.split(SystemData.get("security.hash.acars.salt"), ",");
 				Map<String, String> hashData = new HashMap<String, String>(); boolean isHashOK = false;
 				for (Map.Entry<String, String> me : shaData.entrySet()) {
 					if (!me.getKey().startsWith("SHA")) continue;
-					MessageDigester md = new MessageDigester(me.getKey());
-					md.salt(SystemData.get("security.hash.acars.salt"));
-					String calcHash = MessageDigester.convert(md.digest(xml));
-					hashData.put(me.getKey(), calcHash);
-					if (calcHash.equals(me.getValue())) {
-						isHashOK = true;
-						log.info("ACARS {} validated - {}", me.getKey(), calcHash);
-					} else {
+					
+					// Loop through the keys until one works
+					for (String salt : salts) {
+						MessageDigester md = new MessageDigester(me.getKey());	
+						md.salt(salt);
+						String calcHash = MessageDigester.convert(md.digest(xml));
+						hashData.put(me.getKey(), calcHash);
+						if (calcHash.equals(me.getValue())) {
+							isHashOK = true;
+							log.info("ACARS {} validated - {}", me.getKey(), calcHash);
+							break;
+						}
+
 						log.warn("ACARS {} mismatch - expected {}, calculated {}", me.getKey(), me.getValue(), calcHash);
 					}
 				}
