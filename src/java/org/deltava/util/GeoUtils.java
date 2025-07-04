@@ -86,14 +86,16 @@ public class GeoUtils {
 		GeoLocation lastLoc = pts.getFirst();
 		for (int x = 1; x < pts.size(); x++) {
 			GeoLocation loc = pts.get(x);
-			if (lastLoc.distanceTo(loc) > GC_SEGMENT_SIZE)
-				results.addAll(greatCircle(lastLoc, loc, GC_SEGMENT_SIZE));
-			else
+			if (lastLoc.distanceTo(loc) > GC_SEGMENT_SIZE) {
+				List<GeoLocation> gcPts = greatCircle(lastLoc, loc, GC_SEGMENT_SIZE);
+				results.addAll(gcPts.subList(0, gcPts.size() - 1));
+			} else
 				results.add(lastLoc);
 			
 			lastLoc = loc;
 		}
 		
+		results.add(lastLoc);
 		translate(results);
 		return results;
 	}

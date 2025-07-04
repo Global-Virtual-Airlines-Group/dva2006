@@ -24,6 +24,9 @@ public class TestGeoUtils extends TestCase {
 			assertTrue(gp.distanceTo(gp2) < 100);
 			gp = gp2;
 		}
+		
+		assertTrue(gc.contains(ogg));
+		assertTrue(gc.contains(lax));
 	}
 	
 	public void testNormalize() {
