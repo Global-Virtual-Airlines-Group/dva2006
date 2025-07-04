@@ -881,21 +881,27 @@ public class PIREPCommand extends AbstractFormCommand {
 					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(rb.getSTAR()), rb.getSTARTransition(), rwyA);
 					rb.add(star);
 				}
+				
+				// Load Gates
+				Gate gD = null; Gate gA = null;
+				if (fr instanceof DraftFlightReport dfr) {
+					GetGates gdao = new GetGates(con);
+					gD = gdao.getGate(fr.getAirportD(), dfr.getGateD());
+					gA = gdao.getGate(fr.getAirportA(), dfr.getGateA());
+				}
 
 				// Build the route
 				Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
-				route.add(fr.getAirportD());
+				route.add((gD != null) ? gD: fr.getAirportD());
 				route.addAll(rb.getPoints());
-				route.add(fr.getAirportA());
+				route.add((gA != null) ? gA : fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);
 				
 				// Calculate ETOPS for route
 				ETOPSResult etopsInfo = ETOPSHelper.classify(route);
 				ctx.setAttribute("filedETOPS", etopsInfo, REQUEST);
-				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (acOpts.getETOPS() != ETOPS.INVALID) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime())) {
+				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (acOpts.getETOPS() != ETOPS.INVALID) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime()))
 					fr.setAttribute(FlightReport.ATTR_ETOPSWARN, true);
-					mapType = MapType.GOOGLEStatic;
-				}
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);
@@ -905,10 +911,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Check for Spiders
-			HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
-			boolean captchaOK = ctx.passedCAPTCHA(); boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
-			if (isSpider || ((mapType == MapType.MAPBOX) && !captchaOK && !ctx.isAuthenticated()))
-				mapType = MapType.NONE;
+			boolean captchaOK = ctx.passedCAPTCHA(); 
+			if (!ctx.isAuthenticated() && !captchaOK) {
+				HTTPContextData hctxt = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+				boolean isSpider = (hctxt == null) || (hctxt.getBrowserType() == BrowserType.SPIDER);
+				if (isSpider || ((mapType == MapType.MAPBOX)))
+					mapType = MapType.NONE;	
+			}
 
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
