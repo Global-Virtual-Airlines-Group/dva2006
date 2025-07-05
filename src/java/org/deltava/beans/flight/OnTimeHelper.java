@@ -9,6 +9,8 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
@@ -106,8 +108,11 @@ public class OnTimeHelper {
 		// Filter for matching flight # and close range
 		if (ft instanceof FlightNumber fn) {
 			Optional<ScheduleEntry> ose = _flights.stream().filter(se -> (FlightNumber.compare(se, fn, false) == 0) && matchDeparture(se, ft.getTimeD())).findAny();
-			if (ose.isPresent())
-				return ose.get();
+			if (ose.isPresent()) {
+				ScheduleEntry se = ose.get();
+				log.info("{} matched {}", fn, se);
+				return se;
+			}
 		}
 		
 		Optional<ScheduleEntry> ose = _flights.stream().sorted(new ClosestFlight(ft)).filter(se -> matchDeparture(se, ft.getTimeD())).findFirst();
@@ -123,6 +128,7 @@ public class OnTimeHelper {
 		if (!fr.hasFlightTimes()) return OnTime.UNKNOWN;
 
 		// Get the closest schedule entry
+		log.info("Validating Times for {}", info(fr));
 		_entry = getClosestScheduleEntry(fr);
 		if (_entry == null)
 			return OnTime.UNKNOWN;
@@ -145,6 +151,7 @@ public class OnTimeHelper {
 			return OnTime.UNKNOWN;
 		
 		// Get the closest schedule entry
+		log.info("Validating Departure for {}", info(fr));
 		_entry = getClosestScheduleEntry(fr);
 		if (_entry == null)
 			return OnTime.UNKNOWN;
@@ -159,7 +166,29 @@ public class OnTimeHelper {
 	private boolean matchDeparture(ScheduleEntry se, ZonedDateTime actualDeparture) {
 		int earlyLimit = (int)(_depToleranceMinutes * -0.6); int lateLimit = _depToleranceMinutes;
 		long dMin = Duration.between(se.getTimeD(), actualDeparture).toMinutes();
-		log.info("{} {} [{}] delta = {}, ({} .. {})", se.getFlightCode(), se.getTimeD(), se.getSource(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit));
-		return (dMin > earlyLimit) && (dMin < lateLimit);
+		boolean isOK = (dMin > earlyLimit) && (dMin < lateLimit);
+		log.info("{} {} [{}] delta = {}, ({} .. {}) - {}", se.getFlightCode(), se.getTimeD(), se.getSource(), Long.valueOf(dMin), Integer.valueOf(earlyLimit), Integer.valueOf(lateLimit), isOK ? "OK" : "OUTSIDE");
+		return isOK;
+	}
+	
+	/**
+	 * Helper method to log input parameters.
+	 */
+	private static String info(FlightTimes fr) {
+		StringBuilder buf = new StringBuilder();
+		if (fr instanceof FlightNumber fn)
+			buf.append(fn.getAirline().getCode()).append(fn.getFlightNumber());
+		else
+			buf.append("UNKNOWN");
+		
+		buf.append(" (departing ");
+		buf.append(StringUtils.format(fr.getTimeD(), "HH:mm"));
+		if (fr.getTimeA() != null) {
+			buf.append(", arriving ");
+			buf.append(StringUtils.format(fr.getTimeA(), "HH:mm"));	
+		}
+		
+		buf.append(')');
+		return buf.toString();
 	}
 }

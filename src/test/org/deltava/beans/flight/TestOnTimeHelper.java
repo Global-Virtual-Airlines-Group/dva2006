@@ -1,5 +1,6 @@
 package org.deltava.beans.flight;
 
+import java.io.File;
 import java.time.*;
 import java.time.format.*;
 import java.time.temporal.ChronoField;
@@ -46,6 +47,9 @@ public class TestOnTimeHelper extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		// Init Log4j
+		System.setProperty("log4j2.configurationFile", new File("etc/log4j2-test.xml").getAbsolutePath());
 		
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
@@ -211,7 +215,8 @@ public class TestOnTimeHelper extends TestCase {
 		assertNull(oth.getScheduleEntry());
 
 		// Add draft flight report
-		DraftFlightReport dfr = new DraftFlightReport(null, 123, 1);
+		Airline a = new Airline("Delta Air Lines", "DL");
+		DraftFlightReport dfr = new DraftFlightReport(a, 123, 1);
 		dfr.setAirportD(_mco);
 		dfr.setAirportA(_mia);
 		dfr.setEquipmentType("B737-800");
