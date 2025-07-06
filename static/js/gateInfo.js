@@ -22,20 +22,19 @@ golgotha.gate.load = function(opts) {
 };
 
 golgotha.gate.getOptions = function(g) {
-	let opts = golgotha.gate.icons.other;
 	const isOurs = (g.airlines.length > 0);
 	if (isOurs && (g.zone == 'USPFI'))
-		opts = golgotha.gate.icons.uspfi;
-	else if (isOurs && (g.zone == 'SCHENGEN'))
-		opts = golgotha.gate.icons.schengen;
-	else if (isOurs && (g.zone == 'INTERNATIONAL'))
-		opts = golgotha.gate.icons.intl;
-	else if (isOurs)
-		opts = golgotha.gate.icons.ours;
-	else if (g.useCount > (golgotha.gate.maxUse / 10))
-		opts = golgotha.gate.icons.pop;
+		return golgotha.gate.icons.uspfi;
+	if (isOurs && (g.zone == 'SCHENGEN'))
+		return golgotha.gate.icons.schengen;
+	if (isOurs && (g.zone == 'INTERNATIONAL'))
+		return golgotha.gate.icons.intl;
+	if (isOurs)
+		return golgotha.gate.icons.ours;
+	if (g.useCount > (golgotha.gate.maxUse / 10))
+		return golgotha.gate.icons.pop;
 
-	return opts;
+	return golgotha.gate.icons.other;
 };
 
 golgotha.gate.setValues = function(id) {
@@ -62,7 +61,6 @@ golgotha.gate.display = function(al) {
 			mrk.getElement().addEventListener('click', function(_e) {
 				const mrk = this.marker;
 				mrk.updateTab(1);
-				//setTimeout('golgotha.gate.setValues("' + mrk.markerID + '")', 20);
 				window.setTimeout(golgotha.gate.setValues, 20, mrk.markerID);
 				golgotha.maps.selectedMarker = mrk;
 			});
@@ -115,7 +113,7 @@ golgotha.gate.updateZone = function(cb) {
 	const mrk = golgotha.gate.mrks[id]; const opts = golgotha.gate.getOptions(g);
 	const mrk2 = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,opacity:opts.tx,pt:mrk.getLngLat()});
 	mrk.getElement().innerHTML = mrk2.getElement().innerHTML;
-	
+
 	console.log('Gate ' + g.name + ' set to ' + golgotha.gate.zones[g.zone].description);
 	golgotha.gate.markDirty(id);
 	golgotha.util.display('buttonRow', true);
@@ -133,7 +131,7 @@ golgotha.gate.updateGateAirline = function(cb) {
 	const mrk = golgotha.gate.mrks[id];  const opts = golgotha.gate.getOptions(g);
 	const mrk2 = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,opacity:opts.tx,pt:mrk.getLngLat()});
 	mrk.getElement().innerHTML = mrk2.getElement().innerHTML;
-	
+
 	console.log('Gate ' + g.name + ' airlines set to ' + g.airlines);
 	golgotha.gate.markDirty(id);
 	golgotha.util.display('buttonRow', true);
