@@ -177,7 +177,7 @@ public class EliteRolloverCommand extends AbstractCommand {
 					ctx.rollbackTX();
 			}
 			
-			// FIXME Clear caches
+			// Clear caches
 			CacheManager.invalidate("EliteLevel");
 			CacheManager.invalidate("EliteStatus");
 			CacheManager.invalidate("EliteYearlyTotal");
