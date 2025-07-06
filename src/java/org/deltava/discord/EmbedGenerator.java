@@ -129,7 +129,6 @@ class EmbedGenerator {
             .setDescription("Discord Server Reigstration Status")
             .setTimestampToNow()
             .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
-            .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
             .setFooter(String.format("%s Discord New Member Registration", code))
     		.addField(String.format(":%s_square: - Link Discord and Web Site", s1Complete ? "green" : "red"), s1Complete ? "COMPLETE" : "INCOMPLETE")
     		.addField(String.format(":%s_square: - Request Access Roles", s2Complete ? "green" : "red"), s2Complete ? "COMPLETE" : "INCOMPLETE");
