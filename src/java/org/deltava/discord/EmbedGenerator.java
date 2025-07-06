@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-
+import org.deltava.beans.ExternalID;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.discord.ChannelName;
 
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to generate Discord responses.
  * @author Luke
- * @version 11.1
+ * @version 12.0
  * @since 11.1
  */
 
@@ -96,16 +96,47 @@ class EmbedGenerator {
 	 */
     static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, Collection<Role> roles, String nickName) {
     	EmbedBuilder eb = new EmbedBuilder().
-    			setColor(Color.BLUE)
-                .setFooter("Nickname Assignment")
-                .setTitle(":exclamation: Nickname Assigned")
-                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
-                .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
-                .addInlineField("User", e.getMessageAuthor().getDisplayName())
-                .addInlineField("Name", nickName)
-                .setTimestampToNow();
+   			setColor(Color.BLUE)
+   			.setFooter("Nickname Assignment")
+            .setTitle(":exclamation: Nickname Assigned")
+            .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
+            .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
+            .addInlineField("User", e.getMessageAuthor().getDisplayName())
+            .addInlineField("Name", nickName)
+            .setTimestampToNow();
     	
     	roles.forEach(r -> eb.addInlineField("Server Role", r.getName()));
+    	return eb;
+    }
+    
+    /**
+     * Creates a registration status message, to provide feedback to the Pilot about registration status.
+     * @param e the MessageCreateEvent
+     * @param p the Pilot
+     * @param roles the Discord security Roles
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder createStatus(MessageCreateEvent e, Pilot p, Collection<Role> roles) {
+    	
+    	boolean s1Complete = p.getExternalIDs().containsKey(ExternalID.DISCORD);
+    	boolean s2Complete = !roles.isEmpty();
+    	
+    	String code = SystemData.get("airline.code");
+    	String host = SystemData.get("airline.url");
+    	EmbedBuilder eb = new EmbedBuilder()
+   			.setColor(Color.BLUE)
+            .setFooter(":info: Registration Status")
+            .setDescription("Discord Server Reigstration Status")
+            .setTimestampToNow()
+            .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+            .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
+            .setFooter(String.format("%s Discord New Member Registration", code))
+    		.addField(String.format(":%s_square: - Link Discord and Web Site", s1Complete ? "green" : "red"), s1Complete ? "COMPLETE" : "INCOMPLETE")
+    		.addField(String.format(":%s_square: - Request Access Roles", s2Complete ? "green" : "red"), s2Complete ? "COMPLETE" : "INCOMPLETE");
+    	
+    	if (!s1Complete)
+    		eb.setUrl(String.format("https://%s/discordreg.do?id=%d", host, Long.valueOf(e.getMessageAuthor().getId())));
+   	
     	return eb;
     }
     
@@ -119,14 +150,14 @@ class EmbedGenerator {
     static EmbedBuilder createNicknameError(MessageCreateEvent e, Pilot p, Collection<Role> roles) {
     	String code = SystemData.get("airline.code");
     	EmbedBuilder eb = new EmbedBuilder()
-        .setColor(Color.RED)
-        .setTitle("Unable to Assign Nickname")
-        .setFooter("User Creation Error")
-        .setTimestampToNow()
-        .setDescription(String.format("%s I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with %s policy.", Bot.findRole("administrator").getMentionTag(), code))
-        .addInlineField("User", e.getMessageAuthor().getDiscriminatedName())
-        .addInlineField("Name", p.getName())
-        .addInlineField("Pilot ID", p.getPilotCode());
+    		.setColor(Color.RED)
+    		.setTitle("Unable to Assign Nickname")
+    		.setFooter("User Creation Error")
+    		.setTimestampToNow()
+    		.setDescription(String.format("%s I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with %s policy.", Bot.findRole("administrator").getMentionTag(), code))
+    		.addInlineField("User", e.getMessageAuthor().getDiscriminatedName())
+    		.addInlineField("Name", p.getName())
+    		.addInlineField("Pilot ID", p.getPilotCode());
     	
     	roles.forEach(r -> eb.addInlineField("Server Role", r.getName()));
     	return eb;
@@ -141,16 +172,17 @@ class EmbedGenerator {
     	String code = SystemData.get("airline.code");
     	String host = SystemData.get("airline.url");
         return new EmbedBuilder()
-                .setTitle(":wave: Welcome Aboard!")
-                .setDescription("Welcome to the Delta Virtual Airlines Discord Server. To gain access, you must be an active member of Delta Virtual Airlines at www.deltava.org. We are a non-profit organization dedicated to flight simulation and education and are not affiliated with the real Delta Air Lines in any way. To complete your discord registration with us, follow the steps below.")
-                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
-                .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
-                .setFooter(String.format("%s Discord New Member Registration", code))
-                .setTimestampToNow()
-                .setColor(new Color(1, 0, 100))
-                .addField("Step 1: Link your Discord and Web site User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
-                .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"done\" when you've completed linking your accounts and your roles will be assigned.")
-                .addField("Didn't work?", String.format("If you follow the above process and are still not able to gain access, open a help desk ticket here: https://%s/helpdesk.do", host));
+        	.setTitle(":wave: Welcome Aboard!")
+            .setDescription(String.format("Welcome to the %s Discord Server. To gain access, you must be an active member of Delta Virtual Airlines at %s. We are a non-profit organization dedicated to flight simulation and education and are not affiliated with the real Delta Air Lines in any way. To complete your Discord registration with us, follow the steps below.", code, host))
+            .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+            .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
+            .setFooter(String.format("%s Discord New Member Registration", code))
+            .setTimestampToNow()
+            .setColor(new Color(1, 0, 100))
+            .addField("Step 1: Link your Discord and Web site User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
+            .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"!roles\" when you've completed linking your accounts and your Discord roles will be assigned.")
+            .addField("Didn't work?", String.format("If you follow the above process and are still not able to gain access, open a help desk ticket here: https://%s/helpdesk.do", host))
+            .addField("Check Status", "You can check the status of your registration process by typing \"!status\"");
     }
     
     /**
@@ -161,11 +193,15 @@ class EmbedGenerator {
     static EmbedBuilder welcome(MessageCreateEvent e) {
     	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
-                .setTitle("Welcome Aboard!")
-                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
-                .setColor(new Color(1, 0, 100))
-                .setDescription(String.format("Welcome to the %s Discord server! Type !roles to register.", SystemData.get("airline.name")))
-                .setTimestampToNow();
+    		.setTitle("Welcome Aboard!")
+            .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+            .setColor(new Color(1, 0, 100))
+            .setDescription(String.format("Welcome to the %s Discord server! Here are some commands you can use:", SystemData.get("airline.code")))
+            .setTimestampToNow()
+            .addInlineField("!link", "Link your Discord and Web Site accounts")
+            .addInlineField("!roles", "Assign Discord roles based on your web site access")
+            .addInlineField("!status", "View Discord Registration Status")
+            .addInlineField("!help", "This help message");
     }
     
     /**
@@ -177,13 +213,13 @@ class EmbedGenerator {
      */
     static EmbedBuilder wordDeleted(boolean isSafe, String key, String user) {
     	return new EmbedBuilder()
-    			.setTitle(String.format(":x: %s Keyword Deleted", isSafe ? "Safe" : "Prohibited"))
-    			.setDescription(String.format("A keyword was deleted from the list of %s words or phrases. The bot will no longer ignore this word/phrase.", isSafe ? "accepted" : "prohibited"))
-    			.setFooter("Keyword Deleted")
-    			.addInlineField("User", user)
-    			.addInlineField("Safe Word Deleted", key)
-    			.setColor(Color.GREEN)
-    			.setTimestampToNow();
+    		.setTitle(String.format(":x: %s Keyword Deleted", isSafe ? "Safe" : "Prohibited"))
+    		.setDescription(String.format("A keyword was deleted from the list of %s words or phrases. The bot will no longer ignore this word/phrase.", isSafe ? "accepted" : "prohibited"))
+    		.setFooter("Keyword Deleted")
+    		.addInlineField("User", user)
+    		.addInlineField("Safe Word Deleted", key)
+    		.setColor(Color.GREEN)
+    		.setTimestampToNow();
     }
   
     /**
@@ -195,13 +231,13 @@ class EmbedGenerator {
      */
     static EmbedBuilder wordAdded(boolean isSafe, String key, String user) {
     	return new EmbedBuilder()
-                .setTitle(String.format(":new: %s keyword Added", isSafe? "Accepted" : "Prohibited"))
-                .setDescription(String.format("A new keyword was added to the list of %s words or phrases. The bot will now alert to any message which contains this phrase or a similar one.", isSafe ? "accepted" : "prohibited"))
-                .setTimestampToNow()
-                .setFooter("Keyword Added")
-                .addInlineField("User", user)
-                .addInlineField("Keyword Created", key)
-                .setColor(Color.GREEN);
+    		.setTitle(String.format(":new: %s keyword Added", isSafe? "Accepted" : "Prohibited"))
+            .setDescription(String.format("A new keyword was added to the list of %s words or phrases. The bot will now alert to any message which contains this phrase or a similar one.", isSafe ? "accepted" : "prohibited"))
+            .setTimestampToNow()
+            .setFooter("Keyword Added")
+            .addInlineField("User", user)
+            .addInlineField("Keyword Created", key)
+            .setColor(Color.GREEN);
     }
     
     /**
@@ -214,19 +250,15 @@ class EmbedGenerator {
     	
     	// Convert keywords
     	int idx = 0; StringBuilder buf = new StringBuilder();
-    	for (String kw : keywords) {
-    		buf.append(++idx);
-    		buf.append(" - ");
-    		buf.append(kw);
-    		buf.append('\n');
-    	}
+    	for (String kw : keywords)
+    		buf.append(++idx).append(" - ").append(kw).append('\n');
     	
     	return new EmbedBuilder()
-    			.setTitle(String.format("%s Word List", isSafe? "Accepted" : "Prohibited"))
-    			.setDescription(String.format("This is the list of current %s words", isSafe? "Accepted" : "Prohibited"))
+    		.setTitle(String.format("%s Word List", isSafe? "Accepted" : "Prohibited"))
+    		.setDescription(String.format("This is the list of current %s words", isSafe? "Accepted" : "Prohibited"))
 				.setTimestampToNow()
-				.setFooter("Keyword List")
-				.addInlineField("keywords", buf.toString());
+			.setFooter("Keyword List")
+			.addInlineField("keywords", buf.toString());
     }
 
     /**
@@ -238,12 +270,12 @@ class EmbedGenerator {
      */
     static EmbedBuilder createWarning(String author, String channel, String msg) {
     	return new EmbedBuilder()
-    			.setTitle(":warning: Content Warning")
-    			.setTimestampToNow()
-    			.setColor(Color.RED)
-    			.addField("Channel", "#" + channel)
-    			.addInlineField("Author", author)
-    			.addInlineField("Info", msg)
-    			.setFooter("Content Warning");
+    		.setTitle(":warning: Content Warning")
+    		.setTimestampToNow()
+    		.setColor(Color.RED)
+    		.addField("Channel", "#" + channel)
+    		.addInlineField("Author", author)
+    		.addInlineField("Info", msg)
+    		.setFooter("Content Warning");
     }
 }

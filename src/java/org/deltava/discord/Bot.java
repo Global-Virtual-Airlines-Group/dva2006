@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import org.gvagroup.pool.*;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 11.4
+ * @version 12.0
  * @since 11.0
  */
 
@@ -196,7 +196,7 @@ public class Bot {
     	List<Role> roles = _srv.getRolesByName(roleName);
     	return roles.isEmpty() ? null : roles.get(0);
     }
-    
+
     static Connection getConnection() throws ConnectionPoolException {
     	ConnectionPool<Connection> jdbcPool = SystemData.getJDBCPool();
     	return jdbcPool.getConnection();
@@ -253,5 +253,28 @@ public class Bot {
     	} catch (InterruptedException ie) {
     		log.warn("Interrupted removing Discord roles from {} ({})", p.getName(), p.getPilotCode());
     	}
+    }
+    
+    /**
+     * Looks up a pilot based on their Discord ID.
+     * @param id the Discord ID
+     * @return the Pilot, or null if not found
+     */
+    static Pilot getPilot(String id) {
+    	
+        Pilot p = null; Connection con = null;
+        try {
+        	con = getConnection();
+        	GetPilotDirectory pdao = new GetPilotDirectory(con);
+        	p = pdao.getByIMAddress(id);
+        } catch (ConnectionPoolException cpe) {
+        	log.error("Connection Pool Full, Aborting");
+        } catch (DAOException de) {
+        	log.atError().withThrowable(de).log(de.getMessage());
+        } finally {
+        	release(con);
+        }
+
+    	return p;
     }
 }

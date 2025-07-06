@@ -14,20 +14,15 @@ import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
 
 import java.util.*;
-import java.sql.Connection;
 import java.util.stream.Collectors;
 import java.util.concurrent.CompletableFuture;
 
 import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
 
-import org.deltava.dao.*;
-
 import org.deltava.util.*;
 import org.deltava.util.log.*;
 import org.deltava.util.system.SystemData;
-
-import org.gvagroup.pool.ConnectionPoolException;
 
 /**
  * A Discord message receiver.
@@ -62,25 +57,48 @@ public class MessageReceivedListener implements MessageCreateListener {
     		if (!isBot && (usr != null))
     			isBot = usr.getRoles(srv).stream().anyMatch(r -> r.getName().equalsIgnoreCase("Bot"));
     		
-    		if ("done".equalsIgnoreCase(msg) && sch.isPresent()) {
-    			e.getMessage().delete("Auto delete interaction message");
-    			assignRoles(e);
-    			return;
-    		} else if (!sch.isPresent() || channelName.equals(ChannelName.INTERACTIONS.getName()) || isBot) 
+    		if (!sch.isPresent() || channelName.equals(ChannelName.INTERACTIONS.getName()) || isBot) 
     			return;
 
-    		// Check if this is a message requesting roles
+    		// Check if this is a command in the Welcome channge
     		if (channelName.equals(ChannelName.WELCOME.getName())) {
-    			if (!e.getMessageContent().equalsIgnoreCase("!roles")) {
-    				e.getMessage().delete("Message not allowed in " + ChannelName.WELCOME);
-                    Optional<User> uo = e.getMessageAuthor().asUser();
-                    if (uo.isPresent()) {
-                    	User u = uo.get();
-                    	if (u.getRoles(srv).isEmpty())
-                    		u.sendMessage(EmbedGenerator.welcome(e));
-                    }
-    			} else {
-    				register(e);
+    			User u = e.getMessageAuthor().asUser().orElse(null);
+    			String msgText = e.getMessageContent(); 
+    			if (msgText.startsWith("!") && (u != null)) {
+    				int pos = msgText.indexOf(' ');
+    				String cmdName = msgText.substring(1, (pos == -1) ? msgText.length() : pos).toLowerCase();
+    				switch (cmdName) {
+    				case "link":
+    					long UUID = u.getId();
+    					log.info("Registration request received [ UUID = {}, Name = {} ]", Long.toHexString(UUID), e.getMessageAuthor().getName());
+    					Pilot p = Bot.getPilot(u.getIdAsString());
+    					if (p != null)
+    						u.sendMessage("You have already linked your Discord and web stie accounts.");
+    					else
+    						u.sendMessage(EmbedGenerator.register(UUID));
+    					
+    					break;
+    					
+    				case "roles":
+    					assignRoles(e, u);
+    					break;
+    				
+    				case "status":
+    					log.info("Registration status request [ Name = {}, UUID = {}, Server = {} ]", u.getName(), Long.toHexString(u.getId()), srv);
+    					p = Bot.getPilot(u.getIdAsString());				
+    					u.sendMessage(EmbedGenerator.createStatus(e, p, u.getRoles(srv)));				
+    					break;
+    				
+    				case "help":
+    					u.sendMessage(EmbedGenerator.welcome(e));
+    					break;
+    				
+    				default:
+    					log.warn("Unknown Discord command - %s", cmdName);
+    					u.sendMessage(EmbedGenerator.welcome(e));
+    				}
+    				
+    				e.getMessage().delete("Auto delete interaction message");
     				return;
     			}
     		}
@@ -99,37 +117,13 @@ public class MessageReceivedListener implements MessageCreateListener {
     		Bot.send(ch, EmbedGenerator.createError(e.getMessageAuthor().getDisplayName(), "Registration", ex));
     	}
     }
+    
+    private static void assignRoles(MessageCreateEvent e, User msgAuth) {
 
-    private static void register(MessageCreateEvent e) {
-        long UUID = e.getMessageAuthor().getId();
-        log.info("Registration request received [ UUID = {}, Name = {} ]", Long.toHexString(UUID), e.getMessageAuthor().getName());
-        if (e.getMessageAuthor().asUser().isPresent())
-            e.getMessageAuthor().asUser().get().sendMessage(EmbedGenerator.register(UUID));
-
-        e.getMessage().delete("Auto-delete role request message");
-    }
-
-    private static void assignRoles(MessageCreateEvent e) {
-
-    	// Make sure user is stil here
-    	if (e.getMessageAuthor().asUser().isEmpty()) return;
-        User msgAuth = e.getMessageAuthor().asUser().get();
         Server srv = e.getServer().orElse(null);
         log.info("User requested access [ Name = {}, UUID = {}, Server = {} ]", msgAuth.getName(), Long.toHexString(msgAuth.getId()), srv);
         
-        Pilot p = null; Connection con = null;
-        try {
-        	con = Bot.getConnection();
-        	GetPilotDirectory pdao = new GetPilotDirectory(con);
-        	p = pdao.getByIMAddress(msgAuth.getIdAsString());
-        } catch (ConnectionPoolException cpe) {
-        	log.error("Connection Pool Full, Aborting");
-        } catch (DAOException de) {
-        	log.atError().withThrowable(de).log(de.getMessage());
-        } finally {
-        	Bot.release(con);
-        }
-        
+        Pilot p = Bot.getPilot(msgAuth.getIdAsString()); 
         if (p == null) {
         	log.warn("Cannot find Discord ID {}", msgAuth.getIdAsString());
         	return;
