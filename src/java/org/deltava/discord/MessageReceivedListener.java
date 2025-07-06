@@ -98,7 +98,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     					u.sendMessage(EmbedGenerator.welcome(e));
     				}
     				
-    				e.getMessage().delete("Auto delete interaction message");
+    				e.getMessage().delete("Auto delete interaction message").get();
     				return;
     			}
     		}
