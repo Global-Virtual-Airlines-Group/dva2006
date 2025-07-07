@@ -9,11 +9,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to withdraw a submitted Flight Report.
  * @author Luke
- * @version 11.6
+ * @version 12.1
  * @since 11.6
  */
 
@@ -51,7 +52,9 @@ public class PIREPWithdrawCommand extends AbstractCommand {
 			SetFlightReport frwdao = new SetFlightReport(con);
 			frwdao.withdraw(fr, ctx.getDB());
 			frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
-			frwdao.deleteElite(fr);
+			if (SystemData.getBoolean("elite.enabled"))
+				frwdao.deleteElite(fr);
+			
 			ctx.commitTX();
 			
 			// Save in request
