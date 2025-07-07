@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 11.6
+ * @version 12.1
  * @since 10.0
  */
 
@@ -468,7 +468,7 @@ public class FlightSubmissionHelper {
 				afr.setOnTime(oth.validate(afr));
 				_onTimeEntry = oth.getScheduleEntry();
 				if (_onTimeEntry != null)
-					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Retrieved schedule times from %s (%d min)", _onTimeEntry.getSource().getDescription(), Integer.valueOf(oth.getTolerance())));
+					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Retrieved schedule times from %s (+/- %d min)", _onTimeEntry.getSource().getDescription(), Integer.valueOf(oth.getTolerance())));
 			}
 		}
 			
