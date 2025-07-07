@@ -19,6 +19,7 @@
 <c:if test="${exam.routePlot}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics />
+<content:cspHeader />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
 <script>
 golgotha.exam.expiry = ${exam.expiryDate.toEpochMilli()};
