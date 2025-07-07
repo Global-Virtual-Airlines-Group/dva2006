@@ -23,6 +23,7 @@ import okhttp3.OkHttpClient;
 
 import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.dao.*;
 
@@ -35,7 +36,7 @@ import org.gvagroup.pool.*;
  * The Discord Bot.
  * @author danielw
  * @author luke
- * @version 12.0
+ * @version 12.1
  * @since 11.0
  */
 
@@ -276,5 +277,14 @@ public class Bot {
         }
 
     	return p;
+    }
+ 
+    /**
+     * Sends a Flight Report notification. This is a hacky exposure to prevent opening up all the Discord classes to IPCDaemon. 
+     * @param fr a FlightReport
+     * @param p a Pilot
+     */
+    public static void sendFlightReport(FlightReport fr, Pilot p) {
+    	send(ChannelName.FLIGHTS, EmbedGenerator.createPIREP(fr, p));
     }
 }
