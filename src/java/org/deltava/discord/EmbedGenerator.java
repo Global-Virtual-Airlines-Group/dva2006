@@ -8,9 +8,10 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.deltava.beans.ExternalID;
-import org.deltava.beans.Pilot;
+
+import org.deltava.beans.*;
 import org.deltava.beans.discord.ChannelName;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to generate Discord responses.
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 11.1
  */
 
@@ -38,13 +39,13 @@ class EmbedGenerator {
 	 */
     static EmbedBuilder createError(String userName, String actionName, Exception ex) {
     	return new EmbedBuilder()
-                .setTitle(":warning: Internal Error")
-                .setColor(Color.RED)
-                .addInlineField("User", userName)
-                .addInlineField("Action", actionName)
-                .addInlineField("Error", ex.getMessage())
-                .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
-                .setTimestampToNow();
+    		.setTitle(":warning: Internal Error")
+            .setColor(Color.RED)
+            .addInlineField("User", userName)
+            .addInlineField("Action", actionName)
+            .addInlineField("Error", ex.getMessage())
+            .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
+            .setTimestampToNow();
     }
     
     /**
@@ -163,7 +164,31 @@ class EmbedGenerator {
     }
     
     /**
-	 * Generates an embedded welcome message.
+     * Generates a Flight Report submission message.
+     * @param fr the FlightReport
+     * @param p the Pilot
+     * @return an EmbedBuilder
+     */
+    static EmbedBuilder createPIREP(FlightReport fr, Pilot p) {
+    	
+    	String host = SystemData.get("airline.url");
+    	return new EmbedBuilder()
+    		.setTitle("New Flight Report")
+    		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+    		.setFooter("ACARS Flight Report")
+    		.setTimestampToNow()
+    		.setColor(new Color(1, 0, 100))
+    		.setDescription(String.format("A new ACARS Flight Report has been filed at the %s web site.", SystemData.get("airline.name")))
+    		.addInlineField("Link", String.format("https://%s/pirep.do?id=%s", host, fr.getHexID()))
+    		.addInlineField("Flight Number", fr.getShortCode())
+    		.addInlineField("Route", String.format("%s - %s", fr.getAirportD().getIATA(), fr.getAirportA().getIATA()))
+    		.addInlineField("Equipment", fr.getEquipmentType())
+    		.addInlineField("Pilot Name", p.getName())
+    		.addInlineField("Pilot ID", p.getPilotCode());
+    }
+    
+    /**
+	 * Generates a registration message.
 	 * @param id the Discord User UUID
 	 * @return an EmbedBuilder
 	 */
@@ -190,12 +215,14 @@ class EmbedGenerator {
      * @return an EmbedBuilder
      */
     static EmbedBuilder welcome(MessageCreateEvent e) {
+    	String code = SystemData.get("airline.code");
     	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
     		.setTitle("Welcome Aboard!")
             .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
             .setColor(new Color(1, 0, 100))
             .setDescription(String.format("Welcome to the %s Discord server! Here are some commands you can use:", SystemData.get("airline.code")))
+            .setFooter(String.format("%s Discord New Member Registration", code))
             .setTimestampToNow()
             .addInlineField("!link", "Link your Discord and Web Site accounts")
             .addInlineField("!roles", "Assign Discord roles based on your web site access")
@@ -255,7 +282,7 @@ class EmbedGenerator {
     	return new EmbedBuilder()
     		.setTitle(String.format("%s Word List", isSafe? "Accepted" : "Prohibited"))
     		.setDescription(String.format("This is the list of current %s words", isSafe? "Accepted" : "Prohibited"))
-				.setTimestampToNow()
+			.setTimestampToNow()
 			.setFooter("Keyword List")
 			.addInlineField("keywords", buf.toString());
     }
