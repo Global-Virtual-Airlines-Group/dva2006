@@ -13,7 +13,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -52,6 +54,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
