@@ -15,7 +15,8 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.setType = function() { return document.forms[0].submit(); };
 </script>
 </head>
