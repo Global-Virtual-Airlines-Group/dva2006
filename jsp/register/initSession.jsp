@@ -8,10 +8,12 @@
 <meta http-equiv="refresh" content="5" />
 <title>Welcome to <content:airline /></title>
 <content:css name="main" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
 <content:captcha action="registerInit" />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
@@ -34,7 +36,6 @@ If you continue to have difficulties, please contact our <el:link url="mailto:${
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
  

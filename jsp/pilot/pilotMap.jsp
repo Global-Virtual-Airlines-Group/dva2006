@@ -13,11 +13,11 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="pilotMap" />
-<content:googleAnalytics />
-<content:js name="progressBar" />
+<content:cspHeader />
 <content:filter roles="HR">
 <script async>
 golgotha.pilotMap.deleteMarker = function(id) {

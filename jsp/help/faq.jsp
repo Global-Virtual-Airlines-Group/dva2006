@@ -12,9 +12,11 @@
 <content:expire expires="3600" />
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
@@ -63,6 +65,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
