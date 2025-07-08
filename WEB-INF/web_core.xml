@@ -116,7 +116,7 @@
 	<servlet>
 	   <servlet-name>upload</servlet-name>
 	   <servlet-class>org.deltava.servlet.UploadServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
+        <load-on-startup>4</load-on-startup>
 	</servlet>
 
 	<!-- ACARS Track Image servlet -->
@@ -145,6 +145,13 @@
 		<servlet-name>fleetLibrary</servlet-name>
 		<servlet-class>org.deltava.servlet.LibraryServlet</servlet-class>
 		<load-on-startup>4</load-on-startup>
+	</servlet>
+	
+	<!-- Link Shortner Servlet -->
+	<servlet>
+		<servlet-name>linkShorten</servlet-name>
+		<servlet-class>org.deltava.servlet.LinkServlet</servlet-class>
+		<load-on-startup>5</load-on-startup>
 	</servlet>
 	
 	<!-- Filter mappings to Command Controller -->
@@ -321,6 +328,10 @@
 	<servlet-mapping>
 		<servlet-name>fleetLibrary</servlet-name>
 		<url-pattern>/newsletter/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>linkShorten</servlet-name>
+		<url-pattern>/l/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>cmdController</servlet-name>
