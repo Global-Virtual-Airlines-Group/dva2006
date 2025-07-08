@@ -170,17 +170,14 @@ class EmbedGenerator {
      * @return an EmbedBuilder
      */
     static EmbedBuilder createPIREP(FlightReport fr, Pilot p) {
-    	
-    	String host = SystemData.get("airline.url");
     	return new EmbedBuilder()
-    		.setTitle("New Flight Report")
-    		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
+    		.setTitle(String.format("%s Completed", fr.getShortCode()))
+    		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
     		.setFooter("ACARS Flight Report")
     		.setTimestampToNow()
-    		.setColor(new Color(1, 0, 100))
-    		.setDescription(String.format("A new ACARS Flight Report has been filed at the %s web site.", SystemData.get("airline.name")))
-    		.addInlineField("Link", String.format("https://%s/pirep.do?id=%s", host, fr.getHexID()))
-    		.addInlineField("Flight Number", fr.getShortCode())
+    		.setColor(new Color(1, 0, 161))
+    		.setDescription(String.format("A Flight has been completed and a new ACARS Flight Report has been filed at the %s web site.", SystemData.get("airline.name")))
+    		.addInlineField("Link", String.format("https://%s/l/fr/%s", SystemData.get("airline.domain"), Integer.toHexString(fr.getID())))
     		.addInlineField("Route", String.format("%s - %s", fr.getAirportD().getIATA(), fr.getAirportA().getIATA()))
     		.addInlineField("Equipment", fr.getEquipmentType())
     		.addInlineField("Pilot Name", p.getName())
@@ -221,7 +218,7 @@ class EmbedGenerator {
     		.setTitle("Welcome Aboard!")
             .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", host))
             .setColor(new Color(1, 0, 100))
-            .setDescription(String.format("Welcome to the %s Discord server! Here are some commands you can use:", SystemData.get("airline.code")))
+            .setDescription(String.format("Welcome to the %s Discord server! Here are some commands you can use in this channel:", SystemData.get("airline.code")))
             .setFooter(String.format("%s Discord New Member Registration", code))
             .setTimestampToNow()
             .addInlineField("!link", "Link your Discord and Web Site accounts")
