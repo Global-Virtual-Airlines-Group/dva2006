@@ -11,7 +11,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 <content:attr roles="HR" attr="isHR" value="true" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -82,6 +84,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
