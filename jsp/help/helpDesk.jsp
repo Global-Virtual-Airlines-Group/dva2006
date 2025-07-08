@@ -10,9 +10,11 @@
 <title><content:airline /> Help Desk</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
@@ -119,6 +121,5 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
