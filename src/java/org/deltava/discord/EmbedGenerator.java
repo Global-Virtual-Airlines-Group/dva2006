@@ -3,6 +3,8 @@ package org.deltava.discord;
 
 import java.util.*;
 import java.awt.Color;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
@@ -10,8 +12,8 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.discord.ChannelName;
-import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -170,18 +172,29 @@ class EmbedGenerator {
      * @return an EmbedBuilder
      */
     static EmbedBuilder createPIREP(FlightReport fr, Pilot p) {
-    	return new EmbedBuilder()
+    	boolean isACARS = (fr instanceof ACARSFlightReport);
+    	Duration d = isACARS ? ((ACARSFlightReport) fr).getBlockTime() : Duration.ofMinutes(fr.getLeg() * 6);
+    	EmbedBuilder eb = new EmbedBuilder()
     		.setTitle(String.format("%s Completed", fr.getShortCode()))
     		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
     		.setFooter("ACARS Flight Report")
     		.setTimestampToNow()
     		.setColor(new Color(1, 0, 161))
-    		.setDescription(String.format("A Flight has been completed and a new ACARS Flight Report has been filed at the %s web site.", SystemData.get("airline.name")))
+    		.setDescription(String.format("A Flight has been completed and a new %s Flight Report has been filed at the %s web site.", isACARS ? "ACARS" : "manual", SystemData.get("airline.name")))
     		.addInlineField("Link", String.format("https://%s/l/fr/%s", SystemData.get("airline.domain"), Integer.toHexString(fr.getID())))
     		.addInlineField("Route", String.format("%s - %s", fr.getAirportD().getIATA(), fr.getAirportA().getIATA()))
     		.addInlineField("Equipment", fr.getEquipmentType())
     		.addInlineField("Pilot Name", p.getName())
     		.addInlineField("Pilot ID", p.getPilotCode());
+    	
+    	// Format time / passengers
+    	DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochSecond(d.getSeconds()), ZoneId.of("Z"));
+		eb.addInlineField("Duration", df.format(zdt));
+    	if (fr.getPassengers() > 0)
+    		eb.addInlineField("Passengers", String.valueOf(fr.getPassengers()));
+    	
+    	return eb;
     }
     
     /**

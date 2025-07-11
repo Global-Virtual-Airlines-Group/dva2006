@@ -22,10 +22,12 @@ import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 1.0
  */
 
@@ -160,6 +162,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("isSubmitted", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("notRated", Boolean.valueOf(pirep.hasAttribute(FlightReport.ATTR_NOTRATED)), REQUEST);
 			ctx.setAttribute("isOurs", Boolean.valueOf(pirep.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
+			EventDispatcher.send(new IDEvent(EventType.FLIGHT_REPORT, String.valueOf(pirep.getID()), SystemData.get("airline.code")));
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
