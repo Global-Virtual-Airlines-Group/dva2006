@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2017, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 11.1
+ * @version 12.1
  * @since 2.6
  */
 
@@ -29,7 +29,6 @@ public class GetNavRoute extends GetOceanicRoute {
 	private java.time.Instant _effectiveDate;
 
 	private class ExternalPopulatedRoute extends PopulatedRoute implements ExternalFlightRoute {
-		
 		private String _source;
 		
 		ExternalPopulatedRoute() {
@@ -87,7 +86,7 @@ public class GetNavRoute extends GetOceanicRoute {
 			rt2 = rt2.replace("  ", " ");
 
 		// Get the route text
-		List<String> tkns = StringUtils.split(rt2, " ");
+		List<String> tkns = StringUtils.split(rt2.toUpperCase(), " ");
 		GeoLocation lastPosition = start; SequencedCollection<Airway> aws = new ArrayList<Airway>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
