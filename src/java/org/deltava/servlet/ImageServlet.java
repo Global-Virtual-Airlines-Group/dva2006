@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -7,8 +7,8 @@ import java.sql.*;
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
-import org.deltava.beans.ImageType;
-import org.deltava.beans.Pilot;
+
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
 import org.deltava.beans.schedule.*;
@@ -25,7 +25,7 @@ import org.gvagroup.pool.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 11.3
+ * @version 12.1
  * @since 1.0
  */
 
@@ -36,21 +36,11 @@ public class ImageServlet extends DownloadServlet {
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
-	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
-	 */
 	@Override
 	public String getServletInfo() {
 		return "Database Image Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
 
-	/**
-	 * Processes HTTP GET requests for images.
-	 * @param req the HTTP request
-	 * @param rsp the HTTP response
-	 * @throws IOException if a network I/O error occurs
-	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 
@@ -181,7 +171,7 @@ public class ImageServlet extends DownloadServlet {
 					if (imgBuffer == null)
 						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
 					
-					rsp.setHeader("Cache-Control", "private");
+					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 600);
 					break;
 					
@@ -190,7 +180,7 @@ public class ImageServlet extends DownloadServlet {
 					if (imgBuffer == null)
 						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
 					
-					rsp.setHeader("Cache-Control", "private");
+					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 600);
 					break;
 					
@@ -199,7 +189,7 @@ public class ImageServlet extends DownloadServlet {
 					if (imgBuffer == null)
 						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
 					
-					rsp.setHeader("Cache-Control", "private");
+					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 600);
 					break;
 					
@@ -218,9 +208,13 @@ public class ImageServlet extends DownloadServlet {
 		} catch (ConnectionPoolException cpe) {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
-			if (ce.isWarning())
-				log.warn("Error retrieving image - {}", ce.getMessage());
-			else
+			if (ce.isWarning()) {
+				Level wl = Level.WARN;
+				if (ce instanceof ForbiddenException)
+					wl = (req.getUserPrincipal() == null) ? Level.INFO : Level.WARN;
+				
+				log.log(wl, "Error retrieving image - {}", ce.getMessage());
+			} else
 				log.error("Error retrieving image - {}", ce.getMessage(), ce.getLogStackDump() ? ce : null);
 			
 			rsp.sendError(ce.getStatusCode());
@@ -229,8 +223,7 @@ public class ImageServlet extends DownloadServlet {
 		}
 
 		// If we got nothing, abort
-		if (imgBuffer == null)
-			return;
+		if (imgBuffer == null) return;
 
 		// Get the image type
 		if (!PDFUtils.isPDF(imgBuffer)) {
