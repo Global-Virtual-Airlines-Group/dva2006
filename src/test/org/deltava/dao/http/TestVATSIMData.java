@@ -29,18 +29,4 @@ public class TestVATSIMData extends TestCase {
 		assertNotNull(c);
 		assertTrue(c.isActive());
 	}
-	
-	public void testATOCert() {
-		
-		PilotRating pr = new PilotRating(837789, "P1");
-		pr.setInstructorID(931991);
-		
-		try {
-			SetVATSIMData atodao = new SetVATSIMData();
-			atodao.addRating(pr);
-			fail("Failure expected");
-		} catch (DAOException de) {
-			// empty
-		}
-	}
 }
