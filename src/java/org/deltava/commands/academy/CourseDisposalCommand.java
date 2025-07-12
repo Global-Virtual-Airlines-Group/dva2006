@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -8,13 +8,10 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.schedule.Aircraft;
-import org.deltava.beans.servinfo.PilotRating;
-import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
@@ -24,7 +21,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 10.3
+ * @version 12.1
  * @since 1.0
  */
 
@@ -216,25 +213,6 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// Write the Status Update
 			uwdao.write(upd, ud.getDB());
-			
-			// Send the completion to VATSIM
-			if ((op == Status.COMPLETE) && (crt.getNetwork() != null)) {
-				ctx.setAttribute("cert", crt, REQUEST);
-				PilotRating pr = new PilotRating(StringUtils.parse(usr.getNetworkID(crt.getNetwork()), 0), crt.getNetworkRatingCode());
-				pr.setInstructorID(StringUtils.parse(ctx.getUser().getNetworkID(crt.getNetwork()), 0));
-				pr.setIssueDate(Instant.now());
-				if (crt.getNetwork() == OnlineNetwork.VATSIM) {
-					try {
-						SetVATSIMData vwdao = new SetVATSIMData();
-						vwdao.addRating(pr);
-						APILogger.add(new APIRequest(API.VATSIM.createName("ADDRATING"), !ctx.isAuthenticated()));
-						ctx.setAttribute("networkRatingAdded", Boolean.TRUE, REQUEST);
-					} catch (DAOException rde) {
-						ctx.setAttribute("networkRatingError", rde, REQUEST);
-					}
-				}
-			}
-			
 			ctx.commitTX();
 			
 			// Save the course
