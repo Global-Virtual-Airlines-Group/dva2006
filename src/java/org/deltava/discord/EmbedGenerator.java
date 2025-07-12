@@ -98,8 +98,8 @@ class EmbedGenerator {
 	 * @return an EmbedBuilder
 	 */
     static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, Collection<Role> roles, String nickName) {
-    	EmbedBuilder eb = new EmbedBuilder().
-   			setColor(Color.BLUE)
+    	EmbedBuilder eb = new EmbedBuilder()
+    		.setColor(new Color(1, 0, 161))
    			.setFooter("Nickname Assignment")
             .setTitle(":exclamation: Nickname Assigned")
             .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
@@ -127,7 +127,7 @@ class EmbedGenerator {
     	String code = SystemData.get("airline.code");
     	String host = SystemData.get("airline.url");
     	EmbedBuilder eb = new EmbedBuilder()
-   			.setColor(Color.BLUE)
+   			.setColor(s1Complete && s2Complete ? Color.GREEN : Color.YELLOW)
             .setFooter(":info: Registration Status")
             .setDescription("Discord Server Reigstration Status")
             .setTimestampToNow()
@@ -185,7 +185,8 @@ class EmbedGenerator {
     		.addInlineField("Route", String.format("%s - %s", fr.getAirportD().getIATA(), fr.getAirportA().getIATA()))
     		.addInlineField("Equipment", fr.getEquipmentType())
     		.addInlineField("Pilot Name", p.getName())
-    		.addInlineField("Pilot ID", p.getPilotCode());
+    		.addInlineField("Pilot ID", p.getPilotCode())
+    		.addInlineField("Simulator", fr.getSimulator().name());
     	
     	// Format time / passengers
     	DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
@@ -212,7 +213,7 @@ class EmbedGenerator {
             .setImage(String.format("https://%s/img/DeltaBanner_delta_2007.png", host))
             .setFooter(String.format("%s Discord New Member Registration", code))
             .setTimestampToNow()
-            .setColor(new Color(1, 0, 100))
+            .setColor(new Color(1, 0, 161))
             .addField("Step 1: Link your Discord and Web site User Accounts", String.format("To associate your discord account with your %s pilot ID and receive access to the rest of the server, follow this personalized link and sign into your %s account:\n\nhttps://%s/discordreg.do?id=%d",code, code, host, Long.valueOf(id)))
             .addField("Step 2: Request your Roles", "Return to the #" + ChannelName.WELCOME.getName() + " channel and send \"!roles\" when you've completed linking your accounts and your Discord roles will be assigned.")
             .addField("Didn't work?", String.format("If you follow the above process and are still not able to gain access, open a help desk ticket here: https://%s/helpdesk.do", host))
