@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 11.1
+ * @version 12.1
  * @since 5.1
  */
 
@@ -184,6 +184,7 @@ public class GetGates extends DAO {
 			}
 			
 			results.removeIf(Objects::isNull);
+			_pairCache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
