@@ -177,7 +177,7 @@ class EmbedGenerator {
     	EmbedBuilder eb = new EmbedBuilder()
     		.setTitle(String.format("%s Completed", fr.getShortCode()))
     		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
-    		.setFooter("ACARS Flight Report")
+    		.setFooter((isACARS ? "ACARS " : "") + "Flight Report")
     		.setTimestampToNow()
     		.setColor(new Color(1, 0, 161))
     		.setDescription(String.format("A Flight has been completed and a new %s Flight Report has been filed at the %s web site.", isACARS ? "ACARS" : "manual", SystemData.get("airline.name")))
