@@ -39,48 +39,42 @@ golgotha.local.selectGate = function(e) {
 
 golgotha.local.updateGateStats = function() {
 	const f = document.forms[0];
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 7500;
-	xreq.open('get', '/gateuse.ws?a=${airport.ICAO}&a2=' + golgotha.form.getCombo(f.gateAP) + '&isDeparture=' + golgotha.form.getCheck(f.gateAirportType), true);
-	xreq.onreadystatechange = function() {
-		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
-		const jsData = JSON.parse(xreq.responseText);
-		const drSpan = document.getElementById('gateUsageDays');
-		drSpan.innerText = jsData.dayRange;
-		const oldRows = golgotha.util.getElementsByClass('gateStat', 'tr');
-		oldRows.forEach(function(r) { r.remove(); });
+	const p = fetch('/gateuse.ws?a=${airport.ICAO}&a2=' + golgotha.form.getCombo(f.gateAP) + '&isDeparture=' + golgotha.form.getCheck(f.gateAirportType), {signal:AbortSignal.timeout(3500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			const drSpan = document.getElementById('gateUsageDays');
+			drSpan.innerText = js.dayRange;
+			const oldRows = golgotha.util.getElementsByClass('gateStat', 'tr');
+			oldRows.forEach(function(r) { r.remove(); });
 
-		const t = document.getElementById('apInfoTable');
-		for (var x = 0; x < jsData.gates.length; x++) {
-			const g = jsData.gates[x];
-			const r = document.createElement('tr');
-			r.setAttribute('class', 'gateStat');
-			const c0 = golgotha.util.createElement('td', g.name, 'label');
-			c0.addEventListener('click', golgotha.local.selectGate, {passive:true});
-			c0.gateID = g.id;
-			r.appendChild(c0);
-			const c1 = document.createElement('td');
-			c1.appendChild(golgotha.util.createElement('span', g.zone, 'sec bld'));
-			const as = golgotha.util.createElement('span', ' Used by ', 'small ita');
-			g.airlines.forEach(function(al) {
-				as.innerText += al.name;
-				if (al.useCount > 0) as.innerText += (' (' + al.useCount + ')');
-				as.innerText += ', ';
-			});
+			const t = document.getElementById('apInfoTable');
+			for (var x = 0; x < js.gates.length; x++) {
+				const g = js.gates[x];
+				const r = document.createElement('tr');
+				r.setAttribute('class', 'gateStat');
+				const c0 = golgotha.util.createElement('td', g.name, 'label');
+				c0.addEventListener('click', golgotha.local.selectGate, {passive:true});
+				c0.gateID = g.id;
+				r.appendChild(c0);
+				const c1 = document.createElement('td');
+				c1.appendChild(golgotha.util.createElement('span', g.zone, 'sec bld'));
+				const as = golgotha.util.createElement('span', ' Used by ', 'small ita');
+				g.airlines.forEach(function(al) {
+					as.innerText += al.name;
+					if (al.useCount > 0) as.innerText += (' (' + al.useCount + ')');
+					as.innerText += ', ';
+				});
 
-			as.innerText = as.innerText.substring(0, Math.max(1, as.innerText.length - 2));
-			c1.appendChild(as);
-			r.appendChild(c1);
-			r.appendChild(golgotha.util.createElement('td', g.useCount + ' Flights', 'pri bld'));
-			t.appendChild(r);
-		}
-
-		return true;
-	};
-
-	xreq.send(null);
-	return true;
-}
+				as.innerText = as.innerText.substring(0, Math.max(1, as.innerText.length - 2));
+				c1.appendChild(as);
+				r.appendChild(c1);
+				r.appendChild(golgotha.util.createElement('td', g.useCount + ' Flights', 'pri bld'));
+				t.appendChild(r);
+			}
+		});
+	});
+};
 
 golgotha.onDOMReady(function() {
 	const f = document.forms[0];
@@ -97,6 +91,7 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 <c:set var="isNorthSummer" value="${(localTime.monthValue >2) && (localTime.monthValue < 10)}" scope="page" />
 <c:set var="isSummer" value="${(isNorthSummer && (airport.latitude > 0)) || (!isNorthSummer && (airport.latitude < 0))}" scope="page" />
 
@@ -178,15 +173,15 @@ golgotha.onDOMReady(function() {
 </c:if>
 <tr>
  <td class="label top">Takeoff Runways</td>
- <td class="data" colspan="2"><c:forEach var="rwy" items="${departureRwys}">
+ <td class="data" id="depRwyRow" colspan="2"><c:forEach var="rwy" items="${departureRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
-<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode }]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced 
+<div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced 
 <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> departures (<fmt:int value="${rwy.percentage}" />%)</span></div>
 </c:forEach></td>
 </tr>
 <tr>
  <td class="label top">Landing Runways</td>
- <td class="data" colspan="2"><c:forEach var="rwy" items="${arrivalRwys}">
+ <td class="data" id="arrRwyRow" colspan="2"><c:forEach var="rwy" items="${arrivalRwys}">
 <c:set var="isActive" value="${validRunways.contains(rwy.name)}"  scope="page" />
 <div class="${isActive ? 'sec bld' : 'warn'}">Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet<c:if test="${rwy.thresholdLength > 0}">, displaced 
 <fmt:int value="${rwy.thresholdLength}" /> feet</c:if>) - Heading ${rwy.heading}&deg; <span class="ita"><fmt:int value="${rwy.useCount}" /> arrivals (<fmt:int value="${rwy.percentage}" />%)</span></div> 
@@ -221,12 +216,10 @@ Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="it
  <td class="data" colspan="2">Inbound: <c:if test="${!empty taxiTimeCY.inboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
 Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
 </tr>
-<c:if test="${!empty popularAlternates}">
 <tr>
  <td class="label top">Common Alternates</td>
- <td class="data" colspan="2"><c:forEach var="altA" items="${popularAlternates}" varStatus="altStatus">${altA.name} (<el:cmd url="airportinfo" linkID="${altA.IATA}"><fmt:airport airport="${altA}" /></el:cmd>) <span class="sec bld">(<fmt:distance value="${altA.distanceTo(airport)}" />)</span><c:if test="${!altStats.last}"><br /></c:if></c:forEach>
+ <td class="data" id="altRow" colspan="2"><c:forEach var="altA" items="${popularAlternates}" varStatus="altStatus">${altA.name} (<el:cmd url="airportinfo" linkID="${altA.IATA}"><fmt:airport airport="${altA}" /></el:cmd>) <span class="sec bld">(<fmt:distance value="${altA.distanceTo(airport)}" />)</span><c:if test="${!altStats.last}"><br /></c:if></c:forEach>
 </tr>
-</c:if>
 <tr id="flightTimeChart" style="display:none;">
  <td class="label top">Flight Time Distribution</td>
  <td class="data" colspan="2"><div id="ftChart" style="height:250px;"></div></td>
@@ -250,7 +243,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </tr>
 <tr class="gateInfo" id="gateInfoHdr">
  <td class="label">Airports</td>
- <td class="data" colspan="2"><el:check name="gateAirportType" type="radio" options="${gaTypes}" value="true" onChange="void golgotha.local.updateGateStats()"  /> <el:combo name="gateAP" options="${dGateAirports}" firstEntry="[ ALL AIRPORTS ]" onChange="void golgotha.local.updateGateStats()" /></td>
+ <td class="data" colspan="2"><el:check name="gateAirportType" type="radio" options="${gaTypes}" value="true" onChange="void golgotha.local.updateGateStats()" /> <el:combo name="gateAP" options="${emptyList}" firstEntry="[ ALL AIRPORTS ]" onChange="void golgotha.local.updateGateStats()" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -265,15 +258,21 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 
 // Create the map
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC,zoom:15,minZoom:12,maxZoom:19,scrollZoom:false,style:'mapbox://styles/mapbox/satellite-v9'});
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.fitBounds(golgotha.local.mapBounds);
 golgotha.gate.load({id:'${airport.ICAO}'});
 map.on('zoomend', function() { map.toggle(golgotha.local.gates, (map.getZoom() > 11)); });
+map.once('load', function() {
+	map.minZoom = map.getZoom() - 1;
+	// Is the bounding box anywhere on the map viewport?
+});
 
 // Load charts
 google.charts.load('current', {'packages':['corechart']});
-const p = fetch('ftstats.ws?airport=${airport.ICAO}', {signal:AbortSignal.timeout(7500)});
+const p = fetch('ftstats.ws?id=${airport.ICAO}', {signal:AbortSignal.timeout(7500)});
 p.handle = function(rsp) {
-	if (rsp.status != 200) return false;
+	if (!rsp.ok) return false;
 	rsp.json().then(function(js) {
 		const fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
 		const fData = new google.visualization.DataTable(); 
@@ -290,6 +289,31 @@ p.handle = function(rsp) {
 };
 
 google.charts.setOnLoadCallback(function() { p.then(p.handle) });
+
+// Load async stats
+const sp = fetch('airportinfo.ws?id=${airport.ICAO}', {signal:AbortSignal.timeout(7500)});
+sp.then(function(rsp) {
+	if (!rsp.ok) return false;
+	rsp.json().then(function(js) {
+		const gaCombo = document.forms[0].gateAP;
+		gaCombo.options.length = js.dgAirports.length + 1;
+		for (var x = 0; x < js.dgAirports.length; x++) {
+			const ao = js.dgAirports[x];
+			gaCombo.options[x + 1] = new Option(ao.name, ao.icao);
+		}
+
+		// Popular alternates
+		const c = document.getElementById('altRow');
+		for (var x = 0; x < js.alternates.length; x++) {
+			const aao = js.alternates[x];
+			const ls = document.createElement('span');
+			ls.innerHTML = aao.airport.name + ' (<a href="/airportinfo.do?id=' + aao.airport.icao + '">' + aao.airport.${useICAO ? 'icao' : 'iata'} + '</a>) ';
+			c.appendChild(ls);
+			c.appendChild(golgotha.util.createElement('span', ' (' + aao.distance + ' mi)', 'sec bld'));
+			c.innerHTML += '<br />';
+		}
+	});
+});
 </script>
 </body>
 </html>
