@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 6.3
  */
 
@@ -71,6 +71,8 @@ public class AirportInformationCommand extends AbstractCommand {
 			Collection<Runway> allRwys = nddao.getRunways(a, Simulator.P3Dv4);
 			ctx.setAttribute("rwys", allRwys.isEmpty() ? Set.of(a) : allRwys.stream().map(GeoPosition::new).collect(Collectors.toSet()), REQUEST);
 			int maxLength = allRwys.stream().mapToInt(Runway::getLength).max().orElse(0);
+			
+			// FIXME Extract into service
 			
 			// Load takeoff/landing runways
 			GetRunwayUsage rwdao = new GetRunwayUsage(con);
@@ -127,18 +129,6 @@ public class AirportInformationCommand extends AbstractCommand {
 			} else
 				ctx.setAttribute("validAC", validAC, REQUEST);
 			
-			// Load populaer alternates
-			GetACARSAlternate aadao = new GetACARSAlternate(con);
-			aadao.setQueryMax(5);
-			ctx.setAttribute("popularAlternates", aadao.getAlternates(a), REQUEST);
-			
-			// Load gate usage pairs
-			GetGates gdao = new GetGates(con);
-			List<Airport> gateDestinations = gdao.getUsagePairs(a, true);
-			gateDestinations.sort(new AirportComparator(AirportComparator.NAME));
-			ctx.setAttribute("dGateAirports", gateDestinations, REQUEST);
-			ctx.setAttribute("gaTypes", GATE_AIRPORT_TYPES, REQUEST);
-			
 			// Load ATIS
 			GetATIS atdao = new GetATIS();
 			atdao.setCompression(org.deltava.dao.http.Compression.GZIP);
@@ -165,6 +155,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Save in request
 			ctx.setAttribute("airport", a, REQUEST);
+			ctx.setAttribute("gaTypes", GATE_AIRPORT_TYPES, REQUEST);
 			ctx.setAttribute("airlines", a.getAirlineCodes().stream().map(c -> SystemData.getAirline(c)).filter(al -> !al.getHistoric()).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
