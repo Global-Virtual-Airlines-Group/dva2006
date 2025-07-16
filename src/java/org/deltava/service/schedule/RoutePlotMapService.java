@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 1.0
  */
 
@@ -337,20 +337,8 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Add runways
 		for (Runway r : runways) {
-			if  ((opts != null) && (opts.getTakeoffRunwayLength() > r.getLength())) continue;
-			JSONObject ro = new JSONObject();
-			ro.put("code", r.getComboAlias());
-			ro.put("useCount", (r instanceof UseCount uc) ? uc.getUseCount() : 0);
-			
-			// Build the label
-			StringBuilder buf = new StringBuilder("Runway ");
-			buf.append(r.getName());
-			buf.append(" (");
-			buf.append(r.getLength());
-			buf.append(" feet - ");
-			buf.append(r.getHeading());
-			buf.append(" degrees)");
-			ro.put("label", ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations") ? r.getComboName() : buf.toString());
+			if ((opts != null) && (opts.getTakeoffRunwayLength() > r.getLength())) continue;
+			JSONObject ro = JSONUtils.format(r, !ctx.isUserInRole("Developer") && !ctx.isUserInRole("Operations"));
 			jo.append("runways", ro);
 		}
 		

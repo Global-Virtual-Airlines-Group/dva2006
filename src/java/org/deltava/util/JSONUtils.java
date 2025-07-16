@@ -9,13 +9,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.UseCount;
+import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.FlightStatsEntry;
 
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 7.3
  */
 
@@ -122,6 +124,37 @@ public class JSONUtils {
 		so.put("academy", se.getAcademy());
 		so.putOpt("src", se.getSource());
 		return so;
+	}
+	
+	/**
+	 * Converts a Runway into a JSON object. 
+	 * @param r the Runway
+	 * @param longLabel TRUE to use a longer label, otherwise FALSE
+	 * @return a JSONObject
+	 */
+	public static JSONObject format(Runway r, boolean longLabel) {
+		JSONObject ro = new JSONObject();
+		ro.put("code", r.getComboAlias());
+		ro.put("name", r.getName());
+		ro.put("ll", new GeoPosition(r));
+		ro.put("useCount", (r instanceof UseCount uc) ? uc.getUseCount() : 0);
+		ro.put("length", r.getLength());
+		ro.put("hdg", r.getHeading());
+		ro.put("width", r.getWidth());
+		ro.put("sfc", r.getSurface().getName());
+		if (r.getThresholdLength() > 0)
+			ro.put("threshold", r.getThresholdLength());
+		
+		// Build the label
+		StringBuilder buf = new StringBuilder("Runway ");
+		buf.append(r.getName());
+		buf.append(" (");
+		buf.append(r.getLength());
+		buf.append(" feet - ");
+		buf.append(r.getHeading());
+		buf.append(" degrees)");
+		ro.put("label", longLabel ? buf.toString() : r.getComboName());
+		return ro;
 	}
 	
 	/**
