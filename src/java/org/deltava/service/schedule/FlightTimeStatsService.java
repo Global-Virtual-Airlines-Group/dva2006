@@ -1,10 +1,10 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Airport arrival/departure time distributions.
  * @author Luke
- * @version 8.6
+ * @version 12.1
  * @since 8.6
  */
 
@@ -36,7 +36,7 @@ public class FlightTimeStatsService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the Airport
-		Airport a = SystemData.getAirport(ctx.getParameter("airport"));
+		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
 		
@@ -53,7 +53,7 @@ public class FlightTimeStatsService extends WebService {
 		
 		// Create the JSONObject
 		JSONObject jo = new JSONObject();
-		jo.put("airport", a.getICAO());
+		jo.put("airport", JSONUtils.format(a));
 		for (ScheduleStatsEntry se : stats) {
 			JSONObject ho = new JSONObject();
 			ho.put("hour", se.getHour());
@@ -72,16 +72,12 @@ public class FlightTimeStatsService extends WebService {
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		return SC_OK;
 	}
 	
-	/**
-	 * Returns whether this web service requires authentication.
-	 * @return TRUE
-	 */
 	@Override
 	public boolean isSecure() {
 		return true;
