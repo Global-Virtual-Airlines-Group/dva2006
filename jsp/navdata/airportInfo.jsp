@@ -291,7 +291,7 @@ p.handle = function(rsp) {
 google.charts.setOnLoadCallback(function() { p.then(p.handle) });
 
 // Load async stats
-const sp = fetch('airportinfo.ws?id=${airport.ICAO}', {signal:AbortSignal.timeout(7500)});
+const sp = fetch('airportinfo.ws?id=${airport.ICAO}', {signal:AbortSignal.timeout(15500)});
 sp.then(function(rsp) {
 	if (!rsp.ok) return false;
 	rsp.json().then(function(js) {
