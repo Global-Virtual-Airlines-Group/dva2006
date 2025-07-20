@@ -1,4 +1,4 @@
-// Copyright 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.gvagroup.pool.*;
 /**
  * A JMX bean to export Connection Pool statistics.
  * @author Luke
- * @version 11.4
+ * @version 12.1
  * @since 10.2
  */
 
@@ -22,6 +22,8 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 	private Instant _lastUpdated;
 	
 	private long _reqs;
+	private long _prevReqs; 
+	
 	private int _size;
 	private int _maxBorrowTime;
 	private int _maxWaitTime;
@@ -73,11 +75,13 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 		Collection<ConnectionInfo> info = _pool.getPoolInfo();
 		info.stream().map(ConnectionMBeanImpl::new).forEach(_info::add);
 		_lastUpdated = Instant.now();
+		long reqs = _pool.getTotalRequests();
 		_size = (int) info.stream().filter(ConnectionInfo::getConnected).count();
-		_reqs = Math.max(0, _pool.getTotalRequests() - _reqs);
+		_reqs = reqs - _prevReqs;
 		_maxBorrowTime = (int) _pool.getMaxBorrowTime().toMillis();
 		_maxWaitTime = (int) _pool.getMaxWaitTime().toMillis();
 		_pool.resetMaxTimes();
+		_prevReqs = reqs;
 	}
 	
 	@Override
