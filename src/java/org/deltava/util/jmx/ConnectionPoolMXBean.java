@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import javax.management.MXBean;
 /**
  * An interface for JMX Beans that monitor a JDBC connection pool.
  * @author Luke
- * @version 10.3
+ * @version 12.1
  * @since 10.2
  */
 
@@ -26,6 +26,12 @@ public interface ConnectionPoolMXBean {
 	 * @return the number of connection pool requests
 	 */
 	public Long getRequests();
+	
+	/**
+	 * Returns the connection pool code.
+	 * @return the code
+	 */
+	public String getCode();
 	
 	/**
 	 * Returns the current size of the connection pool.

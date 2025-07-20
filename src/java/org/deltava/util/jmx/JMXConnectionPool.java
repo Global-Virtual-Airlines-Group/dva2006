@@ -45,6 +45,11 @@ public class JMXConnectionPool implements ConnectionPoolMXBean, JMXRefresh {
 	}
 	
 	@Override
+	public String getCode() {
+		return _code;
+	}
+	
+	@Override
 	public Long getRequests() {
 		return Long.valueOf(_reqs);
 	}
