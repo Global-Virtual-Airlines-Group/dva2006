@@ -17,13 +17,6 @@ golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 409
 golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
 golgotha.maps.setOpacity = function(e, tx) { e.style.opacity = tx; };
 
-golgotha.maps.util.unload = function() { 
-	for (m = golgotha.maps.instances.pop(); (m != null); m = golgotha.maps.instances.pop())
-		google.maps.event.clearListeners(m);
-
-	return true;
-};
-
 // Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
 golgotha.maps.util.Timer.prototype.start = function() {
