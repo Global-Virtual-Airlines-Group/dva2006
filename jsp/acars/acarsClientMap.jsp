@@ -50,7 +50,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload()">
+<body>
 <content:empty var="emptyList" />
 
 <!-- Main Body Frame -->

@@ -34,7 +34,7 @@ golgotha.local.validate = function(f) {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

@@ -46,7 +46,7 @@ golgotha.pilotMap.deleteMarker = function(id) {
 </script></content:filter>
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

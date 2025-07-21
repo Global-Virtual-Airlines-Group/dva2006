@@ -19,7 +19,7 @@
 <map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -80,7 +80,7 @@ for (var x = 1; x <= 5; x++) {
 // Hide unused answers
 for (var x = 1; x <= 5; x++) {
 	var rt = eval('f.route' + x + '.value');
-	var row = document.getElementById('choice' + x);
+	const row = document.getElementById('choice' + x);
 	if (x > (maxAnswer + 1))
 		row.style.display = 'none';
 	else
@@ -105,7 +105,7 @@ if (combo.selectedIndex == 0) {
 
 // Create updated map of parameters for route plotting
 const opt = combo.options[combo.selectedIndex];
-var wps = opt.value.split(' ');
+let wps = opt.value.split(' ');
 if (wps[0].indexOf('.') != -1) {
 	golgotha.form.setCombo(f.sid, wps[0]);
 	wps.splice(0, 1);
@@ -115,7 +115,7 @@ if (wps[wps.length -1].indexOf('.') != -1) {
 	wps.splice(wps.length - 1, 1); 
 }
 
-var params = getAJAXParams();
+let params = getAJAXParams();
 params['route'] = wps.join(' ');
 golgotha.routePlot.plotMap(params);
 return true;
@@ -123,7 +123,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.updateCorrect()" onunload="void golgotha.maps.util.unload()">
+<body onload="void golgotha.local.updateCorrect()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
