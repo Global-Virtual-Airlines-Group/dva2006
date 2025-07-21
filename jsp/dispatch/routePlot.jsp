@@ -56,7 +56,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.util.disable('RouteSaveButton')" onunload="void golgotha.maps.util.unload()">
+<body onload="void golgotha.util.disable('RouteSaveButton')">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

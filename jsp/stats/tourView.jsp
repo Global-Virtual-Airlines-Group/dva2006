@@ -26,7 +26,7 @@
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
-<body<c:if test="${hasMap}"> onunload="void golgotha.maps.util.unload()"</c:if>>
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
