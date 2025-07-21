@@ -22,11 +22,6 @@ golgotha.maps.util.isShape = function(o) { return (o) && golgotha.util.isFunctio
 golgotha.maps.util.isTiles = function(o) { return golgotha.maps.util.isShape(o) && (o.getType() == 'Tiles'); };
 golgotha.maps.util.terrain = {type:'raster-dem',tileSize:512,maxZoom:14,url:'mapbox://mapbox.mapbox-terrain-dem-v1'};
 
-golgotha.maps.util.unload = function() {
-	if (map) map.remove(); 
-	return true;
-};
-
 // Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
 golgotha.maps.util.Timer.prototype.start = function() {
