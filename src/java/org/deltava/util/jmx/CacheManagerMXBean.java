@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.jmx;
 
 import java.util.Date;
@@ -8,13 +8,19 @@ import javax.management.MXBean;
 /**
  * An interface for cache manager JMX Beans. 
  * @author Luke
- * @version 10.4
+ * @version 12.1
  * @since 10.2
  * @see org.deltava.util.cache.CacheManager
  */
 
 @MXBean
 public interface CacheManagerMXBean {
+	
+	/**
+	 * Returns the connection pool code.
+	 * @return the code
+	 */
+	public String getCode();
 	
 	/**
 	 * The last update time.
