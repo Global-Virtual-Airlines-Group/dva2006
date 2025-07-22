@@ -241,13 +241,19 @@ public class Bot {
     	
     		// Remove roles
     		Collection<Role> roles = RoleHelper.getManagedRoles();
-    		roles.forEach(usr::removeRole);
-    		log.info("Removed Discord roles {} from {} ({})", roles, p.getName(), p.getPilotCode());
+    		Collection<Role> usrRoles = usr.getRoles(_srv);
+    		for (Role r : roles) {
+    			usr.removeRole(r);
+    			if (usrRoles.contains(r))
+    				log.info("Removed Discord role {} from {} ({})", r.getName(), p.getName(), p.getPilotCode());
+    		}
     		
     		// Add new roles
     		roles = RoleHelper.calculateRoles(p);
-    		roles.forEach(usr::addRole);
-    		log.info("Added Discord roles {} to {} ({})", roles, p.getName(), p.getPilotCode());
+    		if (!roles.isEmpty()) {
+    			roles.forEach(usr::addRole);
+    			log.info("Added Discord roles {} to {} ({})", roles, p.getName(), p.getPilotCode());
+    		}
     	} catch (ExecutionException ee) {
     		log.atError().withThrowable(ee).log(ee.getMessage());
     		NewRelic.noticeError(ee, false);
