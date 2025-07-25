@@ -100,21 +100,23 @@ public class NATDownloadTask extends Task {
 				oTracks.add(ot);
 			}
 			
-			// Start a transaction
-			ctx.startTX();
-			
 			// Write the route data to the database
+			ctx.startTX();
 			SetOceanic wdao = new SetOceanic(con);
 			wdao.write(or);
-			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
-				wdao.write(i.next());
+			for (OceanicTrack ot : oTracks)
+				wdao.write(ot);
 			
 			ctx.commitTX();
-		} catch (URISyntaxException se) {
-			log.atError().withThrowable(se).log("Error downloading NAT Tracks - {}", se.getMessage());
+		} catch (HTTPDAOException | URISyntaxException ge) {
+			boolean noStack = (ge instanceof HTTPDAOException hde) && !hde.getLogStackDump();
+			if (!noStack)
+				log.atError().withThrowable(ge).log("Error downloading Tracks - {}", ge.getMessage());
+			else
+				log.error("Error downloading Tracks - {}", ge.getMessage());
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.atError().withThrowable(de).log("Error saving NAT Data - {}", de.getMessage());
+			log.atError().withThrowable(de).log("Error saving Data - {}", de.getMessage());
 		} finally {
 			ctx.release();
 		}

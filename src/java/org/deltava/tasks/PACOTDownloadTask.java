@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 11.6
+ * @version 12.1
  * @since 1.0
  */
 
@@ -32,9 +32,6 @@ public class PACOTDownloadTask extends Task {
 		super("PACOT Download", PACOTDownloadTask.class);
 	}
 
-	/**
-	 * Executes the task.
-	 */
 	@Override
 	protected void execute(TaskContext ctx) {
 		try {
@@ -100,22 +97,23 @@ public class PACOTDownloadTask extends Task {
 				oTracks.add(ot);
 			}
 
-			// Start a transaction
-			ctx.startTX();
-			
 			// Write the route data to the database
+			ctx.startTX();
 			SetOceanic wdao = new SetOceanic(con);
 			wdao.write(or);
-			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
-				wdao.write(i.next());
+			for (OceanicTrack ot : oTracks)
+				wdao.write(ot);
 			
 			ctx.commitTX();
-			
-		} catch (URISyntaxException se) {
-			log.atError().withThrowable(se).log("Error downloading PACOT Tracks - {}", se.getMessage());
+		} catch (HTTPDAOException | URISyntaxException ge) {
+			boolean noStack = (ge instanceof HTTPDAOException hde) && !hde.getLogStackDump();
+			if (!noStack)
+				log.atError().withThrowable(ge).log("Error downloading Tracks - {}", ge.getMessage());
+			else
+				log.error("Error downloading Tracks - {}", ge.getMessage());
 		} catch (Exception e) {
 			ctx.rollbackTX();
-			log.atError().withThrowable(e).log("Error saving PACOT Data - {}", e.getMessage());
+			log.atError().withThrowable(e).log("Error saving Data - {}", e.getMessage());
 		} finally {
 			ctx.release();
 		}
