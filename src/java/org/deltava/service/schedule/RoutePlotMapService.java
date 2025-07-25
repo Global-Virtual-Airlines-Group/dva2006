@@ -1,9 +1,9 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.io.IOException;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -47,10 +47,8 @@ public class RoutePlotMapService extends MapPlotService {
 		JSONObject req = null;
 		try {
 			req = new JSONObject(new JSONTokener(ctx.getRequest().getInputStream()));
-		} catch (IOException ie) {
-			throw error(SC_BAD_REQUEST, ie.getMessage(), false);
 		} catch (Exception e) {
-			throw error(SC_BAD_REQUEST, e.getMessage());
+			throw error(SC_BAD_REQUEST, e.getMessage(), !(e instanceof EOFException));
 		}
 		
 		// Check if we download runways
