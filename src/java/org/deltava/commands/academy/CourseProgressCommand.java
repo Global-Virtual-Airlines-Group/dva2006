@@ -1,7 +1,6 @@
-// Copyright 2006, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
-import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -15,7 +14,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to track Flight Academy course progress.
  * @author Luke
- * @version 10.2
+ * @version 12.1
  * @since 1.0
  */
 
@@ -46,17 +45,14 @@ public class CourseProgressCommand extends AbstractCommand {
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			if (!access.getCanUpdateProgress())
-				throw securityException("Cannot update progress");
+				throw securityException("Cannot update Progress for Course #" + c.getID());
 			
 			// Start a transaction
 			ctx.startTX();
 			
-			// Loop through the progress entries
+			// Loop through the progress entries and update status
 			SetAcademy wdao = new SetAcademy(con);
-			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
-				CourseProgress cp = i.next();
-			
-				// Get the status
+			for (CourseProgress cp : c.getProgress()) {
 				boolean isComplete = Boolean.parseBoolean(ctx.getParameter("progress" + cp.getID()));
 				if (isComplete != cp.getComplete()) {
 					cp.setAuthorID(ctx.getUser().getID());
@@ -66,7 +62,6 @@ public class CourseProgressCommand extends AbstractCommand {
 				}
 			}
 			
-			// Commit transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
