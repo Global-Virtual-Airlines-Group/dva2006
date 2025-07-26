@@ -1,8 +1,8 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.List;
+import java.util.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve ACARS altenrate airport statistics.
  * @author Luke
- * @version 10.2
+ * @version 12.1
  * @since 10.2
  */
 
@@ -49,6 +49,7 @@ public class GetACARSAlternate extends DAO {
 					results.add(SystemData.getAirport(rs.getString(1)));
 			}
 			
+			results.removeIf(Objects::isNull);
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
