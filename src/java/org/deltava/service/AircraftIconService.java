@@ -17,7 +17,7 @@ import org.deltava.util.tile.Palette;
 /**
  * A Web Service to generate custom aircraft icons. 
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 12.0
  */
 
@@ -56,7 +56,7 @@ public class AircraftIconService extends WebService {
 			} else if (Character.isDigit(color.charAt(0)))
 				c = Integer.parseInt(color) & 0xFFFFFF;
 			else
-				c = getColor(color).getRGB();
+				c = getColor(color).getRGB() & 0xFFFFFF;
 		} catch (Exception e) {
 			return SC_BAD_REQUEST;
 		}
@@ -79,6 +79,7 @@ public class AircraftIconService extends WebService {
 				// Shrink the palette
 				Palette p = new Palette(img, 256);
 				p.setTransparent(TX);
+				p.add(new Color(c));
 				BufferedImage outImg = p.translate(img, true, true);
 
 				// Convert to PNG
