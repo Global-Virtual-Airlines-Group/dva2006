@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 11.5
+ * @version 12.1
  * @since 9.2
  */
 
@@ -45,8 +45,6 @@ public class EliteScoringTask extends Task {
 		
 		// Determine lookback interval
 		int daysBack = Math.max(31, LocalDate.now().get(ChronoField.DAY_OF_YEAR));
-		log.info("Scoring flights approved in the past {} days", Integer.valueOf(daysBack));
-		
 		Collection<Integer> pilotIDs = new HashSet<Integer>();
 		try {
 			Connection con = ctx.getConnection();
@@ -69,7 +67,7 @@ public class EliteScoringTask extends Task {
 			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
 			frsdao.setDayFilter(daysBack);
 			Collection<Integer> IDs = frsdao.getUnscoredFlights();
-			log.warn("Scoring {} flights", Integer.valueOf(IDs.size()));
+			log.warn("{} scoring {} flights approved in the past {} days", SystemData.get("airline.code"), Integer.valueOf(IDs.size()), Integer.valueOf(daysBack));
 			
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
