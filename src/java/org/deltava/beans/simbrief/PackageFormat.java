@@ -1,10 +1,10 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 /**
  * An enumeration of SimBrief package formats.
  * @author Luke
- * @version 10.4
+ * @version 12.1
  * @since 10.3
  */
 
@@ -50,5 +50,19 @@ public enum PackageFormat implements org.deltava.beans.EnumDescription {
 		}
 		
 		return defaultValue; 
+	}
+	
+	/**
+	 * Returns the preferred package format for a particular Airline.
+	 * @param aCode the Airline code
+	 * @return a PackageFormat
+	 */
+	public static PackageFormat getType(String aCode) {
+		return switch (aCode) { 
+			case "DAL" -> DAL;
+			case "AFR" -> AFR2017;
+			case "KLM" -> KLM;
+			default -> LIDO;
+		};
 	}
 }

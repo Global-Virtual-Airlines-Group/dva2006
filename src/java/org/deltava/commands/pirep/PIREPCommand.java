@@ -22,6 +22,7 @@ import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
 import org.deltava.beans.simbrief.BriefingPackage;
+import org.deltava.beans.simbrief.PackageFormat;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.*;
@@ -40,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 1.0
  */
 
@@ -530,6 +531,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						zdt = zdt.plusDays(1);
 				}
 				
+				ctx.setAttribute("pkgType", PackageFormat.getType(fr.getAirline().getICAO()), REQUEST);
 				ctx.setAttribute("departureTime", zdt, REQUEST);
 				ctx.setAttribute("departureTimeUTC", ZonedDateTime.ofInstant(zdt.toInstant(), ZoneOffset.UTC), REQUEST);
 			}
