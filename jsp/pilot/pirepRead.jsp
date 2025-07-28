@@ -376,7 +376,7 @@ table.form td.eliteStatus {
 </tr>
 <tr class="sbData">
  <td class="label">Package Format</td>
- <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="DAL" /> - Weight unit: <el:check type="radio" cols="2" name="sbWeightUnit" options="${weightUnits}" value="${pilot.weightType}" /></td>
+ <td class="data"><el:combo name="sbFormat" size="1" options="${sbFmts}" value="${pkgType}" /> - Weight unit: <el:check type="radio" cols="2" name="sbWeightUnit" options="${weightUnits}" value="${pilot.weightType}" /></td>
 </tr>
 <tr id="sbTailCode" class="sbData" style="display:none;">
  <td class="label">Tail Code</td>
