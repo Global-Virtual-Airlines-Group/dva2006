@@ -23,7 +23,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to display TWC weather tile data.
  * @author Luke
- * @version 11.6
+ * @version 12.1
  * @since 8.0
  */
 
@@ -93,6 +93,8 @@ public class SeriesListService extends WebService {
 			if (sl == null) {
 				try {
 					sl = _f.get(16, TimeUnit.SECONDS);
+				} catch (TimeoutException te) {
+					throw error(SC_GATEWAY_TIMEOUT, te.getMessage(), false);
 				} catch (Exception e) {
 					throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 				}
