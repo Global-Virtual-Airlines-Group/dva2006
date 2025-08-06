@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2014, 2016, 2017, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Message Threads in a Water Cooler channel.
  * @author Luke
- * @version 8.7
+ * @version 12.1
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 
 		// Get/set start/count parameters and channel name
 		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
-		String cName = (String) ctx.getCmdParameter(ID, "General Discussion");
+		String cName = String.valueOf(ctx.getCmdParameter(ID, "General Discussion"));
 		try {
 			Connection con = ctx.getConnection();
 
