@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a link to the Mapbox JS API. 
  * @author Luke
- * @version 12.0
+ * @version 12.1
  * @since 12.0
  */
 
@@ -30,15 +30,17 @@ public class InsertAPITag extends TagSupport {
 	static final String API_JS_NAME = "$mapboxAPI$";
 	static final String API_VER_ATTR_NAME = "$mapBoxAPIVersion$";
 	
-	private int _majorVersion = MAJOR;
 	private final Collection<String> _jsOnLoad = new LinkedHashSet<String>();
+	
+	private int _major = MAJOR;
+	private int _minor;
 	
 	/**
 	 * Sets the Google API version to pull down.
 	 * @param ver the API major version
 	 */
 	public void setVersion(int ver) {
-		_majorVersion = ver;
+		_major = ver;
 	}
 	
 	/**
@@ -47,6 +49,12 @@ public class InsertAPITag extends TagSupport {
 	 */
 	public void setJs(String jsList) {
 		_jsOnLoad.addAll(StringUtils.split(jsList, ","));
+	}
+	
+	@Override
+	public int doStartTag() throws JspException {
+		_minor = SystemData.getInt("config.mapbox.v" + _major, 12);
+		return SKIP_BODY;
 	}
 
 	@Override
@@ -57,19 +65,24 @@ public class InsertAPITag extends TagSupport {
 			return EVAL_PAGE;
 		
 		// Build the Map context object
-		String jsFileName = "mapBoxV" + String.valueOf(_majorVersion);
+		String jsFileName = "mapBoxV" + String.valueOf(_major);
 		JSONObject mco = new JSONObject();
 		mco.put("IMG_PATH", SystemData.get("path.img"));
-		mco.put("API", _majorVersion);
+		mco.put("API", _major);
 		mco.put("async", false);
 		mco.put("type", "mapbox");
 		mco.put("util", new JSONObject());
 		mco.put("wx", new JSONObject());
 		mco.put("seriesData", Collections.emptyMap());
 		
+		// Build base URL
+		String baseURL = String.format("https://api.mapbox.com/mapbox-gl-js/v%d.%d.0/mapbox-gl", Integer.valueOf(_major), Integer.valueOf(_minor));
+		String jsURL = baseURL + ".js";
+		String cssURL = baseURL + ".css";
+		
 		// Insert the API version
 		pageContext.setAttribute("$mapType", MapType.MAPBOX);
-		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
+		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_major), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
 			
@@ -80,8 +93,8 @@ public class InsertAPITag extends TagSupport {
 			out.println(";</script>");
 			
 			// Load the Mapbox CSS and JS
-			out.println("<link href=\"https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css\" rel=\"stylesheet\">");
-			out.println("<script src=\"https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js\"></script>");
+			out.println(String.format("<link href=\"%s\" rel=\"stylesheet\">", cssURL));
+			out.println(String.format("<script src=\"%s\"></script>", jsURL));
 			
 			// Load the Mapbox library 
 			out.print("<script src=\"/");
@@ -101,6 +114,8 @@ public class InsertAPITag extends TagSupport {
 		ContentHelper.addContent(pageContext, "JS", API_JS_NAME);
 		ContentHelper.addContent(pageContext, "CSS", API_JS_NAME);
 		ContentHelper.addContent(pageContext, "JS", jsFileName);
+		ContentHelper.pushContent(pageContext, cssURL, "style");
+		ContentHelper.pushContent(pageContext, jsURL, "script");
 		ContentHelper.addCSP(pageContext, ContentSecurity.CONNECT, "*.tiles.mapbox.com", "api.mapbox.com", "events.mapbox.com");
 		ContentHelper.addCSP(pageContext, ContentSecurity.WORKER, "blob:");
 		ContentHelper.addCSP(pageContext, ContentSecurity.SCRIPT, "api.mapbox.com", "'unsafe-eval'");
