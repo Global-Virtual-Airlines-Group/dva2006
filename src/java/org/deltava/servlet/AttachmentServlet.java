@@ -1,4 +1,4 @@
-// Copyright 2017, 2020, 2021, 2023, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2020, 2021, 2023, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -28,7 +28,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet to download file attachments.
  * @author Luke
- * @version 11.3
+ * @version 12.1
  * @since 7.3
  */
 
@@ -207,7 +207,7 @@ public class AttachmentServlet extends DownloadServlet {
 				buffer = eb.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
 				rsp.setContentType(eb.getContentType());
-				rsp.setHeader("Content-disposition", String.format("attachment; filename=EventBriefing_%s.%s", e.getName().replace(' ', '_'), eb.getExtension()));
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=EventBriefing_%s.%s", StringUtils.stripUnicode(e.getName()).replace(' ', '_'), eb.getExtension()));
 				break;
 				
 			case TOUR:
@@ -226,7 +226,7 @@ public class AttachmentServlet extends DownloadServlet {
 				buffer = t.getBuffer();
 				rsp.setIntHeader("max-age", 3600);
 				rsp.setContentType(t.getContentType());
-				rsp.setHeader("Content-disposition", String.format("attachment; filename=TourBriefing_%s.%s", t.getName().replace(' ', '_'), t.getExtension()));
+				rsp.setHeader("Content-disposition", String.format("attachment; filename=TourBriefing_%s.%s", StringUtils.stripUnicode(t.getName()).replace(' ', '_'), t.getExtension()));
 				break;
 				
 			default:
