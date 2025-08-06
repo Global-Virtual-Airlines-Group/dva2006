@@ -69,6 +69,7 @@ public class InsertAPITag extends TagSupport {
 		JSONObject mco = new JSONObject();
 		mco.put("IMG_PATH", SystemData.get("path.img"));
 		mco.put("API", _major);
+		mco.put("minor", _minor);
 		mco.put("async", false);
 		mco.put("type", "mapbox");
 		mco.put("util", new JSONObject());
