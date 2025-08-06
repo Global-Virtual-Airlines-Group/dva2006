@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 10.3
+ * @version 12.1
  * @since 1.0
  */
 
@@ -466,6 +466,23 @@ public final class StringUtils {
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
 		return (s == null) ? null : s.stream().filter(e -> !isEmpty(e)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Strips non-ASCII characters from a Unicode String.  
+	 * @param s the String
+	 * @return the filtered String
+	 */
+	public static String stripUnicode(String s) {
+		if (s == null) return null;
+		StringBuilder buf = new StringBuilder(s.length());
+		for (int x = 0; x < s.length(); x++) {
+			int c = s.codePointAt(x);
+			if (c <= 0xFF)
+				buf.appendCodePoint(c);
+		}
+
+		return buf.toString();
 	}
 	
 	/**
