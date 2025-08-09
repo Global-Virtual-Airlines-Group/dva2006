@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import org.apache.logging.log4j.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 11.3
+ * @version 12.1
  * @since 11.0
  */
 
@@ -84,7 +84,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     					break;
     				
     				case "status":
-    					log.info("Registration status request [ Name = {}, UUID = {}, Server = {} ]", u.getName(), Long.toHexString(u.getId()), srv);
+    					log.info("Registration status request [ Name = {}, UUID = {}, Server = {} ]", u.getName(), Long.toHexString(u.getId()), Long.valueOf(srv.getId()));
     					p = Bot.getPilot(u.getIdAsString());				
     					u.sendMessage(EmbedGenerator.createStatus(e, p, u.getRoles(srv)));				
     					break;
@@ -94,7 +94,7 @@ public class MessageReceivedListener implements MessageCreateListener {
     					break;
     				
     				default:
-    					log.warn("Unknown Discord command - %s", cmdName);
+    					log.warn("Unknown Discord command - {}", cmdName);
     					u.sendMessage(EmbedGenerator.welcome(e));
     				}
     				
@@ -106,7 +106,6 @@ public class MessageReceivedListener implements MessageCreateListener {
     		// Check content
     		FilterResults fr = Bot.getFilter().search(msg);
     		if (!fr.isOK()) {
-    			log.warn("Bot = {}, {}, {}", Boolean.valueOf(e.getMessageAuthor().isBotOwner()), Boolean.valueOf(e.getMessageAuthor().isBotUser()), Boolean.valueOf(isBot));
     			log.warn("Content warning from {} - {} [{}]", e.getMessageAuthor().getDisplayName(), msg, fr.getFlaggedResults());
     			Bot.send(ChannelName.MOD_ALERTS, EmbedGenerator.createWarning(e, fr.getFlaggedResults()));
     		}
