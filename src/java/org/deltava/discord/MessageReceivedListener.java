@@ -141,23 +141,16 @@ public class MessageReceivedListener implements MessageCreateListener {
         	return;
         }
         
-        // Set the nickname and roles
-        String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
+        // Set roles
         Collection<Role> roles = RoleHelper.calculateRoles(p);
         IntervalTaskTimer tt = new IntervalTaskTimer();
         CompletableFuture<?>[] fs = roles.stream().map(msgAuth::addRole).collect(Collectors.toList()).toArray(new CompletableFuture[roles.size()]);
         CompletableFuture.allOf(fs).join();
         tt.mark("roles");
         
-        // Unable to do nicknames longer than 32 chars
-        if (nickname.length() <= 32) {
-        	msgAuth.updateNickname(srv, nickname).join();
-        	tt.mark("nickname");
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNick(e, p, roles, nickname));
-    	} else {
-    		log.warn("Cannot set nickname {} to {} ({})", nickname, msgAuth.getDisplayName(srv), Integer.valueOf(nickname.length()));
-        	Bot.send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(e, p, roles));
-    	}
+        // Set nickname
+        Bot.assignNickname(p, roles);
+       	tt.mark("nickname");
         
         // Everything went well
         long ms = tt.stop();

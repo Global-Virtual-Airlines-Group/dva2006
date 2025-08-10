@@ -1,16 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.apache.logging.log4j.*;
-
-import java.util.concurrent.Future;
 
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 11.1
+ * @version 12.1
  * @since 1.0
  */
 
@@ -30,6 +29,15 @@ public class ThreadUtils {
 	 */
 	public static boolean isAlive(Thread t) {
 		return ((t != null) && t.isAlive());
+	}
+
+	/**
+	 * A null-safe way to determine if a Future is still executing.
+	 * @param f the FUture
+	 * @return TRUE if the Future is still Active, otherwise FALSE
+	 */
+	public static boolean isAlive(Future<?> f) {
+		return (f != null) && (f.state() == Future.State.RUNNING);
 	}
 
 	/**
@@ -87,6 +95,35 @@ public class ThreadUtils {
 		while (isAlive(t) && (timeElapsed < maxTime)) {
 			sleep(150);
 			timeElapsed += 150;
+		}
+	}
+	
+	/**
+	 * Waits up to a certain period of time for a Future to complete.
+	 * @param f the Future
+	 * @param maxTime the maximum time in milliseconds
+	 */
+	public static void waitFor(Future<?> f, long maxTime) {
+		if (f.state() != Future.State.RUNNING) return;
+		if (f instanceof CompletableFuture cf) {
+			try {
+				cf.get(maxTime, TimeUnit.MILLISECONDS);
+			} catch (TimeoutException te) {
+				log.warn("Timed out ({}ms) waiting for {}", Long.valueOf(maxTime), cf);
+			} catch (ExecutionException ee) {
+				log.atError().withThrowable(ee.getCause()).log("Execution Error - {}", ee.getMessage());
+			} catch (InterruptedException ie) {
+				log.warn("Interrupted waiting for {}", cf);
+			}
+		} else {
+			int timeElapsed = 0;
+			while (isAlive(f) && (timeElapsed < maxTime)) {
+				sleep(125);
+				timeElapsed += 125;
+			}
+			
+			if (timeElapsed >= maxTime)
+				log.warn("Timed out waiting for {} - ({} ms)", f, Long.valueOf(maxTime));
 		}
 	}
 	

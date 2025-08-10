@@ -27,13 +27,13 @@ import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.TaskTimer;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.pool.*;
 
 /**
- * The Discord Bot.
+ * The Discord Bot. This has a number of static methods that serve as the entry point to Discord operations from other code.
  * @author danielw
  * @author luke
  * @version 12.1
@@ -283,6 +283,38 @@ public class Bot {
         }
 
     	return p;
+    }
+    
+    /**
+     * Assigns a nikcname to a Pilot. This is called on registration or when a Pilot's Pilot ID is first assigned. 
+     * @param p the Pilot
+     * @param roles the Discord user Roles
+     */
+    public static void assignNickname(Pilot p, Collection<Role> roles) {
+    	String discordID = p.getExternalID(ExternalID.DISCORD);
+    	if (discordID == null) return;
+    	
+    	String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
+    	Optional<User> ou = _srv.getMemberById(discordID);
+    	if (ou.isEmpty()) {
+    		log.warn("Cannot find Discord UJser {}", discordID);
+    		return;
+    	}
+    	
+    	// Load roles if not looked up already
+    	User u = ou.get();
+    	if (roles.isEmpty())
+    		roles.addAll(u.getRoles(_srv));
+    	
+        // Unable to do nicknames longer than 32 chars
+        if (nickname.length() <= 32) {
+        	CompletableFuture<Void> f = u.updateNickname(_srv, nickname);
+        	send(ChannelName.ALERTS, EmbedGenerator.createNick(u.getDisplayName(_srv), p, roles, nickname));
+        	ThreadUtils.waitFor(f, 500);
+    	} else {
+    		log.warn("Cannot set nickname {} to {} ({})", nickname, u.getDisplayName(_srv), Integer.valueOf(nickname.length()));
+        	send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(u.getDisplayName(_srv), p, roles));
+    	}
     }
  
     /**

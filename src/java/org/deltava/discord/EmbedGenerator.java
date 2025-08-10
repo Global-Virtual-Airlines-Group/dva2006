@@ -91,20 +91,20 @@ class EmbedGenerator {
     
     /**
 	 * Generates a nickname message.
-	 * @param e the MessageCreateEvent
+	 * @param userName the Dicsord User name
 	 * @param p the Pilot
 	 * @param roles the Discord security Roles
 	 * @param nickName the nickname 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createNick(MessageCreateEvent e, Pilot p, Collection<Role> roles, String nickName) {
+    static EmbedBuilder createNick(String userName, Pilot p, Collection<Role> roles, String nickName) {
     	EmbedBuilder eb = new EmbedBuilder()
     		.setColor(new Color(1, 0, 161))
    			.setFooter("Nickname Assignment")
             .setTitle(":exclamation: Nickname Assigned")
             .setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
             .setDescription(Bot.findRole("administrator").getMentionTag() + " I've assigned a nickname to the following member.")
-            .addInlineField("User", e.getMessageAuthor().getDisplayName())
+            .addInlineField("User", userName)
             .addInlineField("Name", nickName)
             .setTimestampToNow();
     	
@@ -144,12 +144,12 @@ class EmbedGenerator {
     
     /**
 	 * Generates an embedded nickname error message.
-	 * @param e the MessageCreateEvent
+	 * @param userName the Discord User name
 	 * @param p the Pilot
 	 * @param roles the Discord security Roles 
 	 * @return an EmbedBuilder
 	 */
-    static EmbedBuilder createNicknameError(MessageCreateEvent e, Pilot p, Collection<Role> roles) {
+    static EmbedBuilder createNicknameError(String userName, Pilot p, Collection<Role> roles) {
     	String code = SystemData.get("airline.code");
     	EmbedBuilder eb = new EmbedBuilder()
     		.setColor(Color.RED)
@@ -157,7 +157,7 @@ class EmbedGenerator {
     		.setFooter("User Creation Error")
     		.setTimestampToNow()
     		.setDescription(String.format("%s I ran into an error when attempting to assign a nickname to the following user. Please have an administrator update the user's nickname by hand in accordance with %s policy.", Bot.findRole("administrator").getMentionTag(), code))
-    		.addInlineField("User", e.getMessageAuthor().getDiscriminatedName())
+    		.addInlineField("User", userName)
     		.addInlineField("Name", p.getName())
     		.addInlineField("Pilot ID", p.getPilotCode());
     	
