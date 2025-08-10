@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 11.5
+ * @version 12.1
  * @since 5.1
  */
 
@@ -29,16 +29,17 @@ public class FlightScorer {
 	 * Does the actual landing scoring.
 	 */
 	private static Tuple<FlightScore, String> score(int fpm, RunwayLengthUsage rl) {
+		int rwyPercent = (rl.getDistance() * 100 / rl.getLength());
 		if (fpm < -600)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
 		if (rl.getDistance() < 100)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to threshold - %d feet/min", Integer.valueOf(rl.getDistance())));
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to threshold - %d feet", Integer.valueOf(rl.getDistance())));
 		if (rl.getLength() - rl.getDistance() < 1500)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to threshold - %d feet/min", Integer.valueOf(rl.getLength() - rl.getDistance())));
+			return Tuple.create(FlightScore.DANGEROUS, String.format("Too close to runway end - %d feet", Integer.valueOf(rl.getLength() - rl.getDistance())));
+		if ((fpm < -375) || (fpm > -125) || ((rl.getDistance() > 1950) && (rwyPercent > 29)) || (rl.getDistance() < 600))
+			return Tuple.create(FlightScore.ACCEPTABLE, String.format("Sink rate %d feet/min, Runway usage %d feet (%d%%)", Integer.valueOf(fpm), Integer.valueOf(rl.getDistance()), Integer.valueOf(rwyPercent)));
 		if (rl.getDistance() > 2250)
-			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive touchdown runway usage - %d feet", Integer.valueOf(rl.getDistance())));
-		if ((fpm < -375) || (fpm > -125) || (rl.getDistance() > 1900) || (rl.getDistance() < 600))
-			return Tuple.create(FlightScore.ACCEPTABLE, String.format("Sink rate %d feet/min, Runway usage %d feet", Integer.valueOf(fpm), Integer.valueOf(rl.getDistance())));
+			return Tuple.create((rwyPercent > 29) ? FlightScore.DANGEROUS : FlightScore.ACCEPTABLE, String.format("Excessive touchdown runway usage - %d feet (%d%%)", Integer.valueOf(rl.getDistance()), Integer.valueOf(rwyPercent)));
 
 		return Tuple.create(FlightScore.OPTIMAL, null);
 	}
@@ -49,9 +50,7 @@ public class FlightScorer {
 	 * @return a FlightScore
 	 */
 	public static FlightScore score(TouchdownData td) {
-		if ((td.getVSpeed() == 0) || (td.getDistance() == 0))
-			return FlightScore.INCOMPLETE;
-		
+		if ((td.getVSpeed() == 0) || (td.getDistance() == 0)) return FlightScore.INCOMPLETE;
 		return score(td.getVSpeed(), td).getLeft();
 	}
 	
