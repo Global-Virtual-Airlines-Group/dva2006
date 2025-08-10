@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
+import org.deltava.discord.Bot;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.PIREPAccessControl;
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 11.2
+ * @version 12.1
  * @since 1.0
  */
 
@@ -315,6 +315,17 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription(String.format("Assigned Pilot ID %s", p.getPilotCode()));
 				upds.add(upd);
+				
+				// Update Discord nickname if already registered 
+				String discordID = p.getExternalID(ExternalID.DISCORD);
+				if (SystemData.getBoolean("discord.enabled") && (discordID != null)) {
+					Bot.assignNickname(p, Collections.emptyList());
+				
+					StatusUpdate upd2 = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
+					upd2.setAuthorID(ctx.getUser().getID());
+					upd2.setDescription(String.format("Assigned Discord Nickname %s", p.getPilotCode()));
+					upds.add(upd2);
+				}
 			}
 
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
