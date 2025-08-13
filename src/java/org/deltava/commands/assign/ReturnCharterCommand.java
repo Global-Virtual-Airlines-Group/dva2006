@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 5.2
  */
 
@@ -151,7 +151,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			fr.setDatabaseID(DatabaseID.DISPOSAL, ctx.getUser().getID());
 			fr.setRank(p.getRank());
 			fr.setDate(info.getAssignDate());
-			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
+			fr.setAttribute(Attribute.CHARTER, true);
 			
 			// Start the transaction
 			ctx.startTX();

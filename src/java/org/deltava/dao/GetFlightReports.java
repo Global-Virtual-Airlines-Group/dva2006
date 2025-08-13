@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 11.5
+ * @version 12.2
  * @since 1.0
  */
 
@@ -166,9 +166,9 @@ public class GetFlightReports extends DAO {
 			int param = 0;
 			ps.setInt(++param, EquipmentType.Rating.PRIMARY.ordinal());
 			ps.setInt(++param, FlightStatus.SUBMITTED.ordinal());
-			ps.setInt(++param, FlightReport.ATTR_CHECKRIDE);
+			ps.setInt(++param, Attribute.CHECKRIDE.getValue());
 			if (!includeAcademy)
-				ps.setInt(++param, FlightReport.ATTR_ACADEMY);
+				ps.setInt(++param, Attribute.ACADEMY.getValue());
 			if (eqType != null)
 				ps.setString(++param, eqType);
 
@@ -253,10 +253,10 @@ public class GetFlightReports extends DAO {
 		
 		// Calculate the attribute to use
 		int attr = switch (net) {
-			case VATSIM -> FlightReport.ATTR_VATSIM;
-			case IVAO -> FlightReport.ATTR_IVAO;
-			case POSCON -> FlightReport.ATTR_POSCON;
-			case PILOTEDGE -> FlightReport.ATTR_PEDGE;
+			case VATSIM -> Attribute.VATSIM.getValue();
+			case IVAO -> Attribute.IVAO.getValue();
+			case POSCON -> Attribute.POSCON.getValue();
+			case PILOTEDGE -> Attribute.PEDGE.getValue();
 			default-> 0;
 		};
 
@@ -471,10 +471,10 @@ public class GetFlightReports extends DAO {
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setFetchSize(2000);
-			ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
-			ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-			ps.setInt(3, FlightReport.ATTR_ACARS);
-			ps.setInt(4, FlightReport.ATTR_ACARS);
+			ps.setInt(1, Attribute.ONLINE_MASK);
+			ps.setInt(2, Attribute.ONLINE_MASK);
+			ps.setInt(3, Attribute.ACARS.getValue());
+			ps.setInt(4, Attribute.ACARS.getValue());
 			ps.setInt(5, FlightStatus.OK.ordinal());
 
 			// Execute the query
@@ -594,7 +594,7 @@ public class GetFlightReports extends DAO {
 			ps.setString(2, a.getIATA());
 			ps.setInt(3, FlightStatus.HOLD.ordinal());
 			ps.setInt(4, FlightStatus.SUBMITTED.ordinal());
-			ps.setInt(5, FlightReport.ATTR_DIVERT);
+			ps.setInt(5, Attribute.DIVERT.getValue());
 			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -659,8 +659,8 @@ public class GetFlightReports extends DAO {
 				FlightStatus status = FlightStatus.values()[rs.getInt(4)];
 				int attr = rs.getInt(13);
 				boolean isACARS = (hasACARS && (rs.getInt(27) != 0));
-				boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
-				boolean isSimFDR = isACARS && ((attr & FlightReport.ATTR_SIMFDR) != 0);
+				boolean isXACARS = isACARS && Attribute.XACARS.in(attr); 
+				boolean isSimFDR = isACARS && Attribute.SIMFDR.in(attr); 
 				boolean isDraft = (hasSchedTimes && (status == FlightStatus.DRAFT));
 
 				// Build the PIREP as a standard one, or an ACARS pirep
@@ -724,7 +724,7 @@ public class GetFlightReports extends DAO {
 				// Load generic ACARS pirep data
 				if (isACARS || isXACARS) {
 					FDRFlightReport ap = (FDRFlightReport) p;
-					ap.setAttribute(FlightReport.ATTR_ACARS, true);
+					ap.setAttribute(Attribute.ACARS, true);
 					ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(28));
 					ap.setStartTime(toInstant(rs.getTimestamp(29)));
 					ap.setStartLocation(new GeoPosition(rs.getDouble(30), rs.getDouble(31), 0));

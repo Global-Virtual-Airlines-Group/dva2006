@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 11.5
+ * @version 12.2
  * @since 1.0
  */
 
@@ -170,7 +170,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				GetRawSchedule rsdao = new GetRawSchedule(con);
 				schdao.setSources(rsdao.getSources(true, ctx.getDB()));
 				int outFlightCount = schdao.getFlights(lastFlight.getAirportA()).size();
-				boolean rCharter = ((outFlightCount == 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
+				boolean rCharter = ((outFlightCount == 0) && !lastFlight.hasAttribute(Attribute.ROUTEWARN)); 
 				ctx.setAttribute("needReturnCharter", Boolean.valueOf(rCharter), REQUEST);
 			}
 			

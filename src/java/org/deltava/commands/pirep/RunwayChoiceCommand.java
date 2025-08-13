@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display runway calculation data.
  * @author Luke
- * @version 10.0
+ * @version 12.2
  * @since 4.2
  */
 
@@ -33,7 +33,7 @@ public class RunwayChoiceCommand extends AbstractCommand {
 			FlightReport fr = prdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report ID - " + ctx.getID());
-			else if (!fr.hasAttribute(FlightReport.ATTR_ACARS))
+			else if (!fr.hasAttribute(Attribute.ACARS))
 				throw notFoundException("Non-ACARS Flight Report - " + ctx.getID());
 			
 			// Convert the flight report

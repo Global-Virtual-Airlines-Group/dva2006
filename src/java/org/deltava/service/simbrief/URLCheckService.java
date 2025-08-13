@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for a generated SimBrief flight plan.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 10.3
  */
 
@@ -64,13 +64,13 @@ public class URLCheckService extends WebService {
 			
 			// Check/log if package created
 			boolean initialSB = false;
-			if (!dfr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
+			if (!dfr.hasAttribute(Attribute.SIMBRIEF)) {
 				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.DISPATCH, "Added SimBrief briefing package");
 				initialSB = true;
 			}
 			
 			// Update route
-			dfr.setAttribute(FlightReport.ATTR_SIMBRIEF, true);
+			dfr.setAttribute(Attribute.SIMBRIEF, true);
 			if (!sbdata.getRoute().equalsIgnoreCase(dfr.getRoute())) {
 				dfr.setRoute(sbdata.getRoute());
 				if (!initialSB)

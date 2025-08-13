@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 12.0
+ * @version 12.2
  * @since 11.0
  */
 
@@ -41,7 +41,7 @@ public class SkyMilesScorer extends EliteScorer {
 	@Override
 	public void add(FlightReport fr) {
 		super.add(fr);
-		if (fr.hasAttribute(FlightReport.ATTR_ACARS)) return;
+		if (fr.hasAttribute(Attribute.ACARS)) return;
 		Integer k = getNonACARSKey(fr.getDate());
 		MutableInteger i = _nonACARSCounts.getOrDefault(k, new MutableInteger(0));
 		i.inc();
@@ -93,7 +93,7 @@ public class SkyMilesScorer extends EliteScorer {
 		_score.setAuthorID(fr.getAuthorID());
 
 		// Check for non-ACARS flights this month
-		boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS); 
+		boolean isACARS = fr.hasAttribute(Attribute.ACARS); 
 		if (!isACARS) {
 			int cnt = _nonACARSCounts.getOrDefault(getNonACARSKey(fr.getDate()), new MutableInteger(0)).intValue();
 			if (cnt >= MAX_NON_ACARS) {
@@ -113,8 +113,8 @@ public class SkyMilesScorer extends EliteScorer {
 		addBonus(100, fr.getNetwork() + " Online Flight", (fr.getNetwork() != null));
 		addBonus(250, "Online Event", (fr.getDatabaseID(DatabaseID.EVENT) > 0));
 		addBonus(200, "Flight Tour", (fr.getDatabaseID(DatabaseID.TOUR) > 0));
-		addBonus(250, "Dispatcher Bonus", fr.hasAttribute(FlightReport.ATTR_DISPATCH));
-		addBonus(250, "SimBrief Usage", fr.hasAttribute(FlightReport.ATTR_SIMBRIEF));
+		addBonus(250, "Dispatcher Bonus", fr.hasAttribute(Attribute.DISPATCH));
+		addBonus(250, "SimBrief Usage", fr.hasAttribute(Attribute.SIMBRIEF));
 		addBonus(Math.round(_score.getPoints() * lvl.getBonusFactor()), lvl.getName() + " Supplement", lvl.getBonusFactor() > 0f);
 		return _score;
 	}

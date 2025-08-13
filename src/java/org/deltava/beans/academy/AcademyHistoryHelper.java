@@ -129,7 +129,7 @@ public final class AcademyHistoryHelper {
 	 * @param flights a Collection of FlightReport beans
 	 */
 	public void addFlights(Collection<FlightReport> flights) {
-		flights.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) && fr.hasAttribute(FlightReport.ATTR_FDR_MASK))).forEach(_flights::add);
+		flights.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) && Attribute.isFDR(fr.getAttributes()))).forEach(_flights::add);
 	}
 	
 	/**
