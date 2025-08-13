@@ -1,8 +1,10 @@
-// Copyright 2012, 2015, 2016, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2018, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.deltava.beans.flight.*;
 import org.deltava.beans.EquipmentType;
@@ -11,7 +13,7 @@ import org.deltava.beans.stats.DisposalQueueStats;
 /**
  * A Data Access Object to return Flight Report disposal queue information.
  * @author Luke
- * @version 10.1
+ * @version 12.2
  * @since 5.0
  */
 
@@ -24,7 +26,31 @@ public class GetFlightReportQueue extends DAO {
 	public GetFlightReportQueue(Connection c) {
 		super(c);
 	}
-
+	
+	/**
+	 * Retrieves entries from the Flight Report post-approval operation queue.
+	 * @return a Collection of ApprovalStatus beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ApprovalStatus> getPostApprovalQueue() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, COMPLETION, STATS, ELITE FROM PIREP_AGGREGATE_QUEUE ORDER BY CREATED")) {
+			Collection<ApprovalStatus> results = new ArrayList<ApprovalStatus>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ApprovalStatus a = new ApprovalStatus(rs.getInt(1));
+					if (rs.getBoolean(2)) a.add(ApprovalOperation.COMPLETION);
+					if (rs.getBoolean(3)) a.add(ApprovalOperation.STATS);
+					if (rs.getBoolean(4)) a.add(ApprovalOperation.ELITE);
+					results.add(a);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Returns the size of the pending Flight Report queue for an Equipment program.
 	 * @param eqType the equipment program name or null for all programs
@@ -49,10 +75,10 @@ public class GetFlightReportQueue extends DAO {
 					ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 					ps.setString(2, eqType);
 					ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
-					ps.setInt(4, FlightReport.ATTR_CHECKRIDE);
+					ps.setInt(4, Attribute.CHECKRIDE.getValue());
 				} else {
 					ps.setInt(1, FlightStatus.SUBMITTED.ordinal());
-					ps.setInt(2, FlightReport.ATTR_CHECKRIDE);
+					ps.setInt(2, Attribute.CHECKRIDE.getValue());
 				}
 				
 				try (ResultSet rs = ps.executeQuery()) {

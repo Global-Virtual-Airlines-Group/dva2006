@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.sql.Connection;
@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.apache.logging.log4j.Level;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
@@ -16,7 +16,7 @@ import org.deltava.util.TaskTimer;
 /**
  * A Scheduled Task to aggregate Flight statistics. 
  * @author Luke
- * @version 11.1
+ * @version 12.1
  * @since 11.1
  */
 
@@ -34,31 +34,35 @@ public class FlightAggregateTask extends Task {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Load the queue
+			// Get the DAOs
 			GetFlightReports frdao = new GetFlightReports(con);
-			GetAggregateStatistics stdao = new GetAggregateStatistics(con);
-			Collection<Integer> IDs = stdao.getAggregateQueue();
+			GetFlightReportQueue qdao = new GetFlightReportQueue(con);
+			SetFlightReportQueue qwdao = new SetFlightReportQueue(con);
+			SetAggregateStatistics stwdao = new SetAggregateStatistics(con);
+			
+			// Get the queue
+			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
+			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.STATS));
 			
 			// Process each flight
-			for (Integer id : IDs) {
-				ctx.startTX();
-				SetAggregateStatistics stwdao = new SetAggregateStatistics(con);
+			for (ApprovalStatus ap : flights) {
+				FlightReport fr = frdao.get(ap.getID(), ctx.getDB());
+				if (fr == null) {
+					log.warn("Missing Flight Report - {}", Integer.valueOf(ap.getID()));
+					continue;
+				}
 				
-				// Get the flight
 				TaskTimer tt = new TaskTimer();
-				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
-				if (fr != null)
-					stwdao.update(fr);
-				else
-					log.warn("Missing Flight Report - {}", id);
 				
-				stwdao.deleteQueueEntry(id.intValue());
+				// Update statistics
+				ctx.startTX();
+				stwdao.update(fr);
+				qwdao.complete(ap.getID(), ApprovalOperation.STATS);
 				ctx.commitTX();
 				
 				long ms = tt.stop();
-				log.log((ms > 4500) ? Level.WARN : Level.INFO, "Aggregates for Flight Report {} completed in {}ms", id, Long.valueOf(ms));
+				log.log((ms > 4500) ? Level.WARN : Level.INFO, "Aggregates for Flight Report {} completed in {}ms", Integer.valueOf(ap.getID()), Long.valueOf(ms));
 			}
-			
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			logError("Error aggregating flights", de);

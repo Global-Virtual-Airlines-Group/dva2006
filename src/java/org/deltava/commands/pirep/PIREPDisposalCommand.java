@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -149,9 +149,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			allRatings.addAll(eq.getRatings());
 			boolean isRated = allRatings.contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
-			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
+			if (fr.hasAttribute(Attribute.NOTRATED) != !isRated) {
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.SYSTEM, String.format("Updating NotRated flag for %s, eq = %s, ratings = %s", p.getName(), fr.getEquipmentType(), p.getRatings()));
-				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
+				fr.setAttribute(Attribute.NOTRATED, !isRated);
 			}
 
 			// Update comments
@@ -280,8 +280,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				dfr.setAuthorID(fr.getAuthorID());
 				dfr.setDate(Instant.now());
 				dfr.setEquipmentType(fr.getEquipmentType());
-				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
-				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
+				dfr.setAttribute(Attribute.HISTORIC, fr.hasAttribute(Attribute.HISTORIC));
+				dfr.setAttribute(Attribute.DIVERT, true);
 				dfr.setLoadFactor(fr.getLoadFactor());
 				dfr.setPassengers(fr.getPassengers());
 				dfr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Diversion completion flight to %s", fInfo.getAirportA().getIATA()));
@@ -342,13 +342,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				}
 			}
 
-			// Update PIREP statistics
-			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
-				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
-				fstdao.addQueueEntry(fr.getID());
-				tt.mark("stats");
-			}
-			
 			// Write status updates (if any)
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			swdao.write(upds);
@@ -406,6 +399,12 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 				tt.mark("archive");
 				ctx.setAttribute("acarsArchive", Boolean.valueOf(fr instanceof FDRFlightReport), REQUEST);
+			}
+			
+			// Add to post-approval queue
+			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
+				SetFlightReportQueue fqdao = new SetFlightReportQueue(con);
+				fqdao.add(fr.getID(), SystemData.getBoolean("elite.enabled"), ctx.getDB());
 			}
 
 			// Commit and Invalidate the pilot again to reflect the new totals
