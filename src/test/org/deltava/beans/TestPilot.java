@@ -193,7 +193,7 @@ public class TestPilot extends AbstractBeanTestCase {
     	
     	assertEquals(0.0, _p.getOnlineHours(), 0.001);
     	assertEquals(0, _p.getOnlineLegs());
-    	fr.setAttribute(FlightReport.ATTR_IVAO, true);
+    	fr.setAttribute(Attribute.IVAO, true);
     	assertEquals(1.1, _p.getOnlineHours(), 0.001);
     	assertEquals(1, _p.getOnlineLegs());
     	assertEquals(fr.getDistance(), _p.getMiles());

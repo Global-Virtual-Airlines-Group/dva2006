@@ -1,6 +1,8 @@
 // Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import static org.deltava.beans.flight.Attribute.*;
+
 import java.util.*;
 import java.time.*;
 import java.time.format.*;
@@ -23,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 11.5
+ * @version 12.2
  * @since 2.4
  */
 
@@ -205,9 +207,9 @@ public final class OfflineFlightParser {
 		
 		// Build the PIREP entry
 		ACARSFlightReport afr = new ACARSFlightReport(al, flight, leg);
-		afr.setAttribute(FlightReport.ATTR_ACARS, true);
-		afr.setAttribute(FlightReport.ATTR_DISPATCH, (inf.getDispatcher() == DispatchType.DISPATCH));
-		afr.setAttribute(FlightReport.ATTR_SIMBRIEF, (inf.getDispatcher() == DispatchType.SIMBRIEF));
+		afr.setAttribute(ACARS, true);
+		afr.setAttribute(DISPATCH, (inf.getDispatcher() == DispatchType.DISPATCH));
+		afr.setAttribute(SIMBRIEF, (inf.getDispatcher() == DispatchType.SIMBRIEF));
 		afr.setSimulator(inf.getSimulator());
 		afr.setStatus(FlightStatus.SUBMITTED);
 		afr.setSubmittedOn(Instant.now());
@@ -230,7 +232,7 @@ public final class OfflineFlightParser {
 		afr.setNetwork(EnumUtils.parse(OnlineNetwork.class, ie.getChildTextTrim("network"), null));
 		
 		// Check if it's a checkride
-		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.parseBoolean(ie.getChildTextTrim("checkRide")));
+		afr.setAttribute(CHECKRIDE, Boolean.parseBoolean(ie.getChildTextTrim("checkRide")));
 		
 		// Parse status messages
 		Element msgsE = re.getChild("msgs");

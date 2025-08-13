@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 10.0
+ * @version 12.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			// Look for a transfer request or an academy course
 			int crID = 0; int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
 			TransferRequest tx = null; Course crs = null;
-			if (fr.hasAttribute(FlightReport.ATTR_ACADEMY)) {
+			if (fr.hasAttribute(Attribute.ACADEMY)) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(pilotID);
 				for (Iterator<Course> i = courses.iterator(); i.hasNext() && (crs == null); ) {
@@ -122,8 +122,8 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			}
 			
 			// Update the flight report
-			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
-			fr.setAttribute(FlightReport.ATTR_NOTRATED, false);
+			fr.setAttribute(Attribute.CHECKRIDE, true);
+			fr.setAttribute(Attribute.NOTRATED, false);
 			fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.UPDATE, "Marked as Check Ride");
 			if (fr.getStatus() == FlightStatus.HOLD) {
 				fr.setStatus(FlightStatus.SUBMITTED);

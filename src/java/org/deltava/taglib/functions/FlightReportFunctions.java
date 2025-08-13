@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.Simulator;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 11.4
+ * @version 12.2
  * @since 1.0
  */
 
@@ -81,7 +81,7 @@ public class FlightReportFunctions {
 	 * @return TRUE if this flight used ACARS, otherwise FALSE
 	 */
 	public static boolean isACARS(FlightReport fr) {
-		return (fr instanceof ACARSFlightReport) || fr.hasAttribute(FlightReport.ATTR_ACARS);
+		return (fr instanceof ACARSFlightReport) || fr.hasAttribute(Attribute.ACARS);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class FlightReportFunctions {
 	 * @return TRUE if this flight used XACARS, otherwise FALSE
 	 */
 	public static boolean isXACARS(FlightReport fr) {
-		return (fr instanceof XACARSFlightReport) || fr.hasAttribute(FlightReport.ATTR_XACARS);
+		return (fr instanceof XACARSFlightReport) || fr.hasAttribute(Attribute.XACARS);
 	}
 	
 	/**
@@ -107,30 +107,30 @@ public class FlightReportFunctions {
 	 * @param fr the Flight Report
 	 * @return TRUE if the ATTR_ONLINE MASK attribute is present, otherwise FALSE
 	 * @see FlightReportFunctions#network(FlightReport)
-	 * @see FlightReport#ATTR_ONLINE_MASK
+	 * @see Attribute#isOnline(int)
 	 */
 	public static boolean isOnline(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK);
+		return (fr != null) && Attribute.isOnline(fr.getAttributes()); 
 	}
 
 	/**
 	 * Returns if this Flight is a Check Ride.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ATTR_CHECKRIDE attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_CHECKRIDE
+	 * @see Attribute#CHECKRIDE
 	 */
 	public static boolean isCheckRide(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+		return (fr != null) && fr.hasAttribute(Attribute.CHECKRIDE);
 	}
 
 	/**
 	 * Returns if this Flight was planned by a Dispatcher.
 	 * @param fr the Flight report
 	 * @return TRUE if the ATTR_DISPATCH attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_DISPATCH
+	 * @see Attribute#DISPATCH
 	 */
 	public static boolean isDispatch(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_DISPATCH);
+		return (fr != null) && fr.hasAttribute(Attribute.DISPATCH);
 	}
 
 	/**
@@ -147,50 +147,50 @@ public class FlightReportFunctions {
 	 * Returns if this Flight is a Historic flight.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ATTR_HISTORIC attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_HISTORIC
+	 * @see Attribute#HISTORIC
 	 */
 	public static boolean isHistoric(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_HISTORIC);
+		return (fr != null) && fr.hasAttribute(Attribute.HISTORIC);
 	}
 
 	/**
 	 * Returns if this Flight is a Charter operation.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ATTR_CHARTER attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_CHARTER
+	 * @see Attribute#CHARTER
 	 */
 	public static boolean isCharter(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_CHARTER);
+		return (fr != null) && fr.hasAttribute(Attribute.CHARTER);
 	}
 
 	/**
 	 * Returns if this Flight is a Flight Academy Training Flight.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ATTR_ACADEMY attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_ACADEMY
+	 * @see Attribute#ACADEMY
 	 */
 	public static boolean isAcademy(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_ACADEMY);
+		return (fr != null) && fr.hasAttribute(Attribute.ACADEMY);
 	}
 
 	/**
 	 * Returns if the Flight was flown using a rated equipment type.
 	 * @param fr the Flight Report
 	 * @return TRUE if the NOTRATED attribute is not present, otherwise FALSE
-	 * @see FlightReport#ATTR_NOTRATED
+	 * @see Attribute#NOTRATED
 	 */
 	public static boolean isRated(FlightReport fr) {
-		return (fr == null) || !fr.hasAttribute(FlightReport.ATTR_NOTRATED);
+		return (fr == null) || !fr.hasAttribute(Attribute.NOTRATED);
 	}
 	
 	/**
 	 * Returns if this Flight was a diversion to another airport.
 	 * @param fr the FlightReport
 	 * @return TRUE if the DIVERT attribute is present, otherwsie FALSE
-	 * @see FlightReport#ATTR_DIVERT
+	 * @see Attribute#DIVERT
 	 */
 	public static boolean isDivert(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_DIVERT);
+		return (fr != null) && fr.hasAttribute(Attribute.DIVERT);
 	}
 	
 	/**
@@ -215,100 +215,100 @@ public class FlightReportFunctions {
 	 * Returns if the Flight's route does not exist in the Schedule database.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ROUTEWARN atribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_ROUTEWARN
+	 * @see Attribute#ROUTEWARN
 	 */
 	public static boolean routeWarn(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_ROUTEWARN);
+		return (fr != null) && fr.hasAttribute(Attribute.ROUTEWARN);
 	}
 
 	/**
 	 * Returns if the Flight's distance exceeds the parameters in the Schedule database.
 	 * @param fr the Flight Report
 	 * @return TRUE if the RANGEWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_RANGEWARN
+	 * @see Attribute#RANGEWARN
 	 */
 	public static boolean rangeWarn(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_RANGEWARN);
+		return (fr != null) && fr.hasAttribute(Attribute.RANGEWARN);
 	}
 
 	/**
 	 * Returns if the takeoff or landing runway exceeds the Aircraft's minimums.
 	 * @param fr the Flight Report
 	 * @return TRUE if the RWYWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_RWYWARN
+	 * @see Attribute#RWYWARN
 	 */
 	public static boolean runwayWarn(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_RWYWARN);
+		return (fr != null) && fr.hasAttribute(Attribute.RWYWARN);
 	}
 
 	/**
 	 * Returns if the Flight's duration exceeds the parameters in the Schedule database.
 	 * @param fr the Flight Report
 	 * @return TRUE if the TIMEWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_TIMEWARN
+	 * @see Attribute#TIMEWARN
 	 */
 	public static boolean timeWarn(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_TIMEWARN);
+		return (fr != null) && fr.hasAttribute(Attribute.TIMEWARN);
 	}
 
 	/**
 	 * Returns if in-flight refueling was detected.
 	 * @param fr the Flight report
 	 * @return TRUE if the REFUELWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_REFUELWARN
+	 * @see Attribute#REFUELWARN
 	 */
 	public static boolean refuelWarn(FlightReport fr) {
-		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_REFUELWARN);
+		return (fr != null) && fr.hasAttribute(Attribute.REFUELWARN);
 	}
 
 	/**
 	 * Returns if this Flight was operated using non-ETOPS-rated aircraft on an ETOPS route.
 	 * @param fr the Flight Report
 	 * @return TRUE if the ETOPSWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_ETOPSWARN
+	 * @see Attribute#ETOPSWARN
 	 */
 	public static boolean etopsWarn(FlightReport fr) {
-		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_ETOPSWARN));
+		return ((fr != null) && fr.hasAttribute(Attribute.ETOPSWARN));
 	}
 	
 	/**
 	 * Returns if this Flight entered Prohibited or Restricted airspace.
 	 * @param fr the FlightReport
 	 * @return TRUE if the AIRSPACEWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_AIRSPACEWARN
+	 * @see Attribute#AIRSPACEWARN
 	 */
 	public static boolean airspaceWarn(FlightReport fr) {
-		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_AIRSPACEWARN));
+		return ((fr != null) && fr.hasAttribute(Attribute.AIRSPACEWARN));
 	}
 
 	/**
 	 * Returns if excessive takeoff or landing weight was detected.
 	 * @param fr the FlightReport
 	 * @return TRUE if the WEIGHTWARN attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_WEIGHTWARN
+	 * @see Attribute#WEIGHTWARN
 	 */
 	public static boolean weightWarn(FlightReport fr) {
-		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WEIGHTWARN));
+		return ((fr != null) && fr.hasAttribute(Attribute.WEIGHTWARN));
 	}
 	
 	/**
 	 * Returns if the flight was planned using SimBrief.
 	 * @param fr the FlightReport
 	 * @return TRUE if the SIMBRIEF attribute is present, otherwise FALSE
-	 * @see FlightReport#ATTR_SIMBRIEF
+	 * @see Attribute#SIMBRIEF
 	 */
 	public static boolean isSimBrief(FlightReport fr) {
-		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_SIMBRIEF));
+		return ((fr != null) && fr.hasAttribute(Attribute.SIMBRIEF));
 	}
 
 	/**
 	 * Returns if any warnings have been set.
 	 * @param fr the FlightReport
 	 * @return TRUE if any warnings are set, otherwise FALSE
-	 * @see FlightReport#ATTR_WARN_MASK
+	 * @see Attribute#hasWarning(int)
 	 */
 	public static boolean hasWarn(FlightReport fr) {
-		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WARN_MASK));
+		return ((fr != null) && Attribute.hasWarning(fr.getAttributes()));
 	}
 
 	/**

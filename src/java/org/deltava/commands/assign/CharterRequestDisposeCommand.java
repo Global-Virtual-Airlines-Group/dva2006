@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.time.Instant;
@@ -20,7 +20,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Web Site Command to dispose of Charter flight Requests. 
  * @author Luke
- * @version 10.0
+ * @version 12.2
  * @since 10.0
  */
 
@@ -93,7 +93,7 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 				fr.setDatabaseID(DatabaseID.DISPOSAL, ctx.getUser().getID());
 				fr.setRank(p.getRank());
 				fr.setDate(info.getAssignDate());
-				fr.setAttribute(FlightReport.ATTR_CHARTER, true);
+				fr.setAttribute(Attribute.CHARTER, true);
 				fr.setEquipmentType(req.getEquipmentType());
 				fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Charter Flight Request %d", Integer.valueOf(req.getID())));
 			

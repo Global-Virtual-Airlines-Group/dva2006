@@ -1,13 +1,14 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.logbook;
 
+import org.deltava.beans.flight.Attribute;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.util.StringUtils;
 
 /**
  * A log book export class to generate default CSV logbooks.  
  * @author Luke
- * @version 10.3
+ * @version 12.2
  * @since 10.3
  */
 
@@ -46,7 +47,7 @@ class DefaultCSVExport extends CSVExport {
 		buf.append(',');
 		buf.append(StringUtils.format(fr.getLength() / 10.0f, "#0.0"));
 		buf.append(',');
-		buf.append(fr.hasAttribute(FlightReport.ATTR_ACARS) ? "Y" : "-");
+		buf.append(Attribute.isFDR(fr.getAttributes()) ? "Y" : "-");
 		
 		int promoCount = getPromotionCount(fr);
 		if (promoCount > 0) {

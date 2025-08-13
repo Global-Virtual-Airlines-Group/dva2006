@@ -27,7 +27,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -85,8 +85,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				Aircraft a = acdao.get(pirep.getEquipmentType());
 				AircraftPolicyOptions opts = (a == null) ? null : a.getOptions(SystemData.get("airline.code"));
 				if (opts != null) {
-					pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, (etops.getResult().getTime() > opts.getETOPS().getTime()));
-					if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
+					pirep.setAttribute(Attribute.ETOPSWARN, (etops.getResult().getTime() > opts.getETOPS().getTime()));
+					if (pirep.hasAttribute(Attribute.ETOPSWARN))
 						pirep.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Filed route is %s, aircraft only rated for %s", etops.getResult(), opts.getETOPS()));
 					else if (etops.getResult().getTime() > 75)
 						pirep.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Filed route is %s", etops.getResult()));
@@ -121,7 +121,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Check the schedule database and check the route pair
 			Duration avgTime = fsh.checkSchedule();
-			if (pirep.hasAttribute(FlightReport.ATTR_TIMEWARN))
+			if (pirep.hasAttribute(Attribute.TIMEWARN))
 				ctx.setAttribute("avgTime", avgTime, REQUEST);
 			
 			// Start transaction
@@ -160,7 +160,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("pirep", pirep, REQUEST);
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("isSubmitted", Boolean.TRUE, REQUEST);
-			ctx.setAttribute("notRated", Boolean.valueOf(pirep.hasAttribute(FlightReport.ATTR_NOTRATED)), REQUEST);
+			ctx.setAttribute("notRated", Boolean.valueOf(pirep.hasAttribute(Attribute.NOTRATED)), REQUEST);
 			ctx.setAttribute("isOurs", Boolean.valueOf(pirep.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
 			EventDispatcher.send(new IDEvent(EventType.FLIGHT_REPORT, String.valueOf(pirep.getID()), SystemData.get("airline.code")));
 		} catch (DAOException de) {

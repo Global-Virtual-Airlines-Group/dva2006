@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019, 2020, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 10.1
+ * @version 12.2
  * @since 4.1
  */
 
@@ -102,7 +102,7 @@ public class XPIREPService extends XAService {
 				xfr.setID(fr.getID());
 				xfr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 				xfr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
-				xfr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
+				xfr.setAttribute(Attribute.CHARTER, fr.hasAttribute(Attribute.CHARTER));
 				if (!StringUtils.isEmpty(fr.getComments()))
 					xfr.setComments(fr.getComments());
 			}
@@ -123,7 +123,7 @@ public class XPIREPService extends XAService {
 			if (cr != null) {
 				cr.setStatus(TestStatus.SUBMITTED);
 				cr.setSubmittedOn(Instant.now());
-				xfr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
+				xfr.setAttribute(Attribute.CHECKRIDE, true);
 			}
 			
 			// Check if the pilot is rated in the equipment type
@@ -206,7 +206,7 @@ public class XPIREPService extends XAService {
 				log.warn("Update Passnger count for PIREP #" + xfr.getID());
 			
 			// Write the check ride if necessary
-			if ((cr != null) && xfr.hasAttribute(FlightReport.ATTR_CHECKRIDE)) {
+			if ((cr != null) && xfr.hasAttribute(Attribute.CHECKRIDE)) {
 				SetExam exwdao = new SetExam(con);
 				cr.setFlightID(fi.getID());
 				exwdao.write(cr);

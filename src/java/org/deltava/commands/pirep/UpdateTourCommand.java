@@ -1,4 +1,4 @@
-// Copyright 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Flight Tours linked to a Flight Report.
  * @author Luke
- * @version 11.2
+ * @version 12.2
  * @since 10.2
  */
 
@@ -58,7 +58,7 @@ public class UpdateTourCommand extends AbstractCommand {
 				TourFlightHelper tfh = new TourFlightHelper(fr, true);
 				tfh.addFlights(frdao.getByTour(fr.getAuthorID(), t.getID(), ctx.getDB()));
 				int leg = tfh.isLeg(t);
-				fr.setAttribute(FlightReport.ATTR_ROUTEWARN, fr.hasAttribute(FlightReport.ATTR_ROUTEWARN) && (leg == 0));
+				fr.setAttribute(Attribute.ROUTEWARN, fr.hasAttribute(Attribute.ROUTEWARN) && (leg == 0));
 				if (leg == 0) {
 					ctx.setAttribute("tour", t, REQUEST);
 					ctx.setAttribute("pirep", fr, REQUEST);

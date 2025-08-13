@@ -12,7 +12,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 11.6
+ * @version 12.2
  * @since 1.0
  */
 
@@ -75,7 +75,7 @@ public class PIREPAccessControl extends AccessControl {
 		// Set role variables
 		final FlightStatus status = _pirep.getStatus();
 		final boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
-		final boolean isPirep = _pirep.hasAttribute(FlightReport.ATTR_ACADEMY) ? isAcademy : _ctx.isUserInRole("PIREP");
+		final boolean isPirep = _pirep.hasAttribute(Attribute.ACADEMY) ? isAcademy : _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(DatabaseID.PILOT) == _ctx.getUser().getID());
 		_canOverrideDateRange = _ctx.isUserInRole("PIREP") && !_ourPIREP;
 		
@@ -102,7 +102,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightStatus.OK)));
 		_canRelease = isHeld && canReleaseHold;
-		_canWithdraw = isSubmitted && _ourPIREP && !_pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (Duration.between(_pirep.getSubmittedOn(), Instant.now()).toMinutes() < 120);
+		_canWithdraw = isSubmitted && _ourPIREP && !_pirep.hasAttribute(Attribute.CHECKRIDE) && (Duration.between(_pirep.getSubmittedOn(), Instant.now()).toMinutes() < 120);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
 		_canEditCoreData = _canEdit && ((_pirep.getDatabaseID(DatabaseID.ACARS) == 0) || !_ourPIREP);
 		_canViewDiagData = _ourPIREP || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("Developer");
@@ -111,12 +111,12 @@ public class PIREPAccessControl extends AccessControl {
 		_canProxySubmit = isHR;
 		_canAdjustEvents = _canApprove || _canReject || _canHold /*isPirep && !_ourPIREP && !isDraft && (_ctx.isUserInRole("Event") || isHR) */;
 		_canUseSimBrief = isDraft && _ourPIREP && _ctx.getUser().hasID(ExternalID.NAVIGRAPH);
-		_canViewSimBrief = (_ourPIREP || isPirep) && _pirep.hasAttribute(FlightReport.ATTR_SIMBRIEF);
+		_canViewSimBrief = (_ourPIREP || isPirep) && _pirep.hasAttribute(Attribute.SIMBRIEF);
 		_canEliteRescore = (status == FlightStatus.OK) && _ctx.isUserInRole("Operations");
 		_canViewScore = (_ourPIREP || isPirep || isHR) && !isDraft;
 		
 		// Get the flight assignment ID
-		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+		final boolean isCheckRide = _pirep.hasAttribute(Attribute.CHECKRIDE);
 		final boolean isAssigned = (_pirep.getDatabaseID(DatabaseID.ASSIGN) > 0);
 		_canDelete = (_ourPIREP && !isAssigned && !isCheckRide && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && ((isRejected && isAssigned) || !isAssigned));
 	}

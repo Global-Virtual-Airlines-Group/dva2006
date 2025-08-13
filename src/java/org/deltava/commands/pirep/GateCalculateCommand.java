@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the gates used.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 5.1
  */
 
@@ -39,7 +39,7 @@ public class GateCalculateCommand extends AbstractCommand {
 			FlightReport fr = prdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report ID - " + ctx.getID());
-			else if (!fr.hasAttribute(FlightReport.ATTR_ACARS))
+			else if (!fr.hasAttribute(Attribute.ACARS))
 				throw notFoundException("Non-ACARS Flight Report - " + ctx.getID());
 
 			// Check our access

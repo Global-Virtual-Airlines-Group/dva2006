@@ -18,12 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 11.6
+ * @version 12.2
  * @since 2.1
  */
 
 public class GetFlightReportStatistics extends DAO {
-
+	
+	private static final int MIN_ACARS_CLIENT = 61;
 	private static final int MAX_VSPEED = -2500;
 	
 	private static final Cache<CacheableList<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
@@ -115,7 +116,7 @@ public class GetFlightReportStatistics extends DAO {
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setInt(2, _dayFilter);
-			if (isACARS) ps.setInt(3, FlightReport.ATTR_ACARS);
+			if (isACARS) ps.setInt(3, Attribute.ACARS.getValue());
 			
 			Collection<RoutePair> results = new ArrayList<RoutePair>();
 			try (ResultSet rs = ps.executeQuery()) {
@@ -137,7 +138,7 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	public Collection<RouteStats> getPopularRoutes(int pilotID) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(P.ID) AS CNT, SUM(IF((P.ATTR & ?)>0, 1,0)) AS ACARS, MAX(P.DATE) FROM PIREPS P WHERE (P.PILOT_ID=?) AND (P.STATUS=?) GROUP BY P.AIRPORT_D, P.AIRPORT_A ORDER BY CNT DESC")) {
-			ps.setInt(1, FlightReport.ATTR_ACARS);
+			ps.setInt(1, Attribute.ACARS.getValue());
 			ps.setInt(2, pilotID);
 			ps.setInt(3, FlightStatus.OK.ordinal());
 			Collection<RouteStats> results = new ArrayList<RouteStats>();
@@ -186,7 +187,7 @@ public class GetFlightReportStatistics extends DAO {
 			ps.setBoolean(++pos, false);
 			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (!allFlights)
-				ps.setInt(++pos, FlightReport.ATTR_ACARS);
+				ps.setInt(++pos, Attribute.ACARS.getValue());
 			if (_dayFilter > 0)
 				ps.setInt(++pos, _dayFilter);	
 			ps.setInt(++pos, 5);
@@ -276,7 +277,7 @@ public class GetFlightReportStatistics extends DAO {
 		try (PreparedStatement ps = prepare("SELECT PR.ID, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
 			+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)")) {
 			ps.setBoolean(1, false);
-			ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
+			ps.setInt(2, MIN_ACARS_CLIENT);
 			ps.setInt(3, pilotID);
 			ps.setInt(4, FlightStatus.OK.ordinal());
 			ps.setInt(5, LandingScorer.OPT_VSPEED);
@@ -438,11 +439,11 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(orderBy);
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, FlightReport.ATTR_ACARS);
-			ps.setInt(2, FlightReport.ATTR_HISTORIC);
-			ps.setInt(3, FlightReport.ATTR_DISPATCH);
-			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
-			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(1, Attribute.ACARS.getValue());
+			ps.setInt(2, Attribute.HISTORIC.getValue());
+			ps.setInt(3, Attribute.DISPATCH.getValue());
+			ps.setInt(4, Attribute.SIMBRIEF.getValue());
+			ps.setInt(5, Attribute.ONLINE_MASK);
 			ps.setInt(6, FlightStatus.OK.ordinal());
 			ps.setString(7, eqType);
 			ps.setInt(8, EquipmentType.Rating.PRIMARY.ordinal());
@@ -482,13 +483,13 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(s.getSQL());
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, FlightReport.ATTR_ACARS);
-			ps.setInt(2, FlightReport.ATTR_HISTORIC);
-			ps.setInt(3, FlightReport.ATTR_DISPATCH);
-			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
-			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(1, Attribute.ACARS.getValue());
+			ps.setInt(2, Attribute.HISTORIC.getValue());
+			ps.setInt(3, Attribute.DISPATCH.getValue());
+			ps.setInt(4, Attribute.SIMBRIEF.getValue());
+			ps.setInt(5, Attribute.ONLINE_MASK);
 			ps.setInt(6, FlightStatus.OK.ordinal());
-			ps.setInt(7, FlightReport.ATTR_CHARTER);
+			ps.setInt(7, Attribute.CHARTER.getValue());
 			
 			// Check the cache
 			String cacheKey = getCacheKey(ps.toString());
@@ -555,7 +556,7 @@ public class GetFlightReportStatistics extends DAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, pilotID);
 			ps.setInt(2, FlightStatus.REJECTED.ordinal());
-			ps.setInt(3, FlightReport.ATTR_CHARTER);
+			ps.setInt(3, Attribute.CHARTER.getValue());
 			if ((days > 0) && (dt != null)) {
 				ps.setTimestamp(4, createTimestamp(dt));
 				ps.setInt(5, days);
@@ -691,11 +692,11 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(s.getSQL());
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, FlightReport.ATTR_ACARS);
-			ps.setInt(2, FlightReport.ATTR_HISTORIC);
-			ps.setInt(3, FlightReport.ATTR_DISPATCH);
-			ps.setInt(4, FlightReport.ATTR_SIMBRIEF);
-			ps.setInt(5, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(1, Attribute.ACARS.getValue());
+			ps.setInt(2, Attribute.HISTORIC.getValue());
+			ps.setInt(3, Attribute.DISPATCH.getValue());
+			ps.setInt(4, Attribute.SIMBRIEF.getValue());
+			ps.setInt(5, Attribute.ONLINE_MASK);
 			ps.setInt(6, FlightStatus.OK.ordinal());
 			ps.setInt(7, days);
 			return execute(ps);
@@ -732,11 +733,11 @@ public class GetFlightReportStatistics extends DAO {
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int param = 0;
-			ps.setInt(++param, FlightReport.ATTR_ACARS);
-			ps.setInt(++param, FlightReport.ATTR_HISTORIC);
-			ps.setInt(++param, FlightReport.ATTR_DISPATCH);
-			ps.setInt(++param, FlightReport.ATTR_SIMBRIEF);
-			ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(++param, Attribute.ACARS.getValue());
+			ps.setInt(++param, Attribute.HISTORIC.getValue());
+			ps.setInt(++param, Attribute.DISPATCH.getValue());
+			ps.setInt(++param, Attribute.SIMBRIEF.getValue());
+			ps.setInt(++param, Attribute.ONLINE_MASK);
 			ps.setInt(++param, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
 				ps.setInt(++param, pilotID);
