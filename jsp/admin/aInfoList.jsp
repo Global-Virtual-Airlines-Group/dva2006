@@ -12,7 +12,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -40,10 +42,10 @@
  <td class="sec bld">${ai.code}</td>
  <td class="bld nophone">${ai.DB}</td>
  <td>${ai.domain}</td>
- <td class="nophpone sec small"><c:if test="${ai.canTransfer}">Airline allows inbound Pilot transfers</c:if>
-<c:if test="${ai.canTransfer && ai.historicRestricted}"><br /></c:if>
-<c:if test="${ai.historicRestricted}">Historic Routes require Historic Aircraft</c:if>
-<c:if test="${!ai.canTransfer && !ai.historicRestricted}">-</c:if></td>
+ <td class="nophpone sec small"><c:if test="${ai.canTransfer}">Airline allows inbound Pilot transfers<br /></c:if>
+<c:if test="${ai.historicRestricted}">Historic Routes require Historic Aircraft<br /></c:if>
+<c:if test="${ai.allowMultiAirline}">Airline allows multiple Airline membership<br /></c:if>
+<c:if test="${ai.autoApprove}">Airline automatically approves optimal ACARS Flight Reports</c:if></td>
 </view:row>
 </c:forEach>
 
@@ -55,6 +57,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
