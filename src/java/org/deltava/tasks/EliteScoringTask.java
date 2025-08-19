@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 9.2
  */
 
@@ -65,7 +65,7 @@ public class EliteScoringTask extends Task {
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			GetFlightReportQueue qdao = new GetFlightReportQueue(con);
 			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
-			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.ELITE));
+			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.ELITE) && ap.isPending(ApprovalOperation.COMPLETION)); // Completion archives the position entries
 			log.warn("{} scoring {} flights", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
 			
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();

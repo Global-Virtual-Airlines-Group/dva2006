@@ -9,8 +9,8 @@ import org.deltava.beans.flight.ApprovalOperation;
  * A Data Access Object to write to asynchronous Flight Report operation queues. This are done for asynchronous updates of Flight Statistics,
  * Flight Report approvals and Elite Status updates. 
  * @author Luke
- * @version 12.1
- * @since 12.1
+ * @version 12.2
+ * @since 12.2
  */
 
 public class SetFlightReportQueue extends DAO {
@@ -71,7 +71,7 @@ public class SetFlightReportQueue extends DAO {
 	public void complete(int id, ApprovalOperation a) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("UPDATE PIREP_AGGREGATE QUEUE SET ");
+		StringBuilder sqlBuf = new StringBuilder("UPDATE PIREP_AGGREGATE_QUEUE SET ");
 		sqlBuf.append(a.toString());
 		sqlBuf.append("=? WHERE (ID=?)");
 		
@@ -86,7 +86,7 @@ public class SetFlightReportQueue extends DAO {
 			}
 			
 			// Clear if complete
-			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_AGGERGATE_QUEUE WHERE (COMPLETION=?) AND (STATS=?) AND (ELITE=?) AND (ID=?)")) {
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_AGGREGATE_QUEUE WHERE (COMPLETION=?) AND (STATS=?) AND (ELITE=?) AND (ID=?)")) {
 				ps.setBoolean(1, true);
 				ps.setBoolean(2, true);
 				ps.setBoolean(3, true);
