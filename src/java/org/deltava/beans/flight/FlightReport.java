@@ -1,5 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
+
+import static org.deltava.beans.flight.Attribute.*;
 
 import java.util.*;
 import java.time.*;
@@ -10,157 +12,18 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 10.3
+ * @version 12.2
  * @since 1.0
  */
 
 public class FlightReport extends Flight implements FlightData, AuthoredBean, CalendarEntry, ViewEntry {
-
-	/**
-	 * Flight flown without Equipment Type Rating.
-	 */
-	public static final int ATTR_NOTRATED = 0x01;
-
-	/**
-	 * Flight flown on VATSIM network.
-	 */
-	public static final int ATTR_VATSIM = 0x02;
-
-	/**
-	 * Flight flown on IVAO network.
-	 */
-	public static final int ATTR_IVAO = 0x04;
-
-	/**
-	 * Flight flown on FPI network.
-	 */
-	public static final int ATTR_FPI = 0x08;
-
-	/**
-	 * Flight logged using ACARS.
-	 */
-	public static final int ATTR_ACARS = 0x10;
-
-	/**
-	 * Flight flown using unknown route pair.
-	 */
-	public static final int ATTR_ROUTEWARN = 0x20;
-
-	/**
-	 * Flight flown with unusually high or low logged hous.
-	 */
-	public static final int ATTR_TIMEWARN = 0x40;
-
-	/**
-	 * Flight flown as a Check Ride.
-	 */
-	public static final int ATTR_CHECKRIDE = 0x80;
-
-	/**
-	 * Flight flown as a Charter flight.
-	 */
-	public static final int ATTR_CHARTER = 0x100;
-
-	/**
-	 * Flight flown using Historic equipment.
-	 */
-	public static final int ATTR_HISTORIC = 0x200;
-
-	/**
-	 * Flight Academy Training Flight.
-	 */
-	public static final int ATTR_ACADEMY = 0x400;
-
-	/**
-	 * Flight flown with excessive range for aircraft.
-	 */
-	public static final int ATTR_RANGEWARN = 0x800;
-	
-	/**
-	 * Flight flown with ACARS refueling detected.
-	 */
-	public static final int ATTR_REFUELWARN = 0x1000;
-	
-	/**
-	 * Flight flown with non-ETOPS-rated aircraft.
-	 */
-	public static final int ATTR_ETOPSWARN = 0x2000;
-	
-	/**
-	 * Flight flown using a Dispatcher-generated flight plan.
-	 */
-	public static final int ATTR_DISPATCH = 0x4000;
-	
-	/**
-	 * Flight flown with excessive weights for Aircraft.
-	 */
-	public static final int ATTR_WEIGHTWARN = 0x8000;
-	
-	/**
-	 * Flight logged using XACARS.
-	 */
-	public static final int ATTR_XACARS = 0x10000;
-	
-	/**
-	 * Flight flown using a too-short takeoff or landing runway.
-	 */
-	public static final int ATTR_RWYWARN = 0x20000;
-	
-	/**
-	 * Flight flown using an inappropriate runway surface.
-	 */
-	public static final int ATTR_RWYSFCWARN = 0x40000;
-	
-	/**
-	 * Flight logged using simFDR.
-	 */
-	public static final int ATTR_SIMFDR = 0x80000;
-	
-	/**
-	 * Flight flown on PilotEdge network.
-	 */
-	public static final int ATTR_PEDGE = 0x100000;
-	
-	/**
-	 * Flight flown through prohibited airspace.
-	 */
-	public static final int ATTR_AIRSPACEWARN = 0x200000;
-	
-	/**
-	 * Flight diverted to alternate airport.
-	 */
-	public static final int ATTR_DIVERT = 0x400000;
-	
-	/**
-	 * Flight flown on POSCON network.
-	 */
-	public static final int ATTR_POSCON = 0x800000;
-	
-	/**
-	 * Flight planned using SimBrief.
-	 */
-	public static final int ATTR_SIMBRIEF = 0x1000000;
 	
 	/**
 	 * Attribute mask for all warnings.
 	 */
+	@Deprecated
 	public static final int ATTR_WARN_MASK = 0x26B861;
 	
-	/**
-	 * Attribute mask for VATSIM/IVAO/FPI online flights.
-	 */
-	public static final int ATTR_ONLINE_MASK = 0x90000E;
-	
-	/**
-	 * Attribute mask for ACARS/XACARS/simFDR flights.
-	 */
-	public static final int ATTR_FDR_MASK = 0x90010;
-	
-	/**
-	 * Minimum ACARS client version for inclusion in statistics aggregation.
-	 */
-	public static final int MIN_ACARS_CLIENT = 61;
-
 	private Instant _date;
 	private Instant _submittedOn;
 	private Instant _disposedOn;
@@ -234,9 +97,9 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	
 	@Override
 	public Recorder getFDR() {
-		if (hasAttribute(ATTR_ACARS)) return Recorder.ACARS;
-		if (hasAttribute(ATTR_XACARS)) return Recorder.XACARS;
-		if (hasAttribute(ATTR_SIMFDR)) return Recorder.SIMFDR;
+		if (hasAttribute(ACARS)) return Recorder.ACARS;
+		if (hasAttribute(XACARS)) return Recorder.XACARS;
+		if (hasAttribute(SIMFDR)) return Recorder.SIMFDR;
 		return null;
 	}
 
@@ -345,7 +208,7 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	 * Returns the attributes for this Flight Report.
 	 * @return a bit-mask containing this Flight Report's attributes
 	 * @see FlightReport#setAttributes(int)
-	 * @see FlightReport#setAttribute(int, boolean)
+	 * @see FlightReport#setAttribute(Attribute, boolean)
 	 */
 	public int getAttributes() {
 		return _attr;
@@ -362,15 +225,15 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 
 	@Override
 	public OnlineNetwork getNetwork() {
-		if (hasAttribute(ATTR_VATSIM))
+		if (hasAttribute(VATSIM))
 			return OnlineNetwork.VATSIM;
-		else if (hasAttribute(ATTR_IVAO))
+		else if (hasAttribute(IVAO))
 			return OnlineNetwork.IVAO;
-		else if (hasAttribute(ATTR_PEDGE))
+		else if (hasAttribute(PEDGE))
 			return OnlineNetwork.PILOTEDGE;
-		else if (hasAttribute(ATTR_POSCON))
+		else if (hasAttribute(POSCON))
 			return OnlineNetwork.POSCON;
-		else if (hasAttribute(ATTR_FPI))
+		else if (hasAttribute(FPI))
 			return OnlineNetwork.FPI;
 		
 		return null;
@@ -395,15 +258,15 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	}
 
 	/**
-	 * Returns the presence of a particular flight attribute.
-	 * @param attrMask the attribute to check
-	 * @return TRUE if the attribute is present
+	 * Returns the presence of a particular flight Attribute.
+	 * @param a the Attribute
+	 * @return TRUE if the Attribute is present
 	 * @see FlightReport#getAttributes()
 	 * @see FlightReport#setAttributes(int)
-	 * @see FlightReport#setAttribute(int, boolean)
+	 * @see FlightReport#setAttribute(Attribute, boolean)
 	 */
-	public boolean hasAttribute(int attrMask) {
-		return ((getAttributes() & attrMask) != 0);
+	public boolean hasAttribute(Attribute a) {
+		return a.in(getAttributes());
 	}
 	
 	/**
@@ -412,11 +275,11 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	 * @see FlightReport#getNetwork()
 	 */
 	public void setNetwork(OnlineNetwork network) {
-		setAttribute(ATTR_VATSIM, (network == OnlineNetwork.VATSIM));
-		setAttribute(ATTR_IVAO, (network == OnlineNetwork.IVAO));
-		setAttribute(ATTR_FPI, (network == OnlineNetwork.FPI));
-		setAttribute(ATTR_PEDGE, (network == OnlineNetwork.PILOTEDGE));
-		setAttribute(ATTR_POSCON, (network == OnlineNetwork.POSCON));
+		setAttribute(VATSIM, (network == OnlineNetwork.VATSIM));
+		setAttribute(IVAO, (network == OnlineNetwork.IVAO));
+		setAttribute(FPI, (network == OnlineNetwork.FPI));
+		setAttribute(PEDGE, (network == OnlineNetwork.PILOTEDGE));
+		setAttribute(POSCON, (network == OnlineNetwork.POSCON));
 	}
 
 	/**
@@ -540,7 +403,7 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	/**
 	 * Sets the attributes for this Flight Report.
 	 * @param attrs the new attributes
-	 * @see FlightReport#setAttribute(int, boolean)
+	 * @see FlightReport#setAttribute(Attribute, boolean)
 	 * @see FlightReport#getAttributes()
 	 */
 	public void setAttributes(int attrs) {
@@ -548,13 +411,14 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	}
 
 	/**
-	 * Set/Clear a particular attribute for this Flight Report.
-	 * @param attrMask the Attribute Mask to set
+	 * Set/Clear a particular Attribute for this Flight Report.
+	 * @param a the Attribute to set or clear
 	 * @param isSet TRUE if attribute should be set, FALSE if attribute should be cleared
 	 * @see FlightReport#setAttributes(int)
 	 * @see FlightReport#getAttributes()
 	 */
-	public void setAttribute(int attrMask, boolean isSet) {
+	public void setAttribute(Attribute a, boolean isSet) {
+		final int attrMask = a.getValue();
 		_attr = (isSet) ? (_attr | attrMask) : (_attr & (~attrMask));
 	}
 
@@ -643,9 +507,9 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 
 	@Override
 	public String getRowClassName() {
-		if (hasAttribute(ATTR_ACADEMY))
+		if (hasAttribute(ACADEMY))
 			return "opt4";
-		if (hasAttribute(ATTR_CHECKRIDE))
+		if (hasAttribute(CHECKRIDE))
 			return "opt3";
 		
 		return _status.getRowClassName();

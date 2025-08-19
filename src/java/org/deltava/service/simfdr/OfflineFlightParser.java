@@ -1,5 +1,7 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
+
+import static org.deltava.beans.flight.Attribute.SIMFDR;
 
 import java.util.*;
 import java.time.*;
@@ -21,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 7.0
  */
 
@@ -88,7 +90,7 @@ final class OfflineFlightParser {
 		
 		// Build a flight data entry
 		SimFDRFlightReport afr = new SimFDRFlightReport(f.getAirline(), f.getFlightNumber(), f.getLeg());
-		afr.setAttribute(FlightReport.ATTR_SIMFDR, true);
+		afr.setAttribute(SIMFDR, true);
 		afr.setStatus(FlightStatus.SUBMITTED);
 		afr.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		afr.setStartTime(StringUtils.parseEpoch(ie.getChildTextTrim("startTime")));

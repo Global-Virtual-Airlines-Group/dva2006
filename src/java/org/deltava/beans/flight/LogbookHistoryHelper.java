@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to identify log book consistency over recent flights. 
  * @author Luke
- * @version 10.6
+ * @version 12.2
  * @since 10.4
  */
 
@@ -108,7 +108,7 @@ public class LogbookHistoryHelper {
 	 * @return TRUE if the flights have all been flown with historic Aircraft
 	 */
 	public boolean isHistoricEQ(int flights) {
-		return head(flights).stream().allMatch(fr -> fr.hasAttribute(FlightReport.ATTR_HISTORIC));
+		return head(flights).stream().allMatch(fr -> fr.hasAttribute(Attribute.HISTORIC));
 	}
 	
 	/**

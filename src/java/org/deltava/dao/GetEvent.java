@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 11.6
+ * @version 12.2
  * @since 1.0
  */
 
@@ -224,7 +224,7 @@ public class GetEvent extends DAO {
 	public Collection<Event> getWithACARS() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR WHERE (E.OWNER=?) AND (PR.EVENT_ID=E.ID) AND ((PR.ATTR & ?)>0) ORDER BY E.STARTTIME DESC")) {
 			ps.setString(1, SystemData.get("airline.code"));
-			ps.setInt(2, FlightReport.ATTR_ACARS);
+			ps.setInt(2, Attribute.ACARS.getValue());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);

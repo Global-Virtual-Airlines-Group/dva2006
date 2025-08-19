@@ -11,7 +11,9 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -45,7 +47,11 @@
  <td class="label">&nbsp;</td>
  <td class="data"><c:if test="${aInfo.canTransfer}"><span class="pri bld small">Airline allows inbound Pilot transfers</span></c:if>
 <c:if test="${aInfo.canTransfer && aInfo.historicRestricted}"><br /></c:if>
-<c:if test="${aInfo.historicRestricted}"><span class="ter bld small">Historic Routes require Historic Aircraft</span></c:if></td>
+<c:if test="${aInfo.historicRestricted}"><span class="ter bld small">Historic Routes require Historic Aircraft</span></c:if>
+<c:if test="${aInfo.historicRestricted && aInfo.allowMultiAirline}"><br /></c:if>
+<c:if test="${aInfo.allowMultiAirline}"><span class="bld small">Airline allows Pilot accounts in multiple Airlines</span></c:if>
+<c:if test="${aInfo.allowMultiAirline && aInfo.autoApprove}"><br /></c:if>
+<c:if test="${aInfo.autoApprove}"><span class="pri bld small">Automatically Approves ACARS Flight Reports with optimal Flight Scores</span></c:if></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -61,6 +67,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

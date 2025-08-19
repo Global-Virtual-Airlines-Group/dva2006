@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
  * @author Luke
- * @version 9.0
+ * @version 12.2
  * @since 2.7
  */
 
@@ -50,10 +50,10 @@ public final class FlightPromotionHelper {
 		if ((ffr == null) && eq.getACARSPromotionLegs()) {
 			_comment = eq.getName() + " requires flights using ACARS/XACARS/simFDR for promotion";
 			return false;
-		} else if (_fr.hasAttribute(FlightReport.ATTR_ACADEMY)) {
+		} else if (_fr.hasAttribute(Attribute.ACADEMY)) {
 			_comment = "Flight Academy flights not eligible for promotion";
 			return false;
-		} else if (_fr.hasAttribute(FlightReport.ATTR_CHARTER)) {
+		} else if (_fr.hasAttribute(Attribute.CHARTER)) {
 			_comment = "Charter flights not eligible for promotion";
 			return false;
 		} else if (_fr.getDistance() < eq.getPromotionMinLength()) {

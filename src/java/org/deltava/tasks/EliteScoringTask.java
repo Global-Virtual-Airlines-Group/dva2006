@@ -5,8 +5,8 @@ import static java.util.concurrent.TimeUnit.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
-import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.Level;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to calculate Elite scores for Flight Reports. 
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 9.2
  */
 
@@ -43,8 +43,6 @@ public class EliteScoringTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		
-		// Determine lookback interval
-		int daysBack = Math.max(31, LocalDate.now().get(ChronoField.DAY_OF_YEAR));
 		Collection<Integer> pilotIDs = new HashSet<Integer>();
 		try {
 			Connection con = ctx.getConnection();
@@ -61,20 +59,21 @@ public class EliteScoringTask extends Task {
 			SetElite elwdao = new SetElite(con);
 			SetFlightReport frwdao = new SetFlightReport(con);
 			SetStatusUpdate updwdao = new SetStatusUpdate(con);
+			SetFlightReportQueue qwdao = new SetFlightReportQueue(con);
 			
 			// Get the Flight Reports
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
-			GetFlightReportStatistics frsdao = new GetFlightReportStatistics(con);
-			frsdao.setDayFilter(daysBack);
-			Collection<Integer> IDs = frsdao.getUnscoredFlights();
-			log.warn("{} scoring {} flights approved in the past {} days", SystemData.get("airline.code"), Integer.valueOf(IDs.size()), Integer.valueOf(daysBack));
+			GetFlightReportQueue qdao = new GetFlightReportQueue(con);
+			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
+			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.ELITE) && ap.isPending(ApprovalOperation.COMPLETION)); // Completion archives the position entries
+			log.warn("{} scoring {} flights", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
 			
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
-			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Iterator<ApprovalStatus> i = flights.iterator(); i.hasNext(); ) {
+				ApprovalStatus ap = i.next();
 				IntervalTaskTimer tt = new IntervalTaskTimer();
 				EliteScorer es = EliteScorer.getInstance();
-				FlightReport fr = frdao.get(id.intValue(), ctx.getDB());
+				FlightReport fr = frdao.get(ap.getID(), ctx.getDB());
 				final int yr = EliteScorer.getStatusYear(fr.getDate());
 				TreeSet<EliteLevel> lvls = eldao.getLevels(yr);
 				TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
@@ -106,6 +105,7 @@ public class EliteScoringTask extends Task {
 					log.info("Loaded {} flights for {} ({}) in {}ms", Integer.valueOf(pireps.size()), p.getName(), p.getPilotCode(), Long.valueOf(ms));
 				}
 				
+				Collection<Integer> IDs = flights.stream().map(ApprovalStatus::getID).collect(Collectors.toSet());
 				pireps.stream().filter(pirep -> !IDs.contains(Integer.valueOf(pirep.getID()))).forEach(es::add);
 				
 				// Get our total and next level
@@ -153,6 +153,7 @@ public class EliteScoringTask extends Task {
 				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
+				qwdao.complete(ap.getID(), ApprovalOperation.ELITE);
 				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
 				
 				// Check for upgrade
@@ -176,7 +177,6 @@ public class EliteScoringTask extends Task {
 					log.info("{} does not reach {} - {} < {}", p.getName(), nextLevel.getName(), total, nlt);
 				}
 				
-				
 				// Check for lifetime status upgrade
 				updR = total.wouldMatch(nextLT, sc);
 				if ((nextLT != null) && (updR != UpgradeReason.NONE)) {
@@ -199,7 +199,7 @@ public class EliteScoringTask extends Task {
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			log.atError().withThrowable(de).log(de.getMessage());
+			logError("Error scring Flights", de);
 		} finally {
 			ctx.release();
 		}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -51,12 +51,12 @@ public class GetStatistics extends DAO  {
 				try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), SUM(IF(P.ATTR & ?,1,0)), ROUND(SUM(IF(P.ATTR & ?, P.FLIGHT_TIME, 0)), 1), "
 					+ "SUM(IF(P.ATTR & ?, P.DISTANCE, 0)), SUM(IF(P.ATTR & ?,1,0)), ROUND(SUM(IF(P.ATTR & ?, P.FLIGHT_TIME, 0)), 1), SUM(IF(P.ATTR & ?, P.DISTANCE, 0)) FROM PIREPS P WHERE (P.STATUS=?)")) {
 					ps.setQueryTimeout(25);
-					ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
-					ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-					ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-					ps.setInt(4, FlightReport.ATTR_FDR_MASK);
-					ps.setInt(5, FlightReport.ATTR_FDR_MASK);
-					ps.setInt(6, FlightReport.ATTR_FDR_MASK);
+					ps.setInt(1, Attribute.ONLINE_MASK);
+					ps.setInt(2, Attribute.ONLINE_MASK);
+					ps.setInt(3, Attribute.ONLINE_MASK);
+					ps.setInt(4, Attribute.FDR_MASK);
+					ps.setInt(5, Attribute.FDR_MASK);
+					ps.setInt(6, Attribute.FDR_MASK);
 					ps.setInt(7, FlightStatus.OK.ordinal());
 
 					// Count all airline totals

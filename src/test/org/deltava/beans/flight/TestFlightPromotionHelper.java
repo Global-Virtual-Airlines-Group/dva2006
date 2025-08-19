@@ -71,7 +71,7 @@ public class TestFlightPromotionHelper extends TestCase {
 		p1.setAirportD(_atl);
 		p1.setAirportA(_jfk);
 		
-		assertFalse(p1.hasAttribute(FlightReport.ATTR_ACARS));
+		assertFalse(p1.hasAttribute(Attribute.ACARS));
 		assertTrue(p1.getDistance() > eq1.getPromotionMinLength());
 		assertTrue(p1.getDistance() > eq2.getPromotionMinLength());
 	
@@ -86,10 +86,10 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertNotNull(p1);
 		p1.setAirportD(_atl);
 		p1.setAirportA(_jfk);
-		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setAttribute(Attribute.ACARS, true);
 		p1.setTime(1, 7200);
 		
-		assertTrue(p1.hasAttribute(FlightReport.ATTR_ACARS));
+		assertTrue(p1.hasAttribute(Attribute.ACARS));
 		assertTrue(p1.getDistance() > eq1.getPromotionMinLength());
 		assertTrue(p1.getDistance() > eq2.getPromotionMinLength());
 		
@@ -104,7 +104,7 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertNotNull(p1);
 		p1.setAirportD(_atl);
 		p1.setAirportA(_dob);
-		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setAttribute(Attribute.ACARS, true);
 		p1.setTime(1, 1800);
 		
 		assertFalse(p1.getDistance() > eq1.getPromotionMinLength());
@@ -121,13 +121,13 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertNotNull(p1);
 		p1.setAirportD(_atl);
 		p1.setAirportA(_jfk);
-		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setAttribute(Attribute.ACARS, true);
 		p1.setTime(1, 2600);
 		p1.setTime(2, 600);
 		
 		assertEquals(715, p1.getDistance());
 		
-		assertTrue(p1.hasAttribute(FlightReport.ATTR_ACARS));
+		assertTrue(p1.hasAttribute(Attribute.ACARS));
 		assertTrue(p1.getDistance() > eq1.getPromotionMinLength());
 		assertTrue(p1.getDistance() > eq2.getPromotionMinLength());
 		assertTrue(p1.getDistance() < eq1.getPromotionSwitchLength());
@@ -146,11 +146,11 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertNotNull(p1);
 		p1.setAirportD(_atl);
 		p1.setAirportA(_bos);
-		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setAttribute(Attribute.ACARS, true);
 		p1.setTime(1, 600);
 		p1.setTime(2, 2600);
 		
-		assertTrue(p1.hasAttribute(FlightReport.ATTR_ACARS));
+		assertTrue(p1.hasAttribute(Attribute.ACARS));
 		assertTrue(p1.getDistance() > eq1.getPromotionMinLength());
 		assertTrue(p1.getDistance() > eq2.getPromotionMinLength());
 		assertTrue(p1.getDistance() > eq1.getPromotionSwitchLength());
@@ -169,7 +169,7 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertNotNull(p1);
 		p1.setAirportD(_atl);
 		p1.setAirportA(_bos);
-		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setAttribute(Attribute.ACARS, true);
 		p1.setTime(1, 600);
 		p1.setTime(2, 2600);
 		

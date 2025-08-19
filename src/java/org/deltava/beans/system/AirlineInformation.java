@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    private boolean _canTransfer;
    private boolean _allowMulti;
    private boolean _histRestricted;
+   private boolean _autoApprove;
 
    /**
     * Creates a new Airline Information bean.
@@ -68,6 +69,14 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
     */
    public String getName() {
       return _name;
+   }
+   
+   /**
+    * Returns whether the Airline supports automatic scoring and approval of ACARS flight reports.
+    * @return TRUE if automatic approval is suppoprted, otherwise FALSE
+    */
+   public boolean getAutoApprove() {
+	   return _autoApprove;
    }
    
    /**
@@ -142,6 +151,15 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
     */
    public void setAllowMultiAirline(boolean allowMulti) {
 	   _allowMulti = allowMulti;
+   }
+   
+   /**
+    * Updates whether this airline supports automatic scoring and approval of ACARS flights.
+    * @param autoApprove TRUE if flights can be automatically approvted, otherwise FALSE
+    * @see AirlineInformation#getAutoApprove()
+    */
+   public void setAutoApprove(boolean autoApprove) {
+	   _autoApprove = autoApprove;
    }
    
    @Override

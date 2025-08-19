@@ -70,12 +70,12 @@ public class TestFlightReport extends AbstractBeanTestCase {
     
     public void testAttributes() {
         assertEquals(0, _fr.getAttributes());
-        _fr.setAttribute(FlightReport.ATTR_ACARS, true);
-        assertTrue(_fr.hasAttribute(FlightReport.ATTR_ACARS));
-        _fr.setAttribute(FlightReport.ATTR_IVAO, true);
-        assertTrue(_fr.hasAttribute(FlightReport.ATTR_IVAO));
-        _fr.setAttribute(FlightReport.ATTR_ACARS, false);
-        assertFalse(_fr.hasAttribute(FlightReport.ATTR_ACARS));
+        _fr.setAttribute(Attribute.ACARS, true);
+        assertTrue(_fr.hasAttribute(Attribute.ACARS));
+        _fr.setAttribute(Attribute.IVAO, true);
+        assertTrue(_fr.hasAttribute(Attribute.IVAO));
+        _fr.setAttribute(Attribute.ACARS, false);
+        assertFalse(_fr.hasAttribute(Attribute.ACARS));
     }
     
     public void testAirports() {

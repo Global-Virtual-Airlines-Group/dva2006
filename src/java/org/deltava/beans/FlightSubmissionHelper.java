@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 10.0
  */
 
@@ -68,7 +68,7 @@ public class FlightSubmissionHelper {
 		_c = c;
 		_fr = fr;
 		_p = p;
-		_isACARS = (_fr.hasAttribute(FlightReport.ATTR_ACARS) || _fr.hasAttribute(FlightReport.ATTR_SIMFDR)) && (_fr instanceof ACARSFlightReport);
+		_isACARS = (_fr.hasAttribute(Attribute.ACARS) || _fr.hasAttribute(Attribute.SIMFDR)) && (_fr instanceof ACARSFlightReport);
 	}
 	
 	/**
@@ -130,6 +130,14 @@ public class FlightSubmissionHelper {
 	}
 	
 	/**
+	 * Returns the ACARS position data. While these are {@link GeospaceLocation} beans in the interface, they are mostly if not completely {@link ACARSRouteEntry} beans.
+	 * @return a Collection of GeospaceLocation beans
+	 */
+	public Collection<GeospaceLocation> getPositionData() {
+		return _rte;
+	}
+	
+	/**
 	 * Returns the Flight Schedule entry for the real-time flight being tracked.
 	 * @return a ScheduleEntry, or none if no matching flight found
 	 */
@@ -143,6 +151,14 @@ public class FlightSubmissionHelper {
 	 */
 	public Course getCourse() {
 		return _crs;
+	}
+	
+	/**
+	 * Returns the Aircraft profile used for this flight.
+	 * @return an Aircraft
+	 */
+	public Aircraft getAircraft() {
+		return _ac;
 	}
 	
 	/**
@@ -172,8 +188,8 @@ public class FlightSubmissionHelper {
 			if (!isSaved) _fr.setID(fr.getID());
 			_fr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 			_fr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
-			_fr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
-			_fr.setAttribute(FlightReport.ATTR_DIVERT, fr.hasAttribute(FlightReport.ATTR_DIVERT));
+			_fr.setAttribute(Attribute.CHARTER, fr.hasAttribute(Attribute.CHARTER));
+			_fr.setAttribute(Attribute.DIVERT, fr.hasAttribute(Attribute.DIVERT));
 			if (!StringUtils.isEmpty(fr.getComments()))
 				_fr.setComments(fr.getComments());
 			if (!fr.getStatusUpdates().isEmpty()) {
@@ -214,7 +230,7 @@ public class FlightSubmissionHelper {
 		}
 		
 		// Load track data
-		if (_fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) {
+		if (Attribute.isOnline(_fr.getAttributes())) {
 			GetOnlineTrack tdao = new GetOnlineTrack(_c); 
 			_trackID = tdao.getTrackID(_fr.getDatabaseID(DatabaseID.PILOT), _fr.getNetwork(), _fr.getSubmittedOn(), _fr.getAirportD(), _fr.getAirportA());
 			if (_trackID != 0) {
@@ -274,7 +290,7 @@ public class FlightSubmissionHelper {
 		EquipmentType eqType = eqdao.get(_p.getEquipmentType(), _db);
 		if (!_p.getRatings().contains(_fr.getEquipmentType()) && !eqType.getRatings().contains(_fr.getEquipmentType())) {
 			log.info("{} not rated in {} ratings - {}", _p.getName(), _fr.getEquipmentType(), _p.getRatings());
-			_fr.setAttribute(FlightReport.ATTR_NOTRATED, !_fr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
+			_fr.setAttribute(Attribute.NOTRATED, !_fr.hasAttribute(Attribute.CHECKRIDE));
 		}
 		
 		// Check promotion
@@ -308,8 +324,8 @@ public class FlightSubmissionHelper {
 		
 		// Check for excessive distance and diversion
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
-		_fr.setAttribute(FlightReport.ATTR_HISTORIC, _ac.getHistoric());
-		_fr.setAttribute(FlightReport.ATTR_RANGEWARN, (_fr.getDistance() > opts.getRange()));
+		_fr.setAttribute(Attribute.HISTORIC, _ac.getHistoric());
+		_fr.setAttribute(Attribute.RANGEWARN, (_fr.getDistance() > opts.getRange()));
 		if ((_info != null) && (_fr.getPassengers() > 0) && (_info.getSeats() == 0))
 			_info.setSeats(opts.getSeats());
 
@@ -317,9 +333,9 @@ public class FlightSubmissionHelper {
 		
 		// Check for excessive weight
 		if ((_ac.getMaxTakeoffWeight() != 0) && (ffr.getTakeoffWeight() > _ac.getMaxTakeoffWeight()))
-			_fr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			_fr.setAttribute(Attribute.WEIGHTWARN, true);
 		else if ((_ac.getMaxLandingWeight() != 0) && (ffr.getLandingWeight() > _ac.getMaxLandingWeight()))
-			_fr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			_fr.setAttribute(Attribute.WEIGHTWARN, true);
 	}
 	
 	/**
@@ -330,7 +346,7 @@ public class FlightSubmissionHelper {
 		List<FuelChecker> fuelData = _rte.stream().filter(FuelChecker.class::isInstance).map(FuelChecker.class::cast).collect(Collectors.toList());
 		FuelUse use = FuelUse.validate(fuelData);
 		afr.setTotalFuel(use.getTotalFuel());
-		afr.setAttribute(FlightReport.ATTR_REFUELWARN, use.getRefuel());
+		afr.setAttribute(Attribute.REFUELWARN, use.getRefuel());
 		use.getMessages().forEach(fuelMsg -> afr.addStatusUpdate(0, HistoryType.SYSTEM, fuelMsg));
 	}
 	
@@ -416,14 +432,14 @@ public class FlightSubmissionHelper {
 			Collection<Course> courses = crsdao.getByPilot(_fr.getAuthorID());
 			_crs = courses.stream().filter(crs -> (crs.getStatus() == org.deltava.beans.academy.Status.STARTED)).findAny().orElse(null);
 			boolean isINS = _p.isInRole("Instructor") ||  _p.isInRole("AcademyAdmin") || _p.isInRole("AcademyAudit") || _p.isInRole("Examiner");
-			_fr.setAttribute(FlightReport.ATTR_ACADEMY, (_crs != null) || isINS);	
-			if (!_fr.hasAttribute(FlightReport.ATTR_ACADEMY))
+			_fr.setAttribute(Attribute.ACADEMY, (_crs != null) || isINS);	
+			if (!_fr.hasAttribute(Attribute.ACADEMY))
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, "Removed Flight Academy status - No active Course");
 		}
 		
 		// Check for diversion
 		if (_info != null)
-			_fr.setAttribute(FlightReport.ATTR_DIVERT, _fr.hasAttribute(FlightReport.ATTR_DIVERT) || !_fr.getAirportA().equals(_info.getAirportA()));
+			_fr.setAttribute(Attribute.DIVERT, _fr.hasAttribute(Attribute.DIVERT) || !_fr.getAirportA().equals(_info.getAirportA()));
 
 		// Check the schedule database and check the route pair
 		boolean isAssignment = (_fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
@@ -434,7 +450,7 @@ public class FlightSubmissionHelper {
 			log.warn("No flights found between {} and {}", _fr.getAirportD(), _fr.getAirportA());
 			boolean wasValid = (_info != null) && _info.isScheduleValidated() && _info.matches(_fr);
 			if (!wasValid)
-				_fr.setAttribute(FlightReport.ATTR_ROUTEWARN, !_fr.hasAttribute(FlightReport.ATTR_CHARTER));
+				_fr.setAttribute(Attribute.ROUTEWARN, !_fr.hasAttribute(Attribute.CHARTER));
 			
 			return Duration.ZERO;
 		}
@@ -443,7 +459,7 @@ public class FlightSubmissionHelper {
 		Duration minTime = Duration.ofSeconds((long)(ft.toSeconds() * 0.75 - 1800));
 		Duration maxTime = Duration.ofSeconds((long)(ft.toSeconds() * 1.15 + 1800));
 		if ((bt.compareTo(minTime) < 0) || (bt.compareTo(maxTime) > 0))
-			_fr.setAttribute(FlightReport.ATTR_TIMEWARN, !isEvent && !isTour);
+			_fr.setAttribute(Attribute.TIMEWARN, !isEvent && !isTour);
 			
 		// Determine flight length, use block time if ACARS/simFDR
 		if (_isACARS && (_fr instanceof ACARSFlightReport afr)) {
@@ -454,7 +470,7 @@ public class FlightSubmissionHelper {
 			}
 			
 			// Calculate timeliness of flight
-			if (!_fr.hasAttribute(FlightReport.ATTR_DIVERT)) {
+			if (!_fr.hasAttribute(Attribute.DIVERT)) {
 				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(_db);
 				ssc.setAirportD(_fr.getAirportD()); ssc.setAirportA(_fr.getAirportA());
 				ssc.setExcludeHistoric(_fr.getAirline().getHistoric() ? Inclusion.INCLUDE : Inclusion.EXCLUDE);
@@ -498,11 +514,11 @@ public class FlightSubmissionHelper {
 			_info.setRunwayD(new RunwayDistance(r, dist));
 			if (r.getLength() < opts.getTakeoffRunwayLength()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Minimum takeoff runway length for the %s is %d feet", _ac.getName(), Integer.valueOf(opts.getTakeoffRunwayLength())));
-				_fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
+				_fr.setAttribute(Attribute.RWYWARN, true);
 			}
 			if (!r.getSurface().isHard() && !opts.getUseSoftRunways()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("%s not authorized for soft runway operation on %s", _ac.getName(), r.getName()));
-				_fr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
+				_fr.setAttribute(Attribute.RWYSFCWARN, true);
 			}
 		}
 
@@ -520,11 +536,11 @@ public class FlightSubmissionHelper {
 			afr.setLandingScore(LandingScorer.score(afr.getLandingVSpeed(), dist));
 			if (r.getLength() < opts.getLandingRunwayLength()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Minimum landing runway length for the %s is %d feet", _ac.getName(), Integer.valueOf(opts.getLandingRunwayLength())));
-				_fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
+				_fr.setAttribute(Attribute.RWYWARN, true);
 			}
 			if (!r.getSurface().isHard() && !opts.getUseSoftRunways()) {
 				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("%s not authorized for soft runway operation on %s", _ac.getName(), r.getName()));
-				_fr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
+				_fr.setAttribute(Attribute.RWYSFCWARN, true);
 			}
 		}
 	}
@@ -539,8 +555,8 @@ public class FlightSubmissionHelper {
 		// Check ETOPS
 		AircraftPolicyOptions opts = _ac.getOptions(_appCode);
 		ETOPSResult etopsClass = ETOPSHelper.classify(_rte);
-		_fr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.isWarn(opts.getETOPS(), etopsClass.getResult()));
-		if (_fr.hasAttribute(FlightReport.ATTR_ETOPSWARN)) {
+		_fr.setAttribute(Attribute.ETOPSWARN, ETOPSHelper.isWarn(opts.getETOPS(), etopsClass.getResult()));
+		if (_fr.hasAttribute(Attribute.ETOPSWARN)) {
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("ETOPS classificataion - aircraft %s, route %s", opts.getETOPS(), etopsClass.getResult()));
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("ETOPS route info - %s", etopsClass));
 		}
@@ -548,7 +564,7 @@ public class FlightSubmissionHelper {
 		// Check prohibited airspace
 		Collection<Airspace> rstAirspaces = AirspaceHelper.classify(_rte, false); 
 		if (!rstAirspaces.isEmpty()) {
-			_fr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
+			_fr.setAttribute(Attribute.AIRSPACEWARN, true);
 			_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Entered restricted airspace %s", StringUtils.listConcat(rstAirspaces, ", ")));
 		}
 	}

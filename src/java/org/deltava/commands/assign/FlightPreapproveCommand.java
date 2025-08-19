@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 10.5
+ * @version 12.2
  * @since 2.1
  */
 
@@ -142,7 +142,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			fr.setDatabaseID(DatabaseID.DISPOSAL, ctx.getUser().getID());
 			fr.setRank(usr.getRank());
 			fr.setDate(info.getAssignDate());
-			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
+			fr.setAttribute(Attribute.CHARTER, true);
 
 			// Start the transaction
 			ctx.startTX();

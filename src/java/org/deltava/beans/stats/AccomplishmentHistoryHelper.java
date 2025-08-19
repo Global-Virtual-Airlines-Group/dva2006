@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 11.0
+ * @version 12.2
  * @since 3.2
  */
 
@@ -82,8 +82,8 @@ public class AccomplishmentHistoryHelper {
 			_airportD.add(fr.getAirportD());
 			add(fr.getAirportA());
 			_airportA.add(fr.getAirportA());
-			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
-			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
+			if (fr.hasAttribute(Attribute.HISTORIC)) _historicLegs++;
+			if (Attribute.isOnline(fr.getAttributes())) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.TOUR) != 0) _tourLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
 			incLeg(_eqLegs, fr.getEquipmentType());
