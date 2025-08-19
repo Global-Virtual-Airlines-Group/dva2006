@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 12.0
+ * @version 12.2
  * @since 5.4
  */
 
@@ -69,7 +69,7 @@ public class MyTrackService extends WebService {
 			flights.addAll(frdao.getByPilot(userID, ssa));
 			
 			// Filter out non-ACARS and sort
-			flights.removeIf(fr -> (!fr.hasAttribute(FlightReport.ATTR_ACARS) || (fr.getStatus() != FlightStatus.OK)));
+			flights.removeIf(fr -> (!fr.hasAttribute(Attribute.ACARS) || (fr.getStatus() != FlightStatus.OK)));
 			flights.sort(new FlightReportComparator(0).reversed());
 			if (flights.size() > MAX_FLIGHTS)
 				flights = flights.subList(0, MAX_FLIGHTS);

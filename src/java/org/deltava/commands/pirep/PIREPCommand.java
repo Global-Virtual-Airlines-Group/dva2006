@@ -41,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -156,18 +156,18 @@ public class PIREPCommand extends AbstractFormCommand {
 			Aircraft aInfo = acdao.get(fr.getEquipmentType());
 			if (aInfo != null) {
 				AircraftPolicyOptions opts = aInfo.getOptions(SystemData.get("airline.code"));
-				fr.setAttribute(FlightReport.ATTR_HISTORIC, aInfo.getHistoric());
-				fr.setAttribute(FlightReport.ATTR_ACADEMY, aInfo.getAcademyOnly());
-				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > opts.getRange()));
+				fr.setAttribute(Attribute.HISTORIC, aInfo.getHistoric());
+				fr.setAttribute(Attribute.ACADEMY, aInfo.getAcademyOnly());
+				fr.setAttribute(Attribute.RANGEWARN, (fr.getDistance() > opts.getRange()));
 				
 				// Check for excessive weight
 				if (fr instanceof ACARSFlightReport afr) {
 					if ((aInfo.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > aInfo.getMaxTakeoffWeight()))
-						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+						afr.setAttribute(Attribute.WEIGHTWARN, true);
 					else if ((aInfo.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > aInfo.getMaxLandingWeight()))
-						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-					else if (afr.hasAttribute(FlightReport.ATTR_WEIGHTWARN))
-						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, false);
+						afr.setAttribute(Attribute.WEIGHTWARN, true);
+					else if (afr.hasAttribute(Attribute.WEIGHTWARN))
+						afr.setAttribute(Attribute.WEIGHTWARN, false);
 				}
 				
 				// If the passengers are non-zero, update the count
@@ -487,7 +487,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Check for SimBrief package
 			BriefingPackage sbPkg = null;
-			if (fr.hasAttribute(FlightReport.ATTR_SIMBRIEF)) {
+			if (fr.hasAttribute(Attribute.SIMBRIEF)) {
 				GetSimBriefPackages sbpdao = new GetSimBriefPackages(con);
 				sbPkg = sbpdao.getSimBrief(fr.getID(), ctx.getDB());
 				if (sbPkg != null) {
@@ -556,7 +556,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// If we're online and not on an event, list possible event
-			if (ac.getCanAdjustEvents() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
+			if (ac.getCanAdjustEvents() && Attribute.isOnline(fr.getAttributes()) && (fr.getDatabaseID(DatabaseID.EVENT) == 0))
 				ctx.setAttribute("possibleEvents", evdao.getPossibleEvents(fr, SystemData.get("airline.code")), REQUEST);
 			
 			// Get the elite status if applicable
@@ -638,7 +638,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
 						
 							// Get online data if we can
-							if (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) {
+							if (Attribute.isOnline(fr.getAttributes())) {
 								Collection<PositionData> entries = pkg.getData().stream().filter(ACARSRouteEntry::getNetworkConnected).map(re -> new PositionData(re.getDate(), new GeoPosition(re))).collect(Collectors.toList());
 								onlineTime = OnlineTime.calculate(entries, otMaxGap);
 							}
@@ -797,7 +797,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Load the online track
 			GetOnlineTrack tdao = new GetOnlineTrack(con);
 			boolean hasTrack = tdao.hasTrack(fr.getID());
-			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightStatus.DRAFT))) {
+			if (hasTrack || (Attribute.isOnline(fr.getAttributes()) && (fr.getStatus() != FlightStatus.DRAFT))) {
 				File f = ArchiveHelper.getOnline(fr.getID());
 				Collection<PositionData> pd = new ArrayList<PositionData>();
 				if (f.exists()) {
@@ -847,7 +847,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				// Check for data outages
-				if (fr.hasAttribute(FlightReport.ATTR_FDR_MASK) && (fr.getNetwork( ) != null) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
+				if (Attribute.isFDR(fr.getAttributes()) && (fr.getNetwork( ) != null) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
 					FDRFlightReport ffr = (FDRFlightReport) fr;
 					Collection<NetworkOutage> networkOutages = NetworkOutage.calculate(fr.getNetwork(), ffr, tdao.getFetches(fr.getNetwork(), ffr), 120);
 					ctx.setAttribute("networkOutages", networkOutages, REQUEST);
@@ -903,7 +903,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ETOPSResult etopsInfo = ETOPSHelper.classify(route);
 				ctx.setAttribute("filedETOPS", etopsInfo, REQUEST);
 				if ((fr.getStatus() == FlightStatus.DRAFT) && (acOpts != null) && (acOpts.getETOPS() != ETOPS.INVALID) && (etopsInfo.getResult().getTime() > acOpts.getETOPS().getTime()))
-					fr.setAttribute(FlightReport.ATTR_ETOPSWARN, true);
+					fr.setAttribute(Attribute.ETOPSWARN, true);
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN)) {
 				Collection<? extends GeoLocation> rt = fr.getAirports();
 				ctx.setAttribute("mapRoute", rt, REQUEST);

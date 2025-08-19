@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 12.0
+ * @version 12.2
  * @since 2.4
  */
 
@@ -381,7 +381,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				SetExam wdao = new SetExam(con);
 				wdao.write(cr);
 			} else
-				afr.setAttribute(FlightReport.ATTR_CHECKRIDE, false);
+				afr.setAttribute(Attribute.CHECKRIDE, false);
 			
 			// Write the PIREP
 			SetFlightReport fwdao = new SetFlightReport(con);

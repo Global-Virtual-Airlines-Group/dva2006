@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 11.4
+ * @version 12.1
  * @since 6.2
  */
 
@@ -22,25 +22,6 @@ public class GetAggregateStatistics extends DAO {
 	 */
 	public GetAggregateStatistics(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Retrieves entries from the Flight Report aggregation queue.
-	 * @return a Collection of Flight Report database IDs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Integer> getAggregateQueue() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID FROM PIREP_AGGREGATE_QUEUE ORDER BY CREATED")) {
-			Collection<Integer> results = new ArrayList<Integer>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					results.add(Integer.valueOf(rs.getInt(1)));
-			}
-			
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**

@@ -11,8 +11,10 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
-<script>
+<content:cspHeader />
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.domain, l:6, t:'Domain Name'});
@@ -55,7 +57,8 @@ golgotha.local.validate = function(f) {
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
 <el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /><br />
-<el:box name="allowsMulti" className="small" label="Allows membership in multiple Virtual Airlines" value="true" checked="${aInfo.allowMultiAirline}" /><br /></td>
+<el:box name="autoApprove" className="small" label="Automatically approve ACARS Flight Reports with optimal Flight Score" value="true" checked="${aInfo.autoApprove}" /><br />
+<el:box name="allowsMulti" className="small" label="Allows membership in multiple Virtual Airlines" value="true" checked="${aInfo.allowMultiAirline}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -71,6 +74,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

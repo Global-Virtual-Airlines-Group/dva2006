@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 11.6
+ * @version 12.2
  * @since 1.0
  */
 
@@ -668,6 +668,7 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeHistory(Collection<FlightHistoryEntry> upds, String dbName) throws DAOException {
+		if (upds.isEmpty()) return;
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("INSERT INTO ");
