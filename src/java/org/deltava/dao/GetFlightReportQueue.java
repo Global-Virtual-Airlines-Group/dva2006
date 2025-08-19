@@ -38,9 +38,9 @@ public class GetFlightReportQueue extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ApprovalStatus a = new ApprovalStatus(rs.getInt(1));
-					if (rs.getBoolean(2)) a.add(ApprovalOperation.COMPLETION);
-					if (rs.getBoolean(3)) a.add(ApprovalOperation.STATS);
-					if (rs.getBoolean(4)) a.add(ApprovalOperation.ELITE);
+					if (!rs.getBoolean(2)) a.add(ApprovalOperation.COMPLETION);
+					if (!rs.getBoolean(3)) a.add(ApprovalOperation.STATS);
+					if (!rs.getBoolean(4)) a.add(ApprovalOperation.ELITE);
 					results.add(a);
 				}
 			}
