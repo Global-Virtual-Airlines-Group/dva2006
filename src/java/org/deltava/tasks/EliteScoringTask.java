@@ -66,7 +66,7 @@ public class EliteScoringTask extends Task {
 			GetFlightReportQueue qdao = new GetFlightReportQueue(con);
 			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
 			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.ELITE) && ap.isPending(ApprovalOperation.COMPLETION)); // Completion archives the position entries
-			log.warn("{} scoring {} flights", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
+			log.log(flights.isEmpty() ? Level.INFO : Level.WARN, "{} processing {} Flight Reports", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
 			
 			int lastID = 0; final List<FlightReport> pireps = new ArrayList<FlightReport>();
 			for (Iterator<ApprovalStatus> i = flights.iterator(); i.hasNext(); ) {
