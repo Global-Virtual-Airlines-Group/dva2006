@@ -60,7 +60,7 @@ public class FlightAggregateTask extends Task {
 			// Get the queue
 			Collection<ApprovalStatus> flights = qdao.getPostApprovalQueue();
 			flights.removeIf(ap -> !ap.isPending(ApprovalOperation.STATS) && !ap.isPending(ApprovalOperation.COMPLETION));
-			log.warn("{} processing {} Flight Reports", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
+			log.log(flights.isEmpty() ? Level.INFO : Level.WARN, "{} processing {} Flight Reports", SystemData.get("airline.code"), Integer.valueOf(flights.size()));
 			
 			// Process each flight
 			for (ApprovalStatus ap : flights) {
