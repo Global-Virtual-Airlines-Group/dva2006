@@ -4,7 +4,7 @@ package org.deltava.beans.flight;
 /**
  * An enumeration to list flight condition warnings.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 8.0
  */
 
@@ -13,7 +13,7 @@ public enum Warning implements org.deltava.beans.EnumDescription {
 	OVER250K("250 under 10K", FlightScore.ACCEPTABLE, 3), DESCENTRATE("Descent Rate"), BANK("Bank Angle"), PITCH("Pitch Angle"), GFORCE("G-Force", FlightScore.ACCEPTABLE, 3),
 	TAXISPEED("Taxi Speed"), NOFUEL("No Fuel", FlightScore.DANGEROUS), OVERSPEED("Overspeed", FlightScore.DANGEROUS, 2), STALL("Stall", FlightScore.DANGEROUS), 
 	AIRSPACE("Airspace", FlightScore.DANGEROUS), ALTITUDE("Altitude"), GEARSPEED("Gear Extension", FlightScore.DANGEROUS), GEARUP("Gear Up"), CRASH("Crash", FlightScore.DANGEROUS), 
-	ENGOUT("Engine Out", FlightScore.DANGEROUS);
+	ENGOUT("Engine Out", FlightScore.DANGEROUS), DATAERROR("Invalid Data", FlightScore.OPTIMAL, 1);
 
 	private final String _desc;
 	private final FlightScore _score;

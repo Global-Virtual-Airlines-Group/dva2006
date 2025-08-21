@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.Warning;
 /**
  * An XACARS Position Report.
  * @author Luke
- * @version 8.0
+ * @version 12.2
  * @since 4.1
  */
 
@@ -93,6 +93,8 @@ public class XARouteEntry extends RouteEntry {
 	@Override
 	public Collection<Warning> getWarnings() {
 		Collection<Warning> warnings = new LinkedHashSet<Warning>();
+		if (hasDataError())
+			warnings.add(Warning.DATAERROR);
 		if ((getAltitude() < 10000) && (getAirSpeed() > 250))
 			warnings.add(Warning.OVER250K);
 		if (getFuelRemaining() <= 20)
