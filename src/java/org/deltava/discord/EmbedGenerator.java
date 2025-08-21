@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to generate Discord responses.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 11.1
  */
 
@@ -173,14 +173,15 @@ class EmbedGenerator {
      */
     static EmbedBuilder createPIREP(FlightReport fr, Pilot p) {
     	boolean isACARS = (fr instanceof ACARSFlightReport);
+    	boolean isApproved = (fr.getStatus() == FlightStatus.OK);
     	Duration d = isACARS ? ((ACARSFlightReport) fr).getBlockTime() : Duration.ofMinutes(fr.getLeg() * 6);
     	EmbedBuilder eb = new EmbedBuilder()
     		.setTitle(String.format("%s Completed", fr.getShortCode()))
     		.setThumbnail(String.format("https://%s/img/favicon/favicon-32x32.png", SystemData.get("airline.url")))
     		.setFooter((isACARS ? "ACARS " : "") + "Flight Report")
     		.setTimestampToNow()
-    		.setColor(new Color(1, 0, 161))
-    		.setDescription(String.format("A Flight has been completed and a new %s Flight Report has been filed at the %s web site.", isACARS ? "ACARS" : "manual", SystemData.get("airline.name")))
+    		.setColor(isApproved ? Color.GREEN : new Color(1, 0, 161))
+    		.setDescription(String.format("A Flight has been completed and a new %s Flight Report has been %s at the %s web site.", isACARS ? "ACARS" : "manual", isApproved ? "approved" : "filed", SystemData.get("airline.name")))
     		.addInlineField("Link", String.format("https://%s/l/fr/%s", SystemData.get("airline.domain"), Integer.toHexString(fr.getID())))
     		.addInlineField("Route", String.format("%s - %s", fr.getAirportD().getIATA(), fr.getAirportA().getIATA()))
     		.addInlineField("Equipment", fr.getEquipmentType())
@@ -189,11 +190,14 @@ class EmbedGenerator {
     		.addInlineField("Simulator", fr.getSimulator().name());
     	
     	// Format time / passengers
+    	if (isApproved)
+    		eb.addInlineField("Status", "Auto-Approved");
+    	if (fr.getPassengers() > 0)
+    		eb.addInlineField("Passengers", String.valueOf(fr.getPassengers()));
+
     	DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
 		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochSecond(d.getSeconds()), ZoneId.of("Z"));
 		eb.addInlineField("Duration", df.format(zdt));
-    	if (fr.getPassengers() > 0)
-    		eb.addInlineField("Passengers", String.valueOf(fr.getPassengers()));
     	
     	return eb;
     }
