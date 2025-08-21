@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 12.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -33,6 +33,8 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	private int _fuelRemaining;
 	
 	private int _flags;
+	
+	private boolean _invalidData;
 	
 	/**
 	 * Creates a new ACARS Route Entry bean.
@@ -185,12 +187,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Updates the aircraft's altitude above <i>sea level</i>.
 	 * @param alt the altitude in feet MSL
-	 * @throws IllegalArgumentException if alt &lt; -1200 or alt &gt; 120000
 	 * @see RouteEntry#getAltitude()
 	 */
 	public void setAltitude(int alt) {
-		if ((alt < -1200) || (alt > 120000))
-			throw new IllegalArgumentException("Altitude cannot be < -1200 or > 120000 - " + alt);
+		if ((alt < -300) || (alt > 90000))
+			_invalidData = true;
 
 		_alt = alt;
 	}
@@ -198,12 +199,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Updates the aircraft's heading.
 	 * @param hdg the heading in degrees
-	 * @throws IllegalArgumentException if hdg < 0 or hdg > 360
 	 * @see RouteEntry#getHeading()
 	 */
 	public void setHeading(int hdg) {
 		if ((hdg < 0) || (hdg > 360))
-			throw new IllegalArgumentException("Heading cannot be < 0 or > 360 degrees");
+			_invalidData = true;
 
 		_hdg = hdg;
 	}
@@ -211,12 +211,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Updates the aircraft's airspeed.
 	 * @param speed the speed in knots
-	 * @throws IllegalArgumentException if speed < -20 or speed > 700
 	 * @see RouteEntry#getAirSpeed()
 	 */
 	public void setAirSpeed(int speed) {
 		if ((speed < -20) || (speed > 700))
-			throw new IllegalArgumentException("Airspeed cannot be < -20 or > 700 - " + speed);
+			_invalidData = true;
 
 		_aSpeed = speed;
 	}
@@ -224,7 +223,6 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Updates the aircraft's ground speed.
 	 * @param speed the speed in knots
-	 * @throws IllegalArgumentException if speed < -5 or speed > 1600
 	 * @see RouteEntry#getGroundSpeed()
 	 */
 	public void setGroundSpeed(int speed) {
@@ -234,12 +232,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Updates the aircraft's Mach number.
 	 * @param mach the Mach number
-	 * @throws IllegalArgumentException if mach > 5.0
 	 * @see RouteEntry#getMach()
 	 */
 	public void setMach(double mach) {
-		if (mach > 5.0)
-			throw new IllegalArgumentException("Invalid Mach Number - " + mach);
+		if (mach > 3.7)
+			_invalidData = true;
 
 		_mach = Math.max(0, mach);
 	}
@@ -316,6 +313,15 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	}
 
 	/**
+	 * Returns if a data field contains an inalid value.
+	 * @return TRUE if invalid, otherwise FALSE
+	 * @see Warning#DATAERROR
+	 */
+	public boolean hasDataError() {
+		return _invalidData;
+	}
+
+	/**
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
 	 */
@@ -329,10 +335,6 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 */
 	public abstract Collection<Warning> getWarnings();
 
-	/**
-	 * Compares two route entries by comparing their date/times.
-	 * @see Comparable#compareTo(Object)
-	 */
 	@Override
 	public int compareTo(Object o2) {
 		RouteEntry re2 = (RouteEntry) o2;

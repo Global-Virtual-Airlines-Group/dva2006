@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 12.0
+ * @version 12.2
  * @since 1.0
  */
 
@@ -106,6 +106,8 @@ public class MapFlightDataService extends WebService {
 			if (entry instanceof RouteEntry re) {
 				eo.put("hdg", re.getHeading());
 				eo.put("agl", re.getRadarAltitude());
+				if (re.hasDataError())
+					eo.put("dataError", true);
 			}
 
 			if (entry instanceof MarkerMapEntry me) {
@@ -115,7 +117,7 @@ public class MapFlightDataService extends WebService {
 				eo.put("pal", me.getPaletteCode());
 				eo.put("icon", me.getIconCode());
 				eo.put("info", me.getInfoBox());
-			} 
+			}
 			
 			if ((entry instanceof ACARSRouteEntry rte) && (rte.getATC1() != null)) {
 				JSONObject ao = new JSONObject();

@@ -26,6 +26,7 @@ p.then(function(rsp) {
 
 		const pts3D = []; const pts2D = [[], []]; let pt2D = pts2D[0];
 		js.positions.forEach(function(p) {
+			if (p.dataError) return false;
 			const agl = golgotha.maps.feet2Meter(p.agl * map.verticalEx);
 			const alt = golgotha.maps.feet2Meter(p.alt * map.verticalEx) + 1.75;
 			let mrk; const ll = golgotha.maps.toLL(p.ll);

@@ -730,6 +730,8 @@ public class ACARSRouteEntry extends RouteEntry {
 	@Override
 	public Collection<Warning> getWarnings() {
 		Collection<Warning> warns = new LinkedHashSet<Warning>();
+		if (hasDataError())
+			warns.add(Warning.DATAERROR);
 		if (getAltitude() < 10000) {
 			int as = getAirSpeed();
 			if (_weight > 590000) {
@@ -903,7 +905,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
 		if (isFlagSet(ACARSFlags.GEARDOWN) && !isFlagSet(ACARSFlags.ONGROUND))
 			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
-		if (isFlagSet(ACARSFlags.SP_ARMED) || isFlagSet(ACARSFlags.SPOILERS)) {
+		if ((isFlagSet(ACARSFlags.SP_ARMED) || isFlagSet(ACARSFlags.SPOILERS)) && (_radarAlt < 3500)) {
 			buf.append("<span class=\"ita\">");
 			buf.append(isFlagSet(ACARSFlags.ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
 			if (isFlagSet(ACARSFlags.SP_ARMED))
