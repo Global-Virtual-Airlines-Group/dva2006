@@ -9,9 +9,8 @@ package org.deltava.beans.flight;
  */
 
 public enum Attribute {
-	NOTRATED(0x1, true), VATSIM(0x2), IVAO(0x4), FPI(0x8), ACARS(0x10), ROUTEWARN(0x20, true), TIMEWARN(0x40, true), CHECKRIDE(0x80), CHARTER(0x100), HISTORIC(0x200), ACADEMY(0x400), 
-	RANGEWARN(0x800, true), REFUELWARN(0x1000, true), ETOPSWARN(0x2000, true), DISPATCH(0x4000), WEIGHTWARN(0x8000, true), XACARS(0x10000), RWYWARN(0x20000, true), 
-	RWYSFCWARN(0x40000, true), SIMFDR(0x80000), PEDGE(0x100000), AIRSPACEWARN(0x200000, true), DIVERT(0x400000, true), POSCON(0x800000), SIMBRIEF(0x1000000);
+	NOTRATED(true), VATSIM, IVAO, FPI, ACARS, ROUTEWARN(true), TIMEWARN(true), CHECKRIDE, CHARTER, HISTORIC, ACADEMY, RANGEWARN(true), REFUELWARN(true), ETOPSWARN(true), 
+	DISPATCH, WEIGHTWARN(true), XACARS, RWYWARN(true),	RWYSFCWARN(true), SIMFDR, PEDGE, AIRSPACEWARN(true), DIVERT(true), POSCON, SIMBRIEF, AUTOAPPROVE;
 	
 	/**
 	 * Bitmap used to search for any online flight in the database.
@@ -26,12 +25,12 @@ public enum Attribute {
 	private final int _mask;
 	private final boolean _isWarning;
 	
-	Attribute(int mask) {
-		this(mask, false);
+	Attribute() {
+		this(false);
 	}
 	
-	Attribute(int mask, boolean isWarning) {
-		_mask = mask;
+	Attribute(boolean isWarning) {
+		_mask = 1 << ordinal();
 		_isWarning = isWarning;
 	}
 	
