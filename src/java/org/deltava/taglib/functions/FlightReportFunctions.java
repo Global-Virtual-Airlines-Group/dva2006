@@ -194,6 +194,16 @@ public class FlightReportFunctions {
 	}
 	
 	/**
+	 * Returns if this Flight was automatically aproved upon submission.
+	 * @param fr the FlightReport
+	 * @return TRUE if the AUTOAPPROVE attribute is present, otherwise FALSE
+	 * @see Attribute#AUTOAPPROVE
+	 */
+	public static boolean isAutoApprove(FlightReport fr) {
+		return (fr != null) && fr.hasAttribute(Attribute.AUTOAPPROVE);
+	}
+	
+	/**
 	 * Returns if this Flight has On-Time data.
 	 * @param fr the FlightReport
 	 * @return TRUE if OnTime data is present, otherwise FALSE

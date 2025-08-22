@@ -268,6 +268,8 @@ table.form td.eliteStatus {
 <div class="ter bld caps">Flight Leg is Stage <fmt:int value="${tourIdx}" /> in the ${tour.name} Tour</div></c:if>
 <c:if test="${fn:isAcademy(pirep)}">
 <div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div></c:if>
+<c:if test="${fn:isAutoApprove(pirep)}">
+<diiv class="sec bld caps">Flight Leg automatically approved by ACARS</diiv></c:if>
 </td>
 </tr>
 <tr>
