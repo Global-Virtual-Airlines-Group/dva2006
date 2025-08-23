@@ -17,48 +17,43 @@ golgotha.local.validateFB = function(f) {
 	fd.set('comments', f.comments.value);
 
 	// Send it and display statistics
-	const xreq = new XMLHttpRequest();
-	xreq.open('post', '${fbURL}?id=${fbObject.hexID}', true);
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		if (xreq.status != 200) {
-			alert('Error ' + xreq.statusText + ' sending feedback');
+	const p = fetch('${fbURL}?id=${fbObject.hexID}', {method:'post', body:fd, signal:AbortSignal.timeout(5500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) {
+			alert('Error ' + rsp.statusText + ' sending feedback');
 			golgotha.form.clear();
 			return false;
 		}
 
-		const js = JSON.parse(xreq.responseText);
-		const sse = document.getElementById('fbSize');
-		const ase = document.getElementById('fbScore');
-		ase.innerText = js.avg; sse.innerText = js.size;
-		golgotha.util.display('fbStats', true);
-		golgotha.util.display('fbResponse', true);
+		rsp.json().then(function(js) {
+			const sse = document.getElementById('fbSize');
+			const ase = document.getElementById('fbScore');
+			ase.innerText = js.avg; sse.innerText = js.size;
+			golgotha.util.display('fbStats', true);
+			golgotha.util.display('fbResponse', true);
 
-		// Show coomments
-		if (js.comments.length > 0) {
-			const ce = document.getElementById('fcData');
-			js.comments.forEach(function(co) {
-				const se = document.createElement('span');
-				se.setAttribute('class', 'pri bld');
-				se.textContent = co.score;
-				ce.appendChild(se);
-				ce.append(' - ');
-				ce.append(co.comments);
-				ce.appendChild(document.createElement('br'));
-			});
+			// Show coomments
+			if (js.comments.length > 0) {
+				const ce = document.getElementById('fcData');
+				js.comments.forEach(function(co) {
+					const se = document.createElement('span');
+					se.setAttribute('class', 'pri bld');
+					se.textContent = co.score;
+					ce.appendChild(se);
+					ce.append(' - ');
+					ce.append(co.comments);
+					ce.appendChild(document.createElement('br'));
+				});
 
-			golgotha.util.display('fbComments', true);	
-		}
+				golgotha.util.display('fbComments', true);	
+			}
 
-		const rows = golgotha.util.getElementsByClass('fbData', 'tr');
-		rows.forEach(function(r) { golgotha.util.display(r, false); });
-		golgotha.form.clear();
-		return true;
-	};
+			const rows = golgotha.util.getElementsByClass('fbData', 'tr');
+			rows.forEach(function(r) { golgotha.util.display(r, false); });
+			golgotha.form.clear();
+		});
 
-	xreq.send(fd);
-	golgotha.form.submit(f);
-	return false;
+	});
 };
 </script></c:if>
 

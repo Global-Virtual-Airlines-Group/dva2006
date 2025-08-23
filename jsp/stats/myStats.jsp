@@ -263,75 +263,74 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 </content:region>
 </content:page>
 <script async>
-google.charts.load('current',{'packages':['corechart']});
-google.charts.setOnLoadCallback(function() {
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 9500;
-xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	golgotha.local.data = JSON.parse(xmlreq.responseText);
-	golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle}};
+golgotha.local.loadStats = function() {
+	const p = fetch('mystats.ws?id=${pilot.hexID}', {signal:AbortSignal.timeout(9500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			golgotha.local.data = js;
+			golgotha.local.charts = {hStyle:{gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle}};
 
-	// Display the eqtypes chart
-	let chart = new google.visualization.PieChart(document.getElementById('landingChart'));
-	let data = new google.visualization.DataTable();
-	data.addColumn('string','Equipment');
-	data.addColumn('number','Flight Legs');
-	data.addRows(golgotha.local.data.eqCount);
-	golgotha.util.display('qbSpinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,theme:'maximized',sliceVisibilityThreshold:0.005}));
+			// Display the eqtypes chart
+			let chart = new google.visualization.PieChart(document.getElementById('landingChart'));
+			let data = new google.visualization.DataTable();
+			data.addColumn('string','Equipment');
+			data.addColumn('number','Flight Legs');
+			data.addRows(golgotha.local.data.eqCount);
+			golgotha.util.display('qbSpinner', false);
+			chart.draw(data,golgotha.charts.buildOptions({title:'Flights by Equipment Type',is3D:true,theme:'maximized',sliceVisibilityThreshold:0.005}));
 
-	// Display the vertical speed chart
-	chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
-	data = new google.visualization.DataTable();
-	data.addColumn('string','Landing Speed');
-	data.addColumn('number','Damaging');
-	data.addColumn('number','Firm');
-	data.addColumn('number','Optimal');
-	data.addColumn('number','Too Soft');
-	data.addRows(golgotha.local.data.landingSpd);
-	golgotha.util.display('lcSpinner', false);
-	const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-	chart.draw(data,golgotha.charts.buildOptions({title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none'}));
+			// Display the vertical speed chart
+			chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
+			data = new google.visualization.DataTable();
+			data.addColumn('string','Landing Speed');
+			data.addColumn('number','Damaging');
+			data.addColumn('number','Firm');
+			data.addColumn('number','Optimal');
+			data.addColumn('number','Too Soft');
+			data.addRows(golgotha.local.data.landingSpd);
+			golgotha.util.display('lcSpinner', false);
+			const aX = {textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			chart.draw(data,golgotha.charts.buildOptions({title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none'}));
+			
+			// Display the vertical speed/runway distance chart
+			chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
+			data = new google.visualization.DataTable();
+			data.addColumn('number','Touchown Distance');
+			data.addColumn('number','Dangerous');
+			data.addColumn('number','Acceptable');
+			data.addColumn('number','Optimal');
+			data.addColumn('number','Too Soft');
+			data.addRows(golgotha.local.data.landingSct);
+			golgotha.util.display('lsSpinner', false);
+			const hX = {title:'Distance from Threshold (feet)',textStyle:golgotha.charts.charts,titleTextStyle:golgotha.charts.ttStyle};
+			const yX = {title:'Landing Speed (feet/min)',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			chart.draw(data,golgotha.charts.buildOptions({title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],hAxis:hX,vAxis:yX}));
 
-	// Display the vertical speed/runway distance chart
-	chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
-	data = new google.visualization.DataTable();
-	data.addColumn('number','Touchown Distance');
-	data.addColumn('number','Dangerous');
-	data.addColumn('number','Acceptable');
-	data.addColumn('number','Optimal');
-	data.addColumn('number','Too Soft');
-	data.addRows(golgotha.local.data.landingSct);
-	golgotha.util.display('lsSpinner', false);
-	const hX = {title:'Distance from Threshold (feet)',textStyle:golgotha.charts.charts,titleTextStyle:golgotha.charts.ttStyle};
-	const yX = {title:'Landing Speed (feet/min)',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-	chart.draw(data,golgotha.charts.buildOptions({title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],hAxis:hX,vAxis:yX}));
+			// Display quality breakdown chart
+			chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
+			data = new google.visualization.DataTable();
+			data.addColumn('string','Landing Quality');
+			data.addColumn('number','Flight Legs');	
+			data.addRows(golgotha.local.data.landingQuality);
+			golgotha.util.display('ls2Spinner', false);
+			chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['red','orange','green','blue'],legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
 
-	// Display quality breakdown chart
-	chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
-	data = new google.visualization.DataTable();
-	data.addColumn('string','Landing Quality');
-	data.addColumn('number','Flight Legs');	
-	data.addRows(golgotha.local.data.landingQuality);
-	golgotha.util.display('ls2Spinner', false);
-	chart.draw(data,golgotha.charts.buildOptions({title:'Landing Assessments',is3D:true,colors:['red','orange','green','blue'],legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
-
-	// Massage data and init charts
-	golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};
-	golgotha.local.data.calendar.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarDistance.forEach(golgotha.charts.dateTX);
-	golgotha.local.data.simCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarDistance.forEach(golgotha.charts.dateTX);
-	golgotha.local.data.landingCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarDistance.forEach(golgotha.charts.dateTX);
-	golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
-	golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
-	golgotha.local.charts.landRating = new google.visualization.ColumnChart(document.getElementById('landingRatingStats'));
-	return golgotha.local.swapTimeGraphs(document.forms[0].timeGraphOpts);
+			// Massage data and init charts
+			golgotha.local.dataMap = {"LEGS":[golgotha.local.data.calendar,golgotha.local.data.simCalendar,golgotha.local.data.landingCalendar,"Legs"],"HOURS":[golgotha.local.data.calendarHours,golgotha.local.data.simCalendarHours,golgotha.local.data.landingCalendarHours,"Hours"],"DISTANCE":[golgotha.local.data.calendarDistance,golgotha.local.data.simCalendarDistance,golgotha.local.data.landingCalendarDistance,"Distance"]};
+			golgotha.local.data.calendar.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.calendarDistance.forEach(golgotha.charts.dateTX);
+			golgotha.local.data.simCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.simCalendarDistance.forEach(golgotha.charts.dateTX);
+			golgotha.local.data.landingCalendar.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarHours.forEach(golgotha.charts.dateTX); golgotha.local.data.landingCalendarDistance.forEach(golgotha.charts.dateTX);
+			golgotha.local.charts.stage = new google.visualization.ColumnChart(document.getElementById('stageStats'));
+			golgotha.local.charts.sim = new google.visualization.ColumnChart(document.getElementById('simStats'));
+			golgotha.local.charts.landRating = new google.visualization.ColumnChart(document.getElementById('landingRatingStats'));
+			return golgotha.local.swapTimeGraphs(document.forms[0].timeGraphOpts);		
+		});
+	});
 };
 
-xmlreq.send(null);
-return true;
-});
+google.charts.load('current',{'packages':['corechart']});
+google.charts.setOnLoadCallback(golgotha.local.loadStats);
 </script>
 </body>
 </html>
