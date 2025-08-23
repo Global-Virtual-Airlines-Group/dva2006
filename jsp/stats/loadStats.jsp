@@ -16,15 +16,6 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:cspHeader />
-<script async>
-golgotha.local.update = function(cb) {
-	golgotha.form.submit(document.forms[0]);
-	const days = golgotha.form.getCombo(cb);
-	return golgotha.local.load(days);
-};
-
-golgotha.local.revert = function() { golgotha.util.display('revertLink', false); return golgotha.local.loadModel(golgotha.local.defaultModel); };
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -95,104 +86,94 @@ golgotha.local.revert = function() { golgotha.util.display('revertLink', false);
 </content:region>
 </content:page>
 <script async>
+golgotha.local.update = function(cb) {
+	golgotha.form.submit(document.forms[0]);
+	const days = golgotha.form.getCombo(cb);
+	return golgotha.local.load(days);
+};
+
+golgotha.local.revert = function() { golgotha.util.display('revertLink', false); return golgotha.local.loadModel(golgotha.local.defaultModel); };
+
 golgotha.local.load = function(days) {
 	golgotha.local.loadCount = 2;
-	golgotha.form
-	const xreq1 = new XMLHttpRequest();
-	xreq1.timeout = 7500;
-	xreq1.open('get', 'loadstats.ws?id=' + days, true);
-	xreq1.onreadystatechange = function() {
-		if (xreq1.readyState != 4) return false;
-		if (xreq1.status != 200) {
+	const p1 = fetch('loadstats.ws?id=' + days, {signal:AbortSignal.timeout(7500)});
+	p1.then(function(rsp) {
+		if (rsp.status != 200) {
 			golgotha.local.loadComplete();
 			return false;
 		}
 
-		const d = JSON.parse(xreq1.responseText);
-		d.data.forEach(golgotha.charts.dateTX);
-		const c = new google.visualization.LineChart(document.getElementById('lfChart'));
-		const data = new google.visualization.DataTable();
-		data.addColumn('date', 'Month');
-		data.addColumn('number', 'Actual Load');
-		data.addColumn('number', 'Target Load');
-		data.addColumn('number', 'Passengers');
-		data.addRows(d.data);
+		rsp.json().then(function(d) {
+			d.data.forEach(golgotha.charts.dateTX);
+			const c = new google.visualization.LineChart(document.getElementById('lfChart'));
+			const data = new google.visualization.DataTable();
+			data.addColumn('date', 'Month');
+			data.addColumn('number', 'Actual Load');
+			data.addColumn('number', 'Target Load');
+			data.addColumn('number', 'Passengers');
+			data.addRows(d.data);
 
-		const hX = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-		const vA0 = {title:'Load Factor',maxValue:1,gridlines:{count:10},textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle,format:'percent'};
-		const vA1 = {title:'Passengers',maxValue:d.maxPassengers,gridlines:{count:10},extStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-		const o = golgotha.charts.buildOptions({series:[{targetAxisIndex:0},{targetAxisIndex:0},{targetAxisIndex:1}],title:'Flights by Load Factor',width:'100%',colors:['blue','grey','green'],hAxis:hX,vAxes:[vA0,vA1]});
-		c.draw(data, o);
-		golgotha.local.loadComplete();
-		return true;
-	};
-	
-	const xreq2 = new XMLHttpRequest();
-	xreq2.timeout = 7500;
-	xreq2.open('get', 'otstats.ws?id=' + days, true);
-	xreq2.onreadystatechange = function() {
-		if (xreq2.readyState != 4) return false;
-		if (xreq2.status != 200) {
+			const hX = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			const vA0 = {title:'Load Factor',maxValue:1,gridlines:{count:10},textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle,format:'percent'};
+			const vA1 = {title:'Passengers',maxValue:d.maxPassengers,gridlines:{count:10},extStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			const o = golgotha.charts.buildOptions({series:[{targetAxisIndex:0},{targetAxisIndex:0},{targetAxisIndex:1}],title:'Flights by Load Factor',width:'100%',colors:['blue','grey','green'],hAxis:hX,vAxes:[vA0,vA1]});
+			c.draw(data, o);
+			golgotha.local.loadComplete();
+		});
+	});
+
+	const p2 = fetch('otstats.ws?id=' + days, {signal:AbortSignal.timeout(7500)});
+	p2.then(function(rsp) {
+		if (rsp.status != 200) {
 			golgotha.local.loadComplete();
 			return false;
 		}
 
-		const d = JSON.parse(xreq2.responseText);
-		d.data.forEach(golgotha.charts.dateTX);
-		const c = new google.visualization.ColumnChart(document.getElementById('otChart'));
-		const data = new google.visualization.DataTable();
-		data.addColumn('date', 'Month');
-		data.addColumn('number', 'Early');
-		data.addColumn('number', 'On Time');
-		data.addColumn('number', 'Late');
-		data.addRows(d.data);
+		rsp.json().then(function(d) {
+			d.data.forEach(golgotha.charts.dateTX);
+			const c = new google.visualization.ColumnChart(document.getElementById('otChart'));
+			const data = new google.visualization.DataTable();
+			data.addColumn('date', 'Month');
+			data.addColumn('number', 'Early');
+			data.addColumn('number', 'On Time');
+			data.addColumn('number', 'Late');
+			data.addRows(d.data);
 
-		const vA = {title:'Flights',maxValue:d.maxLegs,textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-		const hA = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-		const o = golgotha.charts.buildOptions({isStacked:true,title:'Flights by On-Time Status',width:'100%',colors:['blue','green','red'],vAxes:[vA],hAxis:hA});
-		c.draw(data, o);
-		golgotha.local.loadComplete();
-		return true;
-	};
-	
-	xreq1.send(null);
-	xreq2.send(null);
-	return true;
+			const vA = {title:'Flights',maxValue:d.maxLegs,textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			const hA = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			const o = golgotha.charts.buildOptions({isStacked:true,title:'Flights by On-Time Status',width:'100%',colors:['blue','green','red'],vAxes:[vA],hAxis:hA});
+			c.draw(data, o);
+			golgotha.local.loadComplete();
+		});
+	});
 };
 
 golgotha.local.model = function() {
 	const f = document.forms[0];
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 2500;
-	xreq.open('post', 'lfmodel.ws', true);
-	xreq.onreadystatechange = function() {
-		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
-		
-		const d = JSON.parse(xreq.responseText);
-		d.data.forEach(golgotha.charts.dateTX);
-		golgotha.local.defaultModel = d.defaultModel;
-		const c = new google.visualization.LineChart(document.getElementById('lfmChart'));
-		const data = new google.visualization.DataTable();		
-		data.addColumn('date', 'Month');
-		data.addColumn('number', 'Actual');
-		data.addColumn('number', 'Model');
-		data.addRows(d.data);
-		
-		const vA = {title:'Load Factor',maxValue:1,gridlines:{count:10},textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle,format:'percent'};
-		const hA = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
-		const o = golgotha.charts.buildOptions({title:'Modeled vs. Actual Load Factor',width:'100%',colors:['blue','grey','green'],hAxis:hA,vAxes:[vA]});
-		golgotha.util.display('lfmDiv', true);
-		golgotha.util.display('revertLink', true);
-		c.draw(data, o);
-		golgotha.local.loadModel(d.model);
-		return true;
-	};
-	
-	// Build parameters
 	const fd = new FormData(f);
 	fd.set('daysBack', fd.get('modelDays'));
-	xreq.send(fd);
-	return true;
+	const p = fetch('lfmodel.ws', {method:'post', body:fd, signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(d) {
+			d.data.forEach(golgotha.charts.dateTX);
+			golgotha.local.defaultModel = d.defaultModel;
+			const c = new google.visualization.LineChart(document.getElementById('lfmChart'));
+			const data = new google.visualization.DataTable();		
+			data.addColumn('date', 'Month');
+			data.addColumn('number', 'Actual');
+			data.addColumn('number', 'Model');
+			data.addRows(d.data);
+
+			const vA = {title:'Load Factor',maxValue:1,gridlines:{count:10},textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle,format:'percent'};
+			const hA = {title:'Flight Date',textStyle:golgotha.charts.lgStyle,titleTextStyle:golgotha.charts.ttStyle};
+			const o = golgotha.charts.buildOptions({title:'Modeled vs. Actual Load Factor',width:'100%',colors:['blue','grey','green'],hAxis:hA,vAxes:[vA]});
+			golgotha.util.display('lfmDiv', true);
+			golgotha.util.display('revertLink', true);
+			c.draw(data, o);
+			golgotha.local.loadModel(d.model);
+		});
+	});
 };
 
 golgotha.local.loadModel = function(m) {
