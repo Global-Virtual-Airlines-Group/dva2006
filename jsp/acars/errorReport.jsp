@@ -144,25 +144,18 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 <script async>
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 2500;
-	xmlreq.open('get', '/attach/error_log/' + id, true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	const p = fetch('/attach/error_log/' + id, {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
 		const td = document.getElementById('logData');
-		td.innerText = xmlreq.responseText;
-		if (doSave) {
-			const ct = xmlreq.getResponseHeader('Content-Type');
-			const b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
-			const decID = parseInt(id.substring(2), 16);
-			saveAs(b, 'acarsError_' + decID + '.log');
-		}
-
-		return true;
-	};
-
-	xmlreq.send(null);
-	return true;
+		rsp.blob().then(function(b) {
+			b.text().then(function(txt) { td.innerText = txt; });
+			if (doSave) {
+				const decID = parseInt(id.substring(2), 16);
+				saveAs(b, 'acarsError_' + decID + '.log');
+			}
+		});
+	});
 };
 </script>
 </html>

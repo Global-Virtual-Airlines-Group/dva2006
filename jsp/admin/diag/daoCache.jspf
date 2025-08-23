@@ -21,72 +21,56 @@
 </el:table>
 <script async>
 golgotha.local.cacheUpdate = function(updateInterval) {
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.open('GET', 'cacheinfo.ws', true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	if (updateInterval > 0) window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
+	if (!golgotha.util.isExpanded('daoCache')) return false;
+
+	const p = fetch('cacheinfo.ws', {signal:AbortSignal.timeout(3500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
 
 		// Clear the table
-		var title = document.getElementById('cacheTitleBar');
-		var rows = golgotha.util.getElementsByClass('daoCacheEntry', 'tr');
-		for (var r = rows.pop(); (r != null); r = rows.pop())
-			r.parentNode.removeChild(r);
+		const title = document.getElementById('cacheTitleBar');
+		const rows = golgotha.util.getElementsByClass('daoCacheEntry', 'tr');
+		rows.forEach(function(r) { r.parentNode.removeChild(r); });
 
-        // Parse the response
-		const jsData = JSON.parse(xmlreq.responseText);
-        jsData.caches.forEach(function(c) {
-			const r = document.createElement('tr');
-			r.setAttribute('class', 'daoCache daoCacheEntry');
-			const ic = golgotha.util.createElement('td',c.id, 'pri bld'); ic.cacheID = c.id;
-			ic.addEventListener('dblclick', function() { golgotha.local.cacheClear(this.cacheID); });
-			r.appendChild(ic);
-			r.appendChild(golgotha.util.createElement('td', c.type));
-			r.appendChild(golgotha.util.createElement('td', c.size));
-			if (c.remote) {
-				let msg = c.latency + 'ms latency';
-				if (c.errors > 0)
-					msg += ' (' + c.errors + ' errors)';
+		// Parse the response
+		rsp.json().then(function(js) {
+			js.caches.forEach(function(c)  {
+				const r = document.createElement('tr');
+				r.setAttribute('class', 'daoCache daoCacheEntry');
+				const ic = golgotha.util.createElement('td',c.id, 'pri bld'); ic.cacheID = c.id;
+				ic.addEventListener('dblclick', function() { golgotha.local.cacheClear(this.cacheID); });
+				r.appendChild(ic);
+				r.appendChild(golgotha.util.createElement('td', c.type));
+				r.appendChild(golgotha.util.createElement('td', c.size));
+				if (c.remote) {
+					let msg = c.latency + 'ms latency';
+					if (c.errors > 0)
+						msg += ' (' + c.errors + ' errors)';
 
-				const cc = r.appendChild(golgotha.util.createElement('td', msg));
-				cc.setAttribute('colspan', '2');
-				r.appendChild(cc);
-			} else {
-				r.appendChild(golgotha.util.createElement('td', c.maxSize));
-				r.appendChild(golgotha.util.createElement('td', c.fill, 'sec'));
-			}
-
-			r.appendChild(golgotha.util.createElement('td', c.reqs));
-			r.appendChild(golgotha.util.createElement('td', c.hits));
-			r.appendChild(golgotha.util.createElement('td', (c.hitRate == null) ? 'N/A' : c.hitRate, 'bld'));
-			title.parentNode.insertBefore(r, null);
+					const cc = r.appendChild(golgotha.util.createElement('td', msg));
+					cc.setAttribute('colspan', '2');
+					r.appendChild(cc);
+				} else {
+					r.appendChild(golgotha.util.createElement('td', c.maxSize));
+					r.appendChild(golgotha.util.createElement('td', c.fill, 'sec'));
+				}
+			
+				r.appendChild(golgotha.util.createElement('td', c.reqs));
+				r.appendChild(golgotha.util.createElement('td', c.hits));
+				r.appendChild(golgotha.util.createElement('td', (c.hitRate == null) ? 'N/A' : c.hitRate, 'bld'));
+				title.parentNode.insertBefore(r, null);
+			});
 		});
-
-	    if (updateInterval > 0)
-	        window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
-
-	    return true;
-	};
-
-	// Only refresh if expanded
-	if (golgotha.util.isExpanded('daoCache'))
-		xmlreq.send(null);
-	else if (updateInterval > 0)
-		window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
-
-	return true;
+	});
 };
 
 golgotha.local.cacheClear = function(id) {
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.open('post', 'cacheclear.ws?id=' + id, true);
-	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	const p = fetch('cacheclear.ws?id=' + id, {method:'post', signal:AbortSignal.timeout(5500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
 		alert(id + ' - Cleared cache');
-		return true;
-	};
-
-	xmlreq.send(null);
-	return true;
+	});
 };
 
 window.setTimeout(golgotha.local.cacheUpdate, 5500, 12500);

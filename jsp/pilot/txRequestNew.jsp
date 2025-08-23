@@ -25,16 +25,11 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.loadAircraft = function() {
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 2500;
-	xreq.open('get', 'crsims.ws');
-	xreq.onreadystatechange = function() {
-		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
-		golgotha.local.eqACMap = JSON.parse(xreq.responseText);
-		return true;
-	};
-
-	xreq.send(null);
+	const p = fetch('crsims.ws', {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) { golgotha.local.eqACMap = js; });	
+	})
 };
 
 golgotha.local.updateAircraft = function(combo) {
@@ -59,10 +54,12 @@ golgotha.local.updateAircraft = function(combo) {
 	acc.required = (simTypes.length > 1);
 	return true;
 };
+
+golgotha.onDOMReady(golgotha.local.loadAircraft);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.loadAircraft()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

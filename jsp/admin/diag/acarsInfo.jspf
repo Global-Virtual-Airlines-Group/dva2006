@@ -25,32 +25,27 @@
 <script async>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
-const xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'bwstats.ws', true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const statsData = JSON.parse(xmlreq.responseText);
+	const p = fetch('bwstats.ws', {signal:AbortSignal.timeout(5500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			const data = new google.visualization.DataTable();
+			data.addColumn('string','Date/Time');
+			data.addColumn('number','Connections');
+			data.addColumn('number','Messages In (1000)');
+			data.addColumn('number','Messages Out (1000)');
+			data.addColumn('number','Bytes In (MB)');
+			data.addColumn('number','Bytes Out (MB)');
+			data.addColumn('number','Max Connections');
+			data.addColumn('number','Max Messages (1000)');
+			data.addColumn('number','Max Bytes (MB)');
+			data.addColumn('number','Bytes Saved (MB)');
+			data.addRows(js);
 
-	// Display the chart
-	const data = new google.visualization.DataTable();
-	data.addColumn('string','Date/Time');
-	data.addColumn('number','Connections');
-	data.addColumn('number','Messages In (1000)');
-	data.addColumn('number','Messages Out (1000)');
-	data.addColumn('number','Bytes In (MB)');
-	data.addColumn('number','Bytes Out (MB)');
-	data.addColumn('number','Max Connections');
-	data.addColumn('number','Max Messages (1000)');
-	data.addColumn('number','Max Bytes (MB)');
-	data.addColumn('number','Bytes Saved (MB)');
-	data.addRows(statsData);
-	const chart = new google.visualization.LineChart(document.getElementById('bwChart'));
-	chart.draw(data,golgotha.charts.buildOptions());
-	return true;
-};
-
-xmlreq.send(null);
-return true;	
+			const chart = new google.visualization.LineChart(document.getElementById('bwChart'));
+			chart.draw(data,golgotha.charts.buildOptions());
+		});
+	});
 });
 </script></c:if>
 <c:if test="${!empty acarsPool}">
