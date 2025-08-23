@@ -34,43 +34,32 @@ golgotha.local.validate = function(f) {
 	return true;
 };
 <c:if test="${empty entry}">
-golgotha.local.getAvailableFlight = function(f)
-{
-golgotha.form.validate({f:f.airline, t:'Airline'});
-const xmlreq = new XMLHttpRequest();
-xmlreq.timeout = 2500;
-xmlreq.open('get', 'next_flight.ws?start=' + f.rangeStart.value + '&end=' + f.rangeEnd.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
-xmlreq.onreadystatechange = function () {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	const e = JSON.parse(xmlreq.responseText);
-	f.flightNumber.value = e.number;
-	f.flightLeg.value = e.leg;
-	golgotha.form.clear();
-	return true;
-};
-
-golgotha.form.submit();
-xmlreq.send(null);
-return true;
+golgotha.local.getAvailableFlight = function(f) {
+	golgotha.form.validate({f:f.airline, t:'Airline'});
+	golgotha.form.submit();
+	const p = fetch('next_flight.ws?start=' + f.rangeStart.value + '&end=' + f.rangeEnd.value + '&airline=' + golgotha.form.getCombo(f.airline), {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		golgotha.form.clear();
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			f.flightNumber.value = js.number;
+			f.flightLeg.value = js.leg;
+		});
+	});
 };
 
 golgotha.local.getAvailableLeg = function(f) {
 	golgotha.form.validate({f:f.airline, t:'Airline'});
-	const xmlreq = new XMLHttpRequest();
-	xmlreq.timeout = 2500;
-	xmlreq.open('get', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
-	xmlreq.onreadystatechange = function () {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		const e = JSON.parse(xmlreq.responseText);
-		f.flightNumber.value = e.number;
-		f.flightLeg.value = e.leg;
-		golgotha.form.clear();
-		return true;
-	};
-
 	golgotha.form.submit();
-	xmlreq.send(null);
-	return true;
+	const p = fetch('next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + golgotha.form.getCombo(f.airline), {signal:AbortSignal.timeout(2500)});
+	p.then(function(rsp) {
+		golgotha.form.clear();
+		if (!rsp.ok) return false;
+		rsp.json().then(function(js) {
+			f.flightNumber.value = js.number;
+			f.flightLeg.value = js.leg;
+		});
+	});
 };</c:if>
 
 golgotha.local.changeAirline = function(combo) {
@@ -180,7 +169,7 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script>
+<script async>
 const f = document.forms[0];
 const cfg = golgotha.airportLoad.config;
 cfg.doICAO = ${useICAO}; cfg.useSched = false;
