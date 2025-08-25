@@ -148,13 +148,20 @@ public class EliteScoringTask extends Task {
 				} else
 					sc  = es.score(fr, st.getLevel());
 				
-				// Write the score and status history
+				// Check for score - write the score and status history
 				tt.mark("score");
+				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
+				if (sc == null) {
+					log.warn("Cannot Score Flight {}", Integer.valueOf(fr.getID()));
+					i.remove();
+					continue;
+				}
+
+				// Write updates
 				fr.addStatusUpdate(0, HistoryType.ELITE, String.format("Updated %s activity - %d %s", SystemData.get("econ.elite.name"), Integer.valueOf(sc.getPoints()), SystemData.get("econ.elite.points")));
 				frwdao.writeElite(sc, ctx.getDB());
 				frwdao.writeHistory(fr.getStatusUpdates(), ctx.getDB());
 				qwdao.complete(ap.getID(), ApprovalOperation.ELITE);
-				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
 				
 				// Check for upgrade
 				UpgradeReason updR = total.wouldMatch(nextLevel, sc); 
