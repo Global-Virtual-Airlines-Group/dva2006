@@ -65,7 +65,7 @@
 		</init-param>
 		<init-param>
 			<param-name>blockCount</param-name>
-			<param-value>250</param-value>
+			<param-value>200</param-value>
 		</init-param>
 		<init-param>
 			<param-name>blockTime</param-name>
