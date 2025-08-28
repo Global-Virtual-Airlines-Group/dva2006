@@ -78,6 +78,14 @@ public class EliteScoringTask extends Task {
 				TreeSet<EliteLevel> lvls = eldao.getLevels(yr);
 				TreeSet<EliteLifetime> ltLvls = eldao.getLifetimeLevels();
 				
+				// If the fligt is rejected, mark complete
+				if (fr.getStatus() != FlightStatus.OK) {
+					log.warn("Skipping Flight Report {} - {}", Integer.valueOf(fr.getID()), fr.getStatus());
+					qwdao.complete(ap.getID(), ApprovalOperation.ELITE);	
+					i.remove();
+					continue;
+				}
+				
 				// Get the pilot and Elite data - if we have no status create a dummy
 				Pilot p = pdao.get(fr.getAuthorID());
 				EliteStatus st = eldao.getStatus(p.getID(), yr);
@@ -152,7 +160,7 @@ public class EliteScoringTask extends Task {
 				tt.mark("score");
 				pilotIDs.add(Integer.valueOf(fr.getAuthorID()));
 				if (sc == null) {
-					log.warn("Cannot Score Flight {}", Integer.valueOf(fr.getID()));
+					log.warn("Cannot Score Flight Report {} - {}", Integer.valueOf(fr.getID()), fr.getStatus());
 					i.remove();
 					continue;
 				}
