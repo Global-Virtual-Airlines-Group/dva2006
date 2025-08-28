@@ -26,11 +26,11 @@ public class SetFlightReportQueue extends DAO {
 	/**
 	 * Adds an entry to the operation queue.
 	 * @param id the Flight Report database ID
-	 * @param hasElite TRUE if the Airline has an Elite program, otherwise FALSE
+	 * @param skipElite TRUE if Elite scoring should be marked complete (for Rejected flights and no Elite program), otherwise FALSE
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void add(int id, boolean hasElite, String dbName) throws DAOException {
+	public void add(int id, boolean skipElite, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
@@ -41,7 +41,7 @@ public class SetFlightReportQueue extends DAO {
 			ps.setInt(1, id);
 			ps.setBoolean(2, false);
 			ps.setBoolean(3, false);
-			ps.setBoolean(4, !hasElite);
+			ps.setBoolean(4, skipElite);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
