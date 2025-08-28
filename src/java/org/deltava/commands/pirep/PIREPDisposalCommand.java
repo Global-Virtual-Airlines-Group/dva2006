@@ -242,9 +242,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Add to post-approval queue
 			SetFlightReportQueue fqdao = new SetFlightReportQueue(con);
-			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED))
-				fqdao.add(fr.getID(), SystemData.getBoolean("econ.elite.enabled"), ctx.getDB());
-			else
+			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
+				boolean doElite = (op == FlightStatus.OK) && SystemData.getBoolean("econ.elite.enabled");
+				fqdao.add(fr.getID(), !doElite, ctx.getDB());
+			} else
 				fqdao.clear(fr.getID());
 
 			// Commit and Invalidate the pilot again to reflect the new totals
