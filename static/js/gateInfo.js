@@ -27,7 +27,7 @@ golgotha.gate.getOptions = function(g) {
 		return golgotha.gate.icons.uspfi;
 	if (isOurs && (g.zone == 'SCHENGEN'))
 		return golgotha.gate.icons.schengen;
-	if (isOurs && (g.zone == 'INTERNATIONAL'))
+	if (isOurs && ((g.zone == 'INTERNATIONAL') || (g.zone == 'HYBRID')))
 		return golgotha.gate.icons.intl;
 	if (isOurs)
 		return golgotha.gate.icons.ours;
@@ -56,7 +56,7 @@ golgotha.gate.display = function(al) {
 		if ((!al) || (g.isOurs && (al))) llb.extend(g.ll);
 		const mrk = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,opacity:opts.tx,info:g.info, pt:g.ll});
 		golgotha.gate.mrks[id] = mrk; mrk.markerID = g.id;
-		mrk.updateTab = golgotha.maps.util.updateTab; mrk.tabs = g.tabs;
+		mrk.updateTab = golgotha.gate.updateTab; mrk.tabs = g.tabs;
 		if (golgotha.gate.showTabs && (mrk.tabs)) {
 			mrk.getElement().addEventListener('click', function(_e) {
 				const mrk = this.marker;
@@ -75,28 +75,22 @@ golgotha.gate.display = function(al) {
 };
 
 golgotha.gate.save = function() {
-	const xreq = new XMLHttpRequest();
-	xreq.timeout = 3500;
-	xreq.open('post', 'gateupdate.ws?id=' + golgotha.gate.airportD.icao, true);
-	xreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
-	xreq.onreadystatechange = function() {
-		if (xreq.readyState != 4) return false;
-		if (xreq.status != 200) {
-			alert('Error ' + xreq.status + ' updating Gate Data!');
+	const fd = new FormData(); const data = [];
+	golgotha.gate.isDirty.forEach(function(k) { const gd = golgotha.gate.data[k]; data.push({id:gd.name,airlines:gd.airlines,zone:gd.zone}); });
+	fd.set('data', JSON.stringify(data));
+
+	const p = fetch('gateupdate.ws?id=' + golgotha.gate.airportD.icao, {method:'post', body:fd, signal:AbortSignal.timeout(3500)});
+	p.then(function(rsp) {
+		if (!rsp.ok) {
+			alert('Error ' + rsp.status + ' updating Gate Data!');
 			return false;
 		}
 
-		console.log(xreq.getResponseHeader('updatedGates') + ' gates updated');
+		console.log(rsp.headers['updatedGates'] + ' gates updated');
 		golgotha.util.display('buttonRow', false);
 		golgotha.gate.isDirty = [];
 		return true;
-	};
-
-	// Convert associative array to object
-	const data = [];
-	golgotha.gate.isDirty.forEach(function(k) { const gd = golgotha.gate.data[k]; data.push({id:gd.name,airlines:gd.airlines,zone:gd.zone}); });
-	xreq.send('data=' + JSON.stringify(data));
-	return true;
+	});
 };
 
 golgotha.gate.undo = function() {
@@ -135,5 +129,24 @@ golgotha.gate.updateGateAirline = function(cb) {
 	console.log('Gate ' + g.name + ' airlines set to ' + g.airlines);
 	golgotha.gate.markDirty(id);
 	golgotha.util.display('buttonRow', true);
+	return true;
+};
+
+golgotha.gate.updateTab = function(ofs) {
+	golgotha.maps.util.updateTab.call(this, ofs);
+	if (ofs < 1) return false;
+	window.setTimeout(function(mrk) {
+		const g = golgotha.gate.data[mrk.markerID];	
+		const f = document.forms[0];
+		const cb = f.elements['zoneSelect-' + mrk.markerID];
+		const chb = f.elements['gateSelect-' + mrk.markerID];
+		if ((!g) || (!cb)) return false;
+		golgotha.form.setCombo(cb, g.zone);
+		for (var x = 0; x < chb.length; x++) {
+			const ch = chb[x];
+			ch.checked = (g.airlines.indexOf(ch.value) >= -0);
+		}
+	}, 125, this);
+	
 	return true;
 };
