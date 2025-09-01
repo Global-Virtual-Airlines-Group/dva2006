@@ -1,34 +1,32 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.net.*;
 import java.io.IOException;
 import java.sql.Connection;
 
-import static javax.servlet.http.HttpServletResponse.*;
-
 import org.jdom2.*;
 
 import org.deltava.beans.cooler.*;
-import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.*;
 import org.deltava.security.command.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
-import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 10.6
+ * @version 12.2
  * @since 1.0
  */
 
-public class CoolerSyndicationService extends WebService {
+public class CoolerSyndicationService extends SyndicationService {
 	
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -88,30 +86,17 @@ public class CoolerSyndicationService extends WebService {
 		} finally {
 			ctx.release();
 		}
-
-		// Generate the data element
-		Document doc = new Document();
-		Element re = new Element("rss");
-		re.setAttribute("version", "2.0");
-		doc.setRootElement(re);
-
-		// Create the RSS channel
-		Element ch = new Element("channel");
-		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " " + forumName));
-		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " " + forumName + " Message Threads"));
-		ch.addContent(XMLUtils.createElement("link", "https://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
-		ch.addContent(XMLUtils.createElement("language", "en"));
-		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
-		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
-		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.cooler")));
-		re.addContent(ch);
+		
+		// Build the core RSS document
+		String alName = SystemData.get("airline.name"); String serverName = ctx.getRequest().getServerName();
+		Document doc = initRSS(String.format("%s %s", alName, forumName), String.format("%s %s Message Threads", alName, forumName), String.format("https://%s/channel.do?id=ALL", serverName));
+		Element ch = doc.getRootElement().getChild("channel");
+		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.cooler", 10))));
 
 		// Convert the threads into RSS items
 		for (MessageThread mt : threads) {
 			try {
-				// Create the RSS item element
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
+				URI url = new URI("https", serverName, "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", mt.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
@@ -125,6 +110,7 @@ public class CoolerSyndicationService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "utf-8");
+			ctx.setExpiry(300);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

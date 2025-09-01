@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2015, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2015, 2016, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
-
-import java.util.*;
-import java.net.*;
-import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.net.*;
+import java.util.*;
+import java.io.IOException;
+
 import org.jdom2.*;
+
 import org.deltava.beans.News;
-import org.deltava.beans.system.VersionInfo;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
@@ -18,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Notice to Airmen (NOTAM) RSS feed.
  * @author Luke
- * @version 10.6
+ * @version 12.2
  * @since 1.0
  */
 
-public class NoticeSyndicationService extends WebService {
+public class NoticeSyndicationService extends SyndicationService {
 
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -43,30 +44,17 @@ public class NoticeSyndicationService extends WebService {
 		} finally {
 			ctx.release();
 		}
-
-		// Generate the data element
-		Document doc = new Document();
-		Element re = new Element("rss");
-		re.setAttribute("version", "2.0");
-		doc.setRootElement(re);
-
-		// Create the RSS channel
-		Element ch = new Element("channel");
-		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " NOTAMs"));
-		ch.addContent(XMLUtils.createElement("link", "https://" + ctx.getRequest().getServerName() + "/notams.do", true));
-		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " Notices to Airmen"));
-		ch.addContent(XMLUtils.createElement("language", "en"));
-		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
-		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
-		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.news")));
-		re.addContent(ch);
+		
+		// Build the core RSS document
+		String alName = SystemData.get("airline.name"); String serverName = ctx.getRequest().getServerName();
+		Document doc = initRSS(String.format("%s NOTAMs", alName), String.format("%s Notices to Aviators", alName), String.format("https://%s/notams.do", serverName));
+		Element ch = doc.getRootElement().getChild("channel");
+		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.news", 1440))));
 
 		// Convert the entries to RSS items
 		for (News n : entries) {
 			try {
-				// Create the RSS item element
-				URI url = new URI("https", ctx.getRequest().getServerName(), "/notam.do?id=" + StringUtils.formatHex(n.getID()));
+				URI url = new URI("https", serverName, "/notam.do?id=" + StringUtils.formatHex(n.getID()));
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", n.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));

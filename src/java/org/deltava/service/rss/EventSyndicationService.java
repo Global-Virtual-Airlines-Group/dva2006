@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2015, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2015, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 
+import org.jdom2.*;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
 import org.deltava.beans.event.Event;
-import org.deltava.beans.system.VersionInfo;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
@@ -18,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an Online Event RSS feed.
  * @author Luke
- * @version 10.6
+ * @version 12.2
  * @since 1.0
  */
 
-public class EventSyndicationService extends WebService {
+public class EventSyndicationService extends SyndicationService {
 
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -44,30 +45,16 @@ public class EventSyndicationService extends WebService {
 			ctx.release();
 		}
 		
-		// Generate the data element
-		Document doc = new Document();
-		Element re = new Element("rss");
-		re.setAttribute("version", "2.0");
-		doc.setRootElement(re);
-		
-		// Create the RSS channel
-		Element ch = new Element("channel");
-		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Online Events"));
-		ch.addContent(XMLUtils.createElement("link", "https://" + ctx.getRequest().getServerName() + "/event.do", true));
-		ch.addContent(XMLUtils.createElement("description", "Online Events at " + SystemData.get("airline.name")));
-		ch.addContent(XMLUtils.createElement("language", "en"));
-		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
-		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(XMLUtils.createElement("generator", VersionInfo.getAppName()));
-		ch.addContent(XMLUtils.createElement("ttl", SystemData.get("cache.rss.events")));
-		re.addContent(ch);
+		// Build the core RSS document
+		String alName = SystemData.get("airline.name"); String serverName = ctx.getRequest().getServerName();
+		Document doc = initRSS(String.format("%s Online Events", alName), String.format("Online Events at %s", alName), String.format("https://%s/events.do", serverName));
+		Element ch = doc.getRootElement().getChild("channel");
+		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.events", 120))));
 		
 		// Convert the entries to RSS items
 		for (Event e : entries) {
 			try {
 				URI url = new URI("https", ctx.getRequest().getServerName(), "/event.do?id=" + StringUtils.formatHex(e.getID()));
-				
-				// Create the RSS item element
 				Element item = new Element("item");
 				item.addContent(XMLUtils.createElement("title", e.getName()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
@@ -81,6 +68,7 @@ public class EventSyndicationService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "utf-8");
+			ctx.setExpiry(1800);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
