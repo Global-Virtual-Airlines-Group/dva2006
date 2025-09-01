@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015, 2017, 2018, 2020, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice.
  * @author Luke
- * @version 10.0
+ * @version 12.2
  * @since 1.0
  */
 
@@ -40,9 +40,9 @@ public class CopyrightTag extends TagSupport {
 				jw.println("<hr />");
 				jw.print("<div class=\"small copyright\">");
 				jw.print(pageContext.getServletContext().getServletContextName());
-				jw.print(' ');
+				jw.print(" (");
 				jw.print(VersionInfo.getAppName());
-				jw.print(' ');
+				jw.print(") ");
 				jw.print(VersionInfo.HTML_COPYRIGHT);
 				jw.print(" (Build ");
 				jw.print(VersionInfo.getFullBuild());
@@ -58,9 +58,9 @@ public class CopyrightTag extends TagSupport {
 			} else {
 				jw.print("<!-- ");
 				jw.print(pageContext.getServletContext().getServletContextName());
-				jw.print(' ');
+				jw.print(" (");
 				jw.print(VersionInfo.getAppName());
-				jw.print(' ');
+				jw.print(") ");
 				jw.print(VersionInfo.TXT_COPYRIGHT);
 				jw.print(" (Build ");
 				jw.print(VersionInfo.getFullBuild());
