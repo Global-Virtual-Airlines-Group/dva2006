@@ -43,9 +43,8 @@ public class VersionInfo {
      * @return the app name/version
      */
     public static String getAppName() {
-    	StringBuilder buf = new StringBuilder("(Golgotha v");
+    	StringBuilder buf = new StringBuilder("Golgotha v");
     	buf.append(MAJOR).append('.').append(MINOR);
-    	buf.append(')');
     	return buf.toString();
     }
     
