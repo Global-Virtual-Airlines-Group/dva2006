@@ -1,15 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
-
-import org.deltava.util.StringUtils;
 
 import com.newrelic.api.agent.Trace;
 
 /**
- * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
- * and then passed a request and a response.
+ * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor and then passed a request and a response.
  * @author Luke
- * @version 8.2
+ * @version 12.2
  * @since 1.0
  */
 
@@ -79,14 +76,4 @@ public abstract class WebService {
    protected static ServiceException error(int code, String msg, Throwable t) {
 	   return new ServiceException(code, msg, t);
    }
-   
-	/**
-	 * Helper method to return the number of entries to display.
-	 * @param sctxt the Service Context
-	 * @param defaultValue the default number of entries
-	 * @return the value of the count parameter, or defaultVlue
-	 */
-	protected static int getCount(ServiceContext sctxt, int defaultValue) {
-		return StringUtils.parse(sctxt.getRequest().getParameter("count"), defaultValue);
-	}
 }
