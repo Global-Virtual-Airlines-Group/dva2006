@@ -1,8 +1,9 @@
-// Copyright 2015, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
 import java.sql.Connection;
+import java.io.IOException;
 
 import org.json.*;
 
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to update preferred Gate data. 
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 6.3
  */
 
@@ -69,7 +70,11 @@ public class GateUpdateService extends WebService {
 			// Save gate data
 			SetGates gwdao = new SetGates(con);
 			gwdao.update(updGates);
-			ctx.setHeader("updatedGates", updGates.size());
+			ctx.setHeader("X-Gate-Count", updGates.size());
+			ctx.setContentType("text/plain");
+			ctx.commit();
+		} catch (IOException ie) {
+			throw error(SC_CONFLICT, "I/O Error", false);
 		} catch (JSONException je) {
 			throw error(SC_BAD_REQUEST, je.getMessage());
 		} catch (DAOException de) {

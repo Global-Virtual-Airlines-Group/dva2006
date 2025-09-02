@@ -86,9 +86,10 @@ golgotha.gate.save = function() {
 			return false;
 		}
 
-		console.log(rsp.headers['updatedGates'] + ' gates updated');
+		console.log(rsp.headers.get('X-Gate-Count') + ' gates updated');
 		golgotha.util.display('buttonRow', false);
 		golgotha.gate.isDirty = [];
+		rsp.text();
 		return true;
 	});
 };
@@ -108,7 +109,7 @@ golgotha.gate.updateZone = function(cb) {
 	const mrk2 = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,opacity:opts.tx,pt:mrk.getLngLat()});
 	mrk.getElement().innerHTML = mrk2.getElement().innerHTML;
 
-	console.log('Gate ' + g.name + ' set to ' + golgotha.gate.zones[g.zone].description);
+	console.log(g.name + ' set to ' + golgotha.gate.zones[g.zone].description);
 	golgotha.gate.markDirty(id);
 	golgotha.util.display('buttonRow', true);
 	return true;
