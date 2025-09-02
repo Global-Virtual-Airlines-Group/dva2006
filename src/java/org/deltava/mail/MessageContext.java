@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2012, 2015, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012, 2015, 2016, 2018, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 1.0
  */
 
@@ -226,7 +226,8 @@ public class MessageContext {
      * @see MessageContext#execute(String)
      */
     Object evaluate(String arg) {
-   		log.debug("Evaluating {}", arg);
+    	if (log.isDebugEnabled())
+    		log.debug("Evaluating {}", arg);
     	FormatType fmtType = FormatType.RAW;
         StringTokenizer tkns = new StringTokenizer(arg, ".");
         
@@ -261,6 +262,7 @@ public class MessageContext {
             if (hasProperty(objValue, methodName)) {
                 try {
                     Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), (Class []) null);
+                   	m.trySetAccessible();
                     objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
                     log.warn("Error reading {}.{} - {}", objName, methodName, e.getClass().getName());
