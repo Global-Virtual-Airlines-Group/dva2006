@@ -3,10 +3,12 @@ package org.deltava.mail;
 import java.util.Map;
 
 import org.deltava.beans.DistanceUnit;
+import org.deltava.beans.EMailAddress;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.AirlineInformation;
+import org.deltava.util.MailUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -60,6 +62,14 @@ public class TestMessageContext extends TestCase {
         assertEquals("1", _ctxt.execute("obj.INT_FIELD"));
         assertEquals("", _ctxt.execute("obj.barf"));
     }
+    
+    public void testEMailAddress() {
+    	EMailAddress src = MailUtils.makeAddress("webmaster", "deltava.org", "ACARS");
+    	_ctxt.addData("user", src);
+    	assertTrue(_ctxt.hasData("user"));
+    	assertEquals("org.deltava.util.MailUtils$EMailSender", _ctxt.execute("user.getClass.getName"));
+    	assertEquals("ACARS", _ctxt.execute("user.name"));
+    }
 
     public void testNestedObject() {
         _ctxt.addData("name", "ContextName");
@@ -101,15 +111,15 @@ public class TestMessageContext extends TestCase {
         assertEquals("java.lang.Double", _ctxt.execute("pi.getClass.getName"));
         assertEquals("KATL", _ctxt.execute("ap"));
         assertEquals("org.deltava.beans.schedule.Airport", _ctxt.execute("ap.getClass.getName"));
-        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday"));
-        assertEquals("java.util.Date", _ctxt.execute("birthday.getClass.getName"));
+        assertEquals("12%29%1902 23$59:01 UTC", _ctxt.execute("birthday"));
+        assertEquals("java.time.Instant", _ctxt.execute("birthday.getClass.getName"));
         
         // Test explicit formatting
         assertEquals("483 Kilometers", _ctxt.execute("distance$L"));
         assertEquals("300", _ctxt.execute("distance$!"));
-        assertEquals("12%30%1902", _ctxt.execute("birthday$D"));
-        assertEquals("04$59:01 UTC", _ctxt.execute("birthday$T"));
-        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday$DT"));
-        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday$!"));
+        assertEquals("12%29%1902", _ctxt.execute("birthday$D"));
+        assertEquals("23$59:01 UTC", _ctxt.execute("birthday$T"));
+        assertEquals("12%29%1902 23$59:01 UTC", _ctxt.execute("birthday$DT"));
+        assertEquals("12%29%1902 23$59:01 UTC", _ctxt.execute("birthday$!"));
     }
 }
