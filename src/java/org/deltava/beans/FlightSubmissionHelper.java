@@ -185,7 +185,12 @@ public class FlightSubmissionHelper {
 			FlightReport fr = dFlights.getFirst();
 			
 			// If _fr has already been saved then we have a problem, don't adjust the ID
-			if (!isSaved) _fr.setID(fr.getID());
+			if (!isSaved) {
+				_fr.setID(fr.getID());
+				_fr.addStatusUpdate(0, HistoryType.LIFECYCLE, String.format("Populating draft Flight Report %d", Integer.valueOf(fr.getID())));
+			} else
+				_fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Possible duplicate draft Flight Report %d", Integer.valueOf(fr.getID())));
+			
 			_fr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 			_fr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 			_fr.setAttribute(Attribute.CHARTER, fr.hasAttribute(Attribute.CHARTER));
