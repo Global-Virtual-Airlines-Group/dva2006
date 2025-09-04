@@ -323,14 +323,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 			afr.setAverageFrameRate(positions.stream().mapToInt(ACARSRouteEntry::getFrameRate).average().orElse(0));
 				
 			// Validate the dispatch route ID
-			if (inf.getRouteID() != 0) {
+			if ((inf.getRouteID() != 0) && (inf.getDispatcher() == DispatchType.DISPATCH)) {
 				GetACARSRoute ardao = new GetACARSRoute(con);
 				DispatchRoute dr = ardao.getRoute(inf.getRouteID());
 				if (dr == null) {
 					afr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Invalid Dispatch Route - %d", Integer.valueOf(inf.getRouteID())));
 					inf.setRouteID(0);
 				}
-			}
+			} else
+				inf.setRouteID(0);
 			
 			// Validate the dispatcher
 			if (inf.getDispatcherID() != 0) {
