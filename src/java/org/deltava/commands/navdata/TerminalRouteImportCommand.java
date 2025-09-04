@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 11.1
+ * @version 12.2
  * @since 2.0
  */
 
@@ -74,9 +74,9 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 
 		List<String> errors = new ArrayList<String>();
 		Map<String, Long> timings = new LinkedHashMap<String, Long>();
-		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType];
+		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType]; CycleInfo newCycle = null;
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
-		int entryCount = 0; LineNumberReader br = null;
+		int entryCount = 0; LineNumberReader br = null; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
 		try (InputStream is = navData.getInputStream(); LineNumberReader br2 = new LineNumberReader(new InputStreamReader(is), 131072)) {
 			br = br2;
 			
@@ -87,7 +87,15 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			TaskTimer tt = new TaskTimer();
 			String txtData = br.readLine(); String lastAirport = null; int seq = 0;
 			while (txtData != null) {
-				if (txtData.startsWith("[")) {
+				boolean isComment = txtData.startsWith(";");
+				if (isComment && (newCycle == null)) {
+					int pos = txtData.indexOf("AIRAC Cycle : ");
+					if (pos != -1) {
+						newCycle = new CycleInfo(txtData.substring(pos+14, pos+18));
+						if ((inf != null) && (newCycle.compareTo(inf) == -1))
+							throw new IllegalStateException("Navigation Data Cycle " + newCycle + " is older than loaded cycle " + inf);
+					}
+				} else if (txtData.startsWith("[")) {
 					IDs.clear();
 					String id = txtData.substring(1, txtData.indexOf(']')).replace(" ", "");
 					List<String> idParts = StringUtils.split(id, "/");
@@ -121,8 +129,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 					String wpt = wptParts.get(3);
 					if (!StringUtils.isEmpty(wpt) && !IDs.contains(wpt)) {
 						IDs.add(wpt);
-						NavigationDataBean nd = NavigationDataBean.create(Navaid.INT, StringUtils.parse(wptParts.get(4), 0.0),
-								StringUtils.parse(wptParts.get(5), 0.0));
+						NavigationDataBean nd = NavigationDataBean.create(Navaid.INT, StringUtils.parse(wptParts.get(4), 0.0), StringUtils.parse(wptParts.get(5), 0.0));
 						nd.setCode(wpt);
 						tr.addWaypoint(nd);
 						
@@ -173,6 +180,12 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			int regionCount = dao.updateTRWaypoints();
 			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
+			
+			// Write the cycle ID
+			if ((newCycle != null) && updateVersion) {
+				SetMetadata mdwdao = new SetMetadata(con);
+				mdwdao.write("navdata.cycle", newCycle.toString());
+			}
 			
 			// Commit
 			ctx.commitTX();
