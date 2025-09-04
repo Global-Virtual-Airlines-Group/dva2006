@@ -10,8 +10,10 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
 golgotha.local.validate = function(f) {
@@ -44,13 +46,16 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Current Cycle</td>
- <td class="data"><span class="pri bld">${currentNavCycle}</span><c:if test="${!empty currentNavCycle.releasedOn}">, released on 
- <fmt:date date="${currentNavCycle.releasedOn}" fmt="d" d="EEEE MMMM dd, YYYY" /></c:if></td>
+ <td class="data"><span class="pri bld">${currentNavCycle}</span><c:if test="${!empty currentNavCycle.releasedOn}">, released on <fmt:date date="${currentNavCycle.releasedOn}" fmt="d" d="EEEE MMMM dd, YYYY" /></c:if></td>
 </tr>
 <tr>
  <td class="label top">Upload Data File</td>
  <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
 <span class="small ita">AIRAC data must be in PSS Native Format.</span></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="updateVersion" idx="*" className="small" value="true" checked="false" label="Update AIRAC Version on Import completion" /></td>
 </tr>
 </el:table>
 
@@ -65,6 +70,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

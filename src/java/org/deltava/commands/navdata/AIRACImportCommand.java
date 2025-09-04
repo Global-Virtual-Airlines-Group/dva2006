@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 10.6
+ * @version 12.2
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		if ((navaidType == -1) || (navaidType >= Navaid.values().length))
 			throw notFoundException("Unknown Data File - " + navData.getName());
 		
-		Navaid nt = Navaid.values()[navaidType];
+		Navaid nt = Navaid.values()[navaidType]; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
 		List<String> errors = new ArrayList<String>(); 
 		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		int entryCount = 0; int regionCount = 0; CycleInfo newCycle = null;
@@ -196,7 +196,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
 			
 			// Write the cycle ID and commit
-			if (newCycle != null) {
+			if ((newCycle != null) && updateVersion) {
 				SetMetadata mdwdao = new SetMetadata(con);
 				mdwdao.write("navdata.cycle", newCycle.toString());
 			}

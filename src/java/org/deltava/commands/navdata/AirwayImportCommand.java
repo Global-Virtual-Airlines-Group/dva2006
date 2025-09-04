@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 10.2
+ * @version 12.2
  * @since 2.0
  */
 
@@ -56,12 +56,10 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		
 		List<String> errors = new ArrayList<String>();
 		Collection<Airway> results = new ArrayList<Airway>();
-		int entryCount = 0; CycleInfo newCycle = null;
+		int entryCount = 0; CycleInfo newCycle = null; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
 		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		TaskTimer tt = new TaskTimer();
 		try (InputStream is = navData.getInputStream(); LineNumberReader br = new LineNumberReader(new InputStreamReader(is))) {
-			
-			// Iterate through the file
 			Airway a = null; int lastSeq = -1; String lastCode = "";
 			String txtData = br.readLine(); 
 			while (txtData != null) {
@@ -132,13 +130,20 @@ public class AirwayImportCommand extends NavDataImportCommand {
 				entryCount++;
 			}
 			
-			// Update the waypoint types and commit
+			// Update the waypoint types
 			timings.put("Store", Long.valueOf(tt.stop()));
 			dao.setQueryTimeout(75);
 			tt.start();
 			int regionCount = dao.updateAirwayWaypoints();
 			timings.put("UpdateRegion", Long.valueOf(tt.stop()));
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
+			
+			// Write the cycle ID
+			if ((newCycle != null) && updateVersion) {
+				SetMetadata mdwdao = new SetMetadata(con);
+				mdwdao.write("navdata.cycle", newCycle.toString());
+			}
+			
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

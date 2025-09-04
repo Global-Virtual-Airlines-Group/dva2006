@@ -2,6 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title><content:airline /> SID / STAR Import</title>
@@ -9,8 +10,10 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:googleAnalytics />
 <content:js name="common" />
+<content:cspHeader />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script async>
 golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2','pssstar.dat.xz','psssid.dat.xz'];
 golgotha.local.validate = function(f) {
@@ -42,12 +45,17 @@ golgotha.local.validate = function(f) {
  <td colspan="2">PSS AIRAC SID / STAR DATA UPLOAD</td>
 </tr>
 <tr>
+ <td class="label">Current Cycle</td>
+ <td class="data"><span class="pri bld">${currentNavCycle}</span><c:if test="${!empty currentNavCycle.releasedOn}">, released on <fmt:date date="${currentNavCycle.releasedOn}" fmt="d" d="EEEE MMMM dd, YYYY" /></c:if></td>
+</tr>
+<tr>
  <td class="label">Upload Data File</td>
  <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;<span class="small">AIRAC data must be in PSS Format.</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Terminal Route data before Import" /></td>
+ <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Terminal Route data before Import" /><br />
+<el:box name="updateVersion" idx="*" className="small" value="true" checked="true" label="Update AIRAC Version on Import completion" /></td>
 </tr>
 </el:table>
 
@@ -62,6 +70,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
