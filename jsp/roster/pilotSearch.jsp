@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

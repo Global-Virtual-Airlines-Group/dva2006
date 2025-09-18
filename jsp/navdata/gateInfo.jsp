@@ -21,7 +21,7 @@
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.gate.hasPFI = ${airport.hasPFI};
 golgotha.gate.hasSchengen = ${airport.isSchengen};
 golgotha.gate.showTabs = true;
@@ -89,7 +89,7 @@ golgotha.onDOMReady(function() {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />

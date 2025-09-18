@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">

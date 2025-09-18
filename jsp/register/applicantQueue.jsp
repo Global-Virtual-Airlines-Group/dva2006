@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script async>
+<script>
 golgotha.local.sort = function(combo) {
 	if (!golgotha.form.comboSet(combo)) return false;
 	self.location = '/applicants.do?' + combo.name + '=' + encodeURI(golgotha.form.getCombo(combo));

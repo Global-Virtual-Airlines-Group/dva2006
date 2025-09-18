@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.update = function(combo) {
 	combo.enabled = false;
 	self.location = golgotha.form.comboSet(combo) ? '/dsproutes.do?id=' + encodeURI(golgotha.form.getCombo(combo)) : '/dsproutes.do';

@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.refresh = function(combo) {
 	golgotha.util.disable(combo);
 	self.location = '/txrequests.do?eqType=' + golgotha.form.getCombo(combo);

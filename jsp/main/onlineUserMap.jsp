@@ -41,7 +41,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 const mapOpts = {container:'mapBox', zoom:5, maxZoom:12, projection:'globe', center:[-93.25,38.88], style:'mapbox://styles/mapbox/outdoors-v12'};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);

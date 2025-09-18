@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script async>
+<script>
 golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2','pssawy.dat.xz'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

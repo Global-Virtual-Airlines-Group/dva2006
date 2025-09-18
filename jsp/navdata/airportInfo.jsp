@@ -22,7 +22,7 @@
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.update = function(cb) {
 	if (!golgotha.form.check()) return false;
 	self.location = '/airportinfo.do?id=' + encodeURI(golgotha.form.getCombo(cb));
@@ -251,7 +251,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />

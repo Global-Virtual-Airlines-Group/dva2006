@@ -17,7 +17,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});

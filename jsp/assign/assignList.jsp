@@ -18,7 +18,7 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setEQType = function(combo) {
 	self.location = '/assignments.do?eqType=' + golgotha.form.getCombo(combo) + '&status=' + golgotha.form.getCombo(document.forms[0].status);
 	return true;

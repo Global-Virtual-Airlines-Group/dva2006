@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setNetwork = function(combo) {
 	location.href = '/flightboard.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;

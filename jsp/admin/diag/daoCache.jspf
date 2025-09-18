@@ -19,7 +19,7 @@
  <td>HIT RATE</td>
 </tr>
 </el:table>
-<script async>
+<script>
 golgotha.local.cacheUpdate = function(updateInterval) {
 	if (updateInterval > 0) window.setTimeout(golgotha.local.cacheUpdate, updateInterval, updateInterval);
 	if (!golgotha.util.isExpanded('daoCache')) return false;

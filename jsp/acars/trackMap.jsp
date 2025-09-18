@@ -42,7 +42,7 @@
 </content:region>
 </content:page>
 <c:set var="maxZoomLevel" value="${(empty localAP) ? 9 : 12}" scope="page" />
-<script async>
+<script>
 golgotha.local.TrackSource = function(opacity) { this._opacity = opacity; };
 golgotha.local.TrackSource.prototype.getType = 'Tiles';
 golgotha.local.TrackSource.prototype.getLayer = function() {

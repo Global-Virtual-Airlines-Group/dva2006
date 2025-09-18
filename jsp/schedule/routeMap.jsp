@@ -46,7 +46,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 

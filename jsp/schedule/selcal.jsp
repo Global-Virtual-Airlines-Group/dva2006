@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.sortBy = function(combo) {
 	self.location = '/selcals.do?sortType=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;

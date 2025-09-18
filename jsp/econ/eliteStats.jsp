@@ -79,7 +79,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const p = fetch('elitestats.ws?year=${statsYear}', {signal:AbortSignal.timeout(7500)});

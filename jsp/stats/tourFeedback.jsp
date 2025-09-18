@@ -17,7 +17,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.update = function(cb) {
 	self.location = '/tourfb.do?id' = golgotha.form.comboGet(cb);
 	return true;

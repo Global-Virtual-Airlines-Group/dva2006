@@ -21,7 +21,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:5, t:'Tour Name'});
@@ -193,7 +193,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </content:region>
 </content:page>
 <c:if test="${!empty tour.flights}">
-<script async>
+<script>
 golgotha.local.flightData = ${legData};
 const rows = golgotha.util.getElementsByClass('legRow', 'tr', document.getElementById('baseTable'));
 for (var x = 0; x < rows.length; x++)

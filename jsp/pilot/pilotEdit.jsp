@@ -23,7 +23,7 @@
 <content:sysdata var="defaultDFormat" name="time.date_format" />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.hasSignature = ${pilot.hasSignature};
 golgotha.local.validate = function(f)
 {

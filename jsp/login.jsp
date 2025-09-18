@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:captcha action="login" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

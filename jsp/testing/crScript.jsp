@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 <fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;

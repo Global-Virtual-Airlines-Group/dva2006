@@ -105,7 +105,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 	const p = fetch('allstats.ws', {signal:AbortSignal.timeout(7500)});

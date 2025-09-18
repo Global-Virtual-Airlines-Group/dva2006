@@ -59,7 +59,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 golgotha.flightBoard.network = '${network}';
 

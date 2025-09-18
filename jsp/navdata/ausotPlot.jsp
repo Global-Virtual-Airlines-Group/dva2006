@@ -59,7 +59,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.mapInit = function() {
 	// Create the map
 	const mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:[google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]}};

@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.doSort = function() { return document.forms[0].submit(); };
 </script>
 </head>

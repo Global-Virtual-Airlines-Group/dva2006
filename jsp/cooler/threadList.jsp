@@ -21,7 +21,7 @@
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setChannel = function(combo) {
 	self.location = '/channel.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
