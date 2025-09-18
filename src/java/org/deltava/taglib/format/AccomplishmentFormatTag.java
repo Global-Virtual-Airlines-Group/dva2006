@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to display a Pilot Accomplishment.
  * @author Luke
- * @version 7.0
+ * @version 12.3
  * @since 3.2
  */
 
@@ -35,25 +35,18 @@ public class AccomplishmentFormatTag extends TagSupport {
 		_class = className;
 	}
 	
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
 		_class = null;
 	}
-	
-	/**
-	 * Renders the Accomplishment to the JSP output stream.
-	 * @return EVAL_PAGE always
-	 */
+
 	@Override
 	public int doEndTag() throws JspException {
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print("<span style=\"color:#");
-			out.print(Integer.toHexString(_a.getColor()).toLowerCase());
+			out.print(_a.getHexColor());
 			out.print(";\"");
 			if (!StringUtils.isEmpty(_class)) {
 				out.print(" class=\"");
