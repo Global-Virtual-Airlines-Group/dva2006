@@ -11,7 +11,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<style type="text/css">
+<style>
 @media print {
 .noPrint { display:none; }
 .CHART { display:inline; text-align:center; position:absolute; top: -5px; }
