@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -140,7 +140,7 @@ public class MessageFormatTag extends TagSupport {
 				if (token.length() > 1)
 					buf.append(StringUtils.stripInlineHTML(token));
 				else if (token.equals("\n"))
-					buf.append("<br />\n");
+					buf.append("<br>\n");
 				else
 					buf.append(token);
 			}

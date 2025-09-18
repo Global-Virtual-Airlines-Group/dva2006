@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2014, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -15,15 +15,14 @@ import org.deltava.util.*;
 /**
  * A JSP tag to generate a monthly calendar table.
  * @author Luke
- * @version 7.0
+ * @version 12.3
  * @since 1.0
  */
 
 public class MonthlyCalendarTag extends CalendarTag {
 	
 	/**
-	 * Sets the starting date for this monthly calendar tag. This is overriden to be the first
-	 * day of the month.
+	 * Sets the starting date for this monthly calendar tag. This is overriden to be the first day of the month.
 	 * @param dt the start date
 	 * @see CalendarTag#setStartDate(ZonedDateTime)
 	 */
@@ -33,18 +32,12 @@ public class MonthlyCalendarTag extends CalendarTag {
 		calculateEndDate(ChronoUnit.MONTHS, 1);
 	}
 	
-	/**
-	 * Returns the label for the scroll backwards link.
-	 */
 	@Override
 	protected String getBackLabel() {
 		ZonedDateTime zdt = _startDate.minus(_intervalLength, _intervalType);
 		return StringUtils.format(zdt, "MMMM yyyy");
 	}
 	
-	/**
-	 * Returns the label for the scroll forwards link.
-	 */
 	@Override
 	protected String getForwardLabel() {
 		ZonedDateTime zdt = _startDate.plus(_intervalLength, _intervalType);
@@ -56,7 +49,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 */
 	private void openTableCell() throws JspException {
 		// Generate the day elements
-		_day = new XMLRenderer("td");
+		_day = new XMLRenderer("td", true);
 		_day.setAttribute("class", _contentClass);
 		try {
 			// If we're at the start of a new week, generate the headers and open the row
@@ -72,10 +65,13 @@ public class MonthlyCalendarTag extends CalendarTag {
 		}
 	}
 	
+	/*
+	 * Helper method to render a date header cell.
+	 */
 	private void renderDateRow(boolean openRow) throws JspException {
 		
 		// Generate the table cell renderer and date formatter
-		XMLRenderer dayHdr = new XMLRenderer("td");
+		XMLRenderer dayHdr = new XMLRenderer("td", true);
 		DateTimeFormatter df = DateTimeFormatter.ofPattern(_showDaysOfWeek ? "EEE MMM dd" : "MMM dd");
 		ZonedDateTime cd = ZonedDateTime.from(_currentDate);
 		try {
@@ -106,11 +102,6 @@ public class MonthlyCalendarTag extends CalendarTag {
 		}
 	}
 
-	/**
-	 * Renders the Calendar header to the JSP output stream.
-	 * @return TagSupport.EVAL_BODY_INCLUDE always
-	 * @throws JspException if an I/O error occurs
-	 */
 	@Override
 	public int doStartTag() throws JspException {
 		// Init the current date
@@ -122,7 +113,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 			// Write the header row
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("MMMM yyyy");
 			_out.print("<tr>");
-			XMLRenderer title = new XMLRenderer("td");
+			XMLRenderer title = new XMLRenderer("td", true);
 			title.setAttribute("colspan", "7");
 			title.setAttribute("class", _topBarClass);
 			_out.print(title.open(true));
@@ -152,8 +143,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	}
 	
 	/**
-	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called
-	 * to determine if further records are required.
+	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called to determine if further records are required.
 	 * @return TagSupport#EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport#SKIP_BODY
 	 * @throws JspException never
 	 */
@@ -175,11 +165,6 @@ public class MonthlyCalendarTag extends CalendarTag {
 		return result; 
 	}
 	
-	/**
-	 * Closes the calendar table.
-	 * @return TagSupport#EVAL_PAGE always
-	 * @throws JspException if an I/O error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 		try {

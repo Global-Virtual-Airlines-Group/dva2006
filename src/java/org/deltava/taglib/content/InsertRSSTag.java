@@ -1,7 +1,5 @@
-// Copyright 2005, 2006, 2009, 2016, 2018, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2018, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
-
-import java.net.*;
 
 import javax.servlet.jsp.*;
 
@@ -10,7 +8,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to insert a link to an RSS data feed.
  * @author Luke
- * @version 10.6
+ * @version 12.3
  * @since 1.0
  */
 
@@ -62,11 +60,6 @@ public class InsertRSSTag extends InsertContentTag {
 		_protocol = null;
 	}
 
-	/**
-	 * Renders the start of the JSP tag and calculates default values.
-	 * @return SKIP_BODY always
-	 * @throws JspException never
-	 */
 	@Override
 	public int doStartTag() throws JspException {
 		if (_protocol == null)
@@ -77,11 +70,6 @@ public class InsertRSSTag extends InsertContentTag {
 		return SKIP_BODY;
 	}
 
-	/**
-	 * Renders the RSS link to the JSP output stream.
-	 * @return EVAL_PAGE always
-	 * @throws JspException if an error occurs
-	 */
 	@Override
 	public int doEndTag() throws JspException {
 
@@ -92,15 +80,14 @@ public class InsertRSSTag extends InsertContentTag {
 		}
 
 		// Build the URL
-		URI url = null;
+		String url = String.format("%s://%s/%s", _protocol, _host, _path);
 		JspWriter out = pageContext.getOut();
 		try {
-			url = new URI(_protocol, _host, _path);
 			out.print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"");
 			out.print(_title);
 			out.print("\" href=\"");
-			out.print(url.toString());
-			out.println("\" />");
+			out.print(url);
+			out.println("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
@@ -108,7 +95,7 @@ public class InsertRSSTag extends InsertContentTag {
 		}
 
 		// Mark the content as added and return
-		ContentHelper.addContent(pageContext, "RSS", url.toString());
+		ContentHelper.addContent(pageContext, "RSS", url);
 		return EVAL_PAGE;
 	}
 }

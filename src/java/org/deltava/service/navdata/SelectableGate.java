@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.comparators.AirlineComparator;
 /**
  * A bean to store airport Gate information and allow metadata editing on a map.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 10.2
  */
 
@@ -56,7 +56,7 @@ class SelectableGate extends Gate implements TabbedMapEntry {
 		StringBuilder buf = new StringBuilder(256);
 		buf.append("<span class=\"small\"><span class=\"pri bld\">");
 		buf.append(getName());
-		buf.append("</span><br />\nZone: <select size=\"1\" name=\"zoneSelect-");
+		buf.append("</span><br>\nZone: <select size=\"1\" name=\"zoneSelect-");
 		buf.append(getUniqueID());
 		buf.append("\" onChange=\"void golgotha.gate.updateZone(this)\">\n");
 		
@@ -69,7 +69,7 @@ class SelectableGate extends Gate implements TabbedMapEntry {
 			buf.append("</option>");
 		}
 		
-		buf.append("</select><br /><br />\n");
+		buf.append("</select><br><br>\n");
 		
 		// Render airline check boxes
 		for (Iterator<Airline> i = _airlines.iterator(); i.hasNext(); ) {
@@ -81,7 +81,7 @@ class SelectableGate extends Gate implements TabbedMapEntry {
 			buf.append("\"> ");
 			buf.append(al.getName());
 			if (i.hasNext())
-				buf.append("<br />\n");
+				buf.append("<br>\n");
 		}
 		
 		buf.append("</span>");

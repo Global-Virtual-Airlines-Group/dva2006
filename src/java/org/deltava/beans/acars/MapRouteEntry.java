@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018, 2019, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -190,9 +190,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		StringBuilder buf = new StringBuilder(_usr.getRank().getName());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
-		buf.append("<br />");
+		buf.append("<br>");
 		if (!StringUtils.isEmpty(_flightNumber)) {
-			buf.append("<br />Flight <span class=\"bld\">");
+			buf.append("<br>Flight <span class=\"bld\">");
 			buf.append(_flightNumber);
 			buf.append("</span> - <span class=\"sec bld\">");
 		}
@@ -205,15 +205,15 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(_betaBuild);
 		}
 		
-		buf.append(")<br />From: ");
+		buf.append(")<br>From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
 		buf.append(_airportD.getICAO());
-		buf.append(")<br />To: ");
+		buf.append(")<br>To: ");
 		buf.append(_airportA.getName());
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
-		buf.append(")<br />");
+		buf.append(")<br>");
 		buf.append("Using ");
 		buf.append(_sim.getName());
 		if (_fdr != Recorder.ACARS) {
@@ -222,19 +222,19 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append("</span>");
 		}
 		
-		buf.append("<br />");
+		buf.append("<br>");
 		if (_network != null) {
 			buf.append("Flight ");
 			buf.append(getNetworkConnected() ? "connected to" : "operated online using");
 			buf.append(" <span class=\"sec bld\">");
 			buf.append(_network.toString());
-			buf.append("</span><br />");
+			buf.append("</span><br>");
 		}
 		
 		buf.append("<span class=\"small\">Currently in ");
 		buf.append((_c == null) ? "International" : _c.getName());
-		buf.append(" airspace</span><br />");
-		buf.append("<br />");
+		buf.append(" airspace</span><br>");
+		buf.append("<br>");
 		buf.append(super.getInfoBox());
 		return buf.toString();
 	}
@@ -253,13 +253,13 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(')');
 		}
 		
-		buf.append("<br />");
+		buf.append("<br>");
 		buf.append(_usr.getRank());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
-		buf.append("<br />");
+		buf.append("<br>");
 		if (!StringUtils.isEmpty(_flightNumber)) {
-			buf.append("<br />Flight <span class=\"bld\">");
+			buf.append("<br>Flight <span class=\"bld\">");
 			buf.append(_flightNumber);
 			buf.append("</span> - <span class=\"sec bld\">");
 		}
@@ -272,23 +272,23 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(_betaBuild);
 		}
 		
-		buf.append(")<br />From: ");
+		buf.append(")<br>From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
 		buf.append(_airportD.getICAO());
-		buf.append(")<br />To: ");
+		buf.append(")<br>To: ");
 		buf.append(_airportA.getName());
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
-		buf.append(")<br />Using <span class=\"pri\">");
+		buf.append(")<br>Using <span class=\"pri\">");
 		buf.append(_sim.getName());
 		
 		if (_fdr != Recorder.ACARS) {
 			buf.append("</span> and <span class=\"ter\">");
 			buf.append(_fdr.toString());
-			buf.append("</span><br />");
+			buf.append("</span><br>");
 		} else {
-			buf.append("</span><br /><br />ACARS Flight <span class=\"bld\">");
+			buf.append("</span><br><br>ACARS Flight <span class=\"bld\">");
 			buf.append(StringUtils.format(getID(), "#,##0"));
 			buf.append("</span>");
 			if (!StringUtils.isEmpty(_tailCode)) {
@@ -299,7 +299,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		}
 		
 		if (_pax > 0) {
-			buf.append("<br /><span class=\"small\">Carrying <span class=\"ter bld\">");
+			buf.append("<br><span class=\"small\">Carrying <span class=\"ter bld\">");
 			buf.append(_pax);
 			buf.append("</span> passengers (");
 			buf.append(StringUtils.format(_lf, "##0.0%"));
@@ -307,12 +307,12 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		}
 		
 		if (_network != null) {
-			buf.append("<br />Flight operated online using <span class=\"sec bld\">");
+			buf.append("<br>Flight operated online using <span class=\"sec bld\">");
 			buf.append(_network.toString());
 			buf.append("</span>");
 		}
 		if (isFlagSet(ACARSFlags.ONGROUND)) {
-			buf.append("<br />Flight Phase: <span class=\"bld\">");
+			buf.append("<br>Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
 			if (getGroundOperations() > 0) {
 				buf.append(" (");
@@ -327,14 +327,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			
 			buf.append("</span>");
 		} else {
-			buf.append("<br /><span class=\"small\">Currently in ");
+			buf.append("<br><span class=\"small\">Currently in ");
 			buf.append((_c == null) ? "International" : _c.getName());
-			buf.append(" airspace</span><br />");
+			buf.append(" airspace</span><br>");
 		}
 		
 		boolean sterileCockpit = (!_busy && ((getRadarAltitude() < 5000) || (getAltitude() < 10000)));
 		if (_checkRide || (_dispatcher != DispatchType.NONE) || _busy || sterileCockpit) {
-			buf.append("<br />");
+			buf.append("<br>");
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
 			if (_dispatcher == DispatchType.DISPATCH) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
 			if (_dispatcher == DispatchType.SIMBRIEF) buf.append("<span class=\"bld\">PLANNED WITH SIMBRIEF</span> ");

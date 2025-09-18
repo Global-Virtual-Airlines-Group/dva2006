@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017, 2020, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 10.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -271,7 +271,7 @@ public class Pilot extends ConnectedUser implements RoutePair, GeospaceLocation 
 		buf.append(getCallsign());
 		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
-		buf.append(")<br /><br />");
+		buf.append(")<br><br>");
 		if (isPopulated()) {
 			buf.append("Flying from ");
 			buf.append(_airportD.getICAO());
@@ -279,13 +279,13 @@ public class Pilot extends ConnectedUser implements RoutePair, GeospaceLocation 
 			buf.append(_airportA.getICAO());	
 		}
 		
-		buf.append("<br />Position: ");
+		buf.append("<br>Position: ");
 		buf.append(StringUtils.format(_position, true, GeoLocation.ALL));
-		buf.append("<br />Altitude: ");
+		buf.append("<br>Altitude: ");
 		buf.append(StringUtils.format(_altitude, "#,##0"));
-		buf.append(" feet<br />Speed: ");
+		buf.append(" feet<br>Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots<br /><br />Network ID: ");
+		buf.append(" knots<br><br>Network ID: ");
 		buf.append(String.valueOf(getID()));
 		buf.append("</div>");
 		return buf.toString();

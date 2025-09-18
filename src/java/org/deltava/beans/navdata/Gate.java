@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 12.1
+ * @version 12.3
  * @since 5.1
  */
 
@@ -209,7 +209,7 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
 		if (_useCount > 0) {
-			buf.append("<br />Used for ");
+			buf.append("<br>Used for ");
 			buf.append(_useCount);
 			buf.append(" Flight");
 			if (_useCount > 1)
@@ -217,17 +217,17 @@ public class Gate extends NavigationDataBean implements UseCount, ComboAlias {
 		}
 		
 		if (_airlines.size() > 0) {
-			buf.append("<br /><br />");
+			buf.append("<br><br>");
 			buf.append("Airline");
 			if (_airlines.size() > 1)
 				buf.append('s');
 			
-			buf.append(":<br />");
-			_airlines.forEach(a -> buf.append(a.getName()).append("<br />"));
+			buf.append(":<br>");
+			_airlines.forEach(a -> buf.append(a.getName()).append("<br>"));
 		}
 		
 		if (_zone != GateZone.DOMESTIC) {
-			buf.append("<br /><span class=\"sec bld ita caps\">");
+			buf.append("<br><span class=\"sec bld ita caps\">");
 			buf.append(_zone.getDescription());
 			buf.append("</span>");
 		}
