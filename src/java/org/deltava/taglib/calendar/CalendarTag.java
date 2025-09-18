@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2012, 2014, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 7.2
+ * @version 12.3
  * @since 1.0
  */
 
@@ -308,7 +308,7 @@ abstract class CalendarTag extends TagSupport {
 			pageContext.setAttribute(_currentDateAttr, _currentDate, PageContext.REQUEST_SCOPE);
 
 		// Generate the view table
-		_table = new XMLRenderer("table");
+		_table = new XMLRenderer("table", true);
 		_table.setAttribute("id", _tableID);
 		_table.setAttribute("class", _tableClass);
 		if (_border != 0)
@@ -343,22 +343,22 @@ abstract class CalendarTag extends TagSupport {
 
 		try {
 			// Build the backward URL
-			XMLRenderer backURL = new XMLRenderer("a");
+			XMLRenderer backURL = new XMLRenderer("a", true);
 			params.put("startDate", new String[] { _df.format(bd) });
 			backURL.setAttribute("href", buildURL(params));
 
 			// Build the forward URL
-			XMLRenderer fwdURL = new XMLRenderer("a");
+			XMLRenderer fwdURL = new XMLRenderer("a", true);
 			params.put("startDate", new String[] { _df.format(fd) });
 			fwdURL.setAttribute("href", buildURL(params));
 
 			// Render the scroll tag bar row
-			XMLRenderer scrollRow = new XMLRenderer("tr");
+			XMLRenderer scrollRow = new XMLRenderer("tr", false);
 			scrollRow.setAttribute("class", _scrollRowClass);
 			_out.println(scrollRow.open(true));
 
 			// Render the scroll back cell and link
-			XMLRenderer sBackCell = new XMLRenderer("td");
+			XMLRenderer sBackCell = new XMLRenderer("td", false);
 			sBackCell.setAttribute("class", "left");
 			sBackCell.setAttribute("colspan", "3");
 			_out.print(sBackCell.open(true));
@@ -375,7 +375,7 @@ abstract class CalendarTag extends TagSupport {
 			_out.print("<td>&nbsp;</td>");
 
 			// Render the scroll forward cell and link
-			XMLRenderer sFwdCell = new XMLRenderer("td");
+			XMLRenderer sFwdCell = new XMLRenderer("td", false);
 			sFwdCell.setAttribute("class", "right");
 			sFwdCell.setAttribute("colspan", "3");
 			_out.print(sFwdCell.open(true));

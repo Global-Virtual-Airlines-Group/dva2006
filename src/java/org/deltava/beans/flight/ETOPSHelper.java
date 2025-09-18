@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 4.1
  */
 
@@ -45,7 +45,7 @@ public final class ETOPSHelper {
 			StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
 			buf.append(getHTMLTitle());
 			buf.append(getHTMLPosition());
-			if (!_closestAirports.isEmpty()) buf.append("<br />");
+			if (!_closestAirports.isEmpty()) buf.append("<br>");
 			for (Iterator<Airport> i = _closestAirports.iterator(); i.hasNext(); ) {
 				Airport a = i.next();
 				buf.append("Distance from ");
@@ -54,7 +54,7 @@ public final class ETOPSHelper {
 				buf.append(distanceTo(a));
 				buf.append(" miles");
 				if (i.hasNext())
-					buf.append("<br />");
+					buf.append("<br>");
 			}
 			
 			buf.append("</div>");

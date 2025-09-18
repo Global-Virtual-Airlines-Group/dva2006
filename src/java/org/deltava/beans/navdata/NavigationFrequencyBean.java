@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2014, 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A NavigationDataBean to represent a navigation aid with a tunable radio frequency.
  * @author Luke
- * @version 6.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public abstract class NavigationFrequencyBean extends NavigationDataBean {
 		if (_freq != null) {
 			buf.append("Frequency: ");
 			buf.append(_freq);
-			buf.append("<br />");
+			buf.append("<br>");
 		}
 		
 		buf.append(getHTMLPosition());

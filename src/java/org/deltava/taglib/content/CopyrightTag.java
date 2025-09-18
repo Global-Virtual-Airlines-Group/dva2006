@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class CopyrightTag extends TagSupport {
 		try {
 			JspWriter jw = pageContext.getOut();
 			if (_visible) {
-				jw.println("<hr />");
+				jw.println("<hr>");
 				jw.print("<div class=\"small copyright\">");
 				jw.print(pageContext.getServletContext().getServletContextName());
 				jw.print(" (");

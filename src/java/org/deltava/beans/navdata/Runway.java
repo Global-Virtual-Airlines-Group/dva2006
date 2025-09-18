@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -297,22 +297,22 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 			buf.append(_isAltNew ? "Now" : "Previously");
 			buf.append(" <span class=\"sec bld\">");
 			buf.append(_altCode);
-			buf.append("</span></span><br />");
+			buf.append("</span></span><br>");
 		}
 		
 		buf.append("Heading: ");
 		buf.append(StringUtils.format(_heading, "000"));
-		buf.append("<br />Length: ");
+		buf.append("<br>Length: ");
 		buf.append(StringUtils.format(_length, "#,##0"));
 		buf.append(" feet");
 
 		// Add ILS frequency if found
 		if (getFrequency() != null) {
-			buf.append("<br />ILS Frequency: ");
+			buf.append("<br>ILS Frequency: ");
 			buf.append(getFrequency());
 		}
 
-		buf.append("<br /><br />");
+		buf.append("<br><br>");
 		buf.append(getHTMLPosition());
 		buf.append("</div>");
 		return buf.toString();
