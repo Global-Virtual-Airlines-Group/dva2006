@@ -18,7 +18,7 @@
 <c:if test="${googleMap}"><map:api version="3" /></c:if>
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:6, t:'Airport Name'});
@@ -175,7 +175,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="golgotha.local.apMarker" point="${airport}" color="green" />
 

@@ -85,7 +85,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.update = function(cb) {
 	golgotha.form.submit(document.forms[0]);
 	const days = golgotha.form.getCombo(cb);

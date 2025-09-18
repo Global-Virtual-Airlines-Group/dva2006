@@ -16,7 +16,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.navaidCode, l:2, t:'Navigation Aid Code'});
@@ -145,7 +145,7 @@ return true;
 </content:page>
 <div id="zoomLevel" class="mapTextLabel right"></div>
 <c:if test="${!empty results}">
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 

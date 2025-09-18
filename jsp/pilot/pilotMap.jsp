@@ -19,7 +19,7 @@
 <content:js name="pilotMap" />
 <content:cspHeader />
 <content:filter roles="HR">
-<script async>
+<script>
 golgotha.pilotMap.deleteMarker = function(id) {
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.timeout = 7500;
@@ -88,7 +88,7 @@ golgotha.pilotMap.deleteMarker = function(id) {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />

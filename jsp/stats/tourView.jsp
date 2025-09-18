@@ -155,7 +155,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <tr class="tourMap">
  <td colspan="6"><map:div ID="mapBox" height="550" /></td>
 </tr>
-<script async>
+<script>
 <map:token />
 const lines = [];
 <map:point var="golgotha.local.mapC" point="${ctr}" />
@@ -213,7 +213,7 @@ map.once('load', function() {
 </content:region>
 </content:page>
 <c:if test="${barPct > 0}">
-<script async>
+<script>
 const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:pr, text:{value:'', className:'pri', style:{color:'#000000'}}, fill:pr});
 golgotha.local.pb.setText(${Math.round(barPct * 10) / 10.0} + '% complete');

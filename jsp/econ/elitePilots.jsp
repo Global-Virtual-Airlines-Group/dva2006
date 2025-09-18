@@ -17,7 +17,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.update = function() {
 	const f = document.forms[0];
 	self.location = '/elitepilots.do?year=' + golgotha.form.getCombo(f.year) + '&sortType=' + f.sortType.value;

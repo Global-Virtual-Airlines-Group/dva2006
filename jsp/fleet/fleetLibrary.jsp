@@ -16,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <content:sysdata var="imgPath" name="path.img" />
-<script async>
+<script>
 golgotha.local.selectAC = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {
 		golgotha.local.fName = null;

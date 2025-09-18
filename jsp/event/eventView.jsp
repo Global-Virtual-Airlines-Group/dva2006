@@ -22,7 +22,7 @@
 <content:captcha action="event" />
 <content:cspHeader />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Equipment Type'});

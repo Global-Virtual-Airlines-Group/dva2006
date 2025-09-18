@@ -18,7 +18,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
 golgotha.local.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.local.validate = function(f) {

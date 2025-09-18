@@ -14,7 +14,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
 golgotha.maps.geoLocate.gpsOK = function(pos) { map.panTo({lat:pos.coords.latitude, lng:pos.coords.longitude}); map.setZoom(8); return true; };
 golgotha.maps.geoLocate.gpsError = function(err) { console.log('GPS Geolocation failed - ' + err.code); return false; };
@@ -118,7 +118,7 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 

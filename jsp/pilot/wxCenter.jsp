@@ -21,7 +21,7 @@
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
@@ -154,7 +154,7 @@ golgotha.local.clickInfo = function(mrk) {
 </content:region>
 </content:page>
 <div id="copyright" class="small mapTextLabel"></div><div id="zoomLevel" class="small right mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
 golgotha.local.wxMarkers = [];

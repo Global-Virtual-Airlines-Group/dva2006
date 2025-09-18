@@ -20,7 +20,7 @@
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
@@ -122,7 +122,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script async>
+<script>
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

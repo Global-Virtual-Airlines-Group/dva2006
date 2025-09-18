@@ -124,7 +124,7 @@
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script async>
+<script>
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

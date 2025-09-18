@@ -19,7 +19,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.updateSignups = function() {
 	const f = document.forms[0];
 	const tg = !f.canSignup.checked;
