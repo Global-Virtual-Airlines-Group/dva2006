@@ -18,7 +18,7 @@ public class TestGetOceanic extends TestCase {
 
 	@SuppressWarnings("static-method")
 	public void testNAT() throws DAOException {
-		GetNATs dao = new GetNATs("https://www.notams.faa.gov/common/nat.html");
+		GetNATs dao = new GetNATs("https://notams.aim.faa.gov/nat.html");
 		String info = dao.getTrackInfo();
 		assertNotNull(info);
 		assertTrue(info.length() > 0);
