@@ -24,7 +24,7 @@ golgotha.local.validate = function(f) {
 	return true;
 };
 </script>
-<style type="text/css">
+<style>
 table.form td.eliteStatus, .button {
 	color: #ffffff;
 	background-color: #${currentStatus.level.hexColor};

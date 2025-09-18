@@ -29,7 +29,7 @@ golgotha.local.setSort = function(st) {
 	return golgotha.local.update();
 };
 </script>
-<style type="text/css">
+<style>
 <c:forEach var="lvl" items="${totals.keySet()}">
 td.requal-${lvl.name} {
 	background: ${fn:rgba(lvl.color, 0.325)};

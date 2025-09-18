@@ -14,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<style type="text/css">
+<style>
 @media print {
 .noprint { display:none; }
 }
