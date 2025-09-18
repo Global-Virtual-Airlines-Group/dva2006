@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -27,84 +27,84 @@
 <c:choose>
 <c:when test="${isUpdate}">
 <div class="updateHdr">${eliteName} Level Updated</div>
-<br />
-The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" className="bld" nameOnly="true" /> status level definition has been updated in the database. This will not make any changes to existing ${eliteName} status levels.<br />
+<br>
+The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:elite level="${lvl}" className="bld" nameOnly="true" /> status level definition has been updated in the database. This will not make any changes to existing ${eliteName} status levels.<br>
 </c:when>
 <c:when test="${isDeleteLT}">
 <div class="updateHdr">${eliteName} Lifetime Level Deleted</div>
-<br />
+<br>
 The <span class="pri bld">${eliteName}</span>&nbsp;<fmt:ltelite level="${ltLevel}" className="bld" /> lifetime status level definition has been deleted from the database and has been removed from all <content:airline /> Pilots who had previously 
-attained this lifetime status level.<br />  
+attained this lifetime status level.<br>  
 </c:when>
 <c:when test="${isRecalc}">
 <div class="updateHdr">${eliteName} Status Recalculated</div>
-<br />
-<span class="pri bld">${eliteName}</span> status for ${pilot.name} has been recalculated.<br />
-<br />
+<br>
+<span class="pri bld">${eliteName}</span> status for ${pilot.name} has been recalculated.<br>
+<br>
 <c:if test="${!empty updatedScores}">
-The following Flights Reports had their scores changed:<br />
-<br />
+The following Flights Reports had their scores changed:<br>
+<br>
 <c:forEach var="flightID" items="${updatedScores.keySet()}">
 <c:set var="cfMsg" value="${updatedScores[flightID]}" scope="page" />
-Flight Report <el:cmd url="pirep" linkID="${flightID}" className="sec bld">${flightID}</el:cmd> - ${cfMsg}<br /></c:forEach>
-<br />
+Flight Report <el:cmd url="pirep" linkID="${flightID}" className="sec bld">${flightID}</el:cmd> - ${cfMsg}<br></c:forEach>
+<br>
 </c:if>
-<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} and <fmt:int value="${total.points}" />&nbsp;${pointUnit} in ${total.year}.<br />
+<fmt:int value="${total.legs}" className="pri bld" /> Flight Legs were re-scored, and ${pilot.name} has flown <fmt:int value="${total.distance}" />&nbsp;${distUnit} and <fmt:int value="${total.points}" />&nbsp;${pointUnit} in ${total.year}.<br>
 <c:if test="${isDifferent}">
-<span class="ita">Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span><br /></c:if>
-<br />
+<span class="ita">Previously, ${pilot.name} was credited for <fmt:int value="${oldTotal.distance}" />&nbsp;${distUnit} and <fmt:int value="${oldTotal.points}"/>&nbsp;${pointUnit} in ${total.year}.</span><br></c:if>
+<br>
 <c:if test="${!empty msgs}">
 <div class="updateHdr">${eliteName} CALCULATION STATUS UPDATES</div>
-<br />
+<br>
 <c:forEach var="msg" items="${msgs}">
-${msg}<br /></c:forEach>
+${msg}<br></c:forEach>
 </c:if>
 </c:when>
 <c:when test="${isLTUpdate}">
 <div class="updateHdr">${eliteName} Lifetime Level Updated</div>
-<br />
-The <span class="pri bld">${eliteName}</span> ${ll.name} lifetime status level definition has been updated in the database. This will not make any changes to any existing ${eliteName} status levels.<br />
+<br>
+The <span class="pri bld">${eliteName}</span> ${ll.name} lifetime status level definition has been updated in the database. This will not make any changes to any existing ${eliteName} status levels.<br>
 </c:when>
 <c:when test="${isLevelSet}">
 <div class="updateHdr">${eliteName} Requirements Calculated</div>
-<br />
-The <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> status requirements for <span class="bld">${year}</span> have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br />
-<br />
+<br>
+The <content:airline />&nbsp;<span class="pri bld">${eliteName}</span> status requirements for <span class="bld">${year}</span> have been calculated based on existing percentiles and updated in the database. The levels for ${year} are as follows:<br>
+<br>
 <c:forEach var="lvlName" items="${oldLevels.keySet()}">
 <c:set var="ol" value="${oldLevels[lvlName]}" scope="page" />
 <c:set var="nl" value="${newLevels[lvlName]}" scope="page" />
-<fmt:elite level="${nl}" className="bld" nameOnly="true" /><br />
-<br />
-<span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br />
-<span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br />
+<fmt:elite level="${nl}" className="bld" nameOnly="true" /><br>
+<br>
+<span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br>
+<span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br>
 Legs: <fmt:dec value="${(nl.legs - ol.legs) * 1.0 / ol.legs}" fmt="##0.0%" className="bld" forceSign="true" />, ${distUnit}&nbsp;<fmt:dec value="${(nl.distance - ol.distance) * 1.0 / ol.distance}" className="sec bld" fmt="##0.0%" forceSign="true" />, 
-${pointUnit}&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><br /><hr />
-<br />
+${pointUnit}&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><br><hr>
+<br>
 </c:forEach>
-<c:if test="${!isPersisted}"><br /><span class="sec ita bld">These changes have not been written to the database.</span><br />
-<br /></c:if>
+<c:if test="${!isPersisted}"><br><span class="sec ita bld">These changes have not been written to the database.</span><br>
+<br></c:if>
 </c:when>
 <c:when test="${isRollover}">
 <div class="updateHdr">${eliteName} Status Rollover for ${year}</div>
-<br />
-<content:airline />&nbsp;${eliteName} stauts has been rolled over for the ${year} program year:<br />
-<br />
+<br>
+<content:airline />&nbsp;${eliteName} stauts has been rolled over for the ${year} program year:<br>
+<br>
 <c:forEach var="msg" items="${msgs}">
-${msg}<br /></c:forEach>
-<br />
-<fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br /><br />
-<c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span> To persist these changes, <el:cmd url="eliterollover" op="force" className="sec bld">Click Here</el:cmd>.<br />
-<br /></c:if>
+${msg}<br></c:forEach>
+<br>
+<fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br><br>
+<c:if test="${!isPersisted}"><span class="sec ita bld">These changes have not been written to the database.</span> To persist these changes, <el:cmd url="eliterollover" op="force" className="sec bld">Click Here</el:cmd>.<br>
+<br></c:if>
 </c:when>
 </c:choose>
-<br />
-To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br />
-To return to the list of ${eliteName} Lifetime status levels, <el:cmd url="eliteltlevels" className="sec bld">Click Here</el:cmd>.<br />
-<c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
-To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
-To view a list of <content:airline /> Pilots in the ${eliteName} Program, <el:cmd url="elitepilots" className="sec bld">Click Here</el:cmd>.<br />
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To return to the list of ${eliteName} status levels, <el:cmd url="elitelevels" className="sec bld">Click Here</el:cmd>.<br>
+To return to the list of ${eliteName} Lifetime status levels, <el:cmd url="eliteltlevels" className="sec bld">Click Here</el:cmd>.<br>
+<c:if test="${!empty pilot}">To view the ${eliteName} status history for ${pilot.name}, <el:cmd url="eliteinfo" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br>
+To return to the Pilot profile for ${pilot.name}, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br></c:if>
+To view a list of <content:airline /> Pilots in the ${eliteName} Program, <el:cmd url="elitepilots" className="sec bld">Click Here</el:cmd>.<br>
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

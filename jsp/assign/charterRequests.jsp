@@ -73,11 +73,11 @@ golgotha.local.updateAuthor = function(cb) {
 
 <!-- Scroll Bar Row -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar><view:legend width="100" classes=" opt1,warn, " labels="Pending,Rejected,Approved" /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar><view:legend width="100" classes=" opt1,warn, " labels="Pending,Rejected,Approved" /></td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

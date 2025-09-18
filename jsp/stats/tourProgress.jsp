@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.updateTour = function() { document.forms[0].submit(); };
@@ -65,7 +65,7 @@ golgotha.local.updateTour = function() { document.forms[0].submit(); };
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

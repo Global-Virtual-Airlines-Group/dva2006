@@ -12,7 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>

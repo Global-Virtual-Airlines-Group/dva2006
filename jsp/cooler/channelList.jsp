@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -45,10 +45,10 @@
 <tr>
  <td class="left">
 <c:if test="${channel.lastThreadID == 0}">
- <b>${channel.name}</b><br />
+ <b>${channel.name}</b><br>
 </c:if>
 <c:if test="${channel.lastThreadID != 0}">
- <el:cmd url="channel" linkID="${channel.name}" className="bld">${channel.name}</el:cmd><br />
+ <el:cmd url="channel" linkID="${channel.name}" className="bld">${channel.name}</el:cmd><br>
 </c:if>
  <span class="small">${channel.description}</span></td>
 <c:if test="${channel.lastThreadID != 0}">
@@ -59,7 +59,7 @@
 <c:set var="author" value="${authors[post.authorID]}" scope="page" />
  <td class="right"><span class="small nophone">${author.rank.name}&nbsp;</span><span class="pri bld small">${author.name}</span>
  <span class="small nophone"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
- <fmt:date date="${post.createdOn}" /></span><br />
+ <fmt:date date="${post.createdOn}" /></span><br>
  in <el:cmd url="thread" linkID="${post.threadID}" className="bld">${post.subject}</el:cmd></td>
 </c:if>
 <c:if test="${channel.lastThreadID == 0}">

@@ -13,7 +13,7 @@
 <content:googleAnalytics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
@@ -104,7 +104,7 @@ golgotha.local.checkAssignee = function(combo) {
 <c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br />
+ <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br>
 <el:box name="sendIssue" idx="*" value="true" checked="true" label="Send Notification to Assignee" /></td>
 </tr>
 </c:if>
@@ -144,7 +144,7 @@ golgotha.local.checkAssignee = function(combo) {
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br>
 <fmt:date date="${comment.createdOn}" /></td>
  <td class="data top"><fmt:msg value="${comment.body}" /></td>
 </tr>
@@ -165,7 +165,7 @@ golgotha.local.checkAssignee = function(combo) {
 </el:table>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

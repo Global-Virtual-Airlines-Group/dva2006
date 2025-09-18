@@ -13,7 +13,7 @@
 <content:css name="calendar" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
@@ -58,20 +58,20 @@ golgotha.local.validate = function(f) {
 <c:when test="${entry.getClass().simpleName == 'DispatchScheduleEntry'}">
 <c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="page" />
 <c:set var="eAccess" value="${accessMap[entry]}" scope="page" />
-<div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
+<div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br>
 <fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" />
-<c:if test="${eAccess.canEdit}"><br /><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
-<c:if test="${!empty entry.comments}"><br />${entry.comments}</c:if></div>
+<c:if test="${eAccess.canEdit}"><br><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
+<c:if test="${!empty entry.comments}"><br>${entry.comments}</c:if></div>
 </c:when>
 <c:otherwise>
 <c:set var="dispatcher" value="${pilots[entry.pilotID]}" scope="page" />
-<div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
+<div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br>
 <fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" default=" " />
 <c:if test="${entry.hasFlights}">
-<br /><span class="bld"><fmt:int value="${entry.flights.size()}" /> Flights dispatched</span></c:if></div>
+<br><span class="bld"><fmt:int value="${entry.flights.size()}" /> Flights dispatched</span></c:if></div>
 </c:otherwise>
 </c:choose>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:month>
@@ -79,7 +79,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${access.canCreate}">
 <%@ include file="/jsp/dispatch/addServiceTime.jspf" %></c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

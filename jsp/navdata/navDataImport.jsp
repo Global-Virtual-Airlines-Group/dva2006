@@ -13,7 +13,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
 golgotha.local.validate = function(f) {
@@ -66,7 +66,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

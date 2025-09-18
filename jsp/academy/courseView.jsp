@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
@@ -115,7 +115,7 @@ golgotha.local.validateCancel = function() {
 <tr>
  <td class="label top">Study Documents</td>
  <td colspan="6" class="data"><c:forEach var="doc" items="${docs}">
-<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br />
+<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br>
 </c:forEach></td>
 </tr>
 </c:if>
@@ -123,7 +123,7 @@ golgotha.local.validateCancel = function() {
 <tr>
  <td class="label top">Training Videos</td>
  <td colspan="6" class="data"><c:forEach var="video" items="${videos}">
-<el:link url="/video/${video.fileName}">${video.name}</el:link><br />
+<el:link url="/video/${video.fileName}">${video.name}</el:link><br>
 </c:forEach></td>
 </tr>
 </c:if>
@@ -143,7 +143,7 @@ golgotha.local.validateCancel = function() {
  <td class="label top">Entry #<fmt:int value="${progress.ID}" /></td>
  <td colspan="6" class="data top"><fmt:msg value="${progress.text}" />
 <c:if test="${(!empty progress.examName) || progress.complete || access.canUpdateProgress}">
-<br /><hr />
+<br><hr>
 <c:choose>
 <c:when test="${progress.complete}">
 <span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /> (${lastUpd.name})</span>
@@ -210,7 +210,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br>
 <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td colspan="6" class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
@@ -242,7 +242,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

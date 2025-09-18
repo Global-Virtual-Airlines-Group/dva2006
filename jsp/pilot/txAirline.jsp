@@ -10,7 +10,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -54,9 +54,9 @@ golgotha.onDOMReady(function() {
 <c:if test="${!empty eqTypes}">
 <tr>
  <td class="label top">Equipment Program</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT PROGRAM ]" /><br />
+ <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT PROGRAM ]" /><br>
 <c:forEach var="eqType" items="${eqTypes}">
-${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
+${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br>
 </c:forEach></td>
 </tr>
 <tr>
@@ -66,7 +66,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /><br />
+ <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /><br>
 <el:box name="keepActive" idx="*" value="true" checked="${currentAirline.allowMultiAirline}" label="Keep Pilot active at ${airlineName} after transfer" /></td>
 </tr>
 </el:table>
@@ -78,7 +78,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -13,7 +13,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,10 +31,10 @@
 <tr>
  <td class="left" colspan="${cspan}">The culmination of your virtual career with <content:airline /> is joining our all-volunteer staff, giving back to the community you have enjoyed being a member of.
 We periodically need new volunteers to join our staff, handling such duties as grading Examinations, Check Rides, processing Flight Reports and answering questions about <content:airline /> and its
-programs and policies.<br />
+programs and policies.<br>
 <c:if test="${!empty viewContext.results}">
 <content:sysdata var="mailHR" name="airline.mail.hr" />
-<br />
+<br>
 Please review the list of career opportunities below. If you believe that you would be a good match for them, we welcome your application and interest. If you have questions about the positions or any
 aspects of being a member of the <content:airline /> volunteer staff, do not hesitate to contact our Human Resources Department at <a href="mailto:${mailHR}">${mailHR}</a>.</c:if>
 </td>

@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
@@ -63,18 +63,18 @@ golgotha.local.doCR = function() {
 <tr>
  <td colspan="${cspan}"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
  as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
- days in order to retain their type ratings.<br />
-<br /> 
+ days in order to retain their type ratings.<br>
+<br> 
 <c:if test="${!pilot.proficiencyCheckRides}">
-You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br />
-<br />
+You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br>
+<br>
 To discover more about our currency-based certification model, you can <el:cmd url="currencyenable" link="${pilot}" className="pri bld">Click Here</el:cmd> to review the changes that switching to this model will
 have on your existing aircraft type ratings.
 </c:if>
 <c:if test="${pilot.proficiencyCheckRides}">
 You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
- be performed before ratings expire.<c:if test="${!empty expiringRides}"><br />
- <br />
+ be performed before ratings expire.<c:if test="${!empty expiringRides}"><br>
+ <br>
  <span class="pri bld">You have <fmt:int value="${expiringRides.size()}" /> Check Rides that will expire before <fmt:date fmt="d" date="${expiryDate}" />.</span></c:if></c:if>
  </td>
 </tr>
@@ -168,11 +168,11 @@ You are currently enrolled within our <span class="ter bld caps">RECURRENT</span
 </c:when>
 <c:otherwise>
 <tr>
- <td class="left" colspan="${cspan}">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
-<br />
+ <td class="left" colspan="${cspan}">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br>
+<br>
 Our exams are timed. You will see time remaining at the top of the examination page. After starting you have approximately 40 minutes to complete and submit the examination. <span class="bld ita">After 40 minutes the 
- examination will be automatically submitted, regardless of number of questions answered</span>.<br />
-<br />
+ examination will be automatically submitted, regardless of number of questions answered</span>.<br>
+<br>
 Most <content:airline /> examianations are multiple choice and automatically scored when submitted. If not, your examination will be scored within 72 hours of submission, and the results will be sent to you by e-mail.
  Until it is scored, you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
 </tr>
@@ -197,7 +197,7 @@ Most <content:airline /> examianations are multiple choice and automatically sco
 </el:table>
 <el:text type="hidden" value="${pilot.hexID}" name="id" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -60,7 +60,7 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5"><view:legend width="100" labels="Active,Inactive,Web Only" classes=" ,warn,opt2" /><br />
+ <td colspan="5"><view:legend width="100" labels="Active,Inactive,Web Only" classes=" ,warn,opt2" /><br>
 <view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>

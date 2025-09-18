@@ -13,7 +13,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <c:set var="formURL" value="job.do" scope="page" />
 <c:choose>
 <c:when test="${access.canApply}">
@@ -121,7 +121,7 @@ return true;
  <td class="label top">Posting Status</td>
  <td class="data"><span class="pri bld"><fmt:edesc object="${job.status}" /></span>
 <c:if test="${job.staffOnly}">
-<br />
+<br>
 <span class="sec bld caps">This Job Posting is visible to <content:airline /> Staff members only</span></c:if></td>
 </tr>
 <content:filter roles="HR">
@@ -142,26 +142,26 @@ return true;
 <c:forEach var="app" items="${apps}">
 <c:set var="pilot" value="${pilots[app.authorID]}" scope="page" />
 <tr>
- <td class="label top">${pilot.name} (${pilot.pilotCode})<br />
+ <td class="label top">${pilot.name} (${pilot.pilotCode})<br>
 <fmt:date date="${app.createdOn}" t="HH:mm" /></td>
- <td class="data top"><span class="bld">${pilot.rank.name}, ${pilot.equipmentType}</span> - <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br />
-Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" /><br />
+ <td class="data top"><span class="bld">${pilot.rank.name}, ${pilot.equipmentType}</span> - <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br>
+Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" /><br>
 <a href="javascript:void golgotha.local.toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a> - <el:cmd url="profile" link="${pilot}">Click to view pilot profile.</el:cmd>
 <c:choose>
 <c:when test="${access.canShortlist}">
-<hr />
+<hr>
 <el:box name="sl" idx="*" value="${fn:hex(app.authorID)}" checked="${app.shortlisted}" label="Shortlist this Job Applicant" />
 </c:when>
 <c:when test="${app.shortlisted}">
-<br />
+<br>
 <span class="sec bld caps">${pilot.name} has been short-listed for this Position</span>
 <c:if test="${access.canSelect}">
-<hr />
+<hr>
 <el:box name="sl" idx="*" value="${fn:hex(app.authorID)}" checked="${app.approved}" label="Select this Job Applicant" />
 </c:if>
 </c:when>
 <c:when test="${app.approved}">
-<br />
+<br>
 <span class="pri bld caps">${pilot.name} has been Recommended for Hire to this Position</span>
 </c:when>
 </c:choose></td>
@@ -180,7 +180,7 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" /><br 
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <c:if test="${isHR || (job.hireManagerID == comment.authorID)}">
 <tr>
- <td class="label top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br>
 <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
@@ -194,14 +194,14 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" /><br 
 <tr>
  <td class="label top">Application</td>
  <td class="data"><el:textbox style="float:left; margin-right:8px;" name="body" idx="*" width="75%" className="req" height="5" resize="true"></el:textbox>
-<span><c:if test="${!empty profile}"><a href="javascript:void golgotha.local.useTemplate()">Use Saved Application</a><br /></c:if>
+<span><c:if test="${!empty profile}"><a href="javascript:void golgotha.local.useTemplate()">Use Saved Application</a><br></c:if>
 <a href="javascript:void golgotha.local.clearBody()">Clear Text</a></span>
 <div style="clear:both;"></div>
 <span class="small ita">Please provide any information about yourself that qualifies you for the position of ${job.title}.</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="saveProfile" idx="*" value="true" label="Save my Application on file for future positions" /><br />
+ <td class="data"><el:box name="saveProfile" idx="*" value="true" label="Save my Application on file for future positions" /><br>
 <el:box name="autoSubmit" idx="*" value="true" label="Automatically submit this Application for future positions" /></td>
 </tr>
 </c:if>
@@ -230,7 +230,7 @@ golgotha.local.commentValidate = function(f) {
 	return true;
 };
 </script>
-<br />
+<br>
 <el:form action="jobcomment.do" link="${job}" method="post" validate="return golgotha.form.wrap(golgotha.local.commentValidate, this)">
 <el:table className="form">
 <tr class="title caps">
@@ -250,7 +250,7 @@ golgotha.local.commentValidate = function(f) {
 </el:table>
 </el:form>
 </c:if>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

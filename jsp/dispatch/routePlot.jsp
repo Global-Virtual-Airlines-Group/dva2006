@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
@@ -141,7 +141,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </el:table>
 <el:text name="routeID" type="hidden" value="true" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

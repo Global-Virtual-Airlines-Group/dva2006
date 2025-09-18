@@ -9,7 +9,7 @@
 <content:googleAnalytics />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <style type="text/css">
 @media print {
@@ -20,7 +20,7 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<span class="noPrint"><a href="javascript:void window.print()">Print Chart</a><br /></span>
+<span class="noPrint"><a href="javascript:void window.print()">Print Chart</a><br></span>
 <span class="CHART"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${chart.ID}" class="noborder" /></span>
 <div class="noPrint"><content:copyright /></div>
 </body>

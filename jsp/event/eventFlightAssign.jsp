@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,11 +21,11 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Online Event Flight Assignments Created</div>
-<br />
-<fmt:int value="${event.signups.size()}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
-<br />
-To return to this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br />
-<br />
+<br>
+<fmt:int value="${event.signups.size()}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br>
+<br>
+To return to this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.play = function(id, name) {
 	const tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];

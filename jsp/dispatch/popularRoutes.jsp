@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.search = function(aD, aA) {
@@ -97,14 +97,14 @@ golgotha.local.plot = function(aD, aA) {
  
  <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="145" classes="opt1, " labels="No Dispatch Routes,Dispatch Routes" /></td>
 </tr>
 </view:table>
 <el:text type="hidden" name="airportD" value="" readOnly="true" />
 <el:text type="hidden" name="airportA" value="" readOnly="true" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

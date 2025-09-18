@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
@@ -74,7 +74,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

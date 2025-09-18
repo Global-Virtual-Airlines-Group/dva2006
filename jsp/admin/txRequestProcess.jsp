@@ -13,7 +13,7 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
@@ -97,7 +97,7 @@ golgotha.local.toggleBody = function(id, type) {
  <td class="data">Assigned on <fmt:date fmt="d" date="${checkRide.date}" /> in ${checkRide.equipmentType}
 &nbsp;<a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
 <c:if test="${hasComments}">
- <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br />
+ <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br>
 <c:choose>
 <c:when test="${fn:passed(checkRide)}">
  <span class="ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</span>
@@ -202,7 +202,7 @@ golgotha.local.toggleBody = function(id, type) {
 <c:if test="${access.canAssignRide}">
 <el:text type="hidden" name="eqType" value="${eqType.name}" /></c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

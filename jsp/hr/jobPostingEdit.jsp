@@ -13,7 +13,7 @@
 <content:js name="datePicker" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -46,7 +46,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Job Summary</td>
- <td class="data"><el:text name="summary" idx="*" className="req" size="80" max="128" value="${job.summary}" /><br />
+ <td class="data"><el:text name="summary" idx="*" className="req" size="80" max="128" value="${job.summary}" /><br>
 <span class="small ita">(This is a brief description of the position that is posted on the careers page.)</span></td>
 </tr>
 <tr>
@@ -87,7 +87,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

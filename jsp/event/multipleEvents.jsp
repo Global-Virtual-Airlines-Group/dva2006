@@ -13,7 +13,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -47,7 +47,7 @@
  <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.network}</td>
  <td class="sec"><fmt:edesc object="${event.status}" /></td>
- <td class="small"><c:forEach var="route" items="${event.routes}">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
+ <td class="small"><c:forEach var="route" items="${event.routes}">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br>
 </c:forEach></td>
 </view:row>
 </c:forEach>

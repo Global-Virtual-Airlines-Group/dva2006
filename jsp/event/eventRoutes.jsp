@@ -77,8 +77,8 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="3"><el:text name="route${route.routeID}" idx="*" className="req" size="160" max="640" value="${route.route}" /></td>
 </tr>
 <tr>
- <td class="data"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br />
-<el:box name="disable${route.routeID}" value="true" className="small ${toggleBoxClass}" label="${route.active ? 'Disable' : 'Enable'} this Route" /><br />
+ <td class="data"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br>
+<el:box name="disable${route.routeID}" value="true" className="small ${toggleBoxClass}" label="${route.active ? 'Disable' : 'Enable'} this Route" /><br>
 <el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
  <td class="label top">Maximum Signups</td>
  <td class="data top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
@@ -119,7 +119,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

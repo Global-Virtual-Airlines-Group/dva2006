@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -50,7 +50,7 @@
  <td class="sec small nophone"><fmt:list value="${eqType.ranks}" delim=", " /></td>
  <td><fmt:int value="${eqType.size}" /></td>
  <td class="left small nophone" colspan="${cspan}"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
-<c:if test="${!empty eqType.secondaryRatings}"><br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
+<c:if test="${!empty eqType.secondaryRatings}"><br>SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
 </c:if>
 </td>
 </view:row>
@@ -58,7 +58,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="${cspan + 5}"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar><view:legend width="95" classes=" ,opt2" labels="Active,Inactive" /></td>
+ <td colspan="${cspan + 5}"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar><view:legend width="95" classes=" ,opt2" labels="Active,Inactive" /></td>
 </tr>
 </view:table>
 <content:copyright />

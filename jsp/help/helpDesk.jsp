@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,7 +31,7 @@
 </tr>
 <tr>
  <td colspan="2">Welcome to the <content:airline /> Help Desk. This is designed as your single point of contact for questions and answers regarding our virtual airline community. We have collection a number 
-of sources of information to allow you to discover more about our airline.<br />
+of sources of information to allow you to discover more about our airline.<br>
 If you still have questions, please feel free to <el:cmd url="hdissue" op="edit" className="sec bld">ask a new Question</el:cmd> and one of our volunteer staff will answer it soon.</td>
 </tr>
 <tr>
@@ -112,12 +112,12 @@ If you still have questions, please feel free to <el:cmd url="hdissue" op="edit"
 <c:if test="${(!empty myIssues) || (!empty viewContext.results)}">
 <!-- Legend Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="92" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </c:if>
 </view:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

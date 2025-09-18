@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -50,13 +50,13 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Banner Image</td>
  <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /> Width: <el:text name="width" idx="*" size="2" max="3" value="${entry.bannerWidth}" />%
-<c:if test="${entry.hasImage}"><br />
+<c:if test="${entry.hasImage}"><br>
 <el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" label="Notice is In Effect" checked="${entry.active}" /><br />
-<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" /><br />
+ <td class="data"><el:box name="active" idx="*" value="true" label="Notice is In Effect" checked="${entry.active}" /><br>
+<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" /><br>
 <el:box name="noNotify" value="true" label="Don't send e-mail notification" /></td>
 </tr>
 <tr>
@@ -75,7 +75,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

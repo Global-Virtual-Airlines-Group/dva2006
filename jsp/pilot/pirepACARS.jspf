@@ -311,7 +311,7 @@
  <td class="label top">Flight Score</td>
  <td class="data" colspan="${cspan}"><span style="color:#${flightScore.result.hexColor}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn caps bld"><fmt:list value="${warnings}" delim=", " /></span></c:if>
 <c:if test="${!empty flightScore.messages}">
-<br /><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br />" /></span></c:if></td>
+<br><span class="small ita"><fmt:list value="${flightScore.messages}" delim="<br>" /></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">

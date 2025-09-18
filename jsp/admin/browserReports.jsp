@@ -11,7 +11,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
@@ -38,7 +38,7 @@
 <!-- Table data -->
 <c:set var="nl" value="\n" scope="page" />
 <c:forEach var="br" items="${viewContext.results}">
-<c:set var="body" value="${br.body.replace(nl,'<br />')}" scope="page" />
+<c:set var="body" value="${br.body.replace(nl,'<br>')}" scope="page" />
 <view:row entry="${br}">
  <td class="bld"><fmt:int value="${br.ID}" /></td>
  <td class="nophone sec">${br.type}</td>

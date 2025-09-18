@@ -17,7 +17,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.setAirportD = function(combo) {
@@ -95,7 +95,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

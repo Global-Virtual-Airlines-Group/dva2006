@@ -13,7 +13,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,18 +24,18 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">${entryType} ${opName}</div>
-<br />
+<br>
 <c:if test="${!isDelete}">
-This ${entryType} has been successfully ${opName} in the database.<br />
+This ${entryType} has been successfully ${opName} in the database.<br>
 <c:if test="${!empty notifyUsers}">
-<fmt:int value="${notifyUsers}" />&nbsp;<content:airline /> Pilots have been notified via e-mail.<br /></c:if>
-<br />
-To view it, please <el:cmd className="sec bld" url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd>.<br />
+<fmt:int value="${notifyUsers}" />&nbsp;<content:airline /> Pilots have been notified via e-mail.<br></c:if>
+<br>
+To view it, please <el:cmd className="sec bld" url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${isDelete}">
-This ${entryType} has been successfully removed from the database.<br />
+This ${entryType} has been successfully removed from the database.<br>
 </c:if>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

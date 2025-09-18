@@ -10,7 +10,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
@@ -55,9 +55,9 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
-<el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /><br />
-<el:box name="autoApprove" className="small" label="Automatically approve ACARS Flight Reports with optimal Flight Score" value="true" checked="${aInfo.autoApprove}" /><br />
+ <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br>
+<el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /><br>
+<el:box name="autoApprove" className="small" label="Automatically approve ACARS Flight Reports with optimal Flight Score" value="true" checked="${aInfo.autoApprove}" /><br>
 <el:box name="allowsMulti" className="small" label="Allows membership in multiple Virtual Airlines" value="true" checked="${aInfo.allowMultiAirline}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -70,7 +70,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

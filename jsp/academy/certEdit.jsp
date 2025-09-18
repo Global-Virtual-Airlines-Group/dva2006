@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.showReqCert = function(combo) {
@@ -105,7 +105,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Enrollment Roles</td>
- <td class="data"><span class="ita">Select any Security Roles required for this Certification to be available for enrollment by a particular Pilot.</span><br />
+ <td class="data"><span class="ita">Select any Security Roles required for this Certification to be available for enrollment by a particular Pilot.</span><br>
 <el:check name="enrollRoles" width="115" cols="7" newLine="true" checked="${cert.roles}" options="${roles}" /></td>
 </tr>
 <tr>
@@ -135,8 +135,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isActive" idx="*" className="bld" value="true" label="Certification is Active" checked="${cert.active}" /><br />
-<el:box name="autoEnroll" idx="*" value="true" label="Auto-Enroll students in Course" checked="${cert.autoEnroll}" /><br />
+ <td class="data"><el:box name="isActive" idx="*" className="bld" value="true" label="Certification is Active" checked="${cert.active}" /><br>
+<el:box name="autoEnroll" idx="*" value="true" label="Auto-Enroll students in Course" checked="${cert.autoEnroll}" /><br>
 <el:box name="visible" idx="*" value="true" label="Certificate Completion is publicly visible" checked="${cert.visible}" /></td>
 </tr>
 <tr>
@@ -153,7 +153,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

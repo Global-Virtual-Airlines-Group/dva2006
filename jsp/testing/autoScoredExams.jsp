@@ -78,7 +78,7 @@ golgotha.local.setExam = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

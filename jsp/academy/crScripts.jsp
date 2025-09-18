@@ -12,7 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
@@ -69,7 +69,7 @@ span.el {
  <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

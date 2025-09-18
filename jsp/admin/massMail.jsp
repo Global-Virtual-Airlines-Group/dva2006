@@ -9,7 +9,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script async>
 golgotha.local.validate = function(f) {
@@ -52,7 +52,7 @@ golgotha.local.updateEQ = function(cb) {
 </tr>
 <tr>
  <td class="label top">Recipient Program / Security Role</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.updateEQ(this)" /><span id="soCheck"><br />
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.updateEQ(this)" /><span id="soCheck"><br>
 <el:box name="staffOnly" value="true" checked="${param.staffOnly}" label="Chief Pilot / Assistant Chief Pilots only" /></span></td>
 </tr>
 <tr>

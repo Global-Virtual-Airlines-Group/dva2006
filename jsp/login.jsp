@@ -10,7 +10,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="login" />
@@ -54,8 +54,8 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 Welcome to <content:airline />! In order to access the secure areas of our web site, please enter your first and last name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be 
-able to accept cookies from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
-<br />
+able to accept cookies from <span class="sec bld">${domain}</span> in order to log into our web site.<br>
+<br>
 <el:form method="post" action="login.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
@@ -99,7 +99,7 @@ able to accept cookies from <span class="sec bld">${domain}</span> in order to l
 <el:text name="jsOK" type="hidden" value="" /><el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />
 <c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

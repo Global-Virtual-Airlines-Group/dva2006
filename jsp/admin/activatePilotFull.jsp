@@ -11,7 +11,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,9 +23,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Pilot Reactivation - Membership Limit Reached</div>
-<br />
-<content:airline /> has reached its maximum size of <fmt:int value="${maxPilots}" /> Pilots. Reactivating this Pilot will take the Airline above its maximum size, to a total of <fmt:int value="${airlineSize + 1}" /> Pilots. Do you wish to continue?<br />
-<br />
+<br>
+<content:airline /> has reached its maximum size of <fmt:int value="${maxPilots}" /> Pilots. Reactivating this Pilot will take the Airline above its maximum size, to a total of <fmt:int value="${airlineSize + 1}" /> Pilots. Do you wish to continue?<br>
+<br>
 
 <!-- Button Bar -->
 <el:table className="bar">

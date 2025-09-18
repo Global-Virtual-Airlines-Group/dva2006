@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="examTake" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -81,7 +81,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Answer Choices</td>
- <td class="data small"><c:forEach var="choice" items="${question.choices}">${choice}<br /></c:forEach>
+ <td class="data small"><c:forEach var="choice" items="${question.choices}">${choice}<br></c:forEach>
 </tr>
 <tr>
  <td class="label">Correct Answer</td>
@@ -97,7 +97,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

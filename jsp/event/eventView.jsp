@@ -16,7 +16,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="event" />
@@ -284,8 +284,8 @@ golgotha.onDOMReady(function() {  golgotha.local.resizeBriefing(20); });
 <c:if test="${!access.canSignup && event.canSignup && fn:isEventOpen(event) && (empty fn:networkID(user, event.network))}">
 <!-- No Online ID Notice -->
 <tr>
- <td colspan="6" class="mid"><span class="pri bld">You cannot sign up for this Online Event because you have not provided your ${event.network} ID.</span><br />
-<br />
+ <td colspan="6" class="mid"><span class="pri bld">You cannot sign up for this Online Event because you have not provided your ${event.network} ID.</span><br>
+<br>
 <el:cmd className="sec bld" url="profile" link="${user}" op="edit">Click Here</el:cmd> to update your <content:airline /> pilot profile.</td>
 </tr>
 </c:if>

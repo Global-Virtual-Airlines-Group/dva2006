@@ -10,7 +10,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,45 +24,45 @@
 <c:when test="${isDelete}">
 <!-- Route Deleted Message -->
 <div class="updateHdr">ACARS Dispatcher Route Deleted</div>
-<br />
+<br>
 This <content:airline /> ACARS Dispatcher route has been deleted from the database, and is no longer available 
-for use by Dispatchers or Pilots.<br />
-<br />
+for use by Dispatchers or Pilots.<br>
+<br>
 </c:when>
 <c:when test="${isDupe}">
 <div class="updateHdr">Duplicate ACARS Dispatcher Route</div>
-<br />
+<br>
 A duplicate active <content:airline /> ACARS Dispatcher route has been detected from ${route.airportD.name} 
 (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) using
 the route <span class="bld">${route.route}</span>. <span class="error bld">This route has not been saved.</span>
-<br />
-To view the original Dispatch route, <el:cmd url="dsproute" linkID="${dupeID}" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To view the original Dispatch route, <el:cmd url="dsproute" linkID="${dupeID}" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 </c:when>
 <c:when test="${isUpdate}">
 <div class="updateHdr">ACARS Dispatcher Route Updated</div>
-<br />
-This <content:airline /> ACARS Dispatcher route has been updated.<br />
-<br />
-To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br />
-To plot another route, <el:cmd url="dsprouteplot" className="sec bld">Click Here</el:cmd>.<br />
+<br>
+This <content:airline /> ACARS Dispatcher route has been updated.<br>
+<br>
+To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br>
+To plot another route, <el:cmd url="dsprouteplot" className="sec bld">Click Here</el:cmd>.<br>
 </c:when>
 <c:when test="${isCreate}">
 <div class="updateHdr">ACARS Dispatcher Route Created</div>
-<br />
+<br>
 This <content:airline /> ACARS Dispatcher route has been added to the database as Route #<fmt:int value="${route.ID}" />, and 
-is now avialable for use by Dispatchers and Pilots.<br />
-<br />
-To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br />
-To plot another route, <el:cmd url="dsprouteplot" className="sec bld">Click Here</el:cmd>.<br />
+is now avialable for use by Dispatchers and Pilots.<br>
+<br>
+To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br>
+To plot another route, <el:cmd url="dsprouteplot" className="sec bld">Click Here</el:cmd>.<br>
 </c:when>
 </c:choose>
-To return to the list of ACARS Dispatcher routes, <el:cmd url="dsproutes" className="sec bld">Click Here</el:cmd>.<br />
+To return to the list of ACARS Dispatcher routes, <el:cmd url="dsproutes" className="sec bld">Click Here</el:cmd>.<br>
 To return to the list of ACARS routes between ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) and 
 ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
-<el:link url="/dsprsearch.do?airportD=${route.airportD.ICAO}&airportA=${route.airportA.ICAO}" className="sec bld">Click Here</el:link>.<br />
-To view the list of popular ACARS routes, <el:cmd url="poproutes" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<el:link url="/dsprsearch.do?airportD=${route.airportD.ICAO}&airportA=${route.airportA.ICAO}" className="sec bld">Click Here</el:link>.<br>
+To view the list of popular ACARS routes, <el:cmd url="poproutes" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

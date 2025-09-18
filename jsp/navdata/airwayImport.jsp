@@ -13,7 +13,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2','pssawy.dat.xz'];
 golgotha.local.validate = function(f) {
@@ -54,7 +54,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Airway Data before Import" /><br />
+ <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Airway Data before Import" /><br>
 <el:box name="updateVersion" idx="*" className="small" value="true" checked="false" label="Update AIRAC Version on Import completion" /></td>
 </tr>
 </el:table>
@@ -66,7 +66,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -126,7 +126,7 @@
 </el:table>
 </c:if></content:filter>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -26,8 +26,8 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over the course of their career with our airline have demonstrated a superior level of commitment  and dedication, demonstrated by over one hundred logged flight legs. 
- Over the years, the &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more flights.<br />
-<br />
+ Over the years, the &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more flights.<br>
+<br>
 <view:table cmd="centuryclub">
 <!-- Table Header Bar-->
 <tr class="title">

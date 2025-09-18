@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
 <script type="text/javascript">
@@ -70,7 +70,7 @@ golgotha.local.sort = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,9 +23,9 @@
 <el:table className="form">
 <tr class="title caps"><td>PASSWORD RESET COMPLETE</td></tr>
 </el:table>
-<br />
-The password for ${pilot.name} has been successfully reset. An e-mail message has been sent to ${pilot.firstName} at the e-mail address we have on file, notifying this Pilot of the new password.<br />
-<br />
+<br>
+The password for ${pilot.name} has been successfully reset. An e-mail message has been sent to ${pilot.firstName} at the e-mail address we have on file, notifying this Pilot of the new password.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

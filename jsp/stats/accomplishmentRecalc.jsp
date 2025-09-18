@@ -12,7 +12,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:googleAnalytics />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
@@ -57,20 +57,20 @@ golgotha.local.validate = function(f) {
 <c:otherwise>
 <tr>
  <td class="label top">Awarded Pilots</td>
- <td class="data">The following <content:airline /> Pilots have been awarded the Accomplishment:<br />
-<br />
+ <td class="data">The following <content:airline /> Pilots have been awarded the Accomplishment:<br>
+<br>
 <c:forEach var="pilot" items="${pilots}" varStatus="pStatus">
-${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br /></c:if></c:forEach></td>
+${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:otherwise>
 </c:choose>
 <c:if test="${!empty cleared}">
 <tr>
  <td class="label">Cleared Pilots</td>
- <td class="data">The following <content:airline /> Pilots have lost the Accomplishment:<br />
-<br />
+ <td class="data">The following <content:airline /> Pilots have lost the Accomplishment:<br>
+<br>
 <c:forEach var="pilot" items="${cleared}" varStatus="pStatus">
-${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br /></c:if></c:forEach></td>
+${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
@@ -83,7 +83,7 @@ ${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

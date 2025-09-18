@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -144,12 +144,12 @@ Flight Academy training course.</td>
 </c:when>
 <c:otherwise>
 <tr>
- <td class="left" colspan="6">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
-<br />
+ <td class="left" colspan="6">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br>
+<br>
 Our exams are timed. You will see time remaining at the top of the examination page. After starting you have ${examTimes.left}<c:if test="${examTimes.left != examTimes.right}"> -
  ${examTimes.right}</c:if> minutes to complete and submit the examination. <span class="ita">After this time the examination will be automatically submitted, regardless of number 
- of questions answered</span>.<br />
-<br />
+ of questions answered</span>.<br>
+<br>
 The <content:airline /> Flight Academy instructors score examinations within 72 hours of submission, and the results of your examination will be sent to you by email. Until it is scored, you will not be
  able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
 </tr>
@@ -171,7 +171,7 @@ The <content:airline /> Flight Academy instructors score examinations within 72 
 </c:if>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

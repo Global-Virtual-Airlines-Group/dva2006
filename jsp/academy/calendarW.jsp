@@ -14,7 +14,7 @@
 <content:css name="calendar" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
@@ -66,20 +66,20 @@ return true;
 <c:if test="${fn:isBusyTime(session)}">
 <c:set var="ins" value="${pilots[session.ID]}" scope="page" />
 <c:set var="busyAccess" value="${accessMap[busy]}" scope="page" />
-<span class="warn bld caps">${ins.name} IS BUSY</span><br />
+<span class="warn bld caps">${ins.name} IS BUSY</span><br>
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" />
-<c:if test="${busyAccess.canDelete}"><br />
+<c:if test="${busyAccess.canDelete}"><br>
 <el:cmd url="insbusydelete" link="${ins}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
 </c:if>
 <c:if test="${!fn:isBusyTime(session)}">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="page" />
 <c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
-<el:cmd url="isession" link="${session}" className="pri bld">${session.name}</el:cmd><br />
-<fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" /><br />
-<span class="small"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br />
+<el:cmd url="isession" link="${session}" className="pri bld">${session.name}</el:cmd><br>
+<fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" /><br>
+<span class="small"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br>
 <span class="pri small">${ins.name} ${ins.pilotCode}</span>
 </c:if>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:week>
@@ -88,7 +88,7 @@ return true;
 <%@ include file="/jsp/academy/addBusyTime.jspf" %>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

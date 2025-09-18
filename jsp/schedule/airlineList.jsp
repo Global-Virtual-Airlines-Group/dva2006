@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -48,7 +48,7 @@
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
  <td class="sec small"><c:forEach var="appCode" items="${airline.applications}" varStatus="aStatus">
 <c:set var="appName" value="${apps[appCode]}" scope="page" />
-${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
+${appName.name}<c:if test="${!aStatus.last}"><br></c:if></c:forEach></td>
  <td class="bld">${airline.code}</td>
 <c:if test="${airline.historic}">
  <td class="sec bld caps">Historic</td>

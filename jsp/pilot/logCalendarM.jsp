@@ -17,7 +17,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.switchType = function(combo) {
@@ -44,23 +44,23 @@ golgotha.local.switchType = function(combo) {
 <div class="mid">
 <calendar:month date="cDate" startDate="${startDate}" entries="${pireps}" topBarClass="dayHdr" dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="logcalendar">
 <calendar:entry name="pirep">
-<el:cmd className="bld" url="pirep" link="${pirep}" authOnly="true">${pirep.flightCode}</el:cmd><br />
-<span class="bld">${pirep.equipmentType}</span><br />
-<span class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</span><br />
-<fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours<br />
+<el:cmd className="bld" url="pirep" link="${pirep}" authOnly="true">${pirep.flightCode}</el:cmd><br>
+<span class="bld">${pirep.equipmentType}</span><br>
+<span class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</span><br>
+<fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours<br>
 <c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if> 
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
 <c:if test="${fn:isDispatch(pirep)}"><el:img src="dispatch.png" caption="ACARS Dispatch Services" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:month>
 </div>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

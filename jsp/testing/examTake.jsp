@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="examTake" />
 <c:if test="${exam.routePlot}">
@@ -105,7 +105,7 @@ golgotha.exam.rpInfo[${q.number}] = info;
  <td class="label top">Answer #<fmt:int value="${q.number}" /></td>
 <c:choose>
 <c:when test="${isRP}">
- <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.updateMap(golgotha.exam.rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br />" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.updateMap(golgotha.exam.rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br>" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>
 </c:when>
 <c:when test="${isMC}">
 <c:set var="maxSize" value="${q.maxAnswerLength}" scope="page" />
@@ -128,7 +128,7 @@ golgotha.exam.rpInfo[${q.number}] = info;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

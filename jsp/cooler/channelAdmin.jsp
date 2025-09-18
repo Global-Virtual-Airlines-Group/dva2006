@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -43,7 +43,7 @@
 <c:forEach var="channel" items="${channels}">
 <view:row entry="${channel}">
  <td class="left">
- <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="pri bld">${channel.name}</el:cmd><br />
+ <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="pri bld">${channel.name}</el:cmd><br>
  <span class="small">${channel.description}</span></td>
  <td><fmt:int value="${channel.threadCount}" /></td>
  <td class="nophone"><fmt:int value="${channel.postCount}" /></td>

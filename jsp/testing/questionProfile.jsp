@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="examTake" />
 <c:if test="${fn:isRoutePlot(question)}">
@@ -40,7 +40,7 @@
 <c:if test="${fn:isMultiChoice(question)}">
 <tr>
  <td class="label top">Answer Choices</td>
- <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br /></c:forEach></td>
+ <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br></c:forEach></td>
 </tr>
 </c:if>
 <tr>
@@ -61,7 +61,7 @@
  <td class="label top">Statistics</td>
 <c:if test="${question.total > 0}">
  <td class="data">Answered <fmt:int value="${question.total}" /> times, <fmt:int value="${question.passCount}" /> correctly (<fmt:dec value="${question.passCount / question.total * 100}" />%)
-<c:if test="${(academyStats.total > 0) && (academyStats.total != question.total)}"><br />Answered <fmt:int value="${academyStats.total}" /> times, <fmt:int value="${academyStats.passCount}" /> correctly (<fmt:dec value="${academyStats.passCount / academyStats.total * 100}" />%)
+<c:if test="${(academyStats.total > 0) && (academyStats.total != question.total)}"><br>Answered <fmt:int value="${academyStats.total}" /> times, <fmt:int value="${academyStats.passCount}" /> correctly (<fmt:dec value="${academyStats.passCount / academyStats.total * 100}" />%)
  <span class="small sec bld caps">(Flight Academy)</span></c:if></td>
 </c:if>
 <c:if test="${question.total == 0}">
@@ -93,7 +93,7 @@
  <td class="data">
 <c:if test="${question.active}"><span class="ter bld caps">Examination Question is Available</span></c:if>
 <c:if test="${!question.active}"><span class="error bld caps">Examination Question is Not Available</span></c:if>
-<c:if test="${ourAirline != question.owner.code}"><br /><span class="bld caps">Examination Question managed by <span class="pri">${question.owner.name}</span></span></c:if>
+<c:if test="${ourAirline != question.owner.code}"><br><span class="bld caps">Examination Question managed by <span class="pri">${question.owner.name}</span></span></c:if>
  </td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>

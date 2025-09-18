@@ -86,7 +86,7 @@ return true;
 <tr>
  <td class="data">
 <c:forEach var="dupe" items="${nameMatches}">
-${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">&nbsp;(${dupe.pilotCode})</c:if><br />
+${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">&nbsp;(${dupe.pilotCode})</c:if><br>
 </c:forEach></td>
 </tr>
 </c:if>
@@ -298,7 +298,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
  <td class="label top">Program Preference</td>
  <td class="data"><c:forEach var="eqStage" items="${applicant.typeChoices.keySet()}">
 <c:set var="eqStagePref" value="${applicant.typeChoices[eqStage]}" scope="page" />
-Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
+Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br></c:forEach></td>
 </tr>
 </c:if>
 <tr>
@@ -312,7 +312,7 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 <tr>
  <td class="label top">Equipment Program Sizes</td>
  <td class="data"><c:forEach var="eqType" items="${eqTypes}">
-<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqType.size}" /> Pilots</b><br />
+<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqType.size}" /> Pilots</b><br>
 </c:forEach></td>
 </tr>
 </c:if>

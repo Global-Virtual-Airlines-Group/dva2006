@@ -16,7 +16,7 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.setEQType = function(combo) {
@@ -101,12 +101,12 @@ ${leg.airportA.name} (<fmt:airport airport="${leg.airportA}" />)</td>
 
 <!-- Scroll Bar Row -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="95" labels="Available,Assigned,Complete" classes=" ,opt2,opt3" /></td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

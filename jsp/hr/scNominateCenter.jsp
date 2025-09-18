@@ -17,7 +17,7 @@
 <content:js name="scNominate" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f)
@@ -71,12 +71,12 @@ golgotha.onDOMReady(function() { golgotha.sc.getPilots() });
  <td colspan="${cspan}" class="left">Promotion to the rank of <content:airline /> Senior Captain is the highest rank available for pilots without being involved in the day to day operations  
 management of our virtual airline. Unlike other promotions, it is granted based on qualitative achievement over time rather than written examinations and check rides. To become a Senior
 Captain at <content:airline />, one needs to be nominated to the position along with a brief description of what the individual has done to make <content:airline /> a better place. Since this  
-is a qualitative process, there are no specific restrictions or requirements as to what a nomination should contain - it's up to you to best communicate how a member makes our virtual airline better.<br />
-<br />
+is a qualitative process, there are no specific restrictions or requirements as to what a nomination should contain - it's up to you to best communicate how a member makes our virtual airline better.<br>
+<br>
 Keep in mind that you are limited to <fmt:int value="${maxNoms}" /> Senior Captain nominations per quarter, so please be judicious in who you nominate. This also isn't a popularity contest - 
 promoting a member to Senior Captain is the prerogative of the <content:airline /> staff, and this process is designed to bring attention to people who otherwise might get missed. The modest, 
-helpful type is just the person we're looking for!<br />
-<br />
+helpful type is just the person we're looking for!<br>
+<br>
 We look forward to your help in recognizing those who make <content:airline /> a better place for all its members!</td>
 </tr>
 
@@ -207,16 +207,16 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </el:table>
 <c:choose>
 <c:when test="${!access.canNominate}">
-<br />
+<br>
 Sorry, you are unable to nominate anyone for the rank of Senior Captain at this time. You need to have logged at least <fmt:int value="${minFlights}" /> flight legs and have been an active member at  
-<content:airline /> for at least <fmt:int value="${minAge}" /> days. In order to best understand the qualities needed to improve your virtual airline, it's best to have been a member for a while!<br /> 
-<br />
+<content:airline /> for at least <fmt:int value="${minAge}" /> days. In order to best understand the qualities needed to improve your virtual airline, it's best to have been a member for a while!<br> 
+<br>
 </c:when>
 <c:when test="${(myNoms.size() >= maxNoms) && !access.canNominateUnlimited}">
-<br />
+<br>
 Sorry, but you have already nominated <fmt:int value="${maxNoms}" /> <content:airline /> pilots for promotion to Senior Captain this calendar quarter. In order to ensure that nominations are reserved 
-for the most deserving individuals, we limit the number of nomnations that can be made every quarter.<br />
-<br />
+for the most deserving individuals, we limit the number of nomnations that can be made every quarter.<br>
+<br>
 </c:when>
 <c:otherwise>
 <!-- New Nomination form -->
@@ -254,7 +254,7 @@ for the most deserving individuals, we limit the number of nomnations that can b
 </c:otherwise>
 </c:choose>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

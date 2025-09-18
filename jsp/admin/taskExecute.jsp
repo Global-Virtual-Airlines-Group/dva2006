@@ -10,7 +10,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -22,29 +22,29 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Scheduled Task Executed</div>
-<br />
+<br>
 <c:if test="${empty ex}">
-The ${task.name} Scheduled Task (${task.className}) has been successfully executed.<br />
+The ${task.name} Scheduled Task (${task.className}) has been successfully executed.<br>
 </c:if>
 <c:if test="${!empty ex}">
-The ${task.name} Scheduled Task (${task.className}) encountered an error and did not complete successfully.<br />
-<br />
-The stack dump is as follows:<br />
+The ${task.name} Scheduled Task (${task.className}) encountered an error and did not complete successfully.<br>
+<br>
+The stack dump is as follows:<br>
 <pre>
 <fmt:stack exception="${ex}" />
 </pre>
-<br />
+<br>
 <c:if test="${!empty ex.cause}">
-This is the root cause of the exception: <b>${ex.cause.getClass().name}</b><br />
+This is the root cause of the exception: <b>${ex.cause.getClass().name}</b><br>
 <pre>
 <fmt:stack exception="${ex.cause}" />
 </pre>
-<br />
+<br>
 </c:if>
 </c:if>
-<br />
-To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

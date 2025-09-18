@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -26,61 +26,61 @@
 <c:choose>
 <c:when test="${isCreate}">
 <div class="updateHdr">Flight Assignment Created</div>
-<br />
-This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
-<br />
-<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br />
-<br />
+<br>
+This <content:airline /> Flight Assigment has been successfully saved in the database.<br>
+<br>
+<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br>
+<br>
 <c:forEach var="pirep" items="${assign.flights}">
-<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><br />
+<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><br>
 </c:forEach>
 </c:when>
 <c:when test="${isDelete}">
 <div class="updateHdr">Flight Assignment Deleted</div>
-<br />
-This <content:airline /> Flight Assigment has been successfully removed from the database.<br />
-<br />
+<br>
+This <content:airline /> Flight Assigment has been successfully removed from the database.<br>
+<br>
 <c:if test="${flightsDeleted > 0}">
-<fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br />
+<fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br>
 </c:if>
 <c:if test="${flightsUpdated > 0}">
-<fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
+<fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br>
 </c:if>
 </c:when>
 <c:when test="${isRelease}">
 <div class="updateHdr">Flight Assignment Released</div>
-<br />
-This <content:airline /> Flight Assigment has been successfully released.<br />
-<br />
+<br>
+This <content:airline /> Flight Assigment has been successfully released.<br>
+<br>
 <c:if test="${flightsDeleted > 0}">
-<fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br />
+<fmt:int value="${flightsDeleted}" /> Flight Reports were deleted from the database.<br>
 </c:if>
 <c:if test="${flightsUpdated > 0}">
-<fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
+<fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br>
 </c:if>
 </c:when>
 <c:when test="${isReserve}">
 <div class="updateHdr">Flight Assignment Reserved</div>
-<br />
-This <content:airline /> Flight Assigment has been successfully reserved by ${pilot.rank.name} ${pilot.name}.<br />
-<br />
-<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br />
+<br>
+This <content:airline /> Flight Assigment has been successfully reserved by ${pilot.rank.name} ${pilot.name}.<br>
+<br>
+<fmt:int value="${assign.flights.size()}" /> draft Flight Reports have been pre-populated within our database.<br>
 </c:when>
 <c:otherwise>
 <div class="updateHdr">Flight Assignment Updated</div>
-<br />
-This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
+<br>
+This <content:airline /> Flight Assigment has been successfully saved in the database.<br>
 </c:otherwise>
 </c:choose>
 <c:if test="${isPreApprove}">
-<br />
-<span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular <content:airline /> Flight Schedule.</span><br />
+<br>
+<span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular <content:airline /> Flight Schedule.</span><br>
 </c:if>
-<br />
+<br>
 <c:if test="${!empty pilot}">
-To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" link="${pilot}" noCache="true">Click Here</el:cmd>.<br /></c:if>
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" link="${pilot}" noCache="true">Click Here</el:cmd>.<br></c:if>
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

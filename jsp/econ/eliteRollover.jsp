@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
@@ -44,20 +44,20 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <c:if test="${!empty msgs}">
 <tr>
  <td class="label top">Operations Log</td>
- <td class="data"><c:forEach var="msg" items="${msgs}" varStatus="msgStatus">${msg}<c:if test="${!msgStatus.last}"><br /></c:if></c:forEach></td>
+ <td class="data"><c:forEach var="msg" items="${msgs}" varStatus="msgStatus">${msg}<c:if test="${!msgStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 <c:if test="${!isPersisted}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br /> 
+ <td class="data"><fmt:int value="${rollovers}" className="pri bld" /> status rollovers to ${year}, <fmt:int value="${downgrades}" className="bld" /> downgrades in ${year}.<br> 
 <span class="sec bld caps">These changes have not been written to the database</span></td>
 </tr>
 </c:if>
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="allowPointRollover" value="true" className="small ita" label="Allow rollover based on ${elitePoints} attainment" checked="${param.allowPointRollover}" /><br />
-<el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br /><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
+ <td class="data"><el:box name="allowPointRollover" value="true" className="small ita" label="Allow rollover based on ${elitePoints} attainment" checked="${param.allowPointRollover}" /><br>
+<el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
 </tr>
 </el:table>
 
@@ -68,7 +68,7 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

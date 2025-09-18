@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -23,21 +23,21 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> SECURITY VIOLATION</div>
-<br />
-Oops. You attempted to access something that you're not allowed to.<br />
+<br>
+Oops. You attempted to access something that you're not allowed to.<br>
 <content:filter roles="Anonymous">
-<br />
+<br>
 <c:if test="${isExpired}">
-<span class="ita bld">Your user session has expired.</span><br />
-<br />
+<span class="ita bld">Your user session has expired.</span><br>
+<br>
 </c:if>
-To log in to the <content:airline /> web site, <el:cmd url="login" className="sec bld">Click Here</el:cmd>.<br />
+To log in to the <content:airline /> web site, <el:cmd url="login" className="sec bld">Click Here</el:cmd>.<br>
 </content:filter>
 <content:filter roles="!Anonymous">
-<br />
-<span class="bld">${servlet_error}</span><br />
+<br>
+<span class="bld">${servlet_error}</span><br>
 </content:filter>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

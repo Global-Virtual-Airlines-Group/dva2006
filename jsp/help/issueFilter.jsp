@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.update = function(combo) {
 	self.location = '/hdissuefilter.do?op=${param.op}&id=' + encodeURI(golgotha.form.getCombo(combo));
@@ -77,7 +77,7 @@ golgotha.local.update = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
