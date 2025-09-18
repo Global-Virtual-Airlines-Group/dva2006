@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f) {
 	if ((!golgotha.form.check()) || (!f.comments)) return false;
@@ -87,7 +87,7 @@ golgotha.local.setSrc = function(cb) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

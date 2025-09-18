@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:googleAnalytics />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
@@ -62,7 +62,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${!empty msgs}">
 <tr>
  <td class="label top">Import Status</td>
- <td class="data small"><c:forEach var="msg" items="${msgs}">${msg}<br /></c:forEach></td>
+ <td class="data small"><c:forEach var="msg" items="${msgs}">${msg}<br></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
@@ -75,7 +75,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

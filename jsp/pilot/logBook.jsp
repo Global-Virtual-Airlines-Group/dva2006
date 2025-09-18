@@ -19,7 +19,7 @@
 <content:captcha action="logbook" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.export = function(cb) {
@@ -133,13 +133,13 @@ golgotha.local.validate = function(f) {
 </c:if>
 </c:forEach>
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="120" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride,Flight Academy" classes="opt2,opt1,warn, ,err,opt3,opt4" /></td>
 </tr>
 </view:table>
 <el:text name="id" type="hidden" value="${pilot.hexID}" readOnly="true" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

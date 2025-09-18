@@ -15,7 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
@@ -153,7 +153,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <tr>
  <td class="label top">VATSIM Ratings</td>
  <td colspan="${cspan}" class="data"><c:forEach var="pr" items="${vatsim_ratings}" varStatus="prStatus"><span class="pri bld">${pr.ratingCode}</span>, issued by ${pr.ATOName} on <fmt:date fmt="d" date="${pr.issueDate}" />
-<c:if test="${!prStatus.last}"><br /></c:if></c:forEach></td>
+<c:if test="${!prStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
@@ -225,7 +225,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <c:if test="${access.canViewPush && (!empty pilot.pushEndpoints)}">
 <tr>
  <td class="label top">Push Notifications</td>
- <td colspan="${cspan}" class="data"><c:forEach var="ep" items="${pilot.pushEndpoints}" varStatus="hasMoreEP">${ep.host} - since <fmt:date className="sec" fmt="d" date="${ep.createdOn}" /><c:if test="${!hasMoreEP.last}"><br /></c:if></c:forEach></td>
+ <td colspan="${cspan}" class="data"><c:forEach var="ep" items="${pilot.pushEndpoints}" varStatus="hasMoreEP">${ep.host} - since <fmt:date className="sec" fmt="d" date="${ep.createdOn}" /><c:if test="${!hasMoreEP.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${!empty acarsClientInfo}">
@@ -286,7 +286,7 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data"><c:forEach var="loginAddr" items="${loginAddrs}">
 <content:defaultMethod var="isResolved" object="${loginAddr}" method="isResolved" />
-${loginAddr.remoteAddr}<c:if test="${isResolved}"> (${loginAddr.remoteHost})</c:if> - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach></td>
+${loginAddr.remoteAddr}<c:if test="${isResolved}"> (${loginAddr.remoteHost})</c:if> - <fmt:int value="${loginAddr.loginCount}" /> logins<br></c:forEach></td>
 </tr>
 </c:if>
 </content:filter>
@@ -352,9 +352,9 @@ Applicant profile for ${pilot.name}.</td>
  <td class="label top">Pilot Accomplishments</td>
  <td colspan="${cspan}" class="data"><c:if test="${!empty accs}">
 <c:forEach var="a" items="${accs}">
-<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" />&nbsp;${a.unit.description}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
+<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" />&nbsp;${a.unit.description}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br>
 </c:forEach></c:if>
-<c:if test="${access.canChangeStatus}"><c:if test="${!empty accs}"><br /></c:if><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
+<c:if test="${access.canChangeStatus}"><c:if test="${!empty accs}"><br></c:if><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
 <content:filter roles="HR"> | <el:cmd url="acceligibility" className="bld" link="${pilot}">Accomplishment Eligibility</el:cmd></content:filter>
 </c:if></td>
 </tr>

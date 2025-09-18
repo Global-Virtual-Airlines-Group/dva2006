@@ -14,7 +14,7 @@
 <content:css name="calendar" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
@@ -53,16 +53,16 @@ golgotha.local.expandSection = function(id) {
 <c:set var="eventSize" value="${event.signups.size()}" scope="page" />
 <c:set var="eventLargeSignup" value="${eventSize > 10}" scope="page" />
 <c:set var="eventLargeRoutes" value="${event.routes.size() > 3}" scope="page" />
-<el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
-<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br>
+<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br>
 <c:if test="${event.briefing.isPDF}">
-<span class="small"><el:link url="/attach/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br /></c:if>
+<span class="small"><el:link url="/attach/ebrief/${event.hexID}.pdf"><el:img src="library/adobe.png" className="noborder" caption="Event Flight Briefing, ${event.briefing.size / 1024}K" x="32" y="32" /></el:link></span><br></c:if>
 <c:if test="${eventLargeRoutes}">
-<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br /></c:if>
+<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br></c:if>
 <div id="eRoute${event.hexID}" class="small"<c:if test="${eventLargeRoutes}"> style="display:none;"</c:if>>
 <c:forEach var="route" items="${event.routes}">
 <c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">
-<div>${route.airportD.name} - ${route.airportA.name}<c:if test="${eventLargeSignup}"><br />
+<div>${route.airportD.name} - ${route.airportA.name}<c:if test="${eventLargeSignup}"><br>
 <span class="sec"><fmt:distance longUnits="true" value="${route.distance}" /></span></c:if></div></c:if></c:forEach>
 </div>
 <c:if test="${!event.canSignup}">
@@ -77,28 +77,28 @@ golgotha.local.expandSection = function(id) {
 <span class="small bld">NO SIGNUPS YET</span>
 </c:if>
 <c:if test="${eventSize > 0}">
-<br />
+<br>
 <c:if test="${eventLargeSignup}">
 <a href="javascript:golgotha.local.expandSection('eSignup${event.hexID}')" class="small ter bld"><fmt:int value="${eventSize}" /> Participants</a>
 </c:if>
 <c:if test="${!eventLargeSignup}">
 <span class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></span>
 </c:if>
-<br />
+<br>
 <div id="eSignup${event.hexID}" class="small"<c:if test="${eventLargeSignup}"> style="display:none;"</c:if>>
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
-${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})<br /></c:if>
+${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})<br></c:if>
 </c:forEach>
 </div>
 </c:if>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:month>
 </div>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

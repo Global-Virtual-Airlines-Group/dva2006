@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.update = function() { return document.forms[0].submit(); };
@@ -60,7 +60,7 @@ golgotha.local.update = function() { return document.forms[0].submit(); };
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

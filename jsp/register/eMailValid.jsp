@@ -8,7 +8,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -19,9 +19,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">E-Mail Address Validated</div>
-<br />
-${applicant.firstName}, thank you for successfully verifying your e-mail address. This is an important step in the registration process at <content:airline />.<br />
-<br />
+<br>
+${applicant.firstName}, thank you for successfully verifying your e-mail address. This is an important step in the registration process at <content:airline />.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

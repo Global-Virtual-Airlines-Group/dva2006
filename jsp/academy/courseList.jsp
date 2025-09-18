@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
 <content:cspHeader />
@@ -80,7 +80,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

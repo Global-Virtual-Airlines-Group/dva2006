@@ -10,7 +10,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -23,46 +23,46 @@
 <content:region id="main">
 <c:if test="${infoDelete}">
 <div class="updateHdr">ACARS Flight Log Entry Removed</div>
-<br />
+<br>
 The ACARS log entry for Flight ID <fmt:int value="${info.ID}" /> has been successfully removed from 
-the database. All Position reports for this Flight have also been removed.<br />
+the database. All Position reports for this Flight have also been removed.<br>
 </c:if>
 <c:if test="${pirep}">
 <div class="updateHdr">Cannot remove ACARS Flight Log Entry</div>
-<br />
+<br>
 This ACARS Flight has an associated Flight Report, and therefore cannot be removed from the ACARS 
-log database.<br />
-<br />
-To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
+log database.<br>
+<br>
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${conDelete}">
 <div class="updateHdr">ACARS Connection Log Entry Removed</div>
 <c:if test="${deletedIDs.size() > 0}">
-<br />
-The ACARS Connection log entries for Connections <fmt:list value="${deletedIDs}" delim=", " /> have been successfully removed from the database. All Text Messages for these Connections have also been removed.<br />
+<br>
+The ACARS Connection log entries for Connections <fmt:list value="${deletedIDs}" delim=", " /> have been successfully removed from the database. All Text Messages for these Connections have also been removed.<br>
 </c:if>
 <c:if test="${skippedIDs.size() > 0}">
-The ACARS Connection log entries for Connections <fmt:list value="${skippedIDs}" delim=", " /> have associated Flight Information entries and therefore cannot be removed from the ACARS log database. The Flight Information log entries must be removed first.<br />
+The ACARS Connection log entries for Connections <fmt:list value="${skippedIDs}" delim=", " /> have associated Flight Information entries and therefore cannot be removed from the ACARS log database. The Flight Information log entries must be removed first.<br>
 </c:if>
 </c:if>
 <c:if test="${!empty info && !infoDelete}">
-To view this flight's ACARS log entry, <el:cmd url="acarsinfo" link="${info}" className="sec bld">Click Here</el:cmd>.<br />
+To view this flight's ACARS log entry, <el:cmd url="acarsinfo" link="${info}" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${errorDelete}">
 <div class="updateHdr">ACARS Client Error Log Entry Removed</div>
-<br />
-The ACARS Client Error log entry has been successfully removed from the database.<br />
+<br>
+The ACARS Client Error log entry has been successfully removed from the database.<br>
 </c:if>
 <c:if test="${errorPurge}">
 <div class="updateHdr">ACARS Client Error Logs Purged</div>
-<br />
-<fmt:int value="${purgeCount}" />&nbsp;<content:airline /> ACARS Client error log reports have been deleted from the database.<br />
+<br>
+<fmt:int value="${purgeCount}" />&nbsp;<content:airline /> ACARS Client error log reports have been deleted from the database.<br>
 </c:if>
 <c:if test="${errorDelete || errorPurge}">
-<br />
-To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserrors" className="sec bld">Click Here</el:cmd>.<br />
+<br>
+To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserrors" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

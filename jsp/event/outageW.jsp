@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.switchType = function(combo) {
@@ -42,16 +42,16 @@ golgotha.local.switchType = function(combo) {
 </el:table>
 <div class="mid">
 <calendar:week date="cDate" startDate="${startDate}" entries="${outages}" topBarClass="dayHdr" dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="networkoutages">
-<calendar:entry name="outage"><span class="pri bld">${outage.network}</span><br />
-<span class="small"><fmt:date fmt="t" t="HH:mm" date="${outage.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${outage.endTime}" /><br />
+<calendar:entry name="outage"><span class="pri bld">${outage.network}</span><br>
+<span class="small"><fmt:date fmt="t" t="HH:mm" date="${outage.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${outage.endTime}" /><br>
 (<fmt:duration duration="${outage.duration}" t="HH:mm" />)</span>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:week>
 </div>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

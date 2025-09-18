@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script type="text/javascript">
 golgotha.local.update = function(combo) {
 	self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;
@@ -55,12 +55,12 @@ golgotha.local.update = function(combo) {
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="4"><view:legend width="100" labels="Default" classes="opt1" /><view:scrollbar><br />
+ <td colspan="4"><view:legend width="100" labels="Default" classes="opt1" /><view:scrollbar><br>
 <view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

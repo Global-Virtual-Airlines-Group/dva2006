@@ -8,7 +8,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -19,9 +19,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Duplicate Registration Information Sent</div>
-<br />
-Thank you! Your information has been submitted to the <content:airline /> Human Resources Department. You should hear from them within 48-72 hours. Thank you for your interest in <content:airline />!<br />
-<br />
+<br>
+Thank you! Your information has been submitted to the <content:airline /> Human Resources Department. You should hear from them within 48-72 hours. Thank you for your interest in <content:airline />!<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

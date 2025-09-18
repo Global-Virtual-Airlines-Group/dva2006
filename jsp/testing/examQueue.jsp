@@ -12,7 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -49,7 +49,7 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="100" labels="Time Expired,Submitted" classes="opt3,opt1" /></td>
 </tr>
 </view:table>

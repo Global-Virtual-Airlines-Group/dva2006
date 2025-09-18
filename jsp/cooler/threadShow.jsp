@@ -20,7 +20,7 @@
 </c:forEach>
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:captcha action="threadCreate" />
 <content:googleAnalytics />
 <content:js name="common" />
@@ -123,58 +123,58 @@ golgotha.local.postQuote = function(postID, f) {
 <tr id="post${msg.ID}">
  <td rowspan="2" class="postInfo small nophone">
 <c:if test="${isPilot}">
-<c:if test="${isHuman}"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br /></c:if>
+<c:if test="${isHuman}"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br></c:if>
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span></c:if>
 <c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
-<br />
-<span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
-<c:if test="${!empty eliteStatus && (eliteLevel.level.legs > 0)}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" showYear="true" /><br /></c:if>
+<br>
+<span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br>
+<c:if test="${!empty eliteStatus && (eliteLevel.level.legs > 0)}"><fmt:elite level="${eliteLevel.level}" className="bld" nameOnly="true" showYear="true" /><br></c:if>
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
-<fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
-<c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
-<el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
-<br />
-Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
+<fmt:list value="${pilot.certifications}" delim=", " /></span><br></c:if>
+<c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br></c:if>
+<el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br></el:showaddr>
+<br>
+Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br>
 
 <!-- Pilot Accomplishments -->
 <c:set var="accs" value="${accomplishments[pilot.ID]}" scope="page" />
 <c:forEach var="ac" items="${fn:accFilter(accs)}">
-<fmt:accomplish className="bld" accomplish="${ac}" /><br />
+<fmt:accomplish className="bld" accomplish="${ac}" /><br>
 </c:forEach>
 <c:if test="${(!empty pilot.motto) || (!empty pilot.location)}">
-<br />
-<c:if test="${!empty pilot.motto}"><span class="ita">"${pilot.motto}"</span><br /></c:if>
-<c:if test="${!empty pilot.location}">${pilot.location}<br /></c:if>
+<br>
+<c:if test="${!empty pilot.motto}"><span class="ita">"${pilot.motto}"</span><br></c:if>
+<c:if test="${!empty pilot.location}">${pilot.location}<br></c:if>
 </c:if>
-<br />
+<br>
 <c:if test="${pilot.legs > 0}">
-<b><fmt:int fmt="#,##0" value="${pilot.legs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.hours}" /></b> hours<br />
+<b><fmt:int fmt="#,##0" value="${pilot.legs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.hours}" /></b> hours<br>
 </c:if>
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.onlineLegs}" /></b> legs,
- <b><fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br /></c:if>
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br></c:if>
 <c:if test="${pilot.ACARSLegs > 0}">
 <span class="pri"><b><fmt:int fmt="#,##0" value="${pilot.ACARSLegs}" /></b> legs,
- <b><fmt:dec fmt="#,##0.0" value="${pilot.ACARSHours}" /></b> hours ACARS</span><br /></c:if>
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.ACARSHours}" /></b> hours ACARS</span><br></c:if>
 <c:if test="${pilot.eventLegs > 0}">
 <span class="ter"><b><fmt:int fmt="#,##0" value="${pilot.eventLegs}" /></b> legs,
- <b><fmt:dec fmt="#,##0.0" value="${pilot.eventHours}" /></b> hours event</span><br /></c:if>
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.eventHours}" /></b> hours event</span><br></c:if>
 <c:if test="${pilot.totalLegs > pilot.legs}">
-<b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br /></c:if>
+<b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br></c:if>
 <c:if test="${(pilot.dispatchFlights > 0) || (pilot.dispatchHours > 0.1)}">
 <span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.dispatchFlights}" /></b> legs dispatched, <b><fmt:dec fmt="#,##0.0" value="${pilot.dispatchHours}" /></b>
- hours</span><br />
+ hours</span><br>
 </c:if>
 <content:filter roles="Moderator">
-<fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br />
+<fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br>
 </content:filter>
 <content:activeUser user="${msg.authorID}">
-<span class="ter bld">CURRENTLY LOGGED IN</span><br />
+<span class="ter bld">CURRENTLY LOGGED IN</span><br>
 </content:activeUser>
 </c:if>
 <c:if test="${!isPilot}">
-<span class="pri bld">${pilot.name}</span><br />
-APPLICANT<br />
+<span class="pri bld">${pilot.name}</span><br>
+APPLICANT<br>
 </c:if></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}"><span class="phone">Posted on</span><span class="nophone">Post created on</span>
@@ -200,12 +200,12 @@ APPLICANT<br />
 <tr>
  <td class="postBody" colspan="2"><span id="msgBody${msg.ID}"><fmt:msg value="${msg.body}" bbCode="true" /></span>
 <c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
-<br />
+<br>
 <c:choose>
 <c:when test="${pilot.hasSignature}">
 <!-- Signature Image for ${pilot.name} -->
-<br />
-<el:sig user="${pilot}" code="${pilotLoc.airlineCode}" caption="${pilot.name} (${pilot.pilotCode})" /><br />
+<br>
+<el:sig user="${pilot}" code="${pilotLoc.airlineCode}" caption="${pilot.name} (${pilot.pilotCode})" /><br>
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
@@ -329,7 +329,7 @@ notification each time a reply is posted in this Thread.
 </el:table>
 <el:text name="doEdit" type="hidden" value="${doEdit}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

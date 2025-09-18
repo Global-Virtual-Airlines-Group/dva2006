@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
@@ -69,7 +69,7 @@ golgotha.onDOMReady(function() {
 <c:if test="${!empty status.errorMessages}">
 <tr>
  <td class="label top">Import Messages</td>
- <td class="data small"><c:forEach var="msg" items="${status.errorMessages}">${msg}<br /></c:forEach></td>
+ <td class="data small"><c:forEach var="msg" items="${status.errorMessages}">${msg}<br></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
@@ -110,7 +110,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

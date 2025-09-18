@@ -104,7 +104,7 @@ golgotha.onDOMReady(function() { golgotha.form.resizeAll(); });
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.update = function() {
@@ -104,7 +104,7 @@ td.requal-${lvl.name} {
 </el:table>
 <el:text type="hidden" name="sortType" value="${param.sortType}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

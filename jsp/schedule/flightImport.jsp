@@ -64,7 +64,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br />
+ <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br>
 <el:box name="doPurge" idx="*" value="true" checked="true" label="Purge Raw Schedule from this Schedule Source" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
@@ -83,7 +83,7 @@ golgotha.local.validate = function(f) {
 </el:table>
 <el:text name="id" type="hidden" value="" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

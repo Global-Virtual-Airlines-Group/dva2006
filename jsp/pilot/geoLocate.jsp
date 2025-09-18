@@ -86,8 +86,8 @@ golgotha.local.validate = function(f) {
  <td colspan="2">PILOT LOCATION <span id="isLoading"></span></td>
 </tr>
 <tr>
- <td colspan="2" class="data"><c:if test="${empty location}"><span class="small">You have not selected your location. Please click on the map below to set your location. You can drag the map with your mouse and zoom in and out.</span><br />
-<span class="small sec bld">To protect your privacy, the system will automatically randomize your location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br /></c:if>
+ <td colspan="2" class="data"><c:if test="${empty location}"><span class="small">You have not selected your location. Please click on the map below to set your location. You can drag the map with your mouse and zoom in and out.</span><br>
+<span class="small sec bld">To protect your privacy, the system will automatically randomize your location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br></c:if>
 <map:div ID="mapBox" height="570" /></td>
 </tr>
 <tr>
@@ -114,7 +114,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

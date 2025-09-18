@@ -16,7 +16,7 @@
 <content:captcha action="userList" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.sortBy = function(combo) {
@@ -73,7 +73,7 @@ golgotha.local.sortBy = function(combo) {
 </tr>
 <c:if test="${isHR}">
 <view:row entry="${session}">
- <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from <b>${pilot.loginHost}</b><br />
+ <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from <b>${pilot.loginHost}</b><br>
 <span class="small">${session.userAgent}</span></td>
 </view:row>
 </c:if>
@@ -88,7 +88,7 @@ golgotha.local.sortBy = function(combo) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

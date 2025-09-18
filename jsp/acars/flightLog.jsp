@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
@@ -83,7 +83,7 @@
  <td class="pri bld"><el:cmd url="acarsinfo" link="${flight}"><fmt:int value="${flight.ID}" /></el:cmd></td>
  <td><fmt:date t="HH:mm" date="${flight.startTime}" />
 <c:if test="${!empty flight.endTime}">
-<br /><fmt:date t="HH:mm" date="${flight.endTime}" />
+<br><fmt:date t="HH:mm" date="${flight.endTime}" />
 </c:if>
 </td>
  <td class="sec bld">${pilot.pilotCode}</td>

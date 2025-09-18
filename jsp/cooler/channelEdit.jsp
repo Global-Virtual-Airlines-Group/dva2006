@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.validate = function(f) {
@@ -66,7 +66,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" className="sec" value="true" label="Channel is Active" checked="${channel.active}" /><br />
+ <td class="data"><el:box name="active" idx="*" className="sec" value="true" label="Channel is Active" checked="${channel.active}" /><br>
 <el:box name="allowNew" idx="*" value="true" label="Allow New Threads and Replies" checked="${channel.allowNewPosts}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %> 
@@ -80,7 +80,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

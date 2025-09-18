@@ -90,7 +90,7 @@ golgotha.local.filterBy = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

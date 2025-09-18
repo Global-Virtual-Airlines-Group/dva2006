@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,20 +23,20 @@
 <c:if test="${!isDelete}">
 <!-- ${library} Library entry Created/Updated -->
 <div class="updateHdr">${library} Library Entry ${fileAdded? 'Added' : 'Updated'}</div>
-<br />
-This <content:airline />&nbsp;${library} Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
+<br>
+This <content:airline />&nbsp;${library} Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br>
 </c:if>
 <c:if test="${isDelete}">
 <!-- ${library} Library entry Deleted -->
 <div class="updateHdr">${library} Entry Deleted</div>
-<br />
-The <content:airline /> ${library} Library entry "${entry.name}" has been deleted from the database.<br />
+<br>
+The <content:airline /> ${library} Library entry "${entry.name}" has been deleted from the database.<br>
 <c:if test="${fileExisted}">
-The file ${entry.fileName} was delete from the file system.<br /></c:if>
+The file ${entry.fileName} was delete from the file system.<br></c:if>
 </c:if>
-<br />
-To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd}" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd}" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

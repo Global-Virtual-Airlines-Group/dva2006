@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <script async>
 golgotha.local.validate = function(f) {
@@ -117,11 +117,11 @@ golgotha.local.toggleCheckbox = function() {
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${author.name}<span class="nophone"> (${author.pilotCode})</span><br />
+ <td class="label top">${author.name}<span class="nophone"> (${author.pilotCode})</span><br>
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
 <c:if test="${(!empty comment.name) && (!empty user)}">
-<hr />
+<hr>
 Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value="${comment.size}" />) <a href="/attach/issue/${issue.hexID}/${comment.hexID}">Click to Download</a></c:if></td>
 </tr>
 </c:forEach>
@@ -157,7 +157,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

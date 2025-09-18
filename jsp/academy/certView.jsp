@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -65,37 +65,37 @@
 <c:if test="${!empty docs}">
 <tr>
  <td class="label top">Study Documents</td>
- <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the <content:airline /> Document Library.</span><br />
+ <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the <content:airline /> Document Library.</span><br>
 <c:forEach var="doc" items="${docs}" varStatus="hasNext">
-<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><c:if test="${!varStatus.last}"><br /></c:if></c:forEach></td>
+<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><c:if test="${!varStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${!empty rsrcs}">
 <tr>
  <td class="label top">Study Resources</td>
- <td class="data"><span class="sec bld ita">To modify this list, please update the Resources in the <content:airline /> Web Resources Library.</span><br />
+ <td class="data"><span class="sec bld ita">To modify this list, please update the Resources in the <content:airline /> Web Resources Library.</span><br>
 <c:forEach var="rsrc" items="${rsrcs}" varStatus="hasNext">
-<el:link target="_new" external="true" url="${rsrc.URL}">${rsrc.title}</el:link><c:if test="${!hasNext.last}"><br /></c:if></c:forEach></td>
+<el:link target="_new" external="true" url="${rsrc.URL}">${rsrc.title}</el:link><c:if test="${!hasNext.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${cert.rideCount > 0}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data pri bld caps">This Certification requires <fmt:quantity value="${cert.rideCount}" single="Check Ride" />
-<c:if test="${!empty missingScripts}"><br /><span class="error">Missing Check Ride Scripts for Check Ride(s) <fmt:list value="${missingScripts}" delim=", " /></span></c:if></td>
+<c:if test="${!empty missingScripts}"><br><span class="error">Missing Check Ride Scripts for Check Ride(s) <fmt:list value="${missingScripts}" delim=", " /></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty crScripts}">
 <tr>
  <td class="label top">Check Ride Scripts</td>
- <td class="data"><c:forEach var="sc" items="${crScripts}" varStatus="scStatus"><el:cmd url="arScript" linkID="${sc.certificationName}-${sc.index}">Check Ride Script #${sc.index}</el:cmd><c:if test="${!scStatus.isLast()}"><br /></c:if></c:forEach></td></tr>
+ <td class="data"><c:forEach var="sc" items="${crScripts}" varStatus="scStatus"><el:cmd url="arScript" linkID="${sc.certificationName}-${sc.index}">Check Ride Script #${sc.index}</el:cmd><c:if test="${!scStatus.isLast()}"><br></c:if></c:forEach></td></tr>
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data bld"><c:if test="${cert.active}"><span class="ter caps">CERTIFICATION IS AVAILABLE</span></c:if>
 <c:if test="${!cert.active}"><span class="warn caps">CERTIFICATION IS NOT AVAILABLE</span></c:if>
-<c:if test="${cert.autoEnroll}"><br /><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if>
-<c:if test="${!cert.visible}"><br /><span class="ter caps">CERTIFICATE COMPLETION IS NOT PUBLICLY VISIBLE</span></c:if></td>
+<c:if test="${cert.autoEnroll}"><br><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if>
+<c:if test="${!cert.visible}"><br><span class="ter caps">CERTIFICATE COMPLETION IS NOT PUBLICLY VISIBLE</span></c:if></td>
 </tr>
 <c:if test="${!empty cert.description}">
 <tr>

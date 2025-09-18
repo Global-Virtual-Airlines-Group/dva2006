@@ -14,7 +14,7 @@
 <content:favicon />
 <content:captcha action="registerInit" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -27,12 +27,12 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Welcome to <content:airline /></div>
-<br />
+<br>
 Thanks for your interest in <content:airline />. We will now redirect you to our applicant registration page. If you are not redirected, your browser probably has difficuties accepting cookies from our site. 
-Please go into your browser's preferences, and ensure that you can accept cookies from <span class="sec bld">${domain}</span>.<br />
-<br />
-If you continue to have difficulties, please contact our <el:link url="mailto:${infoEmail}">HR department</el:link>.<br />
-<br />
+Please go into your browser's preferences, and ensure that you can accept cookies from <span class="sec bld">${domain}</span>.<br>
+<br>
+If you continue to have difficulties, please contact our <el:link url="mailto:${infoEmail}">HR department</el:link>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

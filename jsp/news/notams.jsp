@@ -16,7 +16,7 @@
 <content:rss title="${airlineName} NOTAMs" path="/notams_rss.ws" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -51,7 +51,7 @@
 </view:row>
 <view:row entry="${notam}">
 <c:if test="${notam.isHTML}">
- <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${news.bannerWidth}%; max-width=${news.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
+ <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${news.bannerWidth}%; max-width:${news.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
 ${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">

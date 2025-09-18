@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
@@ -105,8 +105,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br />
-<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates, this.checked)" /><br />
+ <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br>
+<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates, this.checked)" /><br>
 <el:box name="showAGates" value="true" label="Show Arrival Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.aGates, this.checked)" /></td>
 </tr>
 <tr class="title caps">
@@ -149,8 +149,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br />
-<c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br /></c:if>
+ <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br>
+<c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br></c:if>
 <el:box name="noDL" value="true" idx="*" label="Do not download Flight Plan file" onChange="void golgotha.routePlot.updateSave(this.checked)" /></td>
 </tr>
 </el:table>
@@ -162,7 +162,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

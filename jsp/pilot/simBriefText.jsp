@@ -12,7 +12,7 @@
 <content:googleAnalytics />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <style type="text/css">
 @media print {
@@ -23,11 +23,11 @@
 <content:copyright visible="false" />
 <body style="margin:8px">
 <div class="noprint updateHdr">SimBrief generated Briefing data for ${pirep.flightCode}</div>
-<br />
+<br>
 ${pkg.briefingText}
-<br />
-<span class="noprint"><el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br /></span>
-<br />
+<br>
+<span class="noprint"><el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br></span>
+<br>
 <content:copyright />
 </body>
 </html>

@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -83,7 +83,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

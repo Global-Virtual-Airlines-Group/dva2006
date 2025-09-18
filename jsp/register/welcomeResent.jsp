@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,17 +22,17 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Welcome Message Sent</div>
-<br />
+<br>
 The <content:airline /> welcome e-mail has been re-sent to ${applicant.name} at ${applicant.email}. <c:if test="${!empty questionnaire && fn:passed(questionnaire)}">${applicant.name} has already 
-completed the Initial Questionnaire.</c:if><br />
+completed the Initial Questionnaire.</c:if><br>
 <c:if test="${passwordUpdated}">
-<br />
-Since ${applicant.name} has already been hired as a <content:airline /> pilot, the welcome message has been resent, and his or her password has been reset.<br />
+<br>
+Since ${applicant.name} has already been hired as a <content:airline /> pilot, the welcome message has been resent, and his or her password has been reset.<br>
 </c:if>
-<br />
-To review this Applicant's profile, <el:cmd url="applicant" link="${applicant}" className="sec bld">Click Here</el:cmd>.<br />
-To return to the Applicant queue, <el:cmd url="applicants" className="bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To review this Applicant's profile, <el:cmd url="applicant" link="${applicant}" className="sec bld">Click Here</el:cmd>.<br>
+To return to the Applicant queue, <el:cmd url="applicants" className="bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -20,7 +20,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -131,8 +131,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noNotify" idx="*" value="true" checked="true" label="Don't send notification e-mail" /><br />
-<el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void golgotha.local.updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br />
+ <td class="data"><el:box name="noNotify" idx="*" value="true" checked="true" label="Don't send notification e-mail" /><br>
+<el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void golgotha.local.updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br>
 <el:box name="ignoreCerts" idx="*" value="true" checked="${entry.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -147,7 +147,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

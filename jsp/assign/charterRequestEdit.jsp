@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <fmt:aptype var="useICAO" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
@@ -91,7 +91,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

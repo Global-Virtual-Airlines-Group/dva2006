@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,18 +24,18 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Profile Updated</div>
-<br />
-The Pilot Profile for ${pilot.rank.name}&nbsp;${pilot.name} has been successfully updated.<br />
-<br />
+<br>
+The Pilot Profile for ${pilot.rank.name}&nbsp;${pilot.name} has been successfully updated.<br>
+<br>
 <content:hasmsg>
-<div class="error bld"><content:sysmsg /></div><br />
+<div class="error bld"><content:sysmsg /></div><br>
 </content:hasmsg>
 <c:if test="${!empty vatsimValidationMsgs}">
-<div class="error bld">The following problems occurred attempting to validate your VATSIM account:<br />
-<br />
+<div class="error bld">The following problems occurred attempting to validate your VATSIM account:<br>
+<br>
 <c:forEach var="msg" items="${vatsimValidationMsgs}">
-${msg}<br />
-</c:forEach></div><br /></c:if>
+${msg}<br>
+</c:forEach></div><br></c:if>
 <ul>
 <c:if test="${vatsimOK}">
 <!-- VATSIM Account Verified -->
@@ -96,28 +96,28 @@ ${msg}<br />
 </c:if>
 <c:if test="${sigUpdated}">
 <!-- Removed Signature Image -->
-<li>The ${forumName} signature image for ${pilot.name} has been updated. It is displayed below:<br />
+<li>The ${forumName} signature image for ${pilot.name} has been updated. It is displayed below:<br>
 <el:sig user="${pilot}" caption="${pilot.name}" noCache="true" /></li>
 </c:if>
 <c:if test="${eMailUpdateDupe}">
 <!-- Duplicate E-Mail Address -->
-<br />
+<br>
 <li>The e-mail address for ${pilot.name} cannot be changed to ${newEmail}, since another <content:airline /> pilot has registered using this e-mail address.</li>
 </c:if>
 <c:if test="${!empty addrValid}">
 <!-- E-Mail Address updated -->
-<br />
+<br>
 <li>The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change will not take effect until the address has been validated.</span> To validate the new e-mail address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
 </c:if>
 <c:if test="${isBlocked}">
 <!-- User Suspended -->
-<br />
+<br>
 <li>The user account for ${pilot.name} has been Suspended.</li>
 </c:if>
 <c:if test="${accomplishUpdate && (!empty accs)}">
 <!-- Accomplishment Update -->
-<li>The following new or updated Pilot Accomplishments have been added to ${pilot.name}'s profile:</li><br />
-<br />
+<li>The following new or updated Pilot Accomplishments have been added to ${pilot.name}'s profile:</li><br>
+<br>
 <c:forEach var="acc" items="${accs}">
 <li><fmt:accomplish className="bld" accomplish="${acc}" /> on <fmt:date fmt="d" date="${acc.date}" /></li>
 </c:forEach>
@@ -127,12 +127,12 @@ ${msg}<br />
 <li>No new Pilot Accomploshments have been added to ${pilot.name}'s profile.</li>
 </c:if>
 </ul>
-<br />
-To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" op="read" className="sec bld">Click Here</el:cmd>.<br />
-To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click Here</el:cmd>.<br />
-<c:if test="${isPromotion}">To return to the Promotion Queue, <el:cmd url="promoqueue" className="sec bld">Click Here</el:cmd>.<br /></c:if>
-<c:if test="${spUpdated}">To return to the Staff Roster, <el:cmd url="staff" className="sec bld">Click Here</el:cmd>.<br /></c:if>
-<br />
+<br>
+To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" op="read" className="sec bld">Click Here</el:cmd>.<br>
+To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click Here</el:cmd>.<br>
+<c:if test="${isPromotion}">To return to the Promotion Queue, <el:cmd url="promoqueue" className="sec bld">Click Here</el:cmd>.<br></c:if>
+<c:if test="${spUpdated}">To return to the Staff Roster, <el:cmd url="staff" className="sec bld">Click Here</el:cmd>.<br></c:if>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -16,7 +16,7 @@
 <content:googleAnalytics />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
 <script async>
@@ -121,7 +121,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

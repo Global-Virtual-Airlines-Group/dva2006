@@ -22,7 +22,7 @@
 <content:googleAnalytics />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <fmt:aptype var="useICAO" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script async>
 golgotha.local.validate = function(f)
 {
@@ -293,7 +293,7 @@ return true;
 </el:table>
 <el:text name="doSubmit" type="hidden" value="" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -24,26 +24,26 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> SYSTEM ERROR</div>
-<br />
-Oops. Something bad happened. Really, really bad - and I have no idea what to do. So you figure it out.<br />
-<br />
-This is the message: <span class="pri bld">${servlet_error}</span><br />
-<br />
+<br>
+Oops. Something bad happened. Really, really bad - and I have no idea what to do. So you figure it out.<br>
+<br>
+This is the message: <span class="pri bld">${servlet_error}</span><br>
+<br>
 <c:if test="${logStackDump && (!empty ex)}">
-<span class="sec bld">${ex.getClass().name}</span><br />
+<span class="sec bld">${ex.getClass().name}</span><br>
 <pre><fmt:stack exception="${ex}" /></pre>
-<br />
+<br>
 </c:if>
 <c:choose>
 <c:when test="${(ex.getClass().name == 'javax.servlet.ServletException') && (!empty ex.rootCause)}">
-This is the root cause of the exception: <span class="sec bld">${ex.rootCause.getClass().name}</span> ${ex.rootCause.message}<br />
+This is the root cause of the exception: <span class="sec bld">${ex.rootCause.getClass().name}</span> ${ex.rootCause.message}<br>
 <pre><fmt:stack exception="${ex.rootCause}" /></pre>
-<br />
+<br>
 </c:when>
 <c:when test="${!empty ex.cause}">
-This is the root cause of the exception: <span class="sec bld">${ex.cause.getClass().name}</span> ${ex.cause.message}<br />
+This is the root cause of the exception: <span class="sec bld">${ex.cause.getClass().name}</span> ${ex.cause.message}<br>
 <pre><fmt:stack exception="${ex.cause}" /></pre>
-<br />
+<br>
 </c:when>
 </c:choose>
 <content:copyright />

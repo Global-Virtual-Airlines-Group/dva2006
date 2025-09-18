@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
 <script>
@@ -69,11 +69,11 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar force="${doScroll}"><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="8"><view:scrollbar force="${doScroll}"><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="120" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride,Flight Academy" classes="opt2,opt1,warn, ,err,opt3,opt4" /></td>
 </tr>
 </view:table>
-<br />
+<br>
 <content:copyright />
 </el:form>
 </content:region>

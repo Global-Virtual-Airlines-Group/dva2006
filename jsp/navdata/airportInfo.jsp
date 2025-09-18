@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
@@ -154,20 +154,20 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Current Weather</td>
  <td class="data" colspan="2"><c:if test="${wx.windSpeed > 0}">Winds <fmt:int value="${wx.windDirection}"  fmt="000" />&deg;, <fmt:int value="${wx.windSpeed}" /> kts<c:if test="${wx.windGust > wx.windSpeed}">, gusting to <fmt:int value="${wx.windGust}" /> kts</c:if>
- <br /></c:if>${wx.data}</td>
+ <br></c:if>${wx.data}</td>
 </tr>
 </c:if>
 <c:if test="${!empty atisD}">
 <tr>
  <td class="label top">${atisD.type.description} ATIS</td>
- <td class="data" colspan="2"><span class="pri bld">${atisD.code}</span> - <span class="ita">Effective <fmt:date date="${atisD.effectiveDate}" t="HH:mm" default="N/A" /></span><br />
+ <td class="data" colspan="2"><span class="pri bld">${atisD.code}</span> - <span class="ita">Effective <fmt:date date="${atisD.effectiveDate}" t="HH:mm" default="N/A" /></span><br>
 <span class="small">${atisD.data}</span></td>
 </tr>
 </c:if>
 <c:if test="${!empty atisA}">
 <tr>
  <td class="label top">${atisA.type.description} ATIS</td>
- <td class="data" colspan="2"><span class="pri bld">${atisA.code}</span> - <span class="ita">Effective <fmt:date date="${atisA.effectiveDate}" t="HH:mm" default="N/A"/></span><br />
+ <td class="data" colspan="2"><span class="pri bld">${atisA.code}</span> - <span class="ita">Effective <fmt:date date="${atisA.effectiveDate}" t="HH:mm" default="N/A"/></span><br>
 <span class="small">${atisA.data}</span></td>
 </tr>
 </c:if>
@@ -190,14 +190,14 @@ golgotha.onDOMReady(function() {
 <c:if test="${!empty validAC}">
 <tr>
  <td class="label top">Authorized Aircraft</td>
- <td class="data" colspan="2"><span class="ita small">Due to runway lengths, only the following ${validAC.size()} aircraft are authorized for operation in and out of this Airport:</span><br /><br />
+ <td class="data" colspan="2"><span class="ita small">Due to runway lengths, only the following ${validAC.size()} aircraft are authorized for operation in and out of this Airport:</span><br><br>
 <fmt:list value="${validAC}" delim=", " /></td>
 </tr>
 </c:if>
 <c:if test="${!empty invalidAC}">
 <tr>
  <td class="label top">Unauthorized Aircraft</td>
- <td class="data" colspan="2"><span class="ita small">Due to runway lengths, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br /><br />
+ <td class="data" colspan="2"><span class="ita small">Due to runway lengths, the following ${validAC.size()} aircraft are <span class="pri bld">NOT</span> authorized for operation in and out of this Airport:</span><br><br>
 <fmt:list value="${invalidAC}" delim=", " /></td>
 </tr>
 </c:if>
@@ -208,17 +208,17 @@ golgotha.onDOMReady(function() {
  <td class="data" colspan="2"><c:forEach var="rwy" items="${otherRunways}">
 <c:set var="dCount" value="${odRwyStats[rwy.name]}" scope="page" />
 <c:set var="aCount" value="${oaRwyStats[rwy.name]}" scope="page" />
-Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; (<fmt:int value="${dCount.useCount}" /> departures, <fmt:int value="${aCount.useCount}" /> arrivals)<br /></c:forEach></td>
+Runway ${rwy.name}<c:if test="${!empty rwy.alternateCode}">&nbsp;<span class="ita">[${rwy.isAltNew() ? 'now' : 'was'}&nbsp;${rwy.alternateCode}]</span></c:if>, (<fmt:int value="${rwy.length}" /> feet) - Heading ${rwy.heading}&deg; (<fmt:int value="${dCount.useCount}" /> departures, <fmt:int value="${aCount.useCount}" /> arrivals)<br></c:forEach></td>
 </tr>
 </c:if>
 <tr>
  <td class="label top">Taxi Times</td>
- <td class="data" colspan="2">Inbound: <c:if test="${!empty taxiTimeCY.inboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br />
+ <td class="data" colspan="2">Inbound: <c:if test="${!empty taxiTimeCY.inboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.inboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.inboundTime}" /> (All Years)<br>
 Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:duration t="[H:]mm:ss" duration="${taxiTimeCY.outboundTime}" /> (${taxiTimeCY.year})</span> - </c:if><fmt:duration t="[H:]mm:ss" duration="${taxiTime.outboundTime}" /> (All Years)</td>
 </tr>
 <tr>
  <td class="label top">Common Alternates</td>
- <td class="data" id="altRow" colspan="2"><c:forEach var="altA" items="${popularAlternates}" varStatus="altStatus">${altA.name} (<el:cmd url="airportinfo" linkID="${altA.IATA}"><fmt:airport airport="${altA}" /></el:cmd>) <span class="sec bld">(<fmt:distance value="${altA.distanceTo(airport)}" />)</span><c:if test="${!altStats.last}"><br /></c:if></c:forEach>
+ <td class="data" id="altRow" colspan="2"><c:forEach var="altA" items="${popularAlternates}" varStatus="altStatus">${altA.name} (<el:cmd url="airportinfo" linkID="${altA.IATA}"><fmt:airport airport="${altA}" /></el:cmd>) <span class="sec bld">(<fmt:distance value="${altA.distanceTo(airport)}" />)</span><c:if test="${!altStats.last}"><br></c:if></c:forEach>
 </tr>
 <tr id="flightTimeChart" style="display:none;">
  <td class="label top">Flight Time Distribution</td>
@@ -247,7 +247,7 @@ Outbound: <c:if test="${!empty taxiTimeCY.outboundTime}"><span class="bld"><fmt:
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
@@ -310,7 +310,7 @@ sp.then(function(rsp) {
 			ls.innerHTML = aao.airport.name + ' (<a href="/airportinfo.do?id=' + aao.airport.icao + '">' + aao.airport.${useICAO ? 'icao' : 'iata'} + '</a>) ';
 			c.appendChild(ls);
 			c.appendChild(golgotha.util.createElement('span', ' (' + aao.distance + ' mi)', 'sec bld'));
-			c.innerHTML += '<br />';
+			c.innerHTML += '<br>';
 		}
 	});
 });

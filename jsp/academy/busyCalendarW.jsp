@@ -63,11 +63,11 @@ golgotha.local.validate = function(f) {
 <calendar:entry name="busy">
 <c:set var="ins" value="${pilots[busy.ID]}" scope="page" />
 <c:set var="busyAccess" value="${accessMap[busy]}" scope="page" />
-<span class="warn bld caps">${ins.name} IS BUSY</span><br />
+<span class="warn bld caps">${ins.name} IS BUSY</span><br>
 <fmt:date fmt="t" t="HH:mm" date="${busy.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${busy.endTime}" />
-<c:if test="${busyAccess.canDelete}"><br />
+<c:if test="${busyAccess.canDelete}"><br>
 <el:cmd url="insbusydelete" link="${ins}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
-<calendar:spacer><hr /></calendar:spacer>
+<calendar:spacer><hr></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:week>
@@ -76,7 +76,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/academy/addBusyTime.jspf" %>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

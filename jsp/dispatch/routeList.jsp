@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script async>
 golgotha.local.update = function(combo) {
@@ -55,7 +55,7 @@ golgotha.local.update = function(combo) {
 <c:set var="rAuthor" value="${authors[route.authorID]}" scope="page" />
 <tr>
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
- <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />
+ <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br>
 ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="sec bld"><fmt:int value="${route.useCount}" /></td>
  <td class="small"><c:if test="${empty author}"><el:cmd url="dsproutes" link="${rAuthor}" className="pri bld">${rAuthor.name}</el:cmd> (${rAuthor.pilotCode}) on </c:if><fmt:date date="${route.createdOn}" fmt="d" /></td>
@@ -76,7 +76,7 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

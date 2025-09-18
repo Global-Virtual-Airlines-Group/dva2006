@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -49,7 +49,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 <c:if test="${doSearch}">
-<br />
+<br>
 <!-- Search Results -->
 <el:table className="view">
 <tr class="title caps">
@@ -86,7 +86,7 @@ golgotha.local.validate = function(f) {
 </el:table>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

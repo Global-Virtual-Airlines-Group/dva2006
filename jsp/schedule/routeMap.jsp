@@ -14,7 +14,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="routeMap" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:cspHeader />
 </head>
@@ -42,7 +42,7 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

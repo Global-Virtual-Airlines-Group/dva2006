@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -49,7 +49,7 @@
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="4">&nbsp;<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="110" labels="Blocked,Degraded,None" classes="err,opt1, " /> </td>
 </tr>
 </view:table>

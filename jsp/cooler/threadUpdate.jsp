@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <c:if test="${!isDelete}">
 <meta http-equiv="refresh" content="3;url=/thread.do?id=${thread.hexID}" /></c:if>
 </head>
@@ -30,89 +30,89 @@
 <c:if test="${isLocked || isHidden}">
 <!-- Thread Locked/Hidden Message -->
 <div class="updateHdr">${forumName} Message Thread Locked/Hidden</div>
-<br />
+<br>
 The ${forumName} discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been locked 
 <c:if test="${isHidden}">and hidden. This discussion thread will only appear visible to users with the 
-<span class="sec bld">&quot;Moderator&quot;</span> security role</c:if>.<br />
-<br />
-This discussion thread may be unlocked and/or unhidden at a later date.<br />
+<span class="sec bld">&quot;Moderator&quot;</span> security role</c:if>.<br>
+<br>
+This discussion thread may be unlocked and/or unhidden at a later date.<br>
 </c:if>
 <c:if test="${usUnlocked || isUnhidden}">
 <!-- Thread Unlocked/Hidden Message -->
 <div class="updateHdr">${forumName} Message Thread Exposed</div>
-<br />
+<br>
 The ${forumName} discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been made visible to all 
-users authorized to view posts within the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel.<br />
+users authorized to view posts within the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel.<br>
 <c:if test="${isUnlocked}">
 <div class="updateHdr">${forumName} Message Thread Unlocked</div>
-<br />
+<br>
 This ${forumName} discussion thread has also been unlocked. All users authorized to create new posts or replies within the 
-<span class="sec bld">&quot;${thread.channel}&quot;</span> channel may create new responses within this discussion thread.<br />
+<span class="sec bld">&quot;${thread.channel}&quot;</span> channel may create new responses within this discussion thread.<br>
 </c:if>
 </c:if>
 <c:if test="${isPosted}">
 <!-- New Thread Message -->
 <div class="updateHdr">${forumName} Message Thread Created</div>
-<br />
-This new ${forumName} discussion thread has been posted in the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel. All users authorized to read and create posts in this channel may participate.<br />
+<br>
+This new ${forumName} discussion thread has been posted in the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel. All users authorized to read and create posts in this channel may participate.<br>
 <c:if test="${isNotify}">
-<br />
-You have signed up for response notifications. Each time a new response is posted in this ${forumName} discussion thread, you will receive an e-mail notification. You can turn notifications off at any time by returning to the discussion thread.<br />
+<br>
+You have signed up for response notifications. Each time a new response is posted in this ${forumName} discussion thread, you will receive an e-mail notification. You can turn notifications off at any time by returning to the discussion thread.<br>
 </c:if>
 <c:if test="${hasImage}">
-<br />
+<br>
 Your attached image has been saved in the Image Gallery as a <span class="ita">${forumName} Screen Shot</span>.
 <c:if test="${imgResized}">Your attached image was too large to fit in the ${forumName}. <span class="sec bld">The maximum 
-${forumName} image size is <fmt:int value="${maxX}" />x<fmt:int value="${maxY}" /> pixels, or <fmt:fileSize value="${maxSize}" />.</span> Your image has been scaled to match the ${forumName} limits, and some loss of image quality may occur.<br /></c:if>
+${forumName} image size is <fmt:int value="${maxX}" />x<fmt:int value="${maxY}" /> pixels, or <fmt:fileSize value="${maxSize}" />.</span> Your image has been scaled to match the ${forumName} limits, and some loss of image quality may occur.<br></c:if>
 </c:if>
 <c:if test="${!empty notifyMsgs}">
-<br />
-<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread thread.<br />
+<br>
+<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread thread.<br>
 </c:if>
 </c:if>
 <c:if test="${isReply || isVote}">
 <!-- New Response Message -->
 <div class="updateHdr">${forumName} Message ${isReply ? 'Post' : 'Vote'} Created</div>
-<br />
-Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>. Thank you for your participation in the <content:airline />&nbsp;${forumName}!<br />
+<br>
+Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>. Thank you for your participation in the <content:airline />&nbsp;${forumName}!<br>
 <c:if test="${!empty notifyMsgs}">
-<br />
-<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread response.<br />
+<br>
+<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread response.<br>
 </c:if>
 </c:if>
 <c:if test="${isEdit}">
 <div class="updateHdr">${forumName} Post Updated</div>
-<br />
+<br>
 Your response in the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been updated.Thank you for 
-your participation in the <content:airline /> ${forumName}!<br />
+your participation in the <content:airline /> ${forumName}!<br>
 </c:if>
 <c:if test="${isUnstuck}">
 <!-- Thread Unstuck -->
 <div class="updateHdr">${forumName} Message Thread Unstuck</div>
-<br />
-The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been unstuck.<br />
+<br>
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been unstuck.<br>
 </c:if>
 <c:if test="${isDelete}">
 <!-- Thread Deleted -->
 <div class="updateHdr">${forumName} Message Thread Deleted</div>
-<br />
-The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been deleted.<br />
+<br>
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been deleted.<br>
 </c:if>
 <c:if test="${isMoved}">
 <!-- Thread Moved -->
 <div class="updateHdr">${forumName} Message Thread Moved</div>
-<br />
-The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been moved to the channel <span class="sec bld">${newChannel}</span>.<br />
+<br>
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been moved to the channel <span class="sec bld">${newChannel}</span>.<br>
 </c:if>
-<br />
+<br>
 <c:if test="${!isDelete}">
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return to the thread or you are 
-impatient, you can <el:cmd className="sec bld" url="thread" link="${thread}">Click Here</el:cmd> to display the discussion thread.<br />
-<br />
+impatient, you can <el:cmd className="sec bld" url="thread" link="${thread}">Click Here</el:cmd> to display the discussion thread.<br>
+<br>
 </c:if>
-To return to the ${forumName} Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">Click Here</el:cmd>.<br />
-To view all ${forumName} discussion threads, <el:cmd url="channel" linkID="ALL" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+To return to the ${forumName} Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">Click Here</el:cmd>.<br>
+To view all ${forumName} discussion threads, <el:cmd url="channel" linkID="ALL" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

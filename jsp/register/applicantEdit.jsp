@@ -229,7 +229,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td class="label top">Equipment Program Sizes</td>
  <td class="data"><c:forEach var="eqType" items="${eqTypes}">
-<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqType.size}" /> Pilots</b><br />
+<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqType.size}" /> Pilots</b><br>
 </c:forEach></td>
 </tr>
 </c:if>
@@ -249,7 +249,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </el:table>
 <el:text name="doHire" type="hidden" value="" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
