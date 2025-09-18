@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 11.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -144,11 +144,11 @@ public class CheckTag extends FormElementTag {
 		_out.print(" value=\"");
 		if (opt instanceof ComboAlias alias) {
 			_out.print(alias.getComboAlias());
-			_out.print("\" />");
+			_out.print("\">");
 			_out.print(alias.getComboName());
 		} else {
 			_out.print(opt.toString());
-			_out.print("\" />");
+			_out.print("\">");
 			_out.print(opt.toString());
 		}
 

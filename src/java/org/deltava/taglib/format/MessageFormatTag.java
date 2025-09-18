@@ -59,7 +59,7 @@ public class MessageFormatTag extends TagSupport {
 		imgbuf.append(ei.getName());
 		imgbuf.append("\" title=\"");
 		imgbuf.append(ei.getName());
-		imgbuf.append("\" />");
+		imgbuf.append("\">");
 		return imgbuf;
 	}
 
