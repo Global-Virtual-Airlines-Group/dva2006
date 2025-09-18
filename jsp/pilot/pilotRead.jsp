@@ -70,13 +70,13 @@ golgotha.local.toggleLoginAddrs = function(lnk) {
 <c:if test="${pilot.noVoice}">&nbsp;<span class="warn bld">VOICE ACCESS DISABLED</span></c:if>
 <c:if test="${pilot.noExams}">&nbsp;<span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
 </c:if></td>
+</tr>
 <c:if test="${!empty eliteStatus}">
 <tr>
  <td class="label">${eliteName}</td>
  <td colspan="${cspan}"  class="data"><fmt:elite className="bld" level="${eliteStatus.level}" nameOnly="true" />, effective <fmt:date date="${eliteStatus.effectiveOn}" fmt="d" /><content:filter roles="HR,Operations"> - <el:cmd url="eliteinfo" link="${pilot}">VIEW STATUS</el:cmd></content:filter></td>
 </tr>
 </c:if>
-</tr>
 <c:if test="${acarsEnabled}">
 <c:if test="${access.canChangeStatus}">
 <tr>
