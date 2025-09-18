@@ -12,11 +12,13 @@ import org.deltava.beans.econ.*;
 /**
  * A JSP tag to render the logged in User's name in the menu.
  * @author Luke
- * @version 11.5
+ * @version 12.3
  * @since 11.1
  */
 
 public class UserNameTag extends MenuItemTag {
+	
+	private boolean _isAnonymous;
 
 	@Override
 	public int doStartTag() throws JspException {
@@ -24,6 +26,7 @@ public class UserNameTag extends MenuItemTag {
 		// Get the user object
 		HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 		Principal user = req.getUserPrincipal();
+		_isAnonymous = (user == null);
 		if (user == null)
 			return SKIP_BODY;
 		
@@ -48,5 +51,15 @@ public class UserNameTag extends MenuItemTag {
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
+	}
+	
+	@Override
+	public int doEndTag() throws JspException {
+		if (_isAnonymous) {
+			release();
+			return EVAL_PAGE;
+		}
+		
+		return super.doEndTag();
 	}
 }
