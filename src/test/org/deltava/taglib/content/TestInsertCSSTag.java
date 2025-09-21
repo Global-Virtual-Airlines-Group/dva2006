@@ -1,12 +1,13 @@
 package org.deltava.taglib.content;
 
+import org.deltava.beans.system.VersionInfo;
 import org.deltava.taglib.AbstractTagTestCase;
 
 public class TestInsertCSSTag extends AbstractTagTestCase {
 
     private InsertCSSTag _tag;
     
-    private static final String CSS_START = "<link rel=\"STYLESHEET\" type=\"text/css\" href=\"";
+    private static final String CSS_START = "<link rel=\"stylesheet\" href=\"";
     
     @Override
 	protected void setUp() throws Exception {
@@ -27,7 +28,7 @@ public class TestInsertCSSTag extends AbstractTagTestCase {
         assertEquals("legacy", _tag.getScheme());
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
-        assertEquals(CSS_START + "/css/legacy/dva.css\" />", _jspOut.toString());
+        assertEquals(CSS_START + "/css/v" + VersionInfo.getFullBuild() + "/legacy/dva.css\">" + System.lineSeparator(), _jspOut.toString());
 
         _jspOut.clearBuffer();
         
@@ -35,6 +36,6 @@ public class TestInsertCSSTag extends AbstractTagTestCase {
         _tag.setScheme("modern");
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
-        assertEquals(CSS_START + "/css/modern/deltava.css\" />", _jspOut.toString());
+        assertEquals(CSS_START + "/css/v" + VersionInfo.getFullBuild() + "/modern/deltava.css\">" + System.lineSeparator(), _jspOut.toString());
     }
 }
