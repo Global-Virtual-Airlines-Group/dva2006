@@ -4,7 +4,7 @@ package org.deltava.beans.system;
 /**
  * A class to store version info constants.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 1.0
  */
 
