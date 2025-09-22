@@ -25,7 +25,7 @@ import org.deltava.util.*;
 abstract class CalendarTag extends TagSupport {
 
 	private final DateTimeFormatter _df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-	private static final Collection<String> RESERVED_PARAMS = Collections.singleton("startDate");
+	private static final Collection<String> RESERVED_PARAMS = Set.of("startDate");
 
 	protected JspWriter _out;
 
@@ -309,7 +309,8 @@ abstract class CalendarTag extends TagSupport {
 
 		// Generate the view table
 		_table = new XMLRenderer("table", true);
-		_table.setAttribute("id", _tableID);
+		if (_tableID != null)
+			_table.setAttribute("id", _tableID);
 		_table.setAttribute("class", _tableClass);
 		if (_border != 0)
 			_table.setAttribute("border", String.valueOf(_border));
@@ -320,8 +321,7 @@ abstract class CalendarTag extends TagSupport {
 	}
 
 	/**
-	 * Ends the Calendar tag by adding the scroll forward/backward link row. Subclasses are responsible for closing the current table row
-	 * and closing the table.
+	 * Ends the Calendar tag by adding the scroll forward/backward link row. Subclasses are responsible for closing the current table row and closing the table.
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
@@ -399,9 +399,6 @@ abstract class CalendarTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
