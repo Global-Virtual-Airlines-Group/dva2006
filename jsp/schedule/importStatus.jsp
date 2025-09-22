@@ -53,7 +53,7 @@
 <tr class="import-${st.source}">
  <td class="label top">Invalid Airlines</td>
  <td class="data"><c:forEach var="code" items="${st.invalidAirlines}">
-Invalid Airline Code - <el:cmd url="airline" linkID="${code}" op="edit" target="_new" className="bld">${code}</el:cmd><br> 
+Invalid Airline Code - <el:cmd url="airline" linkID="${code}" op="edit" target="_blank" className="bld">${code}</el:cmd><br> 
 </c:forEach></td>
 </tr>
 </c:if>
@@ -61,7 +61,7 @@ Invalid Airline Code - <el:cmd url="airline" linkID="${code}" op="edit" target="
 <tr class="import-${st.source}">
  <td class="label top">Invalid Airports</td>
  <td class="data"><c:forEach var="code" items="${st.invalidAirports}">
-Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="_new" className="bld">${code}</el:cmd><br>
+Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="_blank" className="bld">${code}</el:cmd><br>
 </c:forEach></td>
 </tr>
 </c:if>

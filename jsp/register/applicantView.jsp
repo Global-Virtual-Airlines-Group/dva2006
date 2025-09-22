@@ -222,7 +222,7 @@ ${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${du
 <c:if test="${!empty applicant.legacyURL}">
 <tr>
  <td class="label">Verification URL</td>
- <td class="data"><el:link target="_new" url="${applicant.legacyURL}">${applicant.legacyURL}</el:link></td>
+ <td class="data"><el:link target="_blank" url="${applicant.legacyURL}">${applicant.legacyURL}</el:link></td>
 </tr>
 </c:if>
 <c:if test="${applicant.legacyVerified}">

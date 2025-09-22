@@ -67,7 +67,7 @@
  <td class="label top">Study Documents</td>
  <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the <content:airline /> Document Library.</span><br>
 <c:forEach var="doc" items="${docs}" varStatus="hasNext">
-<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><c:if test="${!varStatus.last}"><br></c:if></c:forEach></td>
+<el:link target="_blank" url="/library/${doc.fileName}">${doc.name}</el:link><c:if test="${!varStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${!empty rsrcs}">
@@ -75,7 +75,7 @@
  <td class="label top">Study Resources</td>
  <td class="data"><span class="sec bld ita">To modify this list, please update the Resources in the <content:airline /> Web Resources Library.</span><br>
 <c:forEach var="rsrc" items="${rsrcs}" varStatus="hasNext">
-<el:link target="_new" external="true" url="${rsrc.URL}">${rsrc.title}</el:link><c:if test="${!hasNext.last}"><br></c:if></c:forEach></td>
+<el:link target="_blank" external="true" url="${rsrc.URL}">${rsrc.title}</el:link><c:if test="${!hasNext.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${cert.rideCount > 0}">
