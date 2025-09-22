@@ -115,7 +115,7 @@ golgotha.local.validateCancel = function() {
 <tr>
  <td class="label top">Study Documents</td>
  <td colspan="6" class="data"><c:forEach var="doc" items="${docs}">
-<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br>
+<el:link target="_blank" url="/library/${doc.fileName}">${doc.name}</el:link><br>
 </c:forEach></td>
 </tr>
 </c:if>

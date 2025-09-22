@@ -43,7 +43,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routeplan.ws" method="post" target="_new" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
+<el:form action="routeplan.ws" method="post" target="_blank" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT PLAN PLOTTER</td>
@@ -62,7 +62,7 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
  <el:airportCode combo="airportD" airport="${flight.airportD}" idx="*" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" value="${rwy}" options="${dRwys}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /> <el:box name="allSID" value="true" checked="false" className="small" label="All" /></span>
-<c:if test="${!empty flight.airportD}"> <el:cmd url="airportInfo" linkID="${flight.airportD.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
+<c:if test="${!empty flight.airportD}"> <el:cmd url="airportInfo" linkID="${flight.airportD.ICAO}" className="small" target="_blank">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
@@ -76,7 +76,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
  <el:airportCode combo="airportA" airport="${flight.airportA}" idx="*" />
-<c:if test="${!empty flight.airportA}">&nbsp;<el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
+<c:if test="${!empty flight.airportA}">&nbsp;<el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_blank">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>

@@ -136,7 +136,7 @@ table.form td.eliteStatus {
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="https://vatstats.net/pilots/${vatsimID}" target="_new" external="true">VATSTATS</el:link></c:if></td>
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="https://vatstats.net/pilots/${vatsimID}" target="_blank" external="true">VATSTATS</el:link></c:if></td>
 </tr>
 </c:if>
 </c:if>

@@ -82,7 +82,7 @@
 
 <!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
- <td><a href="https://get.adobe.com/reader/" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td><a href="https://get.adobe.com/reader/" rel="external" target="_blank"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our 
 manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
