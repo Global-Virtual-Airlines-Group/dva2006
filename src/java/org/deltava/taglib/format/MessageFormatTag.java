@@ -29,6 +29,7 @@ public class MessageFormatTag extends TagSupport {
 
 	private String _msg;
 	private boolean _bbCode;
+	private boolean _allowReferer;
 	private final BBCodeHandler _bbHandler = new BBCodeHandler();
 
 	/**
@@ -37,6 +38,14 @@ public class MessageFormatTag extends TagSupport {
 	 */
 	public void setBbCode(boolean useBBCode) {
 		_bbCode = useBBCode;
+	}
+	
+	/**
+	 * Sets whether to allow referer data to be passed to the new window. This can have security implications, and should only be set for trusted sites.
+	 * @param isAllow TRUE to allow referer data to be passed by the browser, otherwise FALSE
+	 */
+	public void setAllowReferer(boolean isAllow) {
+		_allowReferer = isAllow;
 	}
 
 	/**
@@ -114,8 +123,11 @@ public class MessageFormatTag extends TagSupport {
 					URI url = new URI(token);
 					buf.append("<a href=\"");
 					buf.append(isEncoded ? URLDecoder.decode(token, UTF_8) : token);
-					if (!SystemData.get("airline.url").equals(url.getHost()))
-						buf.append("\" target=\"_new\" rel=\"external");
+					if (!SystemData.get("airline.url").equals(url.getHost())) {
+						buf.append("\" target=\"_blank\" rel=\"external");
+						if (!_allowReferer)
+							buf.append(" noopener noreferrer");
+					}
 
 					buf.append("\">");
 					buf.append(StringUtils.stripInlineHTML(token));
