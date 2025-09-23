@@ -36,7 +36,7 @@ import org.gvagroup.pool.*;
  * The Discord Bot. This has a number of static methods that serve as the entry point to Discord operations from other code.
  * @author danielw
  * @author luke
- * @version 12.1
+ * @version 12.3
  * @since 11.0
  */
 
@@ -227,7 +227,7 @@ public class Bot {
     public static void resetRoles(Pilot p) {
     	if (!p.hasID(ExternalID.DISCORD)) return;
     	if (!isInitialized()) {
-    		log.error("Bot not initialized - Cannot remove roles from %s", p.getName());
+    		log.error("Bot not initialized - Cannot remove roles from {}", p.getName());
     		return;
     	}
     	
@@ -295,25 +295,26 @@ public class Bot {
     	if (discordID == null) return;
     	
     	String nickname = String.format("%s (%s)", p.getName(), p.getPilotCode());
-    	Optional<User> ou = _srv.getMemberById(discordID);
-    	if (ou.isEmpty()) {
+    	User u = _srv.getMemberById(discordID).orElse(null);
+    	if (u == null) {
     		log.warn("Cannot find Discord UJser {}", discordID);
     		return;
     	}
     	
     	// Load roles if not looked up already
-    	User u = ou.get();
+    	Collection<Role> mutableRoles = new HashSet<Role>(roles);
     	if (roles.isEmpty())
-    		roles.addAll(u.getRoles(_srv));
+    		mutableRoles.addAll(u.getRoles(_srv));
     	
         // Unable to do nicknames longer than 32 chars
+    	String name = u.getDisplayName(_srv);
         if (nickname.length() <= 32) {
         	CompletableFuture<Void> f = u.updateNickname(_srv, nickname);
-        	send(ChannelName.ALERTS, EmbedGenerator.createNick(u.getDisplayName(_srv), p, roles, nickname));
+        	send(ChannelName.ALERTS, EmbedGenerator.createNick(name, p, mutableRoles, nickname));
         	ThreadUtils.waitFor(f, 500);
     	} else {
     		log.warn("Cannot set nickname {} to {} ({})", nickname, u.getDisplayName(_srv), Integer.valueOf(nickname.length()));
-        	send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(u.getDisplayName(_srv), p, roles));
+        	send(ChannelName.ALERTS, EmbedGenerator.createNicknameError(name, p, mutableRoles));
     	}
     }
  
