@@ -25,9 +25,9 @@ golgotha.local.switchType = function(combo) {
 	return true;
 };
 
-golgotha.local.expandSection = function(id) {
-    const s = document.getElementById(id);
-    if (s) s.style.display = (s.style.display == 'none') ? '' : 'none';
+golgotha.local.expandSections = function(id) {
+    const scts = golgotha.util.getElementsByClass(id, 'div');
+    scts.forEach(function(s) { s.style.display = (s.style.display == 'none') ? '' : 'none'; });
     return true;
 };
 </script>
@@ -74,13 +74,11 @@ golgotha.local.expandSection = function(id) {
 <c:if test="${eventSize > 0}">
 <br>
 <c:if test="${eventLargeSignup}">
-<a href="javascript:golgotha.local.expandSection('eSignup${event.hexID}')" class="small ter bld"><fmt:int value="${eventSize}" /> Participants</a>
-</c:if>
+<a href="javascript:golgotha.local.expandSections('eSignup-${event.hexID}')" class="small ter bld"><fmt:int value="${eventSize}" /> Participants</a></c:if>
 <c:if test="${!eventLargeSignup}">
-<span class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></span>
-</c:if>
+<span class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></span></c:if>
 <br>
-<div id="eSignup${event.hexID}" class="small"<c:if test="${eventLargeSignup}"> style="display:none;"</c:if>>
+<div class="small eSignup-${event.hexID}"<c:if test="${eventLargeSignup}"> style="display:none;"</c:if>>
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 ${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})<br></c:if>
