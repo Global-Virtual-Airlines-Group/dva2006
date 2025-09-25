@@ -29,8 +29,8 @@
 <el:form action="mynewairports.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td width="65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
- <td width="10%" class="mid"><el:cmd url="mynewairports">TABLE</el:cmd>
+ <td style="width:65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td style="width:10%" class="mid"><el:cmd url="mynewairports">TABLE</el:cmd>
  <td class="right">AIRLINE <el:combo name="airline" idx="*" firstEntry="[ ALL ]"  options="${airlines}" onChange="void golgotha.local.filter(this)" /></td>
 </tr>
 <tr>

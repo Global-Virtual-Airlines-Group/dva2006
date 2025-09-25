@@ -15,6 +15,7 @@
 <content:googleAnalytics />
 <map:api version="3" />
 <content:cspHeader />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -27,7 +28,7 @@
 <el:form action="accairportmap.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td width="65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td style="width:65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
  <td class="right">ACCOMPLISHMENT <el:combo name="acc" idx="*" firstEntry="[ SELECT ]"  options="${accs}" onChange="void golgotha.local.filter(this)"  /></td>
 </tr>
 <tr>
