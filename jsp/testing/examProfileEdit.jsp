@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.validate = function(f)
@@ -85,7 +85,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Allowed Scorers</td>
- <td class="data"><span class="ita">Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</span><br /> 
+ <td class="data"><span class="ita">Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</span><br> 
 <el:check name="scorerIDs" width="170" cols="5" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>
 <tr>
@@ -100,8 +100,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" label="Examination is Active" checked="${eProfile.active}" /><br />
-<el:box name="doNotify" idx="*" value="true" label="Notify Scorers when Submitted" checked="${eProfile.notify}" /><br />
+ <td class="data"><el:box name="active" idx="*" value="true" label="Examination is Active" checked="${eProfile.active}" /><br>
+<el:box name="doNotify" idx="*" value="true" label="Notify Scorers when Submitted" checked="${eProfile.notify}" /><br>
 <el:box name="isAcademy" className="sec" idx="*" value="true" label="This is a Fleet Academy Examination" checked="${eProfile.academy}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -114,7 +114,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

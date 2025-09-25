@@ -13,11 +13,11 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -56,7 +56,7 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 </tr>
 <tr>
  <td class="label">Pilot Code</td>
- <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /><br />
+ <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /><br>
 <span class="small"><b>NOTE:</b> Pilot Code searches override Name / E-Mail criteria.</span></td>
 </tr>
 <tr>
@@ -83,7 +83,7 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data sec small"><el:box name="exactMatch" idx="*" value="true" label="Exact Matches only" checked="${param.exactMatch == '1'}" />
-<content:filter roles="HR"><br />
+<content:filter roles="HR"><br>
 <el:box name="allAirlines" idx="*" value="true" label="Search all Airlines" /></content:filter></td>
 </tr>
 </el:table>
@@ -165,7 +165,7 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 </view:table>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

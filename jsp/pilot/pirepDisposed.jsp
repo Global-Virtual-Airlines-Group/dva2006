@@ -13,10 +13,10 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
-<script async>
+<script>
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -73,7 +73,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
-<br />
+<br>
 <content:copyright />
 </el:form>
 </content:region>

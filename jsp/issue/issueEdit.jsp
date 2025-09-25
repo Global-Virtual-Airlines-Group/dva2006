@@ -11,11 +11,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
@@ -134,7 +134,7 @@ golgotha.local.validate = function(f) {
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br>
 <fmt:date date="${comment.createdOn}" /></td>
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
@@ -152,7 +152,7 @@ golgotha.local.validate = function(f) {
 </el:table>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

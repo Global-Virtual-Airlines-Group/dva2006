@@ -12,12 +12,12 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="datePicker" />
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airline, t:'Airline'});
@@ -104,9 +104,9 @@ golgotha.local.historicAirlines = ${historicAL};
  <td class="label top">Flight Number / Leg</td>
  <td class="data"><el:text name="flightNumber" idx="*" required="true" size="3" max="4" value="${entry.flightNumber}" />&nbsp;<el:text name="flightLeg" idx="*" required="true" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
 <c:if test="${empty entry}">
-<hr />
+<hr>
 <span class="small">You can search for an available flight number between <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
-<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />&nbsp;<el:button onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br />
+<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />&nbsp;<el:button onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br>
 You can search for the next available Flight Leg. <el:button onClick="void golgotha.form.wrap(golgotha.local.getAvailableLeg, document.forms[0])" label="SEARCH" /></span></c:if></td>
 </tr>
 <tr>
@@ -143,9 +143,9 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" /><br />
+ <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" /><br>
 <el:box name="forceInclude" className="small" idx="*" value="true" label="Force Inclusion even if route exists" checked="${entry.forceInclude}" />
-<c:if test="${academyEnabled}"><br /><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
+<c:if test="${academyEnabled}"><br><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
 <c:if test="${entry.updated}">
 <tr>
@@ -164,12 +164,12 @@ You can search for the next available Flight Leg. <el:button onClick="void golgo
 <el:text type="hidden" name="srcLine" value="${empty entry ? 0 : entry.lineNumber}" />
 <el:text type="hidden" name="src" value="${entry.source}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 const f = document.forms[0];
 const cfg = golgotha.airportLoad.config;
 cfg.doICAO = ${useICAO}; cfg.useSched = false;

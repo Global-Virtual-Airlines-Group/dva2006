@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <map:api version="3" />
 </head>
@@ -91,7 +91,7 @@
 </content:region>
 </content:page>
 <c:if test="${waypoints.size() > 0}">
-<script async>
+<script>
 <map:token />
 
 // Build the route line and map center

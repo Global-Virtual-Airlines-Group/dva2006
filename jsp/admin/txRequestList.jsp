@@ -13,11 +13,11 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.refresh = function(combo) {
 	golgotha.util.disable(combo);
 	self.location = '/txrequests.do?eqType=' + golgotha.form.getCombo(combo);
@@ -66,13 +66,13 @@ golgotha.local.refresh = function(combo) {
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="145" labels="Needs Check Ride,Ride Assigned,Ride Submitted,Complete"
 classes="opt2,opt1,opt3, " /></td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

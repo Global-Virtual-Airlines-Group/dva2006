@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
@@ -59,12 +59,12 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <div id="copyright" class="mapTextLabel"></div><div id="zoomLevel" class="mapTextlabel right"></div>
-<script async>
+<script>
 <map:token />
 
 // Create the map

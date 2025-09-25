@@ -1,4 +1,4 @@
-// Copyright 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A bean to define arbitrary airspace boundaries.
  * @author Luke
- * @version 11.0
+ * @version 12.3
  * @since 7.3
  */
 
@@ -265,9 +265,9 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 		buf.append(_id);
 		buf.append("</span> - <span class=\"sec bld\">");
 		buf.append(_type.getName());
-		buf.append("</span><br />");
+		buf.append("</span><br>");
 		buf.append(_name);
-		buf.append("<br /><br /><span class=\"small\">From ");
+		buf.append("<br><br><span class=\"small\">From ");
 		buf.append(_minAlt);
 		buf.append(" MSL to ");
 		buf.append(_maxAlt);

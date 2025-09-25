@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,19 +21,19 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Flight Report Not Eligible</div>
-<br />
-This <content:airline /> Flight Report does not meet the eligibility requirements for the <span class="pri bld">${tour.name}</span> Flight Tour and cannot be linked to the Tour.<br />
+<br>
+This <content:airline /> Flight Report does not meet the eligibility requirements for the <span class="pri bld">${tour.name}</span> Flight Tour and cannot be linked to the Tour.<br>
 <c:if test="${!empty msgs}">
-<br />
+<br>
 <ul>
 <c:forEach var="msg" items="${msgs}">
 <li>${msg}
 </c:forEach></ul>
 </c:if>
-<br />
-To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
-To view the Flight Tour, <el:cmd url="tour" link="${tour}" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br>
+To view the Flight Tour, <el:cmd url="tour" link="${tour}" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

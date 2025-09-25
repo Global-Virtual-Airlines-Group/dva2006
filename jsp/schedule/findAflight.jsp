@@ -14,13 +14,13 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.ff = golgotha.ff || {};
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {
@@ -166,12 +166,12 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Search Options</td>
- <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
+ <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br>
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" />
-<span id="historicOpts"><br />
+<span id="historicOpts"><br>
 Historic Flights - <el:combo name="historicOnly" options="${inclusionOpts}" value="${fafCriteria.excludeHistoric}" size="1" idx="*" /></span></td>
  <td class="label top">ACARS Dispatch</td>
- <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
+ <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br>
 Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" value="${fafCriteria.dispatchOnly}" size="1" idx="*" /></td>
 </tr>
 <tr class="title mid">
@@ -242,7 +242,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 </el:form>
 </c:if>
 <c:if test="${!empty buildAssign}">
-<br />
+<br>
 <el:table className="view">
 <!-- Flight Assignment Data -->
 <tr class="caps title">

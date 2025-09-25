@@ -22,7 +22,7 @@
 <map:api version="3" /></c:if>
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -92,7 +92,7 @@
 <tr>
  <td class="label top">Previous Leg</td>
  <td class="data" colspan="5"><el:cmd url="pirep" link="${pLeg}" className="pri bld" authOnly="true">${pLeg.flightCode}</el:cmd>: ${pLeg.airportD.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportD.IATA}"><fmt:airport airport="${pLeg.airportD}" /></el:cmd>) - 
- ${pLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportA.IATA}"><fmt:airport airport="${pLeg.airportA}" /></el:cmd>)<span class="nophone ita"> flown on <fmt:date date="${pLeg.date}" fmt="d" /></span><br />
+ ${pLeg.airportA.name} (<el:cmd url="airportinfo" linkID="${pLeg.airportA.IATA}"><fmt:airport airport="${pLeg.airportA}" /></el:cmd>)<span class="nophone ita"> flown on <fmt:date date="${pLeg.date}" fmt="d" /></span><br>
  <span id="progressBar" class="bar" style="width:90%">&nbsp;</span></td>
 </tr>
 <c:if test="${maxLeg < tour.flights.size()}">
@@ -109,8 +109,8 @@
 </tr>
 <tr>
  <td class="label">Tour Completed</td>
- <td class="data" colspan="5"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
- <c:if test="${!empty pilots}"><hr /></c:if></c:if>
+ <td class="data" colspan="5"><span class="pri bld"><fmt:int value="${tour.completionIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (tour.completionIDs.size() > 0) && (progressIDs.size() == 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br>
+ <c:if test="${!empty pilots}"><hr></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${tour.completionIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
@@ -124,8 +124,8 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </c:if>
 <tr>
  <td class="label">Tour in Progress</td>
- <td class="data" colspan="5"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br />
- <c:if test="${!empty pilots}"><hr /></c:if></c:if>
+ <td class="data" colspan="5"><span class="bld"><fmt:int value="${progressIDs.size()}" /> Pilots</span><c:if test="${tourAccess && (progressIDs.size() > 0)}"> - <el:cmd url="tourprogress" link="${tour}" className="sec bld">VIEW</el:cmd><br>
+ <c:if test="${!empty pilots}"><hr></c:if></c:if>
  <c:if test="${!empty pilots}"><span class="small">
 <c:forEach var="pilotID" items="${progressIDs}" varStatus="pilotNext">
 <c:set var="p" value="${pilots[pilotID]}" scope="page" />
@@ -155,7 +155,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 <tr class="tourMap">
  <td colspan="6"><map:div ID="mapBox" height="550" /></td>
 </tr>
-<script async>
+<script>
 <map:token />
 const lines = [];
 <map:point var="golgotha.local.mapC" point="${ctr}" />
@@ -213,7 +213,7 @@ map.once('load', function() {
 </content:region>
 </content:page>
 <c:if test="${barPct > 0}">
-<script async>
+<script>
 const pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:pr, text:{value:'', className:'pri', style:{color:'#000000'}}, fill:pr});
 golgotha.local.pb.setText(${Math.round(barPct * 10) / 10.0} + '% complete');

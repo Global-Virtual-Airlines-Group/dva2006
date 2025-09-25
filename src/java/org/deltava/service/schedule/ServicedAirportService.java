@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to list all airports serviced by a particular Airline.
  * @author Luke
- * @version 11.6
+ * @version 12.3
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class ServicedAirportService extends WebService {
 			
 			// Add Airlines
 			StringBuffer info = new StringBuffer(a.getInfoBox());
-			info.append("<div class=\"mapInfoBox navdata\"><br />Airlines:<br />");
+			info.append("<div class=\"mapInfoBox navdata\"><br>Airlines:<br>");
 			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
 				Airline aal = SystemData.getAirline(ai.next());
 				if (aal == null) continue;
@@ -76,7 +76,7 @@ public class ServicedAirportService extends WebService {
 				ao.append("airlines", alo);
 				info.append(aal.getName());
 				if (ai.hasNext())
-					info.append("<br />");
+					info.append("<br>");
 			}
 			
 			// Build info box

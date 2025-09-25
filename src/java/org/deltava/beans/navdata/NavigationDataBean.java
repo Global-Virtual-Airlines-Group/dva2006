@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -177,19 +177,19 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 			
 		buf.append(" (");
 		buf.append(_type.getName());
-		buf.append(")<br />");
+		buf.append(")<br>");
 		if (_region != null) {
 			buf.append("Region: ");
 			buf.append(_region);
-			buf.append("<br />");
+			buf.append("<br>");
 		}
 		if (_airway != null) {
 			buf.append("Airway: ");
 			buf.append(_airway);
-			buf.append("<br />");
+			buf.append("<br>");
 		}
 		
-		buf.append("<br />");
+		buf.append("<br>");
 		return buf.toString();
 	}
 
@@ -201,9 +201,9 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	protected String getHTMLPosition() {
 		StringBuilder buf = new StringBuilder("Latitude: ");
 		buf.append(StringUtils.format(_gp, true, GeoLocation.LATITUDE));
-		buf.append("<br />Longitude: ");
+		buf.append("<br>Longitude: ");
 		buf.append(StringUtils.format(_gp, true, GeoLocation.LONGITUDE));
-		buf.append("<br />");
+		buf.append("<br>");
 		return buf.toString();
 	}
 

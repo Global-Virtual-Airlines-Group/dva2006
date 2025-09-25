@@ -10,12 +10,12 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
 <content:attr roles="HR" attr="isHR" value="true" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 <c:if test="${!empty dupeUsers}">
@@ -49,7 +49,7 @@ golgotha.local.validate = function(f) {
 <content:filter roles="!HR">
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:addr name="eMail" required="${isHR}" idx="*" size="32" max="80" /><br />
+ <td class="data"><el:addr name="eMail" required="${isHR}" idx="*" size="32" max="80" /><br>
  <span class="small">(We need your e-mail address to verify it's really you.)</span></td>
 </tr>
 </content:filter>
@@ -80,7 +80,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

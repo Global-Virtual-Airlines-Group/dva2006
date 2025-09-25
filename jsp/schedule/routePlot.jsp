@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
@@ -22,7 +22,7 @@
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
@@ -43,7 +43,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routeplan.ws" method="post" target="_new" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
+<el:form action="routeplan.ws" method="post" target="_blank" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT PLAN PLOTTER</td>
@@ -62,7 +62,7 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
  <el:airportCode combo="airportD" airport="${flight.airportD}" idx="*" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" value="${rwy}" options="${dRwys}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /> <el:box name="allSID" value="true" checked="false" className="small" label="All" /></span>
-<c:if test="${!empty flight.airportD}"> <el:cmd url="airportInfo" linkID="${flight.airportD.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
+<c:if test="${!empty flight.airportD}"> <el:cmd url="airportInfo" linkID="${flight.airportD.ICAO}" className="small" target="_blank">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
@@ -76,7 +76,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
  <el:airportCode combo="airportA" airport="${flight.airportA}" idx="*" />
-<c:if test="${!empty flight.airportA}">&nbsp;<el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
+<c:if test="${!empty flight.airportA}">&nbsp;<el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_blank">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>
@@ -105,8 +105,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br />
-<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates, this.checked)" /><br />
+ <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br>
+<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates, this.checked)" /><br>
 <el:box name="showAGates" value="true" label="Show Arrival Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.aGates, this.checked)" /></td>
 </tr>
 <tr class="title caps">
@@ -149,8 +149,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br />
-<c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br /></c:if>
+ <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" disabled="${!empty flight}" onChange="void golgotha.routePlot.togglePax()" /><br>
+<c:if test="${allowLoad}"><el:box name="precalcPax" value="true" idx="*" label="Precalculate load factor and passenger count for Flight" /><br></c:if>
 <el:box name="noDL" value="true" idx="*" label="Do not download Flight Plan file" onChange="void golgotha.routePlot.updateSave(this.checked)" /></td>
 </tr>
 </el:table>
@@ -162,12 +162,12 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script async>
+<script>
 <map:token />
 
 golgotha.local.rpInit = function() {

@@ -11,9 +11,9 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -53,7 +53,7 @@ return true;
 </tr>
 <tr class="fileZIP">
  <td class="label top">ZIP File</td>
- <td class="data"><el:file name="zip" className="small" size="96" max="144" /><br />
+ <td class="data"><el:file name="zip" className="small" size="96" max="144" /><br>
 <span class="small">You can submit the XML and SHA files in a ZIP archive to reduce upload times.</span></td>
 </tr>
 <tr>
@@ -69,7 +69,7 @@ return true;
 <c:if test="${hashFailure}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><div class="error bld">SUBMISSION FAILURE - SHA-256 MISMATCH</div><br />
+ <td class="data"><div class="error bld">SUBMISSION FAILURE - SHA-256 MISMATCH</div><br>
 <span class="ita">The content of the <content:airline /> ACARS XML data file that you have submitted does not match the cryptographic signature contained in the SHA file.</span></td>
 </tr>
 </c:if>
@@ -80,8 +80,8 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><span class="error bld"><content:sysmsg /></span>
-<c:if test="${!empty error}"><br />
-<br />
+<c:if test="${!empty error}"><br>
+<br>
 <pre><fmt:stack exception="${error}" /></pre></c:if></td>
 </tr>
 </content:hasmsg>
@@ -108,7 +108,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

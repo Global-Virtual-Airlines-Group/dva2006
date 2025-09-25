@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2015, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class MessageFormatTag extends TagSupport {
 
 	private String _msg;
 	private boolean _bbCode;
+	private boolean _allowReferer;
 	private final BBCodeHandler _bbHandler = new BBCodeHandler();
 
 	/**
@@ -37,6 +38,14 @@ public class MessageFormatTag extends TagSupport {
 	 */
 	public void setBbCode(boolean useBBCode) {
 		_bbCode = useBBCode;
+	}
+	
+	/**
+	 * Sets whether to allow referer data to be passed to the new window. This can have security implications, and should only be set for trusted sites.
+	 * @param isAllow TRUE to allow referer data to be passed by the browser, otherwise FALSE
+	 */
+	public void setAllowReferer(boolean isAllow) {
+		_allowReferer = isAllow;
 	}
 
 	/**
@@ -59,7 +68,7 @@ public class MessageFormatTag extends TagSupport {
 		imgbuf.append(ei.getName());
 		imgbuf.append("\" title=\"");
 		imgbuf.append(ei.getName());
-		imgbuf.append("\" />");
+		imgbuf.append("\">");
 		return imgbuf;
 	}
 
@@ -114,8 +123,11 @@ public class MessageFormatTag extends TagSupport {
 					URI url = new URI(token);
 					buf.append("<a href=\"");
 					buf.append(isEncoded ? URLDecoder.decode(token, UTF_8) : token);
-					if (!SystemData.get("airline.url").equals(url.getHost()))
-						buf.append("\" target=\"_new\" rel=\"external");
+					if (!SystemData.get("airline.url").equals(url.getHost())) {
+						buf.append("\" target=\"_blank\" rel=\"external");
+						if (!_allowReferer)
+							buf.append(" noopener noreferrer");
+					}
 
 					buf.append("\">");
 					buf.append(StringUtils.stripInlineHTML(token));
@@ -140,7 +152,7 @@ public class MessageFormatTag extends TagSupport {
 				if (token.length() > 1)
 					buf.append(StringUtils.stripInlineHTML(token));
 				else if (token.equals("\n"))
-					buf.append("<br />\n");
+					buf.append("<br>\n");
 				else
 					buf.append(token);
 			}

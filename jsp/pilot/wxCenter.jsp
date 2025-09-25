@@ -14,14 +14,14 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
@@ -50,13 +50,13 @@ xmlreq.onreadystatechange = function() {
 				delete mrk.tabs;
 				const label = wx.firstChild;
 				if (label)
-					pp.setHTML(label.data.replace(/\n/g, '<br />'));
+					pp.setHTML(label.data.replace(/\n/g, '<br>'));
 			} else {
 				mrk.tabs = [];
 				for (var x = 0; x < wx.tabs.length; x++) {
 					const tab = wx.tabs[x];
 					eval('mrk.' + tab.type + ' = tab.content');
-					const wxData = tab.content.replace(/\n/g, '<br />');
+					const wxData = tab.content.replace(/\n/g, '<br>');
 					mrk.tabs.push({name:tab.name, content:wxData});
 					pp.setHTML(mrk.updateTab(0));
 				}
@@ -72,13 +72,13 @@ xmlreq.onreadystatechange = function() {
 		if (wx.tabs.length == 0) {
 			const label = wx.firstChild;
 			if (label)
-				p.setHTML(label.data.replace(/\n/g, '<br />'));
+				p.setHTML(label.data.replace(/\n/g, '<br>'));
 		} else {
 			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab; 
 			for (var x = 0; x < wx.tabs.length; x++) {
 				const tab = wx.tabs[x];
 				eval('mrk.' + tab.type + ' = tab.content');
-				const wxData = tab.content.replace(/\n/g, '<br />');
+				const wxData = tab.content.replace(/\n/g, '<br>');
 				mrk.tabs.push({name:tab.name, content:wxData});
 				p.setHTML(mrk.updateTab(0));
 			}
@@ -154,7 +154,7 @@ golgotha.local.clickInfo = function(mrk) {
 </content:region>
 </content:page>
 <div id="copyright" class="small mapTextLabel"></div><div id="zoomLevel" class="small right mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
 golgotha.local.wxMarkers = [];

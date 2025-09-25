@@ -40,10 +40,10 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Signature Image</td>
- <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br />
+ <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br>
  <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <content:hasmsg>
-<br />
+<br>
 <span class="error bld"><content:sysmsg /></span>
 </content:hasmsg>
  </td>
@@ -63,7 +63,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

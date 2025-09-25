@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,24 +21,24 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><span class="nophone"><content:airline />&nbsp;</span>Security Cookie Data</div>
-<br />
+<br>
 <c:if test="${!empty cd}">
-<span class="pri bld">FROM SESSION</span><br />
-<br />
-${cd} - <span class="sec bld">${cd.signatureAlgorithm}</span><br />
-Login at <fmt:date date="${cd.loginDate}" />, expires on <fmt:date date="${cd.expiryDate}" /><br />
-<br />
+<span class="pri bld">FROM SESSION</span><br>
+<br>
+${cd} - <span class="sec bld">${cd.signatureAlgorithm}</span><br>
+Login at <fmt:date date="${cd.loginDate}" />, expires on <fmt:date date="${cd.expiryDate}" /><br>
+<br>
 </c:if>
 <c:if test="${!empty cd2}">
-<span class="pri bld">FROM COOKIE</span><br />
-<br />
-${cd2} - <span class="sec bld">${cd2.signatureAlgorithm}</span><br />
-Login at <fmt:date date="${cd2.loginDate}" />, expires on <fmt:date date="${cd2.expiryDate}" /><br />
+<span class="pri bld">FROM COOKIE</span><br>
+<br>
+${cd2} - <span class="sec bld">${cd2.signatureAlgorithm}</span><br>
+Login at <fmt:date date="${cd2.loginDate}" />, expires on <fmt:date date="${cd2.expiryDate}" /><br>
 </c:if>
 <c:if test="${!empty ex}">
-<span class="error bld">COOKIE DESCRYPTION ERROR - ${ex.message}</span><br />
+<span class="error bld">COOKIE DESCRYPTION ERROR - ${ex.message}</span><br>
 </c:if>
-<br /> 
+<br> 
 <content:copyright />
 </content:region>
 </content:page>

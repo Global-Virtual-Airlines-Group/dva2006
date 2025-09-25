@@ -12,9 +12,9 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Program to transfer into'});
@@ -104,7 +104,7 @@ golgotha.onDOMReady(golgotha.local.loadAircraft);
 </el:table>
 <c:if test="${isRating}"><el:text name="ratingOnly" type="hidden" value="true" /></c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

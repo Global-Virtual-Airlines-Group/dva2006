@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<script async>
+<script>
 <c:if test="${!empty statSortData}">
 golgotha.local.sortStat = function(t) { return golgotha.sort.exec('pirepStats', t); };
 <fmt:jsarray var="golgotha.sort.data.pirepStats" items="${statSortData}" />

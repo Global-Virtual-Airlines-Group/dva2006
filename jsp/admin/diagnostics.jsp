@@ -17,7 +17,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <c:if test="${acarsEnabled}"><content:googleJS module="charts" /></c:if>
@@ -56,15 +56,15 @@
 <c:if test="${!empty loadAvg}">
 <tr>
  <td class="label top">Load Average</td>
- <td class="data">Last 1 Minute: <fmt:dec value="${fn:get(loadAvg, 0)}" /> processes queued<br />
- Last 5 Minutes: <fmt:dec value="${fn:get(loadAvg, 1)}" /> processes queued<br />
+ <td class="data">Last 1 Minute: <fmt:dec value="${fn:get(loadAvg, 0)}" /> processes queued<br>
+ Last 5 Minutes: <fmt:dec value="${fn:get(loadAvg, 1)}" /> processes queued<br>
  Last 15 Minutes: <fmt:dec value="${fn:get(loadAvg, 2)}" /> processes queued</td>
 </tr>
 </c:if>
 <c:if test="${!empty osMemInfo}">
 <tr>
  <td class="label top">Memory Usage</td>
- <td class="data"><fmt:fileSize value="${osMemInfo['MemTotal']}" /> KB total physical memory<br />
+ <td class="data"><fmt:fileSize value="${osMemInfo['MemTotal']}" /> KB total physical memory<br>
 <fmt:fileSize value="${osMemInfo['MemFree']}" /> KB free physical memory</td>
 </tr>
 </c:if>
@@ -120,7 +120,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <content:duration var="uptime" length="${rawUptime.longValue()}" />
 <tr>
  <td class="label top">Valkey Status</td>
- <td class="data">Server version: <span class="bld">${vkStatus['valkey_version']}</span> Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br />
+ <td class="data">Server version: <span class="bld">${vkStatus['valkey_version']}</span> Uptime: <span class="ita"><fmt:duration duration="${uptime}" /></span><br>
 <fmt:int value="${vkStatus['instantaneous_ops_per_sec']}" /> operations/sec, Memory <fmt:fileSize value="${vkStatus['used_memory']}" /> / <fmt:fileSize value="${vkStatus['maxmemory']}" /></td>
 </tr>
 </c:if>
@@ -137,7 +137,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <c:if test="${!empty buildDataCore && !empty buildDataJSP}">
 <tr>
  <td class="label top">Build Information</td>
- <td class="data"><span class="pri bld">Core</span> - Built on ${buildDataCore['build.date']} on Java ${buildDataCore['build.jvm']} / ${buildDataCore['build.os']}<br />
+ <td class="data"><span class="pri bld">Core</span> - Built on ${buildDataCore['build.date']} on Java ${buildDataCore['build.jvm']} / ${buildDataCore['build.os']}<br>
 <span class="pri bld">JSP</span> - Built on ${buildDataJSP['build.date']} on Java ${buildDataJSP['build.jvm']} / ${buildDataJSP['build.os']}</td>
 </tr>
 </c:if>
@@ -148,7 +148,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <%@ include file="/jsp/admin/diag/httpCompression.jspf" %>
 <c:if test="${acarsEnabled}">
 <%@ include file="/jsp/admin/diag/acarsInfo.jspf" %></c:if>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

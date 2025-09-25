@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010, 2012, 2015, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2010, 2012, 2015, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Pacific Track data.
  * @author Luke
- * @version 10.3
+ * @version 12.3
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class GetPACOTs extends TrackDAO {
 				String data = br.readLine();
 				while (data != null) {
 					buf.append(data);
-					buf.append("<BR />");
+					buf.append("<br>");
 					buf.append(CRLF);
 					data = br.readLine();
 				}
@@ -65,7 +65,7 @@ public class GetPACOTs extends TrackDAO {
 				trackInfo = trackInfo.replace("<B>", "");
 				trackInfo = trackInfo.replace("</B>", "");
 				buf.append(trackInfo);
-				buf.append("<br /><hr />");
+				buf.append("<br><hr>");
 				buf.append(CRLF);
 			}
 
@@ -100,14 +100,14 @@ public class GetPACOTs extends TrackDAO {
 							data = br.readLine();
 
 						while ((data != null) && (!data.startsWith("RTS"))) {
-							data = data.replace("<BR />", "");
+							data = data.replace("<br>", "");
 							wps.addAll(StringUtils.split(data.trim(), " "));
 							data = br.readLine();
 						}
 
 						// Save the track
 						info.put(trackID, wps);
-					} else if (data.startsWith("TRACK ") && data.endsWith(".<BR />")) {
+					} else if (data.startsWith("TRACK ") && data.endsWith(".<br>")) {
 						int tPos = data.indexOf(' ');
 						int tePos = data.indexOf('.', tPos);
 						if (tePos != -1) {
@@ -115,7 +115,7 @@ public class GetPACOTs extends TrackDAO {
 							Collection<String> wps = new LinkedHashSet<String>();
 							data = br.readLine();
 							while ((data != null) && data.startsWith(" ")) {
-								data = data.replace("<BR />", "");
+								data = data.replace("<br>", "");
 								if (data.contains(":")) {
 									int wPos = data.indexOf(':') + 1;
 									wps.addAll(StringUtils.split(data.substring(wPos).trim(), " "));

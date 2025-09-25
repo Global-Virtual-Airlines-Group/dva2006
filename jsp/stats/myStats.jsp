@@ -16,9 +16,9 @@
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
@@ -258,11 +258,11 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.loadStats = function() {
 	const p = fetch('mystats.ws?id=${pilot.hexID}', {signal:AbortSignal.timeout(9500)});
 	p.then(function(rsp) {

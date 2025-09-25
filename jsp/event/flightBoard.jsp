@@ -13,11 +13,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setNetwork = function(combo) {
 	location.href = '/flightboard.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
@@ -98,7 +98,7 @@ golgotha.local.setNetwork = function(combo) {
 </c:forEach>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

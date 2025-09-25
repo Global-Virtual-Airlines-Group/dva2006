@@ -11,12 +11,12 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.selectAircraft = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {
 		golgotha.util.display('descRow', false);

@@ -15,9 +15,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.update = function() {
 	const f = document.forms[0];
 	self.location = '/elitepilots.do?year=' + golgotha.form.getCombo(f.year) + '&sortType=' + f.sortType.value;
@@ -29,7 +29,7 @@ golgotha.local.setSort = function(st) {
 	return golgotha.local.update();
 };
 </script>
-<style type="text/css">
+<style>
 <c:forEach var="lvl" items="${totals.keySet()}">
 td.requal-${lvl.name} {
 	background: ${fn:rgba(lvl.color, 0.325)};
@@ -104,7 +104,7 @@ td.requal-${lvl.name} {
 </el:table>
 <el:text type="hidden" name="sortType" value="${param.sortType}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

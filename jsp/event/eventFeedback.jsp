@@ -13,9 +13,9 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.update = function(cb) {
 	self.location = '/eventfb.do?id' = golgotha.form.comboGet(cb);
 	return true;
@@ -70,7 +70,7 @@ golgotha.local.update = function(cb) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

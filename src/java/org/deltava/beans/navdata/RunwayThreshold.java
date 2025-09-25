@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ACARS takeoff/landing runway data.
  * @author Luke
- * @version 10.3
+ * @version 12.3
  * @since 10.3
  */
 
@@ -59,13 +59,13 @@ public class RunwayThreshold implements MarkerMapEntry, IconMapEntry {
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\"><span class=\"bld\">Runway ");
 		buf.append(_name);
-		buf.append("</span><br /><br /><span class=\"ita\">Distplaced Threshold: ");
+		buf.append("</span><br><br><span class=\"ita\">Distplaced Threshold: ");
 		buf.append(_size);
-		buf.append(" feet<br /><br />Latitude: ");
+		buf.append(" feet<br><br>Latitude: ");
 		buf.append(StringUtils.format(_loc, true, GeoLocation.LATITUDE));
-		buf.append("<br />Longitude: ");
+		buf.append("<br>Longitude: ");
 		buf.append(StringUtils.format(_loc, true, GeoLocation.LONGITUDE));
-		buf.append("<br /></div>");
+		buf.append("<br></div>");
 		return buf.toString();
 	}
 }

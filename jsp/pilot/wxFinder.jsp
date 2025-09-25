@@ -12,16 +12,16 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<style type="text/css">
+<style>
 div.wxPopup {
- flex-wrap:wrap
+	flex-wrap:wrap;
 }
 </style>
 </head>
@@ -52,11 +52,11 @@ div.wxPopup {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 

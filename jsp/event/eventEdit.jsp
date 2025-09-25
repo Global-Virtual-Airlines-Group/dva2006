@@ -19,7 +19,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.updateSignups = function() {
 	const f = document.forms[0];
 	const tg = !f.canSignup.checked;
@@ -121,15 +121,15 @@ golgotha.onDOMReady(function() {
 <c:if test="${event.hasImage}">
 <tr>
  <td class="label top">Banner Image</td>
- <td class="data"><img alt="${event.name} Banner" src="/event/${event.hexID}" /><br />
+ <td class="data"><img alt="${event.name} Banner" src="/event/${event.hexID}" /><br>
 <el:box name="removeBannerImg" value="true" label="Remove Event Banner Image" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label top">Upload Banner Image</td>
- <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br />
+ <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br>
 <span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
-<content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg></td>
+<content:hasmsg><br><span class="bld error"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr>
  <td class="label top">ATC Contact Addresses</td>
@@ -137,7 +137,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label top">Equipment Types</td>
- <td class="data"><span class="sec small">These should be unselected unless signups are restricted to a specific set of equipment.</span><br />
+ <td class="data"><span class="sec small">These should be unselected unless signups are restricted to a specific set of equipment.</span><br>
 <el:check name="eqTypes" idx="*" cols="9" width="95" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
 <tr class="title caps">
@@ -222,7 +222,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

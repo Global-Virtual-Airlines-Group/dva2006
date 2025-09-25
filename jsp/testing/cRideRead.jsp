@@ -14,9 +14,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.toggleBody = function(id) {
 	const row = document.getElementById(id);
 	const linkDesc = document.getElementById('toggleC');

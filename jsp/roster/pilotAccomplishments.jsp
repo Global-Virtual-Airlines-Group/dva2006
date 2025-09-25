@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -26,8 +26,8 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <content:airline /> is committed to recognizing the accomplishments of our talented pilots. Every day, they rack up countless flight hours and legs in a variety of aircraft types. Every day, Pilots take written 
-examinations and check rides and gain promotions in rank, and transfers into new equipment programs. Please join us in congratulating these <content:airline /> members who have achieved the following accomplishments:<br />
-<br />
+examinations and check rides and gain promotions in rank, and transfers into new equipment programs. Please join us in congratulating these <content:airline /> members who have achieved the following accomplishments:<br>
+<br>
 <el:table className="view">
 <!-- Table Header Row -->
 <tr class="title caps">
@@ -114,7 +114,7 @@ examinations and check rides and gain promotions in rank, and transfers into new
  <td colspan="3">&nbsp;</td>
 </tr>
 </el:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

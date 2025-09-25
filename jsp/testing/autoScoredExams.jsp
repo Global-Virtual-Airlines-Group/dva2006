@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.setExam = function(combo) {
 	self.location = '/autoscoredexams.do?examName=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
@@ -78,7 +78,7 @@ golgotha.local.setExam = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -13,10 +13,10 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 <content:sysdata var="imgPath" name="path.img" />
-<script async>
+<script>
 golgotha.local.selectAC = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {
 		golgotha.local.fName = null;
@@ -70,12 +70,12 @@ golgotha.local.download = function() {
 </tr>
 <tr>
  <td colspan="2"><el:img ID="FleetPic" style="float:left; margin:4px;" x="164" y="314" src="blank.png" caption="Fleet Library" />
- <div id="installerInfo" class="top" style="visibility:hidden; margin:4px;"><span id="divName" class="pri bld"></span><br /><br />
-<span class="sec bld"><span id="divSize"></span>&nbsp;bytes, last modified on <span id="divDT"></span></span><br />
-<span id="FSVersions" class="pri bld small"></span><br /><br />
+ <div id="installerInfo" class="top" style="visibility:hidden; margin:4px;"><span id="divName" class="pri bld"></span><br><br>
+<span class="sec bld"><span id="divSize"></span>&nbsp;bytes, last modified on <span id="divDT"></span></span><br>
+<span id="FSVersions" class="pri bld small"></span><br><br>
 <span id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
-aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to download a sound package and an operating manual from the <content:airline /> Document Library.<br />
-<br />
+aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to download a sound package and an operating manual from the <content:airline /> Document Library.<br>
+<br>
 Please select a <content:airline /> Fleet Installer from the list above.</span>
 </div></td>
 </tr>
@@ -88,7 +88,7 @@ Please select a <content:airline /> Fleet Installer from the list above.</span>
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

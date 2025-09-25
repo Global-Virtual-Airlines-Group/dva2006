@@ -10,9 +10,9 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 <fmt:jsarray var="golgotha.local.airlines" items="${autoAppCodes}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -64,7 +64,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Web Applications</td>
  <td class="data"><c:if test="${!empty autoAppCodes}">
-<span class="sec bld ita small">Some Virtual Airlines have flights in their Schedule with this Airline, and cannot be disabled:</span> <span class="pri bld small"><fmt:list value="${autoAppCodes}" delim=", " /></span><br /></c:if>
+<span class="sec bld ita small">Some Virtual Airlines have flights in their Schedule with this Airline, and cannot be disabled:</span> <span class="pri bld small"><fmt:list value="${autoAppCodes}" delim=", " /></span><br></c:if>
 <el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
 </tr>
 <c:if test="${airportCount > 0}">
@@ -79,8 +79,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /><br />
- <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br />
+ <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /><br>
+ <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br>
  <el:box name="sync" idx="*" value="true" label="Synchronize schedule with other Web Applications" checked="${airline.scheduleSync}" /> </td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -93,7 +93,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

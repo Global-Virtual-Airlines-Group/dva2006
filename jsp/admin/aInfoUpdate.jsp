@@ -9,7 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:copyright visible="false" />
 </head>
@@ -21,13 +21,13 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Virtual Airline Profile Updated</div>
-<br />
-The virtual airline profile for <span class="pri bld">${aInfo.name}</span> has been updated successfully.<br />
-<br />
-To return to the list of Virtual Airline profiles, <el:cmd url="aInfoList" className="sec bld">Click Here</el:cmd>.<br />
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
-<br />
-<br />
+<br>
+The virtual airline profile for <span class="pri bld">${aInfo.name}</span> has been updated successfully.<br>
+<br>
+To return to the list of Virtual Airline profiles, <el:cmd url="aInfoList" className="sec bld">Click Here</el:cmd>.<br>
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br>
+<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

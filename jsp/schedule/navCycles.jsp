@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -66,7 +66,7 @@
  <td class="sec bld"><fmt:date fmt="d" date="${cycle.releasedOn}" d="EEEE MMMM dd, YYYY" /></td>
  <td class="left">
 <c:if test="${isCurrent}">This cycle is currently loaded into the <content:airline /> navigation database</c:if>
-<c:if test="${isChart}"><c:if test="${isCurrent}"><br /></c:if>
+<c:if test="${isChart}"><c:if test="${isCurrent}"><br></c:if>
 This cycle is currently loaded into the <content:airline /> FAA Approach Chart database</c:if>
 <c:if test="${isNow}">
 

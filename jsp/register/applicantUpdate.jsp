@@ -8,7 +8,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -19,13 +19,13 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Pilot Application Updated</div>
-<br />
-The <content:airline /> Pilot application from ${applicant.name} has been updated.<br />
-<br />
-To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" link="${applicant}">Click Here</el:cmd>.<br />
-<br />
-To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+The <content:airline /> Pilot application from ${applicant.name} has been updated.<br>
+<br>
+To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" link="${applicant}">Click Here</el:cmd>.<br>
+<br>
+To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.net.URLEncoder;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 11.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -102,9 +102,9 @@ public class FormTag extends ElementTag {
     public int doEndTag() throws JspException {
         try {
         	if (_spinner) {
-        		_out.print("<div id=\"spinner\" style=\"display:none;\"><img class=\"spinImg\" src=\"");
+        		_out.print("<div id=\"spinner\" style=\"display:none;\"><img class=\"spinImg\" alt=\"Progress Spinner\" src=\"");
         		_out.print(_spinnerURL);
-        		_out.println("\" /></div>");
+        		_out.println("\"></div>");
         	}
         	
             _out.println(_data.close());

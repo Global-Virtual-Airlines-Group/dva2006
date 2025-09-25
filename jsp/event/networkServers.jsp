@@ -13,9 +13,9 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script async>
+<script>
 golgotha.local.setNetwork = function(combo) {
 	self.location = '/netservers.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;

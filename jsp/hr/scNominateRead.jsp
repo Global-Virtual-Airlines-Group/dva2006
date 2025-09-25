@@ -14,9 +14,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const act = f.action;
@@ -80,8 +80,8 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label top">${author.name} (${author.pilotCode}) <fmt:date date="${nc.createdOn}" t="HH:mm" /></td>
  <td colspan="${cspan}" class="data top">
-<c:if test="${!nc.support}"><span class="small error bld">DOES NOT SUPPORT THIS NOMINATION</span><br />
-<hr /></c:if>
+<c:if test="${!nc.support}"><span class="small error bld">DOES NOT SUPPORT THIS NOMINATION</span><br>
+<hr></c:if>
 <fmt:msg value="${nc.body}" /></td>
 </tr>
 </c:if>
@@ -124,7 +124,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -9,7 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:css name="form" />
 </head>
@@ -23,10 +23,10 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Leave of Absence</div>
-<br />
+<br>
 You have been placed on a Leave of Absence for up to <fmt:int value="${interval}" /> days. To return to Active status, please log into the <content:airline /> web site again prior to the expiration of your Leave of Absence, which will 
-occur on <fmt:date fmt="d" date="${loaExpires}" />.<br />
-<br />
+occur on <fmt:date fmt="d" date="${loaExpires}" />.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

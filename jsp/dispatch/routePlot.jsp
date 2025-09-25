@@ -14,7 +14,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="mapBoxWX" />
@@ -24,7 +24,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
 golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
 golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
@@ -141,11 +141,11 @@ golgotha.routePlot.updateAirline = function(combo) {
 </el:table>
 <el:text name="routeID" type="hidden" value="true" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 
 const f = document.forms[0];

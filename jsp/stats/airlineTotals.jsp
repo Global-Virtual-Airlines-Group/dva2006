@@ -15,7 +15,7 @@
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -74,7 +74,7 @@
  <td colspan="2"><content:airline /> STATISTICS COMMENCE <fmt:int value="${totals.age}" /> DAYS AGO</td>
 </tr>
 </el:table>
-<br />
+<br>
 <!-- Database Information Table -->
 <el:table className="view">
 <tr class="title caps">
@@ -101,11 +101,11 @@
  <td colspan="5">&nbsp;</td>
 </tr>
 </el:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 	const p = fetch('allstats.ws', {signal:AbortSignal.timeout(7500)});

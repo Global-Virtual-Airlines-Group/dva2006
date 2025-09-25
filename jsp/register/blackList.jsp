@@ -9,7 +9,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,9 +21,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Registration Cannot be Completed</div>
-<br />
-Sorry, but you cannot apply to <content:airline />. Please contact our Human Resources Department at <el:link url="mailto:${hrEmail}">${hrEmail}</el:link> if you have any questions about why this has occurred.<br />
-<br />
+<br>
+Sorry, but you cannot apply to <content:airline />. Please contact our Human Resources Department at <el:link url="mailto:${hrEmail}">${hrEmail}</el:link> if you have any questions about why this has occurred.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

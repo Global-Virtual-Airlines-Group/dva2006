@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -25,15 +25,15 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Pilot Registration Delay</div>
-<br />
+<br>
 <content:airline /> currently has over <fmt:int value="${airlineSize}" /> active Pilots. In order to more effectively serve our members, we restrict Pilot Registration once we have over <fmt:int value="${maxPilots}" /> 
-Pilots. Therefore, there may be a delay before your application is processed.<br />
-<br />
+Pilots. Therefore, there may be a delay before your application is processed.<br>
+<br>
 <span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, you do NOT need to register again.</span> To reactivate your membership at <content:airline />, please
-<el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br />
-<br />
-If you still wish to apply for membership at <content:airline />, we welcome your interest. Please submit your application. We will contact you at the email address on your application when there is an opening.<br />
-<br />
+<el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br>
+<br>
+If you still wish to apply for membership at <content:airline />, we welcome your interest. Please submit your application. We will contact you at the email address on your application when there is an opening.<br>
+<br>
 
 <!-- Button Bar -->
 <el:table className="bar">
@@ -41,7 +41,7 @@ If you still wish to apply for membership at <content:airline />, we welcome you
  <td><el:cmdbutton url="register" op="force" label="REGISTER AT ${airlineName}" />&nbsp;<el:cmdbutton url="home" label="NO THANKS" /></td>
 </tr>
 </el:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

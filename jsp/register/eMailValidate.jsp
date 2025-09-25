@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
@@ -71,8 +71,8 @@ e-mail message, into the space provided below.</td>
 </tr>
 <tr>
  <td class="left" colspan="2">In order for your application to <content:airline /> to be approved, you must provide us with a valid e-mail address. We have sent you an e-mail message to the address you provided when 
-registering with an activation code. Please enter that application code now to validate your e-mail address.<br />
-<br />
+registering with an activation code. Please enter that application code now to validate your e-mail address.<br>
+<br>
 If you have provided us an incorrect e-mail address or you have not received the e-mail message, you can update your address and/or send a new validation e-mail.</td>
 </tr>
 </c:otherwise>
@@ -98,7 +98,7 @@ If you have provided us an incorrect e-mail address or you have not received the
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

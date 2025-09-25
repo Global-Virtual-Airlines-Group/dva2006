@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <c:if test="${exam.routePlot}"><map:api version="3" /></c:if>
@@ -124,7 +124,7 @@
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script async>
+<script>
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

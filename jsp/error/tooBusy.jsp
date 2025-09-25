@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -23,9 +23,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> SERVER TOO BUSY</div>
-<br />
-Take it easy! You're asking the server to do too much work!<br />
-<br />
+<br>
+Take it easy! You're asking the server to do too much work!<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

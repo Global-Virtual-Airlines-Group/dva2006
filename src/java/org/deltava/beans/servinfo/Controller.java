@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 1.0
  */
 
@@ -181,18 +181,18 @@ public class Controller extends ConnectedUser {
 		buf.append(getCallsign());
 		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
-		buf.append(")<span class=\"small\"><br /><br />Network ID: ");
+		buf.append(")<span class=\"small\"><br><br>Network ID: ");
 		buf.append(String.valueOf(getID()));
-		buf.append("<br />Controller rating: ");
+		buf.append("<br>Controller rating: ");
 		Rating r = getRating();
 		buf.append(r.getName());
 		buf.append(" (");
 		buf.append(r.toString());
-		buf.append(")<br /><br />Facility Type: ");
+		buf.append(")<br><br>Facility Type: ");
 		buf.append(_type.getName());
 		buf.append("</span>");
 		if (!_freqs.isEmpty()) {
-			buf.append("<br />Frequenc");	
+			buf.append("<br>Frequenc");	
 			buf.append(_freqs.size() > 1 ? "ies" : "y");
 			buf.append(": ");
 			buf.append(StringUtils.listConcat(getFrequencies(), ", "));

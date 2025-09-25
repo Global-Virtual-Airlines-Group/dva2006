@@ -9,7 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,25 +21,25 @@
 <content:region id="main">
 <c:if test="${isBlock}">
 <div class="updateHdr">IP Network Block Data Imported</div>
-<br />
-The <content:airline /> IP Network Block database has been updated. <fmt:int value="${entryCount}" /> network block entries have been imported.<br />
+<br>
+The <content:airline /> IP Network Block database has been updated. <fmt:int value="${entryCount}" /> network block entries have been imported.<br>
 </c:if>
 <c:if test="${isLocation}">
 <div class="updateHdr">IP Network Location Data Imported</div>
-<br />
-The <content:airline /> IP Network Location database has been updated. <fmt:int value="${locationCount}" /> network location entries have been imported.<br />
+<br>
+The <content:airline /> IP Network Location database has been updated. <fmt:int value="${locationCount}" /> network location entries have been imported.<br>
 </c:if>
 <c:if test="${!empty msgs}">
-<br />
-The following import warning/error messages were logged:<br />
+<br>
+The following import warning/error messages were logged:<br>
 <c:forEach var="msg" items="${msgs}">
-<br />${msg}</c:forEach><br />
+<br>${msg}</c:forEach><br>
 </c:if>
-<br />
-To return to the IP Network Location import page, <el:cmd url="ipgeoimport" className="sec bld">Click Here</el:cmd>.<br />
-To return to the IP Network Block import page, <el:cmd url="ipimport" className="sec bld">Click Here</el:cmd>.<br />
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+To return to the IP Network Location import page, <el:cmd url="ipgeoimport" className="sec bld">Click Here</el:cmd>.<br>
+To return to the IP Network Block import page, <el:cmd url="ipimport" className="sec bld">Click Here</el:cmd>.<br>
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

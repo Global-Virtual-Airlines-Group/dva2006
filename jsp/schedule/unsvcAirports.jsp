@@ -12,9 +12,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!confirm("Are you sure you wish to continue?")) return false;
@@ -43,12 +43,12 @@ golgotha.local.validate = function(f) {
 </c:if>
 <c:forEach var="airline" items="${results.keySet()}">
 <c:set var="airports" value="${results[airline]}" scope="page" />
-The following <fmt:int value="${airports.size()}" /> airports are no longer served by <span class="pri bld">${airline.name}</span>:<br />
-<br />
+The following <fmt:int value="${airports.size()}" /> airports are no longer served by <span class="pri bld">${airline.name}</span>:<br>
+<br>
 <c:forEach var="airport" items="${airports}">
-<el:cmd url="airport" linkID="${airport.IATA}" op="edit" className="bld">${airport.name}</el:cmd> (${airport.ICAO} / ${airport.IATA})<br />
+<el:cmd url="airport" linkID="${airport.IATA}" op="edit" className="bld">${airport.name}</el:cmd> (${airport.ICAO} / ${airport.IATA})<br>
 </c:forEach>
-<hr />
+<hr>
 </c:forEach>
  </td>
 </tr>
@@ -65,7 +65,7 @@ The following <fmt:int value="${airports.size()}" /> airports are no longer serv
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

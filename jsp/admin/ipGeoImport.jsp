@@ -12,8 +12,8 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -65,12 +65,12 @@ golgotha.local.validate = function(f) {
 </el:table>
 <el:text name="id" type="hidden" value="" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['csv','gz','bz2']});
 const dt = document.getElementById('dropTarget');

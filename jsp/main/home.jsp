@@ -22,9 +22,9 @@
 <content:captcha action="home" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="Description" content="${desc}" />
-<meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Description" content="${desc}">
+<meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -37,18 +37,18 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004, Flight  Simulator X (including Steam Edition)
-and Microsoft Flight Simulator 2020. We also support Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11/12. We are in no way affiliated with Delta Air Lines.<br />
-<br />
+and Microsoft Flight Simulator 2020. We also support Lockheed-Martin Prepar3D v1-5 and Laminar Research X-Plane 10/11/12. We are in no way affiliated with Delta Air Lines.<br>
+<br>
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over <fmt:int value="${httpStats.bytes}" /> bytes worth of data.
 <c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in our ${forumName} discussion forum in the past 24 hours.</c:if>
 <c:if test="${!empty runTime}"> Our web server has been running for <fmt:quantity value="${runTime.toDays()}" single="day" />, <fmt:quantity value="${runTime.toHoursPart()}" single="hour" /> and <fmt:quantity value="${runTime.toMinutesPart()}" single="minute" />.</c:if>
-<br />
-<br />
+<br>
+<br>
 <content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join the <content:airline /> active pilot roster, you may submit flight reports and contribute to our discussion forums and image library. If you are interested in 
-a serious virtual airline, designed for both the experienced pilot and the novice (and all of us that are in between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br />
-<br /></content:filter>
-<br />
+a serious virtual airline, designed for both the experienced pilot and the novice (and all of us that are in between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br>
+<br></content:filter>
+<br>
 <!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
@@ -65,7 +65,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
  <td><el:cmd url="notamedit" link="${notam}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </tr>
 <c:if test="${notam.isHTML}">
- <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${notam.bannerWidth}%; max-width=${notam.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
+ <td colspan="3" class="left notam"><c:if test="${notam.hasImage}"><div class="hdr"><el:dbimg img="${notam}" style="width:${notam.bannerWidth}%; max-width:${notam.bannerWidth}%" caption="${notam.subject}"  /></div></c:if>
  ${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">
@@ -209,7 +209,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </el:table>
 </c:if>
 <c:if test="${!empty latestNews}">
-<br />
+<br>
 <!-- Latest News -->
 <el:table className="view">
 <c:forEach var="entry" items="${latestNews}">
@@ -221,7 +221,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 </tr>
 <tr>
 <c:if test="${entry.isHTML}">
- <td class="left news" colspan="3"><c:if test="${entry.hasImage}"><div class="hdr"><el:dbimg img="${entry}" style="width:${entry.bannerWidth}%; max-width=${entry.bannerWidth}%" caption="${entry.subject}"  /></div></c:if>
+ <td class="left news" colspan="3"><c:if test="${entry.hasImage}"><div class="hdr"><el:dbimg img="${entry}" style="width:${entry.bannerWidth}%; max-width:${entry.bannerWidth}%" caption="${entry.subject}"  /></div></c:if>
 ${entry.body}</td>
 </c:if>
 <c:if test="${!entry.isHTML}">
@@ -231,9 +231,9 @@ ${entry.body}</td>
 </c:forEach>
 </el:table>
 </c:if>
-<br />
-If you have questions or comments, please direct them to our Corporate Offices at <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
-<br />
+<br>
+If you have questions or comments, please direct them to our Corporate Offices at <a href="mailto:${infoEmail}">${infoEmail}</a>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -11,11 +11,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:4, t:'Partner Name'});
@@ -54,7 +54,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Banner Image</td>
- <td class="data"><el:file name="img" idx="*" className="small"  size="80" max="144" /><c:if test="${partner.hasImage}"><br />
+ <td class="data"><el:file name="img" idx="*" className="small"  size="80" max="144" /><c:if test="${partner.hasImage}"><br>
 <el:box name="deleteImg" value="true" idx="*" label="Delete Banner Image" /></c:if></td>
 </tr>
 <c:if test="${partner.referCount > 0}">
@@ -77,7 +77,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

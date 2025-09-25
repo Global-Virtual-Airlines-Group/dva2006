@@ -13,10 +13,10 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
@@ -118,13 +118,13 @@ golgotha.local.selectResponse = function(f) {
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${cAuthor.name} (${empty cAuthor.pilotCode ? 'NEW PILOT' : cAuthor.pilotCode})<br />
- <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br />
-<el:box name="deleteID" value="${comment.createdOn.toEpochMilli()}" checked="false" label="Delete" /><br />
+ <td class="label top">${cAuthor.name} (${empty cAuthor.pilotCode ? 'NEW PILOT' : cAuthor.pilotCode})<br>
+ <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br>
+<el:box name="deleteID" value="${comment.createdOn.toEpochMilli()}" checked="false" label="Delete" /><br>
 <el:radio name="faqID" value="${comment.createdOn.toEpochMilli()}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
  <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" />
 <c:if test="${!empty comment.name}">
-<hr />
+<hr>
 Attached File: <span class="pri bld">${comment.name}</span> (<fmt:fileSize value="${comment.size }" />) <a href="/attach/helpdesk/${comment.createdOn.toEpochMilli()}/${issue.hexID}">Click to download</a></c:if></td>
 </tr>
 </c:forEach>
@@ -162,7 +162,7 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

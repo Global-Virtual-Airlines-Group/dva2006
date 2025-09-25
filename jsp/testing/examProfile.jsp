@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -54,7 +54,7 @@
 <c:if test="${!empty eProfile.scorerIDs}">
 <tr>
  <td class="label top">Allowed Scorers</td>
- <td class="data"><c:forEach var="scorer" items="${scorers}">${scorer.name} (${scorer.pilotCode})<br /></c:forEach></td>
+ <td class="data"><c:forEach var="scorer" items="${scorers}">${scorer.name} (${scorer.pilotCode})<br></c:forEach></td>
 </tr>
 </c:if>
 <tr>
@@ -80,9 +80,9 @@
  <td class="data bld caps">
 <c:if test="${eProfile.active}"><span class="ter">Examination is Available</span></c:if>
 <c:if test="${!eProfile.active}"><span class="error">Examination is Not Available</span></c:if>
-<c:if test="${eProfile.notify}"><br />
+<c:if test="${eProfile.notify}"><br>
 <span class="bld">Notify Scorers when Examination is Submitted</span></c:if>
-<c:if test="${eProfile.academy}"><br />
+<c:if test="${eProfile.academy}"><br>
 Examination is part of the <content:airline /> Flight Academy</c:if></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>

@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
@@ -62,7 +62,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 <c:if test="${doSearch}">
-<br />
+<br>
 <view:table cmd="dspsearch">
 <tr class="title caps">
  <td colspan="8" class="left">DISPATCH ROUTE SEARCH RESULTS</td>
@@ -85,7 +85,7 @@ golgotha.local.validate = function(f) {
 <c:set var="author" value="${authors[route.authorID]}" scope="page" />
 <view:row entry="${route}">
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
- <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />
+ <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br>
 ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="sec bld"><fmt:int value="${route.useCount}" /></td>
  <td><el:cmd url="dsproutes" link="${author}" className="pri bld">${author.name}</el:cmd> (${author.pilotCode})</td>
@@ -115,7 +115,7 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </view:table>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
