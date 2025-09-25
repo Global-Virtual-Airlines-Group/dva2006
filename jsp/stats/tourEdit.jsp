@@ -18,10 +18,10 @@
 <content:js name="airportRefresh" />
 <c:if test="${access.canEditLegs}">
 <content:js name="tourEdit" /></c:if>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:5, t:'Tour Name'});
@@ -77,10 +77,10 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="4"><el:box name="acarsOnly" idx="*" value="true" checked="${tour.ACARSOnly}" label="This Tour requires flights logged with ACARS" /><br />
-<el:box name="allowOffline" idx="*" value="true" checked="${tour.allowOffline}" label="Allow Offline Flights" /><br />
-<el:box name="matchEQ" idx="*" value="true" checked="${tour.matchEquipment}" label="Equipment used must match Tour definition" /><br />
-<el:box name="matchLeg" idx="*" value="true" checked="${tour.matchLeg}" label="Flight Number must match Tour definition" /><br />
+ <td class="data" colspan="4"><el:box name="acarsOnly" idx="*" value="true" checked="${tour.ACARSOnly}" label="This Tour requires flights logged with ACARS" /><br>
+<el:box name="allowOffline" idx="*" value="true" checked="${tour.allowOffline}" label="Allow Offline Flights" /><br>
+<el:box name="matchEQ" idx="*" value="true" checked="${tour.matchEquipment}" label="Equipment used must match Tour definition" /><br>
+<el:box name="matchLeg" idx="*" value="true" checked="${tour.matchLeg}" label="Flight Number must match Tour definition" /><br>
 <el:box name="active" idx="*" value="true" checked="${tour.active}" className="pri" label="This Tour is Active" /></td>
 </tr>
 <tr class="title caps">
@@ -177,7 +177,7 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
  <td colspan="4" class="mid"><el:button onClick="golgotha.tour.searchCustom()" idx="*" label="BUILD CUSTOM FLIGHT LEG" /></td>
 </tr>
 </el:table>
-<br />
+<br>
 </c:if>
 
 <!-- Button Bar -->
@@ -188,12 +188,12 @@ ${p.name} <c:if test="${!empty p.pilotCode}" > (${p.pilotCode})</c:if><c:if test
 </el:table>
 <el:text name="legCodes" type="hidden" value="${t.legCodes}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <c:if test="${!empty tour.flights}">
-<script async>
+<script>
 golgotha.local.flightData = ${legData};
 const rows = golgotha.util.getElementsByClass('legRow', 'tr', document.getElementById('baseTable'));
 for (var x = 0; x < rows.length; x++)

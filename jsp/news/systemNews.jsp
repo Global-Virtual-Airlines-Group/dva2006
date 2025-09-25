@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" contexnt="width=device-width, initial-scale=1" />
+<meta name="viewport" contexnt="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -50,7 +50,7 @@
 </tr>
 <tr>
 <c:if test="${news.isHTML}">
- <td colspan="3" class="left news"><c:if test="${news.hasImage}"><div class="hdr"><el:dbimg img="${news}" style="width:${news.bannerWidth}%; max-width=${news.bannerWidth}%" caption="${news.subject}"  /></div></c:if>
+ <td colspan="3" class="left news"><c:if test="${news.hasImage}"><div class="hdr"><el:dbimg img="${news}" style="width:${news.bannerWidth}%; max-width:${news.bannerWidth}%" caption="${news.subject}"  /></div></c:if>
 ${news.body}</td>
 </c:if>
 <c:if test="${!news.isHTML}">

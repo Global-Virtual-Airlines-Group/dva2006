@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:captcha action="register" />
@@ -122,8 +122,8 @@ golgotha.onDOMReady(function() {
 <tr>
  <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the largest yet friendliest and most sophisticated virtual airlines on the Internet. Many aspects of our operations are significantly different 
  from other virtual airlines, specifically in promotions, ratings and what flights are credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline />
- is the right virtual airline for you.<br />
-<br />
+ is the right virtual airline for you.<br>
+<br>
 This is also a good time to review <content:airline />'s <el:cmd url="privacy" className="pri bld">Privacy Policy</el:cmd>.</td>
 </tr>
 
@@ -155,10 +155,10 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr class="dupeFound" style="display:none;">
  <td colspan="${cspan + 1}" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
- already registered with us, you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
-<br />
-<a href="javascript:void golgotha.local.sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
-<br />
+ already registered with us, you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br>
+<br>
+<a href="javascript:void golgotha.local.sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br>
+<br>
 <a href="javascript:void golgotha.local.resetUniqueCheck(true)" class="sec">I've never registered with <content:airline /> before.</a></td>
 </tr>
 <tr>
@@ -289,7 +289,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

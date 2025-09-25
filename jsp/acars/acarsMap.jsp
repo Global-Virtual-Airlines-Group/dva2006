@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:googleAnalytics />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
@@ -76,11 +76,11 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 golgotha.local.refresh = ${refreshInterval + 2000};
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />

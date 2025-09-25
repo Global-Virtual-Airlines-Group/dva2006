@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -65,7 +65,7 @@ Resources department. You should hear back from them within 48-72 hours. Thank y
 </el:table>
 <el:text name="airline" type="hidden" value="${airline.name}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

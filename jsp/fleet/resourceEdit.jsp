@@ -12,8 +12,8 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.url, l:12, t:'Resource URL'});
@@ -80,7 +80,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.getPublic()}" label="This is a public Web Resource" /><br />
+ <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.getPublic()}" label="This is a public Web Resource" /><br>
 <el:box name="ignoreCerts" idx="*" value="true" checked="${resource.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
 </c:if>
@@ -94,7 +94,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,11 +21,11 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">PILOT AIRLINE TRANSFER COMPLETE</div>
-<br />
-${pilot.name} has been successfully transferred to <span class="sec bld">${airline.name}</span>.<br />
-<br />
-To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
-<br />
+<br>
+${pilot.name} has been successfully transferred to <span class="sec bld">${airline.name}</span>.<br>
+<br>
+To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

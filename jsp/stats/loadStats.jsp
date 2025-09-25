@@ -14,7 +14,7 @@
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -81,11 +81,11 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 golgotha.local.update = function(cb) {
 	golgotha.form.submit(document.forms[0]);
 	const days = golgotha.form.getCombo(cb);

@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
@@ -23,7 +23,7 @@
 <content:sysdata var="defaultDFormat" name="time.date_format" />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.hasSignature = ${pilot.hasSignature};
 golgotha.local.validate = function(f)
 {
@@ -149,12 +149,12 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td colspan="${cspan}" class="data"><el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
-<el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
-<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br />
+ <td colspan="${cspan}" class="data"><el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br>
+<el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br>
+<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br>
 <el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" />
 <c:if test="${acarsEnabled}">
-<br /><el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /></c:if></td>
+<br><el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /></c:if></td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
@@ -274,7 +274,7 @@ golgotha.onDOMReady(function() {
 </c:forEach>
 <tr>
  <td class="label top">Privacy Options</td>
- <td colspan="${cspan}" class="data"><el:check type="radio" name="privacyOption" idx="*" cols="1" separator="<br />" options="${privacyOptions}" value="${pilot.emailAccess}" /></td>
+ <td colspan="${cspan}" class="data"><el:check type="radio" name="privacyOption" idx="*" cols="1" separator="<br>" options="${privacyOptions}" value="${pilot.emailAccess}" /></td>
 </tr>
 
 <!-- ${forumName} Preferences -->
@@ -284,21 +284,21 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Signature Image</td>
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
-<img alt="${forumName} Signature" src="/sig/${db}/${pilot.hexID}" /><br />
-<el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void golgotha.local.disableSigBoxes()" /><br /></c:if>
+<img alt="${forumName} Signature" src="/sig/${db}/${pilot.hexID}" /><br>
+<el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void golgotha.local.disableSigBoxes()" /><br></c:if>
 <content:filter roles="HR,Signature"><c:if test="${!sigAuthorized}">
-<el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br /></c:if></content:filter>
+<el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br></c:if></content:filter>
 <el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void golgotha.local.disableSigBoxes()" /></td>
 </tr>
 <tr>
  <td class="label top">Update Signature Image</td>
- <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
+ <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br>
 <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> pixels, and the maximum file size is <fmt:fileSize value="${sigSize}" />.</span></td>
 </tr>
 <tr>
  <td class="label top">Display Options</td>
- <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show ${forumName} Signature Images" /><br />
- <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" /><br />
+ <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show ${forumName} Signature Images" /><br>
+ <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" /><br>
  <el:box name="scrollToNewPosts" value="true" checked="${pilot.showNewPosts}" label="Scroll to new ${forumName} Message Thread posts" /></td>
 </tr>
 
@@ -393,7 +393,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

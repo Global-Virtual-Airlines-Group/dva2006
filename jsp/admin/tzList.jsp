@@ -12,7 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -45,7 +45,7 @@
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
  <view:legend width="200" labels="Observes Daylight Savings,Standard Time" classes="opt1, " /></td>
 </tr>
 </view:table>

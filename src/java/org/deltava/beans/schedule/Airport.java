@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -457,18 +457,18 @@ public class Airport implements Comparable<Airport>, Auditable, ComboAlias, View
    public String getInfoBox() {
       StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\"><span class=\"bld\">");
       buf.append(_name);
-      buf.append("</span><br /><br />IATA Code: ");
+      buf.append("</span><br><br>IATA Code: ");
       buf.append(_iata);
-      buf.append("<br />ICAO Code: ");
+      buf.append("<br>ICAO Code: ");
       buf.append(_icao);
       if (_region != null) {
-    	  buf.append("<br />ICAO Region: ");
+    	  buf.append("<br>ICAO Region: ");
     	  buf.append(_region);
       }
       
-      buf.append("<br /><br />Latitude: ");
+      buf.append("<br><br>Latitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
-      buf.append("<br />Longitude: ");
+      buf.append("<br>Longitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LONGITUDE));
       buf.append("</div>");
       return buf.toString();

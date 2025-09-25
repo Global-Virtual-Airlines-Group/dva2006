@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <content:cspHeader />
 </head>
@@ -45,7 +45,7 @@
  <td class="pri bld">${event.network}</td>
  <td class="sec nophone"><fmt:edesc object="${event.status}" /></td>
  <td class="small nophone"><c:forEach var="route" items="${event.routes}">
-${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
+${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br>
 </c:forEach></td>
 </view:row>
 </c:forEach>

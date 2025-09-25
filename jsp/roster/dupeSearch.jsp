@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.validate = function(f)
@@ -138,9 +138,9 @@ return true;
 </tr>
 <tr>
  <td class="label top">Merge Options</td>
- <td class="data"><el:box name="mergeFlights" value="true" checked="true" label="Merge Flight Reports" /><br />
-<el:box name="mergeExams" value="true" checked="true" label="Merge Examinations" /><br />
-<el:box name="mergeCRs" value="true" checked="true" label="Merge Check Rides" /><br />
+ <td class="data"><el:box name="mergeFlights" value="true" checked="true" label="Merge Flight Reports" /><br>
+<el:box name="mergeExams" value="true" checked="true" label="Merge Examinations" /><br>
+<el:box name="mergeCRs" value="true" checked="true" label="Merge Check Rides" /><br>
 <el:box name="mergeFA" value="true" checked="true" label="Merge Flight Academy Certifications" /></td>
 </tr>
 </el:table>
@@ -154,7 +154,7 @@ return true;
 </c:if>
 </c:if>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

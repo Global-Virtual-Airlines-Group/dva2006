@@ -16,9 +16,9 @@
 <content:googleAnalytics />
 <content:js name="jsColor" />
 <content:sysdata var="forumName" name="airline.forum" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
@@ -124,7 +124,7 @@ return true;
 <tr id="valueCountry" style="display:none;" class="valueRow">
  <td class="label top">Valid Countries</td>
  <td class="data"><el:check name="countries" idx="*" width="190" cols="5" className="small" newLine="true" checked="${ap.choices}" options="${activeCountries}"/>
-<div style="clear:both;"></div><hr />
+<div style="clear:both;"></div><hr>
 <el:check name="countries" idx="*" width="190" cols="5" className="small ita" newLine="true" checked="${ap.choices}" options="${inactiveCountries}"/></td>
 </tr>
 <tr id="valueCont" style="display:none;" class="valueRow">
@@ -158,7 +158,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="alwaysDisplay" idx="*" value="true" checked="${ap.alwaysDisplay}"  label="Always display Accomplishment completion" /><br />
+ <td class="data"><el:box name="alwaysDisplay" idx="*" value="true" checked="${ap.alwaysDisplay}"  label="Always display Accomplishment completion" /><br>
 <el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -171,7 +171,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <map:api version="3" />
 <content:googleAnalytics />
@@ -37,11 +37,11 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 const mapOpts = {container:'mapBox', zoom:5, maxZoom:12, projection:'globe', center:[-93.25,38.88], style:'mapbox://styles/mapbox/outdoors-v12'};
 const map = new golgotha.maps.Map(document.getElementById('mapBox'), mapOpts);

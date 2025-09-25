@@ -15,7 +15,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.validate = function(f) {
@@ -59,7 +59,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="IMAPAllowSMTP" idx="*" value="true" checked="${mb.allowSMTP}" label="Allow direct connections from third-party mail clients" /><br />
+ <td class="data"><el:box name="IMAPAllowSMTP" idx="*" value="true" checked="${mb.allowSMTP}" label="Allow direct connections from third-party mail clients" /><br>
 <el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
@@ -73,7 +73,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.validate = function(f)
 {
@@ -69,7 +69,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><c:if test="${!empty session}"><el:box name="noShow" idx="*" value="true" checked="${session.noShow}" label="Pilot did not attend Instruction Session" /><br /></c:if>
+ <td class="data"><c:if test="${!empty session}"><el:box name="noShow" idx="*" value="true" checked="${session.noShow}" label="Pilot did not attend Instruction Session" /><br></c:if>
 <el:box name="noSend" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
 <tr>
@@ -86,7 +86,7 @@ return true;
 </el:table>
 <el:text name="course" type="hidden" value="${course.hexID}" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

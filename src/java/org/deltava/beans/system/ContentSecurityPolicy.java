@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store dynamic Content Security Policy data. 
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 12.0
  */
 
@@ -16,6 +16,11 @@ public class ContentSecurityPolicy {
 	 * Self-referential constant.
 	 */
 	public static final String SELF = "'self'";
+	
+	/**
+	 * Empty constant.
+	 */
+	public static final String NONE = "'none'";
 
 	private final boolean _enforce;
 	private final Map<ContentSecurity, Collection<String>> _data = new LinkedHashMap<ContentSecurity, Collection<String>>();
@@ -116,7 +121,8 @@ public class ContentSecurityPolicy {
 			buf.append("; ");
 		}
 		
-		buf.append("frame-ancestors none");
+		buf.append("frame-ancestors ");
+		buf.append(NONE);
 		return buf.toString();
 	}
 }

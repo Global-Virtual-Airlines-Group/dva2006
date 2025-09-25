@@ -293,6 +293,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>allowReferer</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>bbCode</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>

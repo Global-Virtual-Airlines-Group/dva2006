@@ -13,7 +13,7 @@
 <content:js name="fileSaver" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
@@ -81,7 +81,7 @@
 <tr>
  <td class="label top">State Data</td>
  <td class="data"><c:forEach var="k" items="${stateData.keySet()}">
-${k} = ${stateData[k]}<br /></c:forEach></td>
+${k} = ${stateData[k]}<br></c:forEach></td>
 </tr>
 </c:if>
 <c:choose>
@@ -136,12 +136,12 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 </body>
-<script async>
+<script>
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
 	const p = fetch('/attach/error_log/' + id, {signal:AbortSignal.timeout(2500)});

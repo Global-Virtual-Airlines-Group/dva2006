@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 11.6
+ * @version 12.3
  * @since 1.0
  */
 
@@ -795,9 +795,9 @@ public class ACARSRouteEntry extends RouteEntry {
 		StringBuilder buf = new StringBuilder(384);
 		buf.append("<div class=\"mapInfoBox acarsFlight\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("</span><br />Time: ");
+		buf.append("</span><br>Time: ");
 		buf.append(StringUtils.format(getDate(), "MM/dd/yyyy HH:mm:ss"));
-		buf.append(" UTC<br />Altitude: ");
+		buf.append(" UTC<br>Altitude: ");
 		buf.append(StringUtils.format(getAltitude(), "#,000"));
 		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
@@ -806,7 +806,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(" feet AGL)");
 		}
 
-		buf.append("<br />");
+		buf.append("<br>");
 		if ((_pitch < -1) || (_pitch > 5)) {
 			buf.append("Pitch: ");
 			buf.append(StringUtils.format(_pitch, "#0.0"));
@@ -814,19 +814,19 @@ public class ACARSRouteEntry extends RouteEntry {
 			if (Math.abs(_bank) > 3)
 				buf.append(' ');
 			else
-				buf.append("<br />");
+				buf.append("<br>");
 		}
 
 		if (Math.abs(_bank) > 3) {
 			buf.append("Bank: ");
 			buf.append(StringUtils.format(_bank, "#0.0"));
-			buf.append("<sup>o</sup><br />");
+			buf.append("<sup>o</sup><br>");
 		}
 
 		if (Math.abs(1 - _gForce) >= 0.1) {
 			buf.append("Acceleration: ");
 			buf.append(StringUtils.format(_gForce, "#0.000"));
-			buf.append("G<br />");
+			buf.append("G<br>");
 		}
 
 		buf.append("Speed: ");
@@ -840,11 +840,11 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("</i>");
 		}
 
-		buf.append("<br />Heading: ");
+		buf.append("<br>Heading: ");
 		buf.append(StringUtils.format(getHeading(), "000"));
-		buf.append(" degrees<br />Vertical Speed: ");
+		buf.append(" degrees<br>Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
-		buf.append(" feet/min<br />");
+		buf.append(" feet/min<br>");
 		boolean showPerEngine = isEngineOut() || _displayPerEngineNX;
 		if (showPerEngine && (_engineCount > 0)) {
 			buf.append(_engineCount);
@@ -857,7 +857,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(StringUtils.format(_avgN2, "##0.0"));
 			buf.append("% throttle");
 			if (showPerEngine) {
-				buf.append("<br />");
+				buf.append("<br>");
 				for (int x = 0; x < _engineCount; x++) {
 					buf.append("Engine ");
 					buf.append(x+1);
@@ -865,7 +865,7 @@ public class ACARSRouteEntry extends RouteEntry {
 					buf.append((int)_n1[x]);
 					buf.append(" RPM, ");
 					buf.append(StringUtils.format(_n2[x], "##0.0"));
-					buf.append("% throttle<br />");
+					buf.append("% throttle<br>");
 				}
 			}
 		} else {
@@ -874,7 +874,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("%, N<sub>2</sub>: ");
 			buf.append(StringUtils.format(_avgN2, "##0.0"));
 			if (showPerEngine) {
-				buf.append("<br />");
+				buf.append("<br>");
 				for (int x = 0; x < _engineCount; x++) {
 					buf.append("Engine ");
 					buf.append(x+1);
@@ -882,35 +882,35 @@ public class ACARSRouteEntry extends RouteEntry {
 					buf.append(_n1[x]);
 					buf.append("% N<sub>1</sub>, ");
 					buf.append(_n2[x]);
-					buf.append("% N<sub>2</sub><br />");
+					buf.append("% N<sub>2</sub><br>");
 				}
 			}
 		}
 		
-		buf.append("<br />Fuel Flow:");
+		buf.append("<br>Fuel Flow:");
 		buf.append(StringUtils.format(_fuelFlow, "#,##0"));
-		buf.append(" lbs/hr<br />");
+		buf.append(" lbs/hr<br>");
 
 		// Add flaps logging if deployed
 		if (_flaps != 0) {
 			buf.append("Flaps: ");
 			if (_flaps > 0)
-				buf.append(_flaps).append("<sup>o</sup><br />");
+				buf.append(_flaps).append("<sup>o</sup><br>");
 			else
-				buf.append(AirbusFlaps.fromCode(_flaps).getDescription()).append("<br />");
+				buf.append(AirbusFlaps.fromCode(_flaps).getDescription()).append("<br>");
 		}
 
 		// Add afterburner/gear if deployed
 		if (isFlagSet(ACARSFlags.AFTERBURNER))
-			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
+			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br>");
 		if (isFlagSet(ACARSFlags.GEARDOWN) && !isFlagSet(ACARSFlags.ONGROUND))
-			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
+			buf.append("<span class=\"ita\">GEAR DOWN</span><br>");
 		if ((isFlagSet(ACARSFlags.SP_ARMED) || isFlagSet(ACARSFlags.SPOILERS)) && (_radarAlt < 3500)) {
 			buf.append("<span class=\"ita\">");
 			buf.append(isFlagSet(ACARSFlags.ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
 			if (isFlagSet(ACARSFlags.SP_ARMED))
 				buf.append(" ARMED");
-			buf.append("</span><br />");
+			buf.append("</span><br>");
 		}
 
 		// Add Autopilot flags if set
@@ -924,38 +924,38 @@ public class ACARSRouteEntry extends RouteEntry {
 
 			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_VNAV)) buf.append((_ap == AutopilotType.MD) ? " PROF" : " VNAV");
 			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_FLCH)) buf.append((_ap == AutopilotType.MD) ? " FMS" : " FLCH");
-			buf.append("<br />");
+			buf.append("<br>");
 		}
 
 		// Add Autothrottle flags if set
 		if (isFlagSet(ACARSFlags.AT_VNAV) && !managedVerticalSpeed)
-			buf.append((_ap == AutopilotType.MD) ? "Autothrottle: FMS<br />" : "Autothrottle: VNAV<br />");
+			buf.append((_ap == AutopilotType.MD) ? "Autothrottle: FMS<br>" : "Autothrottle: VNAV<br>");
 		else if (isFlagSet(ACARSFlags.AT_FLCH) && !managedVerticalSpeed)
-			buf.append("Autothrottle: FLCH<br />");
+			buf.append("Autothrottle: FLCH<br>");
 		else if (isFlagSet(ACARSFlags.AT_IAS))
-			buf.append("Autothrottle: IAS<br />");
+			buf.append("Autothrottle: IAS<br>");
 		else if (isFlagSet(ACARSFlags.AT_MACH))
-			buf.append("Autothrottle: MACH<br />");
+			buf.append("Autothrottle: MACH<br>");
 		
 		// Add Pause/Stall/VAS/Warning flags
 		if (isFlagSet(ACARSFlags.PAUSED))
-			buf.append("<span class=\"bld error\">FLIGHT PAUSED</span><br />");
+			buf.append("<span class=\"bld error\">FLIGHT PAUSED</span><br>");
 		if (_networkConnected)
-			buf.append("<br /><span class=\"ita\">NETWORK CONNECTED</span><br />");
+			buf.append("<br><span class=\"ita\">NETWORK CONNECTED</span><br>");
 		if (!_acarsConnected)
-			buf.append("<span class=\"ter ita\">DISCONNECTED</span><br />");
+			buf.append("<span class=\"ter ita\">DISCONNECTED</span><br>");
 		if ((_frameRate > 0) && (_frameRate <= 8)) {
-			buf.append("<br /><span class=\"warn\">FRAME RATE - ");
+			buf.append("<br><span class=\"warn\">FRAME RATE - ");
 			buf.append(_frameRate);
-			buf.append(" fps</span><br />");
+			buf.append(" fps</span><br>");
 		}
 		if ((_vasFree > 0) && (_vasFree < 524288)) {
 			if (_frameRate > 8)
-				buf.append("<br />");
+				buf.append("<br>");
 				
 			buf.append("<span class=\"warn\">LOW MEMORY - ");
 			buf.append(_vasFree / 1024);
-			buf.append("MB</span><br />");
+			buf.append("MB</span><br>");
 		}
 		
 		Collection<Warning> warns = getWarnings();
@@ -967,16 +967,16 @@ public class ACARSRouteEntry extends RouteEntry {
 					buf.append(' ');
 			}
 
-			buf.append("</span><br />");
+			buf.append("</span><br>");
 		}
 		
 		// Add Thrust Reverser flags if set
 		if (isFlagSet(ACARSFlags.REVERSE) && isFlagSet(ACARSFlags.ONGROUND))
-			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br />");
+			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br>");
 		
 		// Add ATC info
 		buf.append(getATCData(1));
-		if ((_atc1 != null) && (_atc2 != null)) buf.append("<br />");
+		if ((_atc1 != null) && (_atc2 != null)) buf.append("<br>");
 		buf.append(getATCData(2));
 
 		buf.append("</div>");

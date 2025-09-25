@@ -13,8 +13,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2','pssstar.dat.xz','psssid.dat.xz'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -54,7 +54,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Terminal Route data before Import" /><br />
+ <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Terminal Route data before Import" /><br>
 <el:box name="updateVersion" idx="*" className="small" value="true" checked="true" label="Update AIRAC Version on Import completion" /></td>
 </tr>
 </el:table>
@@ -66,7 +66,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

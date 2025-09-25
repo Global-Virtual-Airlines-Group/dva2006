@@ -8,7 +8,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -19,11 +19,11 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Mass Mailing Sent</div>
-<br />
-The mass e-mail message to all active ${eqType} pilots has been sent.<br />
-<br />
-<fmt:int value="${msgSent}" /> e-mail message(s) have been sent.<br />
-<br />
+<br>
+The mass e-mail message to all active ${eqType} pilots has been sent.<br>
+<br>
+<fmt:int value="${msgSent}" /> e-mail message(s) have been sent.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

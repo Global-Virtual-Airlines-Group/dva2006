@@ -9,7 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,29 +22,29 @@
 <c:choose>
 <c:when test="${isImport}">
 <div class="updateHdr">Preferred Routes Imported</div>
-<br />
+<br>
 The Federal Aviation Administration Preferred Routes database (in CSV format) has been successfully imported into the database. <fmt:int value="${routeCount}" /> Preferred Routes have been successfully
-added to the database.<br />
+added to the database.<br>
 <c:if test="${!empty warnings}">
-<br />
-<span class="warn bld">The following Errors and Warnings occured during the import process:</span><br />
+<br>
+<span class="warn bld">The following Errors and Warnings occured during the import process:</span><br>
 <c:forEach var="warning" items="${warnings}">
-${warning}<br />
+${warning}<br>
 </c:forEach>
 </c:if>
 </c:when>
 <c:when test="${isDelete}">
 <div class="updateHdr">Oceanic Route Deleted</div>
-<br />
-The Oceanic Route was successfully deleted from the database.<br />
+<br>
+The Oceanic Route was successfully deleted from the database.<br>
 </c:when>
 <c:when test="${purgeOceanic}">
 <div class="updateHdr">Oceanic Routes Purged</div>
-<br />
-<fmt:int value="${rowsDeleted}" /> Oceanic Routes have been purged from the database.<br />
+<br>
+<fmt:int value="${rowsDeleted}" /> Oceanic Routes have been purged from the database.<br>
 </c:when>
 </c:choose>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

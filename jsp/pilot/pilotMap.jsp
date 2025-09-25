@@ -12,14 +12,14 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="pilotMap" />
 <content:cspHeader />
 <content:filter roles="HR">
-<script async>
+<script>
 golgotha.pilotMap.deleteMarker = function(id) {
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.timeout = 7500;
@@ -84,11 +84,11 @@ golgotha.pilotMap.deleteMarker = function(id) {
 </el:table>
 </content:filter>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />

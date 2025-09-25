@@ -10,7 +10,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,17 +23,17 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">NO AVAILABLE SCHEDULED ONLINE EVENTS</div>
-<br />
+<br>
 At the moment, no <content:airline /> Online Events are currently available for signup. Please be sure to check back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
-major event per month, and ad hoc events approximately once every seven to ten days.<br />
-<br />
+major event per month, and ad hoc events approximately once every seven to ten days.<br>
+<br>
 <el:table>
 <tr>
- <td><el:link url="https://www.vatsim.net/" target="_NEW"><el:img src="network/${vatsimImg}" className="noborder" caption="VATSIM" /></el:link></td>
- <td><el:link url="https://www.ivao.aero/" target="_NEW"><el:img src="network/${ivaoImg}" className="noborder" caption="IVAO" /></el:link></td>
+ <td><el:link url="https://www.vatsim.net/" target="_blank"><el:img src="network/${vatsimImg}" className="noborder" caption="VATSIM" /></el:link></td>
+ <td><el:link url="https://www.ivao.aero/" target="_blank"><el:img src="network/${ivaoImg}" className="noborder" caption="IVAO" /></el:link></td>
 </tr>
 </el:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

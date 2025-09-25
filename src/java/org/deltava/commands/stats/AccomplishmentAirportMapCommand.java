@@ -1,4 +1,4 @@
-// Copyright 2017, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports needed to complete Accomplishments. 
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 7.2
  */
 
@@ -68,8 +68,8 @@ public class AccomplishmentAirportMapCommand extends AbstractCommand {
 		public String getInfoBox() {
 			StringBuilder buf = new StringBuilder(_a.getInfoBox());
 			buf.setLength(buf.length() - 6); // strip closing div tag
-			buf.append("<br /><br /><span class=\"small\">Airlines served:<br />");
-			_a.getAirlineCodes().stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(al -> buf.append(al.getName()).append("<br />"));
+			buf.append("<br><br><span class=\"small\">Airlines served:<br>");
+			_a.getAirlineCodes().stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(al -> buf.append(al.getName()).append("<br>"));
 			buf.append("</div>");
 			return buf.toString();
 		}

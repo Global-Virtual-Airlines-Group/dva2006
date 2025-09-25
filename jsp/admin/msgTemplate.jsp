@@ -12,8 +12,8 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:4, t:'Template Name'});
@@ -111,7 +111,7 @@ golgotha.onDOMReady(golgotha.local.updateObjects);
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHTML" idx="*" value="true" checked="${template.isHTML}" label="Send E-Mail message as HTML" /><br />
+ <td class="data"><el:box name="isHTML" idx="*" value="true" checked="${template.isHTML}" label="Send E-Mail message as HTML" /><br>
 <el:box name="noReply" idx="*" value="true" checked="${template.noReply}" label="Disable Replies to this message" /></td>
 </tr>
 <tr>
@@ -128,7 +128,7 @@ golgotha.onDOMReady(golgotha.local.updateObjects);
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

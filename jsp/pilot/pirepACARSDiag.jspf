@@ -6,9 +6,9 @@
 <c:if test="${!empty acarsClientInfo}">
 <tr class="acarsDiagData">
  <td class="label top">System Information</td>
- <td class="data"><fmt:windows version="${acarsClientInfo.OSVersion}" /> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span><br />
-.NET <span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span><br />
-${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span><br />
+ <td class="data"><fmt:windows version="${acarsClientInfo.OSVersion}" /> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span><br>
+.NET <span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span><br>
+${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span><br>
 ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
 </tr>
 </c:if>
@@ -16,7 +16,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <tr class="acarsDiagData">
  <td class="label top">ACARS Client Timers</td>
  <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" fmt="#0.00" />ms
- Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${tt.stdDev > 0}"> stdDev=<fmt:dec value="${tt.stdDev / tt.tickSize}" fmt="##0.00" />ms</c:if><c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
+ Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${tt.stdDev > 0}"> stdDev=<fmt:dec value="${tt.stdDev / tt.tickSize}" fmt="##0.00" />ms</c:if><c:if test="${!ttStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${!empty acarsFrames}">
@@ -29,6 +29,6 @@ P95 = <fmt:int value="${acarsFrames.getPercentile(95)}" />, P99 = <fmt:int value
 <c:if test="${!empty acarsPerfCtrs}">
 <tr class="acarsDiagData">
  <td class="label top">ACARS Performance Counters</td>
- <td class="data"><c:forEach var="ctr" items="${acarsPerfCtrs.entrySet()}" varStatus="ctrStatus"><span class="bld">${ctr.key}</span> <fmt:int value="${ctr.value}" /><c:if test="${!ctrStatus.last}"><br /></c:if></c:forEach></td>
+ <td class="data"><c:forEach var="ctr" items="${acarsPerfCtrs.entrySet()}" varStatus="ctrStatus"><span class="bld">${ctr.key}</span> <fmt:int value="${ctr.value}" /><c:if test="${!ctrStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>

@@ -15,7 +15,7 @@
 <content:googleAnalytics />
 <map:api version="3" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -29,8 +29,8 @@
 <el:form action="mynewairports.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td width="65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
- <td width="10%" class="mid"><el:cmd url="mynewairports">TABLE</el:cmd>
+ <td style="width:65%"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td style="width:10%" class="mid"><el:cmd url="mynewairports">TABLE</el:cmd>
  <td class="right">AIRLINE <el:combo name="airline" idx="*" firstEntry="[ ALL ]"  options="${airlines}" onChange="void golgotha.local.filter(this)" /></td>
 </tr>
 <tr>
@@ -38,11 +38,11 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 golgotha.local.airports = {all:[], airlines:[]};

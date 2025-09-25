@@ -17,7 +17,7 @@
 <content:sysdata var="airlineURL" name="airline.url" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <c:if test="${access.canUseSimBrief}">
 <content:js name="simBrief" />
@@ -30,7 +30,7 @@
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <content:empty var="emptyList" />
 <c:set var="hasDelay" value="${reviewDelay > 0}" scope="page" />
-<script async>
+<script>
 golgotha.local.startTime = new Date();
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -78,14 +78,14 @@ golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons,
 <content:js name="threebox" minify="false" />
 <content:css name="threebox" noScheme="true" />
 <content:filter roles="PIREP,HR,Developer,Operations">
-<script async>
+<script>
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=360,width=770,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
 </script></content:filter></c:if>
 <content:cspHeader />
 <c:if test="${!empty eliteLevel}">
-<style type="text/css">
+<style>
 table.form td.eliteStatus {
 	color: #ffffff;
 	background-color: #${eliteLevel.hexColor};
@@ -136,7 +136,7 @@ table.form td.eliteStatus {
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="https://vatstats.net/pilots/${vatsimID}" target="_new" external="true">VATSTATS</el:link></c:if></td>
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="https://vatstats.net/pilots/${vatsimID}" target="_blank" external="true">VATSTATS</el:link></c:if></td>
 </tr>
 </c:if>
 </c:if>
@@ -220,7 +220,7 @@ table.form td.eliteStatus {
 </c:if>
 <tr>
  <td class="label top">Other Information</td>
- <td class="data"><c:if test="${fn:isOnline(pirep) && !access.canDispose}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
+ <td class="data"><c:if test="${fn:isOnline(pirep) && !access.canDispose}">Flight Leg flown online using the ${fn:network(pirep)} network<br></c:if>
 <c:if test="${isACARS && !isXACARS && !isSimFDR}">
 <div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div></c:if>
 <c:if test="${isXACARS}">
@@ -430,7 +430,7 @@ table.form td.eliteStatus {
 <tr class="sbData">
 <td class="label top">Alternates</td>
 <td class="data"><c:forEach var ="ap" items="${sbPackage.alternates}" varStatus="aaStatus">
-${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span><c:if test="${!aaStatus.last}"><br /></c:if></c:forEach></td>
+${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="${ap}" /></el:cmd>)<span class="small"> - <fmt:distance value="${ap.distanceTo(pirep.airportA)}" /> from destination</span><c:if test="${!aaStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${sbPackage.ETOPS.time > 75}" >
@@ -456,12 +456,12 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <tr class="elData">
  <td class="label eliteStatus top">Mileage Information</td>
  <td class="data">Mileage accumulation: <fmt:int value="${eliteScore.points}" /> miles<c:if test="${!eliteScore.scoreOnly}"> / <span class="bld"><fmt:int value="${eliteScore.distance}" />&nbsp;${distanceUnit}</span></c:if>, Flown 
- as <fmt:elite className="bld" level="${eliteLevel}" nameOnly="true" /><c:if test="${access.canEliteRescore}"> - <el:cmd url="eliterescore" link="${pirep}" className="pri bld">RECACLCULATE</el:cmd></c:if><br />
-<c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg is not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br /></c:if>
-<hr />
+ as <fmt:elite className="bld" level="${eliteLevel}" nameOnly="true" /><c:if test="${access.canEliteRescore}"> - <el:cmd url="eliterescore" link="${pirep}" className="pri bld">RECACLCULATE</el:cmd></c:if><br>
+<c:if test="${eliteScore.scoreOnly}"><span class="small error bld">This Flight Leg is not eligible to accumulate Flight Legs or ${distanceUnit} in the ${eliteName} Program</span><br></c:if>
+<hr>
 <span class="small"><c:forEach var="esEntry" items="${eliteScore.entries}" varStatus="esStatus">
 <fmt:int className="pri bld" value="${esEntry.points}" /> - ${esEntry.message}<c:if test="${esEntry.bonus}">&nbsp;<span class="ita">( BONUS )</span></c:if>
-<c:if test="${!esStatus.isLast()}"><br /></c:if></c:forEach></span></td> 
+<c:if test="${!esStatus.isLast()}"><br></c:if></c:forEach></span></td> 
 </tr>
 </c:when>
 <c:when test="${eliteEnabled && (pirep.status == 'OK')}">
@@ -549,8 +549,8 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 </tr>
 <tr>
  <td class="label top">Assign Leg</td>
- <td class="data"><span class="ita nophone">This flight does not appear to have arrived at its originally filed destination. Click the box below to hold the Flight Report and automatically assign a leg to complete the originally scheduled flight.</span><br />
-<br /><el:box name="holdDivert" value="true" label="Create diversion completion Flight Assignment" /></td>
+ <td class="data"><span class="ita nophone">This flight does not appear to have arrived at its originally filed destination. Click the box below to hold the Flight Report and automatically assign a leg to complete the originally scheduled flight.</span><br>
+<br><el:box name="holdDivert" value="true" label="Create diversion completion Flight Assignment" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -603,7 +603,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <content:browser human="true">
 <c:choose>
 <c:when test="${googleMap}">
-<script async>
+<script>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:token />
@@ -710,7 +710,7 @@ return true;
 </c:choose>
 <c:if test="${access.canUseSimBrief}">
 <!-- SimBrief integration -->
-<script async>
+<script>
 golgotha.simbrief.id = '${pirep.hexID}';
 golgotha.simbrief.acType = '${acInfo.ICAO}';
 <c:if test="${empty sbPackage}">golgotha.simbrief.loadAirframes();</c:if>

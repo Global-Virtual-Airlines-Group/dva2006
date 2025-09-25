@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.setSort = function(combo) {
 	self.location = '/cmdstats.do?sortBy=' + golgotha.form.getCombo(combo);

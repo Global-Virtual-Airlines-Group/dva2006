@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2014, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.time.ZonedDateTime;
@@ -14,15 +14,14 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate a weekly Calendar.
  * @author Luke
- * @version 7.0
+ * @version 12.3
  * @since 1.0
  */
 
 public class WeeklyCalendarTag extends CalendarTag {
 
 	/**
-	 * Sets the starting date for this calendar tag. This is overriden to be the first day of
-	 * the week (Sunday).
+	 * Sets the starting date for this calendar tag. This is overriden to be the first day of the week (Sunday).
 	 * @param dt the start date
 	 * @see CalendarTag#setStartDate(ZonedDateTime)
 	 */
@@ -32,18 +31,12 @@ public class WeeklyCalendarTag extends CalendarTag {
 		calculateEndDate(ChronoUnit.WEEKS, 1);
 	}
 	
-	/**
-	 * Returns the label for the scroll backwards link.
-	 */
 	@Override
 	protected String getBackLabel() {
 		ZonedDateTime zdt = _startDate.minus(_intervalLength, _intervalType);
 		return "WEEK OF " + StringUtils.format(zdt, "MMM dd yyyy");
 	}
 	
-	/**
-	 * Returns the label for the scroll forwards link.
-	 */
 	@Override
 	protected String getForwardLabel() {
 		ZonedDateTime zdt = _startDate.plus(_intervalLength, _intervalType);
@@ -65,7 +58,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 			// Write the header row
 			_out.print("<tr>");
 			DateTimeFormatter wf = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
-			XMLRenderer title = new XMLRenderer("td");
+			XMLRenderer title = new XMLRenderer("td", true);
 			title.setAttribute("colspan", "7");
 			title.setAttribute("class", _topBarClass);
 			_out.print(title.open(true));
@@ -82,7 +75,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 				// Write the row
 				_out.print("<tr>");
 				for (int x = 0; x < 7; x++) {
-					XMLRenderer dayHdr = new XMLRenderer("td");
+					XMLRenderer dayHdr = new XMLRenderer("td", true);
 					dayHdr.setAttribute("class", getHeaderClass(dw));
 					_out.print(dayHdr.open(true));
 					_out.print(df.format(dw));
@@ -95,7 +88,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 
 			// Generate the week row and first day cell
 			_out.print("<tr>");
-			_day = new XMLRenderer("td");
+			_day = new XMLRenderer("td", true);
 			_day.setAttribute("class", getContentClass(_currentDate));
 			_out.print(_day.open(true));
 		} catch (IOException ie) {
@@ -106,8 +99,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 	}
 
 	/**
-	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called to determine if
-	 * further records are required.
+	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called to determine if further records are required.
 	 * @return TagSupport.EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport.SKIP_BODY
 	 * @throws JspException never
 	 */

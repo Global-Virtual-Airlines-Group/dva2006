@@ -14,9 +14,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -35,8 +35,8 @@ golgotha.local.validate = function(f) {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="landings.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
-The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the best landings and the Pilots who made them. Landings are rated on a combination of touchdown speed (relative to an optimum rate) and distance down the runway.<br />
-<br />
+The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the best landings and the Pilots who made them. Landings are rated on a combination of touchdown speed (relative to an optimum rate) and distance down the runway.<br>
+<br>
 <el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
@@ -83,7 +83,7 @@ The members of <content:airline /> are a skilled group - and they can prove it. 
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

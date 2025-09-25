@@ -1,4 +1,4 @@
-// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A Map entry bean to store an ATC location.
  * @author Luke
- * @version 6.0
+ * @version 12.3
  * @since 4.0
  */
 
@@ -35,11 +35,11 @@ public class ATCMapEntry extends GroundMapEntry {
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox acarsATC\"><span class=\"pri bld\">");
 		buf.append(_usr.getName());
-		buf.append("</span><br />");
+		buf.append("</span><br>");
 		buf .append(_usr.getRank());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
-		buf.append("<br /><br />");
+		buf.append("<br><br>");
 		buf.append("ACARS Radar Build ");
 		buf.append(_clientBuild);
 		if (_betaBuild > 0) {

@@ -15,9 +15,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.sortBy = function(combo) {
 	self.location = '/httpstats.do?sortType=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
@@ -70,7 +70,7 @@ golgotha.local.sortBy = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

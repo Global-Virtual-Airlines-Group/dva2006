@@ -13,13 +13,13 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
@@ -102,7 +102,7 @@ golgotha.onDOMReady(function() {
 <!-- Search Results -->
 <c:if test="${doSearch}">
 <c:if test="${!empty results}">
-<br />
+<br>
 <el:form method="post" action="routebuild.do" validate="return golgotha.form.wrap(golgotha.local.validateBuild, this)">
 <el:table className="view">
 <tr class="title caps">
@@ -152,7 +152,7 @@ golgotha.onDOMReady(function() {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 </c:if>
 <c:if test="${empty results}">
 <el:table className="view">

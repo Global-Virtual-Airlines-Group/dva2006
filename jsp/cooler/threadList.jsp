@@ -16,12 +16,12 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setChannel = function(combo) {
 	self.location = '/channel.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
@@ -88,7 +88,7 @@ golgotha.local.setChannel = function(combo) {
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -9,7 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -22,9 +22,9 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Image Gallery Entry Deleted</div>
-<br />
-This Image Gallery entry has been successfully deleted from the database. If this Image was linked to a ${forumName} message thread, the link has also been removed.<br />
-<br />
+<br>
+This Image Gallery entry has been successfully deleted from the database. If this Image was linked to a ${forumName} message thread, the link has also been removed.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

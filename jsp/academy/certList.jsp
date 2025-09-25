@@ -12,7 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -42,7 +42,7 @@
  <td class="bld"><fmt:int value="${cert.stage}" /></td>
  <td class="sec bld">${cert.reqs.description}</td>
  <td><fmt:int value="${cert.reqCount}" /></td>
- <td class="sec small"><c:forEach var="al" items="${cert.airlines}" varStatus="alNext">${al.name}<c:if test="${!alNext.last}"><br /></c:if></c:forEach></td>
+ <td class="sec small"><c:forEach var="al" items="${cert.airlines}" varStatus="alNext">${al.name}<c:if test="${!alNext.last}"><br></c:if></c:forEach></td>
  <td class="left"><fmt:list value="${cert.examNames}" delim=", " empty="NONE" /></td>
 </view:row>
 </c:forEach>
@@ -52,7 +52,7 @@
  <td colspan="7"> <c:if test="${access.canCreate}"><el:cmd url="cert" op="edit">NEW CERTIFICATION</el:cmd></c:if></td>
 </tr>
 </el:table>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

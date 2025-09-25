@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:js name="resumable" />
 <content:js name="progress" />
-<script async>
+<script>
 golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2','xz'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -64,7 +64,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br />
+ <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br>
 <el:box name="doPurge" idx="*" value="true" checked="true" label="Purge Raw Schedule from this Schedule Source" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
@@ -83,12 +83,12 @@ golgotha.local.validate = function(f) {
 </el:table>
 <el:text name="id" type="hidden" value="" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:262144, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');

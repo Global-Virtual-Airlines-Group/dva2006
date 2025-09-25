@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,96 +24,96 @@
 <c:if test="${isDelete}">
 <!-- Flight Academy Course Deleted -->
 <div class="updateHdr">Flight Academy Course Deleted</div>
-<br />
-The <content:airline /> Flight Academy Course <span class="pri bld">${course.name}</span> for ${pilot.name} has been deleted.<br />
+<br>
+The <content:airline /> Flight Academy Course <span class="pri bld">${course.name}</span> for ${pilot.name} has been deleted.<br>
 </c:if>
 <c:if test="${isRestarted}">
 <!-- Flight Academy Course Restarted -->
 <div class="updateHdr">Flight Academy Course Re-Enrollment Requested</div>
-<br />
+<br>
 You have requested re-enrollment in the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>. A Flight
-Academy Instructor should be in contact with you soon about your request.<br />
-<br />
-To view this Course, <el:cmd url="course" link="${course}" className="sec bld">Click Here</el:cmd>.<br />
+Academy Instructor should be in contact with you soon about your request.<br>
+<br>
+To view this Course, <el:cmd url="course" link="${course}" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${isAbandoned}">
 <!-- Flight Academy Course Abandoned -->
 <div class="updateHdr">Flight Academy Course Withdrawal</div>
-<br />
-You have withdrawn from the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>.<br />
+<br>
+You have withdrawn from the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>.<br>
 </c:if>
 <c:if test="${isCompleted}">
 <!-- Flight Academy Course Completed -->
 <div class="updateHdr">Flight Academy Course Completed</div>
-<br />
+<br>
 ${pilot.name} has successfully completed the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>, and has been awarded the <span class="bld">${course.name}</span> 
-Certification. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName}.<br />
+Certification. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName}.<br>
 <c:if test="${networkRatingAdded}">
-<br />
-The <span class="bld">${cert.networkRatingCode}</span> Pilot rating on the <span class="ter bld">${cert.network}</span> has been successfully granted to this Pilot.<br /></c:if>
+<br>
+The <span class="bld">${cert.networkRatingCode}</span> Pilot rating on the <span class="ter bld">${cert.network}</span> has been successfully granted to this Pilot.<br></c:if>
 <c:if test="${!empty networkRatingError}">
-<br />
-<span class="warn">The following error occured when attempting to grant the ${cert.networkRatingCode} Pilot rating on the ${cert.network}: <span class="bld">${networkRatingError.message}</span></span><br /></c:if>
-<br />
-To view the Pilot profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
+<br>
+<span class="warn">The following error occured when attempting to grant the ${cert.networkRatingCode} Pilot rating on the ${cert.network}: <span class="bld">${networkRatingError.message}</span></span><br></c:if>
+<br>
+To view the Pilot profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${isPending}">
 <!-- Flight Academy Course Enrollment Pending -->
 <div class="updateHdr">Flight Academy Course Enrollment Pending</div>
-<br />
+<br>
 Thank you for your interest in the <content:airline /> Flight Academy. Your enrollment request has been saved, and will be processed within 24 to 72 hours. Once you have obtained at least one Stage 1 Flight 
-Certification, you will be able to enroll in new courses without any waiting period.<br />
+Certification, you will be able to enroll in new courses without any waiting period.<br>
 </c:if>
 <c:if test="${isSessionUpdate}">
 <!-- Flight Academy Instructor Session Updated -->
 <div class="updateHdr">Flight Academy Instructor Session Updated</div>
-<br />
+<br>
 The Flight Academy Instructor Session with ${pilot.name} has been updated in the Flight Academy Instruction Calendar.<c:if test="${emailSent}"> An e-mail message has been sent to ${pilot.name} 
-with information about this session.</c:if><br />
-<br />
-To view the <content:airline /> Flight Acadamy Instruction Calendar, <el:cmd url="academycalendar" className="sec bld">Click Here</el:cmd>.<br />
+with information about this session.</c:if><br>
+<br>
+To view the <content:airline /> Flight Acadamy Instruction Calendar, <el:cmd url="academycalendar" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
 <c:if test="${isSessionCancel}">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="page" />
 <c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
 <!-- Flight Academy Instructor Session Canceled -->
 <div class="updateHdr">Flight Academy Instructor Session Canceled</div>
-<br />
+<br>
 The Flight Academy Instructor Session with ${pilot.name} and ${ins.name} has been canceled, and the Flight Academy Instruction Calendar has been updated. An e-mail message has been sent to ${pilot.name} 
-with information about this session.<br />
+with information about this session.<br>
 </c:if>
 <c:if test="${isAssign && !isOurs}">
 <div class="updateHdr">Flight Academy Check Ride Assigned</div>
-<br />
-This <content:airline /> Flight Academy ${checkRide.name} Check Ride has been assigned to ${pilot.name}, and an e-mail message has been sent to the Pilot.<br />
+<br>
+This <content:airline /> Flight Academy ${checkRide.name} Check Ride has been assigned to ${pilot.name}, and an e-mail message has been sent to the Pilot.<br>
 </c:if>
 <c:if test="${isAssign && isOurs}">
 <div class="updateHdr">Flight Academy Check Ride Assigned</div>
-<br />
-A <content:airline /> Flight Academy Check Ride has been created for you in the <span class="bld">${course.name}</span> Course. The description of the Check Ride is as follows:<br />
-<br />
-<fmt:text value="${rideScript.description}" /><br />
-<br />
-An e-mail message has been sent to you with a decription of the Check Ride.<br /> 
+<br>
+A <content:airline /> Flight Academy Check Ride has been created for you in the <span class="bld">${course.name}</span> Course. The description of the Check Ride is as follows:<br>
+<br>
+<fmt:text value="${rideScript.description}" /><br>
+<br>
+An e-mail message has been sent to you with a decription of the Check Ride.<br> 
 </c:if>
 <c:if test="${isRideAlreadyAssigned}">
 <div class="updateHdr">Check Ride Pending</div>
-<br />
-A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can be assigned while one is currently pending.<br />
+<br>
+A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can be assigned while one is currently pending.<br>
 </c:if>
 <c:if test="${flightUpdate}">
 <div class="updateHdr">Instruction Flight Log Updated</div>
-<br />
-The Instructor Flight Log for ${ins.name} has been updated. <br />
+<br>
+The Instructor Flight Log for ${ins.name} has been updated. <br>
 </c:if>
-<br />
-To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />
+<br>
+To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br>
 <content:filter roles="Instructor,HR">
-<br />
-To view all active <content:airline /> Flight Academy courses, <el:cmd url="courses" op="active" className="sec bld">Click Here</el:cmd>.<br />
-To view all <content:airline /> Flight Academy certifications, <el:cmd url="certs" className="sec bld">Click Here</el:cmd>.<br />
+<br>
+To view all active <content:airline /> Flight Academy courses, <el:cmd url="courses" op="active" className="sec bld">Click Here</el:cmd>.<br>
+To view all <content:airline /> Flight Academy certifications, <el:cmd url="certs" className="sec bld">Click Here</el:cmd>.<br>
 </content:filter>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

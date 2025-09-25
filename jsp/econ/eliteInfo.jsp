@@ -12,19 +12,19 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:attr attr="isOps" value="true" roles="HR,Operations" />
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check() || ${!isOps}) return false;	
 	golgotha.form.submit(f);
 	return true;
 };
 </script>
-<style type="text/css">
+<style>
 table.form td.eliteStatus, .button {
 	color: #ffffff;
 	background-color: #${currentStatus.level.hexColor};
@@ -74,12 +74,12 @@ span.rmbar {
 <tr>
  <td class="label eliteStatus top">Current Status</td>
  <td class="data">${eliteName}&nbsp;<fmt:elite level="${currentStatus.level}" className="bld" /> (<span class="ita">${currentStatus.level.year}</span>)
- <c:if test="${currentStatus.isLifetime}"> - Based on lifetime <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br />
- <hr />
+ <c:if test="${currentStatus.isLifetime}"> - Based on lifetime <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status obtained on <fmt:date date="${currentLTStatus.effectiveOn}" fmt="d" /></c:if><br>
+ <hr>
  ${currentYear} totals - <fmt:int value="${ct.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${ct.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${ct.points}" />&nbsp;${elitePoints}</span>
- <c:if test="${pending.legs > 0}"><br />Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
+ <c:if test="${pending.legs > 0}"><br>Pending ${currentYear} flights - <fmt:int value="${pending.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${pending.distance}" />&nbsp;${eliteDistance}</span></c:if>
  <c:if test="${((ro.legs > 0) || (ro.distance > 0))}">
- <br />
+ <br>
  Rolled over from <span class="pri bld">${currentYear - 1}</span>: <c:if test="${ro.legs > 0}"><fmt:int value="${ro.legs}" className="bld" /> flight legs<c:if test="${ro.distance > 0}">, </c:if></c:if>
 <c:if test="${ro.distance > 0}"><span class="ter bld"><fmt:int value="${ro.distance}" />&nbsp;${eliteDistance}</span></c:if></c:if></td>
 </tr>
@@ -114,7 +114,7 @@ span.rmbar {
  <fmt:int value="${projectedTotal.legs}" /> flight legs and <fmt:int value="${projectedTotal.distance}" />&nbsp;${eliteDistance}, for <fmt:elite level="${projectedStatus.level}" className="bld" nameOnly="true" /> status.
 <c:if test="${projectedStatus.isLifetime}"> <span class="small ita">(based on your <fmt:ltelite level="${currentLTStatus.lifetimeStatus}" className="bld" /> status)</span>)</c:if></c:if>
  <c:if test="${(legDelta < 0.1) || (distDelta < 0.1)}">
- <br /><br />
+ <br><br>
 <span class="pri bld">REQUALIFICATION ALERT</span> - You are approaching the requirements for <fmt:elite level="${nextLevel}" className="bld" nameOnly="true" /> status in ${currentYear + 1}. Just a few more flights could qualify you for a higher
  level until the end of next year. It may be a good time for a mileage run!</c:if></td></c:if>
 </tr>
@@ -156,7 +156,7 @@ span.rmbar {
 <c:when test="${upd.upgradeReason == 'NONE'}">Initial ${eliteName} credit</c:when>
 <c:otherwise>Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason.description})</c:otherwise>
 </c:choose>
-<c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach></td>
+<c:if test="${!updStatus.isLast()}"><br></c:if></c:forEach></td>
 </tr>
 <tr class="title caps">
  <td colspan="2" class="eliteStatus">${eliteName} STATUS HISTORY</td>
@@ -168,8 +168,8 @@ span.rmbar {
 <c:if test="${(yr ne currentYear) && (!empty upds)}">
 <tr>
  <td class="label top" style="background-color:#${yearMax.hexColor};" title="Year-end ${yr} status: ${yearMax.name}">${yr} Results</td>
- <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span><br />
-<br />
+ <td class="data">${yr} totals - <fmt:int value="${total.legs}" className="pri bld" /> flight legs, <span class="sec bld"><fmt:int value="${total.distance}" />&nbsp;${eliteDistance}</span>, <span class="bld"><fmt:int value="${total.points}" />&nbsp;${elitePoints}</span><br>
+<br>
 <c:forEach var="upd" items="${upds}" varStatus="updStatus">
 <fmt:date date="${upd.effectiveOn}" fmt="d"  className="bld" />&nbsp;
 <c:choose>
@@ -179,8 +179,8 @@ span.rmbar {
 <c:when test="${upd.upgradeReason == 'NONE'}">Initial ${eliteName} credit</c:when>
 <c:otherwise>Earned <fmt:elite className="bld" level="${upd.level}" nameOnly="true" /> for ${upd.level.year} (Qualified via ${upd.upgradeReason.description})</c:otherwise>
 </c:choose>
-<c:if test="${!updStatus.isLast()}"><br /></c:if></c:forEach>
-<hr />
+<c:if test="${!updStatus.isLast()}"><br></c:if></c:forEach>
+<hr>
 <c:set var="hasPrevLevel" value="true" scope="page" />
 <c:set var="prevLevel" value="${baseLevel}" scope="page" />
 <c:forEach var="lvl" items="${lvls}">
@@ -189,7 +189,7 @@ span.rmbar {
 <c:set var="lr" value="${hasPrevLevel ? Math.max(0, lvl.legs - total.legs) : lvl.legs}" scope="page" />
 <fmt:eliteProgressBar width="19" percent="true" className="prgbar nrbar" remainingClassName="prgbar rmbar nrbar" progress="${lvl.legs - prevLevel.legs - lr}" level="${lvl}" prev="${prevLevel}"  units="l" showUnits="true" /></c:if>
 <c:set var="hasPrevLevel" value="${hasLevel}" scope="page" />
-<c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach><br />
+<c:set var="prevLevel" value="${lvl}" scope="page" /></c:forEach><br>
 <div style="height:4px;"></div>
 <c:set var="hasPrevLevel" value="true" scope="page" />
 <c:set var="prevLevel" value="${baseLevel}" scope="page" />
@@ -217,7 +217,7 @@ span.rmbar {
 <tr class="title mid"><td class="eliteStatus" colspan="2"><el:cmdbutton url="logbook" link="${pilot}" label="VIEW LOGBOOK" /><c:if test="${isOps}">&nbsp;<el:button type="submit" label="RECALCULATE ${eliteName} STATUS" /></c:if></td></tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

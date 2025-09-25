@@ -12,14 +12,14 @@ public class TestInsertRSSTag extends AbstractTagTestCase {
    private static final String RSS_START = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"";
    
    @Override
-protected void setUp() throws Exception {
+   protected void setUp() throws Exception {
       super.setUp();
       _tag = new InsertRSSTag();
       _tag.setPageContext(_ctx);
    }
 
    @Override
-protected void tearDown() throws Exception {
+   protected void tearDown() throws Exception {
       _tag.release();
       _tag = null;
       super.tearDown();
@@ -27,10 +27,11 @@ protected void tearDown() throws Exception {
 
    public void testOutput() throws JspException {
       _tag.setTitle("RSS Feed");
-      _tag.setPath("/rss/feed.ws");
+      _tag.setPath("rss/feed.ws");
+      _tag.setHost("localhost");
       
       assertSkipBody(_tag.doStartTag());
       assertEvalPage(_tag.doEndTag());
-      assertEquals(RSS_START + "RSS Feed\" href=\"http://localhost/rss/feed.ws\" />", _jspOut.toString());
+      assertEquals(RSS_START + "RSS Feed\" href=\"https://localhost/rss/feed.ws\">" + System.lineSeparator(), _jspOut.toString());
    }
 }

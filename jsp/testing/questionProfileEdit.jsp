@@ -15,7 +15,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="examTake" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 golgotha.local.validate = function(f)
 {
@@ -115,8 +115,8 @@ return true;
  <td class="label top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="225" newLine="true" className="small" checked="${question.exams}" options="${examNames}" />
 <c:if test="${!empty otherExamNames}" >
-<br /><br /><hr />
-<span class="ita">This Examination Question is also included in the following Examinations managed by other Airlines:</span><br /><br />
+<br><br><hr>
+<span class="ita">This Examination Question is also included in the following Examinations managed by other Airlines:</span><br><br>
 <span class="ita"><fmt:list value="${otherExamNames}" delim=", " /></span></c:if></td>
 </tr>
 <c:if test="${!empty question}">
@@ -139,7 +139,7 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Upload Image</td>
- <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" maxSize="512" /><c:if test="${!empty question}"><br />
+ <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" maxSize="512" /><c:if test="${!empty question}"><br>
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
 <tr>
@@ -174,7 +174,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -9,7 +9,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <script>
 golgotha.local.purgeOnly = false;
@@ -57,7 +57,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="purgeOnly" value="true" label="Remove existing Schedule entries only" onChange="void golgotha.local.toggle(this)" /><br />
+ <td class="data"><el:box name="purgeOnly" value="true" label="Remove existing Schedule entries only" onChange="void golgotha.local.toggle(this)" /><br>
 <el:box name="purgeEntries" value="true" label="Purge synchronized Schedule entries at next Import" /></td>
 </tr>
 </el:table>
@@ -69,7 +69,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

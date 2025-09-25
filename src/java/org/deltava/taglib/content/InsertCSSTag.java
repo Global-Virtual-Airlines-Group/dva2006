@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class InsertCSSTag extends InsertMinifiedContentTag {
 			JspWriter out = pageContext.getOut();			
 			out.print("<link rel=\"stylesheet\" href=\"");
 			out.print(buf.toString());
-			out.println("\" />");
+			out.println("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

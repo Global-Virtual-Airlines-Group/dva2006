@@ -15,8 +15,8 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.sort = function(combo) {
 	if (!golgotha.form.comboSet(combo)) return false;
 	self.location = '/applicants.do?' + combo.name + '=' + encodeURI(golgotha.form.getCombo(combo));
@@ -91,12 +91,12 @@ golgotha.local.sort = function(combo) {
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="100" labels="Pending,CAPTCHA" classes="opt1,warn" /></td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

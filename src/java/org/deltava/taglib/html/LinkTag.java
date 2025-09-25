@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate an HTML link.
  * @author Luke
- * @version 7.4
+ * @version 12.3
  * @since 1.0
  */
 
@@ -23,17 +23,16 @@ public class LinkTag extends ElementTag {
         super("a");
     }
 
-    /**
-     * Opens this link element by writing an &gt;A&lt; tag.
-     * @throws JspException if an error occurs; 
-     */
     @Override
     public int doStartTag() throws JspException {
     	super.doStartTag();
         try {
             validateLink();
-            if (!StringUtils.isEmpty(_anchor))
-            	_data.setAttribute("href", _data.get("href") + "#" + _anchor);
+            if (!StringUtils.isEmpty(_anchor)) {
+            	StringBuilder buf = new StringBuilder(_data.get("href"));
+            	buf.append('#').append(_anchor);
+            	_data.setAttribute("href", buf.toString());
+            }
             
             _out.print(_data.open(true));
         } catch(Exception e) {
@@ -43,10 +42,6 @@ public class LinkTag extends ElementTag {
         return EVAL_BODY_INCLUDE;
     }
     
-    /**
-     * Closes this link element by writing an &gt;/A&lt; tag.
-     * @throws JspException if an I/O error occurs
-     */
     @Override
     public int doEndTag() throws JspException {
         try {
@@ -106,7 +101,7 @@ public class LinkTag extends ElementTag {
      */
     public void setExternal(boolean isExternal) {
     	if (isExternal)
-    		_data.setAttribute("rel", "external");
+    		_data.setAttribute("rel", "external noopener noreferrer");
     }
     
     /**
@@ -119,9 +114,6 @@ public class LinkTag extends ElementTag {
             throw new IllegalStateException("href or onClick must be set");
     }
     
-    /**
-     * Releases the tag's state variables.
-     */
     @Override
     public void release() {
     	super.release();

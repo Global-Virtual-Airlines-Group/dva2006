@@ -9,7 +9,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -21,11 +21,11 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> DATABASE CONNECTION POOL FULL</div>
-<br />
-The database Connection Pool is full. This means that our database server is currently overloaded and needs a few minutes to get settled down. Please wait a few minutes and try again.<br />
-<br />
-Attempting to refresh this page right away will likely make the problem worse.<br />
-<br />
+<br>
+The database Connection Pool is full. This means that our database server is currently overloaded and needs a few minutes to get settled down. Please wait a few minutes and try again.<br>
+<br>
+Attempting to refresh this page right away will likely make the problem worse.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

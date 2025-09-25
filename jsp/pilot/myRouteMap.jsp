@@ -45,11 +45,11 @@
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
-<script async>
+<script>
 <map:token />
 golgotha.routeMap.id = '${pilot.hexID}';
 <map:point var="golgotha.local.mapC" point="${home}" />

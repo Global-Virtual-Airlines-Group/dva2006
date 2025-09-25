@@ -126,12 +126,12 @@
 </el:table>
 </c:if></content:filter>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
-<script async>
+<script>
 <map:token />
 
 // Build the route line and map center

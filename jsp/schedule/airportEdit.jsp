@@ -18,7 +18,7 @@
 <c:if test="${googleMap}"><map:api version="3" /></c:if>
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:6, t:'Airport Name'});
@@ -71,10 +71,10 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:text name="name" idx="*" className="pri bld" required="true" size="36" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
- <td class="data small"><span class="ita">The airport name should be in the following formats:</span><br />
-Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br /> 
-Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(New York-Kennedy NY)</span><br />
-Airports outside the United States or Canada, use &lt;City Name&gt; &lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
+ <td class="data small"><span class="ita">The airport name should be in the following formats:</span><br>
+Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br> 
+Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(New York-Kennedy NY)</span><br>
+Airports outside the United States or Canada, use &lt;City Name&gt; &lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br>
 Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;Country&gt;. <span class="ita">(Paris-Charles De Gaulle France)</span></td>
 </tr>
 <tr>
@@ -105,7 +105,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label top">Customs Zones</td>
- <td class="data"><el:box name="isSchengen" value="true" idx="*" checked="${airport.isSchengen}" label="This Airport is located in the Schengen Zone" /><br />
+ <td class="data"><el:box name="isSchengen" value="true" idx="*" checked="${airport.isSchengen}" label="This Airport is located in the Schengen Zone" /><br>
 <el:box name="hasUSPFI" value="true" idx="*" checked="${airport.hasPFI}" label="This Airport has a US Customs Pre-Flight Inspection station" /></td>
 </tr>
 <c:if test="${airport.maximumRunwayLength > 0}">
@@ -124,7 +124,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </c:if>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /><c:if test="${!empty airportTZ}"><br />
+ <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /><c:if test="${!empty airportTZ}"><br>
  <span class="warn">Airport in ${airportTZ.name}</span><c:if test="${tzOffsetWarn}"> <span class="error bld">Time Zone Offsets do not Match!</span></c:if></c:if></td>
 </tr>
 <tr>
@@ -134,7 +134,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <tr>
  <td class="label top">Prior Airport</td>
  <td class="data"><el:combo name="oldAirport" idx="*" size="1" options="${oldAirports}" firstEntry="-" value="${airport.supercededAirport}" onChange="void changeAirport(this)" />&nbsp;
-<el:text ID="oldAirportCode" name="oldAirportCode" size="4" max="4" value="${airport.supercededAirport}" onBlur="void setAirport(document.forms[0].oldAirport, this.value, true)" /><br />
+<el:text ID="oldAirportCode" name="oldAirportCode" size="4" max="4" value="${airport.supercededAirport}" onBlur="void setAirport(document.forms[0].oldAirport, this.value, true)" /><br>
 <span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
 <tr>
  <td class="label">&nbsp;</td>
@@ -170,12 +170,12 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script async>
+<script>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="golgotha.local.apMarker" point="${airport}" color="green" />
 

@@ -12,13 +12,13 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
 golgotha.local.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
 golgotha.local.validate = function(f) {
@@ -57,7 +57,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Search Options</td>
- <td class="data" colspan="3">Historic Flights - <el:combo name="avoidHistorical" idx="*" size="1" options="${inclusionOpts}" value="${param.avoidHistorical}" /><br />
+ <td class="data" colspan="3">Historic Flights - <el:combo name="avoidHistorical" idx="*" size="1" options="${inclusionOpts}" value="${param.avoidHistorical}" /><br>
 <el:box name="avoidVisitedDestination" idx="*" value="true"  checked="${criteria.notVisitedA}" label="Exclude Visited Destination Airports" /></td>
 </tr>
 </el:table>
@@ -103,7 +103,7 @@ golgotha.local.validate = function(f) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

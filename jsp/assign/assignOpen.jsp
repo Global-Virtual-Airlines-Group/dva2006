@@ -11,7 +11,7 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -23,10 +23,10 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr">Flight Assignment Already Reserved</div>
-<br />
+<br>
 You cannot reserve a new <content:airline /> Flight Assigment, since you already have an reserved Flight Assignment. If you have completed all the legs in this Flight Assignment, it may take a few hours for the Flight
-Reports to be approved and the existing Flight Assignment to be automatically closed.<br />
-<br />
+Reports to be approved and the existing Flight Assignment to be automatically closed.<br>
+<br>
 <content:copyright />
 </content:region>
 </content:page>

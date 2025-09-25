@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 10.3
+ * @version 12.3
  * @since 1.0
  */
 
@@ -49,17 +49,17 @@ public class GetNATs extends TrackDAO {
 					// Check for start/end of NAT segment
 					if (!isWriting && data.contains("NAT-")) {
 						buf.append(data);
-						buf.append("<br />");
+						buf.append("<br>");
 						buf.append(CRLF);
 						isWriting = true;
 					} else if (isWriting && (data.startsWith("END OF PART"))) {
 						buf.append(data);
-						buf.append("<br /><hr />");
+						buf.append("<br><hr>");
 						buf.append(CRLF);
 						isWriting = false;
 					} else if (isWriting) {
 						buf.append(data);
-						buf.append("<br />");
+						buf.append("<br>");
 						buf.append(CRLF);
 					}
 

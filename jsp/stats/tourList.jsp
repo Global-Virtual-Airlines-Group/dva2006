@@ -14,7 +14,7 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
 </head>
 <content:copyright visible="false" />
@@ -60,7 +60,7 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br></view:scrollbar>
 <view:legend width="125" labels="Expired,Not Started,Active,Inactive" classes="opt3,opt1, ,warn" /></td>
 </tr>
 </view:table>

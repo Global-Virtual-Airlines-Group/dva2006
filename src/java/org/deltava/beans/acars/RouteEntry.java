@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 1.0
  */
 
@@ -358,11 +358,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 		StringBuilder buf = new StringBuilder(192);
 		buf.append("<div class=\"mapInfoBox acarsPosition\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("</span><br />Time: ");
+		buf.append("</span><br>Time: ");
 		buf.append(StringUtils.format(_date, "MM/dd/yyyy HH:mm:ss"));
-		buf.append(" UTC<br />Altitude: ");
+		buf.append(" UTC<br>Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
-		buf.append(" feet<br />Speed: ");
+		buf.append(" feet<br>Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "##0"));
 		buf.append(" kts (GS: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
@@ -373,13 +373,13 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 			buf.append("</i>");
 		}
 
-		buf.append("<br />Heading: ");
+		buf.append("<br>Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
-		buf.append(" degrees<br />");
+		buf.append(" degrees<br>");
 
 		// Add Pause/Stall/Warning flags
 		if (ACARSFlags.PAUSED.has(_flags))
-			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
+			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br>");
 		Collection<Warning> warns = getWarnings();
 		if (!warns.isEmpty()) {
 			buf.append("<span class=\"error bld caps\">");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2010, 2011, 2012 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2010, 2011, 2012, 2025 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,23 +8,26 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 5.0
+ * @version 12.3
  * @since 1.0
  */
 
 public class XMLRenderer {
 	
 	private final String _name;
+	private final boolean _isHTML;
 	private final Map<String, String> _attrs = new LinkedHashMap<String, String>();
 
 	/**
 	 * Creates a new XML element, with a lowercase name.
-	 * @param name the element nam
+	 * @param name the element name
+	 * @param isHTML TRUE if rendering as HTML, otherwise FALSE
 	 * @throws NullPointerException if name is null
 	 */
-	public XMLRenderer(String name) {
+	public XMLRenderer(String name, boolean isHTML) {
 		super();
 		_name = name.toLowerCase();
+		_isHTML = isHTML;
 	}
 	
 	/**
@@ -110,7 +113,7 @@ public class XMLRenderer {
 
 		// Close the tag if requested
 		if (completeTag) {
-			if (finishTag) {
+			if (finishTag && !_isHTML) {
 				if (!_attrs.isEmpty())
 					buf.append(' ');
 				

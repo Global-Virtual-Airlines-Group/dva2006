@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to display a legend entry for a Google Maps marker.
  * @author Luke
- * @version 5.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -43,9 +43,6 @@ public class LegendTag extends TagSupport {
 		_class = cName;
 	}
 
-	/**
-	 * Releases the tag's state variables.
-	 */
 	@Override
 	public void release() {
 		super.release();
@@ -67,7 +64,7 @@ public class LegendTag extends TagSupport {
 			jw.print(SystemData.get("path.img"));
 			jw.print("/maps/point_");
 			jw.print(_color);
-			jw.print(".png\" /> ");
+			jw.print(".png\"> ");
 
 			// Write span for legend
 			if (_class != null) {

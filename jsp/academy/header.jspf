@@ -6,6 +6,6 @@
 <content:region id="header">
 <div id="mobileMenu" class="mm"></div>
 <el:link url="/" label="Home"><el:img className="header" src="${airlineBanner}" caption="${airlineName}" /></el:link>
-<h1 id="hdrLink" class="mm header caps"><content:airline /><br />
+<h1 id="hdrLink" class="mm header caps"><content:airline /><br>
 FLIGHT ACADEMY</h1>
 </content:region>

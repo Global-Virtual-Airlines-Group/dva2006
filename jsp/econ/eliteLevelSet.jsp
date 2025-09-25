@@ -16,9 +16,9 @@
 <content:js name="datePicker" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.submit(f);
@@ -56,7 +56,7 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <c:if test='${!empty oldLevels}'>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br /><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
+ <td class="data"><el:box ID="isCommit" name="isCommit" value="true" label="Write Updated ${eliteName} qualification levels to Database" /><c:if test="${!isRollover}"><br><span class="ita">(Requirements can only be updated during the ${eliteName} status rollover period.)</span></c:if></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">QUALIFICATION CHANGES FROM ${year - 1} TO ${year}</td>
@@ -67,10 +67,10 @@ golgotha.onDOMReady(function() { golgotha.util.disable(document.getElementById('
 <c:if test="${ol.legs > 0}">
 <tr>
  <td class="label top">${lvlName}</td>
- <td class="data"><span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br />
-<span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br />
+ <td class="data"><span class="pri bld">${ol.year}</span> - <fmt:int value="${ol.legs}" className="bld" /> flight legs, <fmt:int value="${ol.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${ol.points}" />&nbsp;${pointUnit}<br>
+<span class="pri bld">${nl.year}</span> - <fmt:int value="${nl.legs}" className="bld" /> flight legs, <fmt:int value="${nl.distance}" className="sec bld" />&nbsp;${distUnit}, <fmt:int value="${nl.points}" />&nbsp;${pointUnit}<br>
 Legs: <fmt:dec value="${(nl.legs - ol.legs) * 1.0 / ol.legs}" fmt="##0.0%" className="bld" forceSign="true" />, ${distUnit}&nbsp;<fmt:dec value="${(nl.distance - ol.distance) * 1.0 / ol.distance}" className="sec bld" fmt="##0.0%" forceSign="true" />, 
-${pointUnit }&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><hr />
+${pointUnit }&nbsp;<fmt:dec value="${(nl.points / ol.points) * 1.0 / ol.points}" className="ter bld" fmt="##0.0%" forceSign="true" /><hr>
 Adjust Target Percentile: <el:text name="adjust-${lvlName}" idx="*" size="2" max="3" value="${nl.targetPercentile}" /><c:if test="${ol.targetPercentile != nl.targetPercentile}"> - <span class="ita">Originally ${ol.targetPercentile}</span></c:if></td>
 </tr>
 </c:if>
@@ -91,7 +91,7 @@ Adjust Target Percentile: <el:text name="adjust-${lvlName}" idx="*" size="2" max
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

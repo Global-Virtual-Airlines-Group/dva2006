@@ -24,7 +24,7 @@ public final class StringUtils {
 	private static final String UPPER_AFTER = " \'-";
 	
 	private static final String RESERVED_CHARS = "<>&\"\'\\\n:";
-	private static final String[] REPLACE_ENTITIES = {"&lt;", "&gt;", "&amp;", "&quot;", "&#039;", "&#092;", "<br />\n", "&#58;"};
+	private static final String[] REPLACE_ENTITIES = {"&lt;", "&gt;", "&amp;", "&quot;", "&#039;", "&#092;", "<br>\n", "&#58;"};
 
 	// We're a singleton, alone and lonely
 	private StringUtils() {

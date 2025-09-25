@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 <c:forEach var="domain" items="${ourDomains}">
@@ -61,7 +61,7 @@ return true;
 </el:table>
 <el:text name="op" type="hidden" value="force" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

@@ -30,9 +30,9 @@ golgotha.onDOMReady(function() {
 <content:captcha action="pilotcenter" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<style type="text/css">
+<style>
 @media (min-width: 801px) {
     table#pilotCenter td.sideLabel { width: 35%; max-width: 350px; }
 }
@@ -96,8 +96,8 @@ golgotha.onDOMReady(function() {
  <td class="data">Welcome back to <span class="pri bld"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if>
 <c:if test="${acarsEnabled && (empty pilot.pilotCode)}">You can use <span class="pribld">${pilot.ID}</span> as a temporary ACARS User ID.</c:if>
-<br />
- You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
+<br>
+ You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br>
 You are visiting today from <span class="bld">${req.remoteHost}</span><c:if test="${req.remoteAddr != req.remoteHost}"> (${req.remoteAddr})</c:if><c:if test="${!empty ipAddrInfo}">, in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
@@ -106,21 +106,21 @@ You are visiting today from <span class="bld">${req.remoteHost}</span><c:if test
 </tr>
 <tr>
  <td class="mid bld">Push Notifications</td>
- <td class="data"><c:if test="${!empty pilot.pushEndpoints}" ><span id="pushclear">You have <fmt:quantity single="Push Notification endpoint" value="${pilot.pushEndpoints.size()}" /> defined. <a href="javascript:void golgotha.push.clear()" class="sec bld">Click Here</a> to clear them.<br />
- To test your Push Notifications, <a href="javascript:void golgotha.push.test(true)" class="ter bld">Click Here</a>.<br /><br /></span></c:if>
+ <td class="data"><c:if test="${!empty pilot.pushEndpoints}" ><span id="pushclear">You have <fmt:quantity single="Push Notification endpoint" value="${pilot.pushEndpoints.size()}" /> defined. <a href="javascript:void golgotha.push.clear()" class="sec bld">Click Here</a> to clear them.<br>
+ To test your Push Notifications, <a href="javascript:void golgotha.push.test(true)" class="ter bld">Click Here</a>.<br><br></span></c:if>
 <span id ="pushsub"  style="display:none;">You can <a href="javascript:void golgotha.push.sub()" class="bld">Subscribe</a> to browser Push Notifications in this browser in addition to e-mail.</span>
 <span id="pushunsub" style="display:none;">You can <a href="javascript:void golgotha.push.unsub()" class="bld">Unsubscribe</a> from browser Push Notifications this browser.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
 <c:if test="${!empty geoLocation}">
- <td class="data">You can update your location on the <content:airline /> Pilot Board.<br />
-<br />
+ <td class="data">You can update your location on the <content:airline /> Pilot Board.<br>
+<br>
 <span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 <c:if test="${empty geoLocation}">
- <td class="data">You have not specified your geographic location. By doing so, you can add your name to the <content:airline /> Pilot Board.<br />
-<br />
+ <td class="data">You have not specified your geographic location. By doing so, you can add your name to the <content:airline /> Pilot Board.<br>
+<br>
 <span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
@@ -136,9 +136,9 @@ You are visiting today from <span class="bld">${req.remoteHost}</span><c:if test
  <td class="mid">&nbsp;
 <c:if test="${!empty acImage}"><el:img src="${acImage}" className="nophone" caption="${pilot.equipmentType}" /></c:if>
  </td>
- <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span> program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
-<br />
-Your Chief Pilot is <a class="bld" href="mailto:${CP.email}">${CP.name}</a>.<br />
+ <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span> program. <span class="pri bld">(Stage ${eqType.stage})</span><br>
+<br>
+Your Chief Pilot is <a class="bld" href="mailto:${CP.email}">${CP.name}</a>.<br>
 <c:if test="${!empty asstCP}">
 <c:if test="${asstCP.size() == 1}">
 Your Assistant Chief Pilot is </c:if>
@@ -146,13 +146,13 @@ Your Assistant Chief Pilot is </c:if>
 Your Assistant Chief Pilots are </c:if>
 <c:forEach var="aCP" items="${asstCP}" varStatus="acpStatus">
 <a class="bld" href="mailto:${aCP.email}">${aCP.name}</a><c:if test="${!acpStatus.last}">, </c:if></c:forEach>.
-<br />
+<br>
 </c:if>
-<br />
-You are also qualified to file Flight Reports using the following aircraft:<br />
+<br>
+You are also qualified to file Flight Reports using the following aircraft:<br>
 <fmt:list value="${pilot.ratings}" delim=", " />.
 <content:filter roles="Dispatch">
-<br /><br />
+<br><br>
 You are an ACARS Flight Dispatcher and have dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
 </tr>
 <tr>
@@ -161,12 +161,12 @@ You are an ACARS Flight Dispatcher and have dispatched <fmt:int value="${pilot.d
 <c:if test="${empty accs}">
 You have not achieved any Pilot Accomplishments yet.</c:if>
 <c:if test="${!empty accs}">
-You have achieved the following Accomplishments:<br />
-<br />
+You have achieved the following Accomplishments:<br>
+<br>
 <c:forEach var="a" items="${accs}">
-<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" />&nbsp;${a.unit.description}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
+<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" />&nbsp;${a.unit.description}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br>
 </c:forEach></c:if>
-<br />
+<br>
 To view a map of Airports to visit to complete Accomplishments, <el:cmd url="accairportmap" className="sec bld">Click Here</el:cmd>.</td>
 </tr>
 <content:filter roles="HR,Examination,Operations">
@@ -190,16 +190,16 @@ To view a map of Airports to visit to complete Accomplishments, <el:cmd url="acc
 <tr>
  <td class="mid"><el:cmd url="eliteinfo" className="bld"><span style="color:#${eliteStatus.level.hexColor}">My ${eliteName}</span></el:cmd></td>
  <td class="data">${eliteYear} Flight Totals: <fmt:int className="pri bld" value="${currentEliteTotal.legs}" /> Legs | <fmt:int className="sec bld" value="${currentEliteTotal.distance}" />&nbsp;${eliteDistance} | 
- <fmt:int className="bld" value="${currentEliteTotal.points}" />&nbsp;${elitePoints}<br /> 
+ <fmt:int className="bld" value="${currentEliteTotal.points}" />&nbsp;${elitePoints}<br> 
  Congratulations, you are a <span class="pri bld">${eliteName}</span> <fmt:elite className="bld" level="${eliteStatus.level}" /> for ${eliteYear}<c:if test="${!empty ltStatus}"> based on your lifetime <fmt:ltelite level="${ltStatus}" className="bld" /> status</c:if>.
  <c:if test="${!empty nyLevel}">
- <br /><br />Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
+ <br><br>Status in the <content:airline />&nbsp;${eliteName} program requires annual requalification. You have completed enough flights in ${eliteYear} for <fmt:elite level="${nyLevel}" className="bld" nameOnly="true" /> status.
  <c:if test="${nyDowngrade}"> <span class="sec bld">Your status will be downgraded at the end of the year.</span></c:if></c:if>
  <c:if test="${((currentEliteRO.legs > 0) || (currentEliteRO.distance > 0))}">
-<br />
+<br>
 Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="${currentEliteRO.legs}" className="bld" /> flight legs, <span class="ter bld"><fmt:int value="${currentEliteRO.distance}" />&nbsp;${eliteDistance}</span></c:if> 
-<c:if test="${nextEliteLevel.isVisible}"><br />
-<br />You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> or </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" />&nbsp;</c:if>remaining to 
+<c:if test="${nextEliteLevel.isVisible}"><br>
+<br>You have <c:if test="${legsRemaining > 0}"><fmt:int value="${legsRemaining}" /> flight legs </c:if><c:if test="${((legsRemaining > 0) && (dstRemaining > 0))}"> or </c:if><c:if test="${dstRemaining > 0}"><fmt:distance value="${dstRemaining}" />&nbsp;</c:if>remaining to 
  reach ${eliteName}&nbsp;<span class="bld" style="color:#${nextEliteLevel.hexColor}">${nextEliteLevel.name}</span> status.</c:if></td> 
 </tr>
 <content:filter roles="HR,Operations">
@@ -212,7 +212,7 @@ Rolled over from <span class="pri bld">${eliteYear - 1}</span>: <fmt:int value="
 <content:filter roles="Operations">
 <tr>
  <td colspan="2" class="mid">We are currently in the <span class="bld">Rollover Period</span> for the <content:airline />&nbsp;<span class="sec bld">${eliteName}</span> program. This is the period before the end of the ${eliteYear} status year after the start of the new calendar year.
-<c:if test="${empty nyLevels}"><br /><br />
+<c:if test="${empty nyLevels}"><br><br>
 Before the end of the rollover period, the requirements for the upcoming status year will need to be calculated and stored in the database, and status from the previous year must be rolled over for eligible Pilots.</c:if></td>
 </tr>
 <tr>
@@ -223,7 +223,7 @@ Before the end of the rollover period, the requirements for the upcoming status 
 <tr>
  <td class="mid"><el:cmd url="eliterollover" className="bld">Roll Over ${eliteName} Status</el:cmd></td>
  <td class="data">Each year, earned status in the <content:airline />&nbsp;${eliteName} program needs to be rolled over prior to the start of the program year. You can preview the list of Pilots whose status will be rolled over prior to this taking effect.
- <c:if test="${eliteRolloverComplete}"><br /><br /><span class="ita"><span class="pri bld">${eliteName}</span> status rollover has been completed for the <span class="sec bld">${eliteYear + 1}</span> status year.</span></c:if></td> 
+ <c:if test="${eliteRolloverComplete}"><br><br><span class="ita"><span class="pri bld">${eliteName}</span> status rollover has been completed for the <span class="sec bld">${eliteYear + 1}</span> status year.</span></c:if></td> 
 </tr>
 </c:if>
 </content:filter>
@@ -251,28 +251,28 @@ Before the end of the rollover period, the requirements for the upcoming status 
 <tr>
  <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" link="${pilot}">Flight Reports</el:cmd>&nbsp;
 <el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>&nbsp;
-<el:cmd className="bld" url="logcalendar" link="${pilot}">Calendar</el:cmd><br />
+<el:cmd className="bld" url="logcalendar" link="${pilot}">Calendar</el:cmd><br>
 <el:cmd className="bld" url="acarsoffline">File Offline ACARS Flight Report</el:cmd>
-<c:if test="${manualPIREP}"><br />
+<c:if test="${manualPIREP}"><br>
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of
- <fmt:dec className="bld" value="${pilot.hours}" /> hours and <fmt:distance className="bld" value="${pilot.miles}" longUnits="true" />.<br />
+ <fmt:dec className="bld" value="${pilot.hours}" /> hours and <fmt:distance className="bld" value="${pilot.miles}" longUnits="true" />.<br>
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and 
-<span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br /></c:if>
+<span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br></c:if>
 <c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}">
 <span class="pri bld"><fmt:int value="${pilot.ACARSLegs}" /></span> of these flights and 
-<span class="pri bld"><fmt:dec value="${pilot.ACARSHours}" /></span> hours were logged using ACARS.<br /></c:if>
+<span class="pri bld"><fmt:dec value="${pilot.ACARSHours}" /></span> hours were logged using ACARS.<br></c:if>
 <c:if test="${pilot.totalLegs > pilot.legs}">
 You have flown <fmt:int value="${pilot.totalLegs}" /> flights and <fmt:dec value="${pilot.totalHours}" /> hours combined between 
-<content:airline /> and our partner airlines.<br /></c:if>
+<content:airline /> and our partner airlines.<br></c:if>
 <c:if test="${totalPax > 0}">
-You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br /></c:if>
+You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br></c:if>
 <c:if test="${pilot.legacyHours > 0}">
-You have <fmt:dec value="${pilot.legacyHours}" />hours logged at another virtual airline.<br /></c:if>
+You have <fmt:dec value="${pilot.legacyHours}" />hours logged at another virtual airline.<br></c:if>
 <c:if test="${!empty lastFlight}">
-<br />
-Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br />
+<br>
+Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br>
 <el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportD.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportD}" /></el:cmd>) to 
  ${lastFlight.airportA.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportA.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportA}" /></el:cmd>) in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
@@ -292,10 +292,10 @@ Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" 
 <c:if test="${pilot.legs > 0}">
 <tr>
  <td class="mid bld">Flight Information</td>
- <td class="data">To view a map of the routes you have flown, <el:cmd className="sec bld" url="myroutemap">Click Here</el:cmd>.<br />
-<c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}"><br />
+ <td class="data">To view a map of the routes you have flown, <el:cmd className="sec bld" url="myroutemap">Click Here</el:cmd>.<br>
+<c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}"><br>
 To view statistics about your flights, <el:cmd className="sec bld" url="mystats">Click Here</el:cmd>.</c:if>
-<c:if test="${pilot.legs > 10}"><br />
+<c:if test="${pilot.legs > 10}"><br>
 To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewairports">Click Here</el:cmd>.</c:if>
 </td>
 </tr>
@@ -315,13 +315,13 @@ To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewai
 <!-- Flight Report Admin Section -->
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.<c:if test="${pirepQueueStats.size > 0}"><span class="${queueClass}"><br />
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.<c:if test="${pirepQueueStats.size > 0}"><span class="${queueClass}"><br>
 There <fmt:is value="${pirepQueueStats.size}" />  currently <fmt:quantity value="${pirepQueueStats.size}" single="Flight Report" /> awaiting review.
 <content:filter roles="Operations,HR"> The average age of each pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
 <c:set var="myPirepQueueSize" value="${pirepQueueStats.counts[pilot.equipmentType]}" scope="page" />
-<c:if test="${myPirepQueueSize > 0}"><br /><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
+<c:if test="${myPirepQueueSize > 0}"><br><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
 review flown using equipment in the ${pilot.equipmentType} program.</span></c:if>
-<c:if test="${checkRideQueueSize > 0}"><br />
+<c:if test="${checkRideQueueSize > 0}"><br>
 <span class="pri bld">There <fmt:is value="${checkRideQueueSize}" />&nbsp;<fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
 </tr>
@@ -342,27 +342,27 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 <tr>
  <td class="mid"><el:cmd className="bld" url="txrequests">Equipment Transfer Requests</el:cmd></td>
  <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once  they have met the necessary requirements for a new Equipment Program. You can view these transfer 
-requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
-<br />
+requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br>
+<br>
 <span class="ita">There <fmt:is value="${txQueueSize}" />&nbsp;<fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
- <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
-<br />
+ <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br>
+<br>
 <span class="bld">There <fmt:is value="${promoQueueSize}" /> <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</span></c:if></td>
 </tr>
 <content:filter roles="HR,Examination">
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
- <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
-<br />
+ <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br>
+<br>
 <span class="bld">There <fmt:is value="${examQueueSize}" />&nbsp;<fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="crqueue">Submitted Check Rides</el:cmd></td>
- <td class="data">You can view and score submitted Pilot Check Rides.<c:if test="${crQueueSize > 0}"><br />
- <br />
+ <td class="data">You can view and score submitted Pilot Check Rides.<c:if test="${crQueueSize > 0}"><br>
+ <br>
  <span class="bld">There <fmt:is value="${crQueueSize}" />&nbsp;<fmt:quantity value="${crQueueSize}" single="submitted Check Ride" /> awaiting evaluation.</span></c:if></td>
 </tr>
 </content:filter>
@@ -491,7 +491,7 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="data">Our servers automatically download North Atlantic and Pacific Track information every day.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br>
 <el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd></td>
  <td class="data">You can use our Google Maps tool to plot today's North Atlantic and Pacific Tracks, or NAT / PACOT routes for the previous several months.</td>
 </tr>
@@ -528,23 +528,23 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 <tr>
  <td class="mid" colspan="2"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
  as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
- days in order to retain their type ratings.<br />
-<br /> 
+ days in order to retain their type ratings.<br>
+<br> 
 <c:if test="${!pilot.proficiencyCheckRides}">
-You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br />
-<br />
+You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br>
+<br>
 To discover more about our currency-based certification model, you can <el:cmd url="currencyenable" link="${pilot}" className="pri bld">Click Here</el:cmd> to review the changes that switching to this model will
 have on your existing aircraft type ratings.
 </c:if>
 <c:if test="${pilot.proficiencyCheckRides}">
 You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
- be performed before ratings expire.<br />
-<c:if test="${!empty upcomingExpirations}"><br />
-The following Check Rides or Check Ride Waivers are due to expire within the next 60 days. You will need to successfully complete a currency Check Ride prior to expiration in order to maintain your raings:<br />
-<br />
+ be performed before ratings expire.<br>
+<c:if test="${!empty upcomingExpirations}"><br>
+The following Check Rides or Check Ride Waivers are due to expire within the next 60 days. You will need to successfully complete a currency Check Ride prior to expiration in order to maintain your raings:<br>
+<br>
 <c:forEach var="expCR" items="${upcomingExpirations}" varStatus="expStatus">
 <c:set var="isExpired" value="${expCR.expirationDate.isBefore(now)}" scope="page" />
-${expCR.name}, completed on <fmt:date fmt="d" date="${expCR.scoredOn}" /> ${isExpired ? 'expired' : 'expires'} on <fmt:date fmt="d" className="error bld" date="${expCR.expirationDate}" /><c:if test="${!expStatus.last}"><br /></c:if>
+${expCR.name}, completed on <fmt:date fmt="d" date="${expCR.scoredOn}" /> ${isExpired ? 'expired' : 'expires'} on <fmt:date fmt="d" className="error bld" date="${expCR.expirationDate}" /><c:if test="${!expStatus.last}"><br></c:if>
 </c:forEach></c:if></c:if>
  </td>
 </tr>
@@ -570,24 +570,24 @@ Examination(s) in order to be eligible for promotion to Captain</span>.</td></c:
 <c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (eqType.promotionLegs / 2))}" scope="page" />
 <tr>
 <c:if test="${!empty eqSwitch}">
- <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br>
 <el:cmd className="bld" op="rating" url="txrequest">Request Additional Ratings</el:cmd></td>
 </c:if>
 <c:if test="${empty eqSwitch}">
  <td class="mid">&nbsp;</td>
 </c:if>
  <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional ratings in the following equipment types: <b><fmt:list value="${eqSwitch}" delim=", " /></b>.</c:if>
-<c:if test="${!empty eqSwitch && canSwitchFO}"><br /><br /></c:if>
+<c:if test="${!empty eqSwitch && canSwitchFO}"><br><br></c:if>
 <c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the following equipment types upon successful completion of the First Officer's examination for these 
 equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
-<c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
+<c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br>
 <c:if test="${isFO && !captPromote && (eqType.stage == eqSwitchMaxStage)}">
-<br />
+<br>
 <span class="ita">You will not be eligible for equipment type transfers or additional ratings in equipment type programs in Stage <fmt:int value="${eqSwitchMaxStage}" /> or above until you become eligible for promotion to Captain
- in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</span><br />
+ in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</span><br>
 </c:if>
 <c:if test="${promoteLegs < (eqType.promotionLegs / 2)}">
-<br />
+<br>
 <span class="ita">You will not be eligible for equipment type transfers or additional ratings in new equipment type programs in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${eqType.promotionLegs / 2}" /> 
 of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</span></c:if>
 </c:if>
@@ -655,19 +655,19 @@ cannot write a new Examination until this interval has passed.</span></c:if>
  <td class="mid bld">Flight Academy</td>
 </c:if>
  <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. The Academy is available to assist all members regardless of experience, skill level or ratings. 
-The spectrum of training spans from formal flight instruction to informal mentoring to address specific issues like online flying, VOR tracking, ATC procedures, improved landings.<c:if test="${!empty courses}"><br />
-<br />
+The spectrum of training spans from formal flight instruction to informal mentoring to address specific issues like online flying, VOR tracking, ATC procedures, improved landings.<c:if test="${!empty courses}"><br>
+<br>
 You have completed or are enrolled in the following <content:airline /> Flight Academy courses: <span class="sec bld"><fmt:list value="${courses}" delim=", " /></span>.</c:if>
-<c:if test="${!empty course}"><br />
+<c:if test="${!empty course}"><br>
 You are currently enrolled in the <el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd> Flight Academy course.</c:if>
-<c:if test="${academyNoFlights}"><br />
-<br />
+<c:if test="${academyNoFlights}"><br>
+<br>
 <span class="ita">You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed <fmt:int value="${academyFlights}" /> Flight legs.</span></c:if>
 <c:if test="${!empty vatsim_ratings}">
-<br /><br />
-You have obtained the following VATSIM Pilot Ratings:<br />
-<br />
-<c:forEach var="pr" items="${vatsim_ratings}" varStatus="prStatus"><span class="pri bld">${pr.ratingCode}</span>, issued by <span class="ter bld">${pr.ATOName}</span> on <fmt:date fmt="d" date="${pr.issueDate}" />.<c:if test="${!prStatus.last}"><br /></c:if></c:forEach>
+<br><br>
+You have obtained the following VATSIM Pilot Ratings:<br>
+<br>
+<c:forEach var="pr" items="${vatsim_ratings}" varStatus="prStatus"><span class="pri bld">${pr.ratingCode}</span>, issued by <span class="ter bld">${pr.ATOName}</span> on <fmt:date fmt="d" date="${pr.issueDate}" />.<c:if test="${!prStatus.last}"><br></c:if></c:forEach>
 </c:if></td>
 </tr>
 <c:if test="${!empty course}">
@@ -734,7 +734,7 @@ pilot Certification.</td>
 </content:filter>
 <c:if test="${hasEliteAccess}">
 <tr>
- <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="elitelevels">${eliteName} Status levels</el:cmd><br>
 <el:cmd className="bld" url="eliteltlevels">${eliteName} Lifetime Status levels</el:cmd></td>
  <td class="data">You can view and update <span class="pri bld">${eliteName}</span> Status levels for previous and current years, as well as cumulative lifetime status levels.</td>
 </tr>
@@ -820,7 +820,7 @@ pilot Certification.</td>
  <td class="data">You can add new written examinations or modify the examinations to change the number of questions, passing score, or additional ratings granted upon successful completion of an examination.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd><br>
 <el:cmd className="bld" url="qpsearch">Search Question Profiles</el:cmd></td>
  <td class="data">You can add new examination questions or modify existing examination questions.</td>
 </tr>
@@ -852,12 +852,12 @@ pilot Certification.</td>
  <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br>
 <el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
  <td class="data">You can import entries into the <content:airline /> Raw Flight Schedule database from a CSV data file. You may also export entries from the Raw Flight Schedule into a CSV data file.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="rawbrowse">Browse Raw Flight Schedule</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="rawbrowse">Browse Raw Flight Schedule</el:cmd><br>
  <el:cmd className="bld" url="rawvalidate">Raw Schedule Validation</el:cmd></td>
  <td class="data">You can browse, edit and add entries to the <content:airline /> Raw Flight Schedule, which is filtered each day into the Flight Schedule. Schedule entries can be validated to check for unreasonable flight times or duplicates.</td>
 </tr>
@@ -868,12 +868,12 @@ pilot Certification.</td>
 </tr>
 </c:if>
 <tr>
- <td class="mid"><el:cmd className="bld" url="schedimport">Raw Schedule Import</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="schedimport">Raw Schedule Import</el:cmd><br>
 <el:cmd className="bld" url="importstatus">Raw Schedule Import Status</el:cmd></td>
  <td class="data">You can import raw schedule entries from multiple sources into the database, which can be aggregated and filtered based on effective dates and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="schedfilter">Raw Schedule Filter</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="schedfilter">Raw Schedule Filter</el:cmd><br>
  <el:cmd className="bld" url="schedhistory">Raw Schedule Filter History</el:cmd></td>
  <td class="data">You can filter multiple Raw schedule sources based on effective date and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
@@ -883,8 +883,8 @@ pilot Certification.</td>
  Flight Schedule so that their servicing Airlines may be updated.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd><br />
-<el:cmd className="bld" url="awyimport">Airway Data</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd><br>
+<el:cmd className="bld" url="awyimport">Airway Data</el:cmd><br>
 <el:cmd className="bld" url="trouteimport">Terminal Routes</el:cmd></td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes (SIDs / STARs).</td>
 </tr>
@@ -981,12 +981,12 @@ pilot Certification.</td>
 </content:filter>
 <content:filter roles="Developer,Operations">
 <tr>
- <td class="mid"><el:cmd className="bld" url="brwreports">Browser Reports</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="brwreports">Browser Reports</el:cmd><br>
 <el:cmd className="bld" url="cspviolations">Content Security Policy Violations</el:cmd></td>
  <td class="data">You can view web browser reports sent via the browser Reporting API for front-end issues and errors on the web site, as well as aggregated statistics about CSP violations.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br />
+ <td class="mid"><el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd><br>
 <el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd></td>
  <td class="data">You can import MaxMind GeoCity network block and location data files into the database. <span class="ita">Locations should be imported before network blocks</span>.</td>
 </tr>

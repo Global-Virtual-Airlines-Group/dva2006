@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script async>
+<script>
 <fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
@@ -90,7 +90,7 @@ golgotha.local.updateEQ = function(combo) {
 </tr>
 </el:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

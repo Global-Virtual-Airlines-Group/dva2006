@@ -13,13 +13,13 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics />
-<script async>
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -173,7 +173,7 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Upload Image</td>
- <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
+ <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br>
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
 <tr>
@@ -236,13 +236,13 @@ return true;
 </el:table>
 <el:text name="isRoutePlot" type="hidden" value="true" />
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
-<script async>
+<script>
 const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.config.useSched = false;

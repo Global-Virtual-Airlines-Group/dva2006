@@ -19,8 +19,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<script async>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -117,10 +117,10 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small"><c:if test="${!eqType.isDefault}"><el:box name="active" idx="*" value="true" checked="${eqType.active}" label="Equipment Program is Active" /><br />
- <el:box name="makeDefault" idx="*" value="true" label="Make this the default Equipment Program" /><br /></c:if>
- <c:if test="${eqType.isDefault}"><span class="pri bld caps">This is the default Equipment Program and cannot be disabled</span><br /></c:if>
- <el:box name="newHires" idx="*" value="true" checked="${eqType.newHires}" label="Equipment Program accepts new Hires" /><br />
+ <td class="data small"><c:if test="${!eqType.isDefault}"><el:box name="active" idx="*" value="true" checked="${eqType.active}" label="Equipment Program is Active" /><br>
+ <el:box name="makeDefault" idx="*" value="true" label="Make this the default Equipment Program" /><br></c:if>
+ <c:if test="${eqType.isDefault}"><span class="pri bld caps">This is the default Equipment Program and cannot be disabled</span><br></c:if>
+ <el:box name="newHires" idx="*" value="true" checked="${eqType.newHires}" label="Equipment Program accepts new Hires" /><br>
 <c:if test="${acarsEnabled}"><el:box name="acarsPromote" idx="*" value="true" className="bld" checked="${eqType.ACARSPromotionLegs}" label="Require ACARS usage on Flights for Promotion" /></c:if></td>
 </tr>
 <tr>

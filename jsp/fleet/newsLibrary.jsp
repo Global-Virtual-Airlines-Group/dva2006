@@ -15,9 +15,9 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script async>
+<script>
 golgotha.local.setCategory = function(combo) {
 	self.location = '/newsletters.do?category=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;
@@ -72,7 +72,7 @@ golgotha.local.setCategory = function(combo) {
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="5">All <content:airline /> newsletters require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our newsletters, please click on the link to
- the left to download the latest version of Adobe Acrobat Reader.<br />
+ the left to download the latest version of Adobe Acrobat Reader.<br>
 This is a free download.</td>
 </tr>
 
@@ -82,7 +82,7 @@ This is a free download.</td>
 </tr>
 </view:table>
 </el:form>
-<br />
+<br>
 <content:copyright />
 </content:region>
 </content:page>

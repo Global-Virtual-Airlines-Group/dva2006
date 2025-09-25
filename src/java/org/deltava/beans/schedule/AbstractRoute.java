@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 4.1
  */
 
@@ -74,15 +74,15 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 		buf.append(_aD.getIATA());
 		buf.append(" / ");
 		buf.append(_aD.getICAO());
-		buf.append(")<br /><span class=\"bld\">");
+		buf.append(")<br><span class=\"bld\">");
 		buf.append(_aA.getName());
 		buf.append("</span> (");
 		buf.append(_aA.getIATA());
 		buf.append(" / ");
 		buf.append(_aA.getICAO());
-		buf.append(")<br /><br />Distance: ");
+		buf.append(")<br><br>Distance: ");
 		buf.append(getDistance());
-		buf.append(" miles<br />");
+		buf.append(" miles<br>");
 		buf.append(_frequency);
 		buf.append(" Flights</div>");
 		return buf.toString();

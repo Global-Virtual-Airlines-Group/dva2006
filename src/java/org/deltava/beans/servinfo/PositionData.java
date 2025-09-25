@@ -1,16 +1,17 @@
-// Copyright 2009, 2010, 2014, 2015, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014, 2015, 2016, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 2.4
  */
 
@@ -145,13 +146,13 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox onlinePilot\"><span class=\"bld\">");
 		buf.append(StringUtils.format(_dt, "MM/dd/yyyy HH:mm:ss"));
-		buf.append("</span><br /><br />Position: ");
+		buf.append("</span><br><br>Position: ");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("<br />Altitude: ");
+		buf.append("<br>Altitude: ");
 		buf.append(StringUtils.format(_pos.getAltitude(), "#,000"));
-		buf.append(" feet<br />Speed: ");
+		buf.append(" feet<br>Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "#,000"));
-		buf.append(" knots<br />Heading: ");
+		buf.append(" knots<br>Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
 		buf.append(" degrees</div>");
 		return buf.toString();
