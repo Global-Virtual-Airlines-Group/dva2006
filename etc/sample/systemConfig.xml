@@ -393,11 +393,6 @@
 		
 		<auto_reject type="Integer">5</auto_reject>
 	</registration>
-	
-	<!-- PICS content ratings -->
-	<content>
-		<safesurf>SS~~000 3</safesurf>
-	</content>
 
 	<issue_track>
 		<show type="Boolean">true</show>

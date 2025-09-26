@@ -562,11 +562,6 @@
 		</list>
 	</registration>
 
-	<!-- PICS content ratings -->
-	<content>
-		<safesurf>SS~~000 3</safesurf>
-	</content>
-	
 	<issue_track>
 		<show type="Boolean">false</show>
 		<list name="versions" attr="version" sorted="true">

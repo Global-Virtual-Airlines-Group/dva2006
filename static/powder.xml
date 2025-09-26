@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<powder xmlns="http://www.w3.org/2007/05/powder#" xmlns:icra="http://www.icra.org/rdfs/vocabulary2008#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+	<attributtion>
+		<issuedby src="https://www.deltava.org/content-info.rdf#me" />
+		<issued>2025-09-26T14:00:00</issued>
+	</attributtion>
+	<dr>
+		<iriset>
+			<includehosts>deltava.org</includehosts>
+			<includehosts>dev.deltava.org</includehosts>
+			<includehosts>www.deltava.org</includehosts>
+		</iriset>
+
+		<descriptorset>
+			<icra:cz>1</icra:cz>
+			<icra:lz>1</icra:lz>
+			<icra:nz>1</icra:nz>
+			<icra:oz>1</icra:oz>
+			<icra:vz>1</icra:vz>
+			<displaytext> No nudity; No sexual material; No violence; Mild expletives; No potentially disturbing material; User-generated content such as chat rooms and message boards (moderated)</displaytext>
+		</descriptorset>
+	</dr>
+</powder>
