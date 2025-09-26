@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <foaf:Organization rdf:ID="me">
+    <foaf:name>Global Virtual Airlines Group</foaf:name>
+    <foaf:homepage rdf:resource="https://www.gvagroup.org" />
+  </foaf:Organization>
+</rdf:RDF>
