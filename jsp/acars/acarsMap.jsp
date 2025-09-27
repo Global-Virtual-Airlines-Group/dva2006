@@ -52,8 +52,8 @@
 </tr>
 <tr class="nophone mapLegend">
  <td class="label" style="max-width:160px;">Aircraft Legend</td>
- <td class="data" style="width:45%;"><img height="22" width="24" alt="Cruising" src="/acicon.ws?c=blue" /> Cruise | <img height="22" width="22" alt="On Ground" src="/acicon.ws?c=white" /> On Ground | 
- <img height="22" width="22" alt="Climbing" src="/acicon.ws?c=orange" /> Climbing | <img height="22" width="22" alt="Descending" src="/acicon.ws?c=yellow" /> Descending</td>
+ <td class="data" style="width:45%;"><img height="22" width="24" alt="Cruising" src="/acicon.ws?c=blue"> Cruise | <img height="22" width="22" alt="On Ground" src="/acicon.ws?c=white"> On Ground | 
+ <img height="22" width="22" alt="Climbing" src="/acicon.ws?c=orange"> Climbing | <img height="22" width="22" alt="Descending" src="/acicon.ws?c=yellow"> Descending</td>
  <td class="label">Dispatcher Legend</td>
  <td class="data"><map:legend color="green" legend="Available" /> | <map:legend color="purple" legend="Busy" /></td>
 </tr>
