@@ -10,9 +10,11 @@
 <title><content:airline /> Volunteer Staff Posting - ${job.title}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:googleAnalytics />
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <c:set var="formURL" value="job.do" scope="page" />
 <c:choose>
@@ -66,13 +68,12 @@ linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
 };
 <c:if test="${access.canApply}">
-golgotha.local.clearBody = function()
-{
-const f = document.forms[0];
-if (confirm("Are you sure you want to clear what you've written?"))
-	f.body.value = '';
-	
-return true;	
+golgotha.local.clearBody = function() {
+	const f = document.forms[0];
+	if (confirm("Are you sure you want to clear what you've written?"))
+		f.body.value = '';
+
+	return true;	
 };</c:if>
 </script>
 </head>
@@ -254,6 +255,5 @@ golgotha.local.commentValidate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
