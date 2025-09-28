@@ -64,7 +64,7 @@
 <c:if test="${!empty pirep.tailCode}">
 <tr class="acarsData">
  <td class="label">Aircraft Registration</td>
- <td class="data bld" colspan="${cspan}">${pirep.tailCode}</td>
+ <td class="data sec bld" colspan="${cspan}">${pirep.tailCode}</td>
 </tr>
 </c:if>
 </c:if>
