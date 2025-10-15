@@ -320,7 +320,7 @@
 			<url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
 		</pacot>
 		<mapbox>
-			<v3 type="Integer">14</v3>
+			<v3 type="Integer">15</v3>
 		</mapbox>
 	</config>
 
