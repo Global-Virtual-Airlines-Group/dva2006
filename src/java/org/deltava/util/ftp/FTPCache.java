@@ -16,6 +16,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
+@Deprecated
 public class FTPCache {
 
 	private static final Logger log = LogManager.getLogger(FTPCache.class);

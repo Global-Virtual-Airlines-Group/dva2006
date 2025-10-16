@@ -13,6 +13,7 @@ import com.enterprisedt.net.ftp.*;
  * @since 1.0
  */
 
+@Deprecated
 public class FTPConnection implements Closeable {
 
 	private final FTPClient _client = new FTPClient();

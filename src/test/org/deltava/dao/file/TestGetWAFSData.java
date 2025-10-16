@@ -18,6 +18,7 @@ import org.deltava.util.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
 
+@Deprecated
 public class TestGetWAFSData extends TestCase {
 
 	Logger log;
