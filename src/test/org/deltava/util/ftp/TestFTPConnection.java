@@ -8,6 +8,7 @@ import com.enterprisedt.net.ftp.*;
 
 import org.deltava.util.system.SystemData;
 
+@Deprecated
 public class TestFTPConnection extends TestCase {
 	
 	private FTPConnection _con;
