@@ -59,7 +59,8 @@ golgotha.local.updateAuthor = function(cb) {
 <c:set var="disposedBy" value="${pilots[chreq.disposalID]}" scope="page" />
 <view:row entry="${chreq}">
  <td class="pri bld"><el:cmd url="chreq" link="${chreq}">${pilot.name}</el:cmd></td>
- <td class="small nophone">${chreq.airportD.name} (<fmt:airport airport="${chreq.airportD}" />) - ${chreq.airportA.name} (<fmt:airport airport="${chreq.airportA}" />)</td>
+ <td class="small nophone">${chreq.airportD.name} (<el:cmd url="airportinfo" linkID="${chreq.airportD.ICAO}" className="plain"><fmt:airport airport="${chreq.airportD}" /></el:cmd>) - ${chreq.airportA.name}
+ (<el:cmd url="airportinfo" linkID="${chreq.airportA.ICAO}" className="plain"><fmt:airport airport="${chreq.airportA}" /></el:cmd>)</td>
  <td class="sec">${chreq.equipmentType}</td>
  <td class="nophone"><fmt:date date="${chreq.createdOn}" t="HH:mm" /></td>
 <c:if test="${empty chreq.disposedOn}">
