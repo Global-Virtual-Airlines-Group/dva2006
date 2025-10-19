@@ -1,7 +1,8 @@
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.awt.Color;
 import java.awt.image.*;
@@ -14,11 +15,11 @@ import junit.framework.TestCase;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.wx.*;
 
+import org.deltava.dao.http.*;
 import org.deltava.util.*;
 import org.deltava.util.tile.*;
-import org.deltava.util.ftp.FTPConnection;
+import org.deltava.util.system.SystemData;
 
-@Deprecated
 public class TestGetWAFSData extends TestCase {
 
 	Logger log;
@@ -92,35 +93,23 @@ public class TestGetWAFSData extends TestCase {
 		log = LogManager.getLogger(GetWAFSData.class);
 	}
 
+	@SuppressWarnings("static-method")
 	public void testDownloadFile() throws Exception {
 		
+		// Calculate GRIB date
+		ZonedDateTime now = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+		int hour = (now.get(ChronoField.HOUR_OF_DAY) - 3) / 6; String hr = StringUtils.format(hour * 6, "00");
+		
+		// Build URL components
+		String urlPath = String.format("%s/gfs.%s/%s/atmos", SystemData.get("weather.gfs.path"), StringUtils.format(now, "YYYYMMdd"), hr);
+		String urlFile = String.format("gfs.t%sz.pgrb2.0p25.f000", hr);
+		String url = String.format("https://%s%s/%s", SystemData.get("weather.gfs.host"), urlPath, urlFile);
+
 		File outF = new File("data", "gfs.grib");
-		String host = "ftp.ncep.noaa.gov"; ImageSeries is = null;
-		try (FTPConnection con = new FTPConnection(host)) {
-			con.connect("anonymous", "webmaster@deltava.org");
-			log.info("Connected to {}", host);
 		
-			// Find the latest GFS run and get the latest GFS file
-			String path = "/pub/data/nccf/com/gfs/prod";
-			String dir = con.getNewestDirectory(path, FileUtils.fileFilter("gfs.", null));
-			String fName = con.getNewest(path + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
-			Instant lm = con.getTimestamp(path + "/" + dir, fName);
-			assertNotNull(lm);
-			if (outF.exists() && (outF.lastModified() == lm.toEpochMilli()))
-				return;
-			
-			// Calculate the effective date
-			is = new ImageSeries("jetstream", StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
-			assertNotNull(is);
-			assertNotNull(is.getDate());
-		
-			// Download
-			try (InputStream _ = con.get(path + "/" + dir + "/" + fName, outF)) {
-				log.info("Downloaded GFS data - {}", Long.valueOf(outF.length()));
-				outF.setLastModified(lm.toEpochMilli());
-			}
-		}
-		
+		GetURL urldao = new GetURL(url, outF.getAbsolutePath());
+		urldao.setCompression(Compression.GZIP, Compression.BROTLI);
+		outF = urldao.download();
 		assertTrue(outF.exists());
 	}
 
