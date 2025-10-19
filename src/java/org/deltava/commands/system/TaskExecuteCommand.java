@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import org.apache.logging.log4j.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to manually execute Scheduled Tasks. Unlike the Task Scheduler, which spawns a new Thread to
  * execute a Scheduled Task, this Command will execute the Task using the same Thread.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -37,11 +37,9 @@ public class TaskExecuteCommand extends AbstractCommand {
 		try {
 			t.run(ctx.getUser());
 		} catch (RuntimeException rte) {
-			Throwable tc = rte.getCause();
-			if (tc != null)
-			   log.error("Scheduled Task threw {} - {}", tc.getClass().getName(), tc.getMessage());
-			
-			ctx.setAttribute("ex", (tc == null) ? rte : tc, REQUEST);
+			Throwable tc = rte.getCause(); Throwable tt = (tc == null) ? rte : tc;
+		   log.error("Scheduled Task threw {} - {}", tt.getClass().getName(), tt.getMessage());
+			ctx.setAttribute("ex", tt, REQUEST);
 		} catch (Exception e) {
 			log.error("Scheduled Task threw {} - {}", e.getClass().getName(), e.getMessage());
 			ctx.setAttribute("ex", e, REQUEST);
