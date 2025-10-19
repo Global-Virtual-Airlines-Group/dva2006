@@ -298,7 +298,7 @@
 	<weather>
 		<cache>/var/cache/wx</cache>
 		<gfs>
-			<host>ftp.ncep.noaa.gov</host>
+			<host>nomads.ncep.noaa.gov</host>
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 

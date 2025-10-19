@@ -275,22 +275,9 @@
 	<weather>
 		<cache>/var/cache/wx</cache>
 		<gfs>
-			<host>ftp.ncep.noaa.gov</host>
+			<host>nomads.ncep.noaa.gov</host>
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
-		
-		<!-- Radar download bounds -->
-		<radar>
-			<zoom type="Integer">8</zoom>
-			<nw>
-				<lat type="Double">48.65</lat>
-				<lng type="Double">-127.3</lng>
-			</nw>
-			<se>
-				<lat type="Double">21.86</lat>
-				<lng type="Double">-63.4</lng>
-			</se>
-		</radar>
 		
 		<!-- Download locations -->
 		<url>

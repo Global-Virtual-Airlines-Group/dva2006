@@ -1,9 +1,10 @@
-// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.sql.Connection;
 import java.util.concurrent.*;
 
@@ -13,17 +14,17 @@ import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
+import org.deltava.dao.http.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
-import org.deltava.util.ftp.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 11.4
+ * @version 12.3
  * @since 5.2
  */
 
@@ -41,61 +42,36 @@ public class GFSDownloadTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		
+		// Determine hour to download
+		ZonedDateTime now = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+		int hour = (now.get(ChronoField.HOUR_OF_DAY) - 3) / 6; String hr = StringUtils.format(hour * 6, "00");
+		
+		// Build URL components
+		String urlPath = String.format("%s/gfs.%s/%s/atmos", SystemData.get("weather.gfs.path"), StringUtils.format(now, "YYYYMMdd"), hr);
+		String urlFile = String.format("gfs.t%sz.pgrb2.0p25.f000", hr);
+		String url = String.format("https://%s%s/%s", SystemData.get("weather.gfs.host"), urlPath, urlFile);
+		
 		File outF = new File(SystemData.get("weather.cache"), "gfs.grib"); Instant dt = null;
 		try {
-			String host = SystemData.get("weather.gfs.host");
-			try (FTPConnection con = new FTPConnection(host)) {
-				con.connect("anonymous", SystemData.get("airline.mail.webmaster"));
-				log.info("Connected to {}", host);
+			log.info("Fetching GFS data from {}", url);
+			TaskTimer tt = new TaskTimer();
+			GetURL urldao = new GetURL(url, outF.getAbsolutePath());
+			urldao.setCompression(Compression.GZIP, Compression.BROTLI);
+			File f = urldao.download();
+			log.info("Downloaded GFS data ({} bytes) in {}ms", Long.valueOf(outF.length()), Long.valueOf(tt.stop()));
 			
-				// Find the latest GFS run and get the latest GFS file
-				String basePath = SystemData.get("weather.gfs.path");
-				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
-				String hDir = con.getNewestDirectory(basePath + "/" + dir, FileUtils.ACCEPT_ALL);
-				String gribPath = basePath + "/" + dir + "/" + hDir + "/atmos";
-				String fName = con.getNewest(gribPath, FileUtils.fileFilter("gfs.", ".pgrb2.0p25.f000"));
-				if (!StringUtils.isEmpty(fName)) {
-					Instant lm = con.getTimestamp(gribPath, fName);
-					log.info("{} timestamp = {}", fName, StringUtils.format(lm, "MM/dd HH:mm"));
-					log.info("Local timestamp = {}", StringUtils.format(Instant.ofEpochMilli(outF.lastModified()), "MM/dd HH:mm"));
-				
-					// Calculate the effective date and download
-					dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1) + hDir, "yyyyMMddHH");
-					if (!outF.exists() || (lm.toEpochMilli() > outF.lastModified())) {
-						log.info("Downloading updated GFS data");
-						TaskTimer tt = new TaskTimer(); 
-						try (InputStream _ = con.get(gribPath + "/" + fName, outF)) {
-							log.info("Downloaded GFS data - {}", Long.valueOf(outF.length()));
-							outF.setLastModified(lm.toEpochMilli());
-							log.info("Download completed in {}ms", Long.valueOf(tt.stop()));
-						}
-					}
-				} else
-					log.warn("GRIB not ready yet");
-			}
-		} catch (FTPClientException fte) {
-			if (fte.getDumpStack())
-				log.atError().withThrowable(fte).log("Error processing GFS data - {}", fte.getMessage());
-			else
-				log.error("Error processing GFS data - {}", fte.getMessage());
-		} catch (IOException e) {
-			log.atError().withThrowable(e).log("Error processing GFS data - {}", e.getMessage());
-			return;
-		}
-		
-		// Get/set the cycle
-		try {
+			// Update last mofiedied date to be effective date
+			LocalDateTime ld = LocalDateTime.of(LocalDate.now(), LocalTime.of(hour, 0));
+			dt = ld.toInstant(ZoneOffset.UTC);
+			f.setLastModified(dt.toEpochMilli());
+			
+			// Get/set the cycle
 			Connection con = ctx.getConnection();
-			if (dt == null) {
-				GetMetadata mddao = new GetMetadata(con);
-				dt = Instant.ofEpochSecond(Long.parseLong(mddao.get("gfs.cycle")));
-				log.info("Reusing {} GFS data", dt);
-			} else {
-				SetMetadata mdwdao = new SetMetadata(con);
-				mdwdao.write("gfs.cycle", dt);
-			}
-		} catch(DAOException de) {
-			log.atError().withThrowable(de).log(de.getMessage());
+			SetMetadata mdwdao = new SetMetadata(con);
+			mdwdao.write("gfs.cycle", dt);
+		} catch (DAOException de) {
+			log.atError().withThrowable(de).log("Error processing GFS data - {}", de.getMessage());
+			return;
 		} finally {
 			ctx.release();
 		}
