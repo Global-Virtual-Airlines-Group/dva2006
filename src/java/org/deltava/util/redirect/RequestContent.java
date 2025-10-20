@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -8,15 +8,17 @@ import java.util.*;
  * servlet request for display on a result JSP, while at the same time using a redirect so that refreshing the result
  * URL does not invoke the command a second time.
  * @author Luke
- * @version 2.6
+ * @version 12.3
  * @since 1.0
  * @see org.deltava.commands.RedirectCommand
  */
 
 class RequestContent implements java.io.Serializable {
 
+	private static final long serialVersionUID = -7181124581189272915L;
+	
 	private String _url;
-	private Map<String, Object> _attrs = new HashMap<String, Object>();
+	private final Map<String, Object> _attrs = new HashMap<String, Object>();
 
 	/**
 	 * Generates a new bean from the current servlet request, and stores the URL to redirect to.
