@@ -1,15 +1,15 @@
-// Copyright 2006, 2010, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2012, 2017, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store external ID types and Facebook tokens.
  * @author Luke
- * @version 10.3
+ * @version 12.3
  * @since 1.0
  */
 
 public enum ExternalID {
-	MSN("MSN", false), ICQ("ICQ", false), YIM("Yahoo", false), FB("Facebook", false), FBTOKEN("Facebook Token", false), FBPAGE("Facebook page", false), NAVIGRAPH("Navigraph", true), DISCORD("Discord", false);
+	NAVIGRAPH("Navigraph", true), DISCORD("Discord", false);
 	
 	private final String _name;
 	private final boolean _visible;
