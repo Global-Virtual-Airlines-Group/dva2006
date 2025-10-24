@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 12.1
+ * @version 12.3
  * @since 11.0
  */
 
@@ -63,7 +63,12 @@ public class MessageReceivedListener implements MessageCreateListener {
     		// Check if this is a command in the Welcome channge
     		if (channelName.equals(ChannelName.WELCOME.getName())) {
     			User u = e.getMessageAuthor().asUser().orElse(null);
-    			String msgText = e.getMessageContent(); 
+    			String msgText = e.getMessageContent();
+    			
+    			// Delete message
+    			e.getMessage().delete("Auto delete interaction message").get();
+    			log.info("Delete Welcome channel message from {}", (u == null) ? "Anonymous" : u.getName());
+    			
     			if (msgText.startsWith("!") && (u != null)) {
     				int pos = msgText.indexOf(' ');
     				String cmdName = msgText.substring(1, (pos == -1) ? msgText.length() : pos).toLowerCase();
@@ -98,7 +103,6 @@ public class MessageReceivedListener implements MessageCreateListener {
     					u.sendMessage(EmbedGenerator.welcome(e));
     				}
     				
-    				e.getMessage().delete("Auto delete interaction message").get();
     				return;
     			}
     		}
