@@ -9,7 +9,7 @@ package org.deltava.beans;
  */
 
 public enum ExternalID {
-	NAVIGRAPH("Navigraph", true), DISCORD("Discord", false);
+	NAVIGRAPH("Navigraph", true), DISCORD("Discord", false), SIMBRIEF("SimBiref", true);
 	
 	private final String _name;
 	private final boolean _visible;
