@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.util.*;
@@ -8,18 +8,18 @@ import org.jdom2.Document;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.ETOPS;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.XMLUtils;
 
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 10.3
  */
 
-public class BriefingPackage extends DatabaseBean {
+public class BriefingPackage extends DatabaseBean implements RoutePair {
 
 	private final PackageFormat _fmt;
 	private String _sbID;
@@ -29,6 +29,9 @@ public class BriefingPackage extends DatabaseBean {
 	private Instant _createdOn;
 	private String _tailCode;
 	private String _airframeID;
+	
+	private Airport _aD;
+	private Airport _aA;
 	
 	private ETOPS _etops = ETOPS.ETOPS60;
 	private GeoLocation _etopsMidpoint;
@@ -67,6 +70,16 @@ public class BriefingPackage extends DatabaseBean {
 		super();
 		setID(id);
 		_fmt = fmt;
+	}
+	
+	@Override
+	public Airport getAirportD() {
+		return _aD;
+	}
+	
+	@Override
+	public Airport getAirportA() {
+		return _aA;
 	}
 
 	/**
@@ -371,6 +384,22 @@ public class BriefingPackage extends DatabaseBean {
 	 */
 	public void setAIRAC(int airac) {
 		_airac = airac;
+	}
+	
+	/**
+	 * Updates the departure Airport.
+	 * @param a the Airport
+	 */
+	public void setAirportD(Airport a) {
+		_aD = a;
+	}
+
+	/**
+	 * Updates the arrival Airport.
+	 * @param a the Airport
+	 */
+	public void setAirportA(Airport a) {
+		_aA = a;
 	}
 	
 	/**
