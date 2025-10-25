@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A parser for SimBrief XML dispatch packages.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 10.3
  */
 
@@ -67,7 +67,9 @@ public class SimBriefParser {
 		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
+		sb.setAirportD(SystemData.getAirport(XMLUtils.getChildText(re, "origin", "iata_code")));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
+		sb.setAirportA(SystemData.getAirport(XMLUtils.getChildText(re, "destination", "iata_code")));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
 		sb.setTailCode(XMLUtils.getChildText(re, "aircraft", "reg"));
 		String airframeID = XMLUtils.getChildText(re, "api_params", "type");
