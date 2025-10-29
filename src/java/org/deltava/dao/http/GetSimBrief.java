@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -9,11 +9,12 @@ import java.io.*;
 import org.deltava.beans.simbrief.*;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 10.3
  */
 
@@ -89,16 +90,21 @@ public class GetSimBrief extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String refresh(String userID, String staticID) throws DAOException {
-		String url = String.format("https://www.simbrief.com/api/xml.fetcher.php?userid=%s&static_id=%s", userID, staticID);
+		
+		StringBuilder buf = new StringBuilder("https://www.simbrief.com/api/xml.fetcher.php?username=");
+		buf.append(userID);
+		if (!StringUtils.isEmpty(staticID))
+			buf.append("&static_id=").append(staticID);
+		
 		try {
-			init(url);
+			init(buf.toString());
 			
 			// If we're an error, throw a status code exception, except a 400 in which case we parse the error
 			int statusCode = getResponseCode();
 			if (statusCode == SC_BAD_REQUEST)
-				throw new SimBriefException(url, download());
+				throw new SimBriefException(buf.toString(), download());
 			else if (statusCode > SC_BAD_REQUEST)
-				throw new HTTPDAOException(url, statusCode);
+				throw new HTTPDAOException(buf.toString(), statusCode);
 			
 			return download();
 		} catch (IOException ie) {
