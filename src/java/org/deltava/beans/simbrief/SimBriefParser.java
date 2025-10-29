@@ -69,8 +69,10 @@ public class SimBriefParser {
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
 		sb.setAirportD(SystemData.getAirport(XMLUtils.getChildText(re, "origin", "iata_code")));
 		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
+		sb.setTimeD(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_out"), 0)));
 		sb.setAirportA(SystemData.getAirport(XMLUtils.getChildText(re, "destination", "iata_code")));
 		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
+		sb.setTimeA(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_in"), 0)));
 		sb.setTailCode(XMLUtils.getChildText(re, "aircraft", "reg"));
 		String airframeID = XMLUtils.getChildText(re, "api_params", "type");
 		if ((airframeID != null) && (airframeID.length() > 8))

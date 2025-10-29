@@ -2,7 +2,7 @@
 package org.deltava.beans.simbrief;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 
 import org.jdom2.Document;
 
@@ -19,7 +19,7 @@ import org.deltava.util.XMLUtils;
  * @since 10.3
  */
 
-public class BriefingPackage extends DatabaseBean implements RoutePair {
+public class BriefingPackage extends DatabaseBean implements RoutePair, FlightTimes {
 
 	private final PackageFormat _fmt;
 	private String _sbID;
@@ -32,6 +32,8 @@ public class BriefingPackage extends DatabaseBean implements RoutePair {
 	
 	private Airport _aD;
 	private Airport _aA;
+	private ZonedDateTime _timeD;
+	private ZonedDateTime _timeA;
 	
 	private ETOPS _etops = ETOPS.ETOPS60;
 	private GeoLocation _etopsMidpoint;
@@ -80,6 +82,16 @@ public class BriefingPackage extends DatabaseBean implements RoutePair {
 	@Override
 	public Airport getAirportA() {
 		return _aA;
+	}
+	
+	@Override
+	public ZonedDateTime getTimeD() {
+		return _timeD;
+	}
+	
+	@Override
+	public ZonedDateTime getTimeA() {
+		return _timeA;
 	}
 
 	/**
@@ -400,6 +412,22 @@ public class BriefingPackage extends DatabaseBean implements RoutePair {
 	 */
 	public void setAirportA(Airport a) {
 		_aA = a;
+	}
+	
+	/**
+	 * Sets the expected departure time.
+	 * @param dt the departure date/time in UTC
+	 */
+	public void setTimeD(Instant dt) {
+		_timeD = ZonedDateTime.ofInstant(dt, _aD.getTZ().getZone());
+	}
+	
+	/**
+	 * Sets the expected arrival time.
+	 * @param dt the arrival date/time in UTC
+	 */
+	public void setTimeA(Instant dt) {
+		_timeA = ZonedDateTime.ofInstant(dt, _aA.getTZ().getZone());
 	}
 	
 	/**
