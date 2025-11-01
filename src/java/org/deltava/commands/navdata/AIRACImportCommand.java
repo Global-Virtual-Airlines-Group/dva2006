@@ -107,8 +107,9 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							al.setCode(txtData.substring(0, 5));
 							al.setAltitude(StringUtils.parse(txtData.substring(27, 32).trim(), 0));
 							al.setName(txtData.substring(34));
-							if (!codes.add(al.getCode()))
-								throw new IllegalArgumentException("Duplicate Airport code -" + al.getCode());
+							String code = String.format("%s %2$,.4f %3$,.4f", al.getCode(), Double.valueOf(al.getLatitude()), Double.valueOf(al.getLongitude()));
+							if (!codes.add(code))
+								throw new IllegalArgumentException(String.format("Duplicate Airport code - %s at [ %2$,.4f / %3$,.4f ]", al.getCode(), Double.valueOf(al.getLatitude()), Double.valueOf(al.getLongitude())));
 								
 							nd = al;
 							break;
@@ -153,7 +154,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							else if ((cnt == 2) && (txtData.indexOf('-') < 8)) {
 								String codeLat = tkns.nextToken();
 								int pos = txtData.indexOf('-');
-								String code = codeLat.substring(0, pos);
+								code = codeLat.substring(0, pos);
 								nd = new Intersection(code, Double.parseDouble(codeLat.substring(pos).trim()), Double.parseDouble(tkns.nextToken()));
 							} else
 								nd = new Intersection(txtData.substring(0, 5), Double.parseDouble(txtData.substring(5, 15).trim()), Double.parseDouble(txtData.substring(16).trim()));
@@ -187,6 +188,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			}
 			
 			// Flush
+			codes.clear();
 			tt.mark("Read");
 			if (!nds.isEmpty()) {
 				dao.write(nds);
