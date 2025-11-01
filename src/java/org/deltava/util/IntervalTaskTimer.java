@@ -1,4 +1,4 @@
-// Copyright 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * A Task Timer that allows multiple intervals to be recorded for different steps in an operation.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 11.1
  */
 
@@ -74,6 +74,14 @@ public class IntervalTaskTimer extends TaskTimer {
 		
 		long execTime = mrk.longValue() - getStart();
 		return NANOSECONDS.toMillis(execTime); 
+	}
+	
+	/**
+	 * Converts all of the timings to a Map.
+	 * @return a Map of timings, keyed by interval name
+	 */
+	public Map<String, Long> toMap() {
+		return Collections.unmodifiableMap(_intervals);
 	}
 	
 	@Override
