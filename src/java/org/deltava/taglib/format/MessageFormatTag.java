@@ -111,7 +111,7 @@ public class MessageFormatTag extends TagSupport {
 		StringTokenizer tkns = new StringTokenizer(_msg, " \n\r", true);
 		while (tkns.hasMoreTokens()) {
 			String token = tkns.nextToken();
-			if (!_bbCode && (token.startsWith("http://") || token.startsWith("https://"))) {
+			if (token.startsWith("http://") || token.startsWith("https://")) {
 				try {
 					while (token.endsWith(".") || token.endsWith(","))
 						token = token.substring(0, token.length() - 1);
