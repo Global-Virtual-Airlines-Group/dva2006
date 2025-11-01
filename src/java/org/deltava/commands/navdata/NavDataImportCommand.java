@@ -1,7 +1,9 @@
-// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.sql.Connection;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.navdata.CycleInfo;
 
@@ -11,12 +13,17 @@ import org.deltava.dao.*;
 /**
  * An abstract Command to help loading Navigation Data.
  * @author Luke
- * @version 6.0
+ * @version 12.3
  * @since 5.1
  */
 
 abstract class NavDataImportCommand extends AbstractCommand {
-
+	
+	/**
+	 * Shared logger.
+	 */
+	protected static final Logger log = LogManager.getLogger(NavDataImportCommand.class);
+	
 	/**
 	 * Retrieves the currently loaded navigation data cycle.
 	 * @param ctx a CommandContext
