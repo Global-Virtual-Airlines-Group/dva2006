@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 1.0
  */
 
@@ -68,25 +68,25 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		
 		Navaid nt = Navaid.values()[navaidType]; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
 		List<String> errors = new ArrayList<String>(); 
-		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		int entryCount = 0; int regionCount = 0; CycleInfo newCycle = null;
+		IntervalTaskTimer tt = new IntervalTaskTimer();
 		try (InputStream is = navData.getInputStream(); LineNumberReader br = new LineNumberReader(new InputStreamReader(is))) {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
 			// Get the write DAO
-			TaskTimer tt = new TaskTimer();
+			tt.mark("Connection");
 			SetNavData dao = new SetNavData(con);
 			dao.setQueryTimeout(90);
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
-			timings.put("Purge", Long.valueOf(tt.stop()));
-			dao.setQueryTimeout(30); tt.start();
+			tt.mark("Purge");
+			dao.setQueryTimeout(30);
 			ctx.setAttribute("legacyCount", Integer.valueOf(dao.updateLegacy(nt)), REQUEST);
-			timings.put("UpdateLegacy", Long.valueOf(tt.stop()));
+			tt.mark("UpdateLegacy");
 
 			// Iterate through the file
-			Collection<NavigationDataBean> nds = new ArrayList<NavigationDataBean>();
-			String txtData = br.readLine(); tt.start();
+			Collection<NavigationDataBean> nds = new ArrayList<NavigationDataBean>(); Collection<String> codes = new HashSet<String>();
+			String txtData = br.readLine();
 			while (txtData != null) {
 				boolean isComment = txtData.startsWith(";"); 
 				if ((newCycle == null) && isComment) {
@@ -107,6 +107,9 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							al.setCode(txtData.substring(0, 5));
 							al.setAltitude(StringUtils.parse(txtData.substring(27, 32).trim(), 0));
 							al.setName(txtData.substring(34));
+							if (!codes.add(al.getCode()))
+								throw new IllegalArgumentException("Duplicate Airport code -" + al.getCode());
+								
 							nd = al;
 							break;
 
@@ -166,16 +169,16 @@ public class AIRACImportCommand extends NavDataImportCommand {
 					} 
 					
 					// Write the bean, and log any errors
-					if (nd != null) {
-						nds.add(nd);
-						if (nds.size() > 40) {
-							entryCount += nds.size();
-							try {
-								dao.write(nds);
-								nds.clear();
-							} catch (DAOException de) {
-								errors.add("Error at line " + br.getLineNumber() + ": " + de.getMessage());
-							}
+					if (nd != null) nds.add(nd);
+					if (nds.size() >= 50) {
+						entryCount += nds.size();
+						try {
+							dao.write(nds);
+						} catch (DAOException de) {
+							log.atError().withThrowable(de).log("Error writing Navaids - {}", de.getMessage());
+							errors.add("Error at line " + br.getLineNumber() + ": " + de.getMessage());
+						} finally {
+							nds.clear();
 						}
 					}
 				}
@@ -184,16 +187,17 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			}
 			
 			// Flush
+			tt.mark("Read");
 			if (!nds.isEmpty()) {
 				dao.write(nds);
 				entryCount += nds.size();
 			}
 
 			// Update the regions
-			timings.put("Load", Long.valueOf(tt.stop()));
-			dao.setQueryTimeout(150); tt.start();
+			tt.mark("Store");
+			dao.setQueryTimeout(150);
 			regionCount = dao.updateRegions(nt);
-			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
+			tt.mark("UpdateRegions");
 			
 			// Write the cycle ID and commit
 			if ((newCycle != null) && updateVersion) {
@@ -204,9 +208,13 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			ctx.commitTX();
 		} catch (IOException | DAOException ie) {
 			ctx.rollbackTX();
+			tt.mark("Rollback");
+			log.error("Timings = {}", tt);
 			throw new CommandException(ie);
 		} finally {
+			tt.stop();
 			ctx.release();
+			log.info("Timings = {}", tt);
 		}
 
 		// Purge the navdata cache
@@ -215,9 +223,9 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("NavRunway");
 		CacheManager.invalidate("NavSIDSTAR");
 		CacheManager.invalidate("NavRoute");
-		
+
 		// Set status attributes
-		ctx.setAttribute("timings", timings, REQUEST);
+		ctx.setAttribute("timings", tt.toMap(), REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 		ctx.setAttribute("navaidType", nt, REQUEST);
