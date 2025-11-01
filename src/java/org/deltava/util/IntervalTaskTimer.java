@@ -81,7 +81,10 @@ public class IntervalTaskTimer extends TaskTimer {
 	 * @return a Map of timings, keyed by interval name
 	 */
 	public Map<String, Long> toMap() {
-		return Collections.unmodifiableMap(_intervals);
+		Map<String, Long> results = new LinkedHashMap<String, Long>();
+		final long start = getStart();
+		_intervals.forEach((k, v) -> results.put(k, Long.valueOf(NANOSECONDS.toMillis(v.longValue() - start))));
+		return results;
 	}
 	
 	@Override
