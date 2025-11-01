@@ -5,8 +5,6 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.logging.log4j.*;
-
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -23,14 +21,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 2.0
  */
 
 public class TerminalRouteImportCommand extends NavDataImportCommand {
 
-	private static final Logger log = LogManager.getLogger(TerminalRouteImportCommand.class);
-	
 	private static final String[] UPLOAD_NAMES = {"psssid.dat", "pssstar.dat"};
 
 	/**
@@ -73,10 +69,10 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
 		List<String> errors = new ArrayList<String>();
-		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType]; CycleInfo newCycle = null;
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0; LineNumberReader br = null; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
+		IntervalTaskTimer tt = new IntervalTaskTimer();
 		try (InputStream is = navData.getInputStream(); LineNumberReader br2 = new LineNumberReader(new InputStreamReader(is), 131072)) {
 			br = br2;
 			
@@ -84,7 +80,6 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			TerminalRoute tr = null; 
 			Collection<String> IDs = new HashSet<String>(); Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
-			TaskTimer tt = new TaskTimer();
 			String txtData = br.readLine(); String lastAirport = null; int seq = 0;
 			while (txtData != null) {
 				boolean isComment = txtData.startsWith(";");
@@ -147,7 +142,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 				txtData = br.readLine();
 			}
 			
-			timings.put("Load", Long.valueOf(tt.stop()));
+			tt.mark("Load");
 			
 			// Get a connection
 			Connection con = ctx.getConnection();
@@ -156,14 +151,12 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
 			if (doPurge) {
-				tt.start();
 				int purgeCount = dao.purgeTerminalRoutes(rt);
-				timings.put("Purge", Long.valueOf(tt.stop()));
+				tt.mark("Purge");
 				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);	
 			}
 
 			// Write the entries
-			tt.start();
 			for (TerminalRoute trt : results) {
 				if (trt.getTransition() == null) {
 					errors.add(trt.getName() + " (" + trt.getICAO() + ") has no transition");
@@ -175,10 +168,10 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			}
 			
 			// Update the waypoint types
-			timings.put("Write", Long.valueOf(tt.stop()));
+			tt.mark("Write");
 			dao.setQueryTimeout(75);
 			int regionCount = dao.updateTRWaypoints();
-			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
+			tt.mark("UpdateRegions");
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 			
 			// Write the cycle ID
@@ -189,6 +182,8 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			
 			// Commit
 			ctx.commitTX();
+			tt.stop();
+			ctx.setAttribute("timings", tt.toMap(), REQUEST);
 		} catch (Exception e) {
 			if (br != null) log.error("Import error at line {}", Integer.valueOf(br.getLineNumber()));
 			ctx.rollbackTX();
@@ -204,7 +199,6 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("XMLMetadata");
 		
 		// Set status attributes
-		ctx.setAttribute("timings", timings, REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
