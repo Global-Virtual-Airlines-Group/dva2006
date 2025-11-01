@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 2.0
  */
 
@@ -57,8 +57,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		List<String> errors = new ArrayList<String>();
 		Collection<Airway> results = new ArrayList<Airway>();
 		int entryCount = 0; CycleInfo newCycle = null; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
-		Map<String, Long> timings = new LinkedHashMap<String, Long>();
-		TaskTimer tt = new TaskTimer();
+		IntervalTaskTimer tt = new IntervalTaskTimer();
 		try (InputStream is = navData.getInputStream(); LineNumberReader br = new LineNumberReader(new InputStreamReader(is))) {
 			Airway a = null; int lastSeq = -1; String lastCode = "";
 			String txtData = br.readLine(); 
@@ -104,7 +103,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		} catch (IOException | IllegalStateException ie) {
 			throw new CommandException(ie);
 		} finally {
-			timings.put("Load", Long.valueOf(tt.stop()));
+			tt.mark("Load");
 		}
 			
 		// Get a connection
@@ -116,26 +115,23 @@ public class AirwayImportCommand extends NavDataImportCommand {
 			SetNavData dao = new SetNavData(con);
 			boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
 			if (doPurge) {
-				tt.start();
 				int purgeCount = dao.purgeAirways();
-				timings.put("Purge", Long.valueOf(tt.stop()));
+				tt.mark("Purge");
 				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
 				ctx.setAttribute("doPurge", Boolean.TRUE, REQUEST);
 			}
 			
 			// Write the airways
-			tt.start();
 			for (Airway aw : results) {
 				dao.write(aw);
 				entryCount++;
 			}
 			
 			// Update the waypoint types
-			timings.put("Store", Long.valueOf(tt.stop()));
+			tt.mark("Store");
 			dao.setQueryTimeout(75);
-			tt.start();
 			int regionCount = dao.updateAirwayWaypoints();
-			timings.put("UpdateRegion", Long.valueOf(tt.stop()));
+			tt.mark("UpdateRegion");
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 			
 			// Write the cycle ID
@@ -147,9 +143,13 @@ public class AirwayImportCommand extends NavDataImportCommand {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
+			tt.mark("Rollback");
+			log.error("Timings = {}", tt);
 			throw new CommandException(de);
 		} finally {
+			tt.stop();
 			ctx.release();
+			log.info("Timings = {}", tt);
 		}
 		
 		// Purge the caches
@@ -157,7 +157,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
-		ctx.setAttribute("timings", timings, REQUEST);
+		ctx.setAttribute("timings", tt.toMap(), REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("airway", Boolean.TRUE, REQUEST);
