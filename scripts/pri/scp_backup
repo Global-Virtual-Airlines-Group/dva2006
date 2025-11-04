@@ -16,10 +16,6 @@ rsync $OPTS --delete cfg/* $USER@$1:~/cfg
 rsync $OPTS sites/*.tar.gz $USER@$1:~/sites
 rsync $OPTS --delete /home/www/archive/* $USER@$1:~/archive
 
-# Update log permissions
-chown root:backup /home/backup/httplogs/afv/*.bz2
-chown root:backup /home/backup/httplogs/dva/*.bz2
-
 # Backup logs via rsync
 rsync $OPTS --delete httplogs/* $USER@$1:~/httplogs
 rsync $OPTS --delete --exclude=svn.revision_base svn/* $USER@$1:~/svn
