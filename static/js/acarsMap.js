@@ -1,4 +1,4 @@
-golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[]};
+golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[], cfg:{}};
 golgotha.maps.acars.generateXMLRequest = function()
 {
 const xmlreq = new XMLHttpRequest();
@@ -27,7 +27,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Parse the JSON
-	const js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText); const cfg = golgotha.maps.acars.cfg;
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	const allAC = js.aircraft.sort(golgotha.maps.acars.sort);
 	allAC.forEach(function(a) {
@@ -44,6 +44,7 @@ xmlreq.onreadystatechange = function() {
 			p.setHTML(a.info);
 
 		// Set click handlers
+		mrk.popup = p;
 		p.on('close', golgotha.maps.acars.infoClose);
 		p.on('open', function(e) { 
 			golgotha.maps.selectedMarker = e.target._marker;
@@ -63,7 +64,7 @@ xmlreq.onreadystatechange = function() {
 				cbo.selectedIndex = (cbo.options.length - 1);
 		}
 
-		mrk.setPopup(p);
+		if (cfg.showInfo) mrk.setPopup(p);
 		golgotha.maps.acars.acPositions.push(mrk);
 		mrk.setMap(map);
 	});
@@ -127,20 +128,16 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 };
 
-golgotha.maps.acars.clickAircraft = function(mrk)
-{
-// Check what info we display
-const f = document.forms[0];
-const isProgress = f.showProgress.checked;
-const isRoute = f.showRoute.checked;
-golgotha.event.beacon('ACARS', 'Flight Info');
+golgotha.maps.acars.clickAircraft = function(mrk) {
+	const cfg = golgotha.maps.acars.cfg;
+	golgotha.event.beacon('ACARS', 'Flight Info');
 
-// Display flight progress / route
-if (isProgress || isRoute)
-	golgotha.maps.acars.showFlightProgress(mrk, isProgress, isRoute);
+	// Display flight progress / route
+	if (cfg.showProgress || cfg.showRoute)
+		golgotha.maps.acars.showFlightProgress(mrk, cfg.showProgress, cfg.showRoute);
 
-document.pauseRefresh = true;
-return true;
+	document.pauseRefresh = true;
+	return true;
 };
 
 golgotha.maps.acars.clickDispatch = function(mrk)
@@ -216,8 +213,7 @@ golgotha.maps.acars.zoomTo = function(combo) {
 	if ((!opt) || (!opt.mrk)) return false;
 
 	// Check if we zoom or just pan
-	const f = document.forms[0];
-	if (f.zoomToPilot.checked) map.setZoom(9);
+	if (golgotha.maps.acars.cfg.zoomToPilot.checked) map.setZoom(9);
 	map.panTo(opt.mrk.getLngLat());
 	opt.mrk.getElement().dispatchEvent(new Event('click'));
 	return true;
@@ -232,7 +228,7 @@ golgotha.maps.save = function(m) {
 
 golgotha.maps.acars.reloadData = function(isAuto) {
 	const isVisible = !document.visibilityState || (document.visibilityState == 'visible');
-	const doRefresh = document.forms[0].autoRefresh.checked;
+	const doRefresh = golgotha.maps.acars.cfg.autoRefresh;
 
 	// Generate XMLHTTPRequest if we're not already viewing a flight
 	if (!document.pauseRefresh && isVisible) {
@@ -262,5 +258,16 @@ golgotha.maps.acars.showEarth = function() {
 
 golgotha.maps.acars.updateSettings = function() {
 	golgotha.maps.save(map);
+	return true;
+};
+
+golgotha.maps.acars.loadConfig = function() {
+	const f = document.forms[0];
+	const cfg = golgotha.maps.acars.cfg;
+	cfg.showProgress = f.showProgress.checked;
+	cfg.autoRefresh = f.autoRefresh.checked;
+	cfg.zoomToPilot = f.zoomToPilot.checked;
+	cfg.showInfo = f.showInfo.checked;
+	golgotha.maps.acars.acPositions.forEach(function(m) { m.setPopup(cfg.showInfo ? m.popup : null); });	
 	return true;
 };

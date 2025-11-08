@@ -43,11 +43,11 @@
 </tr>
 <tr>
  <td class="label">Map Options</td>
- <td class="data" colspan="3"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
-<el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" />
-<el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" />
-<el:box name="showRoute" idx="*" value="true" label="Show Flight Plan" checked="false" />
-<span class="nophone"><el:box name="zoomToPilot" idx="*" value="true" label="Zoom to Pilot" checked="false" />
+ <td class="data" colspan="3"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" onChange="void golgotha.maps.acars.loadConfig()" />&nbsp;
+<el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" onChange="void golgotha.maps.acars.loadConfig()" />
+<el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" onChange="void golgotha.maps.acars.loadConfig()" />
+<el:box name="showRoute" idx="*" value="true" label="Show Flight Plan" checked="false" onChange="void golgotha.maps.acars.loadConfig()" />
+<span class="nophone"><el:box name="zoomToPilot" idx="*" value="true" label="Zoom to Pilot" checked="false" onChange="void golgotha.maps.acars.loadConfig()" />
 <el:box name="showLegend" idx="*" value="true" label="Show Legend" checked="true" onChange="void golgotha.maps.acars.showLegend(this)" /></span></span></td>
 </tr>
 <tr class="nophone mapLegend">
@@ -110,9 +110,6 @@ golgotha.maps.wx.ctl.addLayer({name:'Satellite', c:'selImg', disabled:true, id:'
 golgotha.maps.wx.ctl.addLayer({name:'FIRs', disabled:true, id:'selFIR', f:function() { return golgotha.local.fl.getFIRs(); }});
 map.addControl(golgotha.maps.wx.ctl, 'bottom-left');
 
-//const jsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.375, zIndex:golgotha.maps.z.OVERLAY}, 'Jet', 'wind-lojet');
-// ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
-
 // Load data async once tiles are loaded
 map.once('load', function() {
 	map.addTerrain(1.5);
@@ -129,6 +126,7 @@ map.addControl(new golgotha.maps.DIVControl('mapStatus'), 'top-right');
 map.addControl(new golgotha.maps.DIVControl('zoomLevel'), 'bottom-right');
 map.addControl(new golgotha.maps.DIVControl('seriesRefresh'), 'bottom-left');
 
+golgotha.maps.acars.loadConfig();
 golgotha.maps.reloadData = function(isReload) {
 	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
 	const dv = document.getElementById('seriesRefresh');
