@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 7.0
  */
 
@@ -47,6 +47,7 @@ final class OfflineFlightParser {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			doc = builder.build(new java.io.StringReader(xml));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
