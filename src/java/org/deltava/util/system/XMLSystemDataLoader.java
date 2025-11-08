@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2017, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom2.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         Document doc = null;
         try (InputStream is = ConfigLoader.getStream(XML_FILENAME)) {
             SAXBuilder builder = new SAXBuilder();
+            builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             doc = builder.build(is);
         } catch (JDOMException je) {
             throw new IOException("XML Parse Error", je);

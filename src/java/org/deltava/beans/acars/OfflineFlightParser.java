@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 12.2
+ * @version 12.3
  * @since 2.4
  */
 
@@ -63,6 +63,7 @@ public final class OfflineFlightParser {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			doc = builder.build(new StringReader(xml));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);

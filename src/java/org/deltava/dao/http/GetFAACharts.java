@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 5.0
  */
 
@@ -44,6 +44,7 @@ public class GetFAACharts extends DAO {
 			init(url);
 			try (InputStream in = getIn()) {
 				SAXBuilder builder = new SAXBuilder();
+				builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 				doc = builder.build(in);
 			}
 		} catch (Exception e) {

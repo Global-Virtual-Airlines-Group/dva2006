@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2019, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2019, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -17,10 +17,9 @@ import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
- * URL is https://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
+ * A Data Access Object to do reverse geocoding using the Google HTTP API.
  * @author Luke
- * @version 11.2
+ * @version 12.3
  * @since 2.3
  */
 
@@ -48,6 +47,7 @@ public class GetGoogleGeocode extends DAO {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			doc = builder.build(new InputStreamReader(getStream(loc), "UTF-8"));
 		} catch (Exception e) {
 			throw new DAOException(e);

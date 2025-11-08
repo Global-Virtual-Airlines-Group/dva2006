@@ -47,6 +47,7 @@ public class SimBriefParser {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			doc = builder.build(new StringReader(xml));
 		} catch (IOException | JDOMException ie) {
 			throw new IllegalStateException(ie);
@@ -127,6 +128,7 @@ public class SimBriefParser {
 	public static String parseError(String xml) {
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			Document doc = builder.build(new StringReader(xml));
 			return XMLUtils.getChildText(doc.getRootElement(), "fetch", "status");
 		} catch (IOException | JDOMException ie) {
