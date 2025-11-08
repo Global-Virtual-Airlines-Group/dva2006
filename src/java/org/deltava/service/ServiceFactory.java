@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class ServiceFactory {
 		Document doc = null;
 		try (InputStream in = ConfigLoader.getStream(configXML)) {
 			SAXBuilder builder = new SAXBuilder();
+			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			doc = builder.build(in);
 		} catch (JDOMException je) {
 			throw new IOException("XML Parse Error in " + configXML, je);
