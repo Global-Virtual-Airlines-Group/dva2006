@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2017, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -45,6 +45,7 @@ public class TaskFactory {
       Document doc = null;
       try (InputStream is = ConfigLoader.getStream(configXML)) {
           SAXBuilder builder = new SAXBuilder();
+          builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
           doc = builder.build(is);
       } catch (JDOMException je) {
           throw new IOException("XML Parse Error in " + configXML, je);
