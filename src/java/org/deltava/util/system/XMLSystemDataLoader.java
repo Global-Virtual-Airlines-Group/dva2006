@@ -38,7 +38,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         Document doc = null;
         try (InputStream is = ConfigLoader.getStream(XML_FILENAME)) {
             SAXBuilder builder = new SAXBuilder();
-            builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            builder.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
             doc = builder.build(is);
         } catch (JDOMException je) {
             throw new IOException("XML Parse Error", je);
