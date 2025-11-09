@@ -40,7 +40,7 @@ public class ServiceFactory {
 		Document doc = null;
 		try (InputStream in = ConfigLoader.getStream(configXML)) {
 			SAXBuilder builder = new SAXBuilder();
-			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			builder.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			doc = builder.build(in);
 		} catch (JDOMException je) {
 			throw new IOException("XML Parse Error in " + configXML, je);

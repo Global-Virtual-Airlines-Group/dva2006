@@ -44,7 +44,7 @@ public class GetFAACharts extends DAO {
 			init(url);
 			try (InputStream in = getIn()) {
 				SAXBuilder builder = new SAXBuilder();
-				builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+				builder.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
 				doc = builder.build(in);
 			}
 		} catch (Exception e) {

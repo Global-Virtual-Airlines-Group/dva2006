@@ -47,7 +47,7 @@ public class GetGoogleGeocode extends DAO {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			builder.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			doc = builder.build(new InputStreamReader(getStream(loc), "UTF-8"));
 		} catch (Exception e) {
 			throw new DAOException(e);
