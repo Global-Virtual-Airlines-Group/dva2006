@@ -47,7 +47,7 @@ final class OfflineFlightParser {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			builder.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			doc = builder.build(new java.io.StringReader(xml));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
