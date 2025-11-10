@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 11.3
+ * @version 12.3
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -72,6 +72,16 @@ public class SecurityCookieFilter extends HttpFilter {
 
 		return null;
 	}
+	
+	/*
+	 * Helper method to return an empty cookie.
+	 */
+	private static Cookie clearCookie(boolean isSecure) {
+		Cookie c = new Cookie(AUTH_COOKIE_NAME, "");
+		c.setHttpOnly(true);
+		c.setSecure(isSecure);
+		return c;
+	}
 
 	/**
 	 * Called by the servlet container on each request. Repopulates the session if a cookie is found.
@@ -106,7 +116,7 @@ public class SecurityCookieFilter extends HttpFilter {
 				s.setAttribute(AUTH_COOKIE_NAME, cData);
 			} catch (Exception e) {
 				log.error("Error decrypting security cookie from {} using {} - {}", req.getRemoteHost(), req.getHeader("user-agent"), e.getMessage());
-				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+				rsp.addCookie(clearCookie(req.isSecure()));
 				cData = null;
 			}
 		}
@@ -115,7 +125,7 @@ public class SecurityCookieFilter extends HttpFilter {
 		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
 		if ((cData != null) && cData.isExpired()) {
 			log.warn("Cookie for {} has expired", cData.getUserID());
-			rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			rsp.addCookie(clearCookie(req.isSecure()));
 			req.setAttribute("isExpired", Boolean.TRUE);
 			s.invalidate();
 			cData = null;
@@ -127,7 +137,10 @@ public class SecurityCookieFilter extends HttpFilter {
 			if (timeUntilExpiry < 7_200_000) {
 				cData.setExpiryDate(cData.getExpiryDate().plusSeconds(3600 * 4));
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
-				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
+				Cookie c = new Cookie(AUTH_COOKIE_NAME, newCookie);
+				c.setHttpOnly(true);
+				c.setSecure(req.isSecure());
+				rsp.addCookie(c);	
 			}
 		}
 
@@ -172,7 +185,7 @@ public class SecurityCookieFilter extends HttpFilter {
 			}
 		} catch (Exception se) {
 			log.warn(se.getMessage());
-			rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			rsp.addCookie(clearCookie(req.isSecure()));
 			req.setAttribute("servlet_error", se.getMessage());
 			s.invalidate();
 			cData = null;
@@ -232,7 +245,7 @@ public class SecurityCookieFilter extends HttpFilter {
 						throw new SecurityException(p.getName() + " status = " + p.getStatus().getDescription());
 				} catch (SecurityException se) {
 					log.error(se.getMessage());
-					rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+					rsp.addCookie(clearCookie(req.isSecure()));
 					s.invalidate();
 				}
 			}
