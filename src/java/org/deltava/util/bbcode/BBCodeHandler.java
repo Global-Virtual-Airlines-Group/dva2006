@@ -71,7 +71,9 @@ public class BBCodeHandler extends DefaultHandler
 			return;
 		
 		try (InputStream is = ConfigLoader.getStream("/etc/bb_config.xml")) {
-			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+			SAXParserFactory sf = SAXParserFactory.newInstance();
+			sf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			SAXParser parser = sf.newSAXParser();
 			parser.parse(is, this);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
