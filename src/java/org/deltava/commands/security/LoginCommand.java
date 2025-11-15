@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -177,6 +177,8 @@ public class LoginCommand extends AbstractCommand {
 					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
 					wc.setPath("/");
 					wc.setMaxAge(86400 * 180);
+					wc.setSecure(ctx.getRequest().isSecure());
+					wc.setHttpOnly(true);
 					ctx.addCookie(wc);
 				} else
 					log.warn("{} status = {}", p.getName(), p.getStatus().getDescription());
@@ -328,32 +330,45 @@ public class LoginCommand extends AbstractCommand {
 
 		// Check if we are going to save the first/last names
 		boolean saveName = Boolean.parseBoolean(ctx.getParameter("saveInfo"));
+		boolean isSecure = ctx.getRequest().isSecure(); 
 		if (saveName) {
 			Base64.Encoder b64e = Base64.getEncoder();
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
 
 			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(UTF_8)));
 			fnc.setMaxAge(cookieAge);
+			fnc.setHttpOnly(true);
+			fnc.setSecure(isSecure);
 			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(UTF_8)));
+			lnc.setHttpOnly(true);
+			lnc.setSecure(isSecure);
 			lnc.setMaxAge(cookieAge);
 			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", p.getHexID());
 			pcc.setMaxAge(cookieAge);
+			pcc.setHttpOnly(true);
+			pcc.setSecure(isSecure);
 			ctx.addCookie(pcc);
 		} else {
 			fnc = new Cookie("dva_fname64", "");
 			fnc.setMaxAge(0);
+			fnc.setHttpOnly(true);
+			fnc.setSecure(isSecure);
 			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", "");
 			lnc.setMaxAge(0);
+			lnc.setHttpOnly(true);
+			lnc.setSecure(isSecure);
 			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", "");
 			pcc.setMaxAge(0);
+			pcc.setHttpOnly(true);
+			pcc.setSecure(isSecure);
 			ctx.addCookie(pcc);
 		}
 		
