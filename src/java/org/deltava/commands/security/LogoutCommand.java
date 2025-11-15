@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import javax.servlet.http.Cookie;
@@ -9,10 +9,9 @@ import org.deltava.beans.Pilot;
 import org.deltava.commands.*;
 
 /**
- * A Web Site Command to log off the user. If a superuser is currently impersonating a user, then
- * the impersonation will end and the user will revert back to their true credentials.
+ * A Web Site Command to log off the user. If a superuser is currently impersonating a user, then impersonation will end and the user will revert back to their true credentials.
  * @author Luke
- * @version 6.0
+ * @version 12.3
  * @since 1.0
  */
 
@@ -40,6 +39,8 @@ public class LogoutCommand extends AbstractCommand {
                 // Clear the security cookie
                 Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, "");
                 c.setMaxAge(1);
+                c.setHttpOnly(true);
+                c.setSecure(ctx.getRequest().isSecure());
                 ctx.addCookie(c);
             }
         }

@@ -377,6 +377,8 @@ public class LoginCommand extends AbstractCommand {
 			log.warn("Resetting Suspended warning cookie for {}", p.getName());
 			Cookie wc = new Cookie("dvaAuthStatus", "");
 			wc.setMaxAge(0);
+			wc.setSecure(isSecure);
+			wc.setHttpOnly(true);
 			ctx.addCookie(wc);
 		}
 		
