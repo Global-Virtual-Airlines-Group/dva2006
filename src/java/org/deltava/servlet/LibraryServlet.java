@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -8,6 +8,7 @@ import java.sql.Connection;
 import javax.servlet.http.*;
 
 import org.apache.logging.log4j.*;
+import org.apache.commons.io.FilenameUtils;
 
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.*;
@@ -27,7 +28,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 11.3
+ * @version 12.3
  * @since 1.0
  */
 
@@ -36,10 +37,6 @@ public class LibraryServlet extends GenericServlet {
 	private static final Logger log = LogManager.getLogger(LibraryServlet.class);
 	private static final int BUFFER_SIZE = 102400;
 
-	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
-	 */
 	@Override
 	public String getServletInfo() {
 		return "Fleet Library Servlet " + VersionInfo.TXT_COPYRIGHT;
@@ -55,6 +52,7 @@ public class LibraryServlet extends GenericServlet {
 
 		// Get the resource we want
 		URLParser url = new URLParser(req.getRequestURI());
+		String fn = FilenameUtils.getName(url.getFileName()); 
 		LibraryEntry entry = null;
 
 		// Get the connection pool
@@ -85,7 +83,7 @@ public class LibraryServlet extends GenericServlet {
 
 			// Check if the file exists
 			if (entry == null)
-				throw new NotFoundException("Cannot find file - " + url.getFileName());
+				throw new NotFoundException("Cannot find file - " + fn);
 			else if (!entry.file().exists())
 				throw new NotFoundException("Cannot find " + entry.file().getAbsolutePath());
 
@@ -94,7 +92,7 @@ public class LibraryServlet extends GenericServlet {
 			FleetEntryAccessControl access = new FleetEntryAccessControl(sctxt, entry);
 			access.validate();
 			if (!access.getCanView())
-				throw new ForbiddenException("Cannot view " + url.getFileName());
+				throw new ForbiddenException("Cannot view " + fn);
 
 			// Get the DAO and log the download
 			if (sctxt.isAuthenticated()) {
@@ -102,10 +100,10 @@ public class LibraryServlet extends GenericServlet {
 				wdao.download(entry.getFileName(), sctxt.getUser().getID());
 			}
 		} catch (ConnectionPoolException cpe) {
-			log.error("Error downloading {} - {}", url.getFileName(), cpe.getMessage());
+			log.error("Error downloading {} - {}", fn, cpe.getMessage());
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (ControllerException ce) {
-			String msg = "Error downloading " + url.getFileName() + " - " + ce.getMessage();
+			String msg = "Error downloading " + fn + " - " + ce.getMessage();
 			if (ce.isWarning())
 				log.warn(msg);
 			else
@@ -122,7 +120,7 @@ public class LibraryServlet extends GenericServlet {
 			return;
 
 		// Log Status message
-		log.info("Downloading {}, {} bytes", url.getFileName().toLowerCase(), Long.valueOf(entry.getSize()));
+		log.info("Downloading {}, {} bytes", fn.toLowerCase(), Long.valueOf(entry.getSize()));
 
 		// Set the response headers
 		rsp.setStatus(HttpServletResponse.SC_OK);
