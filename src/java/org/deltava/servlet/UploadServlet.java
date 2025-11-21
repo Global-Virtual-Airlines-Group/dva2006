@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.*;
+import org.apache.commons.io.FilenameUtils;
 
 import org.deltava.beans.UploadInfo;
 import org.deltava.beans.system.VersionInfo;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to support file uploads.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 7.5
  */
 
@@ -151,7 +152,7 @@ public class UploadServlet extends BasicAuthServlet {
 		if ((info == null) && createIfUnknown) {
 			info = new UploadInfo(StringUtils.parse(req.getParameter("cs"), -1), StringUtils.parse(req.getParameter("ts"), -1));
 			info.setID(id);
-			info.setFileName(req.getParameter("resumableFilename"));
+			info.setFileName(FilenameUtils.getName(req.getParameter("resumableFilename")));
 			info.setTempFile(new File(SystemData.get("path.upload"), info.getFileName() + ".tmp"));
 			_cache.add(info);
 		}
