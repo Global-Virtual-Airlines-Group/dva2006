@@ -72,7 +72,7 @@ var jscolor = {
 				var prop = {};
 				if(m[3]) {
 					try {
-						eval('prop='+m[3]);
+						prop = JSON.parse(m[3]);
 					} catch(eInvalidProp) {}
 				}
 				e[i].color = new jscolor.color(e[i], prop);
