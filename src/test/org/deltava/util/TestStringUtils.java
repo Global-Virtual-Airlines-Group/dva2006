@@ -31,6 +31,15 @@ public class TestStringUtils extends TestCase {
         assertEquals(null, StringUtils.stripInlineHTML(null));
     }
     
+    public void testSanitize() {
+    	assertNull(StringUtils.sanitize(null));
+    	assertEquals("FOO", StringUtils.sanitize("FOO"));
+    	assertEquals("FOO123", StringUtils.sanitize("FOO123"));
+    	assertEquals("FOO", StringUtils.sanitize("!!FOO"));
+    	assertEquals("FÖÖ123", StringUtils.sanitize("FÖÖ123"));
+    	assertEquals("FÖÖ123", StringUtils.sanitize("!FÖÖ123=="));
+    }
+    
     public void testListConcat() {
     	ArrayList<String> l = new ArrayList<String>();
     	l.add("A");
@@ -81,12 +90,6 @@ public class TestStringUtils extends TestCase {
        assertEquals(32, StringUtils.parseHex("0x20"));
        assertEquals(20, StringUtils.parseHex("20"));
        assertEquals("0x20", StringUtils.formatHex(32));
-    }
-    
-    public void testFilter() {
-    	assertEquals("foo", StringUtils.filter("foo", Character::isAlphabetic));
-    	assertEquals("", StringUtils.filter("123", Character::isAlphabetic));
-    	assertEquals("123", StringUtils.filter("123f", Character::isDigit));
     }
     
     public void testIsEmpty() {
