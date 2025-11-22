@@ -1,4 +1,4 @@
-// Copyright 2018, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to receive Amazon SNS messages.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 8.5
  */
 
@@ -68,10 +68,10 @@ abstract class SNSReceiverService extends WebService {
 	 */
 	protected static boolean confirm(SNSPayload sns) throws ServiceException {
 		
-		log.warn("Received subscription confirmation for {}", sns.getTopic());
+		log.warn("Received subscription confirmation for {}", StringUtils.strip(sns.getTopic(), "\r\n"));
 		String url = sns.getBody().getString("SubscribeURL");
 		try {
-			log.info("Fetching confirmation URL {}", url);
+			log.info("Fetching confirmation URL {}", StringUtils.strip(url, "\r\n"));
 			GetURL urldao = new GetURL(url, "");
 			boolean isOK = urldao.isAvailable();
 			log.warn("Subscription confirmation {}", (isOK ? "SUCCEESS" : "FAILED"));
