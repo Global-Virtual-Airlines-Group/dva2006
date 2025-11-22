@@ -95,7 +95,7 @@ golgotha.simbrief.setSBID = function(id) {
 golgotha.simbrief.showSBMessage = function(msg, cn) {
 	const sp = document.getElementById('sbMessage');
 	sp.className = cn;
-	sp.innerHTML = msg;
+	sp.innerText = msg;
 	golgotha.util.display('sbMessageBox', true);
 	return true;
 };

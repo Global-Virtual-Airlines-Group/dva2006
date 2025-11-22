@@ -65,6 +65,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br>
+<el:box name="doDedupe" idx="*" value="true" label="Remove flights with duplicate Departure Times" /><br>
 <el:box name="doPurge" idx="*" value="true" checked="true" label="Purge Raw Schedule from this Schedule Source" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">

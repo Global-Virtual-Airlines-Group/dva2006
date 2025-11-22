@@ -71,7 +71,7 @@ else if (secondsLeft < 600)
 	tr.className = 'warn bld';
 
 // Display the text and decrement the counter
-tr.innerHTML = Math.floor(secondsLeft / 60) + ' minutes ' + Math.round(secondsLeft % 60) + ' seconds';
+tr.innerText = Math.floor(secondsLeft / 60) + ' minutes ' + Math.round(secondsLeft % 60) + ' seconds';
 
 // If we're out of time, set a flag and submit
 if (secondsLeft <= interval) {

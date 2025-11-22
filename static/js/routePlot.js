@@ -134,11 +134,11 @@ xmlreq.onreadystatechange = function() {
 	if ((dstE) && (js.distance > 0)) {
 		let distDelta = (js.distance - js.gcDistance) * 1.0 / js.distance;
 		distDelta = Math.round(distDelta * 10000) / 100;
-		dstE.innerHTML = ' - ' + Math.round(js.distance * distUnit.factor) + ' ' + distUnit.name.toLowerCase() + 's';
+		dstE.innerText = ' - ' + Math.round(js.distance * distUnit.factor) + ' ' + distUnit.name.toLowerCase() + 's';
 		if (distDelta > 1)
-			dstE.innerHTML += ' (' + distDelta + '% difference)';
+			dstE.innerText += ' (' + distDelta + '% difference)';
 	} else if (dstE)
-		dstE.innerHTML = '';
+		dstE.innerText = '';
 
 	// Load the runways
 	golgotha.routePlot.updateRoutes(f.runway, js.runways);
@@ -154,11 +154,11 @@ xmlreq.onreadystatechange = function() {
 	// Display ETOPS rating
 	const etopsSpan = document.getElementById('rtETOPS');
 	if (js.etops.warning || (js.etops.time > 75))
-		etopsSpan.innerHTML = ' - ' + js.etops.rating;
+		etopsSpan.innerText = ' - ' + js.etops.rating;
 
 	// Check for ETOPS warning
 	if (js.etops.warning) {
-		etopsSpan.innerHTML += ', AICRAFT IS RATED ' + js.etops.aircraftRating;
+		etopsSpan.innerText += ', AICRAFT IS RATED ' + js.etops.aircraftRating;
 		const wmrk = new golgotha.maps.IconMarker({pal:js.etops.warnPoint.pal, icon:js.etops.warnPoint.icon, info:js.etops.warnPoint.info, pt:js.etops.warnPoint.ll});
 		wmrk.setMap(map);
 
@@ -235,13 +235,13 @@ xmlreq.onreadystatechange = function() {
 			const metarSpan = document.getElementById(wx.dst ? 'wxAmetar' : 'wxDmetar');
 			golgotha.util.display(metarSpan, true);
 			if (metarSpan)
-				metarSpan.innerHTML = wx.info;
+				metarSpan.innerText = wx.info;
 		} else {
 			golgotha.util.display((wx.dst ? 'wxAr' : 'wxDr'), true);
 			const tafSpan = document.getElementById('wxAtaf');
 			golgotha.util.display(tafSpan, true);
 			if (tafSpan)
-				tafSpan.innerHTML = wx.info;
+				tafSpan.innerText = wx.info;
 		}
 	});
 	

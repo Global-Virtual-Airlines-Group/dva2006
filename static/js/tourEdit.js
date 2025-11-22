@@ -78,12 +78,12 @@ golgotha.tour.addLeg = function(se) {
 	const r = t.insertRow(-1); r.className = 'legRow mid'; let idx = r.rowIndex; r.flight = se; r.id = 'legRow-' + idx;
 	let c = r.insertCell(0);
 	const btn = document.createElement('button'); btn.className = 'button';
-	btn.innerHTML = 'DELETE'; btn.onclick = function() { golgotha.tour.deleteLeg(idx); };
+	btn.innerText = 'DELETE'; btn.onclick = function() { golgotha.tour.deleteLeg(idx); };
 	c.appendChild(btn);
-	c = r.insertCell(1); c.className = 'pri bld'; c.innerHTML = code;
-	c = r.insertCell(2); c.className = 'sec bld'; c.innerHTML = se.eqType;
-	c = r.insertCell(3); c.className = 'small'; c.innerHTML = golgotha.tour.renderRoute(se);
-	c = r.insertCell(4); c.className = 'bld';  c.innerHTML = golgotha.tour.renderTime(se);
+	c = r.insertCell(1); c.className = 'pri bld'; c.innerText = code;
+	c = r.insertCell(2); c.className = 'sec bld'; c.innerText = se.eqType;
+	c = r.insertCell(3); c.className = 'small'; c.innerText = golgotha.tour.renderRoute(se);
+	c = r.insertCell(4); c.className = 'bld';  c.innerText = golgotha.tour.renderTime(se);
 	document.forms[0].legCodes.value = golgotha.tour.buildLegCodes();
 	golgotha.tour.clearCustomFields();
 	return true;
@@ -188,7 +188,7 @@ golgotha.tour.search = function() {
 			const r = t.insertRow(hdrIdx + idx); r.className = 'mid searchResultEntry'; r.flight = se;
 			let c = r.insertCell(0); 
 			let btn = document.createElement('button'); btn.className = 'button';
-			btn.innerHTML = 'ADD LEG'; btn.onclick = function() { golgotha.tour.addLeg(r.flight, hdrIdx + idx); return false; };
+			btn.innerText = 'ADD LEG'; btn.onclick = function() { golgotha.tour.addLeg(r.flight, hdrIdx + idx); return false; };
 			c.appendChild(btn);
 			let s = document.createElement('span'); s.className = 'pri bld';			
 			s.innerText = se.airline + se.flight + ' Leg ' + se.leg;
