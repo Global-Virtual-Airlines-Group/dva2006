@@ -220,9 +220,9 @@ public class SecurityCookieFilter extends HttpFilter {
 					GetIPLocation ipdao = new GetIPLocation(con);
 					addrInfo = ipdao.get(remoteAddr);
 				} else
-					log.error("Unknown Pilot - {}", cData.getUserID());
+					log.error("Unknown Pilot - {}", StringUtils.sanitize(cData.getUserID()));
 			} catch (DAOException de) {
-				log.atError().withThrowable(de).log("Error loading {} - {}", cData.getUserID(), de.getMessage());
+				log.atError().withThrowable(de).log("Error loading {} - {}", StringUtils.sanitize(cData.getUserID()), de.getMessage());
 			} catch (org.gvagroup.pool.ConnectionPoolException cpe) {
 				log.error(cpe.getMessage());
 			} finally {
