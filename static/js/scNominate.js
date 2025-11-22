@@ -8,8 +8,8 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.status != 200) {
 		golgotha.util.display('rowError', true);
 		golgotha.util.display('rowLoading', false);
-		var codeSpan = document.getElementById('errorCode');
-		codeSpan.innerHTML = '(' + xmlreq.status + ')';
+		const codeSpan = document.getElementById('errorCode');
+		codeSpan.innerText = '(' + xmlreq.status + ')';
 		return false;
 	}
 

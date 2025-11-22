@@ -3,6 +3,7 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -27,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 11.5
+ * @version 12.3
  * @since 1.0
  */
 
@@ -54,7 +55,27 @@ public class ScheduleImportCommand extends AbstractCommand {
 			if (tmpResult == 0)
 				tmpResult = rse1.getEndDate().compareTo(rse2.getEndDate());
 			
-			return (tmpResult == 0) ?  Integer.compare(rse1.getDayMap(), rse2.getDayMap()) : tmpResult;
+			return (tmpResult == 0) ? Integer.compare(rse1.getDayMap(), rse2.getDayMap()) : tmpResult;
+		}
+	}
+	
+	private static class TimeDupeChecker extends RawDupeChecker {
+		private final int _delta;
+		
+		protected TimeDupeChecker(int delta) {
+			super();
+			_delta = delta;
+		}
+		
+		@Override
+		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
+			
+			int tmpResult = super.compare(rse1, rse2);
+			if (tmpResult != 0) return tmpResult;
+			
+			Duration d = Duration.between(rse1.getTimeD().toLocalTime(), rse2.getTimeD().toLocalTime());
+			long timeDelta = d.abs().toMinutes();
+			return (timeDelta <= _delta) ? 0 : (d.isPositive() ? -1 : 1);
 		}
 	}
 
@@ -85,6 +106,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 		}
 
 		ImportStatus st = null; boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
+		boolean doDedupe = Boolean.parseBoolean(ctx.getParameter("doDedupe"));
 		File f = (ss == ScheduleSource.INNOVATA) ? new File(SystemData.get("schedule.innovata.file")) : new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		try {
 			// Get the DAOs
@@ -218,8 +240,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Eliminate dupes
-			int rawEntryCount = entries.size();
-			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(new RawDupeChecker());
+			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = doDedupe ? new TimeDupeChecker(30) : new RawDupeChecker();
+			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(dd);
 			entries.removeIf(se -> !dupeFilter.add(se)); int dupeCount = rawEntryCount - entries.size(); 
 			log.info("Removed {} duplicate schedule entries", Integer.valueOf(dupeCount));
 
