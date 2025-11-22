@@ -2,7 +2,6 @@
 package org.deltava.util;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.text.*;
 import java.time.*;
@@ -15,7 +14,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 12.1
+ * @version 12.3
  * @since 1.0
  */
 
@@ -50,6 +49,23 @@ public final class StringUtils {
 		boolean leadingQ = (s.charAt(0) == '"');
 		boolean trailingQ = (s.charAt(s.length() - 1) == '"');
 		return (leadingQ && trailingQ) ? s.substring(1, s.length() - 1) : s;
+	}
+	
+	/**
+	 * Sanitizes a string to only allow letters and digits.
+	 * @param s the String
+	 * @return the sanitized String
+	 */
+	public static String sanitize(String s) {
+		if (s == null) return null;
+		StringBuilder buf = new StringBuilder();
+		for (int x = 0; x < s.length(); x++) {
+			int cp = s.codePointAt(x);
+			if (Character.isAlphabetic(cp) || Character.isDigit(cp))
+				buf.appendCodePoint(cp);
+		}
+		
+		return buf.toString();
 	}
 	
 	/**
@@ -92,24 +108,6 @@ public final class StringUtils {
 		return buf.toString();
 	}
 	
-	/**
-	 * Filters a string by passing in a character filtering Predicate.
-	 * @param s the string
-	 * @param p the Predicate
-	 * @return the filtered string, or null
-	 */
-	public static String filter(String s, Predicate<Character> p) {
-		if (s == null) return null;
-		StringBuilder buf = new StringBuilder();
-		for (int x = 0; x < s.length(); x++) {
-			char c = s.charAt(x);
-			if (p.test(Character.valueOf(c)))
-				buf.append(c);
-		}
-		
-		return buf.toString();
-	}
-
 	/**
 	 * Strips out inline HTML in a string by replacing &lt; and &gt; with <code>&lt;</code> and <code>&gt;</code>.
 	 * @param s the string to Convert
@@ -445,7 +443,7 @@ public final class StringUtils {
 	public static String strip(CharSequence s, String chars) {
 		if (s == null)
 			return null;
-		else if (chars == null)
+		if (chars == null)
 			return s.toString();
 
 		// Strip out the characters
