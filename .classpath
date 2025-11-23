@@ -43,8 +43,8 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.28.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-api-2.25.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-core-2.25.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-7.0.0.jar" sourcepath="lib/src/jedis-7.0.0.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-3.12.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-io-2.20.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-7.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
