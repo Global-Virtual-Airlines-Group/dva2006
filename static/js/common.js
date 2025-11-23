@@ -134,7 +134,7 @@ golgotha.util.getStyle = function(sheet, cl, attr) {
 golgotha.util.setHTML = function(e, content) {
 	if (!e) return false;
 	if (!e.style) e = document.getElementById(e);
-	if (e) e.innerHTML = content;
+	if (e) e.innerText = content;
 	return true;
 };
 
