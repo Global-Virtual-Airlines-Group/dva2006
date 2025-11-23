@@ -100,15 +100,15 @@ public class UploadServlet extends BasicAuthServlet {
 		// Check if all chunks uploaded, and change filename
 		try (PrintWriter rw = rsp.getWriter()) {
 			if (info.isComplete()) {
-				File nf = new File(info.getTempFile().getParentFile(), info.getFileName());
+				File nf = new File(new File(SystemData.get("path.upload")), info.getFileName());
 				if (nf.exists()) {
-					log.warn("{} already exists, deleting", nf);
+					log.warn("{} already exists, deleting", nf.getAbsolutePath());
 					nf.delete();
 				}
 
 				info.getTempFile().renameTo(nf);
 				_cache.remove(info.getID());
-				log.info("Renaming {} to {}", info.getTempFile(), nf);
+				log.info("Renaming {} to {}", info.getTempFile(), nf.getName());
 				rw.print("Complete");
 			} else
 				rw.print("Uploaded " + chunk);
@@ -147,13 +147,14 @@ public class UploadServlet extends BasicAuthServlet {
 	 * Helper method to parse request parameters for chunk data.
 	 */
 	private static UploadInfo getInfo(HttpServletRequest req, boolean createIfUnknown) {
-		String id = req.getParameter("resumableIdentifier");
+		String id = req.getParameter("resumableIdentifier"); 
+		String fn = FilenameUtils.getName(req.getParameter("resumableFilename"));
 		UploadInfo info = _cache.get(id);
 		if ((info == null) && createIfUnknown) {
 			info = new UploadInfo(StringUtils.parse(req.getParameter("cs"), -1), StringUtils.parse(req.getParameter("ts"), -1));
 			info.setID(id);
-			info.setFileName(FilenameUtils.getName(req.getParameter("resumableFilename")));
-			info.setTempFile(new File(SystemData.get("path.upload"), info.getFileName() + ".tmp"));
+			info.setFileName(fn);
+			info.setTempFile(new File(SystemData.get("path.upload"), fn + ".tmp"));
 			_cache.add(info);
 		}
 
@@ -167,7 +168,7 @@ public class UploadServlet extends BasicAuthServlet {
 		File d = new File(SystemData.get("path.upload"));
 		File[] ff = d.listFiles(new TempFilter());
 
-		long now = System.currentTimeMillis();
+		final long now = System.currentTimeMillis();
 		for (int x = 0; (ff != null) && (x < ff.length); x++) {
 			File f = ff[x];
 			if (((now - f.lastModified()) / 1000) > 14400) {
