@@ -1,13 +1,14 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.service;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+
 import org.hansel.CoverageDecorator;
 
-import com.kizna.servletunit.*;
+import org.gvagroup.mockservlet.*;
 
 import org.deltava.beans.Pilot;
 
@@ -25,8 +26,8 @@ public class TestServiceContext extends TestCase {
    @Override
 protected void setUp() throws Exception {
       super.setUp();
-      _req = new HttpServletRequestSimulator();
-      _rsp = new HttpServletResponseSimulator();
+      _req = new MockHttpServletRequest();
+      _rsp = new MockHttpServletResponse();
       _ctx = new ServiceContext(_req, _rsp);
    }
 

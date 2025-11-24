@@ -1,7 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.taglib.AbstractTagTestCase;
 

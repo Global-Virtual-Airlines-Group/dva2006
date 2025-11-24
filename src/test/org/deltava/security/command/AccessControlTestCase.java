@@ -2,10 +2,11 @@ package org.deltava.security.command;
 
 import java.util.*;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
-import com.kizna.servletunit.*;
 import junit.framework.TestCase;
+
+import org.gvagroup.mockservlet.MockHttpServletRequest;
 
 import org.deltava.beans.Pilot;
 import org.deltava.security.SecurityContext;
@@ -65,7 +66,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		_request = new HttpServletRequestSimulator();
+		_request = new MockHttpServletRequest();
 		_user = new AccessControlUser("Test", "User");
 		_user.setID(123);
 		_user.setPilotCode("DVA123");

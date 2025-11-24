@@ -1,7 +1,7 @@
 package org.deltava.taglib;
 
 import java.io.*;
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 
 public class JspTestWriter extends JspWriter {
     

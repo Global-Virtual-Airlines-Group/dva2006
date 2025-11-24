@@ -3,7 +3,7 @@ package org.deltava.security;
 import java.util.Random;
 import java.time.Instant;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
