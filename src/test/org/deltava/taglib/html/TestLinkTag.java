@@ -1,6 +1,6 @@
 package org.deltava.taglib.html;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.taglib.AbstractTagTestCase;
 
