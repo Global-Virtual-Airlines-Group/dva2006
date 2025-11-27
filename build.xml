@@ -22,7 +22,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2024 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2025 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -157,7 +157,7 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
-				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Name" value="Golgotha" />
 				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
@@ -229,8 +229,7 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.24" compilerSourceVM="1.24" threadCount="1.0C"
-	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.24" compilerSourceVM="1.24" threadCount="1.0C" webXmlInclude="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
@@ -256,7 +255,7 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_jsp_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
-				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Name" value="Golgotha-JSP" />
 				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha JSP" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
@@ -280,18 +279,7 @@
 		
 		<property name="task.compile" value="true" />
 	</target>
-<!--
-	<target name="jslint" unless="task.jslint" description="Run JSLint">
-		<available file="lib/jslint4java-2.0.5.jar" property="JSLINT_AVAILABLE" />
-		<taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="lib/jslint4java-2.0.5.jar" />
-		<jslint>
-			<formatter type="plain" />
-			<fileset dir="static/js" includes="*.js" />
-		</jslint>
-		
-		<property name="task.jslint" value="true" />
-	</target>
--->
+
 	<target name="minify" unless="task.minify" description="Minify JS and CSS">
 		<available file="lib/YUIAnt.jar" property="YUIANT_AVAILABLE" />
 		<fail unless="YUIANT_AVAILABLE" message="Run jar target to generate the required task" />
