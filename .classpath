@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/newrelic-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javax.activation-1.20.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/taglibs-standard-impl-1.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
@@ -45,5 +44,6 @@
 	<classpathentry kind="lib" path="lib/jsp-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-6.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api-6.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jakarta.servlet.jsp.jstl-api-3.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
