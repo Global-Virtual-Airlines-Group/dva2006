@@ -1,8 +1,8 @@
 // Copyright 2008, 2015, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to store the number of times the Google Maps API has been requested since the web application was started.

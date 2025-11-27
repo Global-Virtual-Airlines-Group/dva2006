@@ -3,7 +3,7 @@ package org.deltava.taglib.format;
 
 import java.text.DecimalFormat;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.econ.*;
 

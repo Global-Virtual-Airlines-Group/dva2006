@@ -6,7 +6,7 @@ import java.time.*;
 import java.sql.Connection;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;

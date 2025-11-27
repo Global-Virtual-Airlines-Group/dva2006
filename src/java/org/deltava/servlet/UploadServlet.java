@@ -4,9 +4,9 @@ package org.deltava.servlet;
 import java.io.*;
 import java.security.Principal;
 
-import javax.servlet.http.*;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.*;
 import org.apache.commons.io.FilenameUtils;

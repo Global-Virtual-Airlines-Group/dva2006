@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -26,7 +26,7 @@ import org.gvagroup.pool.ConnectionPool;
 /**
  * A servlet filter to do HTTP rate limiting.
  * @author Luke
- * @version 11.6
+ * @version 12.3
  * @since 11.6
  */
 

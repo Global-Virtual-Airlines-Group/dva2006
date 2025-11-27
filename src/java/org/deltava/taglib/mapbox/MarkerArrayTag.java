@@ -3,7 +3,7 @@ package org.deltava.taglib.mapbox;
 
 import java.util.*;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.*;
 import org.deltava.taglib.*;

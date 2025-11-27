@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.json.*;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.wx.*;
 import org.deltava.beans.navdata.AirportLocation;

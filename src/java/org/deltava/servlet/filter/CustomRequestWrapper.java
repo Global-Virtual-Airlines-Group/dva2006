@@ -2,7 +2,7 @@
 package org.deltava.servlet.filter;
 
 import java.security.Principal;
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.deltava.beans.Person;
 

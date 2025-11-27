@@ -1,14 +1,14 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.diag;
 
-import javax.servlet.jsp.*;
-import javax.servlet.ServletContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to display the Servlet API version.
  * @author Luke
- * @version 7.0
+ * @version 12.3
  * @since 2.2
  */
 

@@ -4,7 +4,7 @@ package org.deltava.service.acars;
 import java.io.*;
 import java.util.*;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 

@@ -4,8 +4,8 @@ package org.deltava.taglib.content;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.util.StringUtils;
 

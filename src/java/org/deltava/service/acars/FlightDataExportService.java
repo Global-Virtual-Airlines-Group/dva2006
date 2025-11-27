@@ -4,7 +4,7 @@ package org.deltava.service.acars;
 import java.util.*;
 import java.time.Instant;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.WeightUnit;
 import org.deltava.beans.acars.*;

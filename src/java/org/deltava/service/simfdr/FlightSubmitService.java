@@ -1,7 +1,7 @@
 // Copyright 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.io.IOException;

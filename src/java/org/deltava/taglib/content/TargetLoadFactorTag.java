@@ -3,8 +3,8 @@ package org.deltava.taglib.content;
 
 import java.time.Instant;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.econ.*;
 

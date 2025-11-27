@@ -1,8 +1,8 @@
 // Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
 /**
  * A JSP tag to render &quot;is&quot; and &quot;are&quot;.

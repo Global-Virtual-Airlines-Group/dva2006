@@ -3,7 +3,7 @@ package org.deltava.taglib.format;
 
 import java.text.DecimalFormatSymbols;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.flight.LandingRating;
 

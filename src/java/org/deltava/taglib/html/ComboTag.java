@@ -5,8 +5,8 @@ import java.security.Principal;
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.jsp.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;

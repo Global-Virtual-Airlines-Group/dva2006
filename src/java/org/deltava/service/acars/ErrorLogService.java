@@ -6,7 +6,7 @@ import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.time.Instant;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.apache.logging.log4j.*;
 

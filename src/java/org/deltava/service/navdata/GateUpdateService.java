@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.json.*;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;

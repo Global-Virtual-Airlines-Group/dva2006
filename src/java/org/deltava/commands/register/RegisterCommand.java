@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.time.Instant;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -249,8 +249,8 @@ public class RegisterCommand extends AbstractCommand {
 			
 			// Check for Suspended User
 			
-			javax.servlet.http.Cookie wc = ctx.getCookie("dvaAuthStatus");
-			javax.servlet.http.Cookie fn = ctx.getCookie("dva_fname64");
+			jakarta.servlet.http.Cookie wc = ctx.getCookie("dvaAuthStatus");
+			jakarta.servlet.http.Cookie fn = ctx.getCookie("dva_fname64");
 			if (wc != null) {
 				StringBuilder buf = new StringBuilder("Suspended Pilot: ");
 				try {
@@ -266,7 +266,7 @@ public class RegisterCommand extends AbstractCommand {
 				Base64.Decoder b64d = Base64.getDecoder();
 				StringBuilder buf = new StringBuilder("PC used to login as: ");
 				buf.append(new String(b64d.decode(fn.getValue()), StandardCharsets.UTF_8));
-				javax.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
+				jakarta.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
 					buf.append(new String(b64d.decode(ln.getValue()), StandardCharsets.UTF_8));

@@ -1,7 +1,7 @@
 // Copyright 2007, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 /**
  * A JSP Tag to display quantities of a particular item.

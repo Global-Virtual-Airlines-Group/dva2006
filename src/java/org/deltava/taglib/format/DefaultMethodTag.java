@@ -1,7 +1,7 @@
 // Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.taglib.content.DefaultMethodValueTag;
 

@@ -3,7 +3,7 @@ package org.deltava.taglib.format;
 
 import java.text.*;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 /**
  * A JSP tag to support the rendering of formatted numeric values.

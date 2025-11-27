@@ -3,7 +3,7 @@ package org.deltava.service.exam;
 
 import java.sql.Connection;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.apache.logging.log4j.*;
 

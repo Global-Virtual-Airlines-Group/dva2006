@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2011, 2016, 2024 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.taglib.html;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 /**
  * An abstract JSP tag to support the generation of HTML single-option checkboxes or radio buttons.

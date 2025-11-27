@@ -3,7 +3,7 @@ package org.deltava.commands.security;
 
 import static org.deltava.commands.CommandContext.AUTH_COOKIE_NAME;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.deltava.commands.*;
 import org.deltava.security.*;

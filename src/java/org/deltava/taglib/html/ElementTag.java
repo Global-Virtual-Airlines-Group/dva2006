@@ -3,8 +3,8 @@ package org.deltava.taglib.html;
 
 import java.util.*;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.taglib.*;
 import org.deltava.util.StringUtils;

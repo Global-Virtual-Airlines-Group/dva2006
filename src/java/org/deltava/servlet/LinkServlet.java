@@ -3,7 +3,7 @@ package org.deltava.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 

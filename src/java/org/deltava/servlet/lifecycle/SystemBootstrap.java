@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
 import java.util.*;
 import java.sql.*;
 
-import javax.servlet.*;
+import jakarta.servlet.*;
 
 import org.apache.logging.log4j.*;
 
@@ -36,7 +36,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 11.3
+ * @version 12.3
  * @since 1.0
  */
 

@@ -1,7 +1,7 @@
 // Copyright 2005, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.util.system.SystemData;
 
