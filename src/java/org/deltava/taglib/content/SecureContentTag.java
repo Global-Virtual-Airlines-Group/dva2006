@@ -1,7 +1,7 @@
 // Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to include content based on SSL.

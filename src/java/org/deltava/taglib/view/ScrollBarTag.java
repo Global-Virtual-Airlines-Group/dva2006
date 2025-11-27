@@ -1,7 +1,7 @@
 // Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.commands.ViewContext;
 

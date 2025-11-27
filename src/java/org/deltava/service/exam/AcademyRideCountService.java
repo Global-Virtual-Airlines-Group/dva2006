@@ -1,7 +1,7 @@
 // Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 import org.deltava.beans.academy.*;

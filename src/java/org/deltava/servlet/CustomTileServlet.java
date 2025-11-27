@@ -4,11 +4,11 @@ package org.deltava.servlet;
 import java.time.Instant;
 import java.util.Collection;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 import java.io.IOException;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 

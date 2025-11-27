@@ -5,7 +5,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.util.system.SystemData;

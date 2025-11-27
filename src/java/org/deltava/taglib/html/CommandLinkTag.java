@@ -8,8 +8,8 @@ import java.time.format.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.beans.*;
 import org.deltava.util.StringUtils;

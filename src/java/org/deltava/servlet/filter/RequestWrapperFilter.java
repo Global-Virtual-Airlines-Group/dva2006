@@ -3,15 +3,15 @@ package org.deltava.servlet.filter;
 
 import java.io.IOException;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
 /**
  * A servlet filter to wrap HTTP servlet requests with a custom wrapper. This filter will also extract cookies into servlet request attributes.
  * @author Luke
- * @version 11.6
+ * @version 12.3
  * @since 1.0
  */
 

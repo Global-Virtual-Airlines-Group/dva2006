@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.time.Instant;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import static org.deltava.commands.HTTPContext.*;
 import static org.deltava.commands.CommandContext.*;

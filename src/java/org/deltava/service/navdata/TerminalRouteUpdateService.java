@@ -4,7 +4,7 @@ package org.deltava.service.navdata;
 import java.util.*;
 import java.sql.Connection;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;

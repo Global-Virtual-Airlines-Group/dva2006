@@ -64,9 +64,6 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public void setCharacterEncoding(String encoding) { this.characterEncoding = encoding; }
     public void setBody(String body) { this.bodyBytes = (body == null ? new byte[0] : body.getBytes()); }
     public void setBody(byte[] bytes) { this.bodyBytes = bytes == null ? new byte[0] : bytes; }
-    public void addHeader(String name, String value) {
-        headers.computeIfAbsent(name.toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(value);
-    }
     public void setHeader(String name, String value) {
         List<String> l = new ArrayList<>();
         l.add(value);

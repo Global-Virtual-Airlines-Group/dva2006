@@ -1,8 +1,8 @@
 // Copyright 2005, 2009, 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpSession;
 
 import org.deltava.beans.Pilot;
 

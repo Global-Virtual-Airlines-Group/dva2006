@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.util.stream.Collectors;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 

@@ -1,7 +1,7 @@
 // Copyright 2005, 2007, 2012, 2013, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.taglib.ContentHelper;
 

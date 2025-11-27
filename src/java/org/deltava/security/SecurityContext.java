@@ -2,7 +2,7 @@
 package org.deltava.security;
 
 import java.util.Collection;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Pilot;
 

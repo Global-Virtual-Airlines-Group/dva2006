@@ -1,10 +1,10 @@
 // Copyright 2012, 2013, 2016, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 import java.io.IOException;
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 

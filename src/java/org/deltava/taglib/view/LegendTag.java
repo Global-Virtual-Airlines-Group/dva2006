@@ -4,8 +4,8 @@ package org.deltava.taglib.view;
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP Tag to display view row color legends. These are rendered as a single row HTML table, and the class

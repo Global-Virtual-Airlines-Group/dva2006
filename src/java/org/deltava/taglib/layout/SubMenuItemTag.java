@@ -1,8 +1,8 @@
 // Copyright 2009, 2010, 2013, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to render CSS sub-menu items.

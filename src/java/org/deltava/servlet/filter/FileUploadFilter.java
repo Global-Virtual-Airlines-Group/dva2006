@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -6,8 +6,8 @@ import static java.nio.charset.StandardCharsets.*;
 import java.io.*;
 import java.util.*;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 11.1
+ * @version 12.3
  * @since 1.0
  */
 

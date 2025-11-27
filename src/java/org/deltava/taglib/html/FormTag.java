@@ -5,8 +5,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.*;
 
