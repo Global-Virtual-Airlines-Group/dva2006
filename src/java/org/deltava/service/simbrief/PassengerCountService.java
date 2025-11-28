@@ -1,7 +1,7 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.sql.Connection;
 import java.time.Instant;

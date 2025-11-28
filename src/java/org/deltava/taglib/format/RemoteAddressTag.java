@@ -1,7 +1,7 @@
 // Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.RemoteAddressBean;
 import org.deltava.beans.system.IPBlock;

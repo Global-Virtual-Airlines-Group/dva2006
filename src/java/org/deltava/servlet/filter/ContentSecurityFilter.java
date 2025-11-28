@@ -5,8 +5,8 @@ import static org.deltava.commands.HTTPContext.CSP_ATTR_NAME;
 
 import java.io.IOException;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -15,7 +15,7 @@ import org.deltava.beans.system.*;
 /**
  * A servlet filter to add Content Security Policy data to the request and response.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 12.0
  */
 

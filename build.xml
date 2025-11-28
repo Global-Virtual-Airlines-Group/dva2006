@@ -3,7 +3,7 @@
 <project default="deploy" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="24" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="25" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -22,7 +22,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2024 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2025 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -118,7 +118,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" updatedProperty="jar.compile" includeantruntime="false" debuglevel="lines,vars,source" source="24" target="24" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" updatedProperty="jar.compile" includeantruntime="false" debuglevel="lines,vars,source" source="25" target="25" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,path,finally,-options" />
 			<compilerarg value="-proc:none" />
 	    	<classpath id="javac.classpath">
@@ -157,7 +157,7 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
-				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Name" value="Golgotha" />
 				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
@@ -229,13 +229,12 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.24" compilerSourceVM="1.24" threadCount="1.0C"
-	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.25" compilerSourceVM="1.25" threadCount="1.0C" webXmlInclude="${jspc.webXMLInc}" trimSpaces="SINGLE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" updatedProperty="jsp.compile" compiler="modern" debug="on" debuglevel="source" target="24" source="24" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" updatedProperty="jsp.compile" compiler="modern" debug="on" debuglevel="source" target="25" source="25" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally,-options" />
 			<compilerarg value="-proc:none" />
 			<classpath refid="jspc.classpath" />
@@ -256,7 +255,7 @@
 		<manifest if:set="jar.compile" file="${java.io.tmpdir}/build/golgotha_jsp_MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}" />
 			<section name="common">
-				<attribute name="Bundle-Name" value="IPC" />
+				<attribute name="Bundle-Name" value="Golgotha-JSP" />
 				<attribute name="Bundle-Version" value="${v.major}.${v.minor}" />
 				<attribute name="Specification-Title" value="Golgotha JSP" />
 				<attribute name="Specification-Version" value="${v.major}.${v.minor}.${v.build}" />
@@ -280,18 +279,7 @@
 		
 		<property name="task.compile" value="true" />
 	</target>
-<!--
-	<target name="jslint" unless="task.jslint" description="Run JSLint">
-		<available file="lib/jslint4java-2.0.5.jar" property="JSLINT_AVAILABLE" />
-		<taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="lib/jslint4java-2.0.5.jar" />
-		<jslint>
-			<formatter type="plain" />
-			<fileset dir="static/js" includes="*.js" />
-		</jslint>
-		
-		<property name="task.jslint" value="true" />
-	</target>
--->
+
 	<target name="minify" unless="task.minify" description="Minify JS and CSS">
 		<available file="lib/YUIAnt.jar" property="YUIANT_AVAILABLE" />
 		<fail unless="YUIANT_AVAILABLE" message="Run jar target to generate the required task" />
@@ -662,7 +650,7 @@
 
 	    <!-- Compile the code -->
 	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
-	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.24" target="1.24" compiler="modern" fork="true">
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.25" target="1.25" compiler="modern" fork="true">
 	    	<include name="org/deltava/acars/*.java" />
 	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	        <classpath id="javac.classpath">

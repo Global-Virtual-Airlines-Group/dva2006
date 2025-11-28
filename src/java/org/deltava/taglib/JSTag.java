@@ -3,8 +3,8 @@ package org.deltava.taglib;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * An abstract class to support JSP tags that render JavaScript data. 

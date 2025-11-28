@@ -2,7 +2,7 @@
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 

@@ -3,8 +3,8 @@ package org.deltava.taglib.content;
 
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP Tag to set an attribute based on role membership.

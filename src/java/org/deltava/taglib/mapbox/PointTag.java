@@ -1,7 +1,7 @@
 // Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.mapbox;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.beans.GeoLocation;
 

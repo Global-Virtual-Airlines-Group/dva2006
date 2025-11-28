@@ -3,7 +3,7 @@ package org.deltava.taglib.html;
 
 import java.util.*;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.util.CollectionUtils;

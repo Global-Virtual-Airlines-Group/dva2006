@@ -7,8 +7,8 @@ import java.net.*;
 import java.util.HexFormat;
 import java.util.StringTokenizer;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.cooler.Emoticons;
 

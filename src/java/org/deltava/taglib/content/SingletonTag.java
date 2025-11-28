@@ -3,8 +3,8 @@ package org.deltava.taglib.content;
 
 import java.util.*;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
 /**
  * A JSP tag to create a singleton collection.

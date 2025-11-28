@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.jdom2.*;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.event.Event;
 

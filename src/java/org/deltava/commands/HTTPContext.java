@@ -3,7 +3,7 @@ package org.deltava.commands;
 
 import java.util.*;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.CAPTCHAResult;

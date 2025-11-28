@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
-import javax.servlet.http.*;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.http.*;
+import jakarta.servlet.jsp.tagext.Tag;
 
 import org.jdom2.*;
 import org.jdom2.input.*;
 
 import junit.framework.TestCase;
-import com.kizna.servletunit.*;
+
+import org.gvagroup.mockservlet.*;
 
 import org.deltava.beans.Person;
 import org.deltava.commands.HTTPContext;
@@ -32,7 +33,7 @@ public class AbstractTagTestCase extends TestCase {
    protected HttpServletRequestSimulatorHelper _rootReq;
 
    // Quick helper class since ServletUnit does not support getParameterMap()
-   protected class HttpServletRequestSimulatorHelper extends HttpServletRequestSimulator {
+   protected class HttpServletRequestSimulatorHelper extends MockHttpServletRequest {
 
 	   @Override
       public Map<String, String[]> getParameterMap() {
@@ -57,7 +58,7 @@ public class AbstractTagTestCase extends TestCase {
       
       _rootReq = new HttpServletRequestSimulatorHelper();
       _req = new CustomRequestWrapper(_rootReq);
-      _rsp = new HttpServletResponseSimulator();
+      _rsp = new MockHttpServletResponse();
 
       _jspOut = new JspTestWriter();
       _ctx = new MockPageContext(_jspOut);

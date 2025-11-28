@@ -4,7 +4,7 @@ package org.deltava.taglib.format;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.taglib.JSTag;
 

@@ -1,6 +1,6 @@
 package org.deltava.taglib;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.taglib.html.FormTag;
 import org.deltava.taglib.html.FormElementTag;

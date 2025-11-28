@@ -7,9 +7,9 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
 import org.deltava.taglib.XMLRenderer;

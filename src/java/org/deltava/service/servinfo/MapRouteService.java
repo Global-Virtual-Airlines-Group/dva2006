@@ -6,7 +6,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 import org.deltava.beans.GeoLocation;

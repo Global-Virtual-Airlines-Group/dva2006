@@ -1,6 +1,6 @@
 package org.deltava.taglib.view;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.deltava.commands.ViewContext;
 import org.deltava.taglib.AbstractTagTestCase;
@@ -43,10 +43,10 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
     }
     
     protected void setStart(int start) {
-    	_rootReq.setParameterValue("viewStart", new String[] { String.valueOf(start) } );
+    	_rootReq.addParameter("viewStart", String.valueOf(start));
     }
     
     protected void setCount(int count) {
-    	_rootReq.setParameterValue("viewCount", new String[] { String.valueOf(count) } );
+    	_rootReq.addParameter("viewCount", String.valueOf(count));
     }
 }

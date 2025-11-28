@@ -3,8 +3,8 @@ package org.deltava.taglib.format;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A class to support the rendering of numbers in hexadecimal.

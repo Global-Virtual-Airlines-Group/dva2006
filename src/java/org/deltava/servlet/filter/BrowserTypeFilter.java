@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.net.*;
 import java.io.IOException;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 11.0
+ * @version 12.3
  * @since 1.0
  */
 

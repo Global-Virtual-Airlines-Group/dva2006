@@ -1,7 +1,7 @@
 // Copyright 2017, 2018, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.time.Instant;
 import java.util.Collection;

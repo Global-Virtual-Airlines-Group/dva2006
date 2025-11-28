@@ -1,8 +1,8 @@
 // Copyright 2005, 2006, 2008, 2009, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.mapbox;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.PageContext;
 
 import org.json.*;
 

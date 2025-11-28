@@ -3,7 +3,7 @@ package org.deltava.commands;
 
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.deltava.util.StringUtils;
 

@@ -3,11 +3,10 @@ package org.deltava.taglib;
 import java.io.IOException;
 import java.util.*;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.*;
+import jakarta.el.ELContext;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import jakarta.servlet.jsp.*;
 
 public class MockPageContext extends PageContext {
 
@@ -34,20 +33,8 @@ public class MockPageContext extends PageContext {
     }
     
     @Override
-	public javax.el.ELContext getELContext() {
+	public ELContext getELContext() {
     	throw new UnsupportedOperationException();
-    }
-    
-    @Override
-	@Deprecated
-    public VariableResolver getVariableResolver() {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-	@Deprecated
-    public ExpressionEvaluator getExpressionEvaluator() {
-        throw new UnsupportedOperationException();
     }
     
     @Override

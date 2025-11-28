@@ -1,7 +1,7 @@
 // Copyright 2005, 2010, 2012 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 /**
  * A JSP tag to render HTML tables.
