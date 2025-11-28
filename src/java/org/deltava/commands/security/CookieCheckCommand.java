@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.deltava.commands.*;
 

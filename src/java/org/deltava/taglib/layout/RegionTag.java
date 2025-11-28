@@ -3,8 +3,8 @@ package org.deltava.taglib.layout;
 
 import java.util.*;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.*;
 
 /**
  * A JSP tag to render page layouts in a user-specific way.

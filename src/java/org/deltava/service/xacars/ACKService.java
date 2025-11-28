@@ -1,7 +1,7 @@
 // Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 import org.deltava.service.*;
 

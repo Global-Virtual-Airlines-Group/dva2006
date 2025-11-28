@@ -3,7 +3,7 @@ package org.deltava.service;
 
 import java.io.*;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 /**
  * An invocation/security context object for Web Services.

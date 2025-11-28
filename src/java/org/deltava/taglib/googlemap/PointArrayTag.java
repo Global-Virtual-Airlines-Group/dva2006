@@ -3,7 +3,7 @@ package org.deltava.taglib.googlemap;
 
 import java.util.*;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 import org.json.JSONArray;
 

@@ -1,7 +1,7 @@
 // Copyright 2006, 2012, 2015, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 /**
  * An exception class to define a common singure for exceptions handled by the Command

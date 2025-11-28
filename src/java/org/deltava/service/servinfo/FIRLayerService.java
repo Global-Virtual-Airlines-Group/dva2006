@@ -1,7 +1,7 @@
 // Copyright 2014, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 

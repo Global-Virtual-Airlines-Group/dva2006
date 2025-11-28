@@ -4,9 +4,9 @@ package org.deltava.servlet;
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.MultipartConfig;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import org.apache.logging.log4j.*;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 11.6
+ * @version 12.3
  * @since 1.0
  */
 

@@ -1,7 +1,7 @@
 // Copyright 2004, 2007, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 /**
  * A JSP tag to support the rendering of formatted integer values.

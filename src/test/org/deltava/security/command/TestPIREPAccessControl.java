@@ -3,6 +3,8 @@ package org.deltava.security.command;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
+import java.time.Instant;
+
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
 
@@ -21,6 +23,7 @@ protected void setUp() throws Exception {
       super.setUp();
       _fr = new FlightReport(new Airline("DVA", "Delta Virtual"), 123, 1);
       _fr.setLength(10);
+      _fr.setDate(Instant.now());
       _ac = new PIREPAccessControl(_ctxt, _fr);
    }
 
@@ -153,6 +156,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanDispose());
       
       _fr.setStatus(FlightStatus.SUBMITTED);
+      _fr.setSubmittedOn(Instant.now());
       _ac.validate();
       
       assertTrue(_ac.getOurFlight());

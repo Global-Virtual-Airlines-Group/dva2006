@@ -3,7 +3,7 @@ package org.deltava.commands;
 
 import java.util.Collection;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 import com.newrelic.api.agent.Trace;
 

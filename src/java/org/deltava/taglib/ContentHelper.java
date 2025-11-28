@@ -3,9 +3,9 @@ package org.deltava.taglib;
 
 import java.util.*;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.http.*;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 
@@ -16,7 +16,7 @@ import org.deltava.commands.HTTPContext;
 /**
  * A Helper class to check whether content has been aded into this request. This is also used as a helper to modify the dynamic Content Security Policy.
  * @author Luke
- * @version 12.0
+ * @version 12.3
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag

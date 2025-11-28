@@ -2,7 +2,7 @@
 package org.deltava.util.redirect;
 
 import java.util.*;
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
 

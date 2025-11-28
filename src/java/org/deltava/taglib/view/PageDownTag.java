@@ -3,7 +3,7 @@ package org.deltava.taglib.view;
 
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import org.deltava.commands.ViewContext;
 

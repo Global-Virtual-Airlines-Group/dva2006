@@ -1,7 +1,7 @@
 // Copyright 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 import java.util.*;
 

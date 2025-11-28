@@ -3,7 +3,7 @@ package org.deltava.service.servinfo;
 
 import java.io.IOException;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 

@@ -4,14 +4,14 @@ package org.deltava.beans.system;
 /**
  * A class to store version info constants.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
 public class VersionInfo {
 
     public static final int MAJOR = 12;
-    public static final int MINOR = 3;
+    public static final int MINOR = 4;
     
     public static final int BUILD = 974;
     private static final int HOTFIX = 0;

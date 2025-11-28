@@ -1,7 +1,7 @@
 // Copyright 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 import org.deltava.beans.*;
 

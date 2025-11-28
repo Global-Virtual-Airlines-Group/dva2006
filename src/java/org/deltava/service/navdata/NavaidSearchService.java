@@ -4,7 +4,7 @@ package org.deltava.service.navdata;
 import java.util.*;
 import java.io.IOException;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 

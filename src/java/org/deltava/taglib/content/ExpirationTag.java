@@ -1,8 +1,8 @@
 // Copyright 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.http.*;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.http.*;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to set an HTML Expires header.

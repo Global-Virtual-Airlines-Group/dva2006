@@ -1,7 +1,7 @@
 // Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import javax.servlet.jsp.*;
+import jakarta.servlet.jsp.*;
 
 /**
  * A JSP tag to format file sizes. 

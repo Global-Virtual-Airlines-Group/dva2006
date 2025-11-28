@@ -1,11 +1,13 @@
 package org.deltava.servlet.filter;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
-import com.kizna.servletunit.*;
+
 import org.hansel.CoverageDecorator;
+
+import org.gvagroup.mockservlet.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.commands.HTTPContext;
@@ -16,7 +18,7 @@ public class TestCustomRequestWrapper extends TestCase {
 	private CustomRequestWrapper _wreq;
 	
 	// Quick dirty helper class to ensure that getSession(false) works properly
-	private class HttpServletRequestSimulatorHelper extends HttpServletRequestSimulator {
+	private class HttpServletRequestSimulatorHelper extends MockHttpServletRequest {
 		
 		private HttpSession _s;
 		

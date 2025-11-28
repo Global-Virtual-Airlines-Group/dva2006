@@ -1,12 +1,12 @@
 // Copyright 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 import static org.deltava.commands.HTTPContext.CAPTCHA_ATTR_NAME;
 
 import java.io.*;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.deltava.beans.system.*;
 import org.deltava.dao.DAOException;
