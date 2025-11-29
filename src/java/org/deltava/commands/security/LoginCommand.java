@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -339,36 +339,42 @@ public class LoginCommand extends AbstractCommand {
 			fnc.setMaxAge(cookieAge);
 			fnc.setHttpOnly(true);
 			fnc.setSecure(isSecure);
+			fnc.setAttribute("SameSite", "strict");
 			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(UTF_8)));
 			lnc.setHttpOnly(true);
 			lnc.setSecure(isSecure);
 			lnc.setMaxAge(cookieAge);
+			lnc.setAttribute("SameSite", "strict");
 			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", p.getHexID());
 			pcc.setMaxAge(cookieAge);
 			pcc.setHttpOnly(true);
 			pcc.setSecure(isSecure);
+			pcc.setAttribute("SameSite", "strict");
 			ctx.addCookie(pcc);
 		} else {
 			fnc = new Cookie("dva_fname64", "");
 			fnc.setMaxAge(0);
 			fnc.setHttpOnly(true);
 			fnc.setSecure(isSecure);
+			fnc.setAttribute("SameSite", "strict");
 			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", "");
 			lnc.setMaxAge(0);
 			lnc.setHttpOnly(true);
 			lnc.setSecure(isSecure);
+			lnc.setAttribute("SameSite", "strict");
 			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", "");
 			pcc.setMaxAge(0);
 			pcc.setHttpOnly(true);
 			pcc.setSecure(isSecure);
+			pcc.setAttribute("SameSite", "strict");
 			ctx.addCookie(pcc);
 		}
 		

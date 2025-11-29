@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 2.4
  */
 
@@ -267,6 +267,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public void addCookie(Cookie c) {
 		c.setHttpOnly(true);
 		c.setSecure(_req.isSecure());
+		c.setAttribute("SameSite", "strict");
 		_rsp.addCookie(c);
 	}
 
