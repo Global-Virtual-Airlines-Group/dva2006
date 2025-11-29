@@ -1,4 +1,4 @@
-// Copyright 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import com.newrelic.api.agent.*;
@@ -10,7 +10,6 @@ import com.newrelic.api.agent.*;
  * @since 7.2
  */
 
-@SuppressWarnings("deprecation")
 public class SyntheticResponse extends ExtendedResponse {
 
 	@Override
