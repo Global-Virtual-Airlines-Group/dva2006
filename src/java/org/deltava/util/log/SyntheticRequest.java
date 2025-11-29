@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import java.util.*;
@@ -8,11 +8,10 @@ import com.newrelic.api.agent.*;
 /**
  * A request class for NewRelic non-web transactions. 
  * @author Luke
- * @version 7.2
+ * @version 12.4
  * @since 7.2
  */
 
-@SuppressWarnings("deprecation")
 public class SyntheticRequest extends ExtendedRequest {
 	
 	private final String _name;
