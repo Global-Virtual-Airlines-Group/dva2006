@@ -28,7 +28,7 @@ import org.gvagroup.pool.*;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -80,6 +80,7 @@ public class SecurityCookieFilter extends HttpFilter {
 		Cookie c = new Cookie(AUTH_COOKIE_NAME, "");
 		c.setHttpOnly(true);
 		c.setSecure(isSecure);
+		c.setAttribute("SameSite", "strict");
 		return c;
 	}
 
