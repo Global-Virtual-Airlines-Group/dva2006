@@ -270,6 +270,19 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 		c.setAttribute("SameSite", "strict");
 		_rsp.addCookie(c);
 	}
+	
+	/**
+	 * Clears a Cookie in the response.
+	 * @param name the Cookie name
+	 */
+	public void clearCookie(String name) {
+		Cookie c = new Cookie(name, "");
+		c.setHttpOnly(true);
+		c.setSecure(_req.isSecure());
+		c.setAttribute("SameSite", "strict");
+		c.setMaxAge(0);
+		_rsp.addCookie(c);
+	}
 
 	/**
 	 * Returns one of the special command parameters.
