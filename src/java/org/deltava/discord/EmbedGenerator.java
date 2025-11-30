@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to generate Discord responses.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 11.1
  */
 
@@ -187,14 +187,11 @@ class EmbedGenerator {
     		.addInlineField("Equipment", fr.getEquipmentType())
     		.addInlineField("Pilot Name", p.getName())
     		.addInlineField("Pilot ID", p.getPilotCode())
-    		.addInlineField("Simulator", fr.getSimulator().name());
-    	
-    	// Format time / passengers
-    	if (isApproved)
-    		eb.addInlineField("Status", "Auto-Approved");
-    	if (fr.getPassengers() > 0)
-    		eb.addInlineField("Passengers", String.valueOf(fr.getPassengers()));
+    		.addInlineField("Simulator", fr.getSimulator().name())
+    		.addInlineField("Status", isApproved ? "Auto-Approved" : "Submitted")
+    		.addInlineField("Passengers", (fr.getPassengers() > 0) ? String.valueOf(fr.getPassengers()) : "N/A");
 
+    	// Format duration
     	DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
 		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochSecond(d.getSeconds()), ZoneId.of("Z"));
 		eb.addInlineField("Duration", df.format(zdt));
