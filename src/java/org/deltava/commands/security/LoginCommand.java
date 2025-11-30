@@ -1,8 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.*;
 import java.time.*;
 import java.util.*;
@@ -12,6 +10,9 @@ import java.sql.Connection;
 import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
+
+import static org.deltava.commands.HTTPContext.*;
+import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.econ.*;
@@ -68,36 +69,27 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Check for user cookie name
+		SecurityCookieData ucd = null;
+		Cookie utc = ctx.getCookie(USER_COOKIE_NAME);
+		if ((utc != null) && !StringUtils.isEmpty(utc.getValue())) {
+			try {
+				ucd = SecurityCookieGenerator.readCookie(utc.getValue());
+				if (!ucd.isExpired())
+					ctx.setAttribute("userTokenData", ucd, REQUEST);
+			} catch (SecurityException se) {
+				log.warn("Invalid user token Cookie, clearing");
+				ctx.clearCookie(USER_COOKIE_NAME);
+			}
+		}
 
 		// Get the names
 		String fName = ctx.getParameter("firstName");
 		String lName = ctx.getParameter("lastName");
 		String code = ctx.getParameter("pilotCode");
+		boolean isUserOV = Boolean.parseBoolean(ctx.getParameter("userOV"));
 		
-		// Get pre-loaded names
-		Cookie fnc = ctx.getCookie("dva_fname64");
-		Cookie lnc = ctx.getCookie("dva_lname64");
-		Cookie pcc = ctx.getCookie("dva_pCode");
-		
-		// Save first name
-		Base64.Decoder b64d = Base64.getDecoder();
-		if (fName != null)
-			ctx.setAttribute("fname", fName, REQUEST);
-		else if (fnc != null)
-			ctx.setAttribute("fname", new String(b64d.decode(fnc.getValue()), UTF_8), REQUEST);
-		
-		// Save last name
-		if (lName != null)
-			ctx.setAttribute("lname", lName, REQUEST);
-		else if (lnc != null)
-			ctx.setAttribute("lname", new String(b64d.decode(lnc.getValue()), UTF_8), REQUEST);
-		
-		// Save pilot code
-		if (code != null)
-			ctx.setAttribute("pilotCode", code, REQUEST);
-		else if (pcc != null)
-			ctx.setAttribute("pilotCode", pcc.getValue(), REQUEST);
-
 		// If we've got no firstName parameter, redirect to the login JSP
 		if (fName == null) {
 			result.setURL("/jsp/login.jsp");
@@ -115,17 +107,23 @@ public class LoginCommand extends AbstractCommand {
 		
 		// Build the full name
 		StringBuilder fullName = new StringBuilder(fName.trim());
-		fullName.append(' ');
-		fullName.append(String.valueOf(lName).trim());
+		fullName.append(' ').append(lName.trim());
 
-		Pilot p = null;
+		Pilot p = null; String remoteAddr = ctx.getRequest().getRemoteAddr();
 		Instant maxUserDate = UserPool.getMaxSizeDate();
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the Pilot's Directory Name
+			List<Pilot> users = new ArrayList<Pilot>();
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			List<Pilot> users = dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList());
+			if (isUserOV && !StringUtils.isEmpty(code)) {
+				p = dao.get(StringUtils.parseHex(code));
+				if (p != null)
+					users.add(p);
+			} else
+				users.addAll(dao.getByName(fullName.toString(), ctx.getDB()).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList()));
+			
 			if (users.size() == 0) {
 				String msg = String.format("Unknown User Name - \"%s\"", fullName);
 				log.warn(msg);
@@ -153,7 +151,6 @@ public class LoginCommand extends AbstractCommand {
 				p = users.get(0);
 			
 			// Check the blacklist
-			String remoteAddr = ctx.getRequest().getRemoteAddr();
 			GetSystemData sysdao = new GetSystemData(con);
 			BlacklistEntry be = sysdao.getBlacklist(remoteAddr);
 			if (be != null)
@@ -179,6 +176,7 @@ public class LoginCommand extends AbstractCommand {
 					wc.setMaxAge(86400 * 180);
 					wc.setSecure(ctx.getRequest().isSecure());
 					wc.setHttpOnly(true);
+					wc.setAttribute("SameSite", "strict");
 					ctx.addCookie(wc);
 				} else
 					log.warn("{} status = {}", p.getName(), p.getStatus().getDescription());
@@ -221,17 +219,16 @@ public class LoginCommand extends AbstractCommand {
 			GetIPLocation ipdao = new GetIPLocation(con);
 			IPBlock addrInfo = ipdao.get(remoteAddr);
 
-			// Create the user authentication cookie
+			// Create the user authentication data
 			SecurityCookieData cData = new SecurityCookieData(p.getHexID());
 			cData.setLoginDate(Instant.now());
+			cData.setExpiryDate(cData.getLoginDate().plusSeconds(3600 * SystemData.getInt("security.cookie.authAge", 4)));
 			cData.setRemoteAddr(remoteAddr);
 			cData.setSignatureAlgorithm(SystemData.get("security.hash.algorithm"));
 			
-			// Encode the encrypted data via Base64
-			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
+			// Save the user auth cookie
+			Cookie c = new Cookie(AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
 			c.setMaxAge(-1);
-			c.setHttpOnly(true);
-			c.setSecure(true);
 			c.setPath("/");
 			ctx.addCookie(c);
 			
@@ -288,10 +285,10 @@ public class LoginCommand extends AbstractCommand {
 			String userAgent = ctx.getRequest().getHeader("user-agent");
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute("java.util.Locale", Locale.US);
-			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
-			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
-			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
-			s.setAttribute(CommandContext.AUTH_COOKIE_NAME, cData);
+			s.setAttribute(USER_ATTR_NAME, p);
+			s.setAttribute(ADDRINFO_ATTR_NAME, addrInfo);
+			s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
+			s.setAttribute(AUTH_COOKIE_NAME, cData);
 			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
@@ -330,62 +327,27 @@ public class LoginCommand extends AbstractCommand {
 
 		// Check if we are going to save the first/last names
 		boolean saveName = Boolean.parseBoolean(ctx.getParameter("saveInfo"));
-		boolean isSecure = ctx.getRequest().isSecure(); 
 		if (saveName) {
-			Base64.Encoder b64e = Base64.getEncoder();
-			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
-
-			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(UTF_8)));
-			fnc.setMaxAge(cookieAge);
-			fnc.setHttpOnly(true);
-			fnc.setSecure(isSecure);
-			fnc.setAttribute("SameSite", "strict");
-			ctx.addCookie(fnc);
-
-			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(UTF_8)));
-			lnc.setHttpOnly(true);
-			lnc.setSecure(isSecure);
-			lnc.setMaxAge(cookieAge);
-			lnc.setAttribute("SameSite", "strict");
-			ctx.addCookie(lnc);
+			int cookieAge = SystemData.getInt("security.cookie.userAge", 7) * 86400;
 			
-			pcc = new Cookie("dva_pCode", p.getHexID());
-			pcc.setMaxAge(cookieAge);
-			pcc.setHttpOnly(true);
-			pcc.setSecure(isSecure);
-			pcc.setAttribute("SameSite", "strict");
-			ctx.addCookie(pcc);
-		} else {
-			fnc = new Cookie("dva_fname64", "");
-			fnc.setMaxAge(0);
-			fnc.setHttpOnly(true);
-			fnc.setSecure(isSecure);
-			fnc.setAttribute("SameSite", "strict");
-			ctx.addCookie(fnc);
-
-			lnc = new Cookie("dva_lname64", "");
-			lnc.setMaxAge(0);
-			lnc.setHttpOnly(true);
-			lnc.setSecure(isSecure);
-			lnc.setAttribute("SameSite", "strict");
-			ctx.addCookie(lnc);
+			UserCookieData uData = new UserCookieData(p.getHexID(), p.getFirstName(), p.getLastName());
+			uData.setLoginDate(p.getLastLogin());
+			uData.setRemoteAddr(remoteAddr);
+			uData.setSignatureAlgorithm(SystemData.get("security.hash.algorithm"));
+			uData.setExpiryDate(Instant.now().plusSeconds(cookieAge));
 			
-			pcc = new Cookie("dva_pCode", "");
-			pcc.setMaxAge(0);
-			pcc.setHttpOnly(true);
-			pcc.setSecure(isSecure);
-			pcc.setAttribute("SameSite", "strict");
-			ctx.addCookie(pcc);
-		}
+			// Save the user auth cookie
+			Cookie uc = new Cookie(USER_COOKIE_NAME, SecurityCookieGenerator.getCookieData(uData));
+			uc.setMaxAge(cookieAge);
+			uc.setPath("/");
+			ctx.addCookie(uc);
+		} else
+			ctx.clearCookie(USER_COOKIE_NAME);
 		
 		// Clear warning cookie if valid
 		if (ctx.getCookie("dvaAuthStatus") != null) {
 			log.warn("Resetting Suspended warning cookie for {}", p.getName());
-			Cookie wc = new Cookie("dvaAuthStatus", "");
-			wc.setMaxAge(0);
-			wc.setSecure(isSecure);
-			wc.setHttpOnly(true);
-			ctx.addCookie(wc);
+			ctx.clearCookie("dvaAuthStatus");
 		}
 		
 		// Mark us as complete

@@ -4,6 +4,8 @@ import junit.framework.Test;
 
 import org.hansel.CoverageDecorator;
 
+import java.time.Instant;
+
 import org.deltava.beans.AbstractBeanTestCase;
 
 public class TestSecurityCookieData extends AbstractBeanTestCase {
@@ -18,6 +20,7 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
 	protected void setUp() throws Exception {
         super.setUp();
         _cData = new SecurityCookieData("cn=Luke,ou=dva,o=gva");
+        _cData.setExpiryDate(Instant.now().plusMillis(50));
         setBean(_cData);
     }
 
@@ -30,8 +33,8 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
     public void testProperties() throws InterruptedException {
         assertEquals("cn=Luke,ou=dva,o=gva", _cData.getUserID());
         assertFalse(_cData.isExpired());
-        checkProperty("expiryDate", Long.valueOf(System.currentTimeMillis()));
-        checkProperty("loginDate", Long.valueOf(System.currentTimeMillis()));
+        checkProperty("expiryDate", Instant.now());
+        checkProperty("loginDate", Instant.now());
         checkProperty("remoteAddr", "127.0.0.1");
         Thread.sleep(100);
         assertTrue(_cData.isExpired());
