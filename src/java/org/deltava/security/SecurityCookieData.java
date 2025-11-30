@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015, 2016, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.time.Instant;
@@ -6,13 +6,11 @@ import java.time.Instant;
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 10.1
+ * @version 12.4
  * @since 1.0
  */
 
 public class SecurityCookieData implements java.io.Serializable {
-    
-    private transient static final long DEFAULT_EXPIRY = 3600 * 8;
     
  	private final String _userID;
 	private String _remoteAddr;
@@ -27,7 +25,6 @@ public class SecurityCookieData implements java.io.Serializable {
     public SecurityCookieData(String userID) {
         super();
         _userID = userID;
-        setExpiryDate(Instant.now().plusSeconds(DEFAULT_EXPIRY));
     }
     
     /**

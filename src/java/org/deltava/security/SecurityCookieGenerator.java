@@ -62,7 +62,7 @@ public final class SecurityCookieGenerator {
 		
 		// Rebuild the message token
 		String alg = cookieData.getOrDefault("alg", "SHA-256");
-		boolean isUser = cookieData.containsKey("name");
+		boolean isUser = cookieData.containsKey("ln");
 		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(cookieData.get("uid"));
 		buf.append("@addr:");
@@ -74,8 +74,10 @@ public final class SecurityCookieGenerator {
 		buf.append("@alg:");
 		buf.append(alg);
 		if (isUser) {
-			buf.append("@name:");
-			buf.append(cookieData.get("name"));
+			buf.append("@fn:");
+			buf.append(cookieData.get("fn"));
+			buf.append("@ln:");
+			buf.append(cookieData.get("ln"));
 		}
 		
 		// Get the message digest for the token
@@ -89,7 +91,7 @@ public final class SecurityCookieGenerator {
 		
 		// Initalize the cookie data
 		String uid = cookieData.get("uid");
-		SecurityCookieData scData = isUser ? new UserCookieData(uid, cookieData.get("name")) : new SecurityCookieData(uid);
+		SecurityCookieData scData = isUser ? new UserCookieData(uid, cookieData.get("fn"), cookieData.get("ln")) : new SecurityCookieData(uid);
 		scData.setRemoteAddr(cookieData.get("addr").replace('%', ':'));
 		scData.setSignatureAlgorithm(alg);
 		try {
@@ -121,8 +123,10 @@ public final class SecurityCookieGenerator {
 		buf.append("@alg:");
 		buf.append(scData.getSignatureAlgorithm());
 		if (scData instanceof UserCookieData ucData) {
-			buf.append("@name:");
-			buf.append(ucData.getUserName());
+			buf.append("@fn:");
+			buf.append(ucData.getFirstName());
+			buf.append("@ln:");
+			buf.append(ucData.getLastName());
 		}
 		
 		// Get the message digest for the token

@@ -81,6 +81,7 @@ public class SecurityCookieFilter extends HttpFilter {
 		c.setHttpOnly(true);
 		c.setSecure(isSecure);
 		c.setAttribute("SameSite", "strict");
+		c.setMaxAge(0);
 		return c;
 	}
 

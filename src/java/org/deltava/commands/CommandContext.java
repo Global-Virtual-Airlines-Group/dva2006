@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import jakarta.servlet.http.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 1.0
  * @see Command
  */
@@ -18,6 +18,7 @@ import org.deltava.util.StringUtils;
 public class CommandContext extends HTTPContext {
 	
 	public static final String AUTH_COOKIE_NAME = "authToken";
+	public static final String USER_COOKIE_NAME = "userDataToken";
 
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
 	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";

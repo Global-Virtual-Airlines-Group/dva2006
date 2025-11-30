@@ -391,7 +391,6 @@
 	</api>
 
 	<security>
-		<ssl type="Boolean">true</ssl>
 		<secrets>/usr/local/tomcat/conf/dva_secrets.properties</secrets>
 
 		<!-- Password settings -->
@@ -402,8 +401,9 @@
 		
 		<!-- Security cookie settings -->
 		<cookie>
+			<authAge type="Integer">8</authAge> <!-- Hours -->
 			<checkIP type="Boolean">false</checkIP>
-			<maxAge type="Integer">-1</maxAge>
+			<userAge type="Integer">30</userAge> <!-- Days -->
 		</cookie>
 
 		<list name="roles" attr="role" sorted="true">
@@ -643,7 +643,6 @@
 			<reserve type="Integer">14</reserve>
 		</selcal>
 		
-		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">21</transfer_max>
 		<checkrde_max type="Integer">3</checkrde_max>
 

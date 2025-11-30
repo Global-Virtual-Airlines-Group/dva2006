@@ -85,4 +85,26 @@ public class TestSecurityCookieGenerator extends TestCase {
 			// empty
 		}
 	}
+	
+	public void testUserCookieData() {
+		SecurityCookieGenerator.init(new AESEncryptor(_aesKey));
+
+	    Instant now = Instant.now();
+	    UserCookieData ud = new UserCookieData("cn=Luke,ou=dva,o=gva", "Luke", "Kolin");
+	    ud.setRemoteAddr("127.0.0.1");
+	    ud.setLoginDate(now.minusSeconds(10));
+	    ud.setExpiryDate(now);
+	    assertEquals("Luke", ud.getFirstName());
+	    assertEquals("Kolin", ud.getLastName());
+	    
+	    String enc = SecurityCookieGenerator.getCookieData(ud);
+	    assertNotNull(enc);
+	    
+	    SecurityCookieData sd = SecurityCookieGenerator.readCookie(enc);
+	    assertNotNull(sd);
+	    assertTrue(sd instanceof UserCookieData);
+	    assertEquals(ud.getUserID(), sd.getUserID());
+	    assertEquals(ud.getFirstName(), ((UserCookieData) sd).getFirstName());
+	    assertEquals(ud.getLastName(), ((UserCookieData) sd).getLastName());
+	}
 }
