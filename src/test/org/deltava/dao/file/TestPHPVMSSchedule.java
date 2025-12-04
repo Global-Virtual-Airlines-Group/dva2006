@@ -16,6 +16,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.ScheduleEntryComparator;
 
 import org.deltava.dao.*;
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
@@ -67,9 +68,10 @@ public class TestPHPVMSSchedule extends TestCase {
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\vasystems.csv");
+		File f = new File("C:\\Temp\\dl.csv");
 		assertTrue(f.exists());
 		
+		// Load the data
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
 		try (InputStream is = new BufferedInputStream(new FileInputStream(f), 131072)) {
 			GetPHPVMSSchedule dao = new GetPHPVMSSchedule(is);
@@ -79,6 +81,29 @@ public class TestPHPVMSSchedule extends TestCase {
 			assertFalse(rawEntries.isEmpty());
 		}
 		
+		// Group by departure airport
+		log.info("Loaded {} raw schedule entries", Integer.valueOf(rawEntries.size()));
+		Map<Airport, Collection<RawScheduleEntry>> rawMap = new HashMap<Airport, Collection<RawScheduleEntry>>();
+		rawEntries.forEach(rse -> CollectionUtils.addMapCollection(rawMap, rse.getAirportD(), rse, ArrayList::new));
+		
+		// Purge based on departure time
+		Comparator<RawScheduleEntry> cmp = ScheduleLegHelper.getDupeChecker(true); int dupeLegs = 0;
+		for (Collection<RawScheduleEntry> entries : rawMap.values()) {
+			Collection<RawScheduleEntry> apLegs = new TreeSet<RawScheduleEntry>(cmp);
+			for (RawScheduleEntry rse : entries) {
+				if (!apLegs.add(rse)) {
+					log.info("Removing {} from {}", rse, rse.getAirportD().getICAO());
+					rawEntries.remove(rse);
+					dupeLegs++;
+				}
+			}
+		}
+		
+		// Calculate leg numbers
+		log.info("Removed {} duplicate Flight Legs based on departure time", Integer.valueOf(dupeLegs));
+		ScheduleLegHelper.calculateLegs(rawEntries);
+
+		// Purge and write
 		SetSchedule rwdao = new SetSchedule(_c);
 		rwdao.purgeRaw(ScheduleSource.VASYS);
 		for (RawScheduleEntry rse : rawEntries)
@@ -108,11 +133,11 @@ public class TestPHPVMSSchedule extends TestCase {
 		log.info("Processing {} flight codes for {}", Integer.valueOf(fMap.size()), today);
 		log.info("Total Flights = {}, dupe Count = {}", Long.valueOf(totalFlights), Long.valueOf(totalDupes));
 		
-		ScheduleEntryComparator cmp = new ScheduleEntryComparator(ScheduleEntryComparator.DTIME);
+		ScheduleEntryComparator scmp = new ScheduleEntryComparator(ScheduleEntryComparator.DTIME);
 		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 		for (List<ScheduleEntry> flights : fMap.values()) {
 			if (flights.size() > 1) {
-				Collections.sort(flights, cmp);
+				Collections.sort(flights, scmp);
 				for (int x = 1; x < flights.size(); x++)
 					flights.get(x).setLeg(x + 1);
 			}
