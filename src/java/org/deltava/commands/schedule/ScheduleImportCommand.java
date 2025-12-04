@@ -3,7 +3,6 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -28,56 +27,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import raw Flight Schedule data.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
 public class ScheduleImportCommand extends AbstractCommand {
 
 	protected static final Logger log = LogManager.getLogger(ScheduleImportCommand.class);
-	
-	private static class RawDupeChecker implements Comparator<RawScheduleEntry> {
-		
-		protected RawDupeChecker() {
-			super();
-		}
-
-		@Override
-		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
-			
-			int tmpResult = rse1.getAirportD().compareTo(rse2.getAirportD());
-			if (tmpResult == 0)
-				tmpResult = rse1.getAirportA().compareTo(rse2.getAirportA());
-			if (tmpResult == 0)
-				tmpResult = rse1.compareTo(rse2);
-			if (tmpResult == 0)
-				tmpResult = rse1.getStartDate().compareTo(rse2.getStartDate());
-			if (tmpResult == 0)
-				tmpResult = rse1.getEndDate().compareTo(rse2.getEndDate());
-			
-			return (tmpResult == 0) ? Integer.compare(rse1.getDayMap(), rse2.getDayMap()) : tmpResult;
-		}
-	}
-	
-	private static class TimeDupeChecker extends RawDupeChecker {
-		private final int _delta;
-		
-		protected TimeDupeChecker(int delta) {
-			super();
-			_delta = delta;
-		}
-		
-		@Override
-		public int compare(RawScheduleEntry rse1, RawScheduleEntry rse2) {
-			
-			int tmpResult = super.compare(rse1, rse2);
-			if (tmpResult != 0) return tmpResult;
-			
-			Duration d = Duration.between(rse1.getTimeD().toLocalTime(), rse2.getTimeD().toLocalTime());
-			long timeDelta = d.abs().toMinutes();
-			return (timeDelta <= _delta) ? 0 : (d.isPositive() ? -1 : 1);
-		}
-	}
 
 	/**
 	 * Executes the command.
@@ -240,7 +196,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Eliminate dupes
-			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = doDedupe ? new TimeDupeChecker(30) : new RawDupeChecker();
+			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = ScheduleLegHelper.getDupeChecker(doDedupe);
 			Collection<RawScheduleEntry> dupeFilter = new TreeSet<RawScheduleEntry>(dd);
 			entries.removeIf(se -> !dupeFilter.add(se)); int dupeCount = rawEntryCount - entries.size(); 
 			log.info("Removed {} duplicate schedule entries", Integer.valueOf(dupeCount));
