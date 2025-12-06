@@ -79,7 +79,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label">Country</td>
- <td class="data"><el:combo name="country" idx="*" required="true" options="${countries}" firstEntry="-" value="${airport.country}" onChange="void updateOldAirports()" /></td>
+ <td class="data"><el:combo name="country" idx="*" required="true" options="${countries}" firstEntry="-" value="${airport.country}" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>
@@ -176,11 +176,12 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:page>
 <c:if test="${googleMap}">
 <script>
+<map:token />
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="golgotha.local.apMarker" point="${airport}" color="green" />
 
 // Build the map
-const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, zoom:6, minZoom:4, maxZoom:12, scrollZoom:false, style:'mapbox://styles/mapbox/satellite-v9'}});
+const map = new golgotha.maps.Map(document.getElementById('mapBox'), {center:golgotha.local.mapC, zoom:6, minZoom:4, maxZoom:12, scrollZoom:false, style:'mapbox://styles/mapbox/satellite-v9'});
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.once('load', function() { map.addControl(new golgotha.maps.BaseMapControl(golgotha.maps.DEFAULT_TYPES), 'top-left'); });
