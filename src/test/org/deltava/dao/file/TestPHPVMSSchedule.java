@@ -54,7 +54,7 @@ public class TestPHPVMSSchedule extends TestCase {
 		
 		// Get EQ types
 		GetAircraft acdao = new GetAircraft(_c);
-		_acTypes.addAll(acdao.getAll());
+		_acTypes.addAll(acdao.getAircraftTypes());
 		
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());

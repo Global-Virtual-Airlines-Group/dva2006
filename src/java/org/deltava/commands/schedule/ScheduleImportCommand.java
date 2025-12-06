@@ -54,23 +54,24 @@ public class ScheduleImportCommand extends AbstractCommand {
 			throw securityException("Cannot import Flight Schedule data");
 
 		// If we are not uploading a CSV file, then redirect to the JSP
-		ScheduleSource ss = StringUtils.isEmpty(ctx.getParameter("schedType")) ? null : ScheduleSource.valueOf(ctx.getParameter("schedType"));
+		ScheduleSource ss = EnumUtils.parse(ScheduleSource.class, ctx.getParameter("schedType"), null);
 		if (ss == null) {
 			result.setURL("/jsp/schedule/flightImport.jsp");
 			result.setSuccess(true);
 			return;
 		}
 
-		ImportStatus st = null; boolean doPurge = Boolean.parseBoolean(ctx.getParameter("doPurge"));
-		boolean doDedupe = Boolean.parseBoolean(ctx.getParameter("doDedupe"));
+		ImportStatus st = null; boolean doDedupe = Boolean.parseBoolean(ctx.getParameter("doDedupe")); 
+		RawScheduleMerge mrg = EnumUtils.parse(RawScheduleMerge.class, ctx.getParameter("mergeOptions"), RawScheduleMerge.PURGE);
 		File f = (ss == ScheduleSource.INNOVATA) ? new File(SystemData.get("schedule.innovata.file")) : new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		try {
 			// Get the DAOs
 			Connection con = ctx.getConnection();
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
+			GetRawSchedule rsdao = new GetRawSchedule(con);
 
-			Collection<RawScheduleEntry> entries = new ArrayList<RawScheduleEntry>();
+			List<RawScheduleEntry> entries = new ArrayList<RawScheduleEntry>();
 			Compression c = Compression.detect(f);
 			try (InputStream fis = new FileInputStream(f)) {
 				switch (ss) {
@@ -123,7 +124,6 @@ public class ScheduleImportCommand extends AbstractCommand {
 				case LEGACY:
 				case MANUAL:
 					boolean isUTC = Boolean.parseBoolean(ctx.getParameter("isUTC"));
-					GetRawSchedule rsdao = new GetRawSchedule(con);
 					Collection<ScheduleSourceInfo> srcs = rsdao.getSources(false, ctx.getDB());
 					try (InputStream is = new FileInputStream(f)) {
 						GetSchedule dao = new GetSchedule(ss, is, isUTC);
@@ -194,6 +194,23 @@ public class ScheduleImportCommand extends AbstractCommand {
 				else
 					rse.setEquipmentType(eqTypes.get(0).getName());
 			}
+		
+			// Append or combine the data
+			if (mrg != RawScheduleMerge.PURGE) {
+				Collection<Airline> importAirlines = entries.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
+				List<RawScheduleEntry> existingEntries = rsdao.load(ss, null);
+				if (mrg == RawScheduleMerge.MERGE)
+					existingEntries.removeIf(rse -> importAirlines.contains(rse.getAirline()));
+					
+				existingEntries.addAll(entries);
+				entries = existingEntries;
+				
+				// Renumber entries
+				for (int x = 0; x < entries.size(); x++) {
+					RawScheduleEntry rse = entries.get(x);
+					rse.setLineNumber(x);
+				}
+			}
 			
 			// Eliminate dupes
 			int rawEntryCount = entries.size(); Comparator<RawScheduleEntry> dd = ScheduleLegHelper.getDupeChecker(doDedupe);
@@ -204,7 +221,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Save the data
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
-			if (doPurge && !entries.isEmpty()) {
+			if ((mrg != RawScheduleMerge.APPEND) && !entries.isEmpty()) {
 				int purgeCount = swdao.purgeRaw(ss);
 				log.info("Purged {} raw schedule entries from {}", Integer.valueOf(purgeCount), ss.getDescription());
 				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
@@ -217,8 +234,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Load schedule sources
+			log.info("Wrote {} schedule entries to {}", Integer.valueOf(entryCount), ss.getDescription());
 			CacheManager.invalidate("ScheduleSource");
-			GetRawSchedule rsdao = new GetRawSchedule(con);
 			Collection<ScheduleSourceInfo> stats = rsdao.getSources(false, ctx.getDB());
 			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
 			
@@ -255,7 +272,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			return new BZip2MultiInputStream(new BufferedInputStream(new FileInputStream(f), 65536));
 
 		boolean isPDF = false;
-		try (InputStream his = new BufferedInputStream(new FileInputStream(f))) {
+		try (InputStream his = new BufferedInputStream(new FileInputStream(f), 4096)) {
 			byte[] b = new byte[64]; his.read(b);
 			isPDF = PDFUtils.isPDF(b);
 		}

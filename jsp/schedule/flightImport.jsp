@@ -45,6 +45,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:enum var="mergeOpts" className="org.deltava.beans.schedule.RawScheduleMerge" />
 <content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" exclude="DRAFT" />
 
 <!-- Main Body Frame -->
@@ -63,10 +64,13 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" required="true" firstEntry="[ SCHEDULE TYPE ]" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <tr>
+ <td class="label">Merge Options</td>
+ <td class="data"><el:check type="radio" name="mergeOptions" idx="*" options="${mergeOpts}" value="PURGE" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isUTC" idx="*" value="true" label="Departure/Arrival times are UTC" /><br>
-<el:box name="doDedupe" idx="*" value="true" label="Remove flights with duplicate Departure Times" /><br>
-<el:box name="doPurge" idx="*" value="true" checked="true" label="Purge Raw Schedule from this Schedule Source" /></td>
+<el:box name="doDedupe" idx="*" value="true" label="Remove flights with duplicate Departure Times" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
@@ -91,7 +95,7 @@ golgotha.local.validate = function(f) {
 <content:googleAnalytics />
 <script>
 golgotha.util.disable('SaveButton', true);
-golgotha.local.r = new Resumable({chunkSize:262144, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
+golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
