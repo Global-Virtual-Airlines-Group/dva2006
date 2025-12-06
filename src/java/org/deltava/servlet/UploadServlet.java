@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to support file uploads.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 7.5
  */
 
@@ -43,10 +43,6 @@ public class UploadServlet extends BasicAuthServlet {
 		}
 	}
 
-	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
-	 */
 	@Override
 	public String getServletInfo() {
 		return "File Upload Servlet " + VersionInfo.TXT_COPYRIGHT;
@@ -96,6 +92,7 @@ public class UploadServlet extends BasicAuthServlet {
 
 		info.complete(chunk);
 		_cache.add(info);
+		log.info("{} / {} chunks complete - {}", Integer.valueOf(info.getCompleted()), Integer.valueOf(info.getChunks()), info.getFileName());
 
 		// Check if all chunks uploaded, and change filename
 		try (PrintWriter rw = rsp.getWriter()) {

@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.time.Instant;
 /**
  * A bean to store resumable upload data.
  * @author Luke
- * @version 7.5
+ * @version 12.4
  * @since 7.5
  */
 
@@ -46,6 +46,22 @@ public class UploadInfo implements Cacheable {
 	 */
 	public int getChunkSize() {
 		return _chunkSize;
+	}
+	
+	/**
+	 * Returns the number of chunks in this file.
+	 * @return the number of chunks
+	 */
+	public int getChunks() {
+		return (int) _totalSize / _chunkSize;
+	}
+	
+	/**
+	 * Returns the number of completed chunks.
+	 * @return the number of completed chunks
+	 */
+	public int getCompleted() {
+		return _completedChunks.size();
 	}
 	
 	/**
@@ -102,7 +118,7 @@ public class UploadInfo implements Cacheable {
 	 * @return TRUE if all uploaded, otherwise FALSE
 	 */
 	public boolean isComplete() {
-		int chunks = (int) _totalSize / _chunkSize;
+		int chunks = getChunks();
 		for (int c = 1; c <= chunks; c++) {
 			if (!isComplete(c))
 				return false;
@@ -141,6 +157,11 @@ public class UploadInfo implements Cacheable {
 	 */
 	public void setTempFile(File f) {
 		_tempPath = f;
+	}
+	
+	@Override
+	public int hashCode() {
+		return _id.hashCode();
 	}
 
 	@Override
