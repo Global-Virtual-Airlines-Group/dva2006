@@ -15,7 +15,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A bean to store a SimBrief briefing package.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 10.3
  */
 
@@ -70,8 +70,9 @@ public class BriefingPackage extends DatabaseBean implements RoutePair, FlightTi
 	 */
 	BriefingPackage(int id, PackageFormat fmt) {
 		super();
-		setID(id);
 		_fmt = fmt;
+		if (id > 0)
+			setID(id);
 	}
 	
 	@Override
