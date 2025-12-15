@@ -76,7 +76,7 @@ Welcome to <span class="bld"><content:airline /></span>! In order to access the 
 <c:if test="${!empty userTokenData}">
 <tr id="userLabel">
  <td class="label">First / Last Name</td>
- <td class="data"><span class="pri bld">${userTokenData.firstName} ${userTokenData.lastName}</span> <a href="javascript:void golgotha.local.toggleUser()" class="small ita plain">This isn't me</a></td>
+ <td class="data"><span class="pri bld">${userTokenData.firstName}&nbsp;${userTokenData.lastName}</span> <a href="javascript:void golgotha.local.toggleUser()" class="small ita plain">This isn't me</a></td>
 </tr>
 </c:if>
 <tr id="userFields"<c:if test="${!empty userTokenData}"> style="display:none;"</c:if>>
