@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to fetch SimBrief packages.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 10.3
  */
 
@@ -30,6 +30,7 @@ public class GetSimBrief extends DAO {
 		SimBriefException(String url, String errorData) {
 			super(url, SC_BAD_REQUEST);
 			_errorData = errorData;
+			setLogStackDump(false);
 		}
 		
 		@Override
