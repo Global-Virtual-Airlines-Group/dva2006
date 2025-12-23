@@ -9,7 +9,7 @@ import org.deltava.taglib.html.ElementTag;
 /**
  * A JSP Tag to insert a DIV element to store a Map.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class MapDIVTag extends ElementTag {
       
       // Check for Google Maps API
       if (!ContentHelper.containsContent(pageContext, "JS", InsertAPITag.API_JS_NAME))
-         throw new IllegalStateException("Google Maps API not included in request");
+         throw new IllegalStateException("MapBox API not included in request");
       
       // Get the API version
       Integer rawVersion = (Integer) pageContext.getAttribute(InsertAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
