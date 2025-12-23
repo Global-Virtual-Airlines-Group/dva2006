@@ -9,7 +9,7 @@ import org.deltava.beans.flight.FlightType;
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 2.6
  */
 
@@ -97,7 +97,7 @@ public interface RoutePair {
 	 * @return a List of Airports, or an empty list if not populated.
 	 * @see RoutePair#isPopulated()
 	 */
-	default Collection<Airport> getAirports() {
+	default List<Airport> getAirports() {
 		return isPopulated() ? List.of(getAirportD(), getAirportA()) : Collections.emptyList();
 	}
 	
