@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -121,6 +121,27 @@ public class GeoUtils {
 			
 			lastLoc = loc;
 		}
+	}
+
+	/**
+	 * Thins out a collection of GeoLocations by ensuring a minimum distance between any two points.
+	 * @param pts a Collection of GeoLocations
+	 * @param minDistance the minimum dinstance between two points in miles
+	 * @return a SequencedCollection of GeoLocations
+	 */
+	public static SequencedCollection<GeoLocation> thin(Collection<? extends GeoLocation> pts, int minDistance) {
+		if (pts.size() < 2) return new ArrayList<GeoLocation>(pts);
+		SequencedCollection<GeoLocation> results = new ArrayList<GeoLocation>();
+		GeoLocation last = null;
+		for (GeoLocation loc : pts) {
+			int dst = loc.distanceTo(last);
+			if ((last == null) || (dst > minDistance)) {
+				last = loc;
+				results.add(loc);
+			}
+		}
+		
+		return results;
 	}
 
 	/**
