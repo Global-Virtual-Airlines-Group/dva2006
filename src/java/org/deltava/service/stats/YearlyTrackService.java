@@ -67,7 +67,7 @@ public class YearlyTrackService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the year and user ID
-		int year = StringUtils.parse("year", LocalDate.now().getYear());
+		int year = StringUtils.parse(ctx.getParameter("year"), LocalDate.now().getYear());
 		int userID = ctx.getUser().getID();
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		if ((ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) && (id > 0))
@@ -147,6 +147,7 @@ public class YearlyTrackService extends WebService {
 		JSONObject jo = new JSONObject();
 		jo.put("userID", userID);
 		jo.put("size", tracks.size());
+		jo.put("year", year);
 		for (TrackData td : tracks) {
 			JSONObject to = new JSONObject();
 			to.put("id", td.id);
@@ -163,7 +164,7 @@ public class YearlyTrackService extends WebService {
 		JSONUtils.ensureArrayPresent(jo, "tracks", "landingScores", "flightScores");
 		try {
 			ctx.setContentType("application/json", "utf-8");
-			ctx.setExpiry(3600);
+			ctx.setExpiry(7200);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
