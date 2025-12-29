@@ -46,7 +46,7 @@ table.form td.eliteStatus, .button {
 
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td colspan="2" class="left">${year} YEAR IN REVIEW - ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="2" class="left">${year}<span class="nophone"> YEAR IN REVIEW</span> - <span class="nophone">${pilot.rank.name}&nbsp;</span>${pilot.name} (${pilot.pilotCode})</td>
  <td style="width:150px" class="right">YEAR <el:combo name="year" size="1" idx="*" required="true" firstEntry="[ SELECT ]" value="${year}" options="${years}" onChange="void golgotha.local.updateYear()" /></td>
 </tr>
 <tr>
@@ -109,6 +109,13 @@ table.form td.eliteStatus, .button {
 </tr>
 <tr class="map">
  <td colspan="3"><map:div ID="mapBox" height="550" /></td>
+</tr>
+</el:table>
+
+<!-- Table Bottom Bar -->
+<el:table className="bar">
+<tr>
+ <td colspan="3">&nbsp;</td>
 </tr>
 </el:table>
 <el:text name="id" type="hidden" value="${pilot.ID}" />

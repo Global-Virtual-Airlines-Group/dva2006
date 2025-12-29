@@ -55,6 +55,7 @@ public class YearlyReviewCommand extends AbstractCommand {
 		final Instant sd = LocalDate.of(year, 1, 1).atStartOfDay().minusSeconds(1).toInstant(ZoneOffset.UTC);
 		final Instant lsd = LocalDate.of(year - 1, 1, 1).atStartOfDay().minusSeconds(1).toInstant(ZoneOffset.UTC);
 		
+		CommandResult result = ctx.getResult();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -75,8 +76,21 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Remove future flights - clone data before you do so since the cache may be local
+			List<Integer> years = data.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().collect(Collectors.toList());
 			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isBefore(ed)).collect(Collectors.toList());
-			Collection<Integer> years = flights.stream().mapToInt(fr -> LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear()).distinct().boxed().collect(Collectors.toList());
+			Collections.sort(years, Comparator.reverseOrder());
+			
+			// Save pilot and years
+			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.setAttribute("years", years, REQUEST);
+			ctx.setAttribute("year", Integer.valueOf(year), REQUEST);
+
+			// Check for no flights
+			if (flights.isEmpty()) {
+				result.setURL("/jsp/stats/yearReviewEmpty.jsp");
+				result.setSuccess(true);
+				return;
+			}
 			
 			// Load current year and all previous years flights
 			Collection<FlightReport> cyFlights = flights.stream().filter(fr -> fr.getDate().isAfter(sd)).collect(Collectors.toList());
@@ -111,9 +125,6 @@ public class YearlyReviewCommand extends AbstractCommand {
 			}
 			
 			// Save in request
-			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("years", years, REQUEST);
-			ctx.setAttribute("year", Integer.valueOf(year), REQUEST);
 			ctx.setAttribute("cyFlights", cyFlights, REQUEST);
 			ctx.setAttribute("lyFlights", lyFlights, REQUEST);
 			ctx.setAttribute("cyAirports", cyAP, REQUEST);
@@ -131,7 +142,6 @@ public class YearlyReviewCommand extends AbstractCommand {
 		}
 		
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/stats/yearReview.jsp");
 		result.setSuccess(true);
 	}
