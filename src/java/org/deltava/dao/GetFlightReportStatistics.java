@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 2.1
  */
 
@@ -515,7 +515,7 @@ public class GetFlightReportStatistics extends DAO {
 	 * @see GetEliteStatistics#getPilotTotals(LocalDate)
 	 */
 	public List<YearlyTotal> getPilotTotals(LocalDate sd) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE ((DATE>=MAKEDATE(?,?)) AND (DATE<MAKEDATE(?,?))) AND (STATUS=?) GROUP BY PILOT_ID")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID, COUNT(ID) AS LEGS, SUM(DISTANCE) AS DST FROM PIREPS USE INDEX (PIREP_DT_IDX) WHERE (DATE>=MAKEDATE(?,?)) AND (DATE<MAKEDATE(?,?)) AND (STATUS=?) GROUP BY PILOT_ID")) {
 			ps.setInt(1, sd.getYear());
 			ps.setInt(2, sd.getDayOfYear());
 			ps.setInt(3, sd.getYear() + 1);
@@ -533,6 +533,29 @@ public class GetFlightReportStatistics extends DAO {
 			}
 
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of Flight legs completed by a Pilot in a given calendar year.
+	 * @param pilotID the Pilot database ID
+	 * @param year the calendar year
+	 * @return the number of Flight legs completed in the year
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getFlightCount(int pilotID, int year) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) AND (DATE>=MAKEDATE(?,1)) AND (DATE<MAKEDATE(?,1))")) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, year);
+			ps.setInt(4, year + 1);
+			
+			// Execute the query
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
