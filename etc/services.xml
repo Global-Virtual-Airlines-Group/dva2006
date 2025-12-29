@@ -76,6 +76,7 @@
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
 	<service id="myroutemap" class="org.deltava.service.stats.MyRouteMapService" />
 	<service id="mytracks" class="org.deltava.service.stats.MyTrackService" />
+	<service id="yeartracks" class="org.deltava.service.stats.YearlyTrackService" />
 	<service id="simstats" class="org.deltava.service.stats.SimulatorStatsService" />
 	<service id="acarsbuildstats" class="org.deltava.service.stats.ClientVersionService" />
 	<service id="elitestats" class="org.deltava.service.stats.EliteStatsService" />
@@ -85,6 +86,7 @@
 	<service id="otstats" class="org.deltava.service.stats.OnTimeStatsService" />
 	<service id="logpreload" class="org.deltava.service.logbook.LogbookPreloadService" />
 	<service id="airportinfo" class="org.deltava.service.stats.AirportInformationService" />
+	<service id="yeartracks" class="org.deltava.service.stats.YearlyTrackService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
