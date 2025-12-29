@@ -1,6 +1,8 @@
 // Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
+import org.deltava.beans.*;
+
 /**
  * An enumeration of landing score ratings.
  * @author Luke
@@ -8,23 +10,20 @@ package org.deltava.beans.flight;
  * @since 10.4
  */
 
-public enum LandingRating implements org.deltava.beans.EnumDescription {
-	UNKNOWN(0, "plain"), DANGEROUS(50, "error"), POOR(70, "warn"), ACCEPTABLE(90, "pri"), GOOD(101, "ok");
+public enum LandingRating implements EnumDescription, RGBColor {
+	UNKNOWN(0, 0x0000), DANGEROUS(50, 0xE02010), POOR(70, 0xFF8040), ACCEPTABLE(90, 0x0000A1), GOOD(101, 0x008080);
 	
 	private final int _maxScore;
-	private final String _className;
+	private final int _rgb;
 	
-	LandingRating(int maxScore, String className) {
+	LandingRating(int maxScore, int rgb) {
 		_maxScore = maxScore;
-		_className = className;
+		_rgb = rgb; 
 	}
 	
-	/**
-	 * Returns the CSS class name for this rating's description.
-	 * @return the CSS class name
-	 */
-	public String getClassName() {
-		return _className;
+	@Override
+	public int getColor() {
+		return _rgb;
 	}
 	
 	/**

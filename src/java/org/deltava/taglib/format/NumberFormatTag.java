@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009, 2013, 2016, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013, 2016, 2019, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -8,7 +8,7 @@ import jakarta.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -17,6 +17,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
     protected final DecimalFormat _nF;
     protected Number _value;
     private String _className;
+    private String _style;
     protected String _zeroValue;
     private boolean _forceSign;
     
@@ -31,12 +32,19 @@ abstract class NumberFormatTag extends UserSettingsTag {
     }
     
     /**
-     * Updates the CSS class for this formatted number. This will automatically enclose the output in a
-     * &lt;SPAN&gt; tag.
+     * Updates the CSS class for this formatted number. This will automatically enclose the output in a &lt;SPAN&gt; tag.
      * @param cName the class Name(s)
      */
     public final void setClassName(String cName) {
         _className = cName;
+    }
+    
+    /**
+     * Updates the CSS style for this formatted number. This will automatically enclose the output in a &lt;SPAN&gt; tag.
+     * @param css the CSS style
+     */
+    protected void setStyle(String css) {
+    	_style = css;
     }
     
     /**
@@ -91,6 +99,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
     protected void release(String pattern) {
         super.release();
         _className = null;
+        _style = null;
         _zeroValue = null; 
         _nF.applyPattern(pattern);
     }
@@ -124,11 +133,24 @@ abstract class NumberFormatTag extends UserSettingsTag {
      * @throws Exception if an I/O error occurs
      */
     protected void openSpan() throws Exception {
-    	if (_className == null) return;
+    	if ((_className == null) && (_style == null)) return;
     	JspWriter out = pageContext.getOut();
-    	out.print("<span class=\"");
-        out.print(_className);
-        out.print("\">");
+    	out.print("<span ");
+    	if (_className != null) {
+    		out.print("class=\"");
+            out.print(_className);
+            out.print('\"');
+            if (_style != null)
+            	out.print(' ');
+    	}
+    	
+    	if (_style != null) {
+    		out.print("style=\"");
+    		out.print(_style);
+    		out.print('\"');
+    	}
+    	
+        out.print('>');
     }
 
     /**
@@ -136,7 +158,7 @@ abstract class NumberFormatTag extends UserSettingsTag {
      * @throws Exception if an I/O error occurs
      */
     protected void closeSpan() throws Exception {
-    	if (_className != null)
+    	if ((_className != null) || (_style != null))
     		pageContext.getOut().print("</span>");
     }
     
