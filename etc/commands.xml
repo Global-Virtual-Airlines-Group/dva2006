@@ -74,6 +74,12 @@
 		<roles>HR,Operations</roles>
 	</command>
 
+	<command id="yearreview">
+		<name>Yearly Review</name>
+		<class>org.deltava.commands.stats.YearlyReviewCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="mynewairports">
 		<name>Pilot Missed Airports</name>	
 		<class>org.deltava.commands.stats.NewAirportListCommand</class>
