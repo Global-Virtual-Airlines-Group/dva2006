@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 5.4
  */
 
@@ -94,15 +94,10 @@ public class MyTrackService extends WebService {
 			JSONObject fo = new JSONObject();
 			fo.put("isDST", (me.getKey().getAirportA().equals(a)));
 			fo.put("id", me.getKey().getID());
-			GeoLocation last = null;
-			for (GeoLocation loc : me.getValue()) {
-				int dst = loc.distanceTo(last);
-				if ((last == null) || (dst > 20)) {
-					last = loc;
-					fo.append("trk", JSONUtils.format(loc));
-				}
-			}
 			
+			// Add sparse track
+			Collection<GeoLocation> trk = GeoUtils.thin(me.getValue(), GeoUtils.GC_SEGMENT_SIZE);
+			trk.forEach(loc -> fo.append("trk", JSONUtils.format(loc)));
 			JSONUtils.ensureArrayPresent(fo, "trk");
 			jo.append("routes", fo);
 		}

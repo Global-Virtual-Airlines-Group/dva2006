@@ -79,6 +79,19 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p.setTotalLegs(totalLegs);
 			p.setTotalHours(totalHours);
 			NewRelic.addCustomParameter("pilot.name", p.getName());
+			
+			// Show year in review
+			LocalDate today = LocalDate.now();
+			if ((today.getMonth() == Month.DECEMBER) || (today.getMonth() == Month.JANUARY)) {
+				int yr = today.getYear() - ((today.getMonth() == Month.JANUARY) ? 1 : 0);
+				GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
+				int flightCount = stdao.getFlightCount(p.getID(), yr);
+				if (flightCount > 0) {
+					ctx.setAttribute("hasYearReview", Boolean.TRUE, REQUEST);
+					ctx.setAttribute("reviewYear", Integer.valueOf(yr), REQUEST);
+					ctx.setAttribute("reviewYearFlights", Integer.valueOf(flightCount), REQUEST);
+				}
+			}
 
 			// Calculate how long we've been a member
 			long pilotAge = (System.currentTimeMillis() - p.getCreatedOn().toEpochMilli()) / 86400000;

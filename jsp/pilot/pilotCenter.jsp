@@ -276,6 +276,12 @@ Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" 
 <el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportD.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportD}" /></el:cmd>) to 
  ${lastFlight.airportA.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportA.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportA}" /></el:cmd>) in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
+<c:if test="${hasYearReview}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="yearreview">${reviewYear} Year in Review</el:cmd></td>
+ <td class="data">Look back at your activity at <content:airline /> in ${reviewYear}. You had <fmt:int value="${reviewYearFlights}" className="pri bld" /> flight legs, to a variety of different destinations.</td> 
+</tr>
+</c:if>
 <c:if test="${needReturnCharter}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="rcharter">Request Return Charter</el:cmd></td>

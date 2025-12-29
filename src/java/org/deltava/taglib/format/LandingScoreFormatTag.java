@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormatSymbols;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to format landing scores.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 10.4
  */
 
@@ -51,30 +51,8 @@ public class LandingScoreFormatTag extends NumberFormatTag {
     @Override
     public int doStartTag() {
     	if (_value == null) _value = Double.valueOf(-1);
-    	_rating = LandingRating.rate(_value.intValue()); 
-    	
-    	StringBuilder buf = getClassNameBuilder();
-    	switch (_rating) {
-    	case DANGEROUS:
-    		buf.append("error");
-    		break;
-    	
-    	case POOR:
-    		buf.append("warn");
-    		break;
-    		
-    	case ACCEPTABLE:
-    		buf.append("pri");
-    		break;
-    		
-    	case GOOD:
-    		buf.append("ok");
-    		break;
-    		
-    	default:
-    	}
-    	
-    	setClassName(buf.toString());
+    	_rating = LandingRating.rate(_value.intValue());
+    	setStyle(String.format("color:#%s", _rating.getHexColor()));
     	return SKIP_BODY;
     }
 	
