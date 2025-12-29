@@ -51,8 +51,8 @@ public class LandingScoreFormatTag extends NumberFormatTag {
     @Override
     public int doStartTag() {
     	if (_value == null) _value = Double.valueOf(-1);
-    	_rating = LandingRating.rate(_value.intValue()); 
-    	setClassName(_rating.getClassName());
+    	_rating = LandingRating.rate(_value.intValue());
+    	setStyle(String.format("color:#%s", _rating.getHexColor()));
     	return SKIP_BODY;
     }
 	
