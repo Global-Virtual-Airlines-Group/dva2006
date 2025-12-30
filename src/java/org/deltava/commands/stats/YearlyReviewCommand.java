@@ -113,7 +113,12 @@ public class YearlyReviewCommand extends AbstractCommand {
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
 				GetEliteStatistics elsdao = new GetEliteStatistics(con);
+				SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(eldao.getLevels(currentYear));
 				EliteStatus es = eldao.getStatus(p.getID(), year);
+				if (es == null)
+					es = new EliteStatus(p.getID(), cyLevels.first());
+				
+				// Check lifetime elite status
 				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
 				if (es.overridenBy(els))
 					es = els.toStatus();
