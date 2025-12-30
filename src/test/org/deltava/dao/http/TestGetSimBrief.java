@@ -37,6 +37,16 @@ public class TestGetSimBrief extends TestCase {
 		}
 	}
 	
+	public void testUserIDWhitespace() throws Exception {
+		try {
+			sbdao.refresh("Greg Goodavish", null);
+		} catch (SimBriefException sbe) {
+			assertNotNull(sbe.getMessage());
+			String errorMsg = SimBriefParser.parseError(sbe.getMessage());
+			assertNotNull(errorMsg);
+		}
+	}
+	
 	public void testRefreshError() throws Exception {
 		try {
 			sbdao.refresh(USER, "0x19f4cd");

@@ -5,6 +5,7 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.*;
+import java.net.URLEncoder;
 
 import org.deltava.beans.simbrief.*;
 
@@ -93,7 +94,7 @@ public class GetSimBrief extends DAO {
 	public String refresh(String userID, String staticID) throws DAOException {
 		
 		StringBuilder buf = new StringBuilder("https://www.simbrief.com/api/xml.fetcher.php?username=");
-		buf.append(userID);
+		buf.append(URLEncoder.encode(userID, UTF_8));
 		if (!StringUtils.isEmpty(staticID))
 			buf.append("&static_id=").append(staticID);
 		
