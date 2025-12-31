@@ -296,6 +296,8 @@ golgotha.form.submit = function(f) {
 
 golgotha.form.clear = function(f) {
 	golgotha.form.isSubmitted = false;
+	const dlg = document.getElementById('dlg');
+	if (dlg) dlg.close();
 	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : [];
 	ies.forEach(function(e) { e.disabled = false; });
 	return true;
@@ -320,13 +322,19 @@ golgotha.form.showSpinner = function(f) {
 	return true;
 };
 
-golgotha.form.showDialogMessage = function(msg) {
+golgotha.form.showDialogMessage = function(msg, opts) {
 	const dlg = document.getElementById('dlg');
 	const dv = document.getElementById('dialogMsg');
 	if ((!dlg) || (!dv)) return false;
+	const o = opts || {timeout:0,className:'error bld'};
+	dv.className = '';
+	golgotha.util.addClass(dv, o.className);
 	dv.innerText = msg;
 	golgotha.util.display(dv, true);
 	dlg.showModal();
+	if (o.timeout > 0)
+		window.setTimeout(dlg.close, o.timeout);
+
 	return true;
 };
 
