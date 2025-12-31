@@ -92,7 +92,7 @@ public class FormTag extends ElementTag {
         
         try {
         	if (_dialog || _spinner)
-        		_out.println("<dialog id=\"dlg\" class=\"formDialog mid\" closeby=\"closerequest\"><div id=\"dialogMsg\" class=\"error bld\"></div></dialog>");
+        		_out.println("<dialog id=\"dlg\" class=\"formDialog mid\" closeby=\"closerequest\"><div id=\"dialogMsg\"></div></dialog>");
         	
             _out.println(_data.open(true));
         } catch(Exception e) {
