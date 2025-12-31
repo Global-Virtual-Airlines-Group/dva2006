@@ -1,11 +1,11 @@
-var golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{},sort:{lastSort:{},data:{}}};
+const golgotha = {event:{},util:{},form:{isSubmitted:false,invalidDomains:[]},local:{},nav:{sideMenu:false},charts:{},sort:{lastSort:{},data:{}}};
 golgotha.nav.touch = ("ontouchend" in document);
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.util.darkMode = false; // (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 golgotha.event.beacon = function() { if (gtag) gtag('event', arguments); };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
-golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
-golgotha.event.ValidationError = function(msg, el) { var e = new golgotha.event.Error(msg, true); e.focusElement = el; return e; };
+golgotha.event.Error = function(msg, showAlert) { const e = new Error(msg); e.showAlert = showAlert; return e; };
+golgotha.event.ValidationError = function(msg, el) { const e = new golgotha.event.Error(msg, true); e.focusElement = el; return e; };
 
 golgotha.charts.bg = golgotha.util.darkMode ? '#000021' : '#efefef';
 golgotha.charts.tx =  golgotha.util.darkMode ? '#efefef' : '#00002f';
@@ -290,26 +290,29 @@ return false;
 golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
 golgotha.form.submit = function(f) {
 	golgotha.form.isSubmitted = true;
-	if (f != null) {
+	if (f) {
 		const ies = golgotha.util.getElementsByClass('button', 'input', f);
 		ies.forEach(function(e) { e.disabled = true; });
 	}
 
-	const dv = document.getElementById('spinner');
-	if (!dv) return true;
+	// Get spinner image / parent dialog
+	const dlg = document.getElementById('dlg');
+	const spinImg = document.getElementById('spinImg');
+	if ((!dlg) || (!spinImg)) return true;
+	if (f) {
+		dlg.addEventListener('close', function() {
+			const ies = golgotha.util.getElementsByClass('button', 'input', f);
+			ies.forEach(function(e) { e.disabled = false; });
+		}, {once:true});
+	}
 
-	// Add background
-	const sb = document.createElement('div');
-	sb.setAttribute('id', 'spinnerBack');
-	document.body.appendChild(sb);
-
-	// Add spinner message
-	const w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	const h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-	dv.style.top = ((h - 160) / 2) + 'px';
-	dv.style.left = ((w - 185) / 2) + 'px';
-	dv.style.display = '';
-	return true;
+	// Add spinner message in dialog
+	spinImg.parentNode.removeChild(spinImg);
+	dlg.appendChild(spinImg);
+	golgotha.util.display('dialogMsg', false);
+	golgotha.util.display(spinImg, true);
+	dlg.showModal();
+	return false;
 };
 
 golgotha.form.clear = function(f) {
@@ -356,11 +359,21 @@ golgotha.form.resetCombo = function(ev) {
 
 golgotha.form.wrap = function(func, f) {
 	try {	
-		return func(f); 
+		return func(f) && false;
 	} catch (e) {
-		if (e.showAlert) alert(e.message);
-		else console.log(e);
-		if (e.focusElement) e.focusElement.focus();
+		const dlg = document.getElementById('dlg');
+		if (e.showAlert && dlg) {
+			golgotha.util.display('spinImg', false);
+			dlg.showModal();
+			const msgDiv = document.getElementById('dialogMsg');
+			msgDiv.innerText = e.message;
+		} else if (e.showAlert) 
+			alert(e.message);
+		else
+			console.log(e);
+
+		if (e.focusElement)
+			e.focusElement.focus(); 
 	}
 
 	return false;
@@ -391,7 +404,7 @@ golgotha.form.validateText = function(t, min, title) {
 golgotha.form.validateNumber = function(t, minValue, title) {
 	if ((!t) || (t.disabled)) return true;
 	const i = parseFloat(t.value);
-	if ((t.value.length < 1) || (i == Number.NaN))
+	if ((t.value.length < 1) || isNaN(i))
 		throw new golgotha.event.ValidationError('Please provide a numeric ' + title + '.', t);
 	if (i < minValue)
 		throw new golgotha.event.ValidationError('The ' + title + ' must be greater than ' + minValue + '.', t);
