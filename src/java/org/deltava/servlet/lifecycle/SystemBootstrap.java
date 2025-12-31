@@ -36,7 +36,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -214,6 +214,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			String prefix = code.toLowerCase();
 			GetMetadata mddao = new GetMetadata(c);
 			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
+			JMXUtils.register("org.gvagroup:type=UserPool,name=" + code, new UserBeanImpl(code));
 		} catch (Exception ex) {
 			log.atError().withThrowable(ex).log("Error retrieving data - {}", ex.getMessage());
 		} finally {
