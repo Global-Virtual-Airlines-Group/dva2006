@@ -290,21 +290,16 @@ return false;
 golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
 golgotha.form.submit = function(f) {
 	golgotha.form.isSubmitted = true;
-	if (f) {
-		const ies = golgotha.util.getElementsByClass('button', 'input', f);
-		ies.forEach(function(e) { e.disabled = true; });
-	}
+	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : []; 
+	ies.forEach(function(e) { e.disabled = true; });
 
 	// Get spinner image / parent dialog
 	const dlg = document.getElementById('dlg');
 	const spinImg = document.getElementById('spinImg');
 	if ((!dlg) || (!spinImg)) return true;
-	if (f) {
-		dlg.addEventListener('close', function() {
-			const ies = golgotha.util.getElementsByClass('button', 'input', f);
-			ies.forEach(function(e) { e.disabled = false; });
-		}, {once:true});
-	}
+	dlg.addEventListener('close', function() {
+		ies.forEach(function(e) { e.disabled = false; });
+	}, {once:true});
 
 	// Add spinner message in dialog
 	spinImg.parentNode.removeChild(spinImg);
