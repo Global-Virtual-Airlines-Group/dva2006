@@ -10,9 +10,12 @@
 <title><content:airline /> Applicant - ${applicant.name}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
+<content:googleAnalytics />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<content:cspHeader />
 <content:pics />
 <content:favicon />
-<content:js name="common" />
 <script>
 golgotha.local.validate = function(f) {
 <c:if test="${access.canApprove}">
@@ -32,7 +35,7 @@ xmlreq.open('get', 'vatsim_info.ws?id=' + id + '&name=' + encodeURI(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
-		alert('No records found!');
+		golgotha.form.showDialogMessage('No records found!');
 		golgotha.util.disable('ValidateButton', false);
 		return false;
 	}
@@ -341,6 +344,5 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br></c:forEach></td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

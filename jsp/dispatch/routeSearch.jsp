@@ -17,11 +17,12 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
+<content:cspHeader />
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) {
-		alert('Please select a Departure or Arrival Airport.');
+		golgotha.form.showDialogMessage('Please select a Departure or Arrival Airport.');
 		f.airportD.focus();
 		return false;
 	}
