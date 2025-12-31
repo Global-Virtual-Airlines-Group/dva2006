@@ -290,59 +290,64 @@ return false;
 golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
 golgotha.form.submit = function(f) {
 	golgotha.form.isSubmitted = true;
-	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : []; 
-	ies.forEach(function(e) { e.disabled = true; });
+	golgotha.form.showSpinner(f);
+	return true;
+};
 
-	// Get spinner image / parent dialog
+golgotha.form.clear = function(f) {
+	golgotha.form.isSubmitted = false;
+	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : [];
+	ies.forEach(function(e) { e.disabled = false; });
+	return true;
+};
+
+golgotha.form.showSpinner = function(f) {
+	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : [];
 	const dlg = document.getElementById('dlg');
 	const spinImg = document.getElementById('spinImg');
-	if ((!dlg) || (!spinImg)) return true;
+	if ((!dlg) || (!spinImg)) return false;
 	dlg.addEventListener('close', function() {
 		ies.forEach(function(e) { e.disabled = false; });
+		golgotha.util.display(spinImg, false);
 	}, {once:true});
-
-	// Add spinner message in dialog
+	
+	ies.forEach(function(e) { e.disabled = true; });
 	spinImg.parentNode.removeChild(spinImg);
 	dlg.appendChild(spinImg);
 	golgotha.util.display('dialogMsg', false);
 	golgotha.util.display(spinImg, true);
 	dlg.showModal();
-	return false;
+	return true;
 };
 
-golgotha.form.clear = function(f) {
-	golgotha.form.isSubmitted = false;
-	const sb = document.getElementById('spinnerBack');
-	if (sb) document.body.removeChild(sb);
-	const dv = document.getElementById('spinner');
-	if (dv) dv.style.display = 'none';
-	if (f != null) {
-		const ies = golgotha.util.getElementsByClass('button', 'input', f);
-		ies.forEach(function(e) { e.disabled = false; });
-	}
-
+golgotha.form.showDialogMessage = function(msg) {
+	const dlg = document.getElementById('dlg');
+	const dv = document.getElementById('dialogMsg');
+	if ((!dlg) || (!dv)) return false;
+	dv.innerText = msg;
+	golgotha.util.display(dv, true);
+	dlg.showModal();
 	return true;
 };
 
 golgotha.form.get = function(url) { golgotha.form.submit(); self.location = '/' + url; return true; };
-golgotha.form.post = function(url)
-{
-const f = document.forms[0];
-const oldaction = f.action;
-f.action = url;
+golgotha.form.post = function(url) {
+	const f = document.forms[0];
+	const oldaction = f.action;
+	f.action = url;
  
-// Execute the form validation - if any
-if (f.onsubmit) {
-	const submitOK = f.onsubmit();
-	if (!submitOK) {
-		f.action = oldaction;
-		return false;
+	// Execute the form validation - if any
+	if (f.onsubmit) {
+		const submitOK = f.onsubmit();
+		if (!submitOK) {
+			f.action = oldaction;
+			return false;
+		}
 	}
-}
 
-golgotha.form.submit(f);
-f.submit();
-return true;
+	golgotha.form.submit(f);
+	f.submit();
+	return true;
 };
 
 golgotha.form.resetCombo = function(ev) {
@@ -354,15 +359,12 @@ golgotha.form.resetCombo = function(ev) {
 
 golgotha.form.wrap = function(func, f) {
 	try {	
-		return func(f) && false;
+		return func(f);
 	} catch (e) {
 		const dlg = document.getElementById('dlg');
-		if (e.showAlert && dlg) {
-			golgotha.util.display('spinImg', false);
-			dlg.showModal();
-			const msgDiv = document.getElementById('dialogMsg');
-			msgDiv.innerText = e.message;
-		} else if (e.showAlert) 
+		if (e.showAlert && dlg)
+			showDialogMessage(e.message);
+		else if (e.showAlert) 
 			alert(e.message);
 		else
 			console.log(e);
