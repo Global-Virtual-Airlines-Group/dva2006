@@ -20,12 +20,11 @@
 <content:googleAnalytics />
 <content:cspHeader />
 <script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.searchType, t:'Search Type'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.searchType, t:'Search Type'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.showMap = function(f)
@@ -52,7 +51,7 @@ if (f.doMap.length) {
 
 // Check if we've selected a single flight
 if (!isChecked) {
-	alert('At least one Flight Report must be selected to view in Google Earth.');
+	golgotha.form.showDialogMessage('At least one Flight Report must be selected to view in Google Earth.');
 	return false;
 }
 

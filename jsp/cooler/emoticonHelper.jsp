@@ -19,7 +19,7 @@ golgotha.local.addEmoticon = function(name)
 // Get the window opener
 const parent = window.opener;
 if (!parent) {
-	alert('Your ${forumName} post does not appear to be open.');
+	golgotha.form.showDialogMessage('Your ${forumName} post does not appear to be open.');
 	self.close();
 	return false;
 }

@@ -82,7 +82,7 @@ golgotha.gate.save = function() {
 	const p = fetch('gateupdate.ws?id=' + golgotha.gate.airportD.icao, {method:'post', body:fd, signal:AbortSignal.timeout(3500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) {
-			alert('Error ' + rsp.status + ' updating Gate Data!');
+			golgotha.form.showDialogMessage('Error ' + rsp.status + ' updating Gate Data!');
 			return false;
 		}
 

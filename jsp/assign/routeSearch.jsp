@@ -41,7 +41,7 @@ for (var x = 1; x <= legNum; x++) {
 		isOK = radio.checked;
 	
 	if (!isOK) {
-		alert('At least one flight for Leg #' + x + ' must be selected.');
+		golgotha.form.showDialogMessage('At least one flight for Leg #' + x + ' must be selected.');
 		return false;
 	}
 }

@@ -163,7 +163,6 @@ ul.menu li.submenu li {
 ul.menu:hover ul.submenu li {
 	display: block;
 	opacity: .905;
-	filter: alpha(opacity=90);
 	box-shadow: 3px 3px 2px 1px #4060b0;
 }
 
@@ -336,7 +335,6 @@ div.layerSelect.disabled {
 	background-color:#dedede;
 	color:azure;
 	opacity: .700;
-	filter: alpha(opacity=70);
 }
 
 /* Default table formatting */
@@ -455,7 +453,6 @@ div.mapMarkerLabel {
 	font-size: 8pt;
 	color: #000081;
 	opacity: .700;
-	filter: alpha(opacity=70);
 }
 
 div.mapBoxBaseControl {

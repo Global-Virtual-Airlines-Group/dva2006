@@ -11,16 +11,6 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="fileSaver" />
-<script>
-golgotha.local.validate = function(f) {
-	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
-	const srcs = [];
-	f.src.forEach(function(cb) { if (cb.checked) srcs.push(cb.value); });
-	golgotha.local.download(srcs);
-	golgotha.util.disable('ExportButton', true);
-	return false;
-};
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -54,13 +44,22 @@ golgotha.local.validate = function(f) {
 </content:page>
 <content:googleAnalytics />
 <script>
+golgotha.local.validate = function(f) {
+	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
+	const srcs = [];
+	f.src.forEach(function(cb) { if (cb.checked) srcs.push(cb.value); });
+	golgotha.local.download(srcs);
+	golgotha.util.disable('ExportButton', true);
+	return false;
+};
+
 golgotha.local.download = function(srcs) {
 	const xmlreq = new XMLHttpRequest();
 	xmlreq.timeout = 27500;
 	xmlreq.open('post', '/schedexport.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
-	xmlreq.ontimeout = function () { alert('Timed out exporting schedule data'); return true; };
+	xmlreq.ontimeout = function () { golgotha.form.showDialogMessage('Timed out exporting schedule data'); };
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 		const ct = xmlreq.getResponseHeader('Content-Type');
