@@ -99,6 +99,7 @@ public class GetSimBrief extends DAO {
 			buf.append("&static_id=").append(staticID);
 		
 		try {
+			setReturnErrorStream(true);
 			init(buf.toString());
 			
 			// If we're an error, throw a status code exception, except a 400 in which case we parse the error
