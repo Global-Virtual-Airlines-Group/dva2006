@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class FormTag extends ElementTag {
     private boolean _allowUpload;
     
     private String _scheme;
+    private boolean _dialog = true;
     private boolean _spinner = true;
     private String _spinnerURL;
     
@@ -90,6 +91,9 @@ public class FormTag extends ElementTag {
             _data.setAttribute("enctype", "multipart/form-data");
         
         try {
+        	if (_dialog || _spinner)
+        		_out.println("<dialog id=\"dlg\" class=\"formDialog mid\" closeby=\"closerequest\"><div id=\"dialogMsg\" class=\"error bld\"></div></dialog>");
+        	
             _out.println(_data.open(true));
         } catch(Exception e) {
             throw new JspException(e);
@@ -102,12 +106,12 @@ public class FormTag extends ElementTag {
     public int doEndTag() throws JspException {
         try {
         	if (_spinner) {
-        		_out.print("<div id=\"spinner\" style=\"display:none;\"><img class=\"spinImg\" alt=\"Progress Spinner\" src=\"");
+        		_out.print("<img id=\"spinImg\" style=\"display:none\" class=\"spinImg\" alt=\"Progress Spinner\" src=\"");
         		_out.print(_spinnerURL);
-        		_out.println("\"></div>");
+        		_out.println("\">");
         	}
         	
-            _out.println(_data.close());
+        	_out.println(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
         } finally {
@@ -218,6 +222,14 @@ public class FormTag extends ElementTag {
     }
     
     /**
+     * Sets whether to render the hidden dialog box element.
+     * @param doDialog TRUE if the DIALOG should be rednered, otherwise FALSE
+     */
+    public void setDialog(boolean doDialog) {
+    	_dialog = doDialog;
+    }
+    
+    /**
      * Sets whether to render the hidden spinner DIV.
      * @param doSpinner TRUE if the spinner DIV should be rendered, otherwise FALSE
      */
@@ -232,5 +244,6 @@ public class FormTag extends ElementTag {
         _opName = null;
         _tabIndex = 0;
         _spinner = true;
+        _dialog = true;
     }
 }
