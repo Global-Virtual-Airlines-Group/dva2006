@@ -14,12 +14,13 @@ import org.json.*;
 import org.apache.logging.log4j.*;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.acars.FlightInfo;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -104,6 +105,8 @@ public class YearlyTrackService extends WebService {
 			GetAircraft acdao = new GetAircraft(con);
 			GetACARSData fidao = new GetACARSData(con);
 			GetACARSPositions posdao = new GetACARSPositions(con);
+			posdao.setAllowMissingMetadata(true);
+			
 			for (ACARSFlightReport afr : acarsFlights) {
 				landingScores.add(new FlightLandingScore(++idx, afr.getLandingScore()));
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
@@ -125,14 +128,16 @@ public class YearlyTrackService extends WebService {
 				}
 				
 				// Load sparse track data
-				Collection<? extends GeoLocation> track = posdao.getRouteEntries(inf.getID(), inf.getArchived());
-				if (GeoUtils.crossesMeridian(afr.getAirportD(), afr.getAirportA(), -179.5)) {
-					List<GeoLocation> trnTrack = new ArrayList<GeoLocation>(track);
-					GeoUtils.translate(trnTrack);
-					track = trnTrack;
+				try {
+					List<GeoLocation> track = new ArrayList<GeoLocation>();
+					track.addAll(posdao.getRouteEntries(inf.getID(), inf.getArchived()));
+					if (GeoUtils.crossesMeridian(afr.getAirportD(), afr.getAirportA(), -179.5))
+						GeoUtils.translate(track);
+				
+					tracks.add(new TrackData(afr.getID(), afr.getSubmittedOn(), GeoUtils.thin(track, 2)));
+				} catch (ArchiveValidationException ave) {
+					log.warn("{} - exists={}", ave.getMessage(), Boolean.valueOf(ave.getFileExists()));
 				}
-					
-				tracks.add(new TrackData(afr.getID(), afr.getSubmittedOn(), GeoUtils.thin(track, 2)));
 			}
 			
 			// Build GC track for non-ACARS flights
