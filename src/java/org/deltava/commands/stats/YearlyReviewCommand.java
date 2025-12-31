@@ -122,9 +122,11 @@ public class YearlyReviewCommand extends AbstractCommand {
 				if (!yrLevels.isEmpty()) {
 					List<EliteLifetimeStatus> allELS = eldao.getAllLifetimeStatus(p.getID(), ctx.getDB());
 					allELS.removeIf(els -> els.getEffectiveOn().isBefore(ed));
-					EliteLifetimeStatus els = allELS.getLast();
-					if ((es != null) && es.overridenBy(els))
-						es = els.toStatus();
+					if (!allELS.isEmpty()) {
+						EliteLifetimeStatus els = allELS.getLast();
+						if ((es != null) && es.overridenBy(els))
+							es = els.toStatus();
+					}
 				}
 
 				// Load elite data
