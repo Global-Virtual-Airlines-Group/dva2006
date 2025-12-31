@@ -101,8 +101,8 @@ xmlreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false; 
 	if (xmlreq.status != 200) {
-		alert('Error ' + xmlreq.statusText + ' plotting route');
 		golgotha.form.clear();
+		golgotha.form.showDialogMessage('Error ' + xmlreq.statusText + ' plotting route');
 		return false;
 	}
 	
@@ -208,9 +208,11 @@ xmlreq.onreadystatechange = function() {
 		golgotha.routePlot.aGates.add(gmrk);
 		gmrk.getElement().addEventListener('dblclick', function(_e) {
 			const g = this.marker.gate;
-			golgotha.form.setCombo(f.gateA, g); 
-			alert('Arrival Gate set to ' + g); 
-			golgotha.routePlot.plotMap();
+			golgotha.form.setCombo(f.gateA, g);
+			window.setTimeout(function() { 
+				golgotha.form.showDialogMessage('Arrival Gate set to ' + g, {className:'pri bld',timeout:2750});
+				window.setTimeout(golgotha.routePlot.plotMap, 3250);
+			}, 250);
 		});
 	});
 
@@ -219,9 +221,11 @@ xmlreq.onreadystatechange = function() {
 		golgotha.routePlot.dGates.add(gmrk);
 		gmrk.getElement().addEventListener('dblclick', function(_e) {
 			const g = this.marker.gate;
-			golgotha.form.setCombo(f.gateD, g); 
-			alert('Departure Gate set to ' + g); 
-			golgotha.routePlot.plotMap();
+			golgotha.form.setCombo(f.gateD, g);
+			window.setTimeout(function() {
+				golgotha.form.showDialogMessage('Departure Gate set to ' + g, {className:'pri bld',timeout:2750});	
+				window.setTimeout(golgotha.routePlot.plotMap, 3250);	
+			}, 250);
 		});
 	});
 
@@ -280,7 +284,7 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	golgotha.util.disable('SearchButton', false);
 	if (xmlreq.status != 200) {
-		alert('Error ' + xmlreq.statusText + ' fetching routes');
+		golgotha.form.showDialogMessage('Error ' + xmlreq.statusText + ' fetching routes');
 		golgotha.form.clear();
 		return false;
 	}
@@ -344,7 +348,8 @@ try {
 	if (f.routeID)
 		f.routeID.value = opt.routeID;
 } catch (err) {
-	alert('Error setting route - ' + err.description);
+	console.log(err);
+	golgotha.form.showDialogMessage('Error setting route - ' + err.description);
 }
 
 golgotha.util.disable('RouteSaveButton', false);
@@ -497,7 +502,7 @@ golgotha.routePlot.download = function() {
 	xmlreq.onreadystatechange = function() {
 		if (xmlreq.readyState != 4) return false;
 		if (xmlreq.status != 200) {
-			alert('Error ' + xmlreq.statusText + ' generating flight plan');
+			golgotha.form.showDialogMessage('Error ' + xmlreq.statusText + ' generating flight plan');
 			btn.disabled = false;
 			return false;
 		}
@@ -506,7 +511,7 @@ golgotha.routePlot.download = function() {
 		golgotha.util.disable(f.precalcPax, noRecalc);
 		const noFP = (xmlreq.getResponseHeader('X-Plan-Empty') == 1);
 		if (noFP) {
-			alert('Draft Flight Report Updated');
+			golgotha.form.showDialogMessage('Draft Flight Report Updated', {className:'pri bld'});
 			btn.disabled = false;
 			return true;
 		}

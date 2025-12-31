@@ -35,7 +35,7 @@ golgotha.local.validate = function(f)
 // Check if we're saving an existing route
 const routeID = parseInt(f.routeID.value);
 if (!isNaN(routeID) && (routeID > 0))
-	alert('Updating route #' + routeID);
+	golgotha.form.showDialogMessage('Updating route #' + routeID);
 	
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
