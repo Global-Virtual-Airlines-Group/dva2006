@@ -18,7 +18,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 4.1
  */
 
@@ -26,12 +26,22 @@ public class GetACARSPositions extends GetACARSData {
 	
 	private static final Logger log = LogManager.getLogger(GetACARSPositions.class);
 	
+	private boolean _allowMissingMD;
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
 	public GetACARSPositions(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Updates whether to allow missing metadata when loading archived position entries. The default is FALSE.
+	 * @param allowMissing TRUE to allow missing metadata, otherwise FALSE
+	 */
+	public void setAllowMissingMetadata(boolean allowMissing) {
+		_allowMissingMD = allowMissing;
 	}
 
 	/**
@@ -176,7 +186,10 @@ public class GetACARSPositions extends GetACARSData {
 		ArchiveMetadata md = getArchiveInfo(flightID);
 		if (md == null) {
 			File f = ArchiveHelper.getPositions(flightID);
-			throw new ArchiveValidationException(String.format("No metadata for Flight %d (exists=%s)", Integer.valueOf(flightID), Boolean.valueOf(f.exists())));
+			if (!f.exists() || !_allowMissingMD)
+				throw new ArchiveValidationException(String.format("No metadata for Flight %d", Integer.valueOf(flightID)), f.exists());
+			
+			md = new ArchiveMetadata(flightID);
 		}
 		
 		// Validate and Deserialize

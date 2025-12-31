@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 4.1
  */
 
@@ -60,7 +60,7 @@ public class GetSerializedPosition extends DAO {
 			short version = in.readShort();
 			_v = SerializedDataVersion.fromCode(version);
 			if (_v == null)
-				throw new ArchiveValidationException(String.format("Unknown Archive format - %d", Short.valueOf(version)));
+				throw new ArchiveValidationException(String.format("Unknown Archive format - %d", Short.valueOf(version)), true);
 				
 			in.readInt(); // flight ID
 			return _v.isXACARS() ? loadXACARS(in) : loadACARS(in);
