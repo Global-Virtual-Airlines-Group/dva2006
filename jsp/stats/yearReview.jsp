@@ -72,7 +72,7 @@ table.form td.eliteStatus, .button {
 <c:set var="isNew" value="${newEQ.contains(eqType)}" scope="page" />
 <span class="${isNew ? 'ter bld' : 'plain'}">${eqType}</span><c:if test="${!eqStatus.last}">, </c:if></c:forEach></td>
 </tr>
-<c:if test="${eliteEnabled}">
+<c:if test="${eliteEnabled && hasEliteInYear}">
 <tr class="title caps">
  <td colspan="3" class="eliteStatus"><span class="nophone"><content:airline /> </span> ${eliteName} PROGRAM<span id="eliteToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'elite')">COLLAPSE</span></td>
 </tr>
