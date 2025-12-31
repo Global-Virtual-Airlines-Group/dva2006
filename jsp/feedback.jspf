@@ -20,7 +20,7 @@ golgotha.local.validateFB = function(f) {
 	const p = fetch('${fbURL}?id=${fbObject.hexID}', {method:'post', body:fd, signal:AbortSignal.timeout(5500)});
 	p.then(function(rsp) {
 		if (!rsp.ok) {
-			alert('Error ' + rsp.statusText + ' sending feedback');
+			golgotha.form.showDialogMessage('Error ' + rsp.statusText + ' sending feedback');
 			golgotha.form.clear();
 			return false;
 		}

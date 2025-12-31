@@ -33,10 +33,10 @@ if (act.indexOf('hdcomment.do') != -1) {
 		isChecked += ((f.faqIDs[x].checked) ? 1 : 0);
 
 	if (isChecked == 0) {
-		alert('A FAQ Answer comment must be selected.');
+		golgotha.form.showDialogMessage('A FAQ Answer comment must be selected.');
 		return false;
 	} else if (isChecked > 1) {
-		alert('Only one FAQ Answer comment may be selected.');
+		golgotha.form.showDialogMessage('Only one FAQ Answer comment may be selected.');
 		return false;
 	}
 }

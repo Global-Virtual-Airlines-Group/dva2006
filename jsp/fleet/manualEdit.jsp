@@ -33,7 +33,7 @@ golgotha.form.validate({f:f.file, ext:['pdf','xls'], t:'Uploaded Manual', empty:
 const fileParts = f.file.value.split('\\');
 const fName = fileParts[fileParts.length - 1].toLowerCase();
 if (golgotha.local.manualNames.indexOf(fName) != -1) {
-	alert('A Manual named ' + fName + ' already exists.');
+	golgotha.form.showDialogMessage('A Manual named ' + fName + ' already exists.');
 	form.file.focus();
 	return false;
 }
@@ -51,10 +51,10 @@ if ((!f.showRegister) || (!f.showRegister.checked))
 // Check to ensure security fields match
 if ((updatedField == f.showRegister) && (f.security.selectedIndex > 0))
 {
-	alert('This Manual has been made available to all users, to show on the Registration page.');
+	golgotha.form.showDialogMessage('This Manual has been made available to all users, to show on the Registration page.');
 	f.security.selectedIndex = 0;
 } else if ((updatedField == f.security) && (f.security.selectedIndex > 0) && (f.showRegister.checked)) {
-	alert('This Manual will no longer show on the Registration page.');
+	golgotha.form.showDialogMessage('This Manual will no longer show on the Registration page.');
 	f.showRegister.checked = false;
 } 
 

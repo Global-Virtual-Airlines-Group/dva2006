@@ -15,13 +15,14 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:cspHeader />
 <script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 let isOK = golgotha.form.comboSet(f.installerCode) || golgotha.form.comboSet(f.os);
 if (!isOK && (f.userCode.value.length < 2)) {
-	alert('Please provide an Installer Code, Operating System or User Code.');
+	golgotha.form.showDialogMessage('Please provide an Installer Code, Operating System or User Code.');
 	f.installerCode.focus();
 	return false;
 }

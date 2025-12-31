@@ -25,7 +25,7 @@
 golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
-	alert('Please provide the Airport code.');
+	golgotha.form.showDialogMessage('Please provide the Airport code.');
 	return false;
 }
 
