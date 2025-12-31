@@ -1,5 +1,4 @@
 /* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010, 2015, 2022, 2024 Global Virtual Airlines Group. */
-
 table.form, table.bar {
 	table-layout: auto;
 	width: 100%;
@@ -178,28 +177,21 @@ select.req {
 	color: #efffff;
 }
 
-/* Form Spinner */
-div#spinnerBack {
-	position:fixed;
-	left: 0px;
-	top: 0px;
-	width:100%;
-	height: 100%;
-	background-color: #9191a1;
-	opacity: .667;
-	filter: alpha(opacity=67);
-	z-Index: 10001;
-}
-
-div#spinner {
-	position: fixed;
+/* Form Dialog */
+dialog.formDialog {
 	background-color: #fefefe;
 	border: 1px solid;
+	border-color: #003366;
 	padding: 12px;
 	border-radius: 14px;
-	text-align: center;
-	vertical-align: middle;
 	opacity: .925;
-	filter: alpha(opacity=93);
-	z-Index: 10002;
+}
+
+div#dialogMsg {
+	min-width: 320px;
+}
+
+::backdrop {
+	background-color: #9191a1;
+	opacity: .667;
 }
