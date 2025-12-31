@@ -297,7 +297,7 @@ golgotha.form.submit = function(f) {
 golgotha.form.clear = function(f) {
 	golgotha.form.isSubmitted = false;
 	const dlg = document.getElementById('dlg');
-	if (dlg) dlg.close();
+	if ((dlg) && dlg.open) dlg.close();
 	const ies = (f) ? golgotha.util.getElementsByClass('button', 'input', f) : [];
 	ies.forEach(function(e) { e.disabled = false; });
 	return true;
@@ -333,7 +333,7 @@ golgotha.form.showDialogMessage = function(msg, opts) {
 	golgotha.util.display(dv, true);
 	dlg.showModal();
 	if (o.timeout > 0)
-		window.setTimeout(dlg.close, o.timeout);
+		window.setTimeout(function() { if (dlg.open) dlg.close(); }, o.timeout);
 
 	return true;
 };
