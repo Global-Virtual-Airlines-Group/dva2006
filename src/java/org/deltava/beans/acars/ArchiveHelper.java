@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2018, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2018, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to handle ACARS position archive hash buckets.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 6.2
  */
 
@@ -87,11 +87,11 @@ public class ArchiveHelper {
 		if (md == null) return null;
 		File aF = (f == null) ? getPositions(md.getID()) : f; 
 		if (!aF.exists())
-			throw new ArchiveValidationException(String.format("%s not found", aF.getAbsolutePath()));
+			throw new ArchiveValidationException(String.format("%s not found", aF.getAbsolutePath()), false);
 
 		// Validate size
 		if ((md.getSize() > 0) && (aF.length() != md.getSize()))
-			throw new ArchiveValidationException(String.format("Invalid file size, expected %d, actual %d", Integer.valueOf(md.getSize()), Long.valueOf(aF.length())));
+			throw new ArchiveValidationException(String.format("Invalid file size, expected %d, actual %d", Integer.valueOf(md.getSize()), Long.valueOf(aF.length())), true);
 		
 		// Load data and calculate checksum
 		CRC32 crc = new CRC32(); byte[] rawData = null;
@@ -111,7 +111,7 @@ public class ArchiveHelper {
 		
 		// Validate checksum
 		if ((md.getCRC32() != 0) && (md.getCRC32() != crc.getValue()))
-			throw new ArchiveValidationException(String.format("Invalid CRC32, expected %s, actual %s", Long.toHexString(md.getCRC32()), Long.toHexString(crc.getValue())));
+			throw new ArchiveValidationException(String.format("Invalid CRC32, expected %s, actual %s", Long.toHexString(md.getCRC32()), Long.toHexString(crc.getValue())), true);
 		
 		// Decompress data
 		if (md.getCompression() != Compression.NONE) {
@@ -135,13 +135,13 @@ public class ArchiveHelper {
 			int cnt = in.readInt();
 			SerializedDataVersion ver = SerializedDataVersion.fromCode(v);
 			if (ver == null)
-				throw new ArchiveValidationException(String.format("Unknown Archive format - %d", Short.valueOf(v)));
+				throw new ArchiveValidationException(String.format("Unknown Archive format - %d", Short.valueOf(v)), true);
 			if (ver != md.getFormat())
-				throw new ArchiveValidationException(String.format("Invalid Archive format, expected %s, actual %s", md.getFormat(), ver));
+				throw new ArchiveValidationException(String.format("Invalid Archive format, expected %s, actual %s", md.getFormat(), ver), true);
 			if (flightID != md.getID())
-				throw new ArchiveValidationException(String.format("Invalid Flight ID, expected %d, actual %d", Integer.valueOf(md.getID()), Integer.valueOf(flightID)));
+				throw new ArchiveValidationException(String.format("Invalid Flight ID, expected %d, actual %d", Integer.valueOf(md.getID()), Integer.valueOf(flightID)), true);
 			if (cnt != md.getPositionCount())
-				throw new ArchiveValidationException(String.format("Invalid record count, expected %d, actual %d", Integer.valueOf(md.getPositionCount()), Integer.valueOf(cnt)));
+				throw new ArchiveValidationException(String.format("Invalid record count, expected %d, actual %d", Integer.valueOf(md.getPositionCount()), Integer.valueOf(cnt)), true);
 		} catch (IOException ie) {
 			throw new ArchiveValidationException(ie);
 		}
