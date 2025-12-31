@@ -113,20 +113,25 @@ public class YearlyReviewCommand extends AbstractCommand {
 			if (SystemData.getBoolean("econ.elite.enabled")) {
 				GetElite eldao = new GetElite(con);
 				GetEliteStatistics elsdao = new GetEliteStatistics(con);
-				SortedSet<EliteLevel> cyLevels = new TreeSet<EliteLevel>(eldao.getLevels(currentYear));
+				SortedSet<EliteLevel> yrLevels = new TreeSet<EliteLevel>(eldao.getLevels(year));
 				EliteStatus es = eldao.getStatus(p.getID(), year);
-				if (es == null)
-					es = new EliteStatus(p.getID(), cyLevels.first());
+				if ((es == null) && !yrLevels.isEmpty())
+					es = new EliteStatus(p.getID(), yrLevels.first());
 				
 				// Check lifetime elite status
-				EliteLifetimeStatus els = eldao.getLifetimeStatus(p.getID(), ctx.getDB());
-				if (es.overridenBy(els))
-					es = els.toStatus();
+				if (!yrLevels.isEmpty()) {
+					List<EliteLifetimeStatus> allELS = eldao.getAllLifetimeStatus(p.getID(), ctx.getDB());
+					allELS.removeIf(els -> els.getEffectiveOn().isBefore(ed));
+					EliteLifetimeStatus els = allELS.getLast();
+					if ((es != null) && es.overridenBy(els))
+						es = els.toStatus();
+				}
 
 				// Load elite data
 				ctx.setAttribute("eliteStatus", es, REQUEST);
 				ctx.setAttribute("eliteLog", eldao.getAllStatus(p.getID(), year), REQUEST);
 				ctx.setAttribute("eliteTotals", elsdao.getEliteTotals(p.getID(), year), REQUEST);
+				ctx.setAttribute("hasEliteInYear", Boolean.valueOf(!yrLevels.isEmpty()), REQUEST);
 			}
 			
 			// Save in request
