@@ -84,7 +84,7 @@ golgotha.local.showChart = function() {
 	if (golgotha.local.chartData) return false;
 	const p = fetch('elitestats.ws?year=${statsYear}', {signal:AbortSignal.timeout(7500)});
 	p.then(function(rsp) {
-		if (rsp.ok) return false;
+		if (!rsp.ok) return false;
 		rsp.json().then(function(js) {
 			golgotha.local.chartData = js;
 			return golgotha.local.renderChart();
