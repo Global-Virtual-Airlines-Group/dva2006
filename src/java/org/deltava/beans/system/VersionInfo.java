@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
@@ -16,8 +16,8 @@ public class VersionInfo {
     public static final int BUILD = 978;
     private static final int HOTFIX = 1;
     
-    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2025 Global Virtual Airlines Group. All Rights Reserved.";
-    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2025 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
+    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2026 Global Virtual Airlines Group. All Rights Reserved.";
+    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2026 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
     // static class
     private VersionInfo() {
