@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2020, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
@@ -22,7 +22,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2025 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2026 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -556,90 +556,6 @@
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
-				</modified>
-			</fileset>
-		</scp>
-	</target>
-
-	<!-- Package source code -->
-	<target name="put_source" description="Upload source code archive">
-		<mkdir dir="${java.io.tmpdir}/src" />
-		<tar destfile="${java.io.tmpdir}/src/golgotha.tar" longfile="fail">
-			<tarfileset uid="500" group="gva" dir="${basedir}">
-				<include name="src/java/**/*.java" />
-				<include name="src/test/**/*.java" />
-				<include name="lib/**" />
-				<include name="jsp/**" />
-				<include name="sql/**" />
-				<include name="static/**" />
-				<include name="WEB-INF/**" />
-				<include name="*" />
-			</tarfileset>
-				
-			<!-- Data files -->
-			<tarfileset uid="500" group="gva" dir="${basedir}/data" prefix="data">
-				<exclude name="build_deploy.properties" />
-				<exclude name="build_doc.properties" />
-				<exclude name="jdbc.properties" />
-			</tarfileset>
-				
-			<!-- Sample data files with credentials -->
-			<tarfileset uid="500" group="gva" dir="${basedir}/etc/sample" prefix="data">
-				<include name="build_deploy.properties" />
-				<include name="build_doc.properties" />
-				<include name="jdbc.properties" />
-			</tarfileset>
-				
-			<!-- Configuration files -->
-			<tarfileset uid="500" group="gva" dir="${basedir}/etc" prefix="etc/prod">
-				<include name="commands.xml" />
-				<include name="services.xml" />
-				<include name="tasks.xml" />
-				<include name="codeshares.txt" />
-				<include name="jcs.notams.cer" />
-			</tarfileset>
-				
-			<!-- Sample configuration files with credentials -->
-			<tarfileset uid="500" group="gva" dir="${basedir}/etc/sample" prefix="etc/prod">
-				<include name="auth.properties" />
-				<include name="log4j2.xml" />
-				<include name="systemConfig.xml" />
-			</tarfileset>
-		</tar>
-		
-		<!-- Package the ACARS server source -->
-		<tar destfile="${java.io.tmpdir}/src/golgotha_acars.tar" longfile="fail">
-			<tarfileset uid="500" group="gva" dir="${basedir}/../DVA ACARS">
-				<include name="src/java/**/*.java" />
-				<include name="sql/**" />
-				<include name="*" />
-			</tarfileset>
-		</tar>
-		
-		<!-- Compress the TARs -->
-		<gzip src="${java.io.tmpdir}/src/golgotha.tar" destfile="${java.io.tmpdir}/src/golgotha.tar.gz" />
-		<gzip src="${java.io.tmpdir}/src/golgotha_acars.tar" destfile="${java.io.tmpdir}/src/golgotha_acars.tar.gz" />
-		<delete file="${java.io.tmpdir}/src/golgotha.tar" />
-		<delete file="${java.io.tmpdir}/src/golgotha_acars.tar" />
-		
-		<taskdef classname="org.gvagroup.ant.LowercaseTask" name="lower">
-			<classpath id="lc.classpath">
-				<fileset dir="./lib/deploy" includes="golgotha_ipc-*.jar" />
-			</classpath>
-		</taskdef>
-			
-		<!-- Upload to the web site -->
-		<loadproperties srcFile="data/build_deploy.properties" />
-		<property name="golgotha.ssh.port" value="22" />
-		<property name="golgotha.ssh.hosts" value="${user.home}/.ssh/known_hosts" />
-		<lower value="${user.name}" property="golgotha.ssh.user" />
-		
-		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes" port="${golgotha.ssh.port}" knownhosts="${golgotha.ssh.hosts}" keyfile="${golgotha.ssh.key}">
-			<fileset dir="${java.io.tmpdir}/src">
-				<include name="*.tar.gz" />
-				<modified seldirs="true" algorithm="digest" update="true" delayupdate="true">
-						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="../.local_data/src.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
