@@ -134,7 +134,8 @@ public class YearlyTrackService extends WebService {
 					if (GeoUtils.crossesMeridian(afr.getAirportD(), afr.getAirportA(), -179.5))
 						GeoUtils.translate(track);
 				
-					tracks.add(new TrackData(afr.getID(), afr.getSubmittedOn(), GeoUtils.thin(track, 2)));
+					Instant dt = (afr.getSubmittedOn() == null) ? afr.getDate() : afr.getSubmittedOn();
+					tracks.add(new TrackData(afr.getID(), dt, GeoUtils.thin(track, 2)));
 				} catch (ArchiveValidationException ave) {
 					log.warn("{} - exists={}", ave.getMessage(), Boolean.valueOf(ave.getFileExists()));
 				}
