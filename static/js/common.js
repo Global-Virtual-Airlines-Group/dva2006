@@ -371,7 +371,7 @@ golgotha.form.wrap = function(func, f) {
 	} catch (e) {
 		const dlg = document.getElementById('dlg');
 		if (e.showAlert && dlg)
-			showDialogMessage(e.message);
+			golgotha.form.showDialogMessage(e.message);
 		else if (e.showAlert) 
 			alert(e.message);
 		else
