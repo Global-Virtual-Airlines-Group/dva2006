@@ -24,6 +24,7 @@
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
+golgotha.local.isDraft = ${pirep.status == 'DRAFT'};
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -31,8 +32,9 @@ golgotha.util.display('dateLimits', false);
 golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
 golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
 golgotha.form.validate({f:f.eq, t:'Equipment Type'});
-<c:if test="${pirep.status != 'DRAFT'}">
-golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});</c:if>
+if (!golgotha.local.isDraft || (f.doSubmit.value == 'true'))
+	golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});
+
 golgotha.form.validate({f:f.network, min:1, t:'Online Network'});
 golgotha.form.validate({f:f.fsVersion, t:'Simulator Version'});
 <c:if test="${!isAssign}">
