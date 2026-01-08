@@ -104,6 +104,9 @@ table.form td.eliteStatus, .button {
 <tr class="eval">
  <td colspan="3"><table style="width:100%"><tr><td style="width:48%"><div id="lsChart" style="height:360px"></div></td><td style="width:48%"><div id="fsChart" style="height:360px"></div></td></tr></table></td>
 </tr>
+<tr class="eval">
+<td colspan="3"><table style="width:100%"><tr><td style="width:48%"><div id="lscChart" style="height:360px"></div></td><td style="width:48%"><div id="eqChart" style="height:360px"></div></td></tr></table></td>
+</tr>
 <tr class="title caps">
  <td colspan="3" class="left">${year} FLIGHT MAP<span id="mapToggle" class="toggle nophone" onclick="void golgotha.util.toggleExpand(this, 'map')">COLLAPSE</span></td>
 </tr>
@@ -148,7 +151,8 @@ golgotha.local.loadTracks = function(id, yr) {
 		if (!rsp.ok) return false;
 		rsp.json().then(function(js) {
 			js.tracks.forEach(function(trk) {
-				const l = new golgotha.maps.Line('trk-' + trk.id, {color:'#4080af', width:1.5, opacity:0.675}, trk.trk);
+				const c = trk.isACARS ? '#4080af' : '#20403f';
+				const l = new golgotha.maps.Line('trk-' + trk.id, {color:c,width:1.5,opacity:0.675}, trk.trk);
 				map.addLine(l);
 			});
 
@@ -161,7 +165,7 @@ golgotha.local.loadTracks = function(id, yr) {
 			data.addColumn({type:'string',role:'tooltip'});
 			data.addRows(js.landingScores);
 			chart.draw(data,golgotha.charts.buildOptions({title:'Landing Scores',legend:{position:'none'}}));
-			
+
 			// Plot Flight Score chart
 			chart = new google.visualization.PieChart(document.getElementById('fsChart'));
 			data = new google.visualization.DataTable();
@@ -169,6 +173,22 @@ golgotha.local.loadTracks = function(id, yr) {
 			data.addColumn('number','Flights');
 			data.addRows(js.flightScores);
 			chart.draw(data,golgotha.charts.buildOptions({title:'Flight Scores',is3D:true,colors:['green','orange','red'],legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
+
+			// Plot equipment counts
+			chart = new google.visualization.PieChart(document.getElementById('eqChart'));
+			data = new google.visualization.DataTable();
+			data.addColumn('string','Equipment Type');
+			data.addColumn('number','Flights');
+			data.addRows(js.eqCounts);
+			chart.draw(data,golgotha.charts.buildOptions({title:'Equipment used',is3D:true,legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
+
+			// Plot landing score counts
+			chart = new google.visualization.PieChart(document.getElementById('lscChart'));
+			data = new google.visualization.DataTable();
+			data.addColumn('string','Landing Quality');
+			data.addColumn('number','Flights');
+			data.addRows(js.lsCounts);
+			chart.draw(data,golgotha.charts.buildOptions({title:'Landing Ratings',is3D:true,colors:['#008b8b','green','orange','red'],legend:{position:'none'},tooltip:{trigger:'selection',ignoreBounds:true}}));
 		});
 	});
 };
