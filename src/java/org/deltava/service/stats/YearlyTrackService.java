@@ -1,9 +1,10 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.time.*;
 
@@ -50,7 +51,7 @@ public class YearlyTrackService extends WebService {
 		}
 	}
 	
-	private record TrackData(int id, Instant date, Collection<? extends GeoLocation> track) implements Comparable<TrackData> {
+	private record TrackData(int id, boolean isACARS, Instant date, Collection<? extends GeoLocation> track) implements Comparable<TrackData> {
 		@Override
 		public int compareTo(TrackData td2) {
 			int tmpResult = date.compareTo(td2.date);
@@ -80,8 +81,9 @@ public class YearlyTrackService extends WebService {
 
 		String code = SystemData.get("airline.code");
 		Collection<TrackData> tracks = new TreeSet<TrackData>();
+		Collection<Count<String>> eqCounts = new TreeSet<Count<String>>(Collections.reverseOrder());
 		Collection<FlightLandingScore> landingScores = new ArrayList<FlightLandingScore>();
-		Map<FlightScore, MutableInteger> scoreCounts = new TreeMap<FlightScore, MutableInteger>();
+		Collection<Count<FlightScore>> scoreCounts = new TreeSet<Count<FlightScore>>(Count.labelComparator(FlightScore.class));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -97,6 +99,7 @@ public class YearlyTrackService extends WebService {
 			
 			// Get this year's flights, split into ACARS and non-ACARS
 			Collection<FlightReport> flights = data.stream().filter(fr -> fr.getDate().isAfter(sd) && fr.getDate().isBefore(ed)).collect(Collectors.toList());
+			eqCounts.addAll(CollectionUtils.count(flights, FlightReport::getEquipmentType));
 			Collection<ACARSFlightReport> acarsFlights = flights.stream().filter(ACARSFlightReport.class::isInstance).map(ACARSFlightReport.class::cast).collect(Collectors.toList());
 			flights.removeAll(acarsFlights);
 			
@@ -107,6 +110,7 @@ public class YearlyTrackService extends WebService {
 			GetACARSPositions posdao = new GetACARSPositions(con);
 			posdao.setAllowMissingMetadata(true);
 			
+			Collection<FlightScore> scores = new ArrayList<FlightScore>();
 			for (ACARSFlightReport afr : acarsFlights) {
 				landingScores.add(new FlightLandingScore(++idx, afr.getLandingScore()));
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
@@ -121,28 +125,27 @@ public class YearlyTrackService extends WebService {
 				AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(code);
 				ScorePackage pkg = new ScorePackage(acInfo, afr, inf.getRunwayD(), inf.getRunwayA(), opts);
 				FlightScore fs = FlightScorer.score(pkg);
-				if (fs != FlightScore.INCOMPLETE) {
-					MutableInteger cnt = scoreCounts.getOrDefault(fs, new MutableInteger(0));
-					cnt.inc();
-					scoreCounts.put(fs, cnt);
-				}
+				if (fs != FlightScore.INCOMPLETE)
+					scores.add(fs);
 				
 				// Load sparse track data
+				Instant dt = (afr.getSubmittedOn() == null) ? afr.getDate() : afr.getSubmittedOn();
 				try {
 					List<GeoLocation> track = new ArrayList<GeoLocation>();
 					track.addAll(posdao.getRouteEntries(inf.getID(), inf.getArchived()));
 					if (GeoUtils.crossesMeridian(afr.getAirportD(), afr.getAirportA(), -179.5))
 						GeoUtils.translate(track);
-				
-					Instant dt = (afr.getSubmittedOn() == null) ? afr.getDate() : afr.getSubmittedOn();
-					tracks.add(new TrackData(afr.getID(), dt, GeoUtils.thin(track, 2)));
+					
+					tracks.add(new TrackData(afr.getID(), true, dt, GeoUtils.thin(track, 2)));
 				} catch (ArchiveValidationException ave) {
 					log.warn("{} - exists={}", ave.getMessage(), Boolean.valueOf(ave.getFileExists()));
+					tracks.add(new TrackData(afr.getID(), false, dt, GeoUtils.greatCircle(afr.getAirports())));
 				}
 			}
 			
 			// Build GC track for non-ACARS flights
-			flights.stream().map(fr -> new TrackData(fr.getID(), fr.getDate(), GeoUtils.greatCircle(fr.getAirports()))).forEach(tracks::add);
+			flights.stream().map(fr -> new TrackData(fr.getID(), false, fr.getDate(), GeoUtils.greatCircle(fr.getAirports()))).forEach(tracks::add);
+			scoreCounts.addAll(CollectionUtils.count(scores, Function.identity()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -157,17 +160,24 @@ public class YearlyTrackService extends WebService {
 		for (TrackData td : tracks) {
 			JSONObject to = new JSONObject();
 			to.put("id", td.id);
+			to.put("isACARS", td.isACARS);
 			td.track.forEach(loc -> to.accumulate("trk", JSONUtils.format(loc)));
 			JSONUtils.ensureArrayPresent(to, "trk");
 			jo.accumulate("tracks", to);
 		}
 		
 		// Add score statistics
-		scoreCounts.entrySet().stream().map(me -> { JSONArray eo = new JSONArray(); eo.put(me.getKey().getDescription()); eo.put(me.getValue().intValue()); return eo; }).forEach(ja -> jo.accumulate("flightScores", ja));
+		scoreCounts.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("flightScores", ja));
 		landingScores.stream().map(FlightLandingScore::toJSON).forEach(ja -> jo.accumulate("landingScores", ja));
+		eqCounts.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("eqCounts", ja));
+		
+		// Get landing ratings
+		List<Count<LandingRating>> ratingCount = CollectionUtils.count(landingScores.stream().map(fls -> LandingRating.rate((int)fls.score)).collect(Collectors.toList()), Function.identity());
+		ratingCount.sort(Count.labelComparator(LandingRating.class).reversed());
+		ratingCount.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("lsCounts", ja));
 				
 		// Dump the JSON to the output stream
-		JSONUtils.ensureArrayPresent(jo, "tracks", "landingScores", "flightScores");
+		JSONUtils.ensureArrayPresent(jo, "tracks", "landingScores", "flightScores", "eqCounts", "lsCounts");
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(7200);
