@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2017, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2017, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.util.function.*;
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -150,6 +150,29 @@ public class CollectionUtils {
 		
 		c.add(entry);		
 	}
+	
+	/**
+	 * Returns a Collection of counts of property values for a given collection of objects.
+	 * @param objs a Collection of objects to process
+	 * @param f the function to calculate the key value
+	 * @return a List of Counts
+	 */
+	public static <K extends Comparable<K>, O> List<Count<K>> count(Collection<O> objs, Function<O, K> f) {
+		Map<K, Count<K>> results = new HashMap<K, Count<K>>();
+		for (O o : objs) {
+			K key = f.apply(o);
+			Count<K> cnt = results.get(key);
+			if (cnt == null) {
+				cnt = new Count<K>(key);
+				results.put(key, cnt);
+			}
+			
+			cnt.inc();
+		}
+
+		return new ArrayList<Count<K>>(results.values());
+	}
+	
 	/**
 	 * Creates a Collection of non-null values.
 	 * @param values the values to add

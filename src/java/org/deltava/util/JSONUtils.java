@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -8,8 +8,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.UseCount;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.FlightStatsEntry;
@@ -17,7 +16,7 @@ import org.deltava.beans.stats.FlightStatsEntry;
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 7.3
  */
 
@@ -183,6 +182,18 @@ public class JSONUtils {
 			jo.put("text", DateTimeFormatter.ofPattern(fmtPattern).format(zdt));
 		
 		return jo;
+	}
+
+	/**
+	 * Converts a counter object into a JSON Array.
+	 * @param c the Count
+	 * @return a JSONArray
+	 */
+	public static JSONArray format(Count<?> c) {
+		JSONArray ja = new JSONArray();
+		ja.put(c.getLabel().toString());
+		ja.put(c.getValue());
+		return ja;
 	}
 	
 	/**
