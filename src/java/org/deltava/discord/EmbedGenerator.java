@@ -1,4 +1,4 @@
-// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import java.util.*;
@@ -121,7 +121,7 @@ class EmbedGenerator {
      */
     static EmbedBuilder createStatus(MessageCreateEvent e, Pilot p, Collection<Role> roles) {
     	
-    	boolean s1Complete = p.getExternalIDs().containsKey(ExternalID.DISCORD);
+    	boolean s1Complete = (p != null) && p.getExternalIDs().containsKey(ExternalID.DISCORD);
     	boolean s2Complete = !roles.isEmpty();
     	
     	String code = SystemData.get("airline.code");
