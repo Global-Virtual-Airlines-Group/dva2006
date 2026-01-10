@@ -89,8 +89,8 @@ public class MessageReceivedListener implements MessageCreateListener {
     					break;
     				
     				case "status":
-    					log.info("Registration status request [ Name = {}, UUID = {}, Server = {} ]", u.getName(), Long.toHexString(u.getId()), Long.valueOf(srv.getId()));
-    					p = Bot.getPilot(u.getIdAsString());				
+    					p = Bot.getPilot(u.getIdAsString());
+    					log.info("Registration status request [ Name = {}, UUID = {}, Server = {} ]", u.getName(), Long.toHexString(u.getId()), Long.valueOf(srv.getId()), (p != null) ? p.getName() : "UNLINKED");
     					u.sendMessage(EmbedGenerator.createStatus(e, p, u.getRoles(srv)));				
     					break;
     				
