@@ -1,4 +1,4 @@
-// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.discord;
 
 import org.apache.logging.log4j.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * A Discord message receiver.
  * @author Luke
  * @author danielw
- * @version 12.3
+ * @version 12.4
  * @since 11.0
  */
 
