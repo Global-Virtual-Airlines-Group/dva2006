@@ -45,7 +45,7 @@
 </c:if>
 <tr>
  <td class="label">Active between</td>
- <td class="data" colspan="5"><fmt:date date="${tour.startDate}" t="HH:mm" /> - <fmt:date date="${tour.endDate}" t="HH:mm" /> <c:if test="${tour.active}"><span class="ter bld"> ENABLED</span></c:if><c:if test="${isActiveNow}"><span class="sec bld"> CURRENTLY AVAILABLE</span></c:if></td>
+ <td class="data" colspan="5"><fmt:date date="${tour.startTime}" t="HH:mm" /> - <fmt:date date="${tour.endTime}" t="HH:mm" /> <c:if test="${tour.active}"><span class="ter bld"> ENABLED</span></c:if><c:if test="${isActiveNow}"><span class="sec bld"> CURRENTLY AVAILABLE</span></c:if></td>
 </tr>
 <c:if test="${access.canEdit && !tour.active}">
 <tr>

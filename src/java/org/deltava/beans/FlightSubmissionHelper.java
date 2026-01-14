@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -25,12 +25,10 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * This is an ugly class that needs a proper home.
- * 
  * Flight submission is handled by an ACARS Command, a Web Command and two Services, all of which extend different parent classes. This is a poor
  * attempt to encapsulate common Flight Report validation and hydration behavior to avoid code duplication. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 10.0
  */
 
@@ -590,7 +588,7 @@ public class FlightSubmissionHelper {
 		if (possibleTours.isEmpty()) return;
 
 		// Load flights within the range of the Tours
-		Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartDate().toEpochMilli()).min().orElseThrow()).minusSeconds(86400);
+		Instant minDate = Instant.ofEpochMilli(possibleTours.stream().mapToLong(t -> t.getStartTime().toEpochMilli()).min().orElseThrow()).minusSeconds(86400);
 		Duration d = Duration.between(minDate, _fr.getSubmittedOn());
 		Collection<FlightReport> oldPireps = prdao.getLogbookCalendar(_fr.getAuthorID(), _db, minDate, (int)d.toDaysPart() + 2);
 		

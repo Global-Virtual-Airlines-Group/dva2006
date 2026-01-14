@@ -45,8 +45,8 @@
 <c:forEach var="t" items="${viewContext.results}">
 <view:row entry="${t}">
  <td class="pri bld" colspan="2"><el:cmd url="tour" link="${t}">${t.name}</el:cmd></td>
- <td><fmt:date date="${t.startDate}" fmt="d" /></td>
- <td><fmt:date date="${t.endDate}" fmt="d" /></td>
+ <td><fmt:date date="${t.startTime}" fmt="d" /></td>
+ <td><fmt:date date="${t.endTime}" fmt="d" /></td>
 <c:if test="${empty t.networks}">
  <td class="sec bld nophone">OFFLINE</td>
 </c:if>
