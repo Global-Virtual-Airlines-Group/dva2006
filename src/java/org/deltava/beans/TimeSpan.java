@@ -1,4 +1,4 @@
-// Copyright 2010, 2016, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.time.*;
@@ -6,7 +6,7 @@ import java.time.*;
 /**
  * An interface to describe beans with a start and an end time. 
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 3.1
  */
 
@@ -25,11 +25,23 @@ public interface TimeSpan extends CalendarEntry {
 	public Instant getEndTime();
 	
 	/**
+	 * Validates that the start/end dates are present and is chronological order.
+	 * @throws IllegalArgumentException if the dates fail validation
+	 */
+	default void validateDates() {
+		if (!hasTimes())
+			throw new IllegalArgumentException("Dates not populated");
+		
+		if (!getStartTime().isBefore(getEndTime()))
+			throw new IllegalArgumentException(String.format("Start Date %s before %s", getStartTime(), getEndTime()));
+	}
+	
+	/**
 	 * The duration of this span, or null if both times are not set.
 	 * @return a Duration, or null
 	 */
 	public default Duration getDuration() {
-		return ((getStartTime() == null) || (getEndTime() == null)) ? null : Duration.between(getStartTime(), getEndTime());
+		return hasTimes() ? Duration.between(getStartTime(), getEndTime()) : null;
 	}
 	
 	/**
