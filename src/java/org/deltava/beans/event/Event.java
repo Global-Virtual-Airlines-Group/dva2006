@@ -369,8 +369,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan, FeedbackBe
     }
     
     /**
-     * Updates this start time of this Online Event. If no signup deadline is currently set, it will default
-     * to one hour before the start time.
+     * Updates this start time of this Online Event. If no signup deadline is currently set, it will default to one hour before the start time.
      * @param dt the start date/time
      * @see Event#getStartTime()
      * @see Event#setEndTime(Instant)
@@ -378,40 +377,36 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan, FeedbackBe
      */
     public void setStartTime(Instant dt) {
         _startTime = dt;
-        if (dt != null)
-        	_signupDeadline = dt.minusSeconds(3600);
+        _signupDeadline = (dt == null) ? null : dt.minusSeconds(3600);
     }
     
     /**
      * Updates the end time for this Online Event.
      * @param dt the end date/time
-     * @throws IllegalArgumentException if dt is before the start time
-     * @throws NullPointerException if the start time is null
      * @see Event#getEndTime()
      * @see Event#setStartTime(Instant)
      * @see Event#setSignupDeadline(Instant)
      */
     public void setEndTime(Instant dt) {
-        if ((dt != null) && dt.isBefore(_startTime))
-            throw new IllegalArgumentException("End Time cannot be before Start Time");
-        
         _endTime = dt;
     }
     
     /**
      * Updates the signup deadline for this Online Event.
      * @param dt the signup deadline date/time
-     * @throws IllegalArgumentException if dt is before the start time
-     * @throws NullPointerException if the start time is null
      * @see Event#getSignupDeadline()
      * @see Event#setStartTime(Instant)
      * @see Event#setEndTime(Instant)
      */
     public void setSignupDeadline(Instant dt) {
-        if ((dt != null) && dt.isAfter(_startTime))
-            throw new IllegalArgumentException("Signup Deadline cannot be after Start Time");
-        
         _signupDeadline = dt;
+    }
+    
+    @Override
+	public void validateDates() {
+    	TimeSpan.super.validateDates();
+    	if ((_signupDeadline != null) && _signupDeadline.isAfter(_startTime))
+            throw new IllegalArgumentException("Signup Deadline cannot be after Start Time");
     }
     
     /**
