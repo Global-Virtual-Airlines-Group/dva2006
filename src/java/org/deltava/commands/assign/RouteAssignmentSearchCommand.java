@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2019, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2019, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 4.1
  */
 
@@ -45,7 +45,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		
 		// Get the route pair and type
 		Inclusion allowHistoric = EnumUtils.parse(Inclusion.class, ctx.getParameter("includeHistoric"), Inclusion.ALL);
-		int maxDistance = StringUtils.parse(ctx.getParameter("maxLength"), 0);
+		int maxDistance = StringUtils.parse(ctx.getParameter("maxLength"), 0); int minDistance = StringUtils.parse(ctx.getParameter("minLength"), 0);
 		ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
 		rp.setType((allowHistoric == Inclusion.ALL) ? RoutePairType.HYBRID : (allowHistoric == Inclusion.EXCLUDE) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
 		try {
@@ -61,7 +61,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setSources(rsdao.getSources(true, ctx.getDB()));
 			Collection<ScheduleRoute> lnks = sdao.getRoutePairs(allowHistoric);
-			lnks.removeIf(sr -> ((maxDistance > 0) && (sr.getDistance() > maxDistance)));
+			lnks.removeIf(sr -> (sr.getDistance() < minDistance) || (((maxDistance > 0) && (sr.getDistance() > maxDistance))));
 			rph.setLinks(lnks);
 			
 			// Figure out the routes
