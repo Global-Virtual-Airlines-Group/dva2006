@@ -298,7 +298,7 @@
 		    <url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks&amp;actionType=advancedNOTAMFunctions</url>
 		</pacot>
 		<mapbox>
-			<v3 type="Integer">17</v3>
+			<v3 type="Integer">18</v3>
 		</mapbox>
 	</config>
 	
