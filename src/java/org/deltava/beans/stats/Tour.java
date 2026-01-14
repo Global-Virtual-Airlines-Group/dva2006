@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -13,11 +13,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Tour data.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 10.0
  */
 
-public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry, FeedbackBean {
+public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias, ViewEntry, FeedbackBean, TimeSpan {
 
 	private String _name;
 	private TourStatus _status = TourStatus.PLANNING;
@@ -116,19 +116,18 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 		return _feedback;
 	}
 	
-	/**
-	 * Returns the Tour start date.
-	 * @return the start date/time
-	 */
-	public Instant getStartDate() {
+	@Override
+	public Instant getDate() {
 		return _startDate;
 	}
 	
-	/**
-	 * Returns the Tour end date.
-	 * @return the end date/time
-	 */
-	public Instant getEndDate() {
+	@Override
+	public Instant getStartTime() {
+		return _startDate;
+	}
+	
+	@Override
+	public Instant getEndTime() {
 		return _endDate;
 	}
 	
@@ -286,12 +285,8 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 * Updates the Start date for this Tour.
 	 * @param dt the start date/time
 	 * @throws NullPointerException if dt is null
-	 * @throws IllegalArgumentException if the start date is after the end date
 	 */
-	public void setStartDate(Instant dt) {
-		if ((_endDate != null) && !dt.isBefore(_endDate))
-			throw new IllegalArgumentException("Start Date " + dt + " after " + _endDate);
-		
+	public void setStartTime(Instant dt) {
 		_startDate = dt;
 	}
 	
@@ -299,12 +294,8 @@ public class Tour extends DatabaseDocumentBean implements Auditable, ComboAlias,
 	 * Updates the End date for this Tour.
 	 * @param dt the end date/time
 	 * @throws NullPointerException if dt is null
-	 * @throws IllegalArgumentException if the end date is before the start date
 	 */
-	public void setEndDate(Instant dt) {
-		if ((_startDate != null) && !dt.isAfter(_startDate))
-			throw new IllegalArgumentException("End Date " + dt + " before " + _startDate);
-		
+	public void setEndTime(Instant dt) {
 		_endDate = dt;
 	}
 	

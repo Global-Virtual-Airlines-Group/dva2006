@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display flight Tours.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 10.0
  */
 
@@ -70,9 +70,10 @@ public class TourCommand extends AbstractAuditFormCommand {
 			}
 
 			// Time parser init
-			t.setStartDate(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
-			t.setEndDate(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
-			ZonedDateTime zst = ZonedDateTime.ofInstant(t.getStartDate(), ZoneOffset.UTC);
+			t.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			t.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
+			t.validateDates();
+			ZonedDateTime zst = ZonedDateTime.ofInstant(t.getStartTime(), ZoneOffset.UTC);
 			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("HH:mm");
 			tfb.parseDefaulting(ChronoField.YEAR_OF_ERA, zst.get(ChronoField.YEAR_OF_ERA));
 			tfb.parseDefaulting(ChronoField.DAY_OF_YEAR, zst.getLong(ChronoField.DAY_OF_YEAR));
@@ -191,8 +192,8 @@ public class TourCommand extends AbstractAuditFormCommand {
 				
 				// Convert start/end date/times to user time zone
 				ZoneId tz = ctx.getUser().getTZ().getZone();
-				ctx.setAttribute("startDate", ZonedDateTime.ofInstant(t.getStartDate(), tz), REQUEST);
-				ctx.setAttribute("endDate", ZonedDateTime.ofInstant(t.getEndDate(), tz), REQUEST);
+				ctx.setAttribute("startDate", ZonedDateTime.ofInstant(t.getStartTime(), tz), REQUEST);
+				ctx.setAttribute("endDate", ZonedDateTime.ofInstant(t.getEndTime(), tz), REQUEST);
 			} else {
 				TourAccessControl ac = new TourAccessControl(ctx, null);
 				ac.validate();
@@ -268,10 +269,10 @@ public class TourCommand extends AbstractAuditFormCommand {
 			
 			// Load PIREPs and see current progress
 			if (ctx.isAuthenticated()) {
-				LocalDateTime ldt = LocalDateTime.ofInstant(t.getStartDate(), ZoneOffset.UTC);
-				Instant tourStart = t.getStartDate().minusSeconds(ldt.get(ChronoField.SECOND_OF_DAY));
+				LocalDateTime ldt = LocalDateTime.ofInstant(t.getStartTime(), ZoneOffset.UTC);
+				Instant tourStart = t.getStartTime().minusSeconds(ldt.get(ChronoField.SECOND_OF_DAY));
 				GetFlightReports frdao = new GetFlightReports(con);
-				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), tourStart, (int)(Duration.between(tourStart, t.getEndDate()).toDays()) + 1);
+				List<FlightReport> tourFlights = frdao.getLogbookCalendar(ctx.getUser().getID(), ctx.getDB(), tourStart, (int)(Duration.between(tourStart, t.getEndTime()).toDays()) + 1);
 				tourFlights.removeIf(fr -> (fr.getDatabaseID(DatabaseID.TOUR) != t.getID()));
 				tourFlights.sort(new FlightReportComparator(FlightReportComparator.SUBMISSION));
 				

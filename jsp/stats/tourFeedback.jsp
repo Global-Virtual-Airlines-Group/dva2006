@@ -40,7 +40,7 @@ golgotha.local.update = function(cb) {
 </tr>
 <tr>
  <td class="label">Tour Name</td>
- <td class="data" colspan="3"><el:cmd url="tour" link="${tour}" className="sec bld">${tour.name}</el:cmd><span class="nophone"> <fmt:date date="${tour.startDate}" fmt="d" /> - <fmt:date date="${tour.endDate}" fmt="d" /></span></td>
+ <td class="data" colspan="3"><el:cmd url="tour" link="${tour}" className="sec bld">${tour.name}</el:cmd><span class="nophone"> <fmt:date date="${tour.startTime}" fmt="d" /> - <fmt:date date="${tour.endTime}" fmt="d" /></span></td>
 </tr>
 <tr>
  <td class="label">Score</td>

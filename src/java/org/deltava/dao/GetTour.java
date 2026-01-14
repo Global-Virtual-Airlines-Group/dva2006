@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Tour data from the database.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 10.0
  */
 
@@ -259,8 +259,8 @@ public class GetTour extends DAO {
 			while (rs.next()) {
 				Tour t = new Tour(rs.getString(2));
 				t.setID(rs.getInt(1));
-				t.setStartDate(toInstant(rs.getTimestamp(3)));
-				t.setEndDate(toInstant(rs.getTimestamp(4)));
+				t.setStartTime(toInstant(rs.getTimestamp(3)));
+				t.setEndTime(toInstant(rs.getTimestamp(4)));
 				t.setStatus(TourStatus.values()[rs.getInt(5)]);
 				t.setActive(rs.getBoolean(6));
 				t.setACARSOnly(rs.getBoolean(7));

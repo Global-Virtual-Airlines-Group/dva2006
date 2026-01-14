@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to write Tour data to the database.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 10.0
  */
 
@@ -37,8 +37,8 @@ public class SetTour extends DAO {
 			if (t.getID() == 0) {
 				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO TOURS (NAME, START_DATE, END_DATE, STATUS, ACTIVE, ACARS_ONLY, ALLOW_OFFLINE, MATCH_EQ, MATCH_LEG) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 					ps.setString(1, t.getName());
-					ps.setTimestamp(2, createTimestamp(t.getStartDate()));
-					ps.setTimestamp(3, createTimestamp(t.getEndDate()));
+					ps.setTimestamp(2, createTimestamp(t.getStartTime()));
+					ps.setTimestamp(3, createTimestamp(t.getEndTime()));
 					ps.setInt(4, t.getStatus().ordinal());
 					ps.setBoolean(5, t.getActive());
 					ps.setBoolean(6, t.getACARSOnly());
@@ -52,8 +52,8 @@ public class SetTour extends DAO {
 			} else {
 				try (PreparedStatement ps = prepareWithoutLimits("UPDATE TOURS SET NAME=?, START_DATE=?, END_DATE=?, STATUS=?, ACTIVE=?, ACARS_ONLY=?, ALLOW_OFFLINE=?, MATCH_EQ=?, MATCH_LEG=? WHERE (ID=?)")) {
 					ps.setString(1, t.getName());
-					ps.setTimestamp(2, createTimestamp(t.getStartDate()));
-					ps.setTimestamp(3, createTimestamp(t.getEndDate()));
+					ps.setTimestamp(2, createTimestamp(t.getStartTime()));
+					ps.setTimestamp(3, createTimestamp(t.getEndTime()));
 					ps.setInt(4, t.getStatus().ordinal());
 					ps.setBoolean(5, t.getActive());
 					ps.setBoolean(6, t.getACARSOnly());

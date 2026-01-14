@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to update a Flight Tour. 
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 10.3
  */
 
@@ -69,8 +69,9 @@ public class TourUpdateService extends TourService {
 				t.setAllowOffline(jo.optBoolean("allowOffline"));
 				t.setMatchEquipment(jo.optBoolean("matchEQ"));
 				t.setMatchLeg(jo.optBoolean("matchLeg"));
-				t.setStartDate(Instant.ofEpochSecond(jo.getLong("startDate")));
-				t.setEndDate(Instant.ofEpochSecond(jo.getLong("endDate")));
+				t.setStartTime(Instant.ofEpochSecond(jo.getLong("startDate")));
+				t.setEndTime(Instant.ofEpochSecond(jo.getLong("endDate")));
+				t.validateDates();
 				
 				// Parse networks
 				t.clearNetworks();
@@ -90,10 +91,10 @@ public class TourUpdateService extends TourService {
 					se.setAirportA(SystemData.getAirport(fo.getJSONObject("airportA").getString("iata")));
 					JSONObject tdo = fo.getJSONObject("timeD");
 					LocalTime td = LocalTime.of(tdo.getInt("h"), tdo.getInt("m"));
-					se.setTimeD(LocalDateTime.of(LocalDate.ofInstant(t.getStartDate(), se.getAirportD().getTZ().getZone()), td));
+					se.setTimeD(LocalDateTime.of(LocalDate.ofInstant(t.getStartTime(), se.getAirportD().getTZ().getZone()), td));
 					JSONObject tao = fo.getJSONObject("timeA");
 					LocalTime ta = LocalTime.of(tao.getInt("h"), tao.getInt("m"));
-					se.setTimeA(LocalDateTime.of(LocalDate.ofInstant(t.getStartDate(), se.getAirportA().getTZ().getZone()), ta));
+					se.setTimeA(LocalDateTime.of(LocalDate.ofInstant(t.getStartTime(), se.getAirportA().getTZ().getZone()), ta));
 					t.addFlight(se);
 				}
 			} catch (Exception e) {
