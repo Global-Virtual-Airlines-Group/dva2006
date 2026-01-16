@@ -16,7 +16,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.switchType = function(combo) {
 	const cType = combo.options[combo.selectedIndex].value;
 	self.location = '/busycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';

@@ -5,7 +5,7 @@
 <c:if test="${!hasFB}">
 <c:set var="fbURL" value="${fbObject.getClass().simpleName.toLowerCase()}fb.ws" scope="page" />
 <content:fbscores var="fbValues" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.send = function(b) { return golgotha.form.wrap(golgotha.local.validateFB, b.form); }; 
 
 golgotha.local.validateFB = function(f) {

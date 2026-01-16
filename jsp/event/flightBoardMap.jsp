@@ -59,7 +59,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 golgotha.flightBoard.network = '${network}';
 

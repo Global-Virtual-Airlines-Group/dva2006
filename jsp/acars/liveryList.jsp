@@ -13,8 +13,10 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script type="text/javascript">
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.update = function(combo) {
 	self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;
 	return true;	
@@ -64,6 +66,5 @@ golgotha.local.update = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

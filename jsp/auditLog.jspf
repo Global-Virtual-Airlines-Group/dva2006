@@ -14,7 +14,7 @@
 <fmt:text value="${logEntry.description}"></fmt:text></td>
 </tr>
 </c:forEach>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.toggleLog = function() {
 	const rows = golgotha.util.getElementsByClass('auditLogEntry', 'tr');
 	rows.forEach(function(r) { r.style.display = (r.style.display == '') ? 'none' : ''; });

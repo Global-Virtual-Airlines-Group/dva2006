@@ -91,7 +91,7 @@
 </content:region>
 </content:page>
 <c:if test="${waypoints.size() > 0}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 
 // Build the route line and map center

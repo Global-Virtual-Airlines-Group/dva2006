@@ -15,7 +15,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <c:if test="${!empty pushPubKey}"><content:js name="push" /></c:if>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.push.pubKey = '${pushPubKey}';
 golgotha.onDOMReady(function() { 
 	golgotha.push.init().then(function() {

@@ -24,7 +24,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
 golgotha.local.sl.setData('radar', 0.45, 'wxRadar');
 golgotha.local.sl.setData('infrared', 0.35, 'wxSat');
@@ -145,7 +145,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 
 const f = document.forms[0];

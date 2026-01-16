@@ -16,7 +16,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 <fmt:jsarray var="golgotha.local.routeIDs" items="${routeIDs}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

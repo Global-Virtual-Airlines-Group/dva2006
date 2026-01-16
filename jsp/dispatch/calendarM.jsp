@@ -18,7 +18,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.switchType = function(combo) {
 	self.location = '/dspcalendar.do?op=' + encodeURI(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;

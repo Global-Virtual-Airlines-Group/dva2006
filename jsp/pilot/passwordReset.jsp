@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:cspHeader />
 <content:attr roles="HR" attr="isHR" value="true" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 <c:if test="${!empty dupeUsers}">

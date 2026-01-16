@@ -18,7 +18,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.setChannel = function(combo) {
 	self.location = '/channel.do?id=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;

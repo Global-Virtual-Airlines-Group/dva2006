@@ -14,7 +14,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 <fmt:js var="golgotha.local.eqAircraft" object="${eqAircraft}" />
 golgotha.local.updateEQ = function(combo) {
 	const eq = golgotha.form.getCombo(combo);

@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.setExam = function(combo) {
 	self.location = '/autoscoredexams.do?examName=' + encodeURI(golgotha.form.getCombo(combo));
 	return true;

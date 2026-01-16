@@ -19,7 +19,7 @@
 <content:pics />
 <content:favicon />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>

@@ -20,7 +20,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.ff = golgotha.ff || {};
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
 golgotha.ff.validate = function(f) {

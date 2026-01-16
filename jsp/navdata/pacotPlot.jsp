@@ -64,7 +64,7 @@
 </content:region>
 </content:page>
 <div id="copyright" class="mapTextLabel"></div><div id="zoomLevel" class="mapTextlabel right"></div>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 
 // Create the map

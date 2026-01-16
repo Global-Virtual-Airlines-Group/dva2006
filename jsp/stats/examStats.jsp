@@ -12,14 +12,16 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
-<script type="text/javascript">
+<content:cspHeader />
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.toggleCombo = function(opt)
 {
 var lbl;
 if (!opt) {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	for (var x = 0; x < f.searchType.length; x++) {
 		if (f.searchType[x].checked) {
 			lbl = f.searchType[x].value;
@@ -40,11 +42,10 @@ if (lbl == 'Examinations') {
 return true;	
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -124,6 +125,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

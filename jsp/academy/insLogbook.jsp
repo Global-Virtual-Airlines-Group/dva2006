@@ -13,10 +13,12 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:googleAnalytics />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
-<script type="text/javascript">
+<content:cspHeader />
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.sort = function(combo) {
 	self.location = '/inslogbook.do?id=' + golgotha.form.getCombo(combo);
 	return true;
@@ -74,6 +76,5 @@ golgotha.local.sort = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

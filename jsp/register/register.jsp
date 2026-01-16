@@ -20,7 +20,7 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {

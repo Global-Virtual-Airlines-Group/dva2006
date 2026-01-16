@@ -16,7 +16,7 @@
 <content:cspHeader />
 <content:pics />
 <content:favicon />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 <c:if test="${access.canApprove}">
 	if (!golgotha.form.check()) return false;

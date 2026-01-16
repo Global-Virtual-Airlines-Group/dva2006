@@ -141,7 +141,7 @@ ${k} = ${stateData[k]}<br></c:forEach></td>
 </content:region>
 </content:page>
 </body>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.loadLog = function(id) {
 	const doSave = document.forms[0].saveLog.checked;
 	const p = fetch('/attach/error_log/' + id, {signal:AbortSignal.timeout(2500)});

@@ -30,7 +30,7 @@
 <content:sysdata var="reviewDelay" name="users.pirep.review_delay" default="0" />
 <content:empty var="emptyList" />
 <c:set var="hasDelay" value="${reviewDelay > 0}" scope="page" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.startTime = new Date();
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -78,7 +78,7 @@ golgotha.onDOMReady(function() { window.setTimeout(golgotha.local.enableButtons,
 <content:js name="threebox" minify="false" />
 <content:css name="threebox" noScheme="true" />
 <content:filter roles="PIREP,HR,Developer,Operations">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=360,width=770,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
@@ -603,7 +603,7 @@ ${ap.name} (<el:cmd url="airportinfo" linkID="${ap.IATA}"><fmt:airport airport="
 <content:browser human="true">
 <c:choose>
 <c:when test="${googleMap}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:token />
@@ -710,7 +710,7 @@ return true;
 </c:choose>
 <c:if test="${access.canUseSimBrief}">
 <!-- SimBrief integration -->
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.simbrief.id = '${pirep.hexID}';
 golgotha.simbrief.acType = '${acInfo.ICAO}';
 <c:if test="${empty sbPackage}">golgotha.simbrief.loadAirframes();</c:if>

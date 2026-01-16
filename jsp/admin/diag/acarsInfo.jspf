@@ -22,7 +22,7 @@
  <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
 </el:table>
-<script>
+<script nonce="${contentSecurity.nonce}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 	const p = fetch('bwstats.ws', {signal:AbortSignal.timeout(5500)});

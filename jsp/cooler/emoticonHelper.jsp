@@ -12,7 +12,7 @@
 <content:pics />
 <content:favicon />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha = {local:{}};
 golgotha.local.addEmoticon = function(name)
 {

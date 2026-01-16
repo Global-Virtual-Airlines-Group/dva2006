@@ -49,7 +49,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 golgotha.routeMap.id = '${pilot.hexID}';
 <map:point var="golgotha.local.mapC" point="${home}" />

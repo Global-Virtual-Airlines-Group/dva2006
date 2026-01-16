@@ -16,7 +16,7 @@
 <content:pics />
 <content:favicon />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.setType = function() {
 	document.forms[0].submit();
 	return true;

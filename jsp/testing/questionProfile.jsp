@@ -111,7 +111,7 @@
 </content:page>
 <content:googleAnalytics />
 <c:if test="${fn:isRoutePlot(question)}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:point var="mapC" point="${question.midPoint}" />
 
 // Create map
