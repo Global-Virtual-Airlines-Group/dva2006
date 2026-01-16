@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store dynamic Content Security Policy data. 
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 12.0
  */
 
@@ -23,6 +23,7 @@ public class ContentSecurityPolicy {
 	public static final String NONE = "'none'";
 
 	private final boolean _enforce;
+	private final String _nonce;
 	private final Map<ContentSecurity, Collection<String>> _data = new LinkedHashMap<ContentSecurity, Collection<String>>();
 	
 	private String _reportGroup;
@@ -31,18 +32,23 @@ public class ContentSecurityPolicy {
 	/**
 	 * Creates the bean and populates default values.
 	 * @param enforce TRUE if the CSP is enforced, otherwise FALSE for warn-only mode
+	 * @param nonce a nonce for inline script/style elements
 	 */
-	public ContentSecurityPolicy(boolean enforce) {
+	public ContentSecurityPolicy(boolean enforce, String nonce) {
 		super();
 		_enforce = enforce;
+		_nonce = nonce;
 		add(ContentSecurity.DEFAULT, SELF);
 		add(ContentSecurity.CONNECT, SELF);
 		add(ContentSecurity.SCRIPT, SELF);
-		add(ContentSecurity.SCRIPT, "'unsafe-inline'");
 		add(ContentSecurity.STYLE, SELF);
 		add(ContentSecurity.STYLE, "'unsafe-inline'");
 		add(ContentSecurity.IMG, SELF);
 		add(ContentSecurity.WORKER, SELF);
+		if (_nonce != null)
+			add(ContentSecurity.SCRIPT, String.format("'nonce-%s'", _nonce));
+		else
+			add(ContentSecurity.SCRIPT, "'unsafe-inline'");
 	}
 	
 	/**
@@ -80,6 +86,14 @@ public class ContentSecurityPolicy {
 	 */
 	public String getHeader() {
 		return _enforce ? "Content-Security-Policy" : "Content-Security-Policy-Report-Only";
+	}
+	
+	/**
+	 * Returns the nonce used for inline script/style blocks.
+	 * @return the nonce, or null if none
+	 */
+	public String getNonce() {
+		return _nonce;
 	}
 	
 	/**

@@ -1,9 +1,11 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import static org.deltava.commands.HTTPContext.CSP_ATTR_NAME;
 
 import java.io.IOException;
+import java.util.HexFormat;
+import java.security.SecureRandom;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -15,13 +17,16 @@ import org.deltava.beans.system.*;
 /**
  * A servlet filter to add Content Security Policy data to the request and response.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 12.0
  */
 
 public class ContentSecurityFilter extends HttpFilter {
 
 	private static final Logger log = LogManager.getLogger(ContentSecurityFilter.class);
+	
+	private final SecureRandom _rnd = new SecureRandom();
+	private final HexFormat _fmt = HexFormat.of();
 	
 	private boolean _enforce;
 	private String _reportURI;
@@ -36,8 +41,12 @@ public class ContentSecurityFilter extends HttpFilter {
 	@Override
 	public void doFilter(HttpServletRequest req, HttpServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 		
+		// Generate the CSP nonce
+		byte[] nonce = new byte[8];
+		_rnd.nextBytes(nonce);
+		
 		// Add a CSP bean to the request that downstream can play with
-		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce);
+		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce, _fmt.formatHex(nonce));
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
 		csp.add(ContentSecurity.SCRIPT, "js-agent.newrelic.com");
 		csp.add(ContentSecurity.CONNECT, "*.google-analytics.com");
