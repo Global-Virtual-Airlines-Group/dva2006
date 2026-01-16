@@ -20,7 +20,7 @@
 <content:js name="wxParsers" />
 <content:googleAnalytics />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 const loaders = {};
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
 loaders.series = new golgotha.maps.SeriesLoader();
@@ -76,7 +76,7 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 golgotha.maps.info.ctr = golgotha.maps.info.ctr || golgotha.local.mapC;
 const mapOpts = {center:golgotha.maps.info.ctr, minZoom:3, zoom:golgotha.maps.info.zoom, maxZoom:17, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};

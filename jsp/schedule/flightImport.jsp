@@ -12,7 +12,7 @@
 <content:js name="common" />
 <content:js name="resumable" />
 <content:js name="progress" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.fileTypes = ['txt','pdf','gz','csv','bz2','xz'];
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -93,7 +93,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:golgotha.local.fileTypes});
 const dt = document.getElementById('dropTarget');

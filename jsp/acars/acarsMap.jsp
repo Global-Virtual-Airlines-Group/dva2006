@@ -80,7 +80,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 golgotha.local.refresh = ${refreshInterval + 2000};
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />

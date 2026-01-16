@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});

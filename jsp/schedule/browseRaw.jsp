@@ -87,7 +87,7 @@
 </content:region>
 </content:page>
 </body>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {

@@ -17,7 +17,7 @@
 <content:favicon />
 <content:cspHeader />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
 </head>

@@ -20,7 +20,7 @@
 <content:js name="common" />
 <content:cspHeader />
 <c:if test="${!empty loginAddrs}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.toggleLoginAddrs = function(lnk) {
 	const addrDiv = document.getElementById('loginAddrs');
 	if (!addrDiv) return false;

@@ -43,7 +43,7 @@
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});
 	const srcs = [];

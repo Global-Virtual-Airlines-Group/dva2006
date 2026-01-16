@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.setChart = function(combo) {
 	self.location = '/chart.do?id=' + golgotha.form.getCombo(combo);
 	return true;

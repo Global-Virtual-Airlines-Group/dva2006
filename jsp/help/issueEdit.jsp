@@ -15,7 +15,7 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -170,7 +170,7 @@ golgotha.local.checkAssignee = function(combo) {
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
 </body>

@@ -28,7 +28,7 @@
 <c:forEach var="host" items="${imgHosts}"><content:csp type="IMG" host="${host}" /></c:forEach>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -334,7 +334,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 const postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>

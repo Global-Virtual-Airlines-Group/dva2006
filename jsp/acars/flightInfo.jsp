@@ -131,7 +131,7 @@
 </content:region>
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 
 // Build the route line and map center

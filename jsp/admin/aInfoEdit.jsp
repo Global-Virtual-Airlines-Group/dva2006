@@ -14,7 +14,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.domain, l:6, t:'Domain Name'});

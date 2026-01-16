@@ -18,7 +18,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
@@ -262,7 +262,7 @@ golgotha.local.sortEQLanding = function(t) { return golgotha.sort.exec('eqLandin
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.loadStats = function() {
 	const p = fetch('mystats.ws?id=${pilot.hexID}', {signal:AbortSignal.timeout(9500)});
 	p.then(function(rsp) {

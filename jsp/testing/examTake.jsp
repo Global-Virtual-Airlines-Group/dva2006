@@ -21,7 +21,7 @@
 <content:googleAnalytics />
 <content:cspHeader />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.exam.expiry = ${exam.expiryDate.toEpochMilli()};
 <c:if test="${exam.routePlot}">
 golgotha.exam.rpQuestions = ${rpQuestions};
@@ -87,7 +87,7 @@ golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
 </c:if>
 <c:if test="${isRP}">
 <!-- Map #${q.number} -->
-<script>
+<script nonce="${contentSecurity.nonce}">
 const info = {examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance}};
 info.mapCenter = <map:point point="${q.midPoint}" />
 info.aD = <map:marker point="${q.airportD}" />

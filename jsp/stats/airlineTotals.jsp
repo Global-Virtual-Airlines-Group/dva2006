@@ -105,7 +105,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 	const p = fetch('allstats.ws', {signal:AbortSignal.timeout(7500)});

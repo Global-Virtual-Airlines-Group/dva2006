@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
@@ -70,7 +70,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['csv','gz','bz2']});
 const dt = document.getElementById('dropTarget');

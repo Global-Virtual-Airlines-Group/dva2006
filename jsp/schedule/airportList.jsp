@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.updateSort = function() {
 	const f = document.forms[0];
 	f.action = '/airports.do';

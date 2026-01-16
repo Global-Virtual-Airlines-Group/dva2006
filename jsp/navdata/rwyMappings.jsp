@@ -17,7 +17,7 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.newAP = function() {
 	var icao = document.forms[0].icao;

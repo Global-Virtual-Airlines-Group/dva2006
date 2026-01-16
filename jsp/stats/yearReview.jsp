@@ -19,7 +19,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.updateYear = function() { document.forms[0].submit(); };
 </script>
 <style>
@@ -127,7 +127,7 @@ table.form td.eliteStatus, .button {
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 <map:markers var="golgotha.local.airports" items="${cyAirports}" />
 <map:bounds var="golgotha.local.bb" items="${cyAirports}" />

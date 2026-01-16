@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.passFail, min:1, t:'Check Ride status'});

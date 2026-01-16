@@ -23,7 +23,7 @@
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.isDraft = ${pirep.status == 'DRAFT'};
 golgotha.local.validate = function(f)
 {

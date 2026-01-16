@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;	
 	f.json.value = JSON.stringify(golgotha.local.rwyData);
@@ -111,7 +111,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.rwyData = JSON.parse('${json}');
 </script>
 </body>

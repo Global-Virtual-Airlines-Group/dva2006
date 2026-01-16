@@ -122,7 +122,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 google.charts.load('current',{'packages':['corechart']});
 golgotha.local.showChart = function() {

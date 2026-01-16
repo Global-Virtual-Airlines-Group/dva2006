@@ -19,7 +19,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.switchType = function(combo) {
 	const cType = combo.options[combo.selectedIndex].value;
 	self.location = '/academycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';

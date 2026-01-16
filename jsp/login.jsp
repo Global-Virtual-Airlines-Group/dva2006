@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:captcha action="login" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	const isOV = Boolean(f.userOV.value);

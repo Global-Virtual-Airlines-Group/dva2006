@@ -22,7 +22,7 @@
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.routePlot.keepRoute = ${!empty flight.route};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
@@ -167,7 +167,7 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 
 golgotha.local.rpInit = function() {

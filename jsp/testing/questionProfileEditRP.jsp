@@ -19,7 +19,7 @@
 <map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -242,7 +242,7 @@ return true;
 </content:page>
 <fmt:aptype var="useICAO" />
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
-<script>
+<script nonce="${contentSecurity.nonce}">
 const f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.config.useSched = false;

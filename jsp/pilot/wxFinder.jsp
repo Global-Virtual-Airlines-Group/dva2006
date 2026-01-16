@@ -56,7 +56,7 @@ div.wxPopup {
 <content:copyright />
 </content:region>
 </content:page>
-<script>
+<script nonce="${contentSecurity.nonce}">
 <map:token />
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 

@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.selectAircraft = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {
 		golgotha.util.display('descRow', false);

@@ -16,7 +16,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

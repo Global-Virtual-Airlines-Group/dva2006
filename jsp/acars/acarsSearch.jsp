@@ -19,7 +19,7 @@
 <content:js name="datePicker" />
 <content:googleAnalytics />
 <content:cspHeader />
-<script>
+<script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.searchType, t:'Search Type'});
