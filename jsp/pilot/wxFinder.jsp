@@ -19,7 +19,7 @@
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <content:cspHeader />
-<style>
+<style nonce="${contentSecurity.nonce}">
 div.wxPopup {
 	flex-wrap:wrap;
 }

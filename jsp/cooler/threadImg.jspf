@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty img || !empty thread.imageURLs }">
-<style>
+<style nonce="${contentSecurity.nonce}">
 img.gallery {
 	max-width:98%;
 }

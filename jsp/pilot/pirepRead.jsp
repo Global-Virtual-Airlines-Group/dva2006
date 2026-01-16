@@ -85,7 +85,7 @@ golgotha.local.showRunwayChoices = function() {
 </script></content:filter></c:if>
 <content:cspHeader />
 <c:if test="${!empty eliteLevel}">
-<style>
+<style nonce="${contentSecurity.nonce}">
 table.form td.eliteStatus {
 	color: #ffffff;
 	background-color: #${eliteLevel.hexColor};

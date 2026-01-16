@@ -22,7 +22,7 @@
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.updateYear = function() { document.forms[0].submit(); };
 </script>
-<style>
+<style nonce="${contentSecurity.nonce}">
 table.form td.eliteStatus, .button {
 	color: #ffffff;
 	background-color: #${eliteStatus.level.hexColor};
