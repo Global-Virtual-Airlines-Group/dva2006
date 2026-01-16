@@ -83,10 +83,15 @@ default:
 
 return true;
 };
+
+golgotha.onDOMReady(function() {
+	golgotha.local.showChoices(); 
+	golgotha.local.toggleAll();
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="golgotha.local.showChoices(); golgotha.local.toggleAll()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

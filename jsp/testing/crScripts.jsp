@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:cspHeader />
-<style>
+<style nonce="${contentSecurity.nonce}">
 span.el {
   display: block; /* Fallback for non-webkit */
   display: -webkit-box;

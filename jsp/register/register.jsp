@@ -92,11 +92,12 @@ golgotha.onDOMReady(function() {
 	cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
+	golgotha.local.resetUniqueCheck(false);
 });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.resetUniqueCheck(false)">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

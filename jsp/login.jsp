@@ -55,10 +55,12 @@ golgotha.local.toggleUser = function() {
 	golgotha.util.display('userFields', true);
 	return true;
 };
+
+golgotha.onDOMReady(golgotha.local.setFocus);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.setFocus()">
+<body>
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>

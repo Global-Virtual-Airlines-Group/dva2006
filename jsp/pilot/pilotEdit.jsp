@@ -96,11 +96,12 @@ golgotha.onDOMReady(function() {
 	cfg.doICAO = ${useICAO}; cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
+	golgotha.local.disableSigBoxes();
 });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.disableSigBoxes()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

@@ -39,10 +39,15 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.onDOMReady(function() {
+	const f = document.forms[0];
+	golgotha.local.updateEQ(f.eqType);
+})
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.updateEQ(document.forms[0].eqType)">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

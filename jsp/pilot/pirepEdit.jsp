@@ -151,10 +151,13 @@ return true;
 // Set PIREP date limitations
 <fmt:jsdate var="golgotha.local.fwdLimit" date="${forwardDateLimit}" />
 <fmt:jsdate var="golgotha.local.bwdLimit" date="${backwardDateLimit}" />
+
+// Load airports
+golgotha.onDOMReady(golgotha.local.loadAirports);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.loadAirports()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
