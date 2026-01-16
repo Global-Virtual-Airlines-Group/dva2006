@@ -1,29 +1,28 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.mapbox;
 
 import java.util.*;
 
 import jakarta.servlet.jsp.*;
-import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.json.JSONObject;
 
 import org.deltava.beans.MapType;
 import org.deltava.beans.system.*;
-import org.deltava.taglib.ContentHelper;
+
+import org.deltava.taglib.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
-
 /**
  * A JSP tag to insert a link to the Mapbox JS API. 
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 12.0
  */
 
-public class InsertAPITag extends TagSupport {
+public class InsertAPITag extends CSPNonceTag {
 	
 	private static final int MAJOR = 3;
 	
@@ -84,12 +83,20 @@ public class InsertAPITag extends TagSupport {
 		// Insert the API version
 		pageContext.setAttribute("$mapType", MapType.MAPBOX);
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_major), PageContext.REQUEST_SCOPE);
+		
+		String nonce = getNonce();
 		try {
 			JspWriter out = pageContext.getOut();
 			
 			// Write the MCO
-			out.print("<script id=\"golgothaMCO\">");
-			out.print("golgotha.maps = ");
+			out.print("<script id=\"golgothaMCO\"");
+			if (nonce != null) {
+				out.print(" nonce=\"");
+				out.print(nonce);
+				out.print('\"');
+			}
+			
+			out.print(">golgotha.maps = ");
 			out.print(mco.toString());
 			out.println(";</script>");
 			

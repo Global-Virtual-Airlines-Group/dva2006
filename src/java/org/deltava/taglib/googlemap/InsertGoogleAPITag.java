@@ -1,10 +1,9 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
 
 import jakarta.servlet.jsp.*;
-import jakarta.servlet.jsp.tagext.TagSupport;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
@@ -13,7 +12,7 @@ import org.apache.logging.log4j.*;
 import org.deltava.beans.MapType;
 import org.deltava.beans.system.*;
 
-import org.deltava.taglib.ContentHelper;
+import org.deltava.taglib.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -21,11 +20,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
-public class InsertGoogleAPITag extends TagSupport {
+public class InsertGoogleAPITag extends CSPNonceTag {
 	
 	private static final Logger log = LogManager.getLogger(API.class);
 
@@ -161,21 +160,24 @@ public class InsertGoogleAPITag extends TagSupport {
 		ContentHelper.addContent(pageContext, "JS", jsFileName);
 		pageContext.setAttribute("$mapType", MapType.GOOGLE);
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
+		String nonce = getNonce();
 		try {
 			JspWriter out = pageContext.getOut();
 			
 			// Write the MCO
-			out.print("<script id=\"golgothaMCO\">");
-			out.print("golgotha.maps = ");
+			out.print("<script id=\"golgothaMCO\"");
+			if (nonce != null) {
+				out.print(" nonce=\"");
+				out.print(nonce);
+				out.print('\"');
+			}
+			
+			out.print(">golgotha.maps = ");
 			out.print(mco.toString());
 			out.println(";</script>");
 			
 			// Load the Google API
-			out.print("<script");
-			if (_cb != null)
-				out.print(" async");
-			
-			out.print(" src=\"https://");
+			out.print("<script src=\"https://");
 			out.print(V3_API_URL);
 			if (_cycle == null) {
 				out.print(String.valueOf(_majorVersion));

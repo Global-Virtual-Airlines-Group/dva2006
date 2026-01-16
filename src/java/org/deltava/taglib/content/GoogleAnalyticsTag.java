@@ -2,21 +2,21 @@
 package org.deltava.taglib.content;
 
 import jakarta.servlet.jsp.*;
-import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.system.ContentSecurity;
 
-import org.deltava.taglib.ContentHelper;
+import org.deltava.taglib.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to embed Google Analytics v4 tags.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
-public class GoogleAnalyticsTag extends TagSupport {
+public class GoogleAnalyticsTag extends CSPNonceTag {
 	
 	private static final String JS_URL = "https://www.googletagmanager.com/gtag/js";
 	
@@ -30,13 +30,21 @@ public class GoogleAnalyticsTag extends TagSupport {
 		StringBuilder urlBuf = new StringBuilder(JS_URL);
 		urlBuf.append("?id=").append(accountID);
 		
+		String nonce = getNonce();
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<script async src=\"");
+			out.print("<script src=\"");
 			out.print(urlBuf.toString());
 			out.println("\"></script>");
 			
-			out.println("<script>");
+			out.print("<script");
+			if (nonce != null) {
+				out.print(" nonce=\"");
+				out.print(nonce);
+				out.print('\"');
+			}
+			
+			out.println('>');
 			out.println("window.dataLayer = window.dataLayer || [];");
 			out.println("function gtag(){ dataLayer.push(arguments); };");
 			out.println("gtag('js', new Date());");

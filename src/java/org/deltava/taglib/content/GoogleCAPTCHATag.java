@@ -1,14 +1,14 @@
-// Copyright 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import jakarta.servlet.http.*;
 import jakarta.servlet.jsp.*;
-import jakarta.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.beans.system.CAPTCHAResult;
-import org.deltava.beans.system.ContentSecurity;
+import org.deltava.beans.system.*;
+
 import org.deltava.commands.HTTPContext;
-import org.deltava.taglib.ContentHelper;
+
+import org.deltava.taglib.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -16,11 +16,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert Google RECAPTCHA libraries. 
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 9.0
  */
 
-public class GoogleCAPTCHATag extends TagSupport {
+public class GoogleCAPTCHATag extends CSPNonceTag {
 	
 	private static final String JS_URL = "https://www.google.com/recaptcha/api.js?render=";
 	
@@ -85,6 +85,7 @@ public class GoogleCAPTCHATag extends TagSupport {
 		urlBuf.append(siteKey);
 		ContentHelper.pushContent(pageContext, urlBuf.toString(), "script");
 		
+		String nonce = getNonce();
 		try {
 			JspWriter out = pageContext.getOut();
 			
@@ -94,7 +95,15 @@ public class GoogleCAPTCHATag extends TagSupport {
 			out.println("\"></script>");
 			
 			// Write the action
-			out.println("<script>grecaptcha.ready(function() {");
+			out.print("<script");
+			if (nonce != null) {
+				out.print(" nonce=\"");
+				out.print(nonce);
+				out.print('\"');
+			}
+
+			out.print('>');
+			out.println("grecaptcha.ready(function() {");
 			out.print("grecaptcha.execute('");
 			out.print(siteKey);
 			out.print("',{action:'");
