@@ -72,10 +72,15 @@ for (var x = 0; x < choices.length; x++) {
 
 return true;
 };
+
+golgotha.onDOMReady(function() {
+	golgotha.local.updateAnswerCombo();
+	golgotha.local.toggleAnswerBox();
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="golgotha.local.updateAnswerCombo(); golgotha.local.toggleAnswerBox()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

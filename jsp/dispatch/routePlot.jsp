@@ -53,10 +53,12 @@ golgotha.routePlot.updateAirline = function(combo) {
 	golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 	return true;
 };
+
+golgotha.onDOMReady(function() { golgotha.util.disable('RouteSaveButton'); });
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.util.disable('RouteSaveButton')">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

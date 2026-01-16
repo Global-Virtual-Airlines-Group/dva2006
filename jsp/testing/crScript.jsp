@@ -35,10 +35,12 @@ golgotha.local.updateEQ = function(combo) {
 
 	return true;
 };
+
+golgotha.onDOMRady(golgotha.form.resizeAll);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.form.resizeAll()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

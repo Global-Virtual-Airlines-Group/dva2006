@@ -47,10 +47,12 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.onDOMReady(golgotha.local.toggleCombo);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.toggleCombo()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

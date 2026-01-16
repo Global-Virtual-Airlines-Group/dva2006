@@ -44,10 +44,14 @@ return true;
 <c:set var="onLoad" value="golgotha.exam.initMaps(); ${onLoad}" scope="page" /></c:if>
 // Time offset between server and client clock
 golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
+
+golgotha.onDOMReady(function() {
+	${onLoad};
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="${onLoad}">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

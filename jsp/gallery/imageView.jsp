@@ -17,9 +17,14 @@
 <content:js name="common" />
 <content:js name="imgLike" />
 <content:cspHeader />
+<script nonce="${contentSecurity.nonce}">
+golgotha.onDOMReady(function() {
+	golgotha.like.get(${img.hexID});
+});
+</script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.like.get(${img.hexID})">
+<body>
 <content:page>
 <%@ include file="/jsp/gallery/header.jspf" %> 
 <%@ include file="/jsp/gallery/sideMenu.jspf" %>

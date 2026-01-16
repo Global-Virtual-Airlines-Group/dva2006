@@ -9,11 +9,12 @@
 <title>Emoticons</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
+<content:googleAnalytics />
 <content:pics />
 <content:favicon />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
 <script nonce="${contentSecurity.nonce}">
-golgotha = {local:{}};
 golgotha.local.addEmoticon = function(name)
 {
 // Get the window opener
@@ -33,10 +34,12 @@ f.msgText.value = f.msgText.value + ' :' + name + ':';
 self.close();
 return true;
 };
+
+golgotha.onDOMReady(window.focus);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void window.focus()">
+<body>
 <el:table className="form">
 <!-- Table Header Bars -->
 <tr class="title caps">
@@ -63,6 +66,5 @@ return true;
  <td colspan="3"><el:button onClick="void self.close()" label="CLOSE WINDOW" /></td>
 </tr>
 </el:table>
-<content:googleAnalytics />
 </body>
 </html>

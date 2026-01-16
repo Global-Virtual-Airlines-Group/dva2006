@@ -120,10 +120,12 @@ params['route'] = wps.join(' ');
 golgotha.routePlot.plotMap(params);
 return true;
 };
+
+golgotha.onDOMReady(golgotha.local.updateCorrect);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.updateCorrect()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

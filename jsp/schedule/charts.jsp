@@ -41,11 +41,14 @@ for (var x = 0; x < golgotha.local.cTypes.length; x++) {
 return true;
 };
 
-golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document.forms[0].id); });
+golgotha.onDOMReady(function() {
+	golgotha.local.updateVisibility();
+	return golgotha.airportLoad.setHelpers(document.forms[0].id); 
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.updateVisibility()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
