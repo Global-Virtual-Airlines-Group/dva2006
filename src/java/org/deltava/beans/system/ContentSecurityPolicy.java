@@ -45,10 +45,9 @@ public class ContentSecurityPolicy {
 		add(ContentSecurity.STYLE, "'unsafe-inline'");
 		add(ContentSecurity.IMG, SELF);
 		add(ContentSecurity.WORKER, SELF);
-		if (_nonce != null)
-			add(ContentSecurity.SCRIPT, String.format("'nonce-%s'", _nonce));
-		else
-			add(ContentSecurity.SCRIPT, "'unsafe-inline'");
+		add(ContentSecurity.SCRIPT, "'unsafe-inline'");
+		/* if (_nonce != null)
+			add(ContentSecurity.SCRIPT, String.format("'nonce-%s'", _nonce)); */
 	}
 	
 	/**
