@@ -48,10 +48,7 @@ public class ContentSecurityFilter extends HttpFilter {
 		// Add a CSP bean to the request that downstream can play with
 		ContentSecurityPolicy csp = new ContentSecurityPolicy(_enforce, _fmt.formatHex(nonce));
 		csp.add(ContentSecurity.SCRIPT, "www.googletagmanager.com");
-		csp.add(ContentSecurity.SCRIPT, "js-agent.newrelic.com");
 		csp.add(ContentSecurity.CONNECT, "*.google-analytics.com");
-		csp.add(ContentSecurity.CONNECT, "bam.nr-data.net");
-		csp.add(ContentSecurity.CONNECT, "bam-cell.nr-data.net");
 		
 		// Calculate the reporting URI
 		if (_reportURI != null) {

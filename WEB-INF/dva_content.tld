@@ -133,6 +133,13 @@
 	</tag>
 
 	<tag>
+		<description>NewRelic tag, to insert NewRelic browser instrumentation with a CSP nonce</description>
+		<name>newRelic</name>
+		<tag-class>org.deltava.taglib.content.NewRelicTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
+	<tag>
 		<description>Favicon tag, for inserting favicon links</description>
 		<name>favicon</name>
 		<tag-class>org.deltava.taglib.content.FaviconTag</tag-class>
