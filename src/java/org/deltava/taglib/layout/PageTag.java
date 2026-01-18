@@ -1,8 +1,10 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2018, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2016, 2018, 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import jakarta.servlet.http.*;
 import jakarta.servlet.jsp.*;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
@@ -14,11 +16,13 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
 public class PageTag extends BrowserInfoTag {
+	
+	private static final Logger log = LogManager.getLogger(PageTag.class);
 
 	private boolean _sideMenu;
 	private boolean _isLogged;
@@ -88,7 +92,12 @@ public class PageTag extends BrowserInfoTag {
 	@Override
 	public int doEndTag() throws JspException {
 
-		ContentHelper.flushCSP(pageContext);
+		boolean isCSPWritten = ContentHelper.flushCSP(pageContext);
+		if (isCSPWritten) {
+			HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+			log.error("Writing implict CSP Header for {}", req.getRequestURI());
+		}
+		
 		try {
 			pageContext.getOut().println("</div>");
 		} catch (Exception e) {
