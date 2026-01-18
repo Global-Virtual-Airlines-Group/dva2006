@@ -147,21 +147,22 @@ public class ContentHelper {
 	/**
 	 * Writes a dynamic Content Security Policy header to the response.
 	 * @param ctx the PageContext object
+	 * @return TRUE if the CSP header was added to the response, otherwise FALSE
 	 */
-	public static void flushCSP(PageContext ctx) {
+	public static boolean flushCSP(PageContext ctx) {
 		ContentSecurityPolicy csp = (ContentSecurityPolicy) ctx.getAttribute(HTTPContext.CSP_ATTR_NAME, PageContext.REQUEST_SCOPE);
 		if (csp == null)
 			throw new IllegalStateException("No Content Security Policy in request");
 		
 		// Check if header already set
 		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
-		if (rsp.containsHeader(csp.getHeader())) return;
+		if (rsp.containsHeader(csp.getHeader())) return false;
 		
 		// Check for committed request that will silent fail header setting
 		if (rsp.isCommitted()) {
 			HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
 			log.warn("Cannot set CSP Header for {} - {} already committed", req.getRemoteUser(), req.getRequestURI());
-			return;
+			return false;
 		}
 		
 		rsp.setHeader(csp.getHeader(), csp.getData());
@@ -169,5 +170,7 @@ public class ContentHelper {
 			rsp.setHeader("Reporting-Endpoints", csp.getReportHeader());
 			rsp.setHeader("Report-To", csp.getReportHeader());
 		}
+		
+		return true;
 	}
 }
