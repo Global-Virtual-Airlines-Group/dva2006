@@ -11,8 +11,6 @@ import org.deltava.beans.system.*;
 
 import org.deltava.taglib.*;
 
-import com.newrelic.api.agent.NewRelic;
-
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
@@ -49,8 +47,6 @@ public class PageTag extends BrowserInfoTag {
 		HTTPContextData bctxt = getBrowserContext();
 		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() == DeviceType.PHONE) || (bctxt.getDeviceType() == DeviceType.UNKNOWN);
 		logReason("Non-desktop/tablet device");
-		_sideMenu |= (bctxt != null) && ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
-		logReason("Internet Explorer < 9");
 		
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
@@ -65,7 +61,6 @@ public class PageTag extends BrowserInfoTag {
 
 		try {
 			JspWriter out = pageContext.getOut();
-			out.println(NewRelic.getBrowserTimingHeader());
 			out.print("<div id=\"nav\" class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
 			if (bctxt != null) {
