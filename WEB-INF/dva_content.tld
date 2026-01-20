@@ -136,7 +136,7 @@
 		<description>NewRelic tag, to insert NewRelic browser instrumentation with a CSP nonce</description>
 		<name>newRelic</name>
 		<tag-class>org.deltava.taglib.content.NewRelicTag</tag-class>
-		<body-content>empty</body-content>
+		<body-content>JSP</body-content>
 	</tag>
 
 	<tag>
