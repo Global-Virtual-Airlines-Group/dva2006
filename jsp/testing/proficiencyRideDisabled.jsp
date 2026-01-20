@@ -13,6 +13,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -37,6 +40,5 @@ To return to the <content:airline /> Testing Center, <el:cmd url="testcenter" cl
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

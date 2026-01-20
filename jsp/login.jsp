@@ -14,7 +14,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="login" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

@@ -18,7 +18,8 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

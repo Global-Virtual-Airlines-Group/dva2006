@@ -18,7 +18,9 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<content:cspHeader />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.switchType = function(combo) {
 	const cType = combo.options[combo.selectedIndex].value;

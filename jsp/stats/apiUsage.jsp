@@ -15,6 +15,9 @@
 <content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
@@ -89,6 +92,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -7,9 +7,13 @@
 <head>
 <title>E-Mail Address Invalidated</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -43,6 +47,5 @@ Membership at <content:airline /> requires that you provide us a validated e-mai
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

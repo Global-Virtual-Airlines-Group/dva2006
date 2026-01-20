@@ -15,7 +15,8 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {

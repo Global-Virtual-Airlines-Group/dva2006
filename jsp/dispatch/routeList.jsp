@@ -15,6 +15,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.update = function(combo) {
 	combo.enabled = false;
@@ -80,6 +83,5 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

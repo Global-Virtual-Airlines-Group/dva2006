@@ -18,7 +18,8 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {

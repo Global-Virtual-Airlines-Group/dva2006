@@ -16,7 +16,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="imgLike" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.onDOMReady(function() {
 	golgotha.like.get(${img.hexID});

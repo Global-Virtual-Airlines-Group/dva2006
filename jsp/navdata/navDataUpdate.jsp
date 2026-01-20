@@ -8,8 +8,12 @@
 <head>
 <title><content:airline /> Navigation Database Updated</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
@@ -33,12 +37,10 @@
 Navigation aid data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This data will be available for all pilots.<br>
 </c:when>
 <c:when test="${airway}">
-Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The Airway 
-data was purged prior to the import.</span></c:if><br>
+Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The Airway data was purged prior to the import.</span></c:if><br>
 </c:when>
 <c:when test="${terminalRoute}">
-SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline />  Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR 
-data was purged prior to the import.</span></c:if><br>
+SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline />  Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR data was purged prior to the import.</span></c:if><br>
 </c:when>
 <c:when test="${airspaceData}">
 Airspace boundary data has been imported into the <content:airline /> Navigation Database. This data will be avialable for all pilots.<br>
@@ -65,6 +67,5 @@ To return to the Airspace Data import page, <el:cmd url="airspaceimport" classNa
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

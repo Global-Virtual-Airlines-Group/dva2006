@@ -19,6 +19,8 @@
 <map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {

@@ -14,6 +14,9 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.sortBy = function(combo) {
 	self.location = '/selcals.do?sortType=' + encodeURI(golgotha.form.getCombo(combo));
@@ -94,6 +97,5 @@ golgotha.local.filterBy = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

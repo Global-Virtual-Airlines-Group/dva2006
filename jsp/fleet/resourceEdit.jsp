@@ -10,6 +10,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -98,6 +101,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

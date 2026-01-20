@@ -16,7 +16,8 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <content:attr attr="showAuthors" roles="HR,Operations,PIREP" value="true" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <c:if test="${showAuthors}">
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.updateAuthor = function(cb) {

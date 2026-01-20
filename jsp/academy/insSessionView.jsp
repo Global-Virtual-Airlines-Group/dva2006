@@ -12,8 +12,11 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<content:js name="commmon" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -82,6 +85,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

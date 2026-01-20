@@ -24,7 +24,8 @@
 <content:captcha action="acarsMap" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:csp type="IMG" host="tilecache.rainviewer.com" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

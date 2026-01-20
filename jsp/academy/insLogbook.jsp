@@ -17,7 +17,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.sort = function(combo) {
 	self.location = '/inslogbook.do?id=' + golgotha.form.getCombo(combo);

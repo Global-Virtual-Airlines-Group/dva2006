@@ -16,6 +16,9 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.switchType = function(combo) {
 	const cType = combo.options[combo.selectedIndex].value;
@@ -80,6 +83,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

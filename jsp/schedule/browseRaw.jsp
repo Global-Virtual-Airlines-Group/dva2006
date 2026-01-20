@@ -18,7 +18,8 @@
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

@@ -20,7 +20,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.setChannel = function(combo) {
 	self.location = '/channel.do?id=' + encodeURI(golgotha.form.getCombo(combo));

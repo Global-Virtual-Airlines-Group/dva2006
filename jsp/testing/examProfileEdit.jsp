@@ -14,20 +14,22 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.examName, l:10, t:'Examination Name'});
-golgotha.form.validate({f:f.stage, min:1, t:'Examination Stage'});
-golgotha.form.validate({f:f.minStage, min:0, t:'Examination Minimum Stage'});
-golgotha.form.validate({f:f.questions, min:1, t:'Examination Size'});
-golgotha.form.validate({f:f.passScore, min:0, t:'Passing Score'});
-golgotha.form.validate({f:f.time, min:5, t:'Examination Duration'});
-golgotha.form.validate({f:f.owner, t:'Owner'});
-golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.examName, l:10, t:'Examination Name'});
+	golgotha.form.validate({f:f.stage, min:1, t:'Examination Stage'});
+	golgotha.form.validate({f:f.minStage, min:0, t:'Examination Minimum Stage'});
+	golgotha.form.validate({f:f.questions, min:1, t:'Examination Size'});
+	golgotha.form.validate({f:f.passScore, min:0, t:'Passing Score'});
+	golgotha.form.validate({f:f.time, min:5, t:'Examination Duration'});
+	golgotha.form.validate({f:f.owner, t:'Owner'});
+	golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -118,6 +120,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

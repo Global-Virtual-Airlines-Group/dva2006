@@ -9,12 +9,13 @@
 <title>Runway Options - ${pirep.flightCode}</title>
 <content:expire expires="5" />
 <content:js name="common" />
-<content:googleAnalytics />
 <content:css name="main" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:cspHeader />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body style="margin:8px">

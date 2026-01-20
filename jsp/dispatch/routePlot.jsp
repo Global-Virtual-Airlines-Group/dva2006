@@ -23,7 +23,8 @@
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.sl = new golgotha.maps.wx.SeriesLoader();
 golgotha.local.sl.setData('radar', 0.45, 'wxRadar');

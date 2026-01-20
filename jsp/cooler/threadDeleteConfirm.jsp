@@ -8,6 +8,9 @@
 <title>Confirm ${forumName} Discussion Thread Deletion</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,6 +34,5 @@ To return to the discussion thread, <el:cmd url="thread" link="${thread}" classN
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -10,6 +10,9 @@
 <title><content:airline />&nbsp;${forumName} Thread</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -116,6 +119,5 @@ To view all ${forumName} discussion threads, <el:cmd url="channel" linkID="ALL" 
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

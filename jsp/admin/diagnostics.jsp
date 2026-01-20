@@ -21,7 +21,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <c:if test="${acarsEnabled}"><content:googleJS module="charts" /></c:if>
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

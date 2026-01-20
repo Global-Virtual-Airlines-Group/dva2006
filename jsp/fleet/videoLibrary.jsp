@@ -13,6 +13,9 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.play = function(id, name) {
@@ -101,6 +104,5 @@ golgotha.local.stop = function() {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

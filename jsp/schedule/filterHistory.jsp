@@ -10,6 +10,10 @@
 <title><content:airline /> Schedule Filter History</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -63,6 +67,5 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

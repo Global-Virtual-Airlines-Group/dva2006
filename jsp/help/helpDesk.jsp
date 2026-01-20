@@ -14,7 +14,8 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />

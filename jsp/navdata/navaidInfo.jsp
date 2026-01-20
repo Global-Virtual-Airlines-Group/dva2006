@@ -15,7 +15,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <map:api version="3" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

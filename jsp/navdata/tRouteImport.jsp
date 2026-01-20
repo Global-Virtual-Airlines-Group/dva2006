@@ -12,7 +12,8 @@
 <content:favicon />
 <content:googleAnalytics />
 <content:js name="common" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2','pssstar.dat.xz','psssid.dat.xz'];

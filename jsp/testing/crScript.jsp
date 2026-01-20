@@ -12,6 +12,9 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 <fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
@@ -96,6 +99,5 @@ golgotha.onDOMRady(golgotha.form.resizeAll);
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

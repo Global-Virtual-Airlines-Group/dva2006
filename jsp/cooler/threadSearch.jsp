@@ -17,6 +17,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
@@ -132,6 +135,5 @@ golgotha.local.setChannel = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

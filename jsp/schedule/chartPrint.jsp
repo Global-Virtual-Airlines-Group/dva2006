@@ -10,7 +10,8 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <style nonce="${contentSecurity.nonce}">
 @media print {
 .noPrint { display:none; }

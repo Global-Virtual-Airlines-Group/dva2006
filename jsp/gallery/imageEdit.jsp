@@ -17,16 +17,18 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.title, l:6, t:'Image Title'});
-golgotha.form.validate({f:f.desc, l:5, t:'Image Description'});
-golgotha.form.validate({f:f.img, l:6, t:'Attached Image'});
-golgotha.form.validate({f:f.img, ext:['jpg','png'], t:'Attached Image'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.title, l:6, t:'Image Title'});
+	golgotha.form.validate({f:f.desc, l:5, t:'Image Description'});
+	golgotha.form.validate({f:f.img, l:6, t:'Attached Image'});
+	golgotha.form.validate({f:f.img, ext:['jpg','png'], t:'Attached Image'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -84,6 +86,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

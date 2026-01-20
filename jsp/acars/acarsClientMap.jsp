@@ -19,6 +19,8 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <script nonce="${contentSecurity.nonce}">
 const loaders = {};

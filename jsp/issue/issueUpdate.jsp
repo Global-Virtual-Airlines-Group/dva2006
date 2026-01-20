@@ -13,7 +13,8 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

@@ -14,7 +14,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:sysdata var="imgPath" name="path.img" />
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.selectAC = function(combo) {

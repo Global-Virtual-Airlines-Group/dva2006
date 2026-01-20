@@ -13,6 +13,9 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:pics />
 <content:favicon />
@@ -78,6 +81,5 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 </el:form>
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

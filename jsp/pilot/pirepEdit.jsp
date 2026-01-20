@@ -20,6 +20,8 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1">

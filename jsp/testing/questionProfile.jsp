@@ -18,6 +18,9 @@
 <content:js name="examTake" />
 <c:if test="${fn:isRoutePlot(question)}">
 <map:api version="3" /></c:if>
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -109,7 +112,6 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 <c:if test="${fn:isRoutePlot(question)}">
 <script nonce="${contentSecurity.nonce}">
 <map:point var="mapC" point="${question.midPoint}" />

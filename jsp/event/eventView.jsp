@@ -20,7 +20,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:captcha action="event" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {

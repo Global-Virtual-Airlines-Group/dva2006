@@ -17,6 +17,8 @@
 <content:js name="airportRefresh" />
 <content:js name="datePicker" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;

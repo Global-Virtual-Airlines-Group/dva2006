@@ -18,7 +18,8 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="acarsLog" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

@@ -9,7 +9,11 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,8 +26,7 @@
 <c:if test="${isUpdate || isNew}">
 <div class="updateHdr">Flight Academy Certification Updated</div>
 <br>
-The <content:airline /> Flight Academy <span class="pri bld">${cert.name}</span> Certification profile 
-has been updated.<br>
+The <content:airline /> Flight Academy <span class="pri bld">${cert.name}</span> Certification profile has been updated.<br>
 </c:if>
 <c:if test="${isNew}">To update the list of requirements for this Flight Academy certification, <el:cmd url="certreqs" linkID="${cert.name}" op="edit" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
@@ -44,6 +47,5 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

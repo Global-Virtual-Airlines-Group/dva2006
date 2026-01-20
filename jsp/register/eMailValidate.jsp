@@ -10,6 +10,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -102,6 +105,5 @@ If you have provided us an incorrect e-mail address or you have not received the
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

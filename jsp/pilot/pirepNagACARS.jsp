@@ -8,6 +8,9 @@
 <title><content:airline /> ACARS Flight Report Option</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,6 +49,5 @@ The final benefit to using ACARS is that it will get rid of this page. To contin
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -19,7 +19,8 @@
 <content:js name="acarsFlightMap" />
 <content:js name="threebox" /></c:if>
 <content:googleAnalytics />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

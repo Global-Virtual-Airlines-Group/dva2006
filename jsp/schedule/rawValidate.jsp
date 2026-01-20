@@ -15,6 +15,8 @@
 <content:favicon />
 <content:js name="common" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script nonce="${contentSecurity.nonce}">

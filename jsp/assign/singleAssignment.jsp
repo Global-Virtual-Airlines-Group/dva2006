@@ -17,7 +17,8 @@
 <content:favicon />
 <content:js name="common" />
 <content:googleAnalytics />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.updateFamily = function(cb) { golgotha.form.setCombo(document.forms[0].eqType, '-'); };
 golgotha.local.updateEQ = function(cb) { golgotha.form.setCombo(document.forms[0].family, '-'); };
