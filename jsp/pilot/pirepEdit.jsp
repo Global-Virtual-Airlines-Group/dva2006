@@ -250,10 +250,12 @@ golgotha.onDOMReady(golgotha.local.loadAirports);
  <span id="dateLimits" style="display:none;" class="small warn bld caps"><span class="nophone">MUST BE </span>BETWEEN <fmt:date date="${backwardDateLimit}" fmt="d" /> AND <fmt:date date="${forwardDateLimit}" fmt="d" /></span></td>
 </content:browser>
 </tr>
+<c:if test="${networks.size() > 1}">
 <tr>
  <td class="label">Online Flight</td>
  <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
 </tr>
+</c:if>
 <tr>
  <td class="label">Simulator</td>
  <td class="data"><el:combo name="fsVersion" idx="*" size="1" required="true" options="${fsVersions}" firstEntry="[ SIMULATOR ]" value="${pirep.simulator}" /></td>
