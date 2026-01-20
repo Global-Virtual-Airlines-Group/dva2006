@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017, 2020, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017, 2020, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.commands.HTTPContext;
 /**
  * A Helper class to check whether content has been aded into this request. This is also used as a helper to modify the dynamic Content Security Policy.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -161,7 +161,7 @@ public class ContentHelper {
 		// Check for committed request that will silent fail header setting
 		if (rsp.isCommitted()) {
 			HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
-			log.warn("Cannot set CSP Header for {} - {} already committed", req.getRemoteUser(), req.getRequestURI());
+			log.warn("Cannot set CSP Header for {} - {} already committed ({})", req.getRemoteUser(), req.getRequestURI(), Integer.valueOf(ctx.getOut().getBufferSize()));
 			return false;
 		}
 		
