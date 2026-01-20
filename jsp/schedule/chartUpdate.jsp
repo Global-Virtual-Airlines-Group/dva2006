@@ -7,6 +7,10 @@
 <head>
 <title><content:airline /> Approach Chart - ${chart.name}</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,6 +53,5 @@ To view all Approach Charts for ${chart.airport.name}, <el:cmd url="charts" link
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -31,7 +31,8 @@ golgotha.onDOMReady(function() {
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <style nonce="${contentSecurity.nonce}">
 @media (min-width: 801px) {
     table#pilotCenter td.sideLabel { width: 35%; max-width: 350px; }

@@ -14,6 +14,9 @@
 <content:css name="calendar" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:js name="common" />
 <content:js name="datePicker" />
 <script nonce="${contentSecurity.nonce}">
@@ -80,6 +83,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

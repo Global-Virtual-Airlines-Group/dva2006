@@ -14,7 +14,8 @@
 <content:js name="common" />
 <content:googleAnalytics />
 <map:api version="3" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />

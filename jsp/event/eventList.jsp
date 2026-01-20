@@ -17,7 +17,8 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

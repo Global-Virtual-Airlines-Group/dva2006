@@ -7,6 +7,10 @@
 <head>
 <title><content:airline /> Routes Updated</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,6 +52,5 @@ The Oceanic Route was successfully deleted from the database.<br>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

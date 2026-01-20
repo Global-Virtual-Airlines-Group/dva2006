@@ -16,7 +16,8 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="myRouteMap" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

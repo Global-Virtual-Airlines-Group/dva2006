@@ -27,8 +27,8 @@
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:forEach var="host" items="${imgHosts}"><content:csp type="IMG" host="${host}" /></c:forEach>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
-<content:cspHeader />
-<script nonce="${contentSecurity.nonce}">
+<content:newRelic>
+<content:cspHeader /></content:newRelic><script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

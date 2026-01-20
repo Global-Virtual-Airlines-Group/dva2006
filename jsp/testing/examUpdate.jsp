@@ -8,6 +8,9 @@
 <title><content:airline /> Pilot Examination</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,6 +77,5 @@ To return to the Pilot's profile, <el:cmd url="profile" link="${pilot}" classNam
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

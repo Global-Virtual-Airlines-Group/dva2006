@@ -15,7 +15,8 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.selectAircraft = function(combo) {
 	if (!golgotha.form.comboSet(combo)) {

@@ -18,7 +18,8 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.updateAirport = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) { return (f.id.selectedIndex > 0); };

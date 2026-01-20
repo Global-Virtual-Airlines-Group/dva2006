@@ -8,6 +8,9 @@
 <title><content:airline /> Duplicate Pilots Merged</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,6 +41,5 @@ To view ${pilot.name}'s Pilot Profile, <el:cmd url="profile" link="${pilot}" cla
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

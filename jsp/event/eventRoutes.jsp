@@ -15,7 +15,8 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 <fmt:jsarray var="golgotha.local.routeIDs" items="${routeIDs}" />
 golgotha.local.validate = function(f) {

@@ -11,6 +11,9 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="fileSaver" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -42,7 +45,6 @@
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	golgotha.form.validate({f:f.src,min:1,t:'Raw Schedule Source'});

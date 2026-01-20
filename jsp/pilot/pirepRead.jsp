@@ -83,7 +83,8 @@ golgotha.local.showRunwayChoices = function() {
 	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=360,width=770,menubar=no,toolbar=no,status=no,scrollbars=yes');
 };
 </script></content:filter></c:if>
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <c:if test="${!empty eliteLevel}">
 <style nonce="${contentSecurity.nonce}">
 table.form td.eliteStatus {

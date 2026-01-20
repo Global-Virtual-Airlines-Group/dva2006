@@ -15,7 +15,8 @@
 <content:googleAnalytics />
 <content:pics />
 <content:favicon />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.toggleCombo = function(opt)
 {

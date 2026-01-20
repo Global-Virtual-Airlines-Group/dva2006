@@ -12,6 +12,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,14 +27,12 @@
 <c:if test="${infoDelete}">
 <div class="updateHdr">ACARS Flight Log Entry Removed</div>
 <br>
-The ACARS log entry for Flight ID <fmt:int value="${info.ID}" /> has been successfully removed from 
-the database. All Position reports for this Flight have also been removed.<br>
+The ACARS log entry for Flight ID <fmt:int value="${info.ID}" /> has been successfully removed from the database. All Position reports for this Flight have also been removed.<br>
 </c:if>
 <c:if test="${pirep}">
 <div class="updateHdr">Cannot remove ACARS Flight Log Entry</div>
 <br>
-This ACARS Flight has an associated Flight Report, and therefore cannot be removed from the ACARS 
-log database.<br>
+This ACARS Flight has an associated Flight Report, and therefore cannot be removed from the ACARS log database.<br>
 <br>
 To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br>
 </c:if>
@@ -66,6 +67,5 @@ To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserror
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

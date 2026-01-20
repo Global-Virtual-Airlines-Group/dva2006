@@ -14,6 +14,8 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
 golgotha.maps.geoLocate.gpsOK = function(pos) { map.panTo({lat:pos.coords.latitude, lng:pos.coords.longitude}); map.setZoom(8); return true; };

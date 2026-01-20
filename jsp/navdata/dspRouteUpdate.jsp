@@ -8,8 +8,12 @@
 <head>
 <title><content:airline /> Dispatch Route SID / STAR Update</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <content:copyright visible="false" />
@@ -39,6 +43,5 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

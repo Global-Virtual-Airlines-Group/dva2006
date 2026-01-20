@@ -10,6 +10,10 @@
 <title><content:airline /> ${forumName} Signature Update</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <script nonce="${contentSecurity.nonce}">
@@ -67,6 +71,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

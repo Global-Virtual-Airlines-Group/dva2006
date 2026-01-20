@@ -14,6 +14,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
 <content:js name="datePicker" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.validate = function(f) {
 	if ((!golgotha.form.check()) || (!f.comments)) return false;
@@ -73,6 +76,5 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

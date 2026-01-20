@@ -9,6 +9,9 @@
 <title><content:airline /> Pilot Profile Updated</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -136,6 +139,5 @@ To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click He
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

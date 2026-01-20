@@ -7,6 +7,9 @@
 <title><content:airline /> Registration Problem</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,6 +30,5 @@ Sorry, but you cannot apply to <content:airline />. Please contact our Human Res
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

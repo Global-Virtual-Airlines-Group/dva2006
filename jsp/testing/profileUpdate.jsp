@@ -9,6 +9,9 @@
 <title><content:airline /> Examination / Question Updated</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,6 +67,5 @@ The script for the ${script.equipmentType} Check Ride has been succesfully remov
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

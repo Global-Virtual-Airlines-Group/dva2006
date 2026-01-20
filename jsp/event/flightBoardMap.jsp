@@ -19,7 +19,8 @@
 <map:api version="3" />
 <content:googleAnalytics />
 <content:js name="flightBoardMap" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

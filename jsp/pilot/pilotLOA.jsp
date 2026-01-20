@@ -7,11 +7,14 @@
 <head>
 <title><content:airline /> Pilot Leave of Absence</title>
 <content:css name="main" />
+<content:css name="form" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
-<content:css name="form" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -30,6 +33,5 @@ occur on <fmt:date fmt="d" date="${loaExpires}" />.<br>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -8,6 +8,9 @@
 <title><content:airline /> Online Event Assignments Created</title>
 <content:css name="main" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,6 +32,5 @@ To return to this Online Event, <el:cmd className="sec bld" url="event" link="${
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

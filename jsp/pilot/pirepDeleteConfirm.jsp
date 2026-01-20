@@ -6,6 +6,10 @@
 <head>
 <title>Confirm Flight Report Deletion</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,6 +33,5 @@ To return to the Flight Report, <el:cmd url="pirep" link="${pirep}" className="s
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

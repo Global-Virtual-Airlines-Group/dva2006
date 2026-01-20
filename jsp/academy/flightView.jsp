@@ -9,10 +9,13 @@
 <title><content:airline /> Flight Academy Flight Report</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -71,6 +74,5 @@ by ${pilot.name}</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

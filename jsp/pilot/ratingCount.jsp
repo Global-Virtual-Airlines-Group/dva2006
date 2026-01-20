@@ -13,6 +13,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.filter = function(cb) { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) { golgotha.form.comboSet(f.acType); };
@@ -92,6 +95,5 @@ ${pilot.rank.name}&nbsp;<el:cmd url="profile" link="${pilot}" className="pri bld
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

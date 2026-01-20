@@ -16,6 +16,8 @@
 <content:js name="common" />
 <map:api version="3" js="markerWithLabel,googleMapsWX,oceanicPlot" callback="golgotha.local.mapInit" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <body>

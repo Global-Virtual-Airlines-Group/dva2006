@@ -17,7 +17,8 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="pilotMap" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:filter roles="HR">
 <script nonce="${contentSecurity.nonce}">
 golgotha.pilotMap.deleteMarker = function(id) {

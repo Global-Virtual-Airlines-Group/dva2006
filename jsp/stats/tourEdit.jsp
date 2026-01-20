@@ -20,7 +20,8 @@
 <content:js name="tourEdit" /></c:if>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 </head>
 <content:copyright visible="false" />
 <content:page>

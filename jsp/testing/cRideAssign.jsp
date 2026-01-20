@@ -13,7 +13,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <content:googleAnalytics />
 <content:js name="common" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 <fmt:js var="golgotha.local.eqAircraft" object="${eqAircraft}" />
 golgotha.local.updateEQ = function(combo) {

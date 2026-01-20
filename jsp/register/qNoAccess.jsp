@@ -6,6 +6,10 @@
 <head>
 <title>Questionnaire Already Submitted</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,6 +31,5 @@ contact us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

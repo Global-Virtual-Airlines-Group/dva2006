@@ -20,7 +20,8 @@
 <content:js name="gateInfo" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.gate.hasPFI = ${airport.hasPFI};
 golgotha.gate.hasSchengen = ${airport.isSchengen};

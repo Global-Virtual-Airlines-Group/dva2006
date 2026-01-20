@@ -15,6 +15,9 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.local.setExam = function(combo) {
 	self.location = '/autoscoredexams.do?examName=' + encodeURI(golgotha.form.getCombo(combo));
@@ -82,6 +85,5 @@ golgotha.local.setExam = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

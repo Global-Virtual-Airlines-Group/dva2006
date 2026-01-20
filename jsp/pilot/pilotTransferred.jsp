@@ -8,6 +8,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,6 +32,5 @@ To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

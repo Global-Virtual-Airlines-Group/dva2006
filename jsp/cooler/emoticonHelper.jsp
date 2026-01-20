@@ -11,6 +11,8 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:googleAnalytics />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <content:pics />
 <content:favicon />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />

@@ -19,7 +19,8 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics />
 <fmt:aptype var="useICAO" />
-<content:cspHeader />
+<content:newRelic>
+<content:cspHeader /></content:newRelic>
 <script nonce="${contentSecurity.nonce}">
 golgotha.ff = golgotha.ff || {};
 <fmt:jsarray var="golgotha.ff.famiy" items="${allFamily}" />
