@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8" session="false" trimDirectiveWhitespaces="true" buffer="32kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -79,6 +79,7 @@ td.requal-${lvl.name} {
  <td><a href="javascript:void golgotha.local.setSort(2)">${year}&nbsp;${pointUnit}</a></td>
 </tr>
 <c:forEach var="yt" items="${lvlTotals}">
+<c:set var="ro" value="${yt.rollover}" scope="page" />
 <c:set var="idx" value="${idx + 1}" scope="page" />
 <c:set var="pilot" value="${pilots[yt.ID]}" scope="page" />
 <c:set var="yd" value="${yt.delta(nl)}"  scope="page" />
@@ -94,9 +95,9 @@ td.requal-${lvl.name} {
  <td class="bld">${pilot.pilotCode}</td>
  <td class="sec bld">${pilot.rank.name}</td>
  <td class="pri bld">${pilot.equipmentType}</td>
- <td <c:if test="${((nl.legs > 0) && (yd.legs < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><el:cmd url="logbook" link="${pilot}" className="bld"><fmt:int value="${yt.legs}" /></el:cmd></td>
- <td <c:if test="${((nl.distance > 0) && (yd.distance < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int value="${yt.distance}" /></td>
- <td <c:if test="${(nl.points > 0) && (yd.points < 1)}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int className="sec" value="${yt.points}" /></td>
+ <td <c:if test="${((nl.legs > 0) && (yd.legs < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><el:cmd url="logbook" link="${pilot}" className="bld"><fmt:int value="${yt.legs - ro.legs}" /></el:cmd><c:if test="${ro.legs > 0}">&nbsp;<span class="small ita">(<fmt:int value="${ro.legs}" />)</span></c:if></td>
+ <td <c:if test="${((nl.distance > 0) && (yd.distance < 1))}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int value="${yt.distance - ro.distance}" /><c:if test="${ro.distance > 0}">&nbsp;<span class="small ita">(<fmt:int value="${ro.distance}" />)</span></c:if></td>
+ <td <c:if test="${(nl.points > 0) && (yd.points < 1)}"> class="requal-${lvl.name}" title="Requalifies for ${nl.name} status in ${year + 1}"</c:if>><fmt:int className="sec" value="${yt.points - ro.points}" /> <c:if test="${ro.points > 0}">&nbsp;<span class="small ita">(<fmt:int value="${ro.points}" />)</span></c:if></td>
 </tr>
 </c:forEach>
 </c:forEach>
