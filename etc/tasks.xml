@@ -49,7 +49,7 @@
 	</task>
 
 	<!-- Download PACOT Track data -->
-	<task id="pacot" enabled="true">
+	<task id="pacot" enabled="false">
 		<class>org.deltava.tasks.PACOTDownloadTask</class>
 		<time>
 			<min>0</min>
