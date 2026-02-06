@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 3.2
  */
 
@@ -52,6 +52,7 @@ public class AccomplishmentHistoryHelper {
 		private int _szLegs;
 		private int _tourLegs;
 		private int _onTimeLegs;
+		private int _autoAppLegs;
 		
 		private int _dspFlights;
 		private double _dspHours;
@@ -86,6 +87,7 @@ public class AccomplishmentHistoryHelper {
 			if (Attribute.isOnline(fr.getAttributes())) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.TOUR) != 0) _tourLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
+			if (fr.hasAttribute(Attribute.AUTOAPPROVE)) _autoAppLegs++;
 			incLeg(_eqLegs, fr.getEquipmentType());
 			incLeg(_daLegs, fr.getAirportD().getIATA());
 			incLeg(_aaLegs, fr.getAirportA().getIATA());
@@ -203,6 +205,10 @@ public class AccomplishmentHistoryHelper {
 			return _onTimeLegs;
 		}
 		
+		public int getAutoApproveLegs() {
+			return _autoAppLegs;
+		}
+		
 		public int getDispatchedFlights() {
 			return _dspFlights;
 		}
@@ -305,6 +311,7 @@ public class AccomplishmentHistoryHelper {
 			case TLEGS -> cnt.getTourLegs();
 			case OTLEGS -> cnt.getOnTimeLegs();
 			case EVENTS -> cnt.getEvents();
+			case AAPLEGS -> cnt.getAutoApproveLegs();
 			case AIRPORTS -> AccomplishmentFilter.filter(cnt.getAirports(), a).size();
 			case AIRPORTA -> AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
 			case AIRPORTD -> AccomplishmentFilter.filter(cnt.getDepartureAirports(), a).size();
