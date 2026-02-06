@@ -1,10 +1,10 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 /**
  * An enumeration to track Accomplishment units of measurement.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 6.3
  */
 
@@ -15,7 +15,7 @@ public enum AccomplishUnit implements org.deltava.beans.EnumDescription {
 	STATES("States Visited", true), MEMBERDAYS("Days since joining", Data.NONE, false), AIRLINES("Airlines"), 	DFLIGHTS("Flights Dispatched", Data.DISPATCH, false), 
 	DHOURS("Dispatch Hours", Data.DISPATCH, false), EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited", true), PAX("Passengers Carried"),
 	AIRPORTD("Departure Airport", true), AIRPORTA("Arrival Airport", true), PROMOLEGS("Promotion Legs"), ADLEGS("Departures from Airport", true), AALEGS("Arrivals at Airport", true),
-	DOMESTIC("Domestic Legs"), INTL("International Legs"), SCHENGEN("Schengen Zone Legs"), TLEGS("Tour Legs"), OTLEGS("On-Time Legs");
+	DOMESTIC("Domestic Legs"), INTL("International Legs"), SCHENGEN("Schengen Zone Legs"), TLEGS("Tour Legs"), OTLEGS("On-Time Legs"), AAPLEGS("Automatically Approved Legs");
 
 	/**
 	 * Accomplishment data source.
