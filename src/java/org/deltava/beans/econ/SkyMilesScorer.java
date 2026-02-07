@@ -1,4 +1,4 @@
-// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A flight scorer for Delta Virtual Airlines. This extends the default implementation by restricting flights to a maximum number of non-ACARS flights per month. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 11.0
  */
 
@@ -58,7 +58,7 @@ public class SkyMilesScorer extends EliteScorer {
 		// Calculate landing score bonus
 		if (pkg.getRunwayA() instanceof RunwayDistance ra) {
 			double ls = LandingScorer.score(ffr.getLandingVSpeed(), ra.getDistance());
-			LandingRating lr = LandingRating.rate((int)ls);
+			LandingRating lr = LandingRating.rate(ls);
 			addBonus(Math.max(125, Math.round(ffr.getDistance() * 0.15f)), "Acceptable Landing", (lr == LandingRating.ACCEPTABLE));
 			addBonus(Math.max(350, Math.round(ffr.getDistance() * 0.375f)), "Good Landing", (lr == LandingRating.GOOD));
 		}
