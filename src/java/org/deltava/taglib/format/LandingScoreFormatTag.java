@@ -1,4 +1,4 @@
-// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormatSymbols;
@@ -51,7 +51,7 @@ public class LandingScoreFormatTag extends NumberFormatTag {
     @Override
     public int doStartTag() {
     	if (_value == null) _value = Double.valueOf(-1);
-    	_rating = LandingRating.rate(_value.intValue());
+    	_rating = LandingRating.rate(_value.doubleValue());
     	setStyle(String.format("color:#%s", _rating.getHexColor()));
     	return SKIP_BODY;
     }

@@ -1,4 +1,4 @@
-// Copyright 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.*;
@@ -31,7 +31,7 @@ public enum LandingRating implements EnumDescription, RGBColor {
 	 * @param score the score
 	 * @return a LandingRating, or UNKNOWN
 	 */
-	public static LandingRating rate(int score) {
+	public static LandingRating rate(double score) {
 		for (int x = 0; x < values().length; x++) {
 			LandingRating lr = values()[x];
 			if (score < lr._maxScore)
