@@ -41,7 +41,7 @@ public class YearlyTrackService extends WebService {
 	
 	private record FlightLandingScore(int id, double score) {
 		public JSONArray toJSON() {
-			LandingRating lr = LandingRating.rate((int)score);
+			LandingRating lr = LandingRating.rate(score);
 			JSONArray ja = new JSONArray();
 			ja.put(id);
 			ja.put(score);
@@ -172,7 +172,7 @@ public class YearlyTrackService extends WebService {
 		eqCounts.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("eqCounts", ja));
 		
 		// Get landing ratings
-		List<Count<LandingRating>> ratingCount = CollectionUtils.count(landingScores.stream().map(fls -> LandingRating.rate((int)fls.score)).collect(Collectors.toList()), Function.identity());
+		List<Count<LandingRating>> ratingCount = CollectionUtils.count(landingScores.stream().map(fls -> LandingRating.rate(fls.score)).collect(Collectors.toList()), Function.identity());
 		ratingCount.sort(Count.labelComparator(LandingRating.class).reversed());
 		ratingCount.stream().map(JSONUtils::format).forEach(ja -> jo.accumulate("lsCounts", ja));
 				
