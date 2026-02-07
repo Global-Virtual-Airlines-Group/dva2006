@@ -29,6 +29,11 @@ public class FlightScorer {
 	 * Does the actual landing scoring.
 	 */
 	private static Tuple<FlightScore, String> score(int fpm, RunwayLengthUsage rl) {
+		double score = LandingScorer.score(fpm, rl.getDistance());
+		LandingRating lr = LandingRating.rate(score);
+		if (lr == LandingRating.GOOD)
+			return Tuple.create(FlightScore.OPTIMAL, null);
+		
 		int rwyPercent = (rl.getDistance() * 100 / rl.getLength());
 		if (fpm < -600)
 			return Tuple.create(FlightScore.DANGEROUS, String.format("Excessive sink rate - %d feet/min", Integer.valueOf(fpm)));
