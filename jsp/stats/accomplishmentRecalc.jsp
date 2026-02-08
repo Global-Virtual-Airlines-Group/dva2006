@@ -39,8 +39,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <c:if test="${!doAward}">
 <tr>
- <td colspan="2" class="left">This page can be used to determine which <content:airline /> Pilots are eligible to be awarded
- an Accomplishment. This should be run when an Accomplishment is changed, or a new Accomplishment created to determine which
+ <td colspan="2" class="left">This page can be used to determine which <content:airline /> Pilots are eligible to be awarded an Accomplishment. This should be run when an Accomplishment is changed, or a new Accomplishment created to determine which
  Pilots are eligible. Otherwise, eligbility will only be calculated on Flight Report approval.</td>
 </tr>
 </c:if>
@@ -61,7 +60,7 @@ golgotha.local.validate = function(f) {
  <td class="data">The following <content:airline /> Pilots have been awarded the Accomplishment:<br>
 <br>
 <c:forEach var="pilot" items="${pilots}" varStatus="pStatus">
-${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br></c:if></c:forEach></td>
+${pilot.rank.name}&nbsp;<el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br></c:if></c:forEach></td>
 </tr>
 </c:otherwise>
 </c:choose>

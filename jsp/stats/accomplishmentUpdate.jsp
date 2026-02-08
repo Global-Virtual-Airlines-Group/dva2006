@@ -28,8 +28,7 @@
 <c:when test="${isNew}">
 <div class="updateHdr">New <content:airline /> Pilot Accomplishment Saved</div>
 <br>
-The <content:airline /> Pilot Accomplishment <fmt:accomplish className="bld" accomplish="${ap}" /> has been saved
-in the database. This Accomplishment has <span class="bld">NOT</span> been awarded to any <content:airline /> Pilots.<br>
+The <content:airline /> Pilot Accomplishment <fmt:accomplish className="bld" accomplish="${ap}" /> has been saved in the database. This Accomplishment has <span class="bld">NOT</span> been awarded to any <content:airline /> Pilots.<br>
 </c:when>
 <c:otherwise>
 <div class="updateHdr"><content:airline /> Pilot Accomplishment Updated</div>
