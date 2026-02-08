@@ -16,7 +16,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common";
 	private Connection _c;
 
-	private static final String XML_PATH = "E:\\temp\\rwy";
+	private static final String XML_PATH = "C:\\temp";
 
 	private static final Simulator SIM = Simulator.P3Dv4;
 	
@@ -59,7 +59,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 	public void testLoadXML() throws Exception {
 		// assertTrue(false);
 
-		File rt = new File(XML_PATH, SIM.name());
+		File rt = new File(XML_PATH);
 		assertTrue(rt.isDirectory());
 
 		// Load ICAO codes
@@ -83,8 +83,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		
 		// Load existing gates
 		List<Gate> allGates = new ArrayList<Gate>();
-		try (PreparedStatement ps = _c.prepareStatement("SELECT ICAO, NAME, LATITUDE, LONGITUDE, HDG FROM common.GATES WHERE (SIMVERSION=?) ORDER BY ICAO, NAME")) {
-			ps.setInt(1, SIM.getCode());
+		try (PreparedStatement ps = _c.prepareStatement("SELECT ICAO, NAME, LATITUDE, LONGITUDE, HDG FROM common.GATES ORDER BY ICAO, NAME")) {
 			ps.setFetchSize(1000);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -102,7 +101,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		assertTrue(f.isFile());
 
 		// Init the prepared statement
-		try (PreparedStatement ps = _c.prepareStatement("INSERT INTO gate.NEWGATES (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, OLDNAME) VALUES (?, ?, ?, ?, ?, ?, ?) AS G ON DUPLICATE KEY UPDATE LATITUDE=G.LATITUDE, LONGITUDE=G.LONGITUDE, HDG=G.HDG, OLDNAME=G.OLDNAME")) {
+		try (PreparedStatement ps = _c.prepareStatement("INSERT INTO gate.NEWGATES (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, OLDNAME, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?)) AS G ON DUPLICATE KEY UPDATE LATITUDE=G.LATITUDE, LONGITUDE=G.LONGITUDE, HDG=G.HDG, OLDNAME=G.OLDNAME, LL=G.LL")) {
 
 			// Load the CSV
 			String lastAP = null; boolean hasData = false; List<Gate> airportGates = new ArrayList<Gate>();
@@ -118,7 +117,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 
 					if (!apCode.equals(lastAP)) {
 						if (hasData) ps.executeBatch();
-						log.info("Processing " + apCode + " at Line " + lr.getLineNumber());
+						log.info("Processing {} at Line {}", apCode, Integer.valueOf(lr.getLineNumber()));
 						ps.setString(1, apCode);
 						ps.setInt(3, SIM.getCode());
 						lastAP = apCode;
@@ -139,7 +138,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 						String gateNumber = tkns.get(2);
 						Gate g = new DebugGate(Double.parseDouble(tkns.get(3)), Double.parseDouble(tkns.get(4)));
 						g.setCode(apCode);
-						g.setName(gateName + " " + gateNumber);
+						g.setName(String.format("%s %s", gateName.trim(), gateNumber));
 						g.setHeading(Math.round(Float.parseFloat(tkns.get(6))));
 						
 						// Find the closest gate
@@ -154,14 +153,17 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 						}
 						
 						// Save the entry
+						String ll = String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(g.getLatitude()), Double.valueOf(g.getLongitude()));
 						ps.setString(2, g.getName());
 						ps.setDouble(4, g.getLatitude());
 						ps.setDouble(5, g.getLongitude());
 						ps.setInt(6, g.getHeading());
+						ps.setString(8, ll);
+						ps.setInt(9, 4326);
 						ps.addBatch();
 						hasData = true;
 					} catch (Exception e) {
-						log.warn(e.getMessage() + " at Line " + lr.getLineNumber());
+						log.warn("{} at Line {}", e.getMessage(), Integer.valueOf(lr.getLineNumber()));
 					}
 						
 					data = lr.readLine();
