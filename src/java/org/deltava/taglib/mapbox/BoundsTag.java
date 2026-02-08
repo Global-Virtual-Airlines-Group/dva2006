@@ -1,4 +1,4 @@
-// Copyright 2015, 2017, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.mapbox;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to create a MapBox LatLngBounds object.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 6.3
  */
 
@@ -37,13 +37,18 @@ public class BoundsTag extends MapEntryTag {
 	@Override
 	public int doEndTag() throws JspException {
 		Tuple<GeoLocation, GeoLocation> bnds = GeoUtils.getBoundingBox(_pts);
+		
+		// Normalize if we cross the IDL		
+		List<GeoLocation> pts = new ArrayList<GeoLocation>(List.of(bnds.getLeft(), bnds.getRight()));
+		GeoUtils.translate(pts);
+		
 		try {
 			JspWriter out = pageContext.getOut();
 			writeVariableName();
 			out.print('[');
-			out.print(JSONUtils.toLL(bnds.getRight()));
+			out.print(JSONUtils.toLL(pts.getLast()));
 			out.print(',');
-			out.print(JSONUtils.toLL(bnds.getLeft()));
+			out.print(JSONUtils.toLL(pts.getFirst()));
 			out.print("];");
 		} catch (Exception e) {
 			throw new JspException(e);
