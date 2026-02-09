@@ -1,5 +1,8 @@
-// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 import java.io.*;
 import java.util.*;
@@ -26,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate Flight statistics. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 11.1
  */
 
@@ -72,10 +75,11 @@ public class FlightAggregateTask extends Task {
 				
 				// Do post-approval activities
 				ctx.startTX();
+				Pilot p = pdao.get(fr.getAuthorID());
 				Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 				if (ap.isPending(ApprovalOperation.COMPLETION) && (fr.getStatus() == FlightStatus.OK)) {
 					IntervalTaskTimer tt = new IntervalTaskTimer();
-					Pilot p = pdao.get(fr.getAuthorID());
+					log.info("Processing Flight Report {} for {}", Integer.valueOf(fr.getID()), p.getName());
 							
 					// Load Pilot logbook
 					CacheableCollection<FlightReport> pireps = _cache.get(p.cacheKey());
@@ -91,7 +95,8 @@ public class FlightAggregateTask extends Task {
 					// Populate helper
 					AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 					pireps.forEach(acchelper::add);
-					tt.mark("flights");
+					long ms = MILLISECONDS.convert(tt.mark("flights"), NANOSECONDS);
+					log.info("Loaded {} previous Flight Reports in {}ms", Integer.valueOf(pireps.size()), Long.valueOf(ms));
 
 					// Load accomplishments - only save the ones we haven't obtained yet
 					GetAccomplishment accdao = new GetAccomplishment(con);
@@ -108,7 +113,8 @@ public class FlightAggregateTask extends Task {
 						if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
 							StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RECOGNITION);
 							upd.setAuthorID(ctx.getUser().getID());
-							upd.setDescription("Joined " + a.getName());
+							upd.setDescription(String.format("Joined %s", a.getName()));
+							log.info("{} joined {}", p.getName(), a.getName());
 							if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
 								upd.setDate(acchelper.achieved(a));
 							
@@ -135,6 +141,7 @@ public class FlightAggregateTask extends Task {
 							fr.setDatabaseID(DatabaseID.TOUR, 0);
 							tfh.getMessages().forEach(msg -> fr.addStatusUpdate(0, HistoryType.SYSTEM, msg));
 						} else {
+							log.info("{} completed Leg {} in Tour {}", p.getName(), Integer.valueOf(idx), t.getName());
 							tfh.addFlights(List.of(fr));
 							if (tfh.isComplete(t)) {
 								fr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Tour %s completed", t.getName()));
@@ -142,6 +149,7 @@ public class FlightAggregateTask extends Task {
 								upd.setAuthorID(ctx.getUser().getID());
 								upd.setDescription(String.format("Tour %s completed (%d legs)", t.getName(), Integer.valueOf(idx)));
 								upds.add(upd);
+								log.info("{} completed Tour {} ({} legs)", p.getName(), t.getName(), Integer.valueOf(idx));
 							}
 						}
 					}
@@ -158,9 +166,11 @@ public class FlightAggregateTask extends Task {
 						if (assign.isComplete()) {
 							fawdao.complete(assign, false);
 							fr.addStatusUpdate(0, HistoryType.LIFECYCLE, String.format("Flight Assignment Completed (%d legs)", Integer.valueOf(assign.size())));
+							log.info("{} completed Assignment {} ({} legs)", p.getName(), Integer.valueOf(assign.getID()), Integer.valueOf(assign.size()));
 						}
 					}
 					
+					// Archive position reports
 					int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
 					GetACARSPositions posdao = new GetACARSPositions(con);
 					SetACARSArchive acdao = new SetACARSArchive(con);
@@ -168,6 +178,7 @@ public class FlightAggregateTask extends Task {
 						SequencedCollection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
 						acdao.archive(acarsID, entries);
 						fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d ACARS position updates", Integer.valueOf(entries.size())));
+						log.info("Archived {} position reports for Flight Report {} (ACARS ID {})", Integer.valueOf(entries.size()), Integer.valueOf(fr.getID()), Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)));
 					} else if (fr instanceof XACARSFlightReport) {
 						SequencedCollection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
 						acdao.archive(acarsID, entries);
@@ -182,6 +193,7 @@ public class FlightAggregateTask extends Task {
 							SetSerializedOnline owdao = new SetSerializedOnline(os);
 							owdao.archive(fr.getID(), onlineEntries);
 							fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d %s position updates", Integer.valueOf(onlineEntries.size()), fr.getNetwork()));
+							log.info("Archived {} {} position updates for Flight Report {}", Integer.valueOf(onlineEntries.size()), fr.getNetwork(), Integer.valueOf(fr.getID()));
 						} catch (IOException ie) {
 							throw new DAOException(ie);
 						}
@@ -207,6 +219,7 @@ public class FlightAggregateTask extends Task {
 								SetSerializedRoute rtw = new SetSerializedRoute(os);
 								rtw.archive(arcRt);
 								fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d route points", Integer.valueOf(arcRt.getSize())));
+								log.info("Archived {} route points for Flight Report {}", Integer.valueOf(arcRt.getSize()), Integer.valueOf(fr.getID()));
 							} catch (IOException ie) {
 								log.atWarn().withThrowable(ie).log("Error writing serialized route data");
 							}
@@ -222,7 +235,6 @@ public class FlightAggregateTask extends Task {
 					stwdao.update(fr);
 					qwdao.complete(ap.getID(), ApprovalOperation.STATS);
 					fr.addStatusUpdate(0, HistoryType.LIFECYCLE, "Updated Flight Statistics Totals");
-				
 					long ms = tt.stop();
 					log.log((ms > 4500) ? Level.WARN : Level.INFO, "Aggregates for Flight Report {} completed in {}ms", Integer.valueOf(ap.getID()), Long.valueOf(ms));
 				}
