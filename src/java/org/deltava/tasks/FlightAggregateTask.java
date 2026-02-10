@@ -133,7 +133,7 @@ public class FlightAggregateTask extends Task {
 						GetTour trdao = new GetTour(con);
 						Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
 						TourFlightHelper tfh = new TourFlightHelper(fr, false);
-						tfh.addFlights(pireps); // TODO I suspect this includes the already completed Tour leg
+						tfh.addFlights(pireps.stream().filter(pirep -> pirep.getID() != ap.getID()).collect(Collectors.toList()));
 						tt.mark("tours");
 						
 						int idx = tfh.isLeg(t);
@@ -174,14 +174,15 @@ public class FlightAggregateTask extends Task {
 					GetACARSData fidao = new GetACARSData(con);
 					int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
 					FlightInfo fi = ((fr instanceof FDRFlightReport) && (acarsID != 0)) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
+					boolean doArchive = (fi != null) && !fi.getArchived();
 					GetACARSPositions posdao = new GetACARSPositions(con);
 					SetACARSArchive acdao = new SetACARSArchive(con);
-					if ((fr instanceof ACARSFlightReport) && (fi != null) && !fi.getArchived()) {
+					if ((fr instanceof ACARSFlightReport) && doArchive) {
 						SequencedCollection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
 						acdao.archive(acarsID, entries);
 						fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d ACARS position updates", Integer.valueOf(entries.size())));
 						log.info("Archived {} position reports for Flight Report {} (ACARS ID {})", Integer.valueOf(entries.size()), Integer.valueOf(fr.getID()), Integer.valueOf(fr.getDatabaseID(DatabaseID.ACARS)));
-					} else if (fr instanceof XACARSFlightReport) {
+					} else if ((fr instanceof XACARSFlightReport) && doArchive) {
 						SequencedCollection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
 						acdao.archive(acarsID, entries);
 						fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d XACARS position updates", Integer.valueOf(entries.size())));
