@@ -133,7 +133,7 @@ public class FlightAggregateTask extends Task {
 						GetTour trdao = new GetTour(con);
 						Tour t = trdao.get(fr.getDatabaseID(DatabaseID.TOUR), ctx.getDB());
 						TourFlightHelper tfh = new TourFlightHelper(fr, false);
-						tfh.addFlights(pireps);
+						tfh.addFlights(pireps); // TODO I suspect this includes the already completed Tour leg
 						tt.mark("tours");
 						
 						int idx = tfh.isLeg(t);
@@ -171,10 +171,12 @@ public class FlightAggregateTask extends Task {
 					}
 					
 					// Archive position reports
+					GetACARSData fidao = new GetACARSData(con);
 					int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
+					FlightInfo fi = ((fr instanceof FDRFlightReport) && (acarsID != 0)) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
 					GetACARSPositions posdao = new GetACARSPositions(con);
 					SetACARSArchive acdao = new SetACARSArchive(con);
-					if (fr instanceof ACARSFlightReport) {
+					if ((fr instanceof ACARSFlightReport) && (fi != null) && !fi.getArchived()) {
 						SequencedCollection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
 						acdao.archive(acarsID, entries);
 						fr.addStatusUpdate(0, HistoryType.SYSTEM, String.format("Archived %d ACARS position updates", Integer.valueOf(entries.size())));
@@ -205,10 +207,8 @@ public class FlightAggregateTask extends Task {
 					// Write the route data
 					boolean hasRoute = ArchiveHelper.getRoute(fr.getID()).exists();
 					if (!hasRoute) {
-						GetACARSData fidao = new GetACARSData(con);
 						GetNavRoute navdao = new GetNavRoute(con);
 						GetMetadata mddao = new GetMetadata(con);
-						FlightInfo fi = (fr instanceof FDRFlightReport) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
 						RouteBuilder rb = new RouteBuilder(fr, (fi == null) ? fr.getRoute() : fi.getRoute());
 						navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(rb::add);
 						if (rb.hasData()) {
