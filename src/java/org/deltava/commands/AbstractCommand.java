@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018, 2020, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -24,11 +24,6 @@ public abstract class AbstractCommand implements Command {
 	private String _name;
 	private final Collection<String> _roles = new HashSet<String>();
 
-	/**
-	 * Initializes this command.
-	 * @param cmdName the name of the command
-	 * @throws IllegalStateException if the command has already been initialized
-	 */
 	@Override
 	public void init(String id, String cmdName) {
 		if (_name != null)
@@ -60,8 +55,29 @@ public abstract class AbstractCommand implements Command {
 	 * @param msg the exception message
 	 * @return a CommandException
 	 */
+	@Deprecated
 	protected static CommandException notFoundException(String msg) {
 		return new CommandException(msg, false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); }};
+	}
+	
+	/**
+	 * Helper method to generate an &quot;item not found&quot; exception for a given database ID.
+	 * @param msg the exception message
+	 * @param id the database ID
+	 * @return a CommandException
+	 */
+	protected static CommandException notFoundException(String msg, int id) {
+		return new CommandException(String.format("%s - %d", msg, Integer.valueOf(id)), false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); setWarning(id == 0); }};
+	}
+	
+	/**
+	 * Helper method to generate an &quot;item not found&quot; exception for a given ID.
+	 * @param msg the exception message
+	 * @param id the ID
+	 * @return a CommandException
+	 */
+	protected static CommandException notFoundException(String msg, Object id) {
+		return new CommandException(String.format("%s - %d", msg, id), false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); }};
 	}
 
 	@Override
