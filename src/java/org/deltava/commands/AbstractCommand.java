@@ -49,16 +49,6 @@ public abstract class AbstractCommand implements Command {
 	protected static CommandException forgottenException() {
 		return new CommandException("Blocked for Legal Reasons", false) {{ setWarning(true); setStatusCode(451); }};
 	}
-
-	/**
-	 * Helper method to generate an &quot;item not found&quot; exception.
-	 * @param msg the exception message
-	 * @return a CommandException
-	 */
-	@Deprecated
-	protected static CommandException notFoundException(String msg) {
-		return new CommandException(msg, false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); }};
-	}
 	
 	/**
 	 * Helper method to generate an &quot;item not found&quot; exception for a given database ID.
