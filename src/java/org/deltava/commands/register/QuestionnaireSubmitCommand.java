@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command for submitting Applicant Questionnaires.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
 			GetQuestionnaire rdao = new GetQuestionnaire(con);
 			Examination ex = rdao.get(ctx.getID());
 			if (ex == null)
-				throw notFoundException("Invalid Questionnaire - " + ctx.getID());
+				throw notFoundException("Invalid Questionnaire", ctx.getID());
 
 			// Check our access level
 			QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);

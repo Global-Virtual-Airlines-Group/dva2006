@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to balance signups between routes.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.3
  */
 
@@ -41,7 +41,7 @@ public class EventBalanceCommand extends AbstractCommand {
 			GetEvent edao = new GetEvent(con);
 			Event e =  edao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Check out access
 			EventAccessControl ac = new EventAccessControl(ctx, e);
@@ -71,7 +71,7 @@ public class EventBalanceCommand extends AbstractCommand {
 			// Get the route to assign to
 			Route r = e.getRoute(StringUtils.parse(ctx.getParameter("routeID"), 0));
 			if (r == null)
-				throw notFoundException("Invalid Route ID - " + ctx.getParameter("routeID"));
+				throw notFoundException("Invalid Route", ctx.getParameter("routeID"));
 			
 			// Start transaction
 			ctx.startTX();

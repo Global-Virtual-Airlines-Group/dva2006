@@ -1,4 +1,4 @@
-// Copyright 2007, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to update Water Cooler discussion thread titles.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -32,13 +32,13 @@ public class ThreadSubjectEditCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 			
 			// Get the Cooler Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + mt.getChannel());
+				throw notFoundException("Invalid Channel", mt.getChannel());
 			
 			// Validate our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

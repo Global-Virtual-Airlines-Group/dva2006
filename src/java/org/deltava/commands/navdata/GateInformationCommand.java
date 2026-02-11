@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display and update Gate metadata. 
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 10.2
  */
 
@@ -33,9 +33,9 @@ public class GateInformationCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airport
-		Airport a = SystemData.getAirport((String) ctx.getCmdParameter(ID, null));
+		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
-			throw notFoundException("Unknown Airport - " + ctx.getCmdParameter(ID, null));
+			throw notFoundException("Unknown Airport", ctx.getParameter("id"));
 
 		// Get runway data and build bounding box
 		try {

@@ -1,4 +1,4 @@
-// Copyright 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to enable Proficiency Check Rides for a Pilot.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 8.0
  */
 
@@ -45,12 +45,12 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(userID);
 			if (p == null)
-				throw notFoundException("Unknown Pilot - " + userID);
-			else if (p.getProficiencyCheckRides())
+				throw notFoundException("Unknown Pilot", userID);
+			if (p.getProficiencyCheckRides())
 				throw new CommandException("Proficiency check rides already enabled");
-			else if (!SystemData.getBoolean("testing.currency.enabled"))
+			if (!SystemData.getBoolean("testing.currency.enabled"))
 				throw new CommandException("Proficiency check rides not enabled for Airline");
-			else if (!SystemData.getBoolean("testing.currency.selfenroll") && !ctx.isUserInRole("HR") && !ctx.isUserInRole("Operations"))
+			if (!SystemData.getBoolean("testing.currency.selfenroll") && !ctx.isUserInRole("HR") && !ctx.isUserInRole("Operations"))
 				throw new CommandException("Self-enrollment in Proficiency check rides not enabled");
 			
 			// Load exam history

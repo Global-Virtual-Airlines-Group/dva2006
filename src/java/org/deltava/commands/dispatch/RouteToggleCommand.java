@@ -1,4 +1,4 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to enable or disable an ACARS Dispatch route.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.4
  */
 
@@ -33,7 +33,7 @@ public class RouteToggleCommand extends AbstractCommand {
 			GetACARSRoute dao = new GetACARSRoute(con);
 			DispatchRoute rt = dao.getRoute(ctx.getID());
 			if (rt == null)
-				throw notFoundException("Invalid Dispatch Route - " + ctx.getID());
+				throw notFoundException("Invalid Dispatch Route", ctx.getID());
 			
 			// Check our access
 			DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rt);

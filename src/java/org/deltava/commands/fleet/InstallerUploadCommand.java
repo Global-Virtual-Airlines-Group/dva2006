@@ -1,4 +1,4 @@
-// Copyright 2017, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to upload ACARS installers.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 7.5
  */
 
@@ -44,7 +44,7 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		if (f.exists())
 			fName = f.getName();
 		if (fName == null)
-			throw notFoundException("No Installer Uploaded");
+			throw new CommandException("No Installer Uploaded", false);
 		
 		try {
 			Connection con = ctx.getConnection();

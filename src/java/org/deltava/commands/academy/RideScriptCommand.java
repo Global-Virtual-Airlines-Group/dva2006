@@ -1,4 +1,4 @@
-// Copyright 2010, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2017, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to handle Flight Academy Check Ride scripts.
  * @author Luke
- * @version 8.6
+ * @version 12.4
  * @since 3.4
  */
 
@@ -41,13 +41,13 @@ public class RideScriptCommand extends AbstractAuditFormCommand {
 			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
 			Certification c = acdao.get(certID);
 			if (c == null)
-				throw notFoundException("Unknown Certification - " + certID);
+				throw notFoundException("Unknown Certification", certID);
 			
 			// Get the script
 			AcademyRideID rideID = isNew ? new AcademyRideID(c.getName() + "-" + ctx.getParameter("seq")) : new AcademyRideID(id);
 			AcademyRideScript sc = acdao.getScript(rideID); AcademyRideScript oldSC = BeanUtils.clone(sc);
 			if (!isNew && (sc == null))
-				throw notFoundException("Academy Check Ride script not found - " + rideID);
+				throw notFoundException("Invalid Academy Check Ride Script", rideID);
 
 			// Check our access
 			AcademyRideScriptAccessControl ac = new AcademyRideScriptAccessControl(ctx, sc);
@@ -110,7 +110,7 @@ public class RideScriptCommand extends AbstractAuditFormCommand {
 			if (!isNew) {
 				sc = acdao.getScript(new AcademyRideID(id));
 				if (sc == null)
-					throw notFoundException("Academy Check Ride script not found - " + id);
+					throw notFoundException("Invalid Academy Check Ride Script", id);
 				
 				readAuditLog(ctx, sc);
 			}

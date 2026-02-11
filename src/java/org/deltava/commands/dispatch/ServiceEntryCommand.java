@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle ACARS Dispatcher schedule entries.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.2
  */
 
@@ -40,7 +40,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 				GetDispatchCalendar dao = new GetDispatchCalendar(con);
 				dse = dao.get(ctx.getID());
 				if (dse == null)
-					throw notFoundException("Invalid Dispatch Schedule entry - " + ctx.getID());
+					throw notFoundException("Invalid Dispatch Schedule Entry", ctx.getID());
 				
 				// Get the user's local time zone
 				TZInfo tz = ctx.getUser().getTZ();
@@ -105,7 +105,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 				GetDispatchCalendar dao = new GetDispatchCalendar(con);
 				dse = dao.get(ctx.getID());
 				if (dse == null)
-					throw notFoundException("Unknown Dispatch Schedule entry - " + ctx.getID());
+					throw notFoundException("Invalid Dispatch Schedule Entry", ctx.getID());
 			}
 			
 			// Update common parameters

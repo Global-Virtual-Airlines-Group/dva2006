@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 6.3
  */
 
@@ -43,7 +43,7 @@ public class AirportInformationCommand extends AbstractCommand {
 		// Get the airport
 		Airport a = SystemData.getAirport((String) ctx.getCmdParameter(ID, null));
 		if (a == null)
-			throw notFoundException("Unknown Airport - " + ctx.getCmdParameter(ID, null));
+			throw notFoundException("Unknown Airport", ctx.getCmdParameter(ID, null));
 		
 		try {
 			Connection con = ctx.getConnection();

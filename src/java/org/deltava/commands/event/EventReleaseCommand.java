@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to release an Online Event Signup.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -47,12 +47,12 @@ public class EventReleaseCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Get the Signup for the Pilot
 			Signup s = e.getSignup(pilotID);
 			if (s == null)
-				throw notFoundException("Pilot " + pilotID + " not signed up for Online Event - " + ctx.getID());
+				throw notFoundException(String.format("Pilot %d not signed up for Online Event", Integer.valueOf(pilotID)), ctx.getID());
 			
 			// Get the access controller
 			SignupAccessControl access = new SignupAccessControl(ctx, e, s);

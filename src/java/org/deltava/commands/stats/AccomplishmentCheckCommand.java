@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2017, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 3.2
  */
 
@@ -42,7 +42,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Check our access
 			PilotAccessControl access = new PilotAccessControl(ctx, p);

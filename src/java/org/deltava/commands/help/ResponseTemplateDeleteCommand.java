@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to delete a Help Desk response template.
  * @author Luke
- * @version 3.2
+ * @version 12.4
  * @since 3.2
  */
 
@@ -40,7 +40,7 @@ public class ResponseTemplateDeleteCommand extends AbstractCommand {
 			GetHelpTemplate dao = new GetHelpTemplate(con);
 			ResponseTemplate rsp = dao.get(ctx.getParameter("id"));
 			if (rsp == null)
-				throw notFoundException("Cannot find response template - " + ctx.getParameter("id"));
+				throw notFoundException("Invalid Response template", ctx.getParameter("id"));
 			
 			// Delete the template
 			SetHelp wdao = new SetHelp(con);

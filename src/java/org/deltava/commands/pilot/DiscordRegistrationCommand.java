@@ -1,4 +1,4 @@
-// Copyright 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to associate Pilots with a Discord user ID.
  * @author Luke
- * @version 10.5
+ * @version 12.4
  * @since 10.4
  */
 
@@ -27,7 +27,7 @@ public class DiscordRegistrationCommand extends AbstractCommand {
 		
 		String uuid = ctx.getParameter("id");
 		if (StringUtils.isEmpty(uuid))
-			throw notFoundException("No UUID present");
+			throw new CommandException("No UUID present", false);
 
 		// Check our access - if we cannot get in, go directly to login page
 		CommandResult result = ctx.getResult();

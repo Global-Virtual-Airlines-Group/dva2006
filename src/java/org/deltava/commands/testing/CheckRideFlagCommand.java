@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,9 +37,9 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			else if (!(fr instanceof FDRFlightReport))
-				throw notFoundException("Flight Report does not use ACARS/XACARS");
+				throw new CommandException("Flight Report does not use ACARS/XACARS", false);
 			
 			// Look for a transfer request or an academy course
 			int crID = 0; int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
@@ -95,7 +95,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 				if (crs == null) {
 					Collection<String> eqTypes = eqdao.getPrimaryTypes(ctx.getDB(), fr.getEquipmentType());
 					if (eqTypes.isEmpty())
-						throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
+						throw notFoundException("No Equipment Type", fr.getEquipmentType());
 				
 					// Set the equipment type
 					cr.setEquipmentType(eqTypes.iterator().next());

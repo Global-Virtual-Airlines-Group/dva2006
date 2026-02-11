@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 2.0
  */
 
@@ -66,7 +66,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		// Get the navaid type
 		int routeType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if (routeType == -1)
-			throw notFoundException("Unknown Data File - " + navData.getName());
+			throw notFoundException("Unknown Data File", navData.getName());
 
 		List<String> errors = new ArrayList<String>();
 		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType]; CycleInfo newCycle = null;

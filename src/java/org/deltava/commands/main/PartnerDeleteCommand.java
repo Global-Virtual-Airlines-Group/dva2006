@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.PartnerAccessControl;
 /**
  * A Web Site Command to delete virtual airline Partner information from the database.
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 10.3
  */
 
@@ -33,7 +33,7 @@ public class PartnerDeleteCommand extends AbstractCommand {
 			GetPartner pdao = new GetPartner(con);
 			PartnerInfo p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Partner - " + ctx.getID());
+				throw notFoundException("Invalid Partner", ctx.getID());
 			
 			// Check our access
 			PartnerAccessControl ac = new PartnerAccessControl(ctx, p);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to edit System News entries.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public void execute(CommandContext ctx) throws CommandException {
          GetNews dao = new GetNews(con);
          News nws = dao.getNews(ctx.getID());
          if (nws == null)
-            throw notFoundException("Invalid System News entry - " + ctx.getID());
+            throw notFoundException("Invalid System News", ctx.getID());
          
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, nws);

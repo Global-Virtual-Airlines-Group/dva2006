@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2016, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to save Status History commands for a Pilot.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class StatusCommentCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			usr = pdao.get(ctx.getID());
 			if (usr == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Check our access
 			PilotAccessControl access = new PilotAccessControl(ctx, usr);

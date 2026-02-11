@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		// Get the navaid type
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if ((navaidType == -1) || (navaidType >= Navaid.values().length))
-			throw notFoundException("Unknown Data File - " + navData.getName());
+			throw notFoundException("Unknown Data File", navData.getName());
 		
 		Navaid nt = Navaid.values()[navaidType]; boolean updateVersion = Boolean.parseBoolean(ctx.getParameter("updateVersion"));
 		List<String> errors = new ArrayList<String>(); 

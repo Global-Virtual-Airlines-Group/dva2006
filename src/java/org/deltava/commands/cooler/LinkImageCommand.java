@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2015, 2017, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2017, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -60,13 +60,13 @@ public class LinkImageCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Unknown Message Thread - " + ctx.getID());
+				throw notFoundException("Unknown Message Thread", ctx.getID());
 			
 			// Get the Channel
 			GetCoolerChannels chdao = new GetCoolerChannels(con);
 			Channel ch = chdao.get(mt.getChannel());
 			if (ch == null)
-				throw notFoundException("Unknown Channel - " + mt.getChannel());
+				throw notFoundException("Unknown Channel", mt.getChannel());
 			
 			// Validate our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019, 2020, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			if (!isNew) {
 				entry = dao.get(src, srcLine);
 				if (entry == null)
-					throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
+					throw notFoundException("Invalid Schedule Entry", String.format("%s Line %d", src.getDescription(), Integer.valueOf(srcLine)));
 			} else {
 				Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 				int fNumber = StringUtils.parse(ctx.getParameter("flightNumber"), 1);
@@ -82,7 +82,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(entry.getEquipmentType());
 			if (a == null)
-				throw notFoundException("Invalid equipment - " + entry.getEquipmentType());
+				throw notFoundException("Invalid Equipment Type", entry.getEquipmentType());
 
 			// Update the entry
 			entry.setHistoric(a.getHistoric() || Boolean.parseBoolean(ctx.getParameter("isHistoric")));
@@ -145,7 +145,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				GetRawSchedule dao = new GetRawSchedule(con);
 				ScheduleEntry entry = dao.get(src, srcLine);
 				if (entry == null)
-					throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
+					throw notFoundException("Invalid Schedule Entry", String.format("%s Line %d", src.getDescription(), Integer.valueOf(srcLine)));
 
 				ctx.setAttribute("entry", entry, REQUEST);
 				ctx.setAttribute("airportsD", Collections.singletonList(entry.getAirportD()), REQUEST);

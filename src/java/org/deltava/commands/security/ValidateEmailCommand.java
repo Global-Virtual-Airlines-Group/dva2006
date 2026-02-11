@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2014, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2014, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to validate e-mail addresses.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			p = dao.get(ctx.getUser().getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot - " + ctx.getUser().getID());
+				throw notFoundException("Invalid Pilot", ctx.getUser().getID());
 			
 			// Save the pilot in the request
 			ctx.setAttribute("person", p, REQUEST);

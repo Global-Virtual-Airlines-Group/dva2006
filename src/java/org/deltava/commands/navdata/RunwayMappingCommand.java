@@ -1,4 +1,4 @@
-// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update runway mappings.
  * @author Luke
- * @version 8.5
+ * @version 12.4
  * @since 8.3
  */
 
@@ -78,9 +78,9 @@ public class RunwayMappingCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Get the airport
-		Airport a = SystemData.getAirport((String) ctx.getCmdParameter(ID, null));
+		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
-			throw notFoundException("Invalid Airport - " + ctx.getParameter("airport"));
+			throw notFoundException("Invalid Airport", ctx.getParameter("id"));
 		
 		try {
 			Connection con = ctx.getConnection();

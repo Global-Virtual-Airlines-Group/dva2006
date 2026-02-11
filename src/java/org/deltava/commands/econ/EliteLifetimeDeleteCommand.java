@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to delete lifetime Elite status levels.
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 11.5
  */
 
@@ -29,7 +29,7 @@ public class EliteLifetimeDeleteCommand extends AbstractCommand {
 			GetElite edao = new GetElite(con);
 			EliteLifetime el = edao.getLifetime(ctx.getParameter("id"), ctx.getDB());
 			if (el == null)
-				throw notFoundException("Invalid lifetime ELite level - " + ctx.getParameter("id"));
+				throw notFoundException("Invalid lifetime ELite level", ctx.getParameter("id"));
 			
 			// Delete the level
 			SetElite ewdao = new SetElite(con);

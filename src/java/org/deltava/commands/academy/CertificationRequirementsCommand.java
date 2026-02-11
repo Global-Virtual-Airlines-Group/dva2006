@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Flight Academy Certification requirements.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
 			Certification cert = dao.get(name);
 			if (cert == null)
-				throw notFoundException("Unknown Certification - " + name);
+				throw notFoundException("Unknown Certification", name);
 			
 			// Check our access
 			CertificationAccessControl access = new CertificationAccessControl(ctx);
@@ -111,7 +111,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
 			Certification cert = dao.get(name);
 			if (cert == null)
-				throw notFoundException("Unknown Certification - " + name);
+				throw notFoundException("Unknown Certification", name);
 			
 			// Check our access
 			CertificationAccessControl access = new CertificationAccessControl(ctx);

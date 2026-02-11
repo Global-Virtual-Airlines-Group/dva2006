@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2015, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015, 2016, 2017, 2019, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 3.2
  */
 
@@ -45,7 +45,7 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 				GetAccomplishment dao = new GetAccomplishment(con);
 				a = dao.get(ctx.getID());
 				if (a == null)
-					throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+					throw notFoundException("Invalid Accomplishment", ctx.getID());
 				
 				oa = BeanUtils.clone(a);
 				a.setName(ctx.getParameter("name"));
@@ -173,7 +173,7 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 			if (!isNew) {
 				a = dao.get(ctx.getID());
 				if (a == null)
-					throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+					throw notFoundException("Invalid Accomplishment", ctx.getID());
 			}
 			
 			// Check our security

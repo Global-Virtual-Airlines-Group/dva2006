@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -327,13 +327,13 @@ public class RegisterCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException(String.format("Invalid Examination - %s", examName));
+				throw notFoundException("Invalid Examination", examName);
 
 			// Load the question pool for the questionnaire
 			GetExamQuestions exqdao = new GetExamQuestions(con);
 			Collection<QuestionProfile> qPool = exqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())
-				throw notFoundException(String.format("Empty Question Pool for %s", examName));
+				throw notFoundException("Empty Question Pool", examName);
 
 			// Start the transaction
 			ctx.startTX();

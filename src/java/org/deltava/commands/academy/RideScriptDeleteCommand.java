@@ -1,4 +1,4 @@
-// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AcademyRideScriptAccessControl;
 /**
  * A Web Site Command to delete a Flight Academy Check Ride script. 
  * @author Luke
- * @version 5.3
+ * @version 12.4
  * @since 3.4
  */
 
@@ -27,14 +27,14 @@ public class RideScriptDeleteCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
-			String id = (String) ctx.getCmdParameter(ID, "");
+			String id = ctx.getParameter("id");
 			Connection con = ctx.getConnection();
 			
 			// Load the script
 			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
 			AcademyRideScript sc = acdao.getScript(new AcademyRideID(id));
 			if (sc == null)
-				throw notFoundException("Academy Check Ride script not found - " + id);
+				throw notFoundException("Invalid Academy Check Ride script", id);
 			
 			// Check our access
 			AcademyRideScriptAccessControl ac = new AcademyRideScriptAccessControl(ctx, sc);

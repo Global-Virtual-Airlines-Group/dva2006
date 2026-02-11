@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to delete Airport profiles.
  * @author Luke
- * @version 8.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class AirportDeleteCommand extends AbstractCommand {
 			GetAirport dao = new GetAirport(con);
 			Airport a = dao.get((String) ctx.getCmdParameter(Command.ID, null));
 			if (a == null)
-				throw notFoundException("Unknown Airport - " + ctx.getCmdParameter(Command.ID, null));
+				throw notFoundException("Unknown Airport", ctx.getCmdParameter(Command.ID, null));
 			
 			// Get the write DAO and delete the airport
 			SetAirportAirline wdao = new SetAirportAirline(con);

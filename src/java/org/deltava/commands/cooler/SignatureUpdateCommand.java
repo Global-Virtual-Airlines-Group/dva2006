@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2019, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			Pilot p = dao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 
 			// Check our access
 			PilotAccessControl access = new PilotAccessControl(ctx, p);

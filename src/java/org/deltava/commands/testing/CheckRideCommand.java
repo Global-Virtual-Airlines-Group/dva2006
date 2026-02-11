@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2017, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to view Check Ride records.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -46,11 +46,13 @@ public class CheckRideCommand extends AbstractCommand {
 			GetExam dao = new GetExam(con);
 			CheckRide cr = dao.getCheckRide(ctx.getID());
 			if (cr == null)
-				throw notFoundException("Invalid Check Ride - " + ctx.getID());
+				throw notFoundException("Invalid Check Ride", ctx.getID());
 
 			// Get the pilot taking the checkride
 			GetUserData uddao = new GetUserData(con);
 			UserData ud = uddao.get(cr.getAuthorID());
+			if (ud == null)
+				throw notFoundException("Invalid Pilot", cr.getAuthorID());
 
 			// Check our access
 			ExamAccessControl access = new ExamAccessControl(ctx, cr, ud);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2017, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to view/take/score Pilot Examinations.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class ExamCommand extends AbstractCommand {
 			GetExam dao = new GetExam(con);
 			Examination ex = dao.getExam(ctx.getID());
 			if (ex == null)
-				throw notFoundException("Invalid Examination - " + ctx.getID());
+				throw notFoundException("Invalid Examination", ctx.getID());
 
 			// Get the Pilot taking the exam
 			GetUserData uddao = new GetUserData(con);
@@ -47,7 +47,7 @@ public class ExamCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(ex.getName());
 			if (ep == null)
-				throw notFoundException("Cannot load Examination Profile - " + ex.getName());
+				throw notFoundException("Invalid Examination Profile", ex.getName());
 
 			// Check our access level
 			ExamAccessControl access = new ExamAccessControl(ctx, ex, ud, ep);

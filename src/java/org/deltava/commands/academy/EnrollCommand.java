@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			GetAcademyCertifications cdao = new GetAcademyCertifications(con); 
 			Certification cert = cdao.get(name);
 			if (cert == null)
-				throw notFoundException("Unknown Certification - " + name);
+				throw notFoundException("Unknown Certification", name);
 			
 			// Make sure we can take the test
 			if (!academyHistory.canTake(cert))

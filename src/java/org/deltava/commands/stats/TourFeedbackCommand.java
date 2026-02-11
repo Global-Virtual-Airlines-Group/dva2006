@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.TourAccessControl;
 /**
  * A Web Site command to display Flight Tour user feedback results.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 11.6
  */
 
@@ -38,7 +38,7 @@ public class TourFeedbackCommand extends AbstractViewCommand {
 			GetTour dao = new GetTour(con);
 			Tour t = dao.get(ctx.getID(), ctx.getDB());
 			if (t == null)
-				throw notFoundException("Invalid Flight Tour - " + ctx.getID());
+				throw notFoundException("Invalid Tour", ctx.getID());
 			
 			// Check our access
 			TourAccessControl ac = new TourAccessControl(ctx, t);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request", ctx.getID());
 
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2019, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2019, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class LeaveCommand extends AbstractCommand {
 			GetPilot rdao = new GetPilot(con);
 			Pilot p = rdao.get(id);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + id);
+				throw notFoundException("Invalid Pilot", id);
 
 			// Check our access
 			PilotAccessControl access = new PilotAccessControl(ctx, p);

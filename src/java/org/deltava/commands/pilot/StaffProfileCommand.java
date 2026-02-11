@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to create new Staff Profiles.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class StaffProfileCommand extends AbstractCommand {
 			GetPilot rdao = new GetPilot(con);
 			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 
 			// Check our access
 			StaffAccessControl access = new StaffAccessControl(ctx, null);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 10.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				GetNews dao = new GetNews(con);
 				nws = dao.getNOTAM(ctx.getID());
 				if (nws == null)
-					throw notFoundException("Invalid NOTAM entry - " + ctx.getID());
+					throw notFoundException("Invalid NOTAM", ctx.getID());
 
 				// Check our access
 				NewsAccessControl access = new NewsAccessControl(ctx, nws);

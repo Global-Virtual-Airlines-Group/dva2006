@@ -1,4 +1,4 @@
-// Copyright 2017, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airports needed to complete Accomplishments. 
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 7.2
  */
 
@@ -103,7 +103,7 @@ public class AccomplishmentAirportMapCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(id);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + id);
+				throw notFoundException("Invalid Pilot", id);
 			
 			// Load all accomplishments involving airports
 			GetAccomplishment adao = new GetAccomplishment(con);

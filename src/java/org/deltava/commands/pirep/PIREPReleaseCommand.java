@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2016, 2018, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2016, 2018, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to release a held Flight Report.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class PIREPReleaseCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Flight Report Not Found");
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);

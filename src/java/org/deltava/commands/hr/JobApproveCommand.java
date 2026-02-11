@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to select short-listed applicants for a Job Posting. 
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 3.4
  */
 
@@ -39,7 +39,7 @@ public class JobApproveCommand extends AbstractCommand {
 			GetJobs dao = new GetJobs(con);
 			JobPosting jp = dao.get(ctx.getID());
 			if (jp == null)
-				throw notFoundException("Unknown Job Posting - " + ctx.getID());
+				throw notFoundException("Unknown Job Posting", ctx.getID());
 			
 			// Validate our access
 			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);

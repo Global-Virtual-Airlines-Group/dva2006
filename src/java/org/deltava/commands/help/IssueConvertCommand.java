@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011, 2013, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2013, 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			GetHelp hdao = new GetHelp(con);
 			org.deltava.beans.help.Issue hi = hdao.getIssue(ctx.getID());
 			if (hi == null)
-				throw notFoundException("Invalid Issue ID - " + ctx.getID());
+				throw notFoundException("Invalid Issue", ctx.getID());
 			
 			// Check if we can update status
 			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, hi);

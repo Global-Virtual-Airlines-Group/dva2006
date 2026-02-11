@@ -59,7 +59,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException(String.format("Invalid Flight Report - %d", Integer.valueOf(ctx.getID())));
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -123,7 +123,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-				throw notFoundException(String.format("Unknown Pilot - %d", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT))));
+				throw notFoundException("Unknown Pilot", fr.getDatabaseID(DatabaseID.PILOT));
 			
 			// Send Pilot to NewRelic
 			NewRelic.addCustomParameter("pilot.name", p.getName());

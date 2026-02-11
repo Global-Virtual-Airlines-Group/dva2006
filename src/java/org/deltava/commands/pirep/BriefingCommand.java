@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to display a SimBrief pilot briefing.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 10.3
  */
 
@@ -32,7 +32,7 @@ public class BriefingCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -44,7 +44,7 @@ public class BriefingCommand extends AbstractCommand {
 			GetSimBriefPackages sbdao = new GetSimBriefPackages(con);
 			BriefingPackage pkg = sbdao.getSimBrief(fr.getID(), ctx.getDB());
 			if (pkg == null)
-				throw notFoundException("No SimBrief data for Flight Report " + ctx.getID());
+				throw notFoundException("No SimBrief data", ctx.getID());
 			
 			// Save status attribute
 			ctx.setAttribute("pirep", fr, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017, 2018, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2018, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.BeanUtils;
 /**
  * A Web Site Command to edit Virtual Airline profiles.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 5.0
  */
 
@@ -36,7 +36,7 @@ public class AirlineInformationCommand extends AbstractAuditFormCommand {
 			GetUserData uddao = new GetUserData(con);
 			AirlineInformation ai = uddao.get(id); AirlineInformation oai = BeanUtils.clone(ai);
 			if (ai == null)
-				throw notFoundException("Invalid application code - " + id);
+				throw notFoundException("Invalid application code", id);
 			
 			// Check access
 			AirlineInformationAccessControl ac = new AirlineInformationAccessControl(ai, ctx);
@@ -95,7 +95,7 @@ public class AirlineInformationCommand extends AbstractAuditFormCommand {
 			GetUserData uddao = new GetUserData(ctx.getConnection());
 			AirlineInformation ai = uddao.get(id);
 			if (ai == null)
-				throw notFoundException("Invalid application code - " + id);
+				throw notFoundException("Invalid application code", id);
 			
 			// Check access
 			AirlineInformationAccessControl ac = new AirlineInformationAccessControl(ai, ctx);
@@ -131,7 +131,7 @@ public class AirlineInformationCommand extends AbstractAuditFormCommand {
 			GetUserData uddao = new GetUserData(ctx.getConnection());
 			AirlineInformation ai = uddao.get(id);
 			if (ai == null)
-				throw notFoundException("Invalid application code - " + id);
+				throw notFoundException("Invalid application code", id);
 			
 			// Check access
 			AirlineInformationAccessControl ac = new AirlineInformationAccessControl(ai, ctx);

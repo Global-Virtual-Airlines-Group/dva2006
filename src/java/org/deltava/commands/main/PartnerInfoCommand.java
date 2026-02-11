@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to edit virtual airline Partner Information.
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 10.3
  */
 
@@ -40,7 +40,7 @@ public class PartnerInfoCommand extends AbstractAuditFormCommand {
 			if (!isNew) {
 				p = dao.get(ctx.getID());
 				if (p == null)
-					throw notFoundException("Invalid Partner - " + ctx.getID());
+					throw notFoundException("Invalid Partner", ctx.getID());
 
 				op = BeanUtils.clone(p);
 				p.setName(ctx.getParameter("name"));
@@ -110,7 +110,7 @@ public class PartnerInfoCommand extends AbstractAuditFormCommand {
 			GetPartner dao = new GetPartner(ctx.getConnection());
 			PartnerInfo p = isNew ? null : dao.get(ctx.getID());
 			if (!isNew && (p == null))
-				throw notFoundException("Invalid Partner - " + ctx.getID());
+				throw notFoundException("Invalid Partner", ctx.getID());
 			
 			// Check our access
 			PartnerAccessControl ac = new PartnerAccessControl(ctx, p);
