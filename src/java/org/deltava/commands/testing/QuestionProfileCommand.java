@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 				GetExamQuestions rdao = new GetExamQuestions(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
-					throw notFoundException("Invalid Question Profile - " + ctx.getID());
+					throw notFoundException("Invalid Question Profile", ctx.getID());
 
 				// Update question text / answer
 				oqp = BeanUtils.clone(qp);
@@ -168,7 +168,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			GetExamQuestions eqdao = new GetExamQuestions(con);
 			QuestionProfile qp = eqdao.getQuestionProfile(ctx.getID());
 			if ((qp == null) && (ctx.getID() != 0))
-				throw notFoundException("Invalid Question Profile - " + ctx.getID());
+				throw notFoundException("Invalid Question Profile", ctx.getID());
 
 			// Validate our access
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
@@ -250,7 +250,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			GetExamQuestions dao = new GetExamQuestions(con);
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if (qp == null)
-				throw notFoundException("Invalid Question Profile - " + ctx.getID());
+				throw notFoundException("Invalid Question Profile", ctx.getID());
 
 			// Check our access level
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);

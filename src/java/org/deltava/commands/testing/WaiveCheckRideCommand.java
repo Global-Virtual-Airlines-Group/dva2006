@@ -1,4 +1,4 @@
-// Copyright 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to waive a Check Ride.
  * @author Luke
- * @version 8.0
+ * @version 12.4
  * @since 5.3
  */
 
@@ -42,7 +42,7 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 
 			// Initialize the testing history helper
 			TestingHistoryHelper testHistory = initTestHistory(p, con);

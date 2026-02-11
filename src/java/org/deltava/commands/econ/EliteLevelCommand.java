@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.time.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Elite status levels.
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 9.2
  */
 
@@ -114,7 +114,7 @@ public class EliteLevelCommand extends AbstractAuditFormCommand {
 				GetElite edao = new GetElite(con);
 				EliteLevel lvl = edao.get(name, year, ctx.getDB());
 				if (lvl == null)
-					throw notFoundException("Cannot load Elite level " + name + " for " + year);
+					throw notFoundException("Cannot load Elite Level", String.format("%s / %d", name, Integer.valueOf(year)));
 				
 				readAuditLog(ctx, lvl);
 

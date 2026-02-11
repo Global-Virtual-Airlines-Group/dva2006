@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to disable Proficiency Check Rides for a Pilot.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 8.0
  */
 
@@ -41,7 +41,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(userID);
 			if (p == null)
-				throw notFoundException("Unknown Pilot - " + userID);
+				throw notFoundException("Unknown Pilot", userID);
 			else if (!p.getProficiencyCheckRides())
 				throw new CommandException("Proficiency check rides already disabled");
 			

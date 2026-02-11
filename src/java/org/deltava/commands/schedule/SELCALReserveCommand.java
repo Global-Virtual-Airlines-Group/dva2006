@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve and free SELCAL codes.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 			GetSELCAL dao = new GetSELCAL(con);
 			SelectCall sc = dao.get(code);
 			if (sc == null)
-				throw notFoundException("No SELCAL data for " + code);
+				throw notFoundException("No SELCAL data", code);
 
 			SetSELCAL wdao = new SetSELCAL(con);
 			if (isReserve) {

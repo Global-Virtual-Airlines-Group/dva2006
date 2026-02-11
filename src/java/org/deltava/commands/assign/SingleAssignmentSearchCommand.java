@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 2.2
  */
 
@@ -68,7 +68,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new LogbookSearchCriteria("SUBMITTED DESC", ctx.getDB()));
 			Optional<FlightReport> ofr = pireps.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).findFirst();
 			if (!ofr.isPresent())
-				throw notFoundException("No flights logged");
+				throw new CommandException("No flights logged", false);
 			
 			// Save the user
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);

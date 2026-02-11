@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class NakedCheckRideCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 
 			// Check if we already have a pending checkride
 			boolean hasRide = false;
@@ -111,7 +111,7 @@ public class NakedCheckRideCommand extends AbstractTestHistoryCommand {
 			// Get the equipment type for the Check Ride
 			EquipmentType eqType = eqdao.get(ctx.getParameter("eqType"));
 			if (eqType == null)
-				throw notFoundException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
+				throw notFoundException("Invalid Equipment Program", ctx.getParameter("eqType"));
 
 			// Make sure the assigned type is part of the primary ratings
 			String acType = ctx.getParameter("crType");

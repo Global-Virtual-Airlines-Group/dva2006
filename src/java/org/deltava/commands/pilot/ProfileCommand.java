@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -257,7 +257,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					EquipmentType eq1 = eqdao.get(p.getEquipmentType());
 					EquipmentType eq2 = eqdao.get(newEQ);
 					if (eq2 == null)
-						throw notFoundException("Unknown Equipment Type program - " + newEQ);
+						throw notFoundException("Unknown Equipment Type", newEQ);
 
 					// Figure out if this is truly a promotion
 					RankComparator rcmp = new RankComparator();
@@ -617,7 +617,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetPilot dao = new GetPilot(con);
 			p = dao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 
 			// load the email configuration
 			GetPilotEMail edao = new GetPilotEMail(con);
@@ -711,18 +711,18 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetUserData uddao = new GetUserData(con);
 			UserData usrInfo = uddao.get(ctx.getID());
 			if (usrInfo == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 
 			// If it's in a different database check our role
 			boolean crossDB = !ctx.getDB().equalsIgnoreCase(usrInfo.getDB());
 			if (crossDB && !ctx.isUserInRole("HR"))
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 
 			// Get the DAO and load the pilot profile
 			GetPilot dao = new GetPilot(con);
 			Pilot p = dao.get(usrInfo);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 			
 			// Get the access controller
 			PilotAccessControl access = crossDB ? new CrossAppPilotAccessControl(ctx, p) : new PilotAccessControl(ctx, p);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to view Flight Reports from a Check Ride.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 2.0
  */
 
@@ -36,19 +36,19 @@ public class CheckRidePIREPCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(ctx.getID());
 			if (cr == null)
-				throw notFoundException("Invalid Check Ride ID - " + ctx.getID());
+				throw notFoundException("Invalid Check Ride ID",ctx.getID());
 
 			// Get the Pilot data
 			GetUserData uddao = new GetUserData(con);
 			UserData ud = uddao.get(cr.getAuthorID());
 			if (ud == null)
-				throw notFoundException("Invalid Pilot ID - " + cr.getAuthorID());
+				throw notFoundException("Unknown Pilot", cr.getAuthorID());
 
 			// Get the DAO and the ACARS Flight Report
 			GetFlightReports dao = new GetFlightReports(con);
 			FDRFlightReport afr = dao.getACARS(ud.getDB(), cr.getFlightID());
 			if ((afr == null) || (cr.getFlightID() == 0))
-				throw notFoundException("Invalid ACARS Flight ID - " + cr.getFlightID());
+				throw notFoundException("Invalid ACARS Flight ID", cr.getFlightID());
 
 			// Check if we're loading from another DB
 			crossDB = !ctx.getDB().equals(ud.getDB());

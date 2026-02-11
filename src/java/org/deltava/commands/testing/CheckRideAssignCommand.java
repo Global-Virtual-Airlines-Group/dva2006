@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017, 2019, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request", ctx.getID());
 
 			// Check for an existing check ride
 			GetExam exdao = new GetExam(con);
@@ -63,13 +63,13 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 			GetPilot dao = new GetPilot(con);
 			p = dao.get(txreq.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot - " + txreq.getID());
+				throw notFoundException("Invalid Pilot ID", txreq.getID());
 
 			// Get the Equipment Type for the check ride
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
 			if (eq == null)
-				throw notFoundException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
+				throw notFoundException("Invalid Equipment Program", ctx.getParameter("eqType"));
 			
 			// Determine the check ride type
 			RideType rt = RideType.CHECKRIDE;

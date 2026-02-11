@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 				GetAcademyCertifications dao = new GetAcademyCertifications(con);
 				cert = dao.get(name);
 				if (cert == null)
-					throw notFoundException("Unknown Certification - " + name);
+					throw notFoundException("Unknown Certification", name);
 
 				// Check our access
 				if (!access.getCanEdit())
@@ -162,7 +162,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			if (name != null) {
 				Certification cert = dao.get(name);
 				if (cert == null)
-					throw notFoundException("Unknown Certification - " + name);
+					throw notFoundException("Unknown Certification", name);
 				
 				// Check our access
 				if (!access.getCanEdit())
@@ -218,7 +218,7 @@ public class CertificationCommand extends AbstractAuditFormCommand {
 			String name = (String) ctx.getCmdParameter(ID, null);
 			Certification cert = dao.get(name);
 			if (cert == null)
-				throw notFoundException("Unknown Certification - " + name);
+				throw notFoundException("Unknown Certification", name);
 
 			// Check our access - this'll blow up if we cannot view
 			CertificationAccessControl access = new CertificationAccessControl(ctx);

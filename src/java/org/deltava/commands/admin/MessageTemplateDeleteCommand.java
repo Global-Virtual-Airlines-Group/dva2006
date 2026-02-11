@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.MessageAccessControl;
 /**
  * A Web Site Command to delete Message Templates.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -35,9 +35,9 @@ public class MessageTemplateDeleteCommand extends AbstractCommand {
 
 			// Get the DAO and the message template
 			GetMessageTemplate dao = new GetMessageTemplate(con);
-			MessageTemplate mt = dao.get((String) ctx.getCmdParameter(Command.ID, null));
+			MessageTemplate mt = dao.get(ctx.getParameter("id"));
 			if (mt == null)
-				throw notFoundException("Invalid Message Template - " + ctx.getCmdParameter(Command.ID, null));
+				throw notFoundException("Invalid Message Template", ctx.getParameter("id"));
 
 			// Check our access
 			MessageAccessControl access = new MessageAccessControl(ctx, mt);

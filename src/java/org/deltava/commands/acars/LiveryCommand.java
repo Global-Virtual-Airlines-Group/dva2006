@@ -1,4 +1,4 @@
-// Copyright 2008, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle ACARS multi-player livery data. 
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 2.2
  */
 
@@ -42,7 +42,7 @@ public class LiveryCommand extends AbstractAuditFormCommand {
 				Airline a = SystemData.getAirline(tkns.nextToken());
 				Livery l = dao.get(a, tkns.nextToken());
 				if (l == null)
-					throw notFoundException("Unknown Livery - " + id);
+					throw notFoundException("Unknown Livery", id);
 				
 				ctx.setAttribute("livery", l, REQUEST);
 				readAuditLog(ctx, l);
@@ -92,7 +92,7 @@ public class LiveryCommand extends AbstractAuditFormCommand {
 				Airline a = SystemData.getAirline(tkns.nextToken());
 				l = dao.get(a, tkns.nextToken()); ol = BeanUtils.clone(l);
 				if (l == null)
-					throw notFoundException("Unknown Livery - " + id);
+					throw notFoundException("Unknown Livery", id);
 			} else 
 				l = new Livery(SystemData.getAirline(ctx.getParameter("airline")), ctx.getParameter("code"));
 			

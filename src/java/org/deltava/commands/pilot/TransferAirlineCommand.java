@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			GetPilot rdao = new GetPilot(con);
 			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Check access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
@@ -84,7 +84,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Get the airline to change to
 			AirlineInformation aInfo = airlines.get(ctx.getParameter("dbName"));
 			if (aInfo == null)
-				throw notFoundException("Invalid Airline - " + ctx.getParameter("dbName"));
+				throw notFoundException("Invalid Airline", ctx.getParameter("dbName"));
 
 			// Get the equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -112,7 +112,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			Collection<String> newRatings = new TreeSet<String>();
 			EquipmentType newEQ = eqdao.get(ctx.getParameter("eqType"), aInfo.getDB());
 			if (newEQ == null)
-				throw notFoundException("Invalid " + aInfo.getCode() + " equipment program - " + ctx.getParameter("eqType"));
+				throw notFoundException(String.format("Invalid %s equipment program", aInfo.getCode()), ctx.getParameter("eqType"));
 			
 			// Look for active/pending Academy Courses
 			GetAcademyCourses acdao = new GetAcademyCourses(con);

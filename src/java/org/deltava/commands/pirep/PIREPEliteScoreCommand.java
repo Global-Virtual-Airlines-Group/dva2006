@@ -1,4 +1,4 @@
-// Copyright 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate Elite program scoring for a Flight Report.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 11.2
  */
 
@@ -47,7 +47,7 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException(String.format("Invalid Flight Report - %d", Integer.valueOf(ctx.getID())));
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Check our access
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -64,7 +64,7 @@ public class PIREPEliteScoreCommand extends AbstractCommand {
 			List<EliteStatus> yearStatus = eldao.getAllStatus(fr.getAuthorID(), EliteScorer.getStatusYear(fr.getDate()));
 			yearStatus.removeIf(es -> es.getEffectiveOn().isAfter(fr.getDate()));
 			if (yearStatus.isEmpty())
-				throw notFoundException("No Elite status for " + p.getName());
+				throw notFoundException("No Elite status", p.getName());
 			
 			// Check for lifetime status, but only granted before PIREP date
 			EliteStatus st = yearStatus.getLast();

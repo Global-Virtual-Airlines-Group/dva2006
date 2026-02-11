@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.InstructionAccessControl;
 /**
  * A Web Site Command to cancel a Flight Academy Instruction Session.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class InstructionCancelCommand extends AbstractCommand {
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			InstructionSession s = dao.getSession(ctx.getID());
 			if (s == null)
-				throw notFoundException("Invalid Instruction Session - " + ctx.getID());
+				throw notFoundException("Invalid Instruction Session", ctx.getID());
 			
 			// Check our access
 			InstructionAccessControl access = new InstructionAccessControl(ctx, s);

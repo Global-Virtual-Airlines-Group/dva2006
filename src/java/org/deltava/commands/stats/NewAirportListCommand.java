@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015, 2019, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2019, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 4.0
  */
 
@@ -26,7 +26,6 @@ public class NewAirportListCommand extends AbstractCommand {
 	 * Helper class for connecting airport lists.
 	 */
 	public class ConnectingAirportList extends ArrayList<Airport> {
-		
 		private final boolean _isSource;
 		
 		ConnectingAirportList(boolean isSource, Collection<Airport> airports) {
@@ -77,7 +76,7 @@ public class NewAirportListCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(userID);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + userID);
+				throw notFoundException("Invalid Pilot", userID);
 			
 			ctx.setAttribute("pilot", p, REQUEST);
 			if (doMap)

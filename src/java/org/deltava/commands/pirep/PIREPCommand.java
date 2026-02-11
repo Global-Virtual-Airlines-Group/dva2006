@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -41,7 +41,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -119,7 +119,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Validate airports
 			if ((aa == null) || (ad == null))
-				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 	+ ctx.getParameter("airportACode"));
+				throw notFoundException("Invalid Airport(s)", String.format("%s / %s", ctx.getParameter("airportDCode"), ctx.getParameter("airportACode")));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), RoutePair.of(ad, aa), ctx.getDB());
@@ -318,7 +318,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			} else {
 				fr = dao.get(ctx.getID(), ctx.getDB());
 				if (fr == null)
-					throw notFoundException("Invalid Flight Report - " + ctx.getID());
+					throw notFoundException("Invalid Flight Report", ctx.getID());
 
 				// Check our access
 				ac = new PIREPAccessControl(ctx, fr);
@@ -416,12 +416,12 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Get the pilot
 			Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(DatabaseID.PILOT));
+				throw notFoundException("Invalid Pilot ID", fr.getDatabaseID(DatabaseID.PILOT));
 			
 			// If the flight report is a draft, then load it
 			boolean isACARS = (fr instanceof FDRFlightReport);

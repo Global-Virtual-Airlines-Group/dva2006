@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2012, 2015, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2012, 2015, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle IMAP mailbox profiles.
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 2.2
  */
 
@@ -41,7 +41,7 @@ public class IMAPMailboxCommand extends AbstractAuditFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID",ctx.getID());
 
 			// Load the e-mail configuration
 			GetPilotEMail idao = new GetPilotEMail(con);
@@ -96,7 +96,7 @@ public class IMAPMailboxCommand extends AbstractAuditFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(ctx.getID());
 			if (usr == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID", ctx.getID());
 
 			// Load the e-mail configuration
 			GetPilotEMail idao = new GetPilotEMail(con);

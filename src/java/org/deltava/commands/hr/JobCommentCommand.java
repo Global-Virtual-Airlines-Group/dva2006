@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to create a Job Posting comment.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 3.4
  */
 
@@ -37,7 +37,7 @@ public class JobCommentCommand extends AbstractCommand {
 			GetJobs dao = new GetJobs(con);
 			JobPosting jp = dao.get(ctx.getID());
 			if (jp == null)
-				throw notFoundException("Unknown Job Posting - " + ctx.getID());
+				throw notFoundException("Unknown Job Posting", ctx.getID());
 			
 			// Validate our access
 			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);

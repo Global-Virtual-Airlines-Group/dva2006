@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2018, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to switch credentials and impersonate a user.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -41,8 +41,8 @@ public class UserSwitchCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
-			else if (usr.getIsForgotten())
+				throw notFoundException("Invalid Pilot", ctx.getID());
+			if (usr.getIsForgotten())
 				throw forgottenException();
 			
 			// Populate online totals

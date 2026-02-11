@@ -1,4 +1,4 @@
-// Copyright 2011, 2016, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.net.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 3.6
  */
 
@@ -41,7 +41,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			GetIssue rdao = new GetIssue(con);
 			Issue i = rdao.get(ctx.getID());
 			if (i == null)
-				throw notFoundException("Invalid Issue ID - " + ctx.getID());
+				throw notFoundException("Invalid Issue", ctx.getID());
 
 			// Check our access level
 			IssueAccessControl access = new IssueAccessControl(ctx, i);

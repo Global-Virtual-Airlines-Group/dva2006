@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018, 2021, 2022. 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 10.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -82,7 +82,7 @@ public class LogBookCommand extends AbstractViewCommand {
             GetPilot dao = new GetPilot(con);
             Pilot p = dao.get(id);
             if (p == null)
-            	throw notFoundException("Invalid Pilot - " + id);
+            	throw notFoundException("Invalid Pilot", id);
             else if (p.getIsForgotten() && !ctx.isUserInRole("HR"))
             	throw forgottenException();
 

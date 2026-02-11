@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 10.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ChartCommand extends AbstractFormCommand {
 				GetChart dao = new GetChart(con);
 				c = dao.get(ctx.getID());
 				if (c == null)
-					throw notFoundException("Invalid Approach Chart - " + ctx.getID());
+					throw notFoundException("Invalid Approach Chart", ctx.getID());
 
 				// Get our access
 				ChartAccessControl access = new ChartAccessControl(ctx);
@@ -140,7 +140,7 @@ public class ChartCommand extends AbstractFormCommand {
 				GetChart dao = new GetChart(ctx.getConnection());
 				Chart c = dao.get(ctx.getID());
 				if (c == null)
-					throw notFoundException("Invalid Approach Chart - " + ctx.getID());
+					throw notFoundException("Invalid Approach Chart", ctx.getID());
 
 				ctx.setAttribute("chart", c, REQUEST);
 			} catch (DAOException de) {
@@ -177,7 +177,7 @@ public class ChartCommand extends AbstractFormCommand {
 			GetChart dao = new GetChart(ctx.getConnection());
 			c = dao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Approach Chart - " + ctx.getID());
+				throw notFoundException("Invalid Approach Chart", ctx.getID());
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2015, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to log Flight Academy instruction flights.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 				flight = cdao.getFlight(ctx.getID());
 				if (flight == null)
-					throw notFoundException("Invalid Flight Log ID - " + ctx.getID());
+					throw notFoundException("Invalid Instruction Flight", ctx.getID());
 			} else {
 				flight = new InstructionFlight(1, StringUtils.parseHex(ctx.getParameter("courseID")));
 			}
@@ -66,7 +66,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot ins = pdao.get(uddao.get(StringUtils.parse(ctx.getParameter("instructor"), 0)));
 			if (ins == null)
-				throw notFoundException("Invalid Instructor ID - " + ctx.getParameter("instructor"));
+				throw notFoundException("Invalid Instructor", ctx.getParameter("instructor"));
 			
 			// Update fields from the request
 			flight.setInstructorID(ins.getID());
@@ -126,13 +126,13 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 				flight = cdao.getFlight(ctx.getID());
 				if (flight == null)
-					throw notFoundException("Invalid Flight Log ID - " + ctx.getID());
+					throw notFoundException("Invalid Flight Log", ctx.getID());
 			
 				// Get the Course
 				GetAcademyCourses dao = new GetAcademyCourses(con);
 				c = dao.get(flight.getCourseID());
 				if (c == null)
-					throw notFoundException("Invalid Course ID - " + flight.getCourseID());
+					throw notFoundException("Invalid Course", flight.getCourseID());
 				
 				// Check our Access
 				access = new InstructionAccessControl(ctx, flight);
@@ -146,7 +146,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				GetAcademyCourses dao = new GetAcademyCourses(con);
 				c = dao.get(StringUtils.parseHex(ctx.getParameter("courseID")));
 				if (c == null)
-					throw notFoundException("Invalid Course ID - " + ctx.getParameter("courseID"));
+					throw notFoundException("Invalid Course", ctx.getParameter("courseID"));
 				
 				// Populate the flight bean
 				flight = new InstructionFlight(ctx.getUser().getID(), c.getID());
@@ -155,7 +155,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				access = new InstructionAccessControl(ctx, flight);
 				access.validate();
 				if (!access.getCanCreate())
-					throw securityException("Cannot create flight log");
+					throw securityException("Cannot create Flight Log");
 			}
 			
 			// Make sure we are updating our own entry
@@ -218,13 +218,13 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 			InstructionFlight flight = cdao.getFlight(ctx.getID());
 			if (flight == null)
-				throw notFoundException("Invalid Flight Log ID - " + ctx.getID());
+				throw notFoundException("Invalid Flight Log", ctx.getID());
 			
 			// Get the Course
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			Course c = dao.get(flight.getCourseID());
 			if (c == null)
-				throw notFoundException("Invalid Course ID - " + flight.getCourseID());
+				throw notFoundException("Invalid Course", flight.getCourseID());
 			
 			// Check our access
 			InstructionAccessControl access = new InstructionAccessControl(ctx, flight);

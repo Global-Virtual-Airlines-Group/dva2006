@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019, 2020, 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -58,13 +58,13 @@ public class CourseDisposalCommand extends AbstractCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			Course c = dao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 			
 			// Get the certification
 			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
 			Certification crt = cdao.get(c.getCode());
 			if (crt == null)
-				throw notFoundException("Invalid Certification - " + c.getCode());
+				throw notFoundException("Invalid Certification", c.getCode());
 			
 			// Get the Pilot
 			GetUserData uddao = new GetUserData(con);

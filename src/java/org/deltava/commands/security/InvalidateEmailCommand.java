@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2014, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.AddressValidationHelper;
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 10.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
          GetPilot dao = new GetPilot(con);
          Pilot p = dao.get(ctx.getID());
          if (p == null)
-            throw notFoundException("Invalid Pilot - " + ctx.getID());
+            throw notFoundException("Invalid Pilot", ctx.getID());
          
          // Check if the address has already been invalidated
          GetAddressValidation avdao = new GetAddressValidation(con);

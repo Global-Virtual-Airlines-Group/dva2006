@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class EventCommand extends AbstractCommand {
 			// Load the event. We reload since getFutureEvents() does not populate child lists
 			Event e = edao.get(eventID);
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + eventID);
+				throw notFoundException("Invalid Online Event", eventID);
 
 			// Calculate our access - if we can sign up, save us in the request
 			EventAccessControl eAccess = new EventAccessControl(ctx, e);

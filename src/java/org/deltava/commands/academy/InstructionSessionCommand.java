@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016, 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -57,19 +57,19 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				// Get the Instruction Session
 				s = cdao.getSession(ctx.getID());
 				if (s == null)
-					throw notFoundException("Invalid Session - " + ctx.getID());
+					throw notFoundException("Invalid Instruction Session", ctx.getID());
 				
 				// Get the Course
 				c = dao.get(s.getCourseID());
 				if (c == null)
-					throw notFoundException("Invalid Course - " + s.getCourseID());
+					throw notFoundException("Invalid Course", s.getCourseID());
 			} else {
 				int courseID = StringUtils.parseHex(ctx.getParameter("course"));
 				
 				// Get the Course
 				c = dao.get(courseID);
 				if (c == null)
-					throw notFoundException("Invalid Course - " + courseID);
+					throw notFoundException("Invalid Course", courseID);
 				
 				// Populate the bean
 				s = new InstructionSession(0, c.getID());
@@ -151,12 +151,12 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				// Get the Instruction Session
 				InstructionSession s = cdao.getSession(ctx.getID());
 				if (s == null)
-					throw notFoundException("Invalid Session - " + ctx.getID());
+					throw notFoundException("Invalid Instruction Session", ctx.getID());
 
 				// Get the Course
 				c = dao.get(s.getCourseID());
 				if (c == null)
-					throw notFoundException("Invalid Course - " + s.getCourseID());
+					throw notFoundException("Invalid Course", s.getCourseID());
 				
 				// Check our access
 				InstructionAccessControl access = new InstructionAccessControl(ctx, s);
@@ -179,7 +179,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				// Get the Course
 				c = dao.get(courseID);
 				if (c == null)
-					throw notFoundException("Invalid Course - " + courseID);
+					throw notFoundException("Invalid Course", courseID);
 				
 				// Check our access
 				CourseAccessControl access = new CourseAccessControl(ctx, c);
@@ -229,12 +229,12 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 			InstructionSession s = cdao.getSession(ctx.getID());
 			if (s == null)
-				throw notFoundException("Invalid Session - " + ctx.getID());
+				throw notFoundException("Invalid Instruction Session", ctx.getID());
 			
 			// Get the Course
 			Course c = dao.get(s.getCourseID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + s.getCourseID());
+				throw notFoundException("Invalid Course", s.getCourseID());
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();

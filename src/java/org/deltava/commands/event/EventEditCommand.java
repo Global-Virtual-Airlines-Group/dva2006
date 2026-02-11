@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2012, 2016, 2019, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2012, 2016, 2019, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -80,7 +80,7 @@ public class EventEditCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Calculate our access to the event
 			EventAccessControl access = new EventAccessControl(ctx, e);

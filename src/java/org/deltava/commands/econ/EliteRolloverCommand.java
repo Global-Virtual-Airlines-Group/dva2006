@@ -1,4 +1,4 @@
-// Copyright 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to rollover Elite status levels for a new program year. 
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 11.0
  */
 
@@ -48,12 +48,12 @@ public class EliteRolloverCommand extends AbstractCommand {
 			GetEliteStatistics esdao = new GetEliteStatistics(con);
 			TreeSet<EliteLevel> lvls = eldao.getLevels(year - 1);
 			if (lvls.isEmpty())
-				throw notFoundException("No Elite status levels for " + (year - 1));
+				throw notFoundException("No Elite status levels", year - 1);
 			
 			// Load current year's levels
 			TreeSet<EliteLevel> nyLevels = eldao.getLevels(year);
 			if (nyLevels.isEmpty())
-				throw notFoundException("No Elite status levels for " + year);
+				throw notFoundException("No Elite status levels", year);
 			
 			// Disable point rollover
 			if (!allowPointRollover)

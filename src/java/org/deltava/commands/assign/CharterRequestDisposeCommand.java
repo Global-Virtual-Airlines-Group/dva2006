@@ -1,4 +1,4 @@
-// Copyright 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.time.Instant;
@@ -20,7 +20,7 @@ import org.deltava.util.EnumUtils;
 /**
  * A Web Site Command to dispose of Charter flight Requests. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 10.0
  */
 
@@ -45,7 +45,7 @@ public class CharterRequestDisposeCommand extends AbstractCommand {
 			GetCharterRequests rqdao = new GetCharterRequests(con);
 			CharterRequest req = rqdao.get(ctx.getID());
 			if (req == null)
-				throw notFoundException("Invalid Charter Request ID - " + ctx.getID());
+				throw notFoundException("Invalid Charter Request", ctx.getID());
 			
 			// Check access
 			CharterRequestAccessControl ac = new CharterRequestAccessControl(ctx, req);

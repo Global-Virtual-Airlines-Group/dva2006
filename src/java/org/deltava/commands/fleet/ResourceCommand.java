@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.BeanUtils;
 /**
  * A Web Site Command to display/edit a Web Resource.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 			} else {
 				r = dao.get(ctx.getID());
 				if (r == null)
-					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
+					throw notFoundException("Invalid Web Resource ID", ctx.getID());
 				
 				or = BeanUtils.clone(r);
 			}
@@ -114,7 +114,7 @@ public class ResourceCommand extends AbstractAuditFormCommand {
 				GetResources dao = new GetResources(con);
 				Resource r = dao.get(ctx.getID());
 				if (r == null)
-					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
+					throw notFoundException("Invalid Web Resource ID", ctx.getID());
 
 				// Check our access
 				ResourceAccessControl ac = new ResourceAccessControl(ctx, r);

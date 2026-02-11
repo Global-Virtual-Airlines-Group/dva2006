@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2019, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019, 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -36,9 +36,9 @@ public class RunwayCalculateCommand extends AbstractCommand {
 			GetFlightReportACARS prdao = new GetFlightReportACARS(con);
 			FlightReport fr = prdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report ID - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			else if (!fr.hasAttribute(Attribute.ACARS))
-				throw notFoundException("Non-ACARS Flight Report - " + ctx.getID());
+				throw notFoundException("Non-ACARS Flight Report", ctx.getID());
 
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -53,7 +53,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 			GetACARSData acdao = new GetACARSData(con);
 			FlightInfo info = acdao.getInfo(afr.getDatabaseID(DatabaseID.ACARS));
 			if (info == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException("Invalid ACARS Flight ID", afr.getDatabaseID(DatabaseID.ACARS));
 
 			// Get the DAO
 			boolean isUpdated = false;

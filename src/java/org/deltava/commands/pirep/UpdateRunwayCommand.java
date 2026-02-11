@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019, 2021, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 3.0
  */
 
@@ -41,7 +41,7 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			GetFlightReportACARS prdao = new GetFlightReportACARS(con);
 			FDRFlightReport afr = prdao.getACARS(ctx.getDB(), ctx.getID());
 			if (afr == null)
-				throw notFoundException(String.format("Invalid ACARS Flight ID - %d", Integer.valueOf(ctx.getID())));
+				throw notFoundException("No ACARS Flight Report", ctx.getID());
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, afr);
@@ -53,7 +53,7 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			GetACARSData acdao = new GetACARSData(con);
 			FlightInfo info = acdao.getInfo(ctx.getID());
 			if (info == null)
-				throw notFoundException(String.format("Invalid ACARS Flight ID - %d", Integer.valueOf(ctx.getID())));
+				throw notFoundException("Invalid ACARS Flight ID", ctx.getID());
 			
 			// Get the runway codes
 			List<String> dRwy = StringUtils.split(ctx.getParameter("newRwyD"), " ");

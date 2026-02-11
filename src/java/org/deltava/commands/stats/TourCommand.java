@@ -49,7 +49,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				GetTour tdao = new GetTour(con);
 				t = tdao.get(ctx.getID(), ctx.getDB());
 				if (t == null)
-					throw notFoundException("Invalid Tour ID - " + ctx.getID());
+					throw notFoundException("Invalid Tour ID", ctx.getID());
 
 				// Check our access
 				ac = new TourAccessControl(ctx, t);
@@ -162,7 +162,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 				GetTour tdao = new GetTour(con);
 				Tour t = tdao.get(ctx.getID(), ctx.getDB());
 				if (t == null)
-					throw notFoundException("Invalid Tour ID - " + ctx.getID());
+					throw notFoundException("Invalid Tour ID", ctx.getID());
 
 				// Check our access
 				TourAccessControl ac = new TourAccessControl(ctx, t);
@@ -238,7 +238,7 @@ public class TourCommand extends AbstractAuditFormCommand {
 			GetTour tdao = new GetTour(con);
 			Tour t = tdao.get(ctx.getID(), ctx.getDB());
 			if (t == null)
-				throw notFoundException("Invalid Tour ID - " + ctx.getID());
+				throw notFoundException("Invalid Tour ID", ctx.getID());
 
 			// Get the access controller
 			TourAccessControl ac = new TourAccessControl(ctx, t);

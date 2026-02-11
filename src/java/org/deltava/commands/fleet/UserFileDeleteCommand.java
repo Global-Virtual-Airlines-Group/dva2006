@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.FileEntryAccessControl;
 /**
  * A Web Site Command to delete User File Library entries.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class UserFileDeleteCommand extends AbstractCommand {
          GetLibrary dao = new GetLibrary(con);
          FileEntry entry = dao.getFile(fName);
          if (entry == null)
-            throw notFoundException("Invalid file name - " + fName);
+            throw notFoundException("Invalid File Name", fName);
          
          // Check our access
          FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);

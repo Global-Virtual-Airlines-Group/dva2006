@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to toggle Water Cooler thread update notifications.
  * @author Luke
- * @version 8.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -35,13 +35,13 @@ public class NotificationToggleCommand extends AbstractCommand {
          GetCoolerThreads tdao = new GetCoolerThreads(con);
          MessageThread thread = tdao.getThread(id);
          if (thread == null)
-            throw notFoundException("Invalid Message Thread - " + id);
+            throw notFoundException("Invalid Message Thread", id);
 
          // Get the Channel profile
          GetCoolerChannels cdao = new GetCoolerChannels(con);
          Channel c = cdao.get(thread.getChannel());
          if (c == null)
-            throw notFoundException("Invalid Channel - " + thread.getChannel());
+            throw notFoundException("Invalid Channel", thread.getChannel());
          
          // Get the Notifications for this thread, and if we're doing an add or a remove
          ThreadNotifications nt = tdao.getNotifications(id);

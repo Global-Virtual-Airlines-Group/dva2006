@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014, 2015, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			Course c = cdao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 			
 			// Load the Pilot object
 			GetUserData uddao = new GetUserData(con);
@@ -60,7 +60,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			UserData ud = uddao.get(c.getPilotID());
 			p = pdao.get(ud);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
+				throw notFoundException("Invalid Pilot ID", c.getPilotID());
 			
 			// Load Check Rides for this Course
 			GetExam exdao = new GetExam(con);
@@ -115,7 +115,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			if (!cert.getRideEQ().isEmpty() && isOurs) {
 				Collection<String> availableEQ = p.getRatings().stream().filter(eq -> (cert.getRideEQ().contains(eq))).collect(Collectors.toList());
 				if (availableEQ.isEmpty())
-					throw notFoundException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "));
+					throw new CommandException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "), false);
 			
 				ctx.setAttribute("actypes", availableEQ, REQUEST);
 			} else if (isOurs)

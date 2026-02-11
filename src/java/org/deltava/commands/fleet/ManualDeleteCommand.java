@@ -1,4 +1,4 @@
-// Copyright 2007, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.FleetEntryAccessControl;
 /**
  * A Web Site Command to delete a Manual.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -28,8 +28,7 @@ public class ManualDeleteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the file to delete
-		String fName = (String) ctx.getCmdParameter(ID, null);
-
+		String fName = ctx.getParameter("id");
 		try {
 			Connection con = ctx.getConnection();
 
@@ -37,7 +36,7 @@ public class ManualDeleteCommand extends AbstractCommand {
 			GetDocuments dao = new GetDocuments(con);
 			Manual m = dao.getManual(fName, ctx.getDB());
 			if (m == null)
-				throw notFoundException("Invalid file name - " + fName);
+				throw notFoundException("Invalid File name", fName);
 
 			// Check our access
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, m);

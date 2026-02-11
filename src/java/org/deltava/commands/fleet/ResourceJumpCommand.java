@@ -1,4 +1,4 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to track hits to a Web Resource.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class ResourceJumpCommand extends AbstractCommand {
 			GetResources dao = new GetResources(con);
 			Resource r = dao.get(ctx.getID());
 			if (r == null)
-				throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
+				throw notFoundException("Invalid Web Resource", ctx.getID());
 			
 			// Mark the resource as hit
 			SetResource wdao = new SetResource(con);

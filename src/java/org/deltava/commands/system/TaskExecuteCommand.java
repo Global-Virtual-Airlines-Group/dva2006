@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2016, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import org.apache.logging.log4j.*;
@@ -32,7 +32,7 @@ public class TaskExecuteCommand extends AbstractCommand {
 		TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
 		Task t = tSched.getTask(taskID);
 		if (t == null)
-			throw notFoundException("Invalid Scheduled Task - " + taskID);
+			throw notFoundException("Invalid Scheduled Task", taskID);
 
 		try {
 			t.run(ctx.getUser());

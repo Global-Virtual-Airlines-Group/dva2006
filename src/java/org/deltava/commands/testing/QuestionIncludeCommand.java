@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2011, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -14,10 +14,9 @@ import org.deltava.security.command.QuestionProfileAccessControl;
 import org.deltava.util.CollectionUtils;
 
 /**
- * A Web Site Command to update the Examinations a Question appears in, if the current web
- * application is not the owner of the Question.
+ * A Web Site Command to update the Examinations a Question appears in, if the current web application is not the owner of the Question.
  * @author Luke
- * @version 3.6
+ * @version 12.4
  * @since 2.0
  */
 
@@ -37,7 +36,7 @@ public class QuestionIncludeCommand extends AbstractCommand {
 			GetExamQuestions rdao = new GetExamQuestions(con);
 			QuestionProfile qp = rdao.getQuestionProfile(ctx.getID());
 			if (qp == null)
-				throw notFoundException("Invalid Question Profile - " + ctx.getID());
+				throw notFoundException("Invalid Question Profile", ctx.getID());
 			
 			// Validate our access
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);

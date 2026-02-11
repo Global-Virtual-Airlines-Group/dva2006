@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2016, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to save Help Desk Issue comments.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			GetHelp dao = new GetHelp(con);
 			Issue i = dao.getIssue(ctx.getID());
 			if (i == null)
-				throw notFoundException("Invalid Issue - " + ctx.getID());
+				throw notFoundException("Invalid Issue", ctx.getID());
 			
 			// Check our Access
 			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2016, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2016, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -49,13 +49,13 @@ public class ThreadStickCommand extends AbstractCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			MessageThread mt = dao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Invalid Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 
 			// Get the DAO and the Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + ctx.getID());
+				throw notFoundException("Invalid Channel", ctx.getID());
 
 			// Check our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

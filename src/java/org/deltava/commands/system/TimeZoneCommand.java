@@ -1,4 +1,4 @@
-// Copyright 2007, 2012, 2016, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2016, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -15,14 +15,13 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to edit time zone profiles.
  * @author Luke
- * @version 10.6
+ * @version 12.4
  * @since 1.0
  */
 
 public class TimeZoneCommand extends AbstractFormCommand {
 
 	private class TZComparator implements Comparator<ZoneId> {
-		
 		private final Instant NOW = Instant.now();
 
 		@Override
@@ -48,7 +47,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 		// Get the time zone
 		TZInfo tz = TZInfo.get(id);
 		if ((tz == null) && (id != null))
-			throw notFoundException("Unknown Time Zone - " + id);
+			throw notFoundException("Unknown Time Zone", id);
 		
 		// Get time zone IDs and convert to combo util
 		List<ZoneId> zoneIDs = ZoneId.getAvailableZoneIds().stream().map(ZoneId::of).collect(Collectors.toList());

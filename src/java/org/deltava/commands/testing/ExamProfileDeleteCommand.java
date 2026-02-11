@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.ExamProfileAccessControl;
 /**
  * A Web Site Command to delete an Examination Profile.
  * @author Luke
- * @version 9.1
+ * @version 12.4
  * @since 9.1
  */
 
@@ -34,7 +34,7 @@ public class ExamProfileDeleteCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(name);
 			if (ep == null)
-				throw notFoundException("Invalid Examination Profile - " + name);
+				throw notFoundException("Invalid Examination Profile", name);
 			
 			// Check our access
 			ExamProfileAccessControl ac = new ExamProfileAccessControl(ctx, ep);

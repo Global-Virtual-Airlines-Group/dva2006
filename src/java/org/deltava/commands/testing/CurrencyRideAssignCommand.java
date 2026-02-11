@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for a Pilot to self-assign a Currency Check Ride.
  * @author Luke
- * @version 8.0
+ * @version 12.4
  * @since 8.0
  */
 
@@ -44,7 +44,7 @@ public class CurrencyRideAssignCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Check if we have a pending transfer request
 			GetTransferRequest txdao = new GetTransferRequest(con);
@@ -85,7 +85,7 @@ public class CurrencyRideAssignCommand extends AbstractTestHistoryCommand {
 			// Validate the equipment type
 			EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
 			if (eq == null)
-				throw notFoundException("Unknown Equipment Program - " + ctx.getParameter("eqType"));
+				throw notFoundException("Unknown Equipment Program", ctx.getParameter("eqType"));
 			else if (!myEQ.contains(eq))
 				throw securityException("No expiring currency in " + eq.getName() + " program"); 
 			else if (hasCR)

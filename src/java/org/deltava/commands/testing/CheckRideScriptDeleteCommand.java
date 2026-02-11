@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.EquipmentRideScriptAccessControl;
 /**
  * A Web Site Command to delete Check Ride scripts.
  * @author Luke
- * @version 8.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class CheckRideScriptDeleteCommand extends AbstractCommand {
 			GetExamProfiles dao = new GetExamProfiles(con);
 			EquipmentRideScript cs = dao.getScript(key);
 			if (cs == null)
-				throw notFoundException("Invalid Equipment Type - " + key.getEquipmentType());
+				throw notFoundException("Invalid Equipment Type", key.getEquipmentType());
 
 			// Check our access
 			EquipmentRideScriptAccessControl ac = new EquipmentRideScriptAccessControl(ctx, cs);

@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CoolerChannelAccessControl;
 /**
  * A Web Site Command to delete a Water Cooler channel.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.2
  */
 
@@ -33,7 +33,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
 			GetCoolerChannels ccdao = new GetCoolerChannels(con);
 			Channel c = ccdao.get(ctx.getParameter("id"));
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + ctx.getParameter("id"));
+				throw notFoundException("Invalid Channel", ctx.getParameter("id"));
 			
 			// Check our access
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);

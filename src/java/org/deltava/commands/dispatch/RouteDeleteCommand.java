@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -11,9 +11,9 @@ import org.deltava.dao.*;
 import org.deltava.security.command.DispatchRouteAccessControl;
 
 /**
- * A Web Site Command to delete dispatcher routes.
+ * A Web Site Command to delete ACARS dispatcher routes.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.1
  */
 
@@ -33,7 +33,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 			GetACARSRoute rdao = new GetACARSRoute(con);
 			DispatchRoute rp = rdao.getRoute(ctx.getID());
 			if (rp == null)
-				throw notFoundException("Unknown Route ID - " + ctx.getID());
+				throw notFoundException("Invalid Dispatch Route", ctx.getID());
 			
 			// Check our access
 			DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rp);
