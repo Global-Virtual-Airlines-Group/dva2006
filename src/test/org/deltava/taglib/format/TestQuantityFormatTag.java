@@ -29,7 +29,7 @@ public class TestQuantityFormatTag extends AbstractTagTestCase {
         p.setNumberFormat("##00.0");
         HttpServletRequest hreq = _req;
         setUser(p);
-        _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
+        _ctx.initialize(null, new CustomRequestWrapper(hreq, "localhost"), _rsp, "", false, 8192, false);
         
         _tag.setPageContext(_ctx);
         _tag.setValue(Integer.valueOf(1));

@@ -43,7 +43,7 @@ public class TestCustomRequestWrapper extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		_req = new HttpServletRequestSimulatorHelper();
-		_wreq = new CustomRequestWrapper(_req);
+		_wreq = new CustomRequestWrapper(_req, "localhost");
 	}
 
 	@Override

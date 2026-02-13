@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2015, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2015, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -7,11 +7,12 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
 import org.apache.logging.log4j.*;
+import org.deltava.util.dns.Resolver;
 
 /**
  * A servlet filter to wrap HTTP servlet requests with a custom wrapper. This filter will also extract cookies into servlet request attributes.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -34,6 +35,17 @@ public class RequestWrapperFilter extends HttpFilter {
      */
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse rsp, FilterChain fc) throws IOException, ServletException {
+    	
+		// Get remote host name
+    	String remoteHost = req.getRemoteHost();
+    	if (req.getRemoteAddr().equals(remoteHost)) {
+    		String hostHdr = req.getHeader("X-Forwarded-Host");	
+    		if ((hostHdr == null) || hostHdr.equals(req.getRemoteAddr())) {
+    			String hostName = Resolver.resolve(req.getRemoteAddr(), 250);
+    			if (!hostName.equals(req.getRemoteAddr()))
+    				remoteHost = hostName;
+    		}
+    	}
 
        	// Get cookies
        	Cookie[] cookies = req.getCookies();
@@ -45,7 +57,7 @@ public class RequestWrapperFilter extends HttpFilter {
        	}
         	
        	// Roll the request wrapper
-       	fc.doFilter(new CustomRequestWrapper(req), rsp);
+       	fc.doFilter(new CustomRequestWrapper(req, remoteHost), rsp);
     }
 
     @Override
