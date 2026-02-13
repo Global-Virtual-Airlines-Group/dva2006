@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			// Check if we're uploading to ensure that the file does not already exist
 			if (isNew) {
 				if (entry != null)
-					throw notFoundException("Installer " + fName + " already exists");
+					throw notFoundException("Installer already exists", fName);
 				
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Installer(f);

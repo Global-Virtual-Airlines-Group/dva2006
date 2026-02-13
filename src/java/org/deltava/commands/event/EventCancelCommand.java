@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2012, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012, 2017, 2018, 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to cancel an Online Event.
  * @author Luke
- * @version 9.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class EventCancelCommand extends AbstractCommand {
          GetEvent dao = new GetEvent(con);
          Event e = dao.get(ctx.getID());
          if (e == null)
-            throw notFoundException("Unknown Online Event - " + ctx.getID());
+            throw notFoundException("Unknown Online Event", ctx.getID());
          
          // Get the signed up users for this event
          GetUserData uddao = new GetUserData(con);

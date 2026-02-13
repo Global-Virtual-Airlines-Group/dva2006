@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Flight Report Not Found");
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
@@ -72,7 +72,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			UserData ud = uddao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			p = pdao.get(ud);
 			if (p == null)
-				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
+				throw notFoundException("Unknown Pilot", fr.getDatabaseID(DatabaseID.PILOT));
 
 			// Check our access levels
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);

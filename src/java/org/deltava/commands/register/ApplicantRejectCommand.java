@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2020, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2020, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ApplicantAccessControl;
 /**
  * A Web Site Command to reject Applicants.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			GetApplicant dao = new GetApplicant(con);
 			a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 
 			// Check our access
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);

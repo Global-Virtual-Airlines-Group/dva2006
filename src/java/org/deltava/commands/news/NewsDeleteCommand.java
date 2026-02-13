@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to delete System News entries and NOTAMs.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public void execute(CommandContext ctx) throws CommandException {
          GetNews dao = new GetNews(con);
          News nws = isNOTAM ? dao.getNOTAM(ctx.getID()) : dao.getNews(ctx.getID());
          if (nws == null)
-            throw notFoundException("Invalid System News/NOTAM - " + ctx.getID());
+            throw notFoundException("Invalid News/NOTAM", ctx.getID());
          
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, nws);

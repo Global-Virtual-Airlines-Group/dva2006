@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update flight routes for an Online Event.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);
@@ -120,7 +120,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			GetEvent dao = new GetEvent(ctx.getConnection());
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);

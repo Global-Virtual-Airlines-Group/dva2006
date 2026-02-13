@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to display a Image Gallery Image.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 				GetGallery rdao = new GetGallery(con);
 				img = rdao.getImageData(ctx.getID(), ctx.getDB());
 				if (img == null)
-					throw notFoundException("Cannot find Gallery image " + ctx.getID());
+					throw notFoundException("Invalid Gallery image", ctx.getID());
 
 				// Check our access
 				GalleryAccessControl access = new GalleryAccessControl(ctx, img);
@@ -113,7 +113,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 				GetGallery dao = new GetGallery(con);
 				img = dao.getImageData(ctx.getID(), ctx.getDB());
 				if (img == null)
-					throw notFoundException("Cannot find Gallery image " + ctx.getID());
+					throw notFoundException("Invalid Gallery image", ctx.getID());
 
 				// Get the Image author
 				GetPilot pdao = new GetPilot(con);
@@ -160,7 +160,7 @@ public class GalleryImageCommand extends AbstractFormCommand {
 			GetGallery dao = new GetGallery(con);
 			img = dao.getImageData(ctx.getID(), ctx.getDB());
 			if (img == null)
-				throw notFoundException("Cannot find Gallery image " + ctx.getID());
+				throw notFoundException("Invalid Gallery image", ctx.getID());
 
 			// Get the Image author
 			GetPilot pdao = new GetPilot(con);

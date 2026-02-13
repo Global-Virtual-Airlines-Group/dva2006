@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2017, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2017, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public class ChannelCommand extends AbstractAuditFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(con);
 				c = dao.get(channel);
 				if (c == null)
-					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
+					throw notFoundException(String.format("Invalid %s Channel", forumName), channel);
 				
 				oc = BeanUtils.clone(c);
 			} else
@@ -135,7 +135,7 @@ public class ChannelCommand extends AbstractAuditFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(ctx.getConnection());
 				c = dao.get(channel);
 				if (c == null)
-					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
+					throw notFoundException(String.format("Invalid %s Channel", forumName), channel);
 				
 				readAuditLog(ctx, c);
 			}

@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and edit Charter flight Requests.
  * @author Luke
- * @version 10.5
+ * @version 12.4
  * @since 10.0
  */
 
@@ -42,7 +42,7 @@ public class CharterRequestCommand extends AbstractFormCommand {
 				GetCharterRequests rqdao = new GetCharterRequests(con);
 				req = rqdao.get(ctx.getID());
 				if (req == null)
-					throw notFoundException("Invalid Charter Request ID - " + ctx.getID());
+					throw notFoundException("Invalid Charter Request", ctx.getID());
 			} 
 			
 			// Check our access
@@ -114,7 +114,7 @@ public class CharterRequestCommand extends AbstractFormCommand {
 				GetCharterRequests rqdao = new GetCharterRequests(con);
 				req = rqdao.get(ctx.getID());
 				if (req == null)
-					throw notFoundException("Invalid Charter Request ID - " + ctx.getID());
+					throw notFoundException("Invalid Charter Request", ctx.getID());
 				
 				// Load pilots
 				GetPilot pdao = new GetPilot(con);
@@ -160,7 +160,7 @@ public class CharterRequestCommand extends AbstractFormCommand {
 			GetCharterRequests rqdao = new GetCharterRequests(con);
 			CharterRequest req = rqdao.get(ctx.getID());
 			if (req == null)
-				throw notFoundException("Invalid Charter Request ID - " + ctx.getID());
+				throw notFoundException("Invalid Charter Request", ctx.getID());
 			
 			// Check access
 			CharterRequestAccessControl ac = new CharterRequestAccessControl(ctx, req);

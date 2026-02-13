@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011, 2012, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2012, 2013, 2016, 2019, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 8.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		
 		// Check start/end date
 		if ((startDate.get(ChronoField.YEAR) < 2000) || (Duration.between(Instant.now(), startDate.toInstant()).toDays() > 730))
-			throw notFoundException("Invalid start date - " + StringUtils.format(startDate, "MM/dd/yyyy"));
+			throw notFoundException("Invalid Start Date", StringUtils.format(startDate, "MM/dd/yyyy"));
 		
 		// Save the calendar options in the request
 		ctx.setAttribute("startDate", startDate, REQUEST);

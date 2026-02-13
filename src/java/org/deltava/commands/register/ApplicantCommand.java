@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -127,7 +127,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -186,7 +186,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);

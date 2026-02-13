@@ -1,4 +1,4 @@
-// Copyright 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Pilot progress through Flight Tours.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 10.2
  */
 
@@ -34,7 +34,7 @@ public class TourProgressCommand extends AbstractViewCommand {
 			GetTour tdao = new GetTour(con);
 			Tour t = tdao.get(ctx.getID(), ctx.getDB());
 			if ((ctx.getID() != 0) && (t == null))
-				throw notFoundException("Invalid Flight Tour - " + ctx.getID());
+				throw notFoundException("Invalid Tour", ctx.getID());
 			
 			// Load the progress and the tour options
 			tdao.setQueryStart(vc.getStart());

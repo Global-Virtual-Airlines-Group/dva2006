@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CharterRequestAccessControl;
 /**
  * A Web Site Comand to delete Charter flight Requests. 
  * @author Luke
- * @version 10.0
+ * @version 12.4.
  * @since 10.0
  */
 
@@ -33,7 +33,7 @@ public class CharterRequestDeleteCommand extends AbstractCommand {
 			GetCharterRequests rqdao = new GetCharterRequests(con);
 			CharterRequest req = rqdao.get(ctx.getID());
 			if (req == null)
-				throw notFoundException("Invalid Charter Request ID - " + ctx.getID());
+				throw notFoundException("Invalid Charter Request", ctx.getID());
 			
 			// Check access
 			CharterRequestAccessControl ac = new CharterRequestAccessControl(ctx, req);

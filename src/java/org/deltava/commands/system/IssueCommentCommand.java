@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.IssueAccessControl;
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			GetIssue rdao = new GetIssue(con);
 			Issue i = rdao.get(ctx.getID());
 			if (i == null)
-				throw notFoundException("Invalid Issue ID - " + ctx.getID());
+				throw notFoundException("Invalid Issue", ctx.getID());
 
 			// Check our access level
 			IssueAccessControl access = new IssueAccessControl(ctx, i);

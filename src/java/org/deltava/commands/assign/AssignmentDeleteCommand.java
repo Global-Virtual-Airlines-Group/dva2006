@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.AssignmentAccessControl;
 /**
  * A Web Site Command to delete Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class AssignmentDeleteCommand extends AbstractCommand {
 			GetAssignment dao = new GetAssignment(con);
 			AssignmentInfo assign = dao.get(ctx.getID());
 			if (assign == null)
-				throw notFoundException("Invalid Flight Assignment - " + ctx.getID());
+				throw notFoundException("Invalid Flight Assignment", ctx.getID());
 
 			// Calculate our access
 			AssignmentAccessControl access = new AssignmentAccessControl(ctx, assign);

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 2.4
  */
 
@@ -259,7 +259,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				CacheManager.invalidate("Pilots", Integer.valueOf(inf.getAuthorID()));
 				p = pdao.get(inf.getAuthorID());
 				if (p == null)
-					throw notFoundException("Invalid Proxy user ID - " + inf.getAuthorID());
+					throw notFoundException("Invalid Proxy User", inf.getAuthorID());
 				
 				afr.addStatusUpdate(ctx.getUser().getID(), HistoryType.LIFECYCLE, String.format("Submitted by %s on behalf of %s", ctx.getUser().getName(), p.getName()));
 			} else {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016, 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to assign an Instructor to a Flight Academy Course.
  * @author Luke
- * @version 9.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class CourseAssignCommand extends AbstractCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			c = dao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 			
 			// Check our access
 			CourseAccessControl ac = new CourseAccessControl(ctx, c);
@@ -66,7 +66,7 @@ public class CourseAssignCommand extends AbstractCommand {
 			if (id != 0) {
 				ins = pdao.get(uddao.get(id));
 				if (ins == null)
-					throw notFoundException("Invalid Pilot ID - " + ctx.getParameter("instructor"));
+					throw notFoundException("Invalid Pilot ID", ctx.getParameter("instructor"));
 				else if (!ins.isInRole("Instructor"))
 					throw securityException(ins.getName() + " not an Instructor");
 			}

@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to delete an Online Event.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.2
  */
 
@@ -33,7 +33,7 @@ public class EventDeleteCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Unknown Online Event - " + ctx.getID());
+				throw notFoundException("Unknown Online Event", ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);

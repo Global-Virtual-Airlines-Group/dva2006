@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to move a Message Thread to another Water Cooler channel.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -33,14 +33,14 @@ public class ThreadMoveCommand extends AbstractCommand {
 			GetCoolerThreads trdao = new GetCoolerThreads(con);
 			MessageThread t = trdao.getThread(ctx.getID());
 			if (t == null)
-				throw notFoundException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 			
 			// Get the Channel we wish to move to
 			String newChannel = ctx.getParameter("newChannel");
 			GetCoolerChannels crdao = new GetCoolerChannels(con);
 			Channel ch = crdao.get(newChannel);
 			if (ch == null)
-				throw notFoundException("Invalid Channel - " + newChannel);
+				throw notFoundException("Invalid Channel", newChannel);
 			
 			// Check our access to the new channel - if we cannot read the new channel, then abort
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

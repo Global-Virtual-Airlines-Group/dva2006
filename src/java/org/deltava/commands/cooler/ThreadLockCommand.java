@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to lock or hide Water Cooler message threads.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class ThreadLockCommand extends AbstractCommand {
             GetCoolerThreads tdao = new GetCoolerThreads(con);
             thread = tdao.getThread(ctx.getID());
             if (thread == null)
-                throw notFoundException("Unknown Message Thread - " + ctx.getID());
+                throw notFoundException("Invalid Message Thread", ctx.getID());
 			
             // Get the channel profile
             GetCoolerChannels cdao = new GetCoolerChannels(con);

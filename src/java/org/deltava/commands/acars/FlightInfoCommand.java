@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -39,13 +39,13 @@ public class FlightInfoCommand extends AbstractCommand {
 			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(ctx.getID());
 			if (info == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException("Invalid ACARS Flight ID", ctx.getID());
 
 			// Get the user location and database
 			GetUserData uddao = new GetUserData(con);
 			UserData uloc = uddao.get(info.getAuthorID());
 			if (uloc == null)
-				throw notFoundException("Invalid Pilot ID - " + info.getAuthorID());
+				throw notFoundException("Invalid Pilot ID", info.getAuthorID());
 
 			// Get the PIREP itself (this too might be null, but one or the other won't be)
 			GetFlightReports prdao = new GetFlightReports(con);

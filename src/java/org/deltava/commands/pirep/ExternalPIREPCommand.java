@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2011, 2012, 2018, 2020, 2021, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2011, 2012, 2018, 2020, 2021, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 2.0
  */
 
@@ -42,7 +42,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(ctx.getID());
 			if (cr == null)
-				throw notFoundException("Invalid Check Ride ID - " + ctx.getID());
+				throw notFoundException("Invalid Check Ride", ctx.getID());
 			
 			// Load the pilot object
 			GetUserData uddao = new GetUserData(con);
@@ -50,7 +50,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			UserData ud = uddao.get(cr.getAuthorID());
 			Pilot p = pdao.get(ud);
 			if (p == null)
-				throw notFoundException("Unknown Pilot ID - " + cr.getAuthorID());
+				throw notFoundException("Invalid Pilot ID", cr.getAuthorID());
 			
 			// Validate our access
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr, ud);
@@ -66,7 +66,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FDRFlightReport fr = frdao.getACARS(ud.getDB(), cr.getFlightID());
 			if (fr == null)
-				throw notFoundException("Unknown Flight Report ID - " + cr.getFlightID());
+				throw notFoundException("Invalid Flight Report", cr.getFlightID());
 			
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);

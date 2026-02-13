@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to display Online Event user feedback. 
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 11.6
  */
 
@@ -38,7 +38,7 @@ public class EventFeedbackCommand extends AbstractViewCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Check our access
 			EventAccessControl ac = new EventAccessControl(ctx, e);

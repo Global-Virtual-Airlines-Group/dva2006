@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to delete an ACARS Dispatcher schedule entry.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.2
  */
 
@@ -33,7 +33,7 @@ public class ServiceEntryDeleteCommand extends AbstractCommand {
 			GetDispatchCalendar dao = new GetDispatchCalendar(con);
 			DispatchScheduleEntry dse = dao.get(ctx.getID());
 			if (dse == null)
-				throw notFoundException("Invalid Dispatch Schedule entry - " + ctx.getID());
+				throw notFoundException("Invalid Dispatch Schedule entry", ctx.getID());
 			
 			// Validate our access
 			DispatchScheduleAccessControl ac = new DispatchScheduleAccessControl(ctx, dse);

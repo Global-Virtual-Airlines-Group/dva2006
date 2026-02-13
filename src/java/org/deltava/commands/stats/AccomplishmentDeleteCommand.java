@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AccomplishmentAccessControl;
 /**
  * A Web Site Command to delete Accomplishment profiles.
  * @author Luke
- * @version 3.2
+ * @version 12.4
  * @since 3.2
  */
 
@@ -33,7 +33,7 @@ public class AccomplishmentDeleteCommand extends AbstractCommand {
 			GetAccomplishment dao = new GetAccomplishment(con);
 			Accomplishment a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Accomplishment profile - " + ctx.getID());
+				throw notFoundException("Invalid Accomplishment", ctx.getID());
 			
 			// Check our access
 			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, a);

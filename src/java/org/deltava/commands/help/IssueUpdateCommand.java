@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2017, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to update a Help Desk Issue.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class IssueUpdateCommand extends AbstractCommand {
 			GetHelp dao = new GetHelp(con);
 			Issue i = dao.getIssue(ctx.getID());
 			if (i == null)
-				throw notFoundException("Invalid Issue - " + ctx.getID());
+				throw notFoundException("Invalid Issue", ctx.getID());
 
 			// Check our access
 			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);

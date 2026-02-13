@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class AirportCommand extends AbstractAuditFormCommand {
 				GetAirport dao = new GetAirport(con);
 				a = dao.get(aCode);
 				if (a == null)
-					throw notFoundException("Invalid Airport Code - " + aCode);
+					throw notFoundException("Invalid Airport Code", aCode);
 
 				// Load airport fields
 				oa = BeanUtils.clone(a);

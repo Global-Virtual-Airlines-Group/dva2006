@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2019, 2020, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -117,7 +117,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			if (key != null) {
 				EquipmentRideScript sc = dao.getScript(key);
 				if (sc == null)
-					throw notFoundException("Invalid Check Ride script - " + key.getEquipmentType());
+					throw notFoundException("Invalid Check Ride script", key.getEquipmentType());
 
 				// Calculate our access
 				EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);

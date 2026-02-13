@@ -1,4 +1,4 @@
-// Copyright 2010, 2015, 2018, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015, 2018, 2019, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retire a User. 
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 3.0
  */
 
@@ -35,7 +35,7 @@ public class RetireUserCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw notFoundException("Invalid User ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Check our current status
 			PilotAccessControl access = new PilotAccessControl(ctx, usr);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to sign up Pilots for an Online Event.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,14 +36,14 @@ public class EventSignupCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event", ctx.getID());
 			
 			// Check our access to sign up or cancel
 			boolean ourAccess = false;
 			if (isCancel) {
 				Signup s = e.getSignup(ctx.getUser().getID());
 				if (s == null)
-					throw notFoundException("Not Signed up for " + e.getName());
+					throw notFoundException(String.format("%s Not Signed up", ctx.getUser().getName()), e.getName());
 				
 				SignupAccessControl access = new SignupAccessControl(ctx, e, s);
 				access.validate();
@@ -61,7 +61,7 @@ public class EventSignupCommand extends AbstractCommand {
 			// Find the route
 			Route r = e.getRoute(StringUtils.parse(ctx.getParameter("route"), 0));
 			if (r == null)
-				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
+				throw notFoundException("Invalid Event Route", ctx.getParameter("route"));
 			
 			// Make sure it's active, or we're in the Event role
 			if (!r.getActive() && !ctx.isUserInRole("Event"))

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to delete Water Cooler message threads.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -34,13 +34,13 @@ public class ThreadDeleteCommand extends AbstractCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			MessageThread mt = dao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 
 			// Get the Cooler Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + mt.getChannel());
+				throw notFoundException("Invalid Channel", mt.getChannel());
 
 			// Validate our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

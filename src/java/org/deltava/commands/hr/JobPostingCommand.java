@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2019, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 3.4
  */
 
@@ -47,7 +47,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 				GetJobs dao = new GetJobs(con);
 				jp = dao.get(ctx.getID());
 				if (jp == null)
-					throw notFoundException("Unknown Job Posting - " + ctx.getID());
+					throw notFoundException("Unknown Job Posting", ctx.getID());
 				
 				jp.setTitle(ctx.getParameter("title"));
 			} else {
@@ -136,7 +136,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 				GetJobs dao = new GetJobs(con);
 				jp = dao.get(ctx.getID());
 				if (jp == null)
-					throw notFoundException("Unknown Job Posting - " + ctx.getID());
+					throw notFoundException("Unknown Job Posting", ctx.getID());
 			}
 			
 			// Validate our access
@@ -195,7 +195,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 			GetJobs dao = new GetJobs(con);
 			JobPosting jp = dao.get(ctx.getID());
 			if (jp == null)
-				throw notFoundException("Unknown Job Posting - " + ctx.getID());
+				throw notFoundException("Unknown Job Posting", ctx.getID());
 			
 			// Get Hiring manager
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();

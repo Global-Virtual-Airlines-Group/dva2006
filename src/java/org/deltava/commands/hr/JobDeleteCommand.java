@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  *A Web Site Command to delete a Job posting. 
  * @author Luke
- * @version 3.7
+ * @version 12.4
  * @since 3.7
  */
 
@@ -33,7 +33,7 @@ public class JobDeleteCommand extends AbstractCommand {
 			GetJobs dao = new GetJobs(con);
 			JobPosting jp = dao.get(ctx.getID());
 			if (jp == null)
-				throw notFoundException("Unknown Job Posting - " + ctx.getID());
+				throw notFoundException("Unknown Job Posting", ctx.getID());
 			
 			// Validate our access
 			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);

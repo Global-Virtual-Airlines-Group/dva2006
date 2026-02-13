@@ -1,4 +1,4 @@
-// Copyright 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Flight Tours linked to a Flight Report.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 10.2
  */
 
@@ -38,14 +38,14 @@ public class UpdateTourCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Get the Flight Tour
 			int tourID = StringUtils.parse(ctx.getParameter("flightTour"), 0);
 			GetTour tdao = new GetTour(con);
 			Tour t = tdao.get(tourID, ctx.getDB());
 			if ((t == null) && (tourID != 0))
-				throw notFoundException("Invalid Flight Tour - " + tourID);
+				throw notFoundException("Invalid Tour ID", tourID);
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);

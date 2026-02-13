@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Profiles.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class ExamProfileCommand extends AbstractAuditFormCommand {
 				GetExamProfiles rdao = new GetExamProfiles(con);
 				ep = rdao.getExamProfile(examName);
 				if (ep == null)
-					throw notFoundException("Examination " + examName + " not found");
+					throw notFoundException("Invalid Examination", examName);
 
 				// Update the exam name
 				oep = BeanUtils.clone(ep);
@@ -144,7 +144,7 @@ public class ExamProfileCommand extends AbstractAuditFormCommand {
 			if (examName != null) {
 				ep = dao.getExamProfile(examName);
 				if (ep == null)
-					throw notFoundException("Invalid Exam Name - " + examName);
+					throw notFoundException("Invalid Examination", examName);
 
 				// Save the profile in the request
 				ctx.setAttribute("eProfile", ep, REQUEST);
@@ -198,7 +198,7 @@ public class ExamProfileCommand extends AbstractAuditFormCommand {
 			GetExamProfiles dao = new GetExamProfiles(con);
 			ExamProfile ep = dao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException("Invalid Examination Name - " + examName);
+				throw notFoundException("Invalid Examination", examName);
 
 			// Check our access level
 			ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);

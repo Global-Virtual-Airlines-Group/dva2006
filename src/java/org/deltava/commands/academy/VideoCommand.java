@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2014, 2015, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014, 2015, 2016, 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class VideoCommand extends AbstractFormCommand {
 		if (f.exists())
 			fName = f.getName();
 		if (fName == null)
-			throw notFoundException("No Video Uploaded");
+			throw new CommandException("No Video Uploaded", false);
 
 		// Check if we notify people
 		boolean noNotify = Boolean.parseBoolean(ctx.getParameter("noNotify"));
@@ -173,7 +173,7 @@ public class VideoCommand extends AbstractFormCommand {
 				GetVideos dao = new GetVideos(con);
 				Video v = dao.getVideo(fName);
 				if (v == null)
-					throw notFoundException("Invalid video filename - " + fName);
+					throw notFoundException("Invalid Video", fName);
 			
 				// Create the proper bean
 				TrainingVideo video = new TrainingVideo(v);

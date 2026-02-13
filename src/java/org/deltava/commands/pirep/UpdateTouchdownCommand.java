@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2015, 2016, 2018, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015, 2016, 2018, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 3.1
  */
 
@@ -45,13 +45,13 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			GetACARSData fddao = new GetACARSData(con);
 			FlightInfo info = fddao.getInfo(ctx.getID());
 			if (info == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException("Invalid ACARS Flight ID", ctx.getID());
 			
 			// Load the Flight Report
 			GetFlightReportACARS frdao = new GetFlightReportACARS(con);
 			FDRFlightReport afr = frdao.getACARS(ctx.getDB(), info.getID());
 			if (afr == null)
-				throw notFoundException("Invalid ACARS Flight ID - " + info.getID());
+				throw notFoundException("No Flight Report", info.getID());
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, afr);

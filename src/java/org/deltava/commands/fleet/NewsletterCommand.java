@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2014, 2015, 2016, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014, 2015, 2016, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 		// Get the uploaded file
 		FileUpload mFile = ctx.getFile("file", 0);
 		if (isNew && (mFile == null))
-			throw notFoundException("No Manual Uploaded");
+			throw new CommandException("No Manual Uploaded", false);
 		else if (isNew && (mFile != null))
 			fName = mFile.getName();
 

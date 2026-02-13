@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2020, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to delete Pilot Examinations and Check Rides.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class ExamDeleteCommand extends AbstractCommand {
 			GetExam dao = new GetExam(con);
 			Test t = isCheckRide ? dao.getCheckRide(ctx.getID()) : dao.getExam(ctx.getID());
 			if (t == null)
-				throw notFoundException("Invalid " + (isCheckRide ? "Check Ride - " : "Examination - ") + ctx.getID());
+				throw notFoundException("Invalid " + (isCheckRide ? "Check Ride" : "Examination"), ctx.getID());
 
 			// Get the user data
 			GetPilot pdao = new GetPilot(con);

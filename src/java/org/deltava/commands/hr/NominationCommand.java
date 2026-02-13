@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017, 2021, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2021, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 3.3
  */
 
@@ -57,7 +57,7 @@ public class NominationCommand extends AbstractFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(n.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + n.getID());
+				throw notFoundException("Invalid Pilot ID", n.getID());
 			
 			// Check our access
 			NominationAccessControl access = new NominationAccessControl(ctx, n);
@@ -142,7 +142,7 @@ public class NominationCommand extends AbstractFormCommand {
 			GetNominations ndao = new GetNominations(con);
 			Nomination n = ndao.get(ctx.getID());
 			if (n == null)
-				throw notFoundException("Unknown Nomination - " + ctx.getID());
+				throw notFoundException("Unknown Nomination", ctx.getID());
 			
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);
