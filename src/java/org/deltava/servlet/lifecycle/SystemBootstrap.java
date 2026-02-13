@@ -23,6 +23,7 @@ import org.deltava.taskman.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.dns.ResolverDaemon;
 import org.deltava.util.jmx.*;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.*;
@@ -253,6 +254,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
 		spawnDaemon(new IPCDaemon());
+		spawnDaemon(new ResolverDaemon());
 		log.warn("Started {} in {}ms", code, Long.valueOf(tt.stop()));
 	}
 
