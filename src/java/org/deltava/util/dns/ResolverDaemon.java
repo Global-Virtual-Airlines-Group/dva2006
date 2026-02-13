@@ -7,9 +7,10 @@ import java.util.concurrent.*;
 import org.apache.logging.log4j.*;
 
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
- * 
+ * A daemon to handle asynchronous resverse DNS requests. 
  * @author Luke
  * @version 12.4
  * @since 12.4
@@ -29,6 +30,11 @@ public class ResolverDaemon implements Runnable {
 	 */
 	static boolean add(String addr) {
 		return _work.offer(addr);
+	}
+	
+	@Override
+	public String toString() {
+		return SystemData.get("airline.code") + " Resolver Daemon";
 	}
 	
 	@Override
