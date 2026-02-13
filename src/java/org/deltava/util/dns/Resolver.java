@@ -55,7 +55,6 @@ public class Resolver {
 		_reqs.incrementAndGet();
 		CacheableString hostName = _cache.get(addr);
 		if (hostName != null) {
-			log.info("{} = {}", addr, hostName.getValue());
 			_hits.incrementAndGet();
 			return hostName.getValue();
 		}
@@ -64,18 +63,18 @@ public class Resolver {
 		final String a = addr.intern();
 		boolean isOK = ResolverDaemon.add(a);
 		if (!isOK) {
-			log.warn("Cannot accept reverse DNS request for {}", addr);
+			log.warn("Cannot accept reverse DNS request for {} - queue full", addr);
 			return addr;
 		}
 		
 		// Wait for the result
 		try {
-			log.info("Resolinvg {}", a);
+			log.debug("Resolinvg {}", a);
 			synchronized (a) {
 				a.wait(Math.min(wait, wait));
 			}
 		} catch (InterruptedException ie) {
-			log.info("Timed Out after {}ms", Integer.valueOf(wait));
+			log.info("{} timed Out after {}ms", a, Integer.valueOf(wait));
 			return addr;
 		}
 		
