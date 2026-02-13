@@ -1,4 +1,4 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to delete Flight Academy courses.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class CourseDeleteCommand extends AbstractCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			Course c = dao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);

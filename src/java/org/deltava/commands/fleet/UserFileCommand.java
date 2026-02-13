@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2014, 2015, 2016, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2014, 2015, 2016, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing the User File Library.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class UserFileCommand extends AbstractFormCommand {
 			GetLibrary dao = new GetLibrary(con);
 			FileEntry entry = dao.getFile(fName);
 			if ((entry == null) && !StringUtils.isEmpty(fName))
-				throw notFoundException("Invalid Filename - " + fName);
+				throw notFoundException("Invalid File Name", fName);
 
 			// Check our access
 			FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);

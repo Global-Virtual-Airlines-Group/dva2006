@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.ChartAccessControl;
 /**
  * A Web Site Command to delete Approach Charts.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class ChartDeleteCommand extends AbstractCommand {
          GetChart dao = new GetChart(con);
          Chart c = dao.get(ctx.getID());
          if (c == null)
-            throw notFoundException("Invalid Approach Chart - " + ctx.getID());
+            throw notFoundException("Invalid Approach Chart", ctx.getID());
          
          // Save the chart in the request
          ctx.setAttribute("chart", c, REQUEST);

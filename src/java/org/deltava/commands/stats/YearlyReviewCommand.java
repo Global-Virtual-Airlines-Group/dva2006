@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -63,7 +63,7 @@ public class YearlyReviewCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(userID);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + userID);
+				throw notFoundException("Invalid Pilot", userID);
 			
 			// Load the log book and add to cache
 			CacheableCollection<FlightReport> data = _cache.get(p.cacheKey());

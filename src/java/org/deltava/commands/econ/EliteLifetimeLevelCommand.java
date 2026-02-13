@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update lifetime Elite status level definitions.
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 11.5
  */
 
@@ -56,7 +56,7 @@ public class EliteLifetimeLevelCommand extends AbstractAuditFormCommand {
 			@SuppressWarnings("unlikely-arg-type")
 			EliteLevel lvl = lvls.stream().filter(lv -> lv.equals(lvlName)).findFirst().orElse(null);
 			if (lvl == null)
-				throw notFoundException("Unknown Elite level - " + lvlName);
+				throw notFoundException("Unknown Elite level", lvlName);
 
 			el.setLevel(lvl);
 			
@@ -109,7 +109,7 @@ public class EliteLifetimeLevelCommand extends AbstractAuditFormCommand {
 			if (name != null) {
 				EliteLifetime el = dao.getLifetime(name, ctx.getDB());
 				if (el == null)
-					throw notFoundException("Unknown lifetime Elite level - " + name);
+					throw notFoundException("Unknown lifetime Elite level", name);
 			
 				readAuditLog(ctx, el);
 				ctx.setAttribute("lvl", el, REQUEST);

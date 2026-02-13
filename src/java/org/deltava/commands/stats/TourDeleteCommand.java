@@ -1,4 +1,4 @@
-// Copyright 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.TourAccessControl;
 /**
  * A Web Site Command to delete Tour profiles. 
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 10.0
  */
 
@@ -33,7 +33,7 @@ public class TourDeleteCommand extends AbstractCommand {
 			GetTour tdao = new GetTour(con);
 			Tour t = tdao.get(ctx.getID(), ctx.getDB());
 			if (t == null)
-				throw notFoundException("Invalid Tour ID - " + ctx.getID());
+				throw notFoundException("Invalid Tour", ctx.getID());
 			
 			// Check our access
 			TourAccessControl ac = new TourAccessControl(ctx, t);

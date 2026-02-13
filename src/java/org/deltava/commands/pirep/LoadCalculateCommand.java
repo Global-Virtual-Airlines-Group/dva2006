@@ -1,4 +1,4 @@
-// Copyright 2021, 2022, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2021, 2022, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.time.*;
@@ -39,7 +39,7 @@ public class LoadCalculateCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Ensure we can set the load factor 
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);

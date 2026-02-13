@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command to handle the initial applicant questionnaire.
  * @author Luke
- * @version 5.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          GetQuestionnaire exdao = new GetQuestionnaire(con);
          Examination ex = exdao.get(ctx.getID());
          if (ex == null)
-            throw notFoundException("Invalid Questionnaire - " + ctx.getID());
+            throw notFoundException("Invalid Questionnaire", ctx.getID());
          
          // Get our access and fail gracefully if we can no longer read it
          QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);
@@ -53,7 +53,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          GetApplicant adao = new GetApplicant(con);
          Applicant a = adao.get(ex.getAuthorID());
          if (a == null)
-         	throw notFoundException("Invalid Applicant ID - " + ex.getAuthorID());
+         	throw notFoundException("Invalid Applicant ID", ex.getAuthorID());
          
          // Save the questionnaire and the access controller
          ctx.setAttribute("exam", ex, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command for clearing Water Cooler notifications.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -36,13 +36,13 @@ public class NotificationClearCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(threadID);
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + threadID);
+				throw notFoundException("Invalid Message Thread", threadID);
 			
 			// Get the DAO and the channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + mt.getChannel());
+				throw notFoundException("Invalid Channel", mt.getChannel());
 			
 			// Validate our access to the thread
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

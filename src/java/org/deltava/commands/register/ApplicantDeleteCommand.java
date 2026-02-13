@@ -1,4 +1,4 @@
-// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.ApplicantAccessControl;
 /**
  * A Web Site Command to delete an Applicant profile.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class ApplicantDeleteCommand extends AbstractCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 			
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);

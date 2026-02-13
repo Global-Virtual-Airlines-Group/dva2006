@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException("Invalid Examination - " + examName);
+				throw notFoundException("Invalid Examination", examName);
 
             // Initialize the testing history helper
             TestingHistoryHelper testHistory = initTestHistory(ctx.getUser(), con);

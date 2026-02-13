@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create new Flight Academy Examinations.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException("Invalid Examination - " + examName);
+				throw notFoundException("Invalid Examination", examName);
 			
 			// Load the test history
 			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
@@ -104,8 +104,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 
 			// Add the questions to the exam
 			int qNum = 0;
-			for (Iterator<QuestionProfile> i = qPool.iterator(); i.hasNext();) {
-				QuestionProfile qp = i.next();
+			for (QuestionProfile qp : qPool) {
 				Question q = qp.toQuestion();
 				q.setNumber(++qNum);
 				ex.addQuestion(q);

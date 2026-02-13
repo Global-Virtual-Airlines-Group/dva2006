@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2012, 2014, 2017, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2012, 2014, 2017, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,14 +37,14 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			Course c = cdao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 
 			// Load the user
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(uddao.get(c.getPilotID()));
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
+				throw notFoundException("Invalid Pilot ID", c.getPilotID());
 			
 			// Init the history and fully populate the Course with check ride
 			AcademyHistoryHelper helper = initHistory(p, con);
@@ -55,7 +55,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			// Get the certification profile
 			Certification cert = helper.getCertification(c.getCode());
 			if (cert == null)
-				throw notFoundException("Invalid Certification - " + c.getName());
+				throw notFoundException("Invalid Certification", c.getName());
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);

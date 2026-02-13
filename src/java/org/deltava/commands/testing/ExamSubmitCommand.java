@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 			GetExam rdao = new GetExam(con);
 			Examination ex = rdao.getExam(ctx.getID());
 			if (ex == null)
-				throw notFoundException("Invalid Examination - " + ctx.getID());
+				throw notFoundException("Invalid Examination", ctx.getID());
 			
 			// Get the user's data
 			GetUserData uddao = new GetUserData(con);
@@ -56,7 +56,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(ex.getName());
 			if (ep == null)
-				throw notFoundException("Cannot load Examination Profile - " + ex.getName());
+				throw notFoundException("Invalid Examination Profile", ex.getName());
 
 			// Save answers from the request - score if it's a multiple choice question
 			int score = 0;

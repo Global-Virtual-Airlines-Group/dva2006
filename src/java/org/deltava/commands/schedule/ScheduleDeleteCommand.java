@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2019, 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to delete Flight Schedule entries.
  * @author Luke
- * @version 9.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 		ScheduleSource src = EnumUtils.parse(ScheduleSource.class, id.substring(0, pos), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(id.substring(pos + 1), -1);
 		if (srcLine < 0)
-			throw notFoundException("Invalid Source Line - " + srcLine);
+			throw notFoundException("Invalid Source Line", srcLine);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -42,7 +42,7 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 			GetRawSchedule dao = new GetRawSchedule(con);
 			RawScheduleEntry entry = dao.get(src, srcLine);
 			if (entry == null)
-				throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
+				throw notFoundException("Invalid Schedule Entry", String.format("%s Line %d", src.getDescription(), Integer.valueOf(srcLine)));
 			
 			// Check our access
 			ScheduleAccessControl ac = new ScheduleAccessControl(ctx);

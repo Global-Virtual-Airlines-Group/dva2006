@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2016, 2017, 2019, 2022 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016, 2017, 2019, 2022, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to score Check Rides.
  * @author Luke
- * @version 10.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			GetExam rdao = new GetExam(con);
 			CheckRide cr = rdao.getCheckRide(ctx.getID());
 			if (cr == null)
-				throw notFoundException("Invalid Check Ride - " + ctx.getID());
+				throw notFoundException("Invalid Check Ride", ctx.getID());
 			
 			// Get the user taking the Check Ride
 			GetUserData uddao = new GetUserData(con);

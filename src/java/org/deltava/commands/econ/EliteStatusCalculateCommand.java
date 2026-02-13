@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate a Pilot's Elite status.
  * @author Luke
- * @version 12.0
+ * @version 12.4
  * @since 9.2
  */
 
@@ -72,7 +72,7 @@ public class EliteStatusCalculateCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getID());
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot", ctx.getID());
 			
 			// Get the current levels
 			GetElite edao = new GetElite(con);

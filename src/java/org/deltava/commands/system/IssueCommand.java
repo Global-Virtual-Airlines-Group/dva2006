@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017, 2020, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 				GetIssue dao = new GetIssue(con);
 				i = dao.get(ctx.getID());
 				if (i == null)
-					throw notFoundException("Invalid Issue " + ctx.getID());
+					throw notFoundException("Invalid Development Issue", ctx.getID());
 
 				// Check our access
 				access = new IssueAccessControl(ctx, i);
@@ -201,7 +201,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			} else {
 				i = dao.get(ctx.getID());
 				if (i == null)
-					throw notFoundException("Invalid Issue - " + ctx.getID());
+					throw notFoundException("Invalid Development Issue", ctx.getID());
 
 				// Check our access
 				access = new IssueAccessControl(ctx, i);
@@ -269,7 +269,7 @@ public class IssueCommand extends AbstractAuditFormCommand {
 			GetIssue dao = new GetIssue(con);
 			Issue i = dao.get(ctx.getID());
 			if (i == null)
-				throw notFoundException("Invalid Issue - " + ctx.getID());
+				throw notFoundException("Invalid Development Issue", ctx.getID());
 
 			// Check our access
 			IssueAccessControl access = new IssueAccessControl(ctx, i);

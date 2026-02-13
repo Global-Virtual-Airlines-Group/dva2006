@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016, 2020, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2020, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Site Command to check eligibility for particular Accomplishments.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 3.2
  */
 
@@ -85,7 +85,7 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(id);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + id);
+				throw notFoundException("Invalid Pilot", id);
 			
 			// Load all Accomplishment profiles
 			GetAccomplishment adao = new GetAccomplishment(con);

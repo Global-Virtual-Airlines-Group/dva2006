@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to restore disabled Image Links.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 7.3
  */
 
@@ -33,7 +33,7 @@ public class RestoreImageLinksCommand extends AbstractCommand {
 			GetCoolerThreads mtdao = new GetCoolerThreads(con);
 			MessageThread mt = mtdao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 			
 			// Get the channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
@@ -48,7 +48,7 @@ public class RestoreImageLinksCommand extends AbstractCommand {
 			
 			// Ensure we have disabled linked images
 			if (!mt.getHasDisabledLinks())
-				throw notFoundException("No disabled Image Links on Message Thread " + ctx.getID());
+				throw notFoundException("No disabled Image Links", ctx.getID());
 			
 			// Create status update
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());

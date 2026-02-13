@@ -1,4 +1,4 @@
-// Copyright 2020, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.econ;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display a Pilot's Elite status history. 
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 9.2
  */
 
@@ -49,7 +49,7 @@ public class EliteInfoCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(id);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + id);
+				throw notFoundException("Invalid Pilot", id);
 			
 			// Get all elite levels
 			GetElite eldao = new GetElite(con);

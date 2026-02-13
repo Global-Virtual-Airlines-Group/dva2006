@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2014, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 2.2
  */
 
@@ -45,9 +45,9 @@ public class RouteSaveCommand extends AbstractCommand {
 		
 		// Check airports
 		if (rp.getAirportD() == null)
-			throw notFoundException("Invalid Airport - " + ctx.getParameter("airportD"));
+			throw notFoundException("Invalid Airport", ctx.getParameter("airportD"));
 		else if (rp.getAirportA() == null)
-			throw notFoundException("Invalid Airport - " + ctx.getParameter("airportA"));
+			throw notFoundException("Invalid Airport", ctx.getParameter("airportA"));
 		
 		// Update the route ID
 		int routeID = StringUtils.parse(ctx.getParameter("routeID"), 0);

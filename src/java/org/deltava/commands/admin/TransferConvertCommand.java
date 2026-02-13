@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to toggle the additional ratings flag on a Transfer Request.
  * @author Luke
- * @version 4.2
+ * @version 12.4
  * @since 2.1
  */
 
@@ -33,7 +33,7 @@ public class TransferConvertCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest tx = txdao.get(ctx.getID());
 			if (tx == null)
-				throw notFoundException("No Transfer Request for Pilot " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request", ctx.getID());
 			
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, tx);

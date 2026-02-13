@@ -1,4 +1,4 @@
-// Copyright 2007, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to unlink a Water Cooler linked image. 
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -39,20 +39,20 @@ public class UnlinkImageCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Unknown Message Thread - " + ctx.getID());
+				throw notFoundException("Unknown Message Thread", ctx.getID());
 			
 			// Get the Channel
 			GetCoolerChannels chdao = new GetCoolerChannels(con);
 			Channel ch = chdao.get(mt.getChannel());
 			if (ch == null)
-				throw notFoundException("Unknown Channel - " + mt.getChannel());
+				throw notFoundException("Unknown Channel", mt.getChannel());
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
 			Map<Integer, LinkedImage> imgs = CollectionUtils.createMap(ldao.getURLs(mt.getID(), true), LinkedImage::getID);
 			LinkedImage imgURL = imgs.get(Integer.valueOf(seq));
 			if (imgURL == null)
-				throw notFoundException("Unknown Linked Image sequence - " + seq);
+				throw notFoundException("Unknown Linked Image sequence", seq);
 			
 			// Validate our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

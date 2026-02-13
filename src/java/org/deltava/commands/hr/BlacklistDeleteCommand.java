@@ -1,4 +1,4 @@
-// Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to delete a login/registration blacklist entry.
  * @author Luke
- * @version 9.0
+ * @version 12.4
  * @since 9.0
  */
 
@@ -32,7 +32,7 @@ public class BlacklistDeleteCommand extends AbstractCommand {
 			GetSystemData dao = new GetSystemData(con);
 			BlacklistEntry be = dao.getBlacklist(addr);
 			if (be == null)
-				throw notFoundException(addr + " not in Blacklist");
+				throw notFoundException("Not in Blacklist", addr);
 			
 			// Dete the entry
 			SetSystemData wdao = new SetSystemData(con);

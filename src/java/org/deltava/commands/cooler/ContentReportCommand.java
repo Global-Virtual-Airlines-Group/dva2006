@@ -1,4 +1,4 @@
- // Copyright 2006, 2007, 2008, 2011, 2016, 2017, 2023 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007, 2008, 2011, 2016, 2017, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -51,13 +51,13 @@ public class ContentReportCommand extends AbstractCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			mt = dao.getThread(ctx.getID());
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread", ctx.getID());
 			
 			// Get the channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Water Cooler channel - " + mt.getChannel());
+				throw notFoundException(String.format("Invalid %s Channel", SystemData.get("airline.forum")), mt.getChannel());
 			
 			// Check our access
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
@@ -95,7 +95,7 @@ public class ContentReportCommand extends AbstractCommand {
 				ThreadUpdate upd2 = new ThreadUpdate(mt.getID());
 				upd2.setDate(upd.getDate().plusSeconds(1));
 				upd2.setAuthorID(ctx.getUser().getID());
-				upd2.setDescription("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
+				upd2.setDescription(String.format("Discussion Thread automatically locked/hidden after %d content reports", Integer.valueOf(maxWarns)));
 				wdao.write(upd2);
 				isLocked = true;
 			} else if (mt.getReportCount() == 1) {
@@ -113,7 +113,6 @@ public class ContentReportCommand extends AbstractCommand {
 				}
 			}
 			
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

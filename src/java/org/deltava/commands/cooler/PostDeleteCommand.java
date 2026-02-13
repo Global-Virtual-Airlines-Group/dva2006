@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to delete an individual message post.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -43,13 +43,13 @@ public class PostDeleteCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(threadID, true);
 			if (mt == null)
-				throw notFoundException("Invalid Message Thread - " + threadID);
+				throw notFoundException("Invalid Message Thread", threadID);
 
 			// Get the Channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + mt.getChannel());
+				throw notFoundException("Invalid Channel", mt.getChannel());
 			
 	         // Check our access - only if we're reading
 	         CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
@@ -59,19 +59,10 @@ public class PostDeleteCommand extends AbstractCommand {
 	            throw securityException("Cannot delete Message Post");
 	         
 	         // Ensure that the post exists
-	         boolean hasPost = false;
 	         Collection<Message> posts = mt.getPosts();
-	         for (Iterator<Message> i = posts.iterator(); !hasPost && i.hasNext(); ) {
-	        	 Message msg = i.next();
-	        	 if (msg.getID() == postID) {
-	        		 hasPost = true;
-	        		 i.remove();
-	        	 }
-	         }
-	         
-	         // If we cannot find the post, abort
+	         boolean hasPost = posts.removeIf(p -> p.getID() == postID);
 	         if (!hasPost)
-	        	 throw notFoundException("Invalid Message Post - " + postID);
+	        	 throw notFoundException("Invalid Message Post", postID);
 	         
 	         // Start the transaction
 	         ctx.startTX();

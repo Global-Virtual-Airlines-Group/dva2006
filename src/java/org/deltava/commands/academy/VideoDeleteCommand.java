@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import org.deltava.security.command.CertificationAccessControl;
 /**
  * A Web Site Command to delete training Videos.
  * @author Luke
- * @version 5.3
+ * @version 12.4
  * @since 5.3
  */
 
@@ -42,7 +42,7 @@ public class VideoDeleteCommand extends AbstractCommand {
 			GetVideos dao = new GetVideos(con);
 			Video v = dao.getVideo(fName);
 			if (v == null)
-				throw notFoundException("Invalid video filename - " + fName);
+				throw notFoundException("Invalid Video filename", fName);
 			
 			// Start the transaction
 			ctx.startTX();

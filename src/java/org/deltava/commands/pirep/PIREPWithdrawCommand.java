@@ -1,4 +1,4 @@
-// Copyright 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.time.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to withdraw a submitted Flight Report.
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 11.6
  */
 
@@ -34,7 +34,7 @@ public class PIREPWithdrawCommand extends AbstractCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);

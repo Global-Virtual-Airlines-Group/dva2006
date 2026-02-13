@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request", ctx.getID());
 
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
@@ -60,7 +60,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			UserData ud = uddao.get(txreq.getID());
 			usr = pdao.get(ud);
 			if (usr == null)
-				throw notFoundException("Invalid Pilot - " + txreq.getID());
+				throw notFoundException("Invalid Pilot", txreq.getID());
 			
 			// Get the current equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -81,7 +81,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			if (eqType != null) {
 				EquipmentType newEQ = eqdao.get(eqType);
 				if ((currentEQ == null) || (newEQ == null))
-					throw notFoundException("Invalid Equipment Program - " + eqType + " / " + usr.getEquipmentType());
+					throw notFoundException("Invalid Equipment Program", String.format("%s / %s", eqType, usr.getEquipmentType()));
 				
 				// Get the available ranks
 				Collection<Rank> eqRanks = newEQ.getRanks();
@@ -90,7 +90,7 @@ public class TransferApproveCommand extends AbstractCommand {
 
 				// Validate the rank
 				if ((rank == null) || !eqRanks.contains(rank))
-					throw notFoundException("Invalid Rank - " + rank);
+					throw notFoundException("Invalid Rank", rank);
 
 				// Check if we're doing a promotion or a rating change
 				RankComparator rCmp = new RankComparator();

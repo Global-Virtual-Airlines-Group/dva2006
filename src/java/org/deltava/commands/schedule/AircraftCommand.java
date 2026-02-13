@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019, 2020, 2021, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 10.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 				GetAircraft dao = new GetAircraft(con);
 				a = dao.get(aCode);
 				if (a == null)
-					throw notFoundException("Unknown Aircraft - " + aCode);
+					throw notFoundException("Unknown Aircraft", aCode);
 
 				oa = BeanUtils.clone(a); oldName = a.getName();
 				a.setName(ctx.getParameter("name"));
@@ -178,7 +178,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 				GetAircraft dao = new GetAircraft(ctx.getConnection());
 				Aircraft a = dao.get(aCode);
 				if (a == null)
-					throw notFoundException("Unknown Aircraft - " + aCode);
+					throw notFoundException("Unknown Aircraft", aCode);
 				
 				readAuditLog(ctx, a);
 				
@@ -210,7 +210,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			GetAircraft dao = new GetAircraft(ctx.getConnection());
 			Aircraft a = dao.get(aCode);
 			if (a == null)
-				throw notFoundException("Unknown Aircraft - " + aCode);
+				throw notFoundException("Unknown Aircraft", aCode);
 			
 			// Check access control
 			AircraftAccessControl ac = new AircraftAccessControl(ctx, a);

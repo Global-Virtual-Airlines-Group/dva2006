@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport pirep = frdao.get(id, ctx.getDB());
 			if (pirep == null)
-				throw notFoundException(String.format("Invalid Flight Report - %d", Integer.valueOf(id)));
+				throw notFoundException("Invalid Flight Report", id);
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, pirep);

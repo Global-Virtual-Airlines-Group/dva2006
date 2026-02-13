@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 11.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			GetApplicant dao = new GetApplicant(con);
 			a = dao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -66,7 +66,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(a.getEquipmentType());
 			if (eq == null)
-				throw notFoundException("Invalid Equipment Program - " + a.getEquipmentType());
+				throw notFoundException("Invalid Equipment Program", a.getEquipmentType());
 
 			// Get the equipment ratings
 			Collection<String> ratings = new TreeSet<String>();

@@ -1,4 +1,4 @@
-// Copyright 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import org.deltava.commands.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to purge ACARS client error reports. 
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 9.1
  */
 
@@ -28,7 +28,7 @@ public class ErrorLogPurgeCommand extends AbstractCommand {
 		// Get the purge type
 		int searchType = StringUtils.arrayIndexOf(ErrorLogCommand.FILTER_OPTS, ctx.getParameter("viewType"));
 		if (searchType < 1)
-			throw notFoundException("Invalid purge criteria - " + ctx.getParameter("viewType"));
+			throw notFoundException("Invalid purge criteria", ctx.getParameter("viewType"));
 
 		// Get the build
 		int build = StringUtils.parse(ctx.getParameter("build"), 0);

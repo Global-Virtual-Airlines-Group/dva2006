@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011, 2015, 2019, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015, 2019, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to save System News entries.
  * @author Luke
- * @version 10.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				GetNews dao = new GetNews(con);
 				nws = dao.getNews(ctx.getID());
 				if (nws == null)
-					throw notFoundException("Invalid System News entry - " + ctx.getID());
+					throw notFoundException("Invalid System News", ctx.getID());
 
 				// Check our access
 				NewsAccessControl access = new NewsAccessControl(ctx, nws);

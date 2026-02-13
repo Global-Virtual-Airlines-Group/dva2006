@@ -1,4 +1,4 @@
-// Copyright 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -10,7 +10,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to override the Profanity Filter for all posts in a Water Cooler message thread.
  * @author Luke
- * @version 7.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -23,7 +23,6 @@ public class ContentOverrideCommand extends AbstractCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -31,7 +30,7 @@ public class ContentOverrideCommand extends AbstractCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			MessageThread mt = dao.getThread(ctx.getID());
 			if (mt ==  null)
-				throw notFoundException("Invalid Thread - " + ctx.getID());
+				throw notFoundException("Invalid Thread", ctx.getID());
 			
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());

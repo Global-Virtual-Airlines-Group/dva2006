@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2012, 2014, 2019, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2012, 2014, 2019, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
  * @author Luke
- * @version 10.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(userID);
 			if (usr == null)
-				throw notFoundException("Unknown Pilot ID - " + userID);
+				throw notFoundException("Invalid Pilot", userID);
 			
 			// Get the first flight date
 			GetFlightReports frdao = new GetFlightReports(con);

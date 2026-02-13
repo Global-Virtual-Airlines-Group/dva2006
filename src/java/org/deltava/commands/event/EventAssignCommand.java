@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2020, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 9.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class EventAssignCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw notFoundException("Unknown Online Event - " + ctx.getID());
+				throw notFoundException("Unknown Online Event", ctx.getID());
 			
 			// Check our access level
 			EventAccessControl access = new EventAccessControl(ctx, e);

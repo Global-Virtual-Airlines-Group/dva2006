@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2015, 2016, 2018, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2015, 2016, 2018, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 11.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			FlightReport fr = dao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);

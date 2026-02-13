@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2016, 2017, 2020, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016, 2017, 2020, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
  * @author Luke
- * @version 10.1
+ * @version 12.4
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class CourseCommentCommand extends AbstractCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			Course c = dao.get(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Course - " + ctx.getID());
+				throw notFoundException("Invalid Course", ctx.getID());
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);

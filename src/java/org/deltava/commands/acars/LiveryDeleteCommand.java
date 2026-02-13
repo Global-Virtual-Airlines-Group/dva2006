@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to delete an ACARS multi-player livery command.
  * @author Luke
- * @version 7.0
+ * @version 12.4
  * @since 2.2
  */
 
@@ -37,7 +37,7 @@ public class LiveryDeleteCommand extends AbstractCommand {
 			GetACARSLivery dao = new GetACARSLivery(con);
 			Livery l = dao.get(SystemData.getAirline(tkns.nextToken()), tkns.nextToken());
 			if (l == null)
-				throw notFoundException("Invalid Livery - " + id);
+				throw notFoundException("Invalid Livery", id);
 			
 			// Delete the livery
 			SetACARSData wdao = new SetACARSData(con);

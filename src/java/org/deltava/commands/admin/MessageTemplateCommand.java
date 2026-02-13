@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016, 2017, 2021, 2022, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2021, 2022, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 10.6
+ * @version 12.4
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 			GetMessageTemplate dao = new GetMessageTemplate(con);
 			MessageTemplate msg = dao.get(ctx.getDB(), id);
 			if (msg == null)
-				throw notFoundException("Invalid Message Template - " + id);
+				throw notFoundException("Invalid Message Template", id);
 			
 			// Update our access to calculate deletion rights
 			access = new MessageAccessControl(ctx, msg);
@@ -104,7 +104,7 @@ public class MessageTemplateCommand extends AbstractAuditFormCommand {
 				GetMessageTemplate dao = new GetMessageTemplate(con);
 				mt = dao.get((String) ctx.getCmdParameter(Command.ID, null));
 				if (mt == null)
-					throw notFoundException("Invalid Message Template - " + ctx.getCmdParameter(Command.ID, null));
+					throw notFoundException("Invalid Message Template", ctx.getCmdParameter(Command.ID, null));
 				
 				// Check our access
 				MessageAccessControl access = new MessageAccessControl(ctx, mt);

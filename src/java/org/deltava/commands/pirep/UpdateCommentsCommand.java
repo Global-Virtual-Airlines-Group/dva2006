@@ -1,4 +1,4 @@
-// Copyright 2014, 2021 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2021, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to update Flight Report disposition comments. 
  * @author Luke
- * @version 10.0
+ * @version 12.4
  * @since 5.3
  */
 
@@ -33,7 +33,7 @@ public class UpdateCommentsCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport fr = frdao.get(ctx.getID(), ctx.getDB());
 			if (fr == null)
-				throw notFoundException("Invalid Flight Report ID - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report", ctx.getID());
 			
 			// Check our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);

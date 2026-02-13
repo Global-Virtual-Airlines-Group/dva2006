@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2018, 2019, 2020, 2023 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2018, 2019, 2020, 2023, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to resent the Applicant welcome message.
  * @author Luke
- * @version 11.0
+ * @version 12.4
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			GetApplicant adao = new GetApplicant(con);
 			a = adao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant", ctx.getID());
 			
 			// Get the Questionnaire
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
@@ -74,13 +74,13 @@ public class WelcomeMessageCommand extends AbstractCommand {
 				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(a.getPilotID());
 				if (usr == null)
-					throw notFoundException("Cannot load Pilot Profile");
+					throw notFoundException("Invalid Pilot ID", a.getPilotID());
 				
 				// Load the equipment profile
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				EquipmentType eqType = eqdao.get(a.getEquipmentType());
 				if (eqType == null)
-					throw notFoundException("Cannot load Equipment Profle");
+					throw notFoundException("Invalid Equipment Type", a.getEquipmentType());
 				
 				// Add the equipment profile
 				mctxt.addData("eqType", eqType);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021, 2022, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019, 2021, 2022, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 11.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 				GetAirline dao = new GetAirline(con);
 				a = dao.get(aCode);
 				if (a == null)
-					throw notFoundException("Invalid Airline - " + aCode);
+					throw notFoundException("Invalid Airline", aCode);
 				
 				oa = BeanUtils.clone(a);
 				a.setCode(ctx.getParameter("code"));
