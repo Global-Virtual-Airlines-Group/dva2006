@@ -10,6 +10,12 @@
 	<listener>
 		<listener-class>org.deltava.servlet.lifecycle.UserListener</listener-class>
 	</listener>
+	
+	<!-- Request Queue latency Filter -->
+	<filter>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.RequestLatencyFilter</filter-class>	
+	</filter>
 
 	<!-- Browser Type Detection Filter -->
 	<filter>
@@ -156,6 +162,10 @@
 	
 	<!-- Filter mappings to Command Controller -->
 	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>	
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>BrowserTypeFilter</filter-name>
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
@@ -258,6 +268,10 @@
 
 	<!-- Filter mappings to Fleet Library -->
 	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>fleetLibrary</servlet-name>	
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>SecurityCookieFilter</filter-name>
 		<servlet-name>fleetLibrary</servlet-name>
 	</filter-mapping>
@@ -267,6 +281,10 @@
 	</filter-mapping>	
 
 	<!-- Filter mappings to Web Services -->
+	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>webService</servlet-name>	
+	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SecurityCookieFilter</filter-name>
 		<servlet-name>webService</servlet-name>
@@ -278,6 +296,20 @@
 	<filter-mapping>
 		<filter-name>FileUploadFilter</filter-name>
 		<servlet-name>webService</servlet-name>
+	</filter-mapping>
+	
+	<!-- Filter Mapping to other servlets -->
+	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>sigImage</servlet-name>	
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>linkShorten</servlet-name>	
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>RequestLatencyFilter</filter-name>
+		<servlet-name>attachments</servlet-name>	
 	</filter-mapping>
 	
 	<!-- Servlet URL mappings -->

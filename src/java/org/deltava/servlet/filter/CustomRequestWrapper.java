@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.security.Principal;
@@ -11,46 +11,44 @@ import org.deltava.commands.HTTPContext;
 /**
  * A custom HTTP request wrapper to allow access to custom security information via standard Servlet API calls.
  * @author Luke
- * @version 2.4
+ * @version 12.4
  * @since 1.0
  */
 
 public class CustomRequestWrapper extends HttpServletRequestWrapper {
+	
+	private final String _hostName;
 
     /**
      * Creates a new wrapper from a raw servlet request. 
      * @param req the HTTP Servlet Request
+     * @param remoteHost the remote host name
      */
-    public CustomRequestWrapper(HttpServletRequest req) {
+    public CustomRequestWrapper(HttpServletRequest req, String remoteHost) {
         super(req);
+        _hostName = remoteHost;
     }
     
-    /**
-     * Returns the authentication type.
-     * @return HttpServletRequest.FORM_AUTH
-     */
     @Override
     public final String getAuthType() {
         return HttpServletRequest.FORM_AUTH;
     }
 
-    /**
-     * Returns the name of the logged in user.
-     * @return the User name, or null if not authenticated
-     * @see CustomRequestWrapper#getUserPrincipal()
-     */
     @Override
     public final String getRemoteUser() {
         Principal p = getUserPrincipal();
         return (p == null) ? null : p.getName();
     }
     
+    @Override
+	public final String getRemoteHost() {
+    	return _hostName;
+    }
+    
     /**
-     * Returns the user object associated with the logged in user. Since Person implements Principal, this value
-     * can be safely casted.
+     * Returns the user object associated with the logged in user. Since Person implements Principal, this value can be safely casted.
      * @return the Person object, or null if not authenticated
      * @see CustomRequestWrapper#getRemoteUser()
-     * @see Person
      * @see HTTPContext#USER_ATTR_NAME
      */
     @Override
