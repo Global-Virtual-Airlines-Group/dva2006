@@ -38,7 +38,7 @@ public class TestDateFormatTag extends AbstractTagTestCase {
         p.setTZ(TZInfo.init("US/Eastern", null, null));
         HttpServletRequest hreq = _req;
         setUser(p);
-        _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
+        _ctx.initialize(null, new CustomRequestWrapper(hreq, "localhost"), _rsp, "", false, 8192, false);
 
         _tag.setPageContext(_ctx);
         _tag.setDate(_d);

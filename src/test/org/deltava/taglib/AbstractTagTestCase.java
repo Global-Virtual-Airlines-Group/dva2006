@@ -57,7 +57,7 @@ public class AbstractTagTestCase extends TestCase {
       SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
       
       _rootReq = new HttpServletRequestSimulatorHelper();
-      _req = new CustomRequestWrapper(_rootReq);
+      _req = new CustomRequestWrapper(_rootReq, "localhost");
       _rsp = new MockHttpServletResponse();
 
       _jspOut = new JspTestWriter();

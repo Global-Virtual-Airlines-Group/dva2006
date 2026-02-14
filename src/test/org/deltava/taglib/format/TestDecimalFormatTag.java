@@ -31,7 +31,7 @@ public class TestDecimalFormatTag extends AbstractTagTestCase {
         HttpServletRequest hreq = _req;
         HttpSession s = hreq.getSession(true);
         s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
-        _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
+        _ctx.initialize(null, new CustomRequestWrapper(hreq, "localhost"), _rsp, "", false, 8192, false);
         
         _tag.setPageContext(_ctx);
         _tag.setValue(Integer.valueOf(1));
