@@ -71,7 +71,7 @@ public class Resolver {
 		try {
 			log.debug("Resolinvg {}", a);
 			synchronized (a) {
-				a.wait(Math.min(wait, wait));
+				a.wait(Math.min(wait, 2500));
 			}
 		} catch (InterruptedException ie) {
 			log.info("{} timed Out after {}ms", a, Integer.valueOf(wait));
