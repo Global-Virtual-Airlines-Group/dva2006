@@ -317,6 +317,7 @@ golgotha.form.showSpinner = function(f) {
 	spinImg.parentNode.removeChild(spinImg);
 	dlg.appendChild(spinImg);
 	golgotha.util.display('dialogMsg', false);
+	golgotha.util.display('dialogURLBox', false);
 	golgotha.util.display(spinImg, true);
 	dlg.showModal();
 	return true;
@@ -326,10 +327,28 @@ golgotha.form.showDialogMessage = function(msg, opts) {
 	const dlg = document.getElementById('dlg');
 	const dv = document.getElementById('dialogMsg');
 	if ((!dlg) || (!dv)) return false;
-	const o = opts || {timeout:0,className:'error bld'};
+	const o = opts || {timeout:0,className:'error bld',closeby:'closerequest'};
+	dlg.closeby = o.closeby;
 	dv.className = '';
 	golgotha.util.addClass(dv, o.className);
 	dv.innerText = msg;
+	if (o.url) {
+		const oa = document.getElementById('dialogLink');
+		if (oa) oa.remove();
+
+		const a = document.createElement('a');
+		a.setAttribute('id', 'dialogLink');
+		a.className = 'pri bld';
+		a.href = o.url;
+		a.innerText = o.label || o.url;
+
+		// Display link
+		const urldv = document.getElementById('dialogURL');
+		urldv.appendChild(a);
+		golgotha.util.display('dialogURLBox', true);
+	} else
+		golgotha.util.display('dialogURLBox', false);
+	
 	golgotha.util.display(dv, true);
 	dlg.showModal();
 	if (o.timeout > 0)

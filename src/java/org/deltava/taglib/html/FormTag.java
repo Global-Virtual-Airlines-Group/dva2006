@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.net.URLEncoder;
@@ -91,8 +91,12 @@ public class FormTag extends ElementTag {
             _data.setAttribute("enctype", "multipart/form-data");
         
         try {
-        	if (_dialog || _spinner)
-        		_out.println("<dialog id=\"dlg\" class=\"formDialog mid\" closeby=\"closerequest\"><div id=\"dialogMsg\"></div></dialog>");
+        	if (_dialog || _spinner) {
+        		_out.println("<dialog id=\"dlg\" class=\"formDialog mid\" closeby=\"closerequest\">");
+        		_out.println("<div id=\"dialogMsg\"></div>");
+        		_out.println("<span id=\"dialogURLBox\" style=\"display:none\"><br><span id=\"dialogURL\"></span></span>");
+        		_out.println("</dialog>");
+        	}
         	
             _out.println(_data.open(true));
         } catch(Exception e) {
