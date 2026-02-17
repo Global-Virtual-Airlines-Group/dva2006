@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.simbrief;
 
 import java.io.*;
@@ -7,6 +7,8 @@ import java.time.Instant;
 
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
+
+import org.apache.logging.log4j.*;
 
 import org.deltava.beans.WeightUnit;
 import org.deltava.beans.flight.ETOPS;
@@ -23,7 +25,9 @@ import org.deltava.util.system.SystemData;
  */
 
 public class SimBriefParser {
-
+	
+	private static final Logger log = LogManager.getLogger(SimBriefParser.class);
+	
 	// static class
 	private SimBriefParser() {
 		super();
@@ -68,17 +72,29 @@ public class SimBriefParser {
 		sb.setSimBriefUserID(pe.getChildTextTrim("user_id"));
 		sb.setCreatedOn(Instant.ofEpochSecond(StringUtils.parse(pe.getChildTextTrim("time_generated"), 0)));
 		sb.setAIRAC(StringUtils.parse(pe.getChildTextTrim("airac"), 2208));
-		sb.setAirportD(SystemData.getAirport(XMLUtils.getChildText(re, "origin", "iata_code")));
-		sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
-		sb.setTimeD(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_out"), 0)));
-		sb.setAirportA(SystemData.getAirport(XMLUtils.getChildText(re, "destination", "iata_code")));
-		sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
-		sb.setTimeA(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_in"), 0)));
 		sb.setTailCode(XMLUtils.getChildText(re, "aircraft", "reg"));
 		String airframeID = XMLUtils.getChildText(re, "api_params", "type");
 		if ((airframeID != null) && (airframeID.length() > 8))
 			sb.setAirframeID(airframeID);
-	
+		
+		// Get departure airport
+		String adCode = XMLUtils.getChildText(re, "origin", "iata_code");
+		sb.setAirportD(SystemData.getAirport(adCode));
+		if (sb.getAirportD() != null) {
+			sb.setRunwayD(XMLUtils.getChildText(re, "origin", "plan_rwy"));
+			sb.setTimeD(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_out"), 0)));
+		} else
+			log.warn("Invalid departure Airport - {}", adCode);
+		
+		// Get arrival airport
+		String aaCode = XMLUtils.getChildText(re, "destination", "iata_code");
+		sb.setAirportA(SystemData.getAirport(aaCode));
+		if (sb.getAirportA() != null) {
+			sb.setRunwayA(XMLUtils.getChildText(re, "destination", "plan_rwy"));
+			sb.setTimeA(Instant.ofEpochSecond(StringUtils.parse(XMLUtils.getChildText(re, "times", "est_in"), 0)));
+		} else
+			log.warn("Invalid arrival Airport - {}", aaCode);
+		
 		re.getChildren("alternate").stream().map(ae -> SystemData.getAirport(ae.getChildTextTrim("iata_code"))).filter(Objects::nonNull).forEach(sb::addAirportL);
 		sb.setXML(doc);
 		
