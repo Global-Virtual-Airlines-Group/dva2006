@@ -23,7 +23,6 @@
 <content:js name="simBrief" />
 <c:if test="${empty sbPackage}">
 <content:js name="simbrief.apiv1" /></c:if></c:if>
-<content:captcha action="pirep" />
 <content:googleAnalytics />
 <c:if test="${googleMap}"><map:api version="3" /></c:if>
 <c:if test="${scoreCR || access.canDispose}">

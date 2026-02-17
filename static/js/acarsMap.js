@@ -35,7 +35,8 @@ xmlreq.onreadystatechange = function() {
 		mrk.isExternal = a.hasOwnProperty('external_id');
 		mrk.flight_id = mrk.isExternal ? a.external_id : a.flight_id;
 		mrk.isBusy = a.busy;
-		const p = new mapboxgl.Popup({closeOnClick:true,focusAfterOpen:false,maxWidth:'320px'});
+		const p = new mapboxgl.Popup({closeOnClick:true,focusAfterOpen:false,maxWidth:'320px'}); // TODO: Move to clickAircraft; check for flightInfo
+		p.setLngLat(a.ll);
 		if (a.tabs.length != 0) {
 			mrk.updateTab = golgotha.maps.util.updateTab;
 			mrk.tabs = a.tabs;
@@ -46,15 +47,17 @@ xmlreq.onreadystatechange = function() {
 		// Set click handlers
 		mrk.popup = p;
 		p.on('close', golgotha.maps.acars.infoClose);
-		p.on('open', function(e) { 
-			golgotha.maps.selectedMarker = e.target._marker;
-			golgotha.maps.acars.clickAircraft(golgotha.maps.selectedMarker);
+		p.on('open', function(e) {
+			const m =e.target._marker;
+			golgotha.maps.selectedMarker = m;
+			golgotha.maps.acars.clickAircraft(m);
+			if (cfg.showInfo) m.popup.addTo(map);
 		});
 
 		// Add the user ID
 		if ((a.pilot) && (cbo != null)) {
 			let lbl = a.pilot.name;
-			if (a.pilot.code != null)
+			if (a.pilot.code)
 				lbl += (' (' + a.pilot.code + ')');
 
 			const o = new Option(lbl, a.pilot.code);
@@ -64,7 +67,6 @@ xmlreq.onreadystatechange = function() {
 				cbo.selectedIndex = (cbo.options.length - 1);
 		}
 
-		if (cfg.showInfo) mrk.setPopup(p);
 		golgotha.maps.acars.acPositions.push(mrk);
 		mrk.setMap(map);
 	});
@@ -161,10 +163,8 @@ return true;
 golgotha.maps.acars.infoClose = function() {
 	document.pauseRefresh = false;
 	if (!golgotha.maps.selectedMarker) return false;
+	golgotha.maps.selectedMarker.remove();
 	delete golgotha.maps.selectedMarker;
-	/* if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
-		map.infoWindow.marker.rangeCircle.setMap(null); */
-
 	map.removeLine(golgotha.maps.acars.routeData);
 	map.removeLine(golgotha.maps.acars.tempData);
 	map.removeLine(golgotha.maps.acars.routeWaypoints);

@@ -16,7 +16,6 @@
 <content:googleAnalytics />
 <content:js name="common" />
 <content:js name="progress" />
-<content:captcha action="tour" />
 <content:attr attr="tourAccess" value="true" roles="Pilot" />
 <c:if test="${tour.flights.size() > 0}"><c:set var="hasMap" value="true" scope="page" />
 <map:api version="3" /></c:if>
