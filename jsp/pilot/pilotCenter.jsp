@@ -27,7 +27,6 @@ golgotha.onDOMReady(function() {
 	return true;
 });
 </script>
-<content:captcha action="pilotcenter" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1">
