@@ -1,4 +1,4 @@
-// Copyright 2022, 2023, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2022, 2023, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simbrief;
 
 import static jakarta.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to refresh SimBrief briefing packages. 
  * @author Luke
- * @version 11.5
+ * @version 12.4
  * @since 10.3
  */
 
@@ -70,6 +70,9 @@ public class PackageRefreshService extends WebService {
 			
 			// Parse the data
 			BriefingPackage sbdata = SimBriefParser.parse(data);
+			if (!sbdata.isPopulated())
+				throw new IllegalStateException("SimBrief package missing Airport(s)");
+			
 			if (sbdata.getCreatedOn().isAfter(pkg.getCreatedOn())) {
 				sbdata.setSimBriefID(pkg.getSimBriefID());
 				sbdata.setURL(pkg.getURL());
@@ -138,7 +141,8 @@ public class PackageRefreshService extends WebService {
 				ctx.setHeader("X-SB-Error-Message", errorMsg);
 				throw error (SC_SERVICE_UNAVAILABLE, errorMsg, false);
 			}
-
+			
+			ctx.setHeader("X-SB-Error-Message", de.getMessage());
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
