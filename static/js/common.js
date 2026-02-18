@@ -341,6 +341,8 @@ golgotha.form.showDialogMessage = function(msg, opts) {
 		a.className = 'pri bld';
 		a.href = o.url;
 		a.innerText = o.label || o.url;
+		if (o.urlNew === true)
+			a.target = '_new';
 
 		// Display link
 		const urldv = document.getElementById('dialogURL');
