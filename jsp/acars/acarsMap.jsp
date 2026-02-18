@@ -21,7 +21,6 @@
 <content:js name="acarsMap" />
 <content:js name="mapBoxWX" />
 <content:js name="wxParsers" />
-<content:captcha action="acarsMap" />
 <content:csp type="CONNECT" host="tilecache.rainviewer.com" />
 <content:csp type="IMG" host="tilecache.rainviewer.com" />
 <content:newRelic>
