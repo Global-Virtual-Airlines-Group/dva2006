@@ -512,7 +512,7 @@ golgotha.routePlot.download = function() {
 		const noFP = (xmlreq.getResponseHeader('X-Plan-Empty') == 1);
 		if (noFP) {
 			const frID = xmlreq.getResponseHeader('X-Plan-ID');
-			golgotha.form.showDialogMessage('Draft Flight Report Updated', {className:'sec bld', url:'/pirep.do?id=' + frID, label:'View Flight Plan'});
+			golgotha.form.showDialogMessage('Draft Flight Report Updated', {className:'sec bld', url:'/pirep.do?id=' + frID, label:'View Flight Report', urlNew:true});
 			btn.disabled = false;
 			return true;
 		}
