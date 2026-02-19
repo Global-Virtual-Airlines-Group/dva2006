@@ -19,16 +19,15 @@ golgotha.maps.setOpacity = function(e, tx) { e.style.opacity = tx; };
 
 // Resize map based on window size
 golgotha.maps.util.resize = function() {
-	const wh = window.innerHeight	|| document.documentElement.clientHeight || document.body.clientHeight;
-	const ratio = wh / 800;
-	const divs = golgotha.util.getElementsByClass('googleMapV3', 'div');
+	const wh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	const ratio = wh / 1024;
+	const divs = golgotha.util.getElementsByClass('mapBoxV3', 'div');
 	for (var d = divs.pop(); (d != null); d = divs.pop()) {
-		const h = d.getAttribute('h');
-		if (h != null)
-			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
+		const h = parseInt(d.getAttribute('h'));
+		d.style.height = Math.max(h, Math.floor(h * ratio)) + 'px';
 	}
 
-	golgotha.maps.instances.forEach(function(m) { google.maps.event.trigger(m, 'resize'); });
+	golgotha.maps.instances.forEach(function(m) { m.resize(); });
 	return true;
 };
 
