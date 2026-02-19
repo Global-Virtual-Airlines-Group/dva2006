@@ -17,22 +17,6 @@ golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 409
 golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
 golgotha.maps.setOpacity = function(e, tx) { e.style.opacity = tx; };
 
-// Timer class
-golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
-golgotha.maps.util.Timer.prototype.start = function() {
-	if (this.startTime != null) return false;
-	this.startTime = new Date();
-	return true;
-};
-
-golgotha.maps.util.Timer.prototype.stop = function() {
-	if (this.startTime == null) return -1;	
-	const now = new Date();
-	this.runTime = (now.getTime() - this.startTime.getTime());
-	this.startTime = null;
-	return this.runTime;
-};
-
 // Resize map based on window size
 golgotha.maps.util.resize = function() {
 	const wh = window.innerHeight	|| document.documentElement.clientHeight || document.body.clientHeight;
