@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2014, 2015, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2015, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.mapbox;
 
 import jakarta.servlet.jsp.*;
@@ -54,6 +54,7 @@ public class MapDIVTag extends ElementTag {
       // Calculate height / width
       StringBuilder buf = new StringBuilder("width:100%;");
       if (_mapHeight > 0) {
+    	  _data.setAttribute("h", String.valueOf(_mapHeight));
     	  buf.append(" height:");
     	  buf.append(_mapHeight);
     	  buf.append("px;");
