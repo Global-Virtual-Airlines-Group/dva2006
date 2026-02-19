@@ -39,12 +39,12 @@ golgotha.maps.CreateButtonDiv = function(txt) {
 // Resize map based on window size
 golgotha.maps.util.resize = function() {
 	const wh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-	const ratio = wh / 800;
+	const ratio = wh / 1024;
+	console.log('Resize, wh=' + wh + ', ratio=' + ratio);
 	const divs = golgotha.util.getElementsByClass('mapBoxV3', 'div');
 	for (var d = divs.pop(); (d != null); d = divs.pop()) {
-		const h = d.getAttribute('h');
-		if (h != null)
-			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
+		const h = parseInt(d.getAttribute('h'));
+		d.style.height = Math.max(h, Math.floor(h * ratio)) + 'px';
 	}
 
 	golgotha.maps.instances.forEach(function(m) { m.resize(); });
