@@ -40,7 +40,6 @@ golgotha.maps.CreateButtonDiv = function(txt) {
 golgotha.maps.util.resize = function() {
 	const wh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 	const ratio = wh / 1024;
-	console.log('Resize, wh=' + wh + ', ratio=' + ratio);
 	const divs = golgotha.util.getElementsByClass('mapBoxV3', 'div');
 	for (var d = divs.pop(); (d != null); d = divs.pop()) {
 		const h = parseInt(d.getAttribute('h'));
