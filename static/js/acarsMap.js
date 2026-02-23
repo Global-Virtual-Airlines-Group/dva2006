@@ -163,7 +163,6 @@ return true;
 golgotha.maps.acars.infoClose = function() {
 	golgotha.maps.acars.pauseRefresh = false;
 	if (!golgotha.maps.selectedMarker) return false;
-	golgotha.maps.selectedMarker.remove();
 	delete golgotha.maps.selectedMarker;
 	map.removeLine(golgotha.maps.acars.routeData);
 	map.removeLine(golgotha.maps.acars.tempData);
