@@ -1,4 +1,4 @@
-golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[], cfg:{}};
+golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[], cfg:{}, pauseRefresh:false};
 golgotha.maps.acars.generateXMLRequest = function()
 {
 const xmlreq = new XMLHttpRequest();
@@ -27,7 +27,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Parse the JSON
-	const js = JSON.parse(xmlreq.responseText); const cfg = golgotha.maps.acars.cfg;
+	const js = JSON.parse(xmlreq.responseText);
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	const allAC = js.aircraft.sort(golgotha.maps.acars.sort);
 	allAC.forEach(function(a) {
@@ -47,6 +47,7 @@ xmlreq.onreadystatechange = function() {
 		mrk.popup = p;
 		p.on('close', golgotha.maps.acars.infoClose);
 		p.on('open', function(e) {
+			golgotha.maps.acars.pauseRefresh = true;
 			const m = e.target._marker;
 			golgotha.maps.selectedMarker = m;
 			golgotha.maps.acars.clickAircraft(m);
@@ -137,7 +138,7 @@ golgotha.maps.acars.clickAircraft = function(mrk) {
 	if (cfg.showProgress || cfg.showRoute)
 		golgotha.maps.acars.showFlightProgress(mrk, cfg.showProgress, cfg.showRoute);
 
-	document.pauseRefresh = true;
+	golgotha.maps.acars.pauseRefresh = true;
 	return true;
 };
 
@@ -155,12 +156,12 @@ if (!this.rangeCircle) {
 } else
 	this.rangeCircle.setMap(map);
 
-document.pauseRefresh = true;
+golgotha.maps.acars.pauseRefresh = true;
 return true;
 };
 
 golgotha.maps.acars.infoClose = function() {
-	document.pauseRefresh = false;
+	golgotha.maps.acars.pauseRefresh = false;
 	if (!golgotha.maps.selectedMarker) return false;
 	golgotha.maps.selectedMarker.remove();
 	delete golgotha.maps.selectedMarker;
@@ -230,7 +231,7 @@ golgotha.maps.acars.reloadData = function(isAuto) {
 	const doRefresh = golgotha.maps.acars.cfg.autoRefresh;
 
 	// Generate XMLHTTPRequest if we're not already viewing a flight
-	if (!document.pauseRefresh && isVisible) {
+	if (!golgotha.maps.acars.pauseRefresh && isVisible) {
 		const isLoading = document.getElementById('isLoading');
 		isLoading.innerHTML = ' - LOADING...';
 		const xmlreq = golgotha.maps.acars.generateXMLRequest();
