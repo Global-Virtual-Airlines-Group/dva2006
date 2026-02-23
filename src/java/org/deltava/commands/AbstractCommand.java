@@ -57,7 +57,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected static CommandException notFoundException(String msg, int id) {
-		return new CommandException(String.format("%s - %d", msg, Integer.valueOf(id)), false) {{ setWarning(true); setStatusCode(SC_NOT_FOUND); setWarning(id == 0); }};
+		return new CommandException(String.format("%s - %d", msg, Integer.valueOf(id)), false) {{ setStatusCode(SC_NOT_FOUND); setWarning(id == 0); }};
 	}
 	
 	/**
