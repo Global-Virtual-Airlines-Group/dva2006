@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.deltava.beans.stats.GateUsage.GATE_USAGE_YEARS;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 6.2
  */
 
@@ -24,36 +24,6 @@ public class SetAggregateStatistics extends DAO {
 	 */
 	public SetAggregateStatistics(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Adds an entry to the aggregation queue.
-	 * @param id the Flight Report database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public void addQueueEntry(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_AGGREGATE_QUEUE VALUES(?, NOW())")) {
-			ps.setInt(1, id);
-			executeUpdate(ps, 1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes an entry from the aggregation queue.
-	 * @param id the Flight Report database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public void deleteQueueEntry(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_AGGREGATE_QUEUE WHERE (ID=?)")) {
-			ps.setInt(1, id);
-			executeUpdate(ps, 0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 	
 	/**
