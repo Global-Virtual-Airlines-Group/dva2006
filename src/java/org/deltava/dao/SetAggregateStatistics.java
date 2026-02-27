@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import static org.deltava.beans.stats.GateUsage.GATE_USAGE_YEARS;
+import static org.deltava.beans.stats.RunwayLandingStats.MIN_LANDING_SCORE;
 
 import java.sql.*;
 
@@ -74,6 +75,17 @@ public class SetAggregateStatistics extends DAO {
 				ps.setBoolean(1, false);
 				ps.setInt(2, 32500);
 				ps.setInt(3, fr.getID());
+				executeUpdate(ps, 0);
+			}
+
+			int year = fr.getYear();
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_LANDSCORE (SELECT R.ICAO, R.RUNWAY, YEAR(P.DATE) AS YR, ROUND(AVG(AP.LANDING_SCORE)), ROUND(STDDEV(AP.LANDING_SCORE)), AVG(R.DISTANCE), "
+				+ "STDDEV(R.DISTANCE), AVG(AP.LANDING_VSPEED), STDDEV(AP.LANDING_VSPEED), COUNT(AP.ID) FROM acars.RWYDATA R, ACARS_PIREPS AP, PIREPS P WHERE (R.ISTAKEOFF=?) AND (R.ICAO=?) AND (R.ID=AP.ACARS_ID) AND "
+				+ "(AP.ID=P.ID) AND (YEAR(P.DATE)=?) AND (AP.LANDING_SCORE>?) GROUP BY R.ICAO, R.RUNWAY, YR)")) {
+				ps.setBoolean(1, false);
+				ps.setString(2, fr.getAirportA().getICAO());
+				ps.setInt(3, year);
+				ps.setInt(4, MIN_LANDING_SCORE); // Don't let really bad landings distort things
 				executeUpdate(ps, 0);
 			}
 			
