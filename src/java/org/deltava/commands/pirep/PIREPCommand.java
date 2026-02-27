@@ -468,7 +468,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Load taxi times
 			if (ac.getCanUseSimBrief() || isACARS) {
 				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
-				int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
+				int year = fr.getYear();
 				TaxiTime ttA = ttdao.getTaxiTime(fr.getAirportA(), year);
 				TaxiTime ttD = ttdao.getTaxiTime(fr.getAirportD(), year);
 				if (ttA.isEmpty())
