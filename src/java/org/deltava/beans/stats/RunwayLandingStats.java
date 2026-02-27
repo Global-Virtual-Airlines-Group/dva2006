@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 12.4
  */
 
-public class RunwayLandingStats implements Cacheable {
+public class RunwayLandingStats implements Cacheable, Comparable<RunwayLandingStats> {
 	
 	private final Airport _a;
 	private final String _runway;
@@ -196,6 +196,13 @@ public class RunwayLandingStats implements Cacheable {
 		rsw2.setDistance((int) agmD, (int) Math.round(Math.sqrt(dcv)));
 		rsw2.setVerticalSpeed((int) agmVS, (int) Math.round(Math.sqrt(vcv)));
 		return rsw2;
+	}
+	
+	@Override
+	public int compareTo(RunwayLandingStats rsw) {
+		int tmpResult = _a.compareTo(rsw._a);
+		tmpResult = (tmpResult == 0) ? _runway.compareTo(rsw._runway) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(_year, rsw._year) : tmpResult;
 	}
 	
 	@Override
