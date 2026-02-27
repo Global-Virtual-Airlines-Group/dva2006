@@ -14,6 +14,11 @@ import org.deltava.util.cache.Cacheable;
 
 public class RunwayLandingStats implements Cacheable, Comparable<RunwayLandingStats> {
 	
+	/**
+	 * Minimum landing score to avoid aggregating outlier data.
+	 */
+	public static final int MIN_LANDING_SCORE = 500;
+	
 	private final Airport _a;
 	private final String _runway;
 	private final int _year;
