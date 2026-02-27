@@ -648,7 +648,22 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (ac.getCanViewScore()) {
 							FlightScore score = FlightScorer.score(pkg);
 							if (score != FlightScore.INCOMPLETE)
-								ctx.setAttribute("flightScore", pkg, REQUEST);	
+								ctx.setAttribute("flightScore", pkg, REQUEST);
+						}
+					}
+					
+					// Get runway landing statistics
+					if (ac.getCanViewScore() && (afr.getFDR() != Recorder.XACARS)) {
+						GetAggregateStatistics asdao = new GetAggregateStatistics(con);
+						List<RunwayLandingStats> rls = asdao.getRunwayLandingStats(afr.getAirportA(), info.getRunwayA().getName());
+						if (!rls.isEmpty()) {
+							Iterator<RunwayLandingStats> i = rls.iterator(); RunwayLandingStats rsw = i.next();
+							while (i.hasNext() && rsw.getCount() < 100) {
+								RunwayLandingStats rs = i.next();
+								rsw = rsw.merge(rs);
+							}
+							
+							ctx.setAttribute("rlStats", rsw, REQUEST);
 						}
 					}
 					
