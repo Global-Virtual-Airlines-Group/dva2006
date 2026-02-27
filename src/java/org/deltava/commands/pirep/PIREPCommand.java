@@ -656,15 +656,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					if (ac.getCanViewScore() && (afr.getFDR() != Recorder.XACARS)) {
 						GetAggregateStatistics asdao = new GetAggregateStatistics(con);
 						List<RunwayLandingStats> rls = asdao.getRunwayLandingStats(afr.getAirportA(), info.getRunwayA().getName());
-						if (!rls.isEmpty()) {
-							Iterator<RunwayLandingStats> i = rls.iterator(); RunwayLandingStats rsw = i.next();
-							while (i.hasNext() && rsw.getCount() < 100) {
-								RunwayLandingStats rs = i.next();
-								rsw = rsw.merge(rs);
-							}
-							
-							ctx.setAttribute("rlStats", rsw, REQUEST);
-						}
+						ctx.setAttribute("rlStats", RunwayLandingStats.merge(rls, 100), REQUEST);
 					}
 					
 					// Get the IP address
