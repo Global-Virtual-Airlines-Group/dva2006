@@ -1,6 +1,8 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import java.util.*;
+
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.cache.Cacheable;
@@ -32,6 +34,24 @@ public class RunwayLandingStats implements Cacheable, Comparable<RunwayLandingSt
 	
 	private int _avgVS;
 	private int _vsSD;
+	
+	/**
+	 * Aggregates a Collection of RunwayLandingStats beans, optionally ensuring a minimum number of landings have been included.
+	 * @param rls a Collection of RunwayLandingStats beans
+	 * @param minLandings the minimum number of landings, or zero for all
+	 * @return a RunwayLandingStats bean with aggregated totals
+	 */
+	public static RunwayLandingStats merge(Collection<RunwayLandingStats> rls, int minLandings) {
+		if (rls.isEmpty()) return null;
+		final int minCnt = (minLandings <= 0) ? Integer.MAX_VALUE : minLandings;
+		Iterator<RunwayLandingStats> i = rls.iterator(); RunwayLandingStats rs = i.next();
+		while (i.hasNext() && rs.getCount() > minCnt) {
+			RunwayLandingStats rs2 = i.next();
+			rs = rs.merge(rs2);
+		}
+		
+		return rs;
+	}
 	
 	/**
 	 * Creates the bean.
