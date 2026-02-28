@@ -28,12 +28,28 @@ public class Tuple<K, V> implements Cacheable, Comparable<Tuple<K, ?>> {
 		_v = v;
 	}
 	
+	/**
+	 * Returns the first value.
+	 * @return the value
+	 */
 	public K getLeft() {
 		return _k;
 	}
 	
+	/**
+	 * Returns the second value.
+	 * @return the value
+	 */
 	public V getRight() {
 		return _v;
+	}
+	
+	/**
+	 * Returns whether both values are populated.
+	 * @return TRUE if both are non-null, otherwise FALSE
+	 */
+	public boolean isPopulated() {
+		return (_k != null) && (_v != null);
 	}
 	
 	public final static <K, V> Tuple<K, V> create(K k, V v) {
