@@ -38,19 +38,18 @@ public class ChallengingRunwaysCommand extends AbstractViewCommand {
 			sdao.setQueryMax(vc.getCount());
 			
 			// Load the runway names
-			vc.setResults(sdao.getChalleningRunways(5));
+			vc.setResults(sdao.getChalleningRunways(10));
 			
 			// Populate runway data
 			GetNavData navdao = new GetNavData(con);
 			Map<String, Runway> rwyData = new HashMap<String, Runway>();
 			for (RunwayLandingStats rwy : vc.getResults()) {
-				Runway r = navdao.getRunway(rwy.getAirport(), rwy.getRunway(), Simulator.FS2020);
+				Runway r = navdao.getRunway(rwy.getAirport(), rwy.getRunway(), Simulator.UNKNOWN);
 				if (r != null)
-					rwyData.put(String.format("%s-%s", r.getCode(), r.getName()), r);
+					rwyData.put(String.format("%s-%s", r.getCode(), rwy.getRunway()), r);
 			}
 			
 			ctx.setAttribute("rwys", rwyData, REQUEST);
-			ctx.setExpiry(1800);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
