@@ -39,10 +39,11 @@ public class ResolverDaemon implements Runnable {
 	
 	@Override
 	public void run() {
-		log.info("Started");
+		log.info("Started"); long reqs = 0;
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				String addr = _work.take();
+				reqs++;
 				try {
 					InetAddress host = InetAddress.getByName(addr);
 					log.debug("{} resolves to {}", addr, host.getCanonicalHostName());
@@ -61,6 +62,6 @@ public class ResolverDaemon implements Runnable {
 			}
 		}
 		
-		log.info("Stopped");
+		log.info("Stopped - {} requests", Long.valueOf(reqs));
 	}
 }
