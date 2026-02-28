@@ -45,7 +45,7 @@ public class RunwayLandingStats implements Cacheable, Comparable<RunwayLandingSt
 		if (rls.isEmpty()) return null;
 		final int minCnt = (minLandings <= 0) ? Integer.MAX_VALUE : minLandings;
 		Iterator<RunwayLandingStats> i = rls.iterator(); RunwayLandingStats rs = i.next();
-		while (i.hasNext() && rs.getCount() > minCnt) {
+		while (i.hasNext() && rs.getCount() < minCnt) {
 			RunwayLandingStats rs2 = i.next();
 			rs = rs.merge(rs2);
 		}
