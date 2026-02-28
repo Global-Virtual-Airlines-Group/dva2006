@@ -78,6 +78,7 @@ public class SetAggregateStatistics extends DAO {
 				executeUpdate(ps, 0);
 			}
 
+			// Get current year statistics
 			int year = fr.getYear();
 			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_LANDSCORE (SELECT R.ICAO, R.RUNWAY, YEAR(P.DATE) AS YR, ROUND(AVG(AP.LANDING_SCORE)), ROUND(STDDEV(AP.LANDING_SCORE)), AVG(R.DISTANCE), "
 				+ "STDDEV(R.DISTANCE), AVG(AP.LANDING_VSPEED), STDDEV(AP.LANDING_VSPEED), COUNT(AP.ID) FROM acars.RWYDATA R, ACARS_PIREPS AP, PIREPS P WHERE (R.ISTAKEOFF=?) AND (R.ICAO=?) AND (R.ID=AP.ACARS_ID) AND "
@@ -86,6 +87,16 @@ public class SetAggregateStatistics extends DAO {
 				ps.setString(2, fr.getAirportA().getICAO());
 				ps.setInt(3, year);
 				ps.setInt(4, MIN_LANDING_SCORE); // Don't let really bad landings distort things
+				executeUpdate(ps, 0);
+			}
+			
+			// Get all-time statistics
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_LANDSCORE (SELECT R.ICAO, R.RUNWAY, 0, ROUND(AVG(AP.LANDING_SCORE)), ROUND(STDDEV(AP.LANDING_SCORE)), AVG(R.DISTANCE), STDDEV(R.DISTANCE), "
+				+ "AVG(AP.LANDING_VSPEED), STDDEV(AP.LANDING_VSPEED), COUNT(AP.ID) FROM acars.RWYDATA R, ACARS_PIREPS AP, PIREPS P WHERE (R.ISTAKEOFF=?) AND (R.ICAO=?) AND (R.ID=AP.ACARS_ID) AND (AP.ID=P.ID) AND "
+				+ "(AP.LANDING_SCORE>?) GROUP BY R.ICAO, R.RUNWAY)")) {
+				ps.setBoolean(1, false);
+				ps.setString(2, fr.getAirportA().getICAO());
+				ps.setInt(3, MIN_LANDING_SCORE); // Don't let really bad landings distort things
 				executeUpdate(ps, 0);
 			}
 			

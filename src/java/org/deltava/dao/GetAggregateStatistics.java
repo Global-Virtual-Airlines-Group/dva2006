@@ -8,7 +8,6 @@ import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.schedule.Airport;
 
-import org.deltava.util.Tuple;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -214,23 +213,10 @@ public class GetAggregateStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<RunwayLandingStats> getRunwayLandingStats(Airport a, String rw) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (ICAO=?) AND (RUNWAY=?) ORDER BY YEAR DESC")) {
+		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (ICAO=?) AND (RUNWAY=?) AND (YEAR>0) ORDER BY YEAR DESC")) {
 			ps.setString(1, a.getICAO());
 			ps.setString(2, rw);
-			
-			List<RunwayLandingStats> results = new ArrayList<RunwayLandingStats>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					RunwayLandingStats rsw = new RunwayLandingStats(a, rs.getString(2), rs.getInt(3));
-					rsw.setScore(rs.getInt(4) / 100d, rs.getInt(5) / 100d);
-					rsw.setDistance(rs.getInt(6), rs.getInt(7));
-					rsw.setVerticalSpeed(rs.getInt(8), rs.getInt(9));
-					rsw.setCount(rs.getInt(10));
-					results.add(rsw);
-				}
-			}
-			
-			return results;
+			return executeLS(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -242,25 +228,33 @@ public class GetAggregateStatistics extends DAO {
 	 * @return a List of Tuples, with Airport and Runway name
 	 * @throws DAOException
 	 */
-	public List<Tuple<Airport,String>> getChalleningRunways(int minLandings) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT R.ICAO, R.RUNWAY, AVG(AP.LANDING_SCORE) AS SCORE, COUNT(R.ID) AS CNT FROM acars.RWYDATA R LEFT JOIN ACARS_PIREPS AP ON (R.ID=AP.ACARS_ID) WHERE (R.ISTAKEOFF=?) AND (AP.LANDING_SCORE>?) "
-			+ "GROUP BY R.ICAO, R.RUNWAY HAVING (CNT>?) ORDER BY SCORE ASC")) {
-			ps.setBoolean(1, false);
-			ps.setInt(2, RunwayLandingStats.MIN_LANDING_SCORE);
-			ps.setInt(3, minLandings);
-			
-			List<Tuple<Airport,String>> results = new ArrayList<Tuple<Airport,String>>();
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Airport a = SystemData.getAirport(rs.getString(1));
-					results.add(Tuple.create(a, rs.getString(2)));
-				}
-			}
-			
-			return results;
+	public List<RunwayLandingStats> getChalleningRunways(int minLandings) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (YEAR=?) AND (COUNT>=?) ORDER BY SCORE ASC")) {
+			ps.setInt(1, 0);
+			ps.setInt(2, minLandings);
+			return executeLS(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+
+	/*
+	 * Helper method to parse landing statistics result sets.
+	 */
+	private static List<RunwayLandingStats> executeLS(PreparedStatement ps) throws SQLException {
+		List<RunwayLandingStats> results = new ArrayList<RunwayLandingStats>();
+		try (ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				RunwayLandingStats rsw = new RunwayLandingStats(SystemData.getAirport(rs.getString(1)), rs.getString(2), rs.getInt(3));
+				rsw.setScore(rs.getInt(4) / 100d, rs.getInt(5) / 100d);
+				rsw.setDistance(rs.getInt(6), rs.getInt(7));
+				rsw.setVerticalSpeed(rs.getInt(8), rs.getInt(9));
+				rsw.setCount(rs.getInt(10));
+				results.add(rsw);
+			}
+		}
+		
+		return results;
 	}
 	
 	/*
