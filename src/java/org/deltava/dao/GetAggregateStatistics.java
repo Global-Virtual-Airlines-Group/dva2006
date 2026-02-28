@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019, 2020, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,16 +6,20 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
+import org.deltava.beans.schedule.Airport;
+
+import org.deltava.util.Tuple;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 12.1
+ * @version 12.4
  * @since 6.2
  */
 
 public class GetAggregateStatistics extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -197,6 +201,63 @@ public class GetAggregateStatistics extends DAO {
 				ps.setBoolean(1, (grp == FlightStatsGroup.AD));
 			
 			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads aggregate landing score statistics from the database.
+	 * @param a the Airport
+	 * @param rw the Runway name
+	 * @return a Collection of RunwayLandingStats beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<RunwayLandingStats> getRunwayLandingStats(Airport a, String rw) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (ICAO=?) AND (RUNWAY=?) ORDER BY YEAR DESC")) {
+			ps.setString(1, a.getICAO());
+			ps.setString(2, rw);
+			
+			List<RunwayLandingStats> results = new ArrayList<RunwayLandingStats>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					RunwayLandingStats rsw = new RunwayLandingStats(a, rs.getString(2), rs.getInt(3));
+					rsw.setScore(rs.getInt(4) / 100d, rs.getInt(5) / 100d);
+					rsw.setDistance(rs.getInt(6), rs.getInt(7));
+					rsw.setVerticalSpeed(rs.getInt(8), rs.getInt(9));
+					rsw.setCount(rs.getInt(10));
+					results.add(rsw);
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the most challenging Runways, with the lowest average landing score.
+	 * @param minLandings the minimum number of landings
+	 * @return a List of Tuples, with Airport and Runway name
+	 * @throws DAOException
+	 */
+	public List<Tuple<Airport,String>> getChalleningRunways(int minLandings) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT R.ICAO, R.RUNWAY, AVG(AP.LANDING_SCORE) AS SCORE, COUNT(R.ID) AS CNT FROM acars.RWYDATA R LEFT JOIN ACARS_PIREPS AP ON (R.ID=AP.ACARS_ID) WHERE (R.ISTAKEOFF=?) AND (AP.LANDING_SCORE>?) "
+			+ "GROUP BY R.ICAO, R.RUNWAY HAVING (CNT>?) ORDER BY SCORE ASC")) {
+			ps.setBoolean(1, false);
+			ps.setInt(2, RunwayLandingStats.MIN_LANDING_SCORE);
+			ps.setInt(3, minLandings);
+			
+			List<Tuple<Airport,String>> results = new ArrayList<Tuple<Airport,String>>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					results.add(Tuple.create(a, rs.getString(2)));
+				}
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
