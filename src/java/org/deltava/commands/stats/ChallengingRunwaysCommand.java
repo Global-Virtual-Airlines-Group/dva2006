@@ -6,13 +6,10 @@ import java.sql.Connection;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.Runway;
-import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.RunwayLandingStats;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.Tuple;
 
 /**
  * A Web Site Command to list Runways with the lowest aggregate landing scores.
@@ -41,21 +38,17 @@ public class ChallengingRunwaysCommand extends AbstractViewCommand {
 			sdao.setQueryMax(vc.getCount());
 			
 			// Load the runway names
-			List<Tuple<Airport, String>> rwys = sdao.getChalleningRunways(5);
+			vc.setResults(sdao.getChalleningRunways(5));
 			
 			// Populate runway data
 			GetNavData navdao = new GetNavData(con);
 			Map<String, Runway> rwyData = new HashMap<String, Runway>();
-			List<RunwayLandingStats> results = new ArrayList<RunwayLandingStats>();
-			for (Tuple<Airport, String> rwy : rwys) {
-				List<RunwayLandingStats> rws = sdao.getRunwayLandingStats(rwy.getLeft(), rwy.getRight());
-				results.add(RunwayLandingStats.merge(rws, 0));
-				Runway r = navdao.getRunway(rwy.getLeft(), rwy.getRight(), Simulator.FS2020);
+			for (RunwayLandingStats rwy : vc.getResults()) {
+				Runway r = navdao.getRunway(rwy.getAirport(), rwy.getRunway(), Simulator.FS2020);
 				if (r != null)
 					rwyData.put(String.format("%s-%s", r.getCode(), r.getName()), r);
 			}
 			
-			vc.setResults(results);
 			ctx.setAttribute("rwys", rwyData, REQUEST);
 			ctx.setExpiry(1800);
 		} catch (DAOException de) {
