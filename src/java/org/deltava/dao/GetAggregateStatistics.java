@@ -229,9 +229,10 @@ public class GetAggregateStatistics extends DAO {
 	 * @throws DAOException
 	 */
 	public List<RunwayLandingStats> getChalleningRunways(int minLandings) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (YEAR=?) AND (COUNT>=?) ORDER BY SCORE ASC")) {
+		try (PreparedStatement ps = prepare("SELECT LS.*, COUNT(R.NAME) AS RID FROM FLIGHTSTATS_LANDSCORE LS LEFT JOIN common.RUNWAYS R ON (LS.ICAO=R.ICAO) AND (LS.RUNWAY=R.NAME) WHERE (LS.YEAR=?) AND (LS.COUNT>=?) GROUP BY LS.ICAO, LS.RUNWAY HAVING (RID>?) ORDER BY SCORE ASC")) {
 			ps.setInt(1, 0);
 			ps.setInt(2, minLandings);
+			ps.setInt(3, 0);
 			return executeLS(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
