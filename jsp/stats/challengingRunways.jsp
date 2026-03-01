@@ -33,6 +33,12 @@
  <td colspan="7" class="left"><span class="nophone"><content:airline />&nbsp;</span>CHALLENGING RUNWAYS</td>
 </tr>
 
+<!-- Description -->
+<tr>
+ <td colspan="7" class="mid">Some approaches and landings are more challenging than others. Whether it's the geography, typical weather or just the nature of the airspace, touching down safely and precisely can be a real test of a Pilot's
+ abilities. Over 20 years, here are the most consistently challenging runways at <content:airline /> with a minimum of <fmt:int value="${minLandings}" /> - for Pilots, are they places to avoid - or perhaps to seek out?</td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:10%">#</td>
@@ -53,7 +59,7 @@
 <tr>
  <td class="bld"><fmt:int value="${idx}" /></td>
  <td class="small"><span class="nophone">${rls.airport.name} - </span><el:cmd url="airportinfo" linkID="${rls.airport.ICAO}" className="plain" authOnly="true"><fmt:airport airport="${rls.airport}" /></el:cmd></td>
- <td><span class="pri bld">${rls.runway}</span><span class="nophone"> - <fmt:int value="${rwy.length}" /> feet, ${rwy.heading} degrees</span><c:if test="${!empty rwy.alternateCode}"> <span class="small ita"> [now ${rwy.name}]</span></c:if></td>
+ <td><span class="pri bld">${rwy.name}</span><span class="nophone"> - <fmt:int value="${rwy.length}" /> feet, ${rwy.heading} degrees</span><c:if test="${!empty rwy.alternateCode && (rls.runway != rwy.name)}">&nbsp;<span class="small ita">[was ${rls.runway}]</span></c:if></td>
  <td><fmt:landscore value="${rls.averageScore}" className="bld" /><c:if test="${rls.count > 1}"> +/- <fmt:dec value="${rls.scoreSD}" /></c:if></td>
  <td><fmt:int value="${rls.averageDistance}" /><c:if test="${rls.count > 1}"> +/- <fmt:int value="${rls.distanceSD}" /></c:if> ft</td>
  <td><fmt:int value="${rls.averageVerticalSpeed }" /><c:if test="${rls.count > 1}"> +/- <fmt:int value="${rls.verticalSpeedSD}" /></c:if> ft/min</td>
