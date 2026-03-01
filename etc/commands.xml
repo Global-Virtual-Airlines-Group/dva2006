@@ -65,7 +65,7 @@
 	<command id="challengerunways">
 		<name>Challenging Runways</name>
 		<class>org.deltava.commands.stats.ChallengingRunwaysCommand</class>
-		<roles>Pilot</roles>
+		<roles>*</roles>
 	</command>
 
 	<command id="mystats">
