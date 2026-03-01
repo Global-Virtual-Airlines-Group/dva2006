@@ -117,6 +117,7 @@
  <content:subitem><el:cmd url="econstats">Passenger Statistics</el:cmd></content:subitem> 
  <content:subitem><el:cmd url="landingstats">Landing Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="landings">Optimal Landings</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="challengerunways">Challenging Runways</el:cmd></content:subitem>
 <content:filter roles="Operations,Fleet,HR,Developer"> 
  <content:subitem><el:cmd url="fleetstats">Client Configurations</el:cmd></content:subitem>
 </content:filter>
