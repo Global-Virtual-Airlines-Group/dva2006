@@ -46,7 +46,7 @@
  <td>RUNWAY</td>
  <td style="width:15%">SCORE</td>
  <td style="width:15%">DISTANCE</td>
- <td style="width:10%">VERT. SPEED</td>
+ <td class="nophone" style="width:10%">VERT. SPEED</td>
  <td style="width:6%">LANDINGS</td>
 </tr>
 
@@ -60,9 +60,9 @@
  <td class="bld"><fmt:int value="${idx}" /></td>
  <td class="small"><span class="nophone">${rls.airport.name} - </span><el:cmd url="airportinfo" linkID="${rls.airport.ICAO}" className="plain" authOnly="true"><fmt:airport airport="${rls.airport}" /></el:cmd></td>
  <td><span class="pri bld">${rwy.name}</span><span class="nophone"> - <fmt:int value="${rwy.length}" /> feet, ${rwy.heading} degrees</span><c:if test="${!empty rwy.alternateCode && (rls.runway != rwy.name)}">&nbsp;<span class="small ita">[was ${rls.runway}]</span></c:if></td>
- <td><fmt:landscore value="${rls.averageScore}" className="bld" /><c:if test="${rls.count > 1}"> +/- <fmt:dec value="${rls.scoreSD}" /></c:if></td>
- <td><fmt:int value="${rls.averageDistance}" /><c:if test="${rls.count > 1}"> +/- <fmt:int value="${rls.distanceSD}" /></c:if> ft</td>
- <td><fmt:int value="${rls.averageVerticalSpeed }" /><c:if test="${rls.count > 1}"> +/- <fmt:int value="${rls.verticalSpeedSD}" /></c:if> ft/min</td>
+ <td><fmt:landscore value="${rls.averageScore}" className="bld" /><c:if test="${rls.count > 1}"><span class="nophone"> +/- <fmt:dec value="${rls.scoreSD}" /></span></c:if></td>
+ <td><fmt:int value="${rls.averageDistance}" /><c:if test="${rls.count > 1}"><span class="nophone"> +/- <fmt:int value="${rls.distanceSD}" /></span></c:if> ft</td>
+ <td class="nophone"><fmt:int value="${rls.averageVerticalSpeed }" /><c:if test="${rls.count > 1}"><span class="nophone"> +/- <fmt:int value="${rls.verticalSpeedSD}" /></span></c:if> ft/min</td>
  <td class="bld"><fmt:int value="${rls.count}" /></td>
 </tr>
 </c:forEach>
