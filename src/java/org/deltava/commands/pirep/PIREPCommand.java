@@ -468,7 +468,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Load taxi times
 			if (ac.getCanUseSimBrief() || isACARS) {
 				GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
-				int year = LocalDate.ofInstant(fr.getDate(), ZoneOffset.UTC).getYear();
+				int year = fr.getYear();
 				TaxiTime ttA = ttdao.getTaxiTime(fr.getAirportA(), year);
 				TaxiTime ttD = ttdao.getTaxiTime(fr.getAirportD(), year);
 				if (ttA.isEmpty())
@@ -648,8 +648,15 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (ac.getCanViewScore()) {
 							FlightScore score = FlightScorer.score(pkg);
 							if (score != FlightScore.INCOMPLETE)
-								ctx.setAttribute("flightScore", pkg, REQUEST);	
+								ctx.setAttribute("flightScore", pkg, REQUEST);
 						}
+					}
+					
+					// Get runway landing statistics
+					if (ac.getCanViewScore() && (afr.getFDR() != Recorder.XACARS)) {
+						GetAggregateStatistics asdao = new GetAggregateStatistics(con);
+						List<RunwayLandingStats> rls = asdao.getRunwayLandingStats(afr.getAirportA(), info.getRunwayA().getName());
+						ctx.setAttribute("rlStats", RunwayLandingStats.merge(rls, 100), REQUEST);
 					}
 					
 					// Get the IP address
