@@ -1,7 +1,8 @@
-// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2022, 2023, 2024, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.deltava.beans.stats.GateUsage.GATE_USAGE_YEARS;
+import static org.deltava.beans.stats.RunwayLandingStats.MIN_LANDING_SCORE;
 
 import java.sql.*;
 
@@ -12,7 +13,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 6.2
  */
 
@@ -24,36 +25,6 @@ public class SetAggregateStatistics extends DAO {
 	 */
 	public SetAggregateStatistics(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Adds an entry to the aggregation queue.
-	 * @param id the Flight Report database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public void addQueueEntry(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PIREP_AGGREGATE_QUEUE VALUES(?, NOW())")) {
-			ps.setInt(1, id);
-			executeUpdate(ps, 1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes an entry from the aggregation queue.
-	 * @param id the Flight Report database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public void deleteQueueEntry(int id) throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREP_AGGREGATE_QUEUE WHERE (ID=?)")) {
-			ps.setInt(1, id);
-			executeUpdate(ps, 0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 	
 	/**
@@ -104,6 +75,28 @@ public class SetAggregateStatistics extends DAO {
 				ps.setBoolean(1, false);
 				ps.setInt(2, 32500);
 				ps.setInt(3, fr.getID());
+				executeUpdate(ps, 0);
+			}
+
+			// Get current year statistics
+			int year = fr.getYear();
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_LANDSCORE (SELECT R.ICAO, R.RUNWAY, YEAR(P.DATE) AS YR, ROUND(AVG(AP.LANDING_SCORE)), ROUND(STDDEV(AP.LANDING_SCORE)), AVG(R.DISTANCE), "
+				+ "STDDEV(R.DISTANCE), AVG(AP.LANDING_VSPEED), STDDEV(AP.LANDING_VSPEED), COUNT(AP.ID) FROM acars.RWYDATA R, ACARS_PIREPS AP, PIREPS P WHERE (R.ISTAKEOFF=?) AND (R.ICAO=?) AND (R.ID=AP.ACARS_ID) AND "
+				+ "(AP.ID=P.ID) AND (YEAR(P.DATE)=?) AND (AP.LANDING_SCORE>?) GROUP BY R.ICAO, R.RUNWAY, YR)")) {
+				ps.setBoolean(1, false);
+				ps.setString(2, fr.getAirportA().getICAO());
+				ps.setInt(3, year);
+				ps.setInt(4, MIN_LANDING_SCORE); // Don't let really bad landings distort things
+				executeUpdate(ps, 0);
+			}
+			
+			// Get all-time statistics
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO FLIGHTSTATS_LANDSCORE (SELECT R.ICAO, R.RUNWAY, 0, ROUND(AVG(AP.LANDING_SCORE)), ROUND(STDDEV(AP.LANDING_SCORE)), AVG(R.DISTANCE), STDDEV(R.DISTANCE), "
+				+ "AVG(AP.LANDING_VSPEED), STDDEV(AP.LANDING_VSPEED), COUNT(AP.ID) FROM acars.RWYDATA R, ACARS_PIREPS AP, PIREPS P WHERE (R.ISTAKEOFF=?) AND (R.ICAO=?) AND (R.ID=AP.ACARS_ID) AND (AP.ID=P.ID) AND "
+				+ "(AP.LANDING_SCORE>?) GROUP BY R.ICAO, R.RUNWAY)")) {
+				ps.setBoolean(1, false);
+				ps.setString(2, fr.getAirportA().getICAO());
+				ps.setInt(3, MIN_LANDING_SCORE); // Don't let really bad landings distort things
 				executeUpdate(ps, 0);
 			}
 			

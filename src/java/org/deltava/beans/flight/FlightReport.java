@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021, 2022, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018, 2020, 2021, 2022, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import static org.deltava.beans.flight.Attribute.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 12.2
+ * @version 12.4
  * @since 1.0
  */
 
@@ -151,6 +151,14 @@ public class FlightReport extends Flight implements FlightData, AuthoredBean, Ca
 	@Override
 	public Instant getDate() {
 		return _date;
+	}
+	
+	/**
+	 * Returns the year the Flight Report was flown. This is a convenience method to avoid downstream boilerplate.
+	 * @return the year
+	 */
+	public int getYear() {
+		return LocalDate.ofInstant(_date, ZoneOffset.UTC).getYear();
 	}
 
 	/**

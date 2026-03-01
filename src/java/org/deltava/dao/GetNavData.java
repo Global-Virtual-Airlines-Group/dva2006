@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 11.4
+ * @version 12.4
  * @since 1.0
  */
 
@@ -194,6 +194,23 @@ public class GetNavData extends DAO {
 	}
 	
 	/**
+	 * Returns information about all airport Runways in all Simulators.
+	 * @param a the ICAOAirport
+	 * @return a Runway bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Runway> getRunways(ICAOAirport a) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT R.*, RR.OLDCODE, RR.NEWCODE, IF(RR.OLDCODE=R.NAME,1,0) AS ISNEWCODE, N.FREQ FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
+			+ "((R.NAME=RR.OLDCODE) OR (R.NAME=RR.NEWCODE))) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.OLDCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) ORDER BY R.SIMVERSION DESC")) {
+			ps.setInt(1, Navaid.RUNWAY.ordinal());
+			ps.setString(2, a.getICAO());
+			return executeRunway(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns information about a particular airport Runway.
 	 * @param a the ICAOAirport
 	 * @param rwyCode the runway name/number
@@ -203,7 +220,7 @@ public class GetNavData extends DAO {
 	 */
 	public Runway getRunway(ICAOAirport a, String rwyCode, Simulator sim) throws DAOException {
 		if (rwyCode == null) return null;
-		List<Runway> rwys = getRunways(a, sim);
+		List<Runway> rwys = ((sim == null) || (sim == Simulator.UNKNOWN)) ? getRunways(a) : getRunways(a, sim);
 		return rwys.stream().filter(r -> r.matches(rwyCode)).findFirst().orElse(null);
 	}
 	
