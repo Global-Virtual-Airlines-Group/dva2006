@@ -20,6 +20,8 @@ import org.deltava.dao.*;
 
 public class ChallengingRunwaysCommand extends AbstractViewCommand {
 	
+	private static final int MIN_LANDINGS = 10;
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -38,7 +40,7 @@ public class ChallengingRunwaysCommand extends AbstractViewCommand {
 			sdao.setQueryMax(vc.getCount());
 			
 			// Load the runway names
-			vc.setResults(sdao.getChalleningRunways(10));
+			vc.setResults(sdao.getChalleningRunways(MIN_LANDINGS));
 			
 			// Populate runway data
 			GetNavData navdao = new GetNavData(con);
@@ -50,6 +52,7 @@ public class ChallengingRunwaysCommand extends AbstractViewCommand {
 			}
 			
 			ctx.setAttribute("rwys", rwyData, REQUEST);
+			ctx.setAttribute("minLandings", Integer.valueOf(MIN_LANDINGS), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
