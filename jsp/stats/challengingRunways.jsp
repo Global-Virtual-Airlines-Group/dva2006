@@ -51,7 +51,7 @@
 </tr>
 
 <!-- Table Runway Data -->
-<c:set var="idx" value="0" scope="page" />
+<c:set var="idx" value="${viewContext.start}" scope="page" />
 <c:forEach var="rls" items="${viewContext.results}">
 <c:set var="idx" value="${idx + 1}" scope="page" />
 <c:set var="rwyID" value="${rls.airport.ICAO}-${rls.runway}" scope="page" />
