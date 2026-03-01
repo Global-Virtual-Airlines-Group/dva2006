@@ -6,6 +6,7 @@ import java.util.concurrent.*;
 
 import org.apache.logging.log4j.*;
 
+import org.deltava.util.TaskTimer;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -40,17 +41,23 @@ public class ResolverDaemon implements Runnable {
 	@Override
 	public void run() {
 		log.info("Started"); long reqs = 0;
+		TaskTimer tt = new TaskTimer(false);
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				String addr = _work.take();
-				reqs++;
+				reqs++; tt.start();
 				try {
 					InetAddress host = InetAddress.getByName(addr);
-					log.debug("{} resolves to {}", addr, host.getCanonicalHostName());
-					_cache.add(new CacheableString(addr, host.getCanonicalHostName()));
+					String hostName = host.getCanonicalHostName();
+					log.debug("{} resolves to {}", addr, hostName);
+					_cache.add(new CacheableString(addr, hostName));
 				} catch (UnknownHostException uhe) {
 					log.warn("Cannot Resolve {}", addr);
 					_cache.add(new CacheableString(addr, addr));
+				} finally {
+					long ms = tt.stop();
+					if (ms > 1000)
+						log.warn("Slow Reverse DNS resolution for {} - {}ms", addr, Long.valueOf(ms));
 				}
 				
 				// Notify
