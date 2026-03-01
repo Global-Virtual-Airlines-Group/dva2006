@@ -1,6 +1,6 @@
 #!/bin/bash
 # Database backup script
-# (c) 2005 - 2024 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005 - 2026 Global Virtual Airlines Group. All Rights Reserved.
 
 echo 'Starting'
 
@@ -116,8 +116,8 @@ $mysqldump $dump_file_opt `cat /etc/sqlbackup.conf` afv HELPDESK_FILES | $arc_ut
 
 # Write flight statistics
 echo 'Writing flight statistics'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK FLIGHTSTATS_GATE | $arc_util > dva_stats.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK FLIGHTSTATS_GATE | $arc_util > afv_stats.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK FLIGHTSTATS_GATE FLIGHTSTATS_LANDSCORE | $arc_util > dva_stats.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY FLIGHTSTATS_NETWORK FLIGHTSTATS_GATE FLIGHTSTATS_LANDSCORE | $arc_util > afv_stats.sql.bz2
 
 # Write raw schedule
 echo 'Writing raw schedule'
@@ -126,7 +126,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv RAW_SCHEDULE RAW_SCHEDULE_AIR
 
 # Dump DVA database
 echo 'Writing DVA database'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE \
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE --ignore-table=dva.FLIGHTSTATS_LANDSCORE \
  --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE --ignore-table=dva.FLIGHTSTATS_LANDING \
  --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES --ignore-table=dva.FLIGHTSTATS_NETWORK --ignore-table=dva.FLIGHTSTATS_GATE \
  --ignore-table=dva.PIREPS --ignore-table=dva.ACARS_PIREPS --ignore-table=dva.PIREP_COMMENT --ignore-table=dva.PIREP_ROUTE --ignore-table=dva.PIREP_DRAFT \
@@ -143,7 +143,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva ONLINE_TRACK | $arc_util > dv
 
 # Dump AFV database
 echo 'Writing AFV database'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE \
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE --ignore-table=afv.FLIGHTSTATS_LANDSCORE \
  --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE --ignore-table=afv.FLIGHTSTATS_LANDING \
  --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES --ignore-table=afv.FLIGHTSTATS_NETWORK --ignore-table=afv.FLIGHTSTATS_GATE \
  --ignore-table=afv.PIREPS --ignore-table=afv.ACARS_PIREPS --ignore-table=afv.PIREP_COMMENT --ignore-table=afv.PIREP_ROUTE \
