@@ -2,10 +2,9 @@
 package org.deltava.util.dns;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.*;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 
 /**
@@ -21,36 +20,17 @@ public class Resolver {
 	private static final Logger log = LogManager.getLogger(Resolver.class);
 	
 	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
-	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 8, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().factory());
+	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 4, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
 	
-	private static final AtomicLong _reqs = new AtomicLong();
-	private static final AtomicLong _hits = new AtomicLong();
-
 	// static class
 	private Resolver() {
 		super();
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public static long getHits() {
-		return _hits.longValue();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public static long getRequests() {
-		return _reqs.longValue();
-	}
-	
 	public static void start() {
 		_exec.allowCoreThreadTimeOut(true);
 		_exec.prestartCoreThread();
-		log.info("Started");
+		log.info("Started - {} threads", Integer.valueOf(_exec.getMaximumPoolSize()));
 	}
 	
 	/**
@@ -59,7 +39,9 @@ public class Resolver {
 	public static void stop() {
 		log.info("Stopping");
 		_exec.shutdownNow();
-		log.info("Stopped - {} hits, {} requests", Long.valueOf(_hits.longValue()), Long.valueOf(_reqs.longValue()));
+		double hitRate = (_cache.getRequests() == 0) ? 0 : _cache.getHits() * 1d / _cache.getRequests();
+		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(_cache.getHits()), Long.valueOf(_cache.getRequests()), StringUtils.format(hitRate, "##0.00%"));
+		log.info("Maximum threads - {}", Integer.valueOf(_exec.getLargestPoolSize()));
 	}
 	
 	/**
@@ -70,24 +52,23 @@ public class Resolver {
 	 */
 	public static String resolve(String addr, int wait) {
 		
-		_reqs.incrementAndGet();
+		// Check the cache
 		DNSEntry de = _cache.get(addr);
-		if (de != null) {
-			_hits.incrementAndGet();
+		if (de != null)
 			return de.getRemoteHost();
-		}
 		
 		// Wait for the result
+		final int w = Math.min(wait, 2500);
 		log.debug("Resolinvg {}", addr);
 		try {
 			Future<String> f = _exec.submit(new ResolverWorker(addr));
-			String hostName = f.get(Math.min(wait, 2500), TimeUnit.MILLISECONDS);
+			String hostName = f.get(w, TimeUnit.MILLISECONDS);
 			log.debug("{} resolves to {}", addr, hostName);
 			return hostName;
 		} catch (InterruptedException | TimeoutException ie) {
-			log.info("{} timed Out after {}ms", addr, Integer.valueOf(wait));
+			log.info("{} timed out after {}ms", addr, Integer.valueOf(w));
 		} catch (RejectedExecutionException re) {
-			log.error("Cannot resolve {} - queue full", addr);
+			log.warn("Cannot resolve {} - queue full", addr);
 		} catch (ExecutionException ee) {
 			log.atError().withThrowable(ee.getCause()).log("Error resolving {} - {}", addr, ee.getMessage());
 		}
