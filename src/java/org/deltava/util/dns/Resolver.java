@@ -1,6 +1,7 @@
 // Copyright 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.dns;
 
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.*;
@@ -16,9 +17,11 @@ import org.deltava.util.cache.*;
 
 public class Resolver {
 	
-	private static final Cache<CacheableString> _cache = CacheManager.get(CacheableString.class, "ReverseDNS");
-	
+	private static final Cache<DNSEntry> _cache = CacheManager.get(DNSEntry.class, "ReverseDNS");
 	private static final Logger log = LogManager.getLogger(Resolver.class);
+	
+	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
+	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 8, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().factory());
 	
 	private static final AtomicLong _reqs = new AtomicLong();
 	private static final AtomicLong _hits = new AtomicLong();
@@ -44,6 +47,21 @@ public class Resolver {
 		return _reqs.longValue();
 	}
 	
+	public static void start() {
+		_exec.allowCoreThreadTimeOut(true);
+		_exec.prestartCoreThread();
+		log.info("Started");
+	}
+	
+	/**
+	 * Shuts down the executor pool.
+	 */
+	public static void stop() {
+		log.info("Stopping");
+		_exec.shutdownNow();
+		log.info("Stopped - {} hits, {} requests", Long.valueOf(_hits.longValue()), Long.valueOf(_reqs.longValue()));
+	}
+	
 	/**
 	 * Resolves a host name from an IP address.
 	 * @param addr the IP address
@@ -53,32 +71,27 @@ public class Resolver {
 	public static String resolve(String addr, int wait) {
 		
 		_reqs.incrementAndGet();
-		CacheableString hostName = _cache.get(addr);
-		if (hostName != null) {
+		DNSEntry de = _cache.get(addr);
+		if (de != null) {
 			_hits.incrementAndGet();
-			return hostName.getValue();
-		}
-		
-		// Offer the address
-		final String a = addr.intern();
-		boolean isOK = ResolverDaemon.add(a);
-		if (!isOK) {
-			log.warn("Cannot accept reverse DNS request for {} - queue full", addr);
-			return addr;
+			return de.getRemoteHost();
 		}
 		
 		// Wait for the result
+		log.debug("Resolinvg {}", addr);
 		try {
-			log.debug("Resolinvg {}", a);
-			synchronized (a) {
-				a.wait(Math.min(wait, 2500));
-			}
-		} catch (InterruptedException ie) {
-			log.info("{} timed Out after {}ms", a, Integer.valueOf(wait));
-			return addr;
+			Future<String> f = _exec.submit(new ResolverWorker(addr));
+			String hostName = f.get(Math.min(wait, 2500), TimeUnit.MILLISECONDS);
+			log.debug("{} resolves to {}", addr, hostName);
+			return hostName;
+		} catch (InterruptedException | TimeoutException ie) {
+			log.info("{} timed Out after {}ms", addr, Integer.valueOf(wait));
+		} catch (RejectedExecutionException re) {
+			log.error("Cannot resolve {} - queue full", addr);
+		} catch (ExecutionException ee) {
+			log.atError().withThrowable(ee.getCause()).log("Error resolving {} - {}", addr, ee.getMessage());
 		}
 		
-		hostName = _cache.get(addr);
-		return (hostName == null) ? addr : hostName.getValue();
+		return addr;
 	}
 }
