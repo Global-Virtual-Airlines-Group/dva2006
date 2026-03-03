@@ -209,11 +209,18 @@ public class GetAggregateStatistics extends DAO {
 	 * Loads aggregate landing score statistics from the database.
 	 * @param a the Airport
 	 * @param rw the Runway name
+	 * @param dbName the database name
 	 * @return a Collection of RunwayLandingStats beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<RunwayLandingStats> getRunwayLandingStats(Airport a, String rw) throws DAOException {
-		try (PreparedStatement ps = prepare("SELECT * FROM FLIGHTSTATS_LANDSCORE WHERE (ICAO=?) AND (RUNWAY=?) AND (YEAR>0) ORDER BY YEAR DESC")) {
+	public List<RunwayLandingStats> getRunwayLandingStats(Airport a, String rw, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".FLIGHTSTATS_LANDSCORE WHERE (ICAO=?) AND (RUNWAY=?) AND (YEAR>0) ORDER BY YEAR DESC");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, a.getICAO());
 			ps.setString(2, rw);
 			return executeLS(ps);
