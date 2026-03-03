@@ -130,7 +130,7 @@ public class PackageRefreshService extends WebService {
 				if (!StringUtils.isEmpty(sbdata.getSimBriefID())) frwdao.writeSimBrief(sbdata); // non-null if updated
 				ctx.commitTX();
 			}
-		} catch (ServiceException se) {
+		} catch (ServiceException | IllegalStateException se) {
 			ctx.setHeader("X-SB-Error-Message", se.getMessage());
 			throw se;
 		} catch (Exception de) {
@@ -139,7 +139,7 @@ public class PackageRefreshService extends WebService {
 				String errorMsg = SimBriefParser.parseError(hde.getMessage());
 				ctx.setHeader("X-SB-Error-Code", hde.getStatusCode());
 				ctx.setHeader("X-SB-Error-Message", errorMsg);
-				throw error (SC_SERVICE_UNAVAILABLE, errorMsg, false);
+				throw error(SC_SERVICE_UNAVAILABLE, errorMsg, false);
 			}
 			
 			ctx.setHeader("X-SB-Error-Message", de.getMessage());
