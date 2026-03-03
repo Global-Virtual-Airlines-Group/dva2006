@@ -251,8 +251,11 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 		}
 		
-		// Start the mailer/IPC daemons
+		// Start DNS resolver
 		Resolver.start();
+		JMXUtils.register("org.gvagroup:type=DNSResolver,name=" + code, new JMXResolver(code));
+		
+		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
 		spawnDaemon(new IPCDaemon());
 		log.warn("Started {} in {}ms", code, Long.valueOf(tt.stop()));
