@@ -655,7 +655,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Get runway landing statistics
 					if (ac.getCanViewScore() && (afr.getFDR() != Recorder.XACARS)) {
 						GetAggregateStatistics asdao = new GetAggregateStatistics(con);
-						List<RunwayLandingStats> rls = asdao.getRunwayLandingStats(afr.getAirportA(), info.getRunwayA().getName());
+						List<RunwayLandingStats> rls = asdao.getRunwayLandingStats(afr.getAirportA(), info.getRunwayA().getName(), ctx.getDB());
 						ctx.setAttribute("rlStats", RunwayLandingStats.merge(rls, 100), REQUEST);
 					}
 					
