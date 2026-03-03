@@ -2,8 +2,10 @@
 package org.deltava.util.dns;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.*;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 
@@ -22,15 +24,55 @@ public class Resolver {
 	private static final BlockingQueue<Runnable> _work = new ArrayBlockingQueue<Runnable>(24);
 	private static final ThreadPoolExecutor _exec = new ThreadPoolExecutor(1, 4, 2500, TimeUnit.MILLISECONDS, _work, Thread.ofVirtual().name("DNS Worker").factory());
 	
+	private static final AtomicLong _hits = new AtomicLong();
+	private static final AtomicLong _reqs = new AtomicLong();
+	
 	// static class
 	private Resolver() {
 		super();
 	}
 	
+	/**
+	 * Starts the executor pool.
+	 */
 	public static void start() {
 		_exec.allowCoreThreadTimeOut(true);
 		_exec.prestartCoreThread();
 		log.info("Started - {} threads", Integer.valueOf(_exec.getMaximumPoolSize()));
+	}
+	
+	/**
+	 * Returns the number of currently active resolver threads.
+	 * @return the number of threads
+	 */
+	public static int getThreadCount() {
+		return _exec.getActiveCount();
+	}
+	
+	/**
+	 * Returns the number of resolver cache hits. If this cache is shared, calling this method on the cache will return
+	 * the aggregate across all cache consumers, so this class maintains its own counter.
+	 * @return the number of cache hits
+	 */
+	public static long getHits() {
+		return _hits.longValue();
+	}
+	
+	/**
+	 * Returns the number of resolver cache requests. If this cache is shared, calling this method on the cache will return
+	 * the aggregate across all cache consumers, so this class maintains its own counter.
+	 * @return the number of cache requests
+	 */
+	public static long getRequests() {
+		return _reqs.longValue();
+	}
+	
+	/**
+	 * Returns the cache hit ratio.
+	 * @return the ratio from 0 to 1
+	 */
+	public static float getHitRate() {
+		return (getRequests() == 0) ? 0 : getHits() * 1f / getRequests();
 	}
 	
 	/**
@@ -39,8 +81,7 @@ public class Resolver {
 	public static void stop() {
 		log.info("Stopping");
 		_exec.shutdownNow();
-		double hitRate = (_cache.getRequests() == 0) ? 0 : _cache.getHits() * 1d / _cache.getRequests();
-		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(_cache.getHits()), Long.valueOf(_cache.getRequests()), StringUtils.format(hitRate, "##0.00%"));
+		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(getHits()), Long.valueOf(getRequests()), StringUtils.format(getHitRate(), "##0.00%"));
 		log.info("Maximum threads - {}", Integer.valueOf(_exec.getLargestPoolSize()));
 	}
 	
@@ -53,9 +94,12 @@ public class Resolver {
 	public static String resolve(String addr, int wait) {
 		
 		// Check the cache
+		_reqs.incrementAndGet();
 		DNSEntry de = _cache.get(addr);
-		if (de != null)
+		if (de != null) {
+			_hits.incrementAndGet();
 			return de.getRemoteHost();
+		}
 		
 		// Wait for the result
 		final int w = Math.min(wait, 2500);
