@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2012, 2014, 2016, 2025 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2012, 2014, 2016, 2025, 2026 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 12.3
+ * @version 12.4
  * @since 1.0
  */
 
@@ -51,6 +51,7 @@ abstract class CalendarTag extends TagSupport {
 	protected int _border;
 	protected boolean _showDaysOfWeek = true;
 	private boolean _showScrollTags = true;
+	private boolean _multipleDays;
 
 	protected XMLRenderer _table;
 	protected XMLRenderer _day;
@@ -119,7 +120,7 @@ abstract class CalendarTag extends TagSupport {
 	}
 
 	/**
-	 * Calculcates the end date based on the start date and a particular interval amount. <i>This must be called by a subclass for the
+	 * Calculates the end date based on the start date and a particular interval amount. <i>This must be called by a subclass for the
 	 * forward/backward links to work properly</i>.
 	 * @param intervalType the interval type (use Calendar constants)
 	 * @param amount the size of the interval
@@ -212,6 +213,14 @@ abstract class CalendarTag extends TagSupport {
 	}
 
 	/**
+	 * Sets whether to include an entry that spans multiple days to be included on each day.
+	 * @param doMultiDays TRUE to render on all days, otherwise FALSE
+	 */
+	public void setMultipleDays(boolean doMultiDays) {
+		_multipleDays = doMultiDays;
+	}
+
+	/**
 	 * Sets the BORDER value for this table.
 	 * @param border the border width attribute value
 	 */
@@ -275,8 +284,27 @@ abstract class CalendarTag extends TagSupport {
 		// Calculate the start/end points of the current date in the users's local time, in UTC
 		Instant sd = _currentDate.toInstant().minus(1, ChronoUnit.MILLIS);
 		Instant ed = sd.plus(1, ChronoUnit.DAYS).plus(2, ChronoUnit.MILLIS);
+		final DateRange rng = new DateRange(sd, ed);
+		
+		
 		return _entries.stream().filter(ce -> (ce.getDate().isAfter(sd) && ce.getDate().isBefore(ed))).collect(Collectors.toList());
 	}
+	
+	/*
+	 * Helper method to filter calendar entries based on date.
+	 */
+	private boolean singleFilter(CalendarEntry ce, DateRange dr) {
+		return ce.getDate().isAfter(dr.getStartDate()) && ce.getDate().isBefore(dr.getEndDate());
+	}
+	
+	public boolean multiFilter(CalendarEntry ce, DateRange dr) {
+		if (ce instanceof TimeSpan ts) {
+
+		}
+		
+		return singleFilter(ce, dr);
+	}
+	
 
 	/**
 	 * Determines if we have further days to render in the calendar. Subclasses are responsible for opening and closing the table cells.
