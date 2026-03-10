@@ -26,6 +26,7 @@ public class Resolver {
 	
 	private static final AtomicLong _hits = new AtomicLong();
 	private static final AtomicLong _reqs = new AtomicLong();
+	private static final AtomicLong _errs = new AtomicLong();
 	
 	// static class
 	private Resolver() {
@@ -68,6 +69,15 @@ public class Resolver {
 	}
 	
 	/**
+	 * Returns the number of rejected resolver entries. If this cache is shared, calling this method on the cache will return
+	 * the aggregate across all cache consumers, so this class maintains its own counter.
+	 * @return the number of rejected requests 
+	 */
+	public static long getErrors() {
+		return _errs.longValue();
+	}
+	
+	/**
 	 * Returns the cache hit ratio.
 	 * @return the ratio from 0 to 1
 	 */
@@ -82,7 +92,7 @@ public class Resolver {
 		log.info("Stopping");
 		_exec.shutdownNow();
 		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(getHits()), Long.valueOf(getRequests()), StringUtils.format(getHitRate(), "##0.00%"));
-		log.info("Maximum threads - {}", Integer.valueOf(_exec.getLargestPoolSize()));
+		log.info("Maximum threads - {}, Queue Full = {}", Integer.valueOf(_exec.getLargestPoolSize()), Long.valueOf(getErrors()));
 	}
 	
 	/**
@@ -112,7 +122,9 @@ public class Resolver {
 		} catch (InterruptedException | TimeoutException ie) {
 			log.info("{} timed out after {}ms", addr, Integer.valueOf(w));
 		} catch (RejectedExecutionException re) {
+			_errs.incrementAndGet();
 			log.warn("Cannot resolve {} - queue full", addr);
+			_cache.add(new DNSTimeoutEntry(addr, 300));
 		} catch (ExecutionException ee) {
 			log.atError().withThrowable(ee.getCause()).log("Error resolving {} - {}", addr, ee.getMessage());
 		}
