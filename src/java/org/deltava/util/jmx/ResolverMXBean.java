@@ -8,7 +8,7 @@ package org.deltava.util.jmx;
  * @since 12.4
  */
 
-public interface ResolverMBean {
+public interface ResolverMXBean {
 	
 	/**
 	 * Returns the application code.
@@ -38,7 +38,7 @@ public interface ResolverMBean {
 	 * Returns the number of rejected requests made to this resolve.
 	 * @return the number of rejected requests
 	 */
-	public Long getErrors();
+	public Long getRejected();
 	
 	/**
 	 * Returns the cache hit rate percentage.

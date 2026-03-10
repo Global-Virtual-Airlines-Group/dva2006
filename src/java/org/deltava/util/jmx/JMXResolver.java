@@ -10,7 +10,7 @@ import org.deltava.util.dns.Resolver;
  * @since 12.4
  */
 
-public class JMXResolver implements ResolverMBean, JMXRefresh {
+public class JMXResolver implements ResolverMXBean, JMXRefresh {
 	
 	private final String _code;
 	
@@ -52,7 +52,7 @@ public class JMXResolver implements ResolverMBean, JMXRefresh {
 	}
 	
 	@Override
-	public Long getErrors() {
+	public Long getRejected() {
 		return Long.valueOf(_errors);
 	}
 
@@ -65,7 +65,7 @@ public class JMXResolver implements ResolverMBean, JMXRefresh {
 	public synchronized void update() {
 		long hits = Resolver.getHits();
 		long reqs = Resolver.getRequests();
-		long errors = Resolver.getErrors();
+		long errors = Resolver.getRejected();
 		
 		_reqs = Math.max(0, reqs - _prevReqs);
 		_hits = Math.max(0, hits - _prevHits);

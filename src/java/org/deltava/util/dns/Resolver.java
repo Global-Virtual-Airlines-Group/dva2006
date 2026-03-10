@@ -73,7 +73,7 @@ public class Resolver {
 	 * the aggregate across all cache consumers, so this class maintains its own counter.
 	 * @return the number of rejected requests 
 	 */
-	public static long getErrors() {
+	public static long getRejected() {
 		return _errs.longValue();
 	}
 	
@@ -92,7 +92,7 @@ public class Resolver {
 		log.info("Stopping");
 		_exec.shutdownNow();
 		log.info("Stopped - {} hits, {} requests ( {} )", Long.valueOf(getHits()), Long.valueOf(getRequests()), StringUtils.format(getHitRate(), "##0.00%"));
-		log.info("Maximum threads - {}, Queue Full = {}", Integer.valueOf(_exec.getLargestPoolSize()), Long.valueOf(getErrors()));
+		log.info("Maximum threads - {}, Queue Full = {}", Integer.valueOf(_exec.getLargestPoolSize()), Long.valueOf(getRejected()));
 	}
 	
 	/**
