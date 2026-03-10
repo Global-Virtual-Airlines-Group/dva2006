@@ -29,10 +29,16 @@ public interface ResolverMBean {
 	public Long getRequests();
 	
 	/**
-	 * Returns the number of success requests made to this resolver.
+	 * Returns the number of successful requests made to this resolver.
 	 * @return the number of hits
 	 */
 	public Long getHits();
+	
+	/**
+	 * Returns the number of rejected requests made to this resolve.
+	 * @return the number of rejected requests
+	 */
+	public Long getErrors();
 	
 	/**
 	 * Returns the cache hit rate percentage.
