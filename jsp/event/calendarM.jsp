@@ -49,7 +49,7 @@ golgotha.local.expandSections = function(id) {
 </tr>
 </el:table>
 <div class="mid">
-<calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
+<calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"	dayBarClass="dayHdr" multipleDays="true" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
 <c:set var="eventSize" value="${event.signups.size()}" scope="page" />
 <c:set var="eventLargeSignup" value="${eventSize > 10}" scope="page" />
