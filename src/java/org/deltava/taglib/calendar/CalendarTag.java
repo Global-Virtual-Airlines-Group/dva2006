@@ -298,13 +298,8 @@ abstract class CalendarTag extends TagSupport {
 	}
 	
 	public boolean multiFilter(CalendarEntry ce, DateRange dr) {
-		if (ce instanceof TimeSpan ts) {
-
-		}
-		
-		return singleFilter(ce, dr);
+		return (ce instanceof TimeSpan ts) ? dr.contains(ts) : singleFilter(ce, dr);
 	}
-	
 
 	/**
 	 * Determines if we have further days to render in the calendar. Subclasses are responsible for opening and closing the table cells.
