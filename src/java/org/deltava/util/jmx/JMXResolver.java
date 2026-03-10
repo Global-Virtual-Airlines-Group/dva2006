@@ -16,9 +16,11 @@ public class JMXResolver implements ResolverMBean, JMXRefresh {
 	
 	private long _reqs;
 	private long _hits;
+	private long _errors;
 	
 	private long _prevReqs;
 	private long _prevHits;
+	private long _prevErrors;
 
 	/**
 	 * Creates the bean.
@@ -48,6 +50,11 @@ public class JMXResolver implements ResolverMBean, JMXRefresh {
 	public Long getHits() {
 		return Long.valueOf(_hits);
 	}
+	
+	@Override
+	public Long getErrors() {
+		return Long.valueOf(_errors);
+	}
 
 	@Override
 	public Float getHitRate() {
@@ -58,10 +65,13 @@ public class JMXResolver implements ResolverMBean, JMXRefresh {
 	public synchronized void update() {
 		long hits = Resolver.getHits();
 		long reqs = Resolver.getRequests();
+		long errors = Resolver.getErrors();
 		
 		_reqs = Math.max(0, reqs - _prevReqs);
 		_hits = Math.max(0, hits - _prevHits);
+		_errors = Math.max(0, errors - _prevErrors);
 		_prevReqs = reqs;
 		_prevHits = hits;
+		_prevErrors = errors;
 	}
 }
