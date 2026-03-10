@@ -285,19 +285,20 @@ abstract class CalendarTag extends TagSupport {
 		Instant sd = _currentDate.toInstant().minus(1, ChronoUnit.MILLIS);
 		Instant ed = sd.plus(1, ChronoUnit.DAYS).plus(2, ChronoUnit.MILLIS);
 		final DateRange rng = new DateRange(sd, ed);
-		
-		
-		return _entries.stream().filter(ce -> (ce.getDate().isAfter(sd) && ce.getDate().isBefore(ed))).collect(Collectors.toList());
+		return _entries.stream().filter(ce -> _multipleDays ? multiFilter(ce, rng) : singleFilter(ce, rng)).collect(Collectors.toList());
 	}
 	
 	/*
 	 * Helper method to filter calendar entries based on date.
 	 */
-	private boolean singleFilter(CalendarEntry ce, DateRange dr) {
+	private static boolean singleFilter(CalendarEntry ce, DateRange dr) {
 		return ce.getDate().isAfter(dr.getStartDate()) && ce.getDate().isBefore(dr.getEndDate());
 	}
 	
-	public boolean multiFilter(CalendarEntry ce, DateRange dr) {
+	/*
+	 * Helper method to filter multi-day events.
+	 */
+	public static boolean multiFilter(CalendarEntry ce, DateRange dr) {
 		return (ce instanceof TimeSpan ts) ? dr.contains(ts) : singleFilter(ce, dr);
 	}
 
@@ -426,6 +427,7 @@ abstract class CalendarTag extends TagSupport {
 	public void release() {
 		super.release();
 		_border = 0;
+		_multipleDays = false;
 		_showDaysOfWeek = true;
 		_showScrollTags = true;
 		_tableClass = null;
