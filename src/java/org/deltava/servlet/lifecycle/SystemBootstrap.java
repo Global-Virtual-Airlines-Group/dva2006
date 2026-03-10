@@ -123,7 +123,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			_jdbcPool.connect(SystemData.getInt("jdbc.pool_size"));
 			JMXConnectionPool jmxpool = new JMXConnectionPool(code, _jdbcPool);
 			JMXUtils.register("org.gvagroup:type=JDBCPool,name=" + code, jmxpool);
-			SharedWorker.register(new JMXRefreshTask(jmxpool, 60000));
+			SharedWorker.register(new JMXRefreshTask(jmxpool, 30000));
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Cannot load JDBC driver class - {}", SystemData.get("jdbc.Driver"));
 		} catch (ConnectionPoolException cpe) {
@@ -253,7 +253,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		
 		// Start DNS resolver
 		Resolver.start();
-		JMXUtils.register("org.gvagroup:type=DNSResolver,name=" + code, new JMXResolver(code));
+		JMXResolver rsolv = new JMXResolver(code);
+		JMXUtils.register("org.gvagroup:type=DNSResolver,name=" + code, rsolv);
+		SharedWorker.register(new JMXRefreshTask(rsolv, 30000));
 		
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
